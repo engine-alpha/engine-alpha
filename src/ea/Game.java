@@ -464,14 +464,32 @@ implements TastenReagierbar
      * Meldet ein Mausobjekt an.<br />
      * Ab sofort wird die anzumeldende Maus im Fenster dargestellt und Klicks werden auf die Maus uebertragen.
      * @param maus  Die anzumeldende Maus
+     * @param listenerUebernehmen	Ist dieser Wert <code>true</code>, so uebernimmt die neue Maus <b>alle Listener der alten
+     * 								Maus</b>
      * @see Maus
      */
-    public void mausAnmelden(Maus maus) {
+    public void mausAnmelden(Maus maus, boolean listenerUebernehmen) {
         if(maus == null) {
             System.err.println("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
         }
+        Maus alteMaus = fenster.getMaus();
         fenster.mausLoeschen();
+        if(alteMaus != null && listenerUebernehmen) {
+        	maus.uebernehmeAlleListener(alteMaus);
+        }
         fenster.anmelden(maus);
+    }
+    
+    /**
+     * Meldet ein Mausobjekt an.<br />
+     * Ab sofort wird die anzumeldende Maus im Fenster dargestellt und Klicks werden auf die Maus uebertragen.
+     * @param maus  Die anzumeldende Maus
+     * @param listenerUebernehmen	Ist dieser Wert <code>true</code>, so uebernimmt die neue Maus <b>alle Listener der alten
+     * 								Maus</b>
+     * @see Maus
+     */
+    public void mausAnmelden(Maus maus) {
+    	mausAnmelden(maus, false);
     }
 
     /**

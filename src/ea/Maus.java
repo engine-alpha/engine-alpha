@@ -225,6 +225,30 @@ public class Maus {
     }
     
     /**
+     * Uebernimmt alle Listener von einer anderen Maus.
+     * @param von	Von dieser Maus, werden alle Listener-Listen übernommen.
+     * 				Bereits vorhandene Listener bleiben dabei erhalten, werden aber
+     * 				eventuell <b>DOPPELT</b> eingefügt.
+     */
+    public void uebernehmeAlleListener(Maus von) {
+    	for(Auftrag a : von.mausListe) {
+    		this.anmelden(a.listener, a.koll, a.signal);
+    	}
+    	
+    	for(KlickReagierbar kr : von.klickListe) {
+    		this.klickReagierbarAnmelden(kr);
+    	}
+    	
+    	for(RechtsKlickReagierbar rkr : von.rechtsKlickListe) {
+    		this.rechtsKlickReagierbarAnmelden(rkr);
+    	}
+        
+    	for(MausLosgelassenReagierbar mlr : loslassListe ) {
+    		this.mausLosgelassenReagierbarAnmelden(mlr);
+    	}
+    }
+    
+    /**
      * Bei einer angemeldeten Maus wird bei einem Klick diese Methode aufgerufen.<br />
      * So lassen sich auch Klicks auf die Maus "simulieren".
      * @param   x   Die X-Koordinate des Klicks

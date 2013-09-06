@@ -40,7 +40,17 @@ extends Game {
      * Konstruktor. Private, da dies als <i>Singleton</i> gehandhabt wird.
      */
     private FensterE() {
-        super(808, 629, "Darstellung");
+        this(808, 629, "Darstellung");
+    }
+    
+    /**
+     * Konstruktor Typ 2: Freie Wahl der Fenstereigenschaften.
+     * @param breite	Die gewünschte Breite.
+     * @param hoehe		Die gewünschte Höhe.
+     * @param titel		Der gewünschte Titel.
+     */
+    private FensterE(int breite, int hoehe, String titel) {
+    	super(breite, hoehe, titel);
     }
 
     /**
@@ -51,8 +61,21 @@ extends Game {
      * @return  Das Fenster, in dem alle "edu"-Grafiken wiedergegeben werden.
      */
     public static final FensterE getFenster() {
-        if(fenster == null) {
-            return fenster = new FensterE();
+        return getFenster(808, 629);
+    }
+    
+    /**
+     * Gibt das "edu"-Fenster aus. Dies funktioniert nach dem <i>Singleton</i>-Prinzip:<br /><br />
+     * - <b>Alle Objekte</b> aus dem <code>edu</code>-Paket sind in DIESEM Fenster angezeigt.<br />
+     * - Es gibt nur <b>ein einziges</b> Fenster in jedem laufenden Programm. Dieses Fenster wird beim
+     * ersten Aufruf dieser Methode erstellt.
+     * @param breite	Die Wunschbreite, falls noch kein Fenster erstellt wurde.
+     * @param hoehe		Die Wunschhöhe, falls noch kein Fenster erstellt wurde.
+     * @return  Das Fenster, in dem alle "edu"-Grafiken wiedergegeben werden.
+     */
+    public static final FensterE getFenster(int breite, int hoehe) {
+    	if(fenster == null) {
+            return fenster = new FensterE(breite, hoehe, "Darstellung");
         }
         return fenster;
     }

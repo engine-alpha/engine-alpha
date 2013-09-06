@@ -83,27 +83,47 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
 
     /**
      * Konstruktor. Erstellt die Texte fuer Links- und Rechtspunkte.
+     * @param breite	Die gewünschte Breite der Anzeige in Pixel.
+     * @param hoehe		Die gewünschtte Höhe der Anzeige in Pixel.
      */
-    public AnzeigeE() {
-        links = new Text(300, 10, "0");
-        rechts = new Text(500, 10, "0");
+    public AnzeigeE(int breite, int hoehe) {
+        links = new Text(0, 10, "0");
+        rechts = new Text(0, 10, "0");
         aufgaben = new ArrayList<TastenAuftrag>();
         aufgabenT = new ArrayList<Auftrag>();
         aufgabenKlick = new ArrayList<KlickAuftrag>();
-        FensterE.getFenster().wurzel.add(links, rechts, strich =  new Text(400, 10, "-"));
-        FensterE.getFenster().tastenReagierbarAnmelden(this);
+        FensterE.getFenster(breite, hoehe).wurzel.add(links, rechts, strich =  new Text(0, 10, "-"));
+        FensterE.getFenster(breite, hoehe).tastenReagierbarAnmelden(this);
         super.anmelden(this, 1);
         punkteAnzeigen(false);
+        punkteAlignen();
     }
 
-    
-    public int zufallszahlVonBis(int von, int bis) {
+    /**
+     * Interne Align-Methode für harmonisches Aussehen der Punkte
+     */
+    private void punkteAlignen() {
+		int lLinks = links.dimension().breite;
+		int lRechts = rechts.dimension().breite;
+		int lStrich = strich.dimension().breite;
+		
+		int groesser = lLinks>lRechts ? lLinks : lRechts;
+		
+		int breite = FensterE.getFenster().fensterGroesse().breite;
+		
+		strich.positionSetzen((breite-lStrich)/2, 10);
+		links.positionSetzen(((breite-lStrich)/2)-groesser-5, 10);
+		rechts.positionSetzen((breite+lStrich)/2+5, 10);
+	}
+
+
+	public int zufallszahlVonBis(int von, int bis) {
         if(von > bis) {
-            System.err.println("Die Zufallszahl von ("+von+") war grÃ¶ÃŸer als die "
+            System.err.println("Die Zufallszahl von ("+von+") war größer als die "
                     + "Zufallszahl bis (" + bis +").");
             return -1;
         }
-        return random.nextInt(bis-von) + von;
+        return random.nextInt(bis-von+1) + von;
     }
     
     /**

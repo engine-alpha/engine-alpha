@@ -450,6 +450,14 @@ public class Fenster extends JFrame
     }
     
     /**
+     * Gibt die Maus aus.
+     * @return	Die aktuelle Maus. Kann <code>null</code> sein!!
+     */
+    public Maus getMaus() {
+    	return maus;
+    }
+    
+    /**
      * Gibt die Fenstermasse in einem BoundingRechteck an.
      * @return ein BoundingRechteck mit Position (0|0), dessen Hoehe & Breite die Masse des Fensters in Pixel angeben.
      * @see ea.BoundingRechteck
