@@ -94,7 +94,7 @@ public class Sound
     private AudioFormat format;
     
     /**
-     * Konstruktor fï¿½uer Objekte der Klasse Sound
+     * Konstruktor für Objekte der Klasse Sound
      * @param   verzeichnis Das Verzeichnis der Sound-Datei. Mit Endung angeben! (z.B. "meinSound.wav")
      * @param   tempoBPM    Das Abspieltempo in Beats per Minute; nur fuer MIDI-Dateien relevant.
      */

@@ -21,6 +21,9 @@ package ea;
 
 import java.awt.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 /**
  * Der Manager ist eine Standartklasse und eine der wichtigsten der Engine Alpha, die zur Interaktion ausserhalb der engine benutzt werden kann.<br />
  * Neben einer Liste aller moeglichen Fonts handelt er auch das <b>Ticker-System</b>.
@@ -35,8 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @see Ticker
  */
 public class Manager
-implements Runnable
-{
+extends Timer {
     /**Der Counter aller vorhandenen Manager-Tickerthreads*/
     private static int nummerCount = 0;
 
@@ -54,22 +56,12 @@ implements Runnable
     /**
      * Die Liste aller Auftraege.
      */
-    private volatile CopyOnWriteArrayList<Auftrag> liste = new CopyOnWriteArrayList<Auftrag>();
+    private volatile ArrayList<Auftrag> liste = new ArrayList<Auftrag>();
 
     /**
      * Der Name des Threads, ueber dem dieser Manager arbeitet
      */
     private final String name;
-
-    /**
-     * Gibt an, ob dieser Manager bereits ueber einen eigenen Thread laeuft, oder ob dieser Manager noch nie gefuellt wurde. 
-     */
-    private boolean arbeitet = false;
-    
-    /**
-     * Gibt an, ob dieser Manager noch arbeiten soll.
-     */
-    private boolean work = true;
 
     /**
      * Die 'Liste' aller moeglichen Fontnamen des Systems, auf dem man sich gerade befindet.<br />
@@ -111,8 +103,9 @@ implements Runnable
      * @see anmelden(Ticker)
      */
     public void anmelden(Ticker t, int intervall) {
-        anmelden(t);
-        starten(t, intervall);
+    	anmelden(t);
+    	
+    	starten(t, intervall);
     }
 
     /**
@@ -121,17 +114,25 @@ implements Runnable
      * @see anmelden(Ticker, int)
      */
     public void anmelden(Ticker t) {
-        if(t == null) {
-            System.err.println("Die Eingabe des Tickers war null!");
-            return;
+    	if(istAngemeldet(t)) {
+    		System.err.println("Der Ticker ist bereits an diesem Manager angemeldet");
+    		return;
+    	}
+    	liste.add(new Auftrag(t, 1000, false));
+    }
+    
+    /**
+     * Gibt den Auftrag zu einem bestimmten Ticker aus.
+     * @param t	Der Ticker, zu dem der entsprechende Auftrag 
+     * @return
+     */
+    private Auftrag auftragZu(Ticker t) {
+    	for(Auftrag a : liste) {
+            if(a.steuert(t)) {
+            	return a;
+            }
         }
-        if(istAngemeldet(t))
-            System.err.println("Achtung! Der Manager hat diesen Ticker bereits angemeldet!!");
-        liste.add(new Auftrag(t, 1, false));
-        if(!arbeitet) {
-            new Thread(this, name).start();
-            arbeitet = true;
-        }
+    	return null;
     }
     
     /**
@@ -156,19 +157,31 @@ implements Runnable
      * @param intervall Das Intervall, in dem dieser Ticker ab sofort immer wieder aufgerufen wird.
      * @see anhalten(Ticker)
      */
-    public void starten(Ticker t, int intervall) {
-        if(t == null) {
-            System.err.println("Die Eingabe des Tickers war null!");
-            return;
-        }
-        for(Auftrag a : liste) {
-            if(a.steuert(t)) {
-                a.intervallSetzen(intervall);
-                a.aktivSetzen(true);
-                return;
-            }
-        }
-        System.err.println("Achtung! Der Ticker, der gestartet werden sollte, war NICHT am Manager angemedet! Hierfuer bitte zuerst die Methode anmelden(...) nutzen!");
+    public void starten(final Ticker t, int intervall) {
+    	if(!istAngemeldet(t)) {
+    		System.err.println("Der Ticker ist noch nicht angemeldet.");
+    		return;
+    	}
+    	
+    	
+		Auftrag a = auftragZu(t);
+		
+		if(a.aktiv) {
+			System.err.println("Ticker ist bereits am Laufen!");
+			return;
+		}
+		
+		TimerTask tt = new TimerTask(){
+			@Override
+			public void run() {
+				t.tick();
+			}
+		};
+		
+		a.aktivSetzen(true);
+		a.taskSetzen(tt);
+		
+    	this.schedule(tt, 0, intervall);
     }
 
     /**
@@ -178,15 +191,16 @@ implements Runnable
      * @see starten(Ticker, int)
      */
     public void anhalten(Ticker t) {
-        if(t == null) {
-            System.err.println("Die Eingabe des Tickers war null!");
-            return;
-        }
-        for(Auftrag a : liste) {
-            a.aktivSetzen(false);
-            return;
-        }
-        System.err.println("Achtung! Der Ticker, der angehalten werden sollte, war NICHT am Manager angemedet! Hierfuer bitte zuerst die Methode anmelden(...) nutzen!");
+    	if(!istAngemeldet(t)) {
+    		System.err.println("Der Ticker ist noch nicht angemeldet.");
+    		return;
+    	}
+    	
+    	Auftrag a = auftragZu(t);
+    	TimerTask tt = a.task;
+    	
+    	a.aktivSetzen(false);
+    	tt.cancel();
     }
 
     /**
@@ -196,13 +210,20 @@ implements Runnable
      * @param   intervall   Das neue Intervall fuer den Ticker
      */
     public void intervallSetzen(Ticker t, int intervall) {
-        for(Auftrag a : liste) {
-            if(a.steuert(t)) {
-                a.intervallSetzen(intervall);
-                return;
-            }
-        }
-        System.err.println("Achtung! Der Ticker dessen Intervall neu gesetzt werden sollte, war NICHT an diesem Manager angemeldet!");
+    	if(!istAngemeldet(t)) {
+    		System.err.println("Der Ticker ist noch nicht angemeldet.");
+    		return;
+    	}
+    	
+    	Auftrag a = auftragZu(t);
+    	
+    	if(a.aktiv) {
+    		//TODO Abmelden
+        	
+        	anmelden(t, intervall);
+    	}
+    	
+    	a.intervall = intervall;
     }
     
     /**
@@ -211,18 +232,16 @@ implements Runnable
      * @param   t   Der abzumeldende Ticker
      */
     public void abmelden(Ticker t) {
-        Auftrag rem = null;
-        for(Auftrag a : liste) {
-            if(a.steuert(t)) {
-                rem = a;
-                break;
-            }
-        }
-        if(rem == null) {
-            System.err.println("Der abzumeldende Ticker war gar nicht an diesem Manager angemeldet.");
-            return;
-        }
-        liste.remove(rem);
+    	if(!istAngemeldet(t)) {
+    		System.err.println("Der Ticker ist noch nicht angemeldet.");
+    		return;
+    	}
+    	
+    	Auftrag a = auftragZu(t);
+    	
+    	if(a.aktiv)
+    		a.task.cancel();
+    	liste.remove(a);
     }
     
     /**
@@ -230,38 +249,11 @@ implements Runnable
      * zu beenden. Neue Ticker koennen jederzeit wieder angemeldet werden.
      */
     public void alleAbmelden() {
-        liste = new CopyOnWriteArrayList<Auftrag>();
-    }
-    
-    /**
-     * Die zu jedem Eigenstaendigen Thread gehoerende run()-Methode.<br />
-     * Ihr Inhalt wird auf die private Methode <code>handling()</code> verlagert.
-     * @see java.lang.Runnable
-     */
-    public void run() {
-        handling();
-    }
-    
-    private void handling() {
-        int runde = 1;
-        while(work) {
-            long t1 = System.currentTimeMillis();
-            for(Auftrag a : liste) {
-                a.tick(runde);
-            }
-            long t2 = System.currentTimeMillis();
-            if(t2 == t1) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    //
-                }
-            }
-            if(runde > 50000) {
-                runde = 0;
-            }
-            runde++;
-        }
+    	for(Auftrag a : liste) {
+    		if(a.aktiv)
+    			a.task.cancel();
+    	}
+    	liste = new ArrayList<Auftrag>();
     }
     
     /**
@@ -270,7 +262,7 @@ implements Runnable
      * geloescht werden soll.
      */
     public void kill() {
-        work = false;
+    	alleAbmelden();
     }
     
     /**
@@ -306,6 +298,11 @@ implements Runnable
          * Ob der Ticker momentan aktiv ist.
          */
         private boolean aktiv;
+        
+        /**
+         * Der eigentliche TimerTask
+         */
+        private TimerTask task;
 
         /**
          * Konstruktor.
@@ -343,16 +340,13 @@ implements Runnable
         public void aktivSetzen(boolean aktiv) {
             this.aktiv = aktiv;
         }
-
+        
         /**
-         * Prueft, ob in der angegeben Runde ein Tick bei diesem Ticker stattfinden soll.<br />
-         * Loest NICHT automatisch beim anliegenden Ticker einen TICK aus.
-         * @param runde Die aktuelle Runde (Im Idealfall gilt 1 Runde = 1 ms)
+         * Setzt den Task neu.
+         * @param task	Der neue tatsächliche TimerTask, der ausgeführt wird.
          */
-        public void tick(int runde) {
-            if(aktiv && runde % intervall == 0) {
-                ticker.tick();
-            }
+        public void taskSetzen(TimerTask task) {
+        	this.task = task;
         }
     }
 }

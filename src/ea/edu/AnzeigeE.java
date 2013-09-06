@@ -132,6 +132,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
      */
     public void punkteLinksSetzen(int punkte) {
         links.inhaltSetzen(""+punkte);
+        punkteAlignen();
     }
     
     /**
@@ -151,6 +152,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
      */
     public void punkteRechtsSetzen(int punkte) {
         rechts.inhaltSetzen(""+punkte);
+        punkteAlignen();
     }
     
     /**
