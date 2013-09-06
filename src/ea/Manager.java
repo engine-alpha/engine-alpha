@@ -1,0 +1,358 @@
+/*
+ * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ *
+ * Copyright (C) 2011  Michael Andonie
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package ea;
+
+import java.awt.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+/**
+ * Der Manager ist eine Standartklasse und eine der wichtigsten der Engine Alpha, die zur Interaktion ausserhalb der engine benutzt werden kann.<br />
+ * Neben einer Liste aller moeglichen Fonts handelt er auch das <b>Ticker-System</b>.
+ * Dies ist ein relativ konsistentes System, das viele <b><code>Ticker</code></b>-Objekte - Interfaces mit einer Methode, die in immergleichen Abstaenden 
+ * immer wieder aufgerufen werden.
+ * <br /><br />
+ *
+ * Bewusst leitet sich diese Klasse nicht von <code>Thread</code> ab. Hierdurch kann ein Manager ohne grossen Ressourcenaufwand erstellt werden,
+ * wobei der Thread (und damit Computerrechenzeit) erst mit dem aktiven Nutzen erstellt wird
+ * @author Andonie
+ * @version 2.0
+ * @see Ticker
+ */
+public class Manager
+implements Runnable
+{
+    /**Der Counter aller vorhandenen Manager-Tickerthreads*/
+    private static int nummerCount = 0;
+
+    /**
+     * Der Standartmanager. Dieser wird nur innerhalb des "ea"-Paketes-verwendet!<br />
+     * Er ist der Manager, der verschiedene Ticker-Beduerfnisse von einzelnen internen Klassen deckt und seine Fassung ist 
+     * exakt an der Anzahl der noetigen Ticker angeglichen. Dieser ist fuer:<br />
+     * - Die Fensterkontrollroutine<br />
+     * - Die Kollisionskontrollroutine der Klasse <code>Physik</code><br />
+     * - Die Figurenanimationsroutine<br />
+     * - Die Leuchtanimationsroutine
+     */
+    static Manager standard = new Manager("Interner Routinenmanager");
+
+    /**
+     * Die Liste aller Auftraege.
+     */
+    private volatile CopyOnWriteArrayList<Auftrag> liste = new CopyOnWriteArrayList<Auftrag>();
+
+    /**
+     * Der Name des Threads, ueber dem dieser Manager arbeitet
+     */
+    private final String name;
+
+    /**
+     * Gibt an, ob dieser Manager bereits ueber einen eigenen Thread laeuft, oder ob dieser Manager noch nie gefuellt wurde. 
+     */
+    private boolean arbeitet = false;
+    
+    /**
+     * Gibt an, ob dieser Manager noch arbeiten soll.
+     */
+    private boolean work = true;
+
+    /**
+     * Die 'Liste' aller moeglichen Fontnamen des Systems, auf dem man sich gerade befindet.<br />
+     * Hiernach werden ueberpruefungen gemacht, ob die gewuenschte Schriftart auch auf dem hiesigen PC vorhanden ist.
+     */
+    public static final String[] fontNamen;
+    
+    static {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        fontNamen = ge.getAvailableFontFamilyNames();
+    }
+    
+    /**
+     * Konstruktor eines Managers.<br />
+     * Bei einem normalen Spiel muss nicht extra ein Manager erstellt werden. Dafuer gibt es bereits eine Referenz<br /><br />
+     * <code>public final Manager manager;</code><br /><br /> in der Klass <code>Game</code> und damit auch in jeder spielsteurnden Klasse.
+     * @param   name        Der Name, den der Thread haben wird, ueber den dieser Manager laeuft.<br />
+     * Dieser Parameter kann auch einfach weggelassen werden; in diesem Fall erhaelt der Ticker einen standartisierten Namen.
+     * @see Manager()
+     */
+    public Manager(String name) {
+         this.name = name;
+         nummerCount++;
+    }
+
+    /**
+     * Vereinfachter Konstruktor ohne Parameter.<br />
+     * Bei einem normalen Spiel muss nicht extra ein Manager erstellt werden. Dafuer gibt es bereits eine Referenz<br /><br />
+     * <code>public final Manager manager;</code><br /><br /> in der Klass <code>Game</code> und damit auch in jeder spielsteurnden Klasse.
+     */
+    public Manager() {
+        this("Tickerthread " + (nummerCount + 1));
+    }
+    
+    /**
+     * Meldet einen Ticker am Manager an. Ab sofort laeuft er auf diesem Manager und damit wird auch dessen
+     * <code>tick()</code>-Methode immer wieder aufgerufen.
+     *  @param  t   Der anzumeldende Ticker
+     * @see anmelden(Ticker)
+     */
+    public void anmelden(Ticker t, int intervall) {
+        anmelden(t);
+        starten(t, intervall);
+    }
+
+    /**
+     * Macht diesem Manager einen Ticker bekannt, <b>OHNE</b> ihn aufzurufen.
+     * @param t Der anzumeldende Ticker
+     * @see anmelden(Ticker, int)
+     */
+    public void anmelden(Ticker t) {
+        if(t == null) {
+            System.err.println("Die Eingabe des Tickers war null!");
+            return;
+        }
+        if(istAngemeldet(t))
+            System.err.println("Achtung! Der Manager hat diesen Ticker bereits angemeldet!!");
+        liste.add(new Auftrag(t, 1, false));
+        if(!arbeitet) {
+            new Thread(this, name).start();
+            arbeitet = true;
+        }
+    }
+    
+    /**
+     * Prueft, ob ein Ticker t bereits angemeldet ist.
+     * @param t	Der zu pruefende Ticker.
+     * @return	<code>true</code>, falls der Ticker bereits an diesem <code>Manager</code>
+     * 			angemeldet ist, sonst <code>false</code>.
+     */
+    public boolean istAngemeldet(Ticker t) {
+    	for(Auftrag a : liste) {
+            if(a.steuert(t)) {
+            	return true;
+            }
+        }
+    	return false;
+    }
+
+    /**
+     * Startet einen Ticker, der <b>bereits an diesem Manager angemeldet ist</b>.<br />
+     * Laueft der Ticker bereits, passiert gar nichts. War der Ticker nicht angemeldet, kommt eine Fehlermeldung.
+     * @param t         Der zu startende, <b>bereits am Manager angemeldete</b> Ticker.
+     * @param intervall Das Intervall, in dem dieser Ticker ab sofort immer wieder aufgerufen wird.
+     * @see anhalten(Ticker)
+     */
+    public void starten(Ticker t, int intervall) {
+        if(t == null) {
+            System.err.println("Die Eingabe des Tickers war null!");
+            return;
+        }
+        for(Auftrag a : liste) {
+            if(a.steuert(t)) {
+                a.intervallSetzen(intervall);
+                a.aktivSetzen(true);
+                return;
+            }
+        }
+        System.err.println("Achtung! Der Ticker, der gestartet werden sollte, war NICHT am Manager angemedet! Hierfuer bitte zuerst die Methode anmelden(...) nutzen!");
+    }
+
+    /**
+     * Haelt einen Ticker an, der <b>bereits an diesem Manager angemeldet ist</b>.<br />
+     * Ist der Ticker bereits angehalten, passiert gar nichts. War der Ticker nicht angemeldet, kommt eine Fehlermeldung.
+     * @param t Der anzuhaltende Ticker
+     * @see starten(Ticker, int)
+     */
+    public void anhalten(Ticker t) {
+        if(t == null) {
+            System.err.println("Die Eingabe des Tickers war null!");
+            return;
+        }
+        for(Auftrag a : liste) {
+            a.aktivSetzen(false);
+            return;
+        }
+        System.err.println("Achtung! Der Ticker, der angehalten werden sollte, war NICHT am Manager angemedet! Hierfuer bitte zuerst die Methode anmelden(...) nutzen!");
+    }
+
+    /**
+     * Diese Methode setzt das Intervall eines Tickers neu.
+     * @param   t   Der Ticker, dessen Intervall geaendert werden soll.<br />
+     * Ist er nicht an dem Manager angemeldet, so wird eine Fehlermeldung ausgeloest!
+     * @param   intervall   Das neue Intervall fuer den Ticker
+     */
+    public void intervallSetzen(Ticker t, int intervall) {
+        for(Auftrag a : liste) {
+            if(a.steuert(t)) {
+                a.intervallSetzen(intervall);
+                return;
+            }
+        }
+        System.err.println("Achtung! Der Ticker dessen Intervall neu gesetzt werden sollte, war NICHT an diesem Manager angemeldet!");
+    }
+    
+    /**
+     * Meldet einen Ticker ab.<br />
+     * War dieser Ticker nicht angemeldet, so passiert nichts, ausser einer Fehlermeldung.
+     * @param   t   Der abzumeldende Ticker
+     */
+    public void abmelden(Ticker t) {
+        Auftrag rem = null;
+        for(Auftrag a : liste) {
+            if(a.steuert(t)) {
+                rem = a;
+                break;
+            }
+        }
+        if(rem == null) {
+            System.err.println("Der abzumeldende Ticker war gar nicht an diesem Manager angemeldet.");
+            return;
+        }
+        liste.remove(rem);
+    }
+    
+    /**
+     * Macht diesen Manager frei von allen aktiven Tickern, jedoch ohne ihn selbst
+     * zu beenden. Neue Ticker koennen jederzeit wieder angemeldet werden.
+     */
+    public void alleAbmelden() {
+        liste = new CopyOnWriteArrayList<Auftrag>();
+    }
+    
+    /**
+     * Die zu jedem Eigenstaendigen Thread gehoerende run()-Methode.<br />
+     * Ihr Inhalt wird auf die private Methode <code>handling()</code> verlagert.
+     * @see java.lang.Runnable
+     */
+    public void run() {
+        handling();
+    }
+    
+    private void handling() {
+        int runde = 1;
+        while(work) {
+            long t1 = System.currentTimeMillis();
+            for(Auftrag a : liste) {
+                a.tick(runde);
+            }
+            long t2 = System.currentTimeMillis();
+            if(t2 == t1) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    //
+                }
+            }
+            if(runde > 50000) {
+                runde = 0;
+            }
+            runde++;
+        }
+    }
+    
+    /**
+     * Beendet den Thread, den dieser Manager verwendet und damit den Manager
+     * selbst. Sollte <b>nur</b> aufgerufen werden, wenn der Manager selbst 
+     * geloescht werden soll.
+     */
+    public void kill() {
+        work = false;
+    }
+    
+    /**
+     * Prueft, ob ein Font auf diesem Computer existiert.
+     * @param   name    Der Name des zu ueberpruefenden Fonts
+     * @return  TRUE, wenn der Font auf dem PC existiert
+     */
+    public static boolean fontExistiert(String name) {
+        for(int i = 0; i < fontNamen.length; i++) {
+            if(fontNamen[i].equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Diese Klasse beschreibt einen "Tick-Auftrag" und sammelt so alle eigenschaften:<br />
+     * Ticker, Intervall, Aktivitaet.
+     */
+    private final class Auftrag {
+        /**
+         * Der Ticker dieses Auftrages
+         */
+        private final Ticker ticker;
+
+        /**
+         * Das Intervall dieses Auftrages
+         */
+        private int intervall;
+
+        /**
+         * Ob der Ticker momentan aktiv ist.
+         */
+        private boolean aktiv;
+
+        /**
+         * Konstruktor.
+         * @param ticker    Der Ticker dieses Auftrages.
+         * @param intervall Das Aufrufintervall des Tickers in 1/ms.
+         * @param aktiv     Ob dieser Ticker aktiv ist
+         */
+        public Auftrag(Ticker ticker, int intervall, boolean aktiv) {
+            this.ticker = ticker;
+            this.intervall = intervall;
+            this.aktiv = aktiv;
+        }
+
+        /**
+         * Prueft, ob dieser Auftrag einen bestimmten Ticker swteuert.
+         * @param t Der Ticker, der auf Gleichheit mit dem angelegten zu pruefen ist.
+         * @return  <code>true</code>, wenn beide Ticker identisch sind (Pruefung mit <code>equals</code>), sonst <code>false</code>.
+         */
+        public boolean steuert(Ticker t) {
+            return ticker.equals(t);
+        }
+
+        /**
+         * Setzt das Aufrufintervall neu.
+         * @param intervall Das neue Aufrufintervall
+         */
+        public void intervallSetzen(int intervall) {
+            this.intervall = intervall;
+        }
+
+        /**
+         * Setzt, ob der anliegende Ticker momentan aktiv ist.
+         * @param aktiv Ob der anliegende Ticker aufgerufen werden soll, oder nicht.
+         */
+        public void aktivSetzen(boolean aktiv) {
+            this.aktiv = aktiv;
+        }
+
+        /**
+         * Prueft, ob in der angegeben Runde ein Tick bei diesem Ticker stattfinden soll.<br />
+         * Loest NICHT automatisch beim anliegenden Ticker einen TICK aus.
+         * @param runde Die aktuelle Runde (Im Idealfall gilt 1 Runde = 1 ms)
+         */
+        public void tick(int runde) {
+            if(aktiv && runde % intervall == 0) {
+                ticker.tick();
+            }
+        }
+    }
+}
