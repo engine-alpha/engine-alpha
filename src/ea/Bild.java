@@ -151,23 +151,6 @@ extends Raum
         urBreite = img.getWidth();
     }
 
-
-    /**
-     * Laedt ein Bild auf die Klassische Art. Klassendateiabhaengig.
-     * @param verzeichnis   Das Verzeichnis des Bildes
-     * @return  Das geladene Bild
-     */
-    private BufferedImage imageKlassischLaden(String verzeichnis) {
-        BufferedImage img = null;
-        URL picURL = getClass().getClassLoader().getResource(verzeichnis);
-        try {
-            img = ImageIO.read(picURL);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-        return img;
-    }
-
     /**
      * Laedt ein Bild auf die 2.0-Art. Alles auff Basis der ausfuehrbaren Datei.
      * @param verzeichnis   Das Verzeichnis des Bildes. Nach dem Materialordner-Prinzip
@@ -194,7 +177,7 @@ extends Raum
     public static BufferedImage resize(BufferedImage img, int newW, int newH) {  
         int w = img.getWidth();  
         int h = img.getHeight();  
-        BufferedImage dimg = dimg = new BufferedImage(newW, newH, img.getType());  
+        BufferedImage dimg = new BufferedImage(newW, newH, img.getType());  
         Graphics2D g = dimg.createGraphics();  
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);  
         g.drawImage(img, 0, 0, newW, newH, 0, 0, w, h, null);  
@@ -211,7 +194,7 @@ extends Raum
     public static BufferedImage rotieren(BufferedImage img, double angle) {  
         int w = img.getWidth();
         int h = img.getHeight();
-        BufferedImage dimg = dimg = new BufferedImage((int)(w*Math.sin(angle)+w*Math.cos(angle)), (int)(h*Math.sin(angle)+h*Math.cos(angle)), img.getType());
+        BufferedImage dimg = new BufferedImage((int)(w*Math.sin(angle)+w*Math.cos(angle)), (int)(h*Math.sin(angle)+h*Math.cos(angle)), img.getType());
         Graphics2D g = dimg.createGraphics();
         g.rotate(angle, w/2, h/2);
         g.drawImage(img, null, (int)(Math.cos(angle)*h/2*Math.sin(angle)),  (int)(Math.cos(angle)*h/2*Math.sin(angle)));

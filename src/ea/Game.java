@@ -19,14 +19,17 @@
 
 package ea;
 
+import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
-import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -37,14 +40,13 @@ import javax.swing.filechooser.FileFilter;
  * @version 1.0 (Juni 2010)
  */
 public abstract class Game
-implements TastenReagierbar
-{
-    /**
+implements TastenReagierbar {
+	/**
      * Das Spielfenster
      */
     private final Fenster fenster;
 
-    /*
+    /**
      * Der Font fuer die Fenstertexte
      */
     private Font font;
@@ -228,6 +230,10 @@ implements TastenReagierbar
      */
     public Game() {
         this(500, 500, "", false);
+    }
+    
+    public void iconSetzen(Bild icon) {
+    	fenster.setIconImage(icon.bild());
     }
     
     /**
@@ -459,15 +465,15 @@ implements TastenReagierbar
     public void tastenLosgelassenReagierbarAnmelden(TastenLosgelassenReagierbar g) {
         fenster.tastenLosgelassenAnmelden(g);
     }
-
+    
     /**
-     * Meldet ein Mausobjekt an.<br />
-     * Ab sofort wird die anzumeldende Maus im Fenster dargestellt und Klicks werden auf die Maus uebertragen.
-     * @param maus  Die anzumeldende Maus
-     * @param listenerUebernehmen	Ist dieser Wert <code>true</code>, so uebernimmt die neue Maus <b>alle Listener der alten
-     * 								Maus</b>
-     * @see Maus
-     */
+    * Meldet ein Mausobjekt an.<br />
+    * Ab sofort wird die anzumeldende Maus im Fenster dargestellt und Klicks werden auf die Maus uebertragen.
+    * @param maus Die anzumeldende Maus
+    * @param listenerUebernehmen Ist dieser Wert <code>true</code>, so uebernimmt die neue Maus <b>alle Listener der alten
+    * Maus</b>
+    * @see Maus
+    */
     public void mausAnmelden(Maus maus, boolean listenerUebernehmen) {
         if(maus == null) {
             System.err.println("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
@@ -475,21 +481,23 @@ implements TastenReagierbar
         Maus alteMaus = fenster.getMaus();
         fenster.mausLoeschen();
         if(alteMaus != null && listenerUebernehmen) {
-        	maus.uebernehmeAlleListener(alteMaus);
+         maus.uebernehmeAlleListener(alteMaus);
         }
         fenster.anmelden(maus);
     }
-    
+        
     /**
      * Meldet ein Mausobjekt an.<br />
      * Ab sofort wird die anzumeldende Maus im Fenster dargestellt und Klicks werden auf die Maus uebertragen.
      * @param maus  Die anzumeldende Maus
-     * @param listenerUebernehmen	Ist dieser Wert <code>true</code>, so uebernimmt die neue Maus <b>alle Listener der alten
-     * 								Maus</b>
      * @see Maus
      */
     public void mausAnmelden(Maus maus) {
-    	mausAnmelden(maus, false);
+        if(maus == null) {
+            System.err.println("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
+        }
+        fenster.mausLoeschen();
+        fenster.anmelden(maus);
     }
 
     /**
