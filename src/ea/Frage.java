@@ -21,8 +21,7 @@ import javax.swing.*;
  * //Nichts<br />
  * }<br />
  * </code><br />
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Andonie
  */
 public class Frage
 extends JDialog {

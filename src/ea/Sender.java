@@ -27,7 +27,8 @@ import java.io.*;
  * Ein Sender bekommt also einen <code>OutputStream</code>, ueber den die Kommunikation verlaeuft.
  * @author Andonie
  */
-public class Sender {
+public class Sender 
+implements SenderInterface {
 	
 	/**
 	 * Gibt an, ob noch eine Verbindung zum anderen Ende der
@@ -64,11 +65,13 @@ public class Sender {
 	 * Interne Routine. Sendet eine Nachricht, wobei wesentliche
 	 * Eigenschaften geprueft werden und Fehler ausgegeben werden.
 	 * @param s	Der String, der uebertragen werden soll.
+	 * @return <code>true</code>, wenn die Nachricht erfolgreich gesendet werden
+	 * 			konnte, sonst <code>false</code>.
 	 */
-	private void sende(String s) {
+	private boolean sende(String s) {
 		if(!active) {
-			System.err.println("Kann nach dem schlieﬂen nicht mehr senden.");
-			return;
+			System.err.println("Kann nach dem Schlieﬂen nicht mehr senden.");
+			return false;
 		}
 		try {
 			writer.write(s);
@@ -76,34 +79,71 @@ public class Sender {
 			writer.flush();
 		} catch (IOException e) {
 			System.err.println("Es gab einen internen Fehler beim Schreiben.");
+			return false;
 		}
+		return true;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void sendeString(String s) {
 		sende("s"+s);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void sendeInt(int i) {
 		sende("i"+Integer.toString(i));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void sendeByte(byte b) {
 		sende("b"+Byte.toString(b));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void sendeDouble(double d) {
 		sende("d"+Double.toString(d));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void sendeChar(char c) {
 		sende("c"+Character.toString(c));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void sendeBoolean(boolean b) {
 		sende("k"+Boolean.toString(b));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void beendeVerbindung() {
-		sende("xq");
+		if(!sende("xq"))
+			return;
+		active = false;
+		try {
+			writer.close();
+		} catch(IOException e) {
+			System.err.println("Konnte die Verbindung nicht schlieﬂen.");
+		}
 	}
 }

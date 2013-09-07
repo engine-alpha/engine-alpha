@@ -144,6 +144,11 @@ extends Thread {
 				connectionActive = false;
 			}
 		}
+		try {
+			reader.close();
+		} catch (IOException e)  {
+			System.err.println("Konnte die Verbindung nicht schlieﬂen.");
+		}
 	}
 	
 	

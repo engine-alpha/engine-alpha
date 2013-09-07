@@ -19,6 +19,8 @@
 
 package ea;
 
+import java.io.BufferedWriter;
+
 /**
  * Diese Klasse sammelt die beiden wesentlichen Objekte einer Netzverbindung
  * (<code>NetwerkInterpreter</code>, der die Informationen an alle angemeldeten 
@@ -26,7 +28,8 @@ package ea;
  * Informationen an die andere Seite schicken kann)und gibt dieser einen Namen.
  * @author Andonie
  */
-public class NetzwerkVerbindung {
+public class NetzwerkVerbindung 
+extends Sender {
 	
 	/**
 	 * Der Name der Verbindung. Dies ist der Name, den der Client dem
@@ -40,14 +43,9 @@ public class NetzwerkVerbindung {
 	 */
 	private final NetzwerkInterpreter interpreter;
 	
-	/**
-	 * Der Sender, der Nachrichten an den Partner schicken kann.
-	 */
-	private final Sender sender;
-	
-	public NetzwerkVerbindung(String name, Sender sender, NetzwerkInterpreter interpreter) {
+	public NetzwerkVerbindung(String name, BufferedWriter bw, NetzwerkInterpreter interpreter) {
+		super(bw);
 		this.name = name;
-		this.sender = sender;
 		this.interpreter = interpreter;
 	}
 	
@@ -58,7 +56,7 @@ public class NetzwerkVerbindung {
 	 * 			empfangen kann. Sonst <code>false</code>.
 	 */
 	public boolean istAktiv() {
-		return sender.verbindungAktiv() && interpreter.verbindungAktiv();
+		return super.verbindungAktiv() && interpreter.verbindungAktiv();
 	}
 	
 	/**
@@ -75,13 +73,5 @@ public class NetzwerkVerbindung {
 	 */
 	public NetzwerkInterpreter getInterpreter() {
 		return interpreter;
-	}
-
-	/**
-	 * Gibt den Sender der Verbindung aus.
-	 * @return	Der Sender der Verbindung.
-	 */
-	public Sender getSender() {
-		return sender;
 	}
 }

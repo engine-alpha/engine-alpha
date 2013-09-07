@@ -35,7 +35,7 @@ import java.net.UnknownHostException;
  */
 public class Client 
 extends Thread 
-implements Empfaenger {
+implements Empfaenger, SenderInterface {
 	
 	/**
 	 * Der socket, ueber den die Verbindung aufgebaut wird.
@@ -76,6 +76,11 @@ implements Empfaenger {
 		this("Unbenannter Client", ipAdresse, port);
 	}
 	
+	/**
+	 * Die run-Methode des Threads baut eine Verbindung zum Server aus.
+	 * Sobald dieser Thread erfolgreich abgeschlossen ist, kann die Verbindung 
+	 * zur Kommunikation genutzt werden.
+	 */
 	@Override
 	public void run() {
 		try {
@@ -96,8 +101,11 @@ implements Empfaenger {
 			interpreter.empfaengerHinzufuegen(this);
 			
 			NetzwerkVerbindung vb = new NetzwerkVerbindung(
-					name, new Sender(bw), interpreter);
+					name, bw, interpreter);
 			verbindung = vb;
+			synchronized(this) {
+				verbindung.notifyAll();
+			}
 		} catch (UnknownHostException e) {
 			System.err.println("Konnte die IP-Adresse nicht zuordnen...");
 		} catch (IOException e) {
@@ -106,114 +114,213 @@ implements Empfaenger {
 		}
 	}
 	
+	/**
+	 * Diese Methode <b>stellt sicher</b>, dass eine Verbindung mit dem Server besteht.<br />
+	 * Diese Methode friert den ausführenden Thread ein, wenn noch keine Verbindung besteht
+	 * und endet erst, wenn die Verbindung aufgebaut wurde.
+	 */
+	public void warteAufVerbindung() {
+		if(verbindung == null) {
+			synchronized(this) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					System.err.println("Achtung. Es könnte trotz warteAufVerbindung() noch "
+							+ "keine Verbindung bestehen, da der Warteprozess unterbrochen wurde.");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Setzt den Empfaenger, der ueber jede Nachricht an diesen 
+	 * Client informiert wird.
+	 * @param e	Der Empfaenger, and den alle Nachrichten an 
+	 * diesen Client weitergereicht werden sollen.
+	 */
+	public void empfaengerHinzufuegen(Empfaenger e) {
+		this.verbindung.getInterpreter().empfaengerHinzufuegen(e);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * Sonst passiert <b>nichts</b>.
+	 */
+	@Override
 	public void sendeString(String string) {
 		if(verbindung == null) {
 			return;
 		}
-		verbindung.getSender().sendeString(string);
+		verbindung.sendeString(string);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * Sonst passiert <b>nichts</b>.
+	 */
+	@Override
 	public void sendeInt(int i) {
 		if(verbindung == null) {
 			return;
 		}
-		verbindung.getSender().sendeInt(i);
+		verbindung.sendeInt(i);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * Sonst passiert <b>nichts</b>.
+	 */
+	@Override
 	public void sendeByte(byte b) {
 		if(verbindung == null) {
 			return;
 		}
-		verbindung.getSender().sendeByte(b);
+		verbindung.sendeByte(b);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * Sonst passiert <b>nichts</b>.
+	 */
+	@Override
 	public void sendeDouble(double d) {
 		if(verbindung == null) {
 			return;
 		}
-		verbindung.getSender().sendeDouble(d);
+		verbindung.sendeDouble(d);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * Sonst passiert <b>nichts</b>.
+	 */
+	@Override
 	public void sendeChar(char c) {
 		if(verbindung == null) {
 			return;
 		}
-		verbindung.getSender().sendeChar(c);
+		verbindung.sendeChar(c);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * Sonst passiert <b>nichts</b>.
+	 */
+	@Override
 	public void sendeBoolean(boolean b) {
 		if(verbindung == null) {
 			return;
 		}
-		verbindung.getSender().sendeBoolean(b);
+		verbindung.sendeBoolean(b);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * Sonst passiert <b>nichts</b>.
+	 */
+	@Override
 	public void beendeVerbindung() {
 		if(verbindung == null) {
 			return;
 		}
-		verbindung.getSender().beendeVerbindung();
+		verbindung.beendeVerbindung();
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
+	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeString(String string) {
-		System.out.println("EMPFANGEN: " + string);
+		//To be overwritten
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
+	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeInt(int i) {
-		// TODO Auto-generated method stub
-		
+		//To be overwritten
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
+	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeByte(byte b) {
-		// TODO Auto-generated method stub
-		
+		//To be overwritten
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
+	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeDouble(double d) {
-		// TODO Auto-generated method stub
-		
+		//To be overwritten
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
+	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeChar(char c) {
-		// TODO Auto-generated method stub
-		
+		//To be overwritten
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
+	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeBoolean(boolean b) {
-		// TODO Auto-generated method stub
-		
+		//To be overwritten
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
+	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void verbindungBeendet() {
-		// TODO Auto-generated method stub
-		
+		//To be overwritten
 	}
 }

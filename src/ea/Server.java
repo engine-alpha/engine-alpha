@@ -38,7 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Server
 extends Thread
-implements Empfaenger {
+implements Empfaenger, SenderInterface {
 	
 	/**
 	 * Diese Liste speichert alle <b>aktiven></b> Netzwerkverbindungen.
@@ -131,12 +131,14 @@ implements Empfaenger {
 				interpreter.empfaengerHinzufuegen(this);
 				
 				NetzwerkVerbindung verbindung = new NetzwerkVerbindung(
-						name, new Sender(new BufferedWriter(new OutputStreamWriter(os))), interpreter);
+						name, new BufferedWriter(new OutputStreamWriter(os)), interpreter);
 				
 				waitingQueue.add(verbindung);
 				verbindungen.add(verbindung);
 				
-				waitingQueue.notify();
+				synchronized(waitingQueue) {
+					waitingQueue.notify();
+				}
 			} catch (IOException e) {
 				System.err.println("Beim Herstellen einer Verbindung ist ein Input/Output - "
 						+ "Fehler aufgetreten.");
@@ -157,7 +159,9 @@ implements Empfaenger {
 	public NetzwerkVerbindung naechsteVerbindungAusgeben() {
 		if(waitingQueue.isEmpty()) {
 			try {
-				waitingQueue.wait();
+				synchronized(waitingQueue) {
+					waitingQueue.wait();
+				}
 			} catch (InterruptedException e) {
 				//
 			}
@@ -177,84 +181,160 @@ implements Empfaenger {
 		this.globalerEmpfaenger = e;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Der Befehl wird an alle verbundenen Clients weitergegeben.
+	 */
+	@Override
 	public void sendeString(String string) {
 		for(NetzwerkVerbindung v : verbindungen) {
-			v.getSender().sendeString(string);
+			v.sendeString(string);
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Der Befehl wird an alle verbundenen Clients weitergegeben.
+	 */
+	@Override
 	public void sendeInt(int i) {
 		for(NetzwerkVerbindung v : verbindungen) {
-			v.getSender().sendeInt(i);
+			v.sendeInt(i);
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Der Befehl wird an alle verbundenen Clients weitergegeben.
+	 */
+	@Override
 	public void sendeByte(byte b) {
 		for(NetzwerkVerbindung v : verbindungen) {
-			v.getSender().sendeByte(b);
+			v.sendeByte(b);
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Der Befehl wird an alle verbundenen Clients weitergegeben.
+	 */
+	@Override
 	public void sendeDouble(double d) {
 		for(NetzwerkVerbindung v : verbindungen) {
-			v.getSender().sendeDouble(d);
+			v.sendeDouble(d);
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Der Befehl wird an alle verbundenen Clients weitergegeben.
+	 */
+	@Override
 	public void sendeChar(char c) {
 		for(NetzwerkVerbindung v : verbindungen) {
-			v.getSender().sendeChar(c);
+			v.sendeChar(c);
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Der Befehl wird an alle verbundenen Clients weitergegeben.
+	 */
+	@Override
 	public void sendeBoolean(boolean b) {
 		for(NetzwerkVerbindung v : verbindungen) {
-			v.getSender().sendeBoolean(b);
+			v.sendeBoolean(b);
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Der Befehl wird an alle verbundenen Clients weitergegeben.
+	 */
+	@Override
 	public void beendeVerbindung() {
 		for(NetzwerkVerbindung v : verbindungen) {
-			v.getSender().beendeVerbindung();
+			v.beendeVerbindung();
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Gibt die Nachricht an den globalen Empfänger 
+	 * weiter, sofern einer vorhanden ist.
+	 * @param string	Die Nachricht vom Client.
+	 */
 	@Override
 	public void empfangeString(String string) {
 		if(globalerEmpfaenger != null)
 			globalerEmpfaenger.empfangeString(string);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Gibt die Nachricht an den globalen Empfänger 
+	 * weiter, sofern einer vorhanden ist.
+	 * @param i	Die Nachricht vom Client.
+	 */
 	@Override
 	public void empfangeInt(int i) {
 		if(globalerEmpfaenger != null)
 			globalerEmpfaenger.empfangeInt(i);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Gibt die Nachricht an den globalen Empfänger 
+	 * weiter, sofern einer vorhanden ist.
+	 * @param string	Die Nachricht vom Client.
+	 */
 	@Override
 	public void empfangeByte(byte b) {
 		if(globalerEmpfaenger != null)
 			globalerEmpfaenger.empfangeByte(b);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Gibt die Nachricht an den globalen Empfänger 
+	 * weiter, sofern einer vorhanden ist.
+	 * @param d	Die Nachricht vom Client.
+	 */
 	@Override
 	public void empfangeDouble(double d) {
 		if(globalerEmpfaenger != null)
 			globalerEmpfaenger.empfangeDouble(d);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Gibt die Nachricht an den globalen Empfänger 
+	 * weiter, sofern einer vorhanden ist.
+	 * @param c	Die Nachricht vom Client.
+	 */
 	@Override
 	public void empfangeChar(char c) {
 		if(globalerEmpfaenger != null)
 			globalerEmpfaenger.empfangeChar(c);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Gibt die Nachricht an den globalen Empfänger 
+	 * weiter, sofern einer vorhanden ist.
+	 * @param b	Die Nachricht vom Client.
+	 */
 	@Override
 	public void empfangeBoolean(boolean b) {
 		if(globalerEmpfaenger != null)
 			globalerEmpfaenger.empfangeBoolean(b);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Gibt die Nachricht an den globalen Empfänger 
+	 * weiter, sofern einer vorhanden ist.
+	 */
 	@Override
 	public void verbindungBeendet() {
 		if(globalerEmpfaenger != null)
