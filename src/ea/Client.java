@@ -86,6 +86,13 @@ implements Empfaenger, SenderInterface {
 		try {
 			socket = new Socket(ipAdresse, port);
 			
+			//Stelle sicher, dass der Socket auch wieder geschlossen wird.
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					verbindungSchliessen();
+				}
+			});
 			
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
 					socket.getOutputStream()));
@@ -104,13 +111,13 @@ implements Empfaenger, SenderInterface {
 					name, bw, interpreter);
 			verbindung = vb;
 			synchronized(this) {
-				verbindung.notifyAll();
+				this.notifyAll();
 			}
 		} catch (UnknownHostException e) {
 			System.err.println("Konnte die IP-Adresse nicht zuordnen...");
 		} catch (IOException e) {
 			System.err.println("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer"
-					+ " Internet etc. vorhanden?");
+					+ " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
 		}
 	}
 	
@@ -132,6 +139,17 @@ implements Empfaenger, SenderInterface {
 		}
 	}
 	
+	public void verbindungSchliessen() {
+		if(!socket.isClosed()) {
+			verbindung.beendeVerbindung();
+			try {
+				socket.close();
+			} catch(IOException e) {
+				System.err.println("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+			}
+		}
+	}
+	
 	/**
 	 * Setzt den Empfaenger, der ueber jede Nachricht an diesen 
 	 * Client informiert wird.
@@ -139,98 +157,101 @@ implements Empfaenger, SenderInterface {
 	 * diesen Client weitergereicht werden sollen.
 	 */
 	public void empfaengerHinzufuegen(Empfaenger e) {
+		warteAufVerbindung();
 		this.verbindung.getInterpreter().empfaengerHinzufuegen(e);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
-	 * Sonst passiert <b>nichts</b>.
+	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
+	 * mit einem Server verbinden konnte.</b>.
 	 */
 	@Override
 	public void sendeString(String string) {
-		if(verbindung == null) {
-			return;
-		}
+		warteAufVerbindung();
 		verbindung.sendeString(string);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
-	 * Sonst passiert <b>nichts</b>.
+	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
+	 * mit einem Server verbinden konnte.</b>.
 	 */
 	@Override
 	public void sendeInt(int i) {
-		if(verbindung == null) {
-			return;
-		}
+		warteAufVerbindung();
 		verbindung.sendeInt(i);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
-	 * Sonst passiert <b>nichts</b>.
+	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
+	 * mit einem Server verbinden konnte.</b>.
 	 */
 	@Override
 	public void sendeByte(byte b) {
-		if(verbindung == null) {
-			return;
-		}
+		warteAufVerbindung();
 		verbindung.sendeByte(b);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
-	 * Sonst passiert <b>nichts</b>.
+	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
+	 * mit einem Server verbinden konnte.</b>.
 	 */
 	@Override
 	public void sendeDouble(double d) {
-		if(verbindung == null) {
-			return;
-		}
+		warteAufVerbindung();
 		verbindung.sendeDouble(d);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
-	 * Sonst passiert <b>nichts</b>.
+	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
+	 * mit einem Server verbinden konnte.</b>.
 	 */
 	@Override
 	public void sendeChar(char c) {
-		if(verbindung == null) {
-			return;
-		}
+		warteAufVerbindung();
 		verbindung.sendeChar(c);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
-	 * Sonst passiert <b>nichts</b>.
+	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
+	 * mit einem Server verbinden konnte.</b>.
 	 */
 	@Override
 	public void sendeBoolean(boolean b) {
-		if(verbindung == null) {
-			return;
-		}
+		warteAufVerbindung();
 		verbindung.sendeBoolean(b);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
-	 * Sonst passiert <b>nichts</b>.
+	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
+	 * mit einem Server verbinden konnte.</b>.
 	 */
 	@Override
 	public void beendeVerbindung() {
-		if(verbindung == null) {
-			return;
+		warteAufVerbindung();
+		if(!verbindung.istAktiv()) {
+			System.err.println("Die Verbindung zum Server wurde "
+					+ "bereits beendet.");
 		}
 		verbindung.beendeVerbindung();
+		try {
+			socket.close();
+		} catch(IOException e) {
+			System.err.println("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+		}
 	}
 
 	/**

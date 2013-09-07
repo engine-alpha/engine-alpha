@@ -74,4 +74,10 @@ extends Sender {
 	public NetzwerkInterpreter getInterpreter() {
 		return interpreter;
 	}
+	
+	@Override
+	public void beendeVerbindung() {
+		super.beendeVerbindung();
+		interpreter.quitCommunication();
+	}
 }

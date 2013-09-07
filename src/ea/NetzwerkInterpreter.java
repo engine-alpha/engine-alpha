@@ -118,13 +118,7 @@ extends Thread {
 		case 'x': //Steuerzeichen
 			switch(rest.charAt(0)) {
 			case 'q': //quit communication
-				for(Empfaenger e : outputListe) e.verbindungBeendet();
-				try {
-					reader.close();
-				} catch (IOException e1) {
-					System.err.println("Konnte den Kommunikationskanal nicht mehr schlieﬂen.");
-				}
-				connectionActive = false;
+				quitCommunication();
 				break;
 			case 'e': // name entry
 				break;
@@ -133,11 +127,27 @@ extends Thread {
 		}
 	}
 	
+	public void quitCommunication() {
+		for(Empfaenger e : outputListe) e.verbindungBeendet();
+		try {
+			reader.close();
+		} catch (IOException e1) {
+			System.err.println("Konnte den Kommunikationskanal nicht mehr schlieﬂen.");
+		}
+		connectionActive = false;
+	}
+	
 	@Override
 	public void run() {
 		while(!isInterrupted() && connectionActive) {
 			try {
 				String got = reader.readLine();
+				
+				if(got == null) {
+					connectionActive = false;
+					break;
+				}
+				
 				process(got);
 			} catch (IOException e) {
 				System.err.println("Konnte nicht vom Kommunikationspartner einlesen.");

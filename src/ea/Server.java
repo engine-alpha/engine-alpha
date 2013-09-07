@@ -106,6 +106,14 @@ implements Empfaenger, SenderInterface {
 			try {
 				Socket got = socket.accept();
 				
+				//Stelle sicher, dass der Socket auch wieder geschlossen wird.
+				Runtime.getRuntime().addShutdownHook(new Thread() {
+					@Override
+					public void run() {
+						beendeVerbindung();
+					}
+				});
+				
 				BufferedReader br = new BufferedReader(
 						new InputStreamReader(got.getInputStream()));
 				OutputStream os = got.getOutputStream();
@@ -130,11 +138,32 @@ implements Empfaenger, SenderInterface {
 				NetzwerkInterpreter interpreter = new NetzwerkInterpreter(br);
 				interpreter.empfaengerHinzufuegen(this);
 				
-				NetzwerkVerbindung verbindung = new NetzwerkVerbindung(
+				final NetzwerkVerbindung verbindung = new NetzwerkVerbindung(
 						name, new BufferedWriter(new OutputStreamWriter(os)), interpreter);
 				
 				waitingQueue.add(verbindung);
 				verbindungen.add(verbindung);
+				
+				verbindung.getInterpreter().empfaengerHinzufuegen(new Empfaenger(){
+					@Override
+					public void empfangeString(String string) {}
+					@Override
+					public void empfangeInt(int i) {}
+					@Override
+					public void empfangeByte(byte b) {}
+					@Override
+					public void empfangeDouble(double d) {}
+					@Override
+					public void empfangeChar(char c) {}
+					@Override
+					public void empfangeBoolean(boolean b) {}
+					
+					@Override
+					public void verbindungBeendet() {
+						verbindungen.remove(verbindung);
+						waitingQueue.remove(verbindung);
+					}
+				});
 				
 				synchronized(waitingQueue) {
 					waitingQueue.notify();
@@ -253,8 +282,15 @@ implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void beendeVerbindung() {
-		for(NetzwerkVerbindung v : verbindungen) {
-			v.beendeVerbindung();
+		if(!socket.isClosed()) {
+			for(NetzwerkVerbindung v : verbindungen) {
+				v.beendeVerbindung();
+			}
+			try {
+				socket.close();
+			} catch(IOException e) {
+				System.err.println("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+			}
 		}
 	}
 
@@ -333,7 +369,10 @@ implements Empfaenger, SenderInterface {
 	/**
 	 * {@inheritDoc}
 	 * Gibt die Nachricht an den globalen Empfänger 
-	 * weiter, sofern einer vorhanden ist.
+	 * weiter, sofern einer vorhanden ist.<br />
+	 * <b>ACHTUNG:</b> Dies betrifft stets nur eine Verbindung. 
+	 * Es ist daher gut möglich, dass der Server trotzdem noch 
+	 * kommunizieren kann und muss - mit anderen Clients.
 	 */
 	@Override
 	public void verbindungBeendet() {
