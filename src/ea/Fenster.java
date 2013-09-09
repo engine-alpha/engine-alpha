@@ -326,7 +326,7 @@ public class Fenster extends Frame {
 	}
 
 	private void addKeyListener() {
-		addKeyListener(new KeyListener() {
+		KeyListener keyListener = new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				tastenAktion(e);
 			}
@@ -345,7 +345,10 @@ public class Fenster extends Frame {
 
 			public void keyTyped(KeyEvent e) {
 			}
-		});
+		};
+		
+		addKeyListener(keyListener);
+		zeichner.addKeyListener(keyListener);
 	}
 
 	private void addMouseListener() {

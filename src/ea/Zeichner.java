@@ -88,6 +88,7 @@ public class Zeichner extends Canvas implements Runnable {
 	public Zeichner(int x, int y, Kamera c) {
 		this.setSize(x, y);
 		this.setPreferredSize(getSize());
+		this.setFocusable(true);
 
 		groesse = new BoundingRechteck(0, 0, x, y);
 		cam = c;
@@ -105,11 +106,19 @@ public class Zeichner extends Canvas implements Runnable {
 		createBufferStrategy(2);
 		BufferStrategy bs = getBufferStrategy();
 		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+		
+		if(g instanceof Graphics2D) { // Kantenglaettung
+			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 
 		while (work) {
 			render(g);
-			bs.show();
-
+			
+			if(this.isDisplayable())
+				bs.show();
+			else break;
+			
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
@@ -191,11 +200,6 @@ public class Zeichner extends Canvas implements Runnable {
 	 *            Das zum Zeichnen uebergebene Graphics-Objekt
 	 */
 	public void render(Graphics g) {
-		if (g instanceof Graphics2D) { // Kantenglaettung
-			((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
-		}
-
 		// Absoluter Hintergrund
 		g.setColor(Color.black);
 		g.fillRect(0, 0, groesse.breite, groesse.hoehe);

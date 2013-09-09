@@ -104,6 +104,7 @@ implements Empfaenger, SenderInterface {
 		}
 		while(!isInterrupted() && active) {
 			try {
+				System.out.println("accepting...");
 				Socket got = socket.accept();
 				
 				//Stelle sicher, dass der Socket auch wieder geschlossen wird.
@@ -168,6 +169,8 @@ implements Empfaenger, SenderInterface {
 				synchronized(waitingQueue) {
 					waitingQueue.notify();
 				}
+				
+				break;
 			} catch (IOException e) {
 				System.err.println("Beim Herstellen einer Verbindung ist ein Input/Output - "
 						+ "Fehler aufgetreten.");
