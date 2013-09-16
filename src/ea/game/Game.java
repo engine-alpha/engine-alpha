@@ -19,16 +19,20 @@
 
 package ea.game;
 
-import ea.*;
 import ea.audio.AudioManager;
 import ea.graphic.AnimationsManager;
 import ea.graphic.Bild;
+import ea.graphic.Farbe;
 import ea.graphic.Text;
+import ea.graphic.camera.Kamera;
 import ea.graphic.geo.BoundingRechteck;
+import ea.graphic.geo.Knoten;
 import ea.graphic.geo.Raum;
 import ea.graphic.geo.Rechteck;
-import ea.input.Eingabe;
-import ea.input.Maus;
+import ea.graphic.windows.Fenster;
+import ea.graphic.windows.HighScoreFenster;
+import ea.input.*;
+import ea.io.DateiManager;
 
 import java.awt.Font;
 import java.awt.image.BufferedImage;

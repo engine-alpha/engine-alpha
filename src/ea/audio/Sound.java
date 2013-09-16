@@ -19,7 +19,7 @@
 
 package ea.audio;
 
-import ea.DateiManager;
+import ea.io.DateiManager;
 
 import javax.sound.sampled.*;
 import javax.sound.midi.*;

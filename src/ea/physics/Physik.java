@@ -19,10 +19,12 @@
 
 package ea.physics;
 
-import ea.*;
-import ea.animations.KollisionsReagierbar;
+import ea.game.Manager;
+import ea.game.Ticker;
+import ea.graphic.figures.KollisionsReagierbar;
 import ea.graphic.Vektor;
 import ea.graphic.geo.BoundingRechteck;
+import ea.graphic.geo.Knoten;
 import ea.graphic.geo.Raum;
 
 import java.util.concurrent.CopyOnWriteArrayList;

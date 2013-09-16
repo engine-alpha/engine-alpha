@@ -19,9 +19,9 @@
 
 package ea.graphic;
 
-import ea.Manager;
+import ea.game.Manager;
 import ea.graphic.geo.Raum;
-import ea.Ticker;
+import ea.game.Ticker;
 
 /**
  * Jede Klasse, die ein Raum-Objekt animieren kann, leitet sich hieraus ab.<br />

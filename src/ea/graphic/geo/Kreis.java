@@ -19,8 +19,6 @@
 
 package ea.graphic.geo;
 
-import ea.RegEck;
-
 import java.awt.Graphics;
 
 /**

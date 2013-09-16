@@ -19,7 +19,6 @@
 
 package ea.graphic.geo;
 
-import ea.*;
 import ea.graphic.Vektor;
 
 /**

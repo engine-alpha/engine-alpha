@@ -19,9 +19,8 @@
 
 package ea.graphic.geo;
 
-import ea.Farbe;
-import ea.Leuchtend;
-import ea.Listung;
+import ea.graphic.Farbe;
+import ea.graphic.lights.Leuchtend;
 import ea.graphic.Vektor;
 
 import java.awt.Color;
@@ -132,7 +131,7 @@ implements Leuchtend, Listung
     /**
      * Setzt ganzheitlich die Farbe der gesamten geometrischen Figur auf eine Farbe.
      * @param   f   Die Farbe, die das Objekt haben soll.
-     * @see ea.Farbe
+     * @see ea.graphic.Farbe
      */
     public void farbeSetzen(Farbe f) {
         farbeSetzen(f.wert());

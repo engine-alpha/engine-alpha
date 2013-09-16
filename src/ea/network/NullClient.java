@@ -19,10 +19,10 @@
 
 package ea.network;
 
-import ea.FallReagierbar;
+import ea.physics.FallReagierbar;
 import ea.physics.PhysikClient;
 import ea.graphic.geo.Raum;
-import ea.StehReagierbar;
+import ea.graphic.StehReagierbar;
 import ea.graphic.Vektor;
 
 /**
@@ -90,7 +90,7 @@ extends PhysikClient {
      * Diese Methode setzt die kritische Tiefe eines Aktiv-Objektes. Aber hierin wird nur eine Fehlermeldung ausgegeben,
      * da bei dieser Klasse ein neutrales Objekt vorliegt, das keine kritische Falltiefe haben kann
      * @param tiefe Die Tiefe, ab der das anliegende <code>FallReagierbar</code>-Interface informiert werden soll.
-     * @see fallReagierbarAnmelden( ea.FallReagierbar , int)
+     * @see fallReagierbarAnmelden( ea.physics.FallReagierbar , int)
      */
     @Override
     public void kritischeTiefeSetzen(int tiefe) {

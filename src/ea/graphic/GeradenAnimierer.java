@@ -19,7 +19,7 @@
 
 package ea.graphic;
 
-import ea.*;
+import ea.game.Manager;
 import ea.graphic.geo.Punkt;
 import ea.graphic.geo.Raum;
 

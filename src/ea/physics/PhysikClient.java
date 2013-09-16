@@ -19,9 +19,8 @@
 
 package ea.physics;
 
-import ea.FallReagierbar;
 import ea.graphic.geo.Raum;
-import ea.StehReagierbar;
+import ea.graphic.StehReagierbar;
 import ea.graphic.Vektor;
 
 /**
@@ -79,7 +78,7 @@ public abstract class PhysikClient {
      * Diese Methode setzt die kritische Tiefe eines Aktiv-Objektes. Ab dieser wird das entsprechende <code>FallReagierbar</code>-Inteface,
      * <b>das angemeldet wurde</b>, ueber den Fall informiert.
      * @param tiefe Die Tiefe, ab der das anliegende <code>FallReagierbar</code>-Interface informiert werden soll.
-     * @see fallReagierbarAnmelden( ea.FallReagierbar , int)
+     * @see fallReagierbarAnmelden( FallReagierbar , int)
      */
     public abstract void kritischeTiefeSetzen(int tiefe);
 

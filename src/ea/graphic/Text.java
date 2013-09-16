@@ -19,9 +19,11 @@
 
 package ea.graphic;
 
-import ea.*;
+import ea.game.Manager;
 import ea.graphic.geo.BoundingRechteck;
 import ea.graphic.geo.Raum;
+import ea.graphic.lights.Leuchtend;
+import ea.graphic.windows.Fenster;
 
 import java.awt.*;
 import java.io.*;
@@ -325,7 +327,7 @@ implements Leuchtend
      * Parallele Methode zu <code>setzeFarbe()</code>
      * @param   farbe   Der Name der neuen Fuellfarbe
      * @see setzeFarbe(String)
-     * @see farbeSetzen( ea.Farbe )
+     * @see farbeSetzen( Farbe )
      */
     public void farbeSetzen(String farbe) {
         setzeFarbe(farbe);

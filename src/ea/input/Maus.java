@@ -21,7 +21,6 @@ package ea.input;
 
 import ea.graphic.geo.Punkt;
 import ea.graphic.geo.Raum;
-import ea.RechtsKlickReagierbar;
 import ea.graphic.Bild;
 
 import java.awt.image.*;
@@ -109,7 +108,7 @@ public class Maus {
      * jeder Bewegung) das Fenster verschieben; ist dieser Wert <code>false</code>, so ist dies nich moeglich, und die Maus ist in den Fenzergrenzen 
      * gefangen (Was besonders bei einer absoluten Maus wenig Sinn macht).
      * @see ea.graphic.Bild
-     * @see ea.Kamera
+     * @see ea.graphic.camera.Kamera
      */
     public Maus(Raum mausbild, Punkt hotspot, boolean absolut, boolean bewegend) {
         this.mausArt = -1;
@@ -135,7 +134,7 @@ public class Maus {
      * die <code>Kamera</code> bei Mausverschiebung. Bei <code>false</code>verhaelt sich diese Maus genauso wie eine gewohnte Computermaus.
      * @see Maus( ea.graphic.Bild , Punkt, boolean, boolean)
      * @see ea.graphic.Bild
-     * @see ea.Kamera
+     * @see ea.graphic.camera.Kamera
      */
     public Maus(Raum mausbild, Punkt hotspot, boolean absolut) {
         this(mausbild, hotspot, absolut, false);

@@ -19,8 +19,8 @@
 
 package ea.graphic;
 
-import ea.TastenGedruecktReagierbar;
-import ea.TastenLosgelassenReagierbar;
+import ea.input.TastenGedruecktReagierbar;
+import ea.input.TastenLosgelassenReagierbar;
 import ea.game.Game;
 
 /**

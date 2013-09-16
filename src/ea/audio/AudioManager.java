@@ -19,8 +19,8 @@
 
 package ea.audio;
 
-import ea.Kanal;
-import ea.Manager;
+import ea.game.Kanal;
+import ea.game.Manager;
 
 /**
  * Der Audiomanager organisiert das Abspielen verschiedener Sounddateien.<br />

@@ -19,12 +19,12 @@
 
 package ea.edu.mine;
 
-import ea.*;
 import ea.game.Game;
 import ea.graphic.Text;
 import ea.graphic.geo.Rechteck;
 import ea.input.KlickReagierbar;
 import ea.input.Maus;
+import ea.input.RechtsKlickReagierbar;
 
 /**
  * Diese Interne Klasse ermoeglicht folgendes:<br />

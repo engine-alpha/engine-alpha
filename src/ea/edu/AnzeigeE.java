@@ -19,10 +19,13 @@
 
 package ea.edu;
 
-import ea.*;
+import ea.game.Manager;
+import ea.game.Ticker;
 import ea.graphic.Text;
 import ea.input.KlickReagierbar;
 import ea.input.Maus;
+import ea.input.RechtsKlickReagierbar;
+import ea.input.TastenReagierbar;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -189,7 +192,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
      * @param o             Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br />
      * Es <b>MUSS</b> eine Methode <code>tick()</code> haben.
      * @param   intervall   Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
-     * @see ea.Ticker
+     * @see ea.game.Ticker
      * @see tickerAbmelden(Object)
      */
     public void tickerAnmelden(Object o, int intervall) {
@@ -228,7 +231,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
      * anmelden!<br />
      * Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des EDU-<code>TASTENREAGIERBARANMELDEN</code>-Interfaces sind!!</i>
      * @param o    Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Tastendruck informiert.
-     * @see ea.TastenReagierbar
+     * @see ea.input.TastenReagierbar
      */
     public void tastenReagierbarAnmelden(Object o) {
         Class<?> klasse = o.getClass();
@@ -257,7 +260,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
      * 
      * @param client    Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Mausklick informiert.
      * @see ea.input.KlickReagierbar
-     * @see ea.RechtsKlickReagierbar
+     * @see ea.input.RechtsKlickReagierbar
      */
     public void klickReagierbarAnmelden(Object o, boolean linksklick) {
         if(maus == null) {
@@ -311,7 +314,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
     /**
      * Methode zum Weiterleiten von Tastendrucks an die angemeldeten
      * @param code Der Tastaturcode des Tastendrucks
-     * @see ea.TastenReagierbar
+     * @see ea.input.TastenReagierbar
      */
     @Override
     public void reagieren(int code) {

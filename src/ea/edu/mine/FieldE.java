@@ -19,11 +19,13 @@
 
 package ea.edu.mine;
 
-import ea.*;
+import ea.graphic.Farbe;
 import ea.graphic.Text;
+import ea.graphic.figures.Figur;
 import ea.graphic.geo.Punkt;
 import ea.graphic.geo.Rechteck;
 import ea.input.MausReagierbar;
+import ea.input.RechtsKlickReagierbar;
 
 import java.lang.reflect.*;
 

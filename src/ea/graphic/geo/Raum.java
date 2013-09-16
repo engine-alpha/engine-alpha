@@ -19,10 +19,17 @@
 
 package ea.graphic.geo;
 
-import ea.*;
 import ea.graphic.AnimationsManager;
+import ea.graphic.StehReagierbar;
 import ea.graphic.Vektor;
+import ea.graphic.lights.LeuchtMacher;
+import ea.graphic.lights.Leuchtend;
+import ea.graphic.windows.Fenster;
+import ea.io.DateiManager;
 import ea.network.NullClient;
+import ea.physics.FallReagierbar;
+import ea.physics.Gravitator;
+import ea.physics.Passivator;
 import ea.physics.PhysikClient;
 
 import java.awt.*;
@@ -196,7 +203,7 @@ implements java.io.Serializable
      * @param f Das anzumeldende <code>FallReagierbar
      * @param kritischeTiefe    Die Tiefe ab der der Listener <i>dauerhaft</i> durch den Aufruf seiner Reaktionsmethode
      * informiert wird, solange das <code>Raum</code>-Objekt hierunter ist.
-     * @see ea.FallReagierbar
+     * @see ea.physics.FallReagierbar
      * @see kritischeTiefeSetzen(int)
      */
     public void fallReagierbarAnmelden(FallReagierbar f, int kritischeTiefe) {
@@ -208,7 +215,7 @@ implements java.io.Serializable
      * aufgerufen - dauerhaft so lange, bis das <code>Raum</code>-Objekt <b>nicht mehr unterhalb dieser Tiefe ist</b>.
      * @param tiefe Die neue kritische Tiefe. Die Tiefe ab der der Listener <i>dauerhaft</i> durch den Aufruf seiner Reaktionsmethode
      * informiert wird, solange das <code>Raum</code>-Objekt hierunter ist.
-     * @see ea.FallReagierbar
+     * @see ea.physics.FallReagierbar
      * @see fallReagierbarAnmelden(FallReagierbar, int)
      */
     public void kritischeTiefeSetzen(int tiefe) {
@@ -224,7 +231,7 @@ implements java.io.Serializable
      * Diese Methode mach natuerlich nur Sinn, wenn sie an einem <i>Aktiv-Objekt</i> ausgefuehrt wird. Andernfalls gibt es eine Fehlermeldung!
      * @param s Der <code>StehReagierbar</code>-Listener, der ab sofort bei jedem neuen zum Stehen kommen dieses <code>Raum</code>-Objekts
      * informiert wird.
-     * @see ea.StehReagierbar
+     * @see ea.graphic.StehReagierbar
      */
     public void stehReagierbarAnmelden(StehReagierbar s) {
         phClient.stehReagierbarAnmelden(s);

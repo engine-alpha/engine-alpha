@@ -20,9 +20,8 @@
 package ea.graphic;
 
 import ea.graphic.geo.BoundingRechteck;
-import ea.Fenster;
+import ea.graphic.windows.Fenster;
 import ea.graphic.geo.Raum;
-import ea.Rotation;
 
 import java.awt.*;
 import javax.imageio.ImageIO;
@@ -208,7 +207,7 @@ extends Raum
     /**
      * Rotiert das Objekt um eine bereits definierte Rotation.
      * @param   rot Das Rotationsobjekt, das die  Rotation beschreibt
-     * @see ea.Rotation
+     * @see Rotation
      */
     public void rotieren(Rotation rot) {
         img = rotieren(img, rot.winkelBogen());

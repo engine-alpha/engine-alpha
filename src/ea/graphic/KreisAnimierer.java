@@ -19,10 +19,11 @@
 
 package ea.graphic;
 
-import ea.*;
+import ea.game.Manager;
 import ea.graphic.geo.Gerade;
 import ea.graphic.geo.Punkt;
 import ea.graphic.geo.Raum;
+import ea.graphic.geo.RegEck;
 
 /**
  * Beschreiben Sie hier die Klasse KreisAnimierer.
@@ -83,7 +84,7 @@ extends Animierer
     public void animationsSchritt() {
         winkel += schritt;
         int x, y;
-        x = RegEck.runden((- Math.sin(winkel))*radius) + zentrum.x;
+        x = RegEck.runden((-Math.sin(winkel)) * radius) + zentrum.x;
         y = RegEck.runden((  Math.cos(winkel))*radius) + zentrum.y;
         Vektor v = new Vektor(x - letzter.x, y - letzter.y);
         ziel.bewegen(v);

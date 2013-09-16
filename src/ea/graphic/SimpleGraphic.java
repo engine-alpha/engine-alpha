@@ -4,7 +4,7 @@
  */
 
 package ea.graphic;
-import ea.Fenster;
+import ea.graphic.windows.Fenster;
 
 import java.awt.*;
 /**
