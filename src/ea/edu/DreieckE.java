@@ -19,7 +19,8 @@
 
 package ea.edu;
 
-import ea.*;
+import ea.graphic.geo.Dreieck;
+import ea.graphic.geo.Punkt;
 
 /**
  * Das einfache Dummie-Dreieck. Kann nur in seiner Position veraendert werden.

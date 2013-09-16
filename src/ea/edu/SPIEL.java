@@ -20,8 +20,9 @@ package ea.edu;
  */
  
 
-import ea.*;
-import ea.edu.*;
+import ea.graphic.Bild;
+import ea.graphic.geo.Punkt;
+import ea.input.Maus;
 
 /**
  * Die Klasse SPIEL ist ein Template, das so wie es ist an Schueler ausgegeben werden kann.

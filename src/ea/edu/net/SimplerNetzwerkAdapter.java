@@ -21,8 +21,7 @@ package ea.edu.net;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import ea.Empfaenger;
-import ea.Server;
+import ea.network.Empfaenger;
 
 public abstract class SimplerNetzwerkAdapter {
 
