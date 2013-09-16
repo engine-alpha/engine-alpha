@@ -19,6 +19,13 @@
 
 package ea;
 
+import ea.graphic.AnimationsManager;
+import ea.graphic.SimpleGraphic;
+import ea.graphic.Vektor;
+import ea.graphic.geo.BoundingRechteck;
+import ea.graphic.geo.Raum;
+import ea.physics.Physik;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -71,7 +78,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * Die Liste der einfachen Geometrischen Koerper, die gezeichnet werden
 	 * sollen.
 	 * 
-	 * @see ea.SimpleGraphic
+	 * @see ea.graphic.SimpleGraphic
 	 */
 	private final CopyOnWriteArrayList<SimpleGraphic> simples = new CopyOnWriteArrayList<SimpleGraphic>();
 

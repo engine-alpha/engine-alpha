@@ -42,7 +42,7 @@ public interface RechtsKlickReagierbar {
      * </code>
      * @param x Die X-Koordinate der Maus beim Klick <b>auf der Zeichenebene</b>
      * @param y Die Y-Koordinate der Maus beim Klick <b>auf der Zeichenebene</b>
-     * @see ea.Maus
+     * @see ea.input.Maus
      */
     public abstract void rechtsKlickReagieren(int x, int y);
 }

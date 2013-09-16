@@ -4,13 +4,17 @@
  */
 
 package ea;
+import ea.graphic.SimpleGraphic;
+import ea.graphic.geo.Punkt;
+import ea.graphic.geo.Raum;
+
 import java.awt.*;
 /**
  * Ein Strich ist ein einfaches zeichenbares Objekt.<br />
  * @author Andonie
  */
 public class Strich
-extends SimpleGraphic{
+extends SimpleGraphic {
 
     /**
      * Der erste Punkt
@@ -31,7 +35,7 @@ extends SimpleGraphic{
      * @param ay    Y-Koordinate des Punktes A.
      * @param bx    X-Koordinate des Punktes B.
      * @param by    Y-Koordinate des Punktes B.
-     * @see #Strich(ea.Punkt, ea.Punkt)
+     * @see #Strich(ea.graphic.geo.Punkt, ea.graphic.geo.Punkt)
      */
     public Strich(int ax, int ay, int bx, int by) {
         a = new Punkt(ax, ay);
@@ -66,7 +70,7 @@ extends SimpleGraphic{
      * @param ay    Y-Koordinate des Punktes A.
      * @param bx    X-Koordinate des Punktes B.
      * @param by    Y-Koordinate des Punktes B.
-     * @see #punkteSetzen(ea.Punkt, ea.Punkt)
+     * @see #punkteSetzen(ea.graphic.geo.Punkt, ea.graphic.geo.Punkt)
      */
     public void punkteSetzen(int ax, int ay, int bx, int by) {
         a = new Punkt(ax, ay);

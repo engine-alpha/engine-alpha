@@ -19,6 +19,10 @@
 
 package ea;
 
+import ea.graphic.Vektor;
+import ea.graphic.geo.BoundingRechteck;
+import ea.graphic.geo.Raum;
+
 import java.util.ArrayList;
 /**
  * Eine Figur ist eine aus einer Datei geladene Sammlung von Pixeln, die orientierungsmaessig rechteckig gehandelt werden.<br />

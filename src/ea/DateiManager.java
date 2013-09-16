@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.graphic.geo.Raum;
+
 import java.io.*;
 import java.awt.Color;
 import java.util.ArrayList;

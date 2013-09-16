@@ -20,6 +20,11 @@
 package ea.edu.mine;
 
 import ea.*;
+import ea.game.Game;
+import ea.graphic.Text;
+import ea.graphic.geo.Rechteck;
+import ea.input.KlickReagierbar;
+import ea.input.Maus;
 
 /**
  * Diese Interne Klasse ermoeglicht folgendes:<br />
@@ -116,7 +121,7 @@ implements KlickReagierbar, RechtsKlickReagierbar {
     /**
      * Tasten-Reaktionsmethode.
      * @param code Der Tastencode.
-     * @see ea.Game#tasteReagieren(int)
+     * @see ea.game.Game#tasteReagieren(int)
      */
     @Override
     public void tasteReagieren(int code) {

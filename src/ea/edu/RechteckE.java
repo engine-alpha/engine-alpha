@@ -19,7 +19,7 @@
 
 package ea.edu;
 
-import ea.Rechteck;
+import ea.graphic.geo.Rechteck;
 
 /**
  * Ein einfaches "edu"-Dummmie-Rechteck.

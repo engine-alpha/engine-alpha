@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.graphic.geo.Punkt;
+
 /**
  * Die Klasse <code>Rotation</code> beschreibt eine Rotation, also eine Drehung, diese ist durch zwei Eigenschaften 
  * definiert:<br />

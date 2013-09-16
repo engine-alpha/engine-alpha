@@ -19,6 +19,12 @@
 
 package ea;
 
+import ea.graphic.AnimationsEndeReagierbar;
+import ea.graphic.Animierer;
+import ea.graphic.Vektor;
+import ea.graphic.geo.Punkt;
+import ea.graphic.geo.Raum;
+
 /**
  * Ein Linienanimierer laesst ein Raum-Objekt zwischen verschiedenen Punkten zusammenlaufen.
  * sich fest zwischen 2 Punkten gleichmaessig hin- und herbewegen.

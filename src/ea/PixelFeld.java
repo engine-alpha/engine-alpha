@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.graphic.geo.BoundingRechteck;
+
 import java.awt.*;
 
 /**

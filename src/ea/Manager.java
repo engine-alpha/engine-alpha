@@ -51,7 +51,7 @@ extends Timer {
      * - Die Figurenanimationsroutine<br />
      * - Die Leuchtanimationsroutine
      */
-    static Manager standard = new Manager("Interner Routinenmanager");
+    public static Manager standard = new Manager("Interner Routinenmanager");
 
     /**
      * Die Liste aller Auftraege.
@@ -343,7 +343,7 @@ extends Timer {
         
         /**
          * Setzt den Task neu.
-         * @param task	Der neue tatsächliche TimerTask, der ausgeführt wird.
+         * @param task	Der neue tatsï¿½chliche TimerTask, der ausgefï¿½hrt wird.
          */
         public void taskSetzen(TimerTask task) {
         	this.task = task;

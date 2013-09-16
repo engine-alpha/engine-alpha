@@ -19,6 +19,10 @@
 
 package ea;
 
+import ea.graphic.Vektor;
+import ea.graphic.geo.BoundingRechteck;
+import ea.graphic.geo.Raum;
+
 import java.util.ArrayList;
 
 /**
@@ -397,7 +401,7 @@ extends Raum {
 
     /**
      * @return  Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll einzuschliessen</b>.
-     * @see ea.Raum.dimension()
+     * @see ea.graphic.geo.Raum.dimension()
      */
     @Override
     public BoundingRechteck dimension() {

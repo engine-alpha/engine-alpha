@@ -19,6 +19,10 @@
 
 package ea;
 
+import ea.graphic.Vektor;
+import ea.graphic.geo.BoundingRechteck;
+import ea.graphic.geo.Raum;
+
 import java.util.ArrayList;
 
 /**

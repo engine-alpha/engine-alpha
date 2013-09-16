@@ -19,8 +19,9 @@
 
 package ea;
 
+import ea.audio.Sound;
+
 import javax.sound.sampled.*;
-import javax.sound.midi.*;
 import java.io.IOException;
 
 /**

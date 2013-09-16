@@ -1,6 +1,6 @@
 package ea.edu.net;
 
-import ea.*;
+import ea.network.Server;
 
 public class SimplerServer 
 extends SimplerNetzwerkAdapter {

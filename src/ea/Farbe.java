@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.graphic.geo.Raum;
+
 import java.awt.Color;
 /**
  * Die Klasse Farbe ermoeglicht ein sehr einfaches Handling mit allen Farben. Sie basiert auf der Klasse 
@@ -58,7 +60,7 @@ implements java.io.Serializable
      * Gibt ein <code>Farbe</code>-Objekt aus, dass die selben Eigenschaften wie eine der EA-Standardfarben hat.
      * @param s Der Name der Farbe.
      * @return  Das Farb-Objekt, das diese Farbe beinhaltet.
-     * @see Raum.zuFarbeKonvertieren(String)
+     * @see ea.graphic.geo.Raum.zuFarbeKonvertieren(String)
      */
     public static final Farbe vonString(String s) {
         return new Farbe(Raum.zuFarbeKonvertieren(s));

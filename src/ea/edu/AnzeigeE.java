@@ -20,6 +20,9 @@
 package ea.edu;
 
 import ea.*;
+import ea.graphic.Text;
+import ea.input.KlickReagierbar;
+import ea.input.Maus;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -83,8 +86,8 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
 
     /**
      * Konstruktor. Erstellt die Texte fuer Links- und Rechtspunkte.
-     * @param breite	Die gewünschte Breite der Anzeige in Pixel.
-     * @param hoehe		Die gewünschtte Höhe der Anzeige in Pixel.
+     * @param breite	Die gewï¿½nschte Breite der Anzeige in Pixel.
+     * @param hoehe		Die gewï¿½nschtte Hï¿½he der Anzeige in Pixel.
      */
     public AnzeigeE(int breite, int hoehe) {
         links = new Text(0, 10, "0");
@@ -100,7 +103,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
     }
 
     /**
-     * Interne Align-Methode für harmonisches Aussehen der Punkte
+     * Interne Align-Methode fï¿½r harmonisches Aussehen der Punkte
      */
     private void punkteAlignen() {
 		int lLinks = links.dimension().breite;
@@ -119,7 +122,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
 
 	public int zufallszahlVonBis(int von, int bis) {
         if(von > bis) {
-            System.err.println("Die Zufallszahl von ("+von+") war größer als die "
+            System.err.println("Die Zufallszahl von ("+von+") war grï¿½ï¿½er als die "
                     + "Zufallszahl bis (" + bis +").");
             return -1;
         }
@@ -253,7 +256,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
      * }</code>
      * 
      * @param client    Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Mausklick informiert.
-     * @see ea.KlickReagierbar
+     * @see ea.input.KlickReagierbar
      * @see ea.RechtsKlickReagierbar
      */
     public void klickReagierbarAnmelden(Object o, boolean linksklick) {

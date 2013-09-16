@@ -19,6 +19,13 @@
 
 package ea;
 
+import ea.animations.FallDummy;
+import ea.graphic.Vektor;
+import ea.graphic.geo.BoundingRechteck;
+import ea.graphic.geo.Raum;
+import ea.physics.Physik;
+import ea.physics.PhysikClient;
+
 /**
  * Ein Gravitator sorgt fuer das Verhalten eines Aktiv-Raum-Objektes in der Physik.
  * 
@@ -298,7 +305,7 @@ extends PhysikClient {
      * <b>Wichtig:</b> Dies repraesentiert <i>keinen</i> Wert fuer die (Erd-)
      * Beschleunigungszahl "g" aus der Physik. Schon allein deshalb, weil die 
      * Zahl umgekehrt wirkt (s. oben).
-     * @see ea.Raum#aktivMachen()
+     * @see ea.graphic.geo.Raum#aktivMachen()
      */
     @Override
     public void schwerkraftSetzen(int schwerkraft) {

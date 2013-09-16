@@ -19,7 +19,7 @@
 
 package ea.edu.net;
 
-import ea.*;
+import ea.network.Client;
 
 public class SimplerClient 
 extends SimplerNetzwerkAdapter {

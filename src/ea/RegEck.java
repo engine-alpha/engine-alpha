@@ -19,6 +19,10 @@
 
 package ea;
 
+import ea.graphic.geo.Dreieck;
+import ea.graphic.geo.Geometrie;
+import ea.graphic.geo.Punkt;
+
 /**
  * Basisklasse fuer ein regelmaessiges n-Eck.<br />
  * Tatsaechlich ist aufgrund von moeglicherweise Auftretenden Rundungsfehlern dies ein n+1 - Eck.<br />
