@@ -18,9 +18,18 @@
 
 package ea;
 
+import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics2D;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 
-import javax.swing.*;
+import javax.imageio.ImageIO;
 
 /**
  * Diese Klasse ist ausschliesslich dazu da, um der EA eine 
@@ -29,30 +38,80 @@ import javax.swing.*;
  * @author Andonie
  *
  */
-public class EngineAlpha {
+@SuppressWarnings("serial")
+public class EngineAlpha
+extends Frame {
+	// 1.0, 1.1, 1.2, 2.0, 3.0pre
+	public static final int VERSION_CODE = 5;
+	public static final String VERSION_STRING = "v3.0pre";
 
-	private class PromoFrame
-	extends JFrame {
+	public EngineAlpha() {
+		super("Engine Alpha " + EngineAlpha.VERSION_STRING);
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				dispose();
+				
+				System.exit(0);
+			}
+		});
 		
-		public PromoFrame() {
-			super("Engine Alpha");
-			
-			int width = 300;
-			int height = 200;
-			super.setSize(width, height);
-			
-			Dimension screenSize = getToolkit().getScreenSize();
-			super.setLocation((screenSize.width-width) / 2, (screenSize.height - height)/2);
-		}
-		
+		new EngineAlphaPromotion(this);
 	}
 	
-	private static JEditorPane ladeContent() {
+	private class EngineAlphaPromotion
+	extends Canvas
+	implements Runnable {
 		
-		return null;
+		private BufferedImage about;
+		
+		public EngineAlphaPromotion(EngineAlpha parent) {
+			try {
+				URL url = EngineAlpha.class.getResource("/ea/about.png");
+				
+				if(url == null)
+					System.exit(1);
+				
+				about = ImageIO.read(url);
+			} catch (IOException e) {
+				System.exit(1);
+			}
+			
+			setSize(300, 200);
+			setPreferredSize(getSize());
+			parent.add(this);
+			parent.pack();
+			
+			Dimension screen = getToolkit().getScreenSize();
+			parent.setLocation((screen.width-parent.getWidth())/2, (screen.height-parent.getHeight())/2);
+			
+			parent.setVisible(true);
+			new Thread(this).start();
+		}
+		
+		public void run() {
+			createBufferStrategy(2);
+			BufferStrategy bs = getBufferStrategy();
+			Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+			
+			while(isVisible()) {
+				render(g);
+				bs.show();
+				
+				try {
+					Thread.sleep(50);
+				} catch(InterruptedException e) {
+					// don't care!
+				}
+			}
+		}
+		
+		public void render(Graphics2D g) {
+			g.drawImage(about, 0, 0, null);
+		}
 	}
 	
 	public static void main(String[] args) {
-		
+		new EngineAlpha();
 	}
 }
