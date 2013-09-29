@@ -32,11 +32,10 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 /**
- * Diese Klasse ist ausschliesslich dazu da, um der EA eine 
- * runnable-Funktion zu geben. Hierbei wird ein kleines Fenster
- * geoeffnet, dass eine Information zur Engine angibt.
- * @author Andonie
- *
+ * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box
+ * beim Ausführen der .jar-Datei.
+ * 
+ * @author Niklas Keller
  */
 @SuppressWarnings("serial")
 public class EngineAlpha
