@@ -28,8 +28,7 @@ import java.util.ArrayList;
  * sowie die eines String- oder Integer-Arrays im EAA-Format (Engine-Alpha-Array-Format) lesen und speichern.
  * 
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class DateiManager
 {

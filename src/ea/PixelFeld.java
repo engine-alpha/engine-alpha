@@ -27,8 +27,7 @@ import java.awt.*;
  * <br /><b>Achtung!</b> Pixelfelder leiten sich nicht aus der notwendigen Ueberklasse <code>Raum</code> ab, um direkt
  * grafisch dargestellt werden zu koennen ein einzelnes Pixelfeld kann in einer unanimierten Figur dargestellt werden!
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class PixelFeld
 implements java.io.Serializable

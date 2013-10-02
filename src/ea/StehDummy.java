@@ -21,7 +21,8 @@ package ea;
 
 /**
  * Die Nichtstuende Dummy-Standartklasse, die fuer einen Gravitator der nichtstuende Initial-StehReagierbar-Listener ist.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  * @see ea.StehReagierbar
  */
 public class StehDummy

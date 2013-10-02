@@ -19,11 +19,11 @@
 
 package ea;
 
-import java.awt.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
 /**
  * Der Manager ist eine Standartklasse und eine der wichtigsten der Engine Alpha, die zur Interaktion ausserhalb der engine benutzt werden kann.<br />
  * Neben einer Liste aller moeglichen Fonts handelt er auch das <b>Ticker-System</b>.
@@ -33,8 +33,8 @@ import java.util.TimerTask;
  *
  * Bewusst leitet sich diese Klasse nicht von <code>Thread</code> ab. Hierdurch kann ein Manager ohne grossen Ressourcenaufwand erstellt werden,
  * wobei der Thread (und damit Computerrechenzeit) erst mit dem aktiven Nutzen erstellt wird
- * @author Andonie
- * @version 2.0
+ * 
+ * @author Michael Andonie
  * @see Ticker
  */
 public class Manager
@@ -343,7 +343,7 @@ extends Timer {
         
         /**
          * Setzt den Task neu.
-         * @param task	Der neue tatsächliche TimerTask, der ausgeführt wird.
+         * @param task	Der neue tatsï¿½chliche TimerTask, der ausgefï¿½hrt wird.
          */
         public void taskSetzen(TimerTask task) {
         	this.task = task;

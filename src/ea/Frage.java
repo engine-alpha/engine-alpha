@@ -21,7 +21,8 @@ import javax.swing.*;
  * //Nichts<br />
  * }<br />
  * </code><br />
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class Frage
 extends JDialog {

@@ -23,8 +23,7 @@ package ea;
  * Ein Punkt beschreibt einen exakt bestimmten eindimensionalen Punkt auf der Zeichenebene.<br />
  * Er ist durch 2 Koordinaten exakt bestimmt.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Punkt
 {

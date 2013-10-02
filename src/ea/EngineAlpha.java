@@ -32,8 +32,8 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 /**
- * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box
- * beim Ausführen der .jar-Datei.
+ * Diese Klasse definiert Versions-Konstanten und sorgt fÃ¼r eine About-Box
+ * beim AusfÃ¼hren der .jar-Datei.
  * 
  * @author Niklas Keller
  */

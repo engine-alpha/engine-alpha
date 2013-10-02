@@ -26,8 +26,7 @@ package ea;
  * Ticker werden auch innerhalb der Engine benutzt, zu organisierten, Threadsparenden Animation.<br />
  * Die Benutzung eines Tickers wird in der Methodenbeschreibung bestens erklart.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public interface Ticker
 extends java.io.Serializable

@@ -20,8 +20,6 @@ package ea;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -29,10 +27,10 @@ import java.util.ArrayList;
  * <b>
  * zu verarbeiten und die enthaltene Information an einen oder
  * auch mehrere <code>Empfaenger</code> weiterzugeben.<br />
- * Die Weitergabe der Signale erfolg <b>sequentiell über einen eigenen
+ * Die Weitergabe der Signale erfolg <b>sequentiell ï¿½ber einen eigenen
  * Thread</b>. Die Signale werden ebenso <b>sequentiell verarbeitet</b>.
- * @author Andonie
- *
+ * 
+ * @author Michael Andonie
  */
 public class NetzwerkInterpreter
 extends Thread {
@@ -44,7 +42,7 @@ extends Thread {
 	private final ArrayList<Empfaenger> outputListe = new ArrayList<Empfaenger>();
 	
 	/**
-	 * Der Reader, über den die Informationen gelesen werden.
+	 * Der Reader, ï¿½ber den die Informationen gelesen werden.
 	 */
 	private BufferedReader reader;
 	
@@ -82,7 +80,7 @@ extends Thread {
 	/**
 	 * Diese Methode verarbeitet die unveraenderte Ausgabe des 
 	 * Kommunikationspartners. Diese wird analysiert und
-	 * anschließend die entsprechende Information
+	 * anschlieï¿½end die entsprechende Information
 	 * an alle angehaengten <code>Empfaenger</code> weitergegeben.
 	 * @param communication	Die ungeschnittene Nachricht
 	 * des Partners.
@@ -132,7 +130,7 @@ extends Thread {
 		try {
 			reader.close();
 		} catch (IOException e1) {
-			System.err.println("Konnte den Kommunikationskanal nicht mehr schließen.");
+			System.err.println("Konnte den Kommunikationskanal nicht mehr schlieï¿½en.");
 		}
 		connectionActive = false;
 	}
@@ -157,7 +155,7 @@ extends Thread {
 		try {
 			reader.close();
 		} catch (IOException e)  {
-			System.err.println("Konnte die Verbindung nicht schließen.");
+			System.err.println("Konnte die Verbindung nicht schlieï¿½en.");
 		}
 	}
 	

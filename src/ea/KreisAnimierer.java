@@ -23,8 +23,7 @@ package ea;
  * Beschreiben Sie hier die Klasse KreisAnimierer.
  * Er animiert vorlaeufig nur im Urzeigersinn.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class KreisAnimierer
 extends Animierer

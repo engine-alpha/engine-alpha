@@ -24,13 +24,11 @@ import java.util.ArrayList;
 /**
  * Ein Knoten ist eine Sammlung vielen Raum-Objekten, die hierdurch einheitlich bewegt, und einheitlich behandelt werden koennen.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Knoten
 extends Raum
-implements Listung
-{
+implements Listung {
     /**
      * Die Liste aller Raum-Objekte, die dieser Knoten fasst.
      */

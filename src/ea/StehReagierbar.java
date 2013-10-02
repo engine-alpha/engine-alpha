@@ -22,7 +22,8 @@ package ea;
 /**
  * Dieses Interface beschreibt einen Listener der Physik, der immer dann informiert wird, wenn das <code>Raum</code>-Objekt,
  * an dem er angemeldet wurde, nach dem Fall wieder sicher auf einem Passiv-Objekt steht.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public interface StehReagierbar {
 

@@ -43,8 +43,7 @@ import java.awt.Color;
  * rechteck.farbeSetzen(new Farbe(200, 200, 200));
  * </code>
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public final class Farbe
 implements java.io.Serializable

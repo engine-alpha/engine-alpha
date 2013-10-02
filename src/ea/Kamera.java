@@ -35,8 +35,7 @@ package ea;
  * Bei den Fokuseinstellungen sollte immer ein Bereich gewaehlt werden, der die Groesse des Anzeigefensters (oder Vollbildes) bei weitem uebersteigt.<br />
  * Allgemein wirken diese Bounds auch ohne aktivierten Fokus. jedoch ist dies meist weniger sinnvoll.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Kamera
 {

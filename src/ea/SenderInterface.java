@@ -1,5 +1,10 @@
 package ea;
 
+/**
+ * TODO Docs fehlen!
+ * 
+ * @author Michael Andonie
+ */
 public interface SenderInterface {
 
 	/**

@@ -21,7 +21,8 @@ package ea;
 
 /**
  * Ein Passivator ueberwacht und steuert ein passives Objekt in der Physik.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class Passivator
 extends PhysikClient {

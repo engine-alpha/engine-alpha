@@ -4,12 +4,10 @@ package ea;
  * AnimationsEndeReagierbar kann auf das Ende einer Animation reagieren und entsprechend der Lage 
  * etwas tun.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 
-public interface AnimationsEndeReagierbar
-{
+public interface AnimationsEndeReagierbar {
     /**
      * Diese Methode wird einmal dann aufgerufen, wenn die Animation zu Ende ist.<br />
      * Dadurch kann das Ende der Animation in Programmiercode gefestigt und speziell genommen werden.

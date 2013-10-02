@@ -22,6 +22,8 @@ package ea;
 /**
  * Leuchtend implementieren intern alle Klassen, die leuchten koennen.<br />
  * Bei den erbenden Klassen muss nur die Methode <code>leuchtetSetzen()</code> ausgefuehrt werden.
+ * 
+ * @author Michael Andonie
  */
 public interface Leuchtend {
     /**

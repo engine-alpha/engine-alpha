@@ -22,7 +22,7 @@ package ea;
 /**
  * Ein Gravitator sorgt fuer das Verhalten eines Aktiv-Raum-Objektes in der Physik.
  * 
- * @author Andonie
+ * @author Michael Andonie
  */
 public class Gravitator
 extends PhysikClient {

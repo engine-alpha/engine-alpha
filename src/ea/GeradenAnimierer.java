@@ -24,8 +24,7 @@ package ea;
  * dann wird die Animation beendet.<br />
  * Dies ist eine einfache Moeglichkeit, um z.B. Schuesse zu realisieren.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class GeradenAnimierer
 extends Animierer

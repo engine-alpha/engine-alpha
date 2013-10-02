@@ -23,8 +23,7 @@ import java.awt.Color;
 /**
  * Ein Objekt, das aus n primitiven Geometrischen Formen - <b>Dreiecken</b> - besteht
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public abstract class Geometrie
 extends Raum

@@ -19,13 +19,10 @@
 
 package ea;
 
-import java.awt.Color;
-
 /**
  * Beschreiben Sie hier die Klasse Rechteck.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Rechteck
 extends Geometrie

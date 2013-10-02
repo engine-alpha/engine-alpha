@@ -25,8 +25,7 @@ package ea;
  * diese Methode nicht bei jedem Druck der Taste aktiviert wird, sondern in regelmaessigen Abstaenden 
  * (der <b>Interpolation</b>) aufgerufen.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 
 public interface TastenGedruecktReagierbar

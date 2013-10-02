@@ -20,8 +20,8 @@
 package ea;
 
 /**
- *  KlickReagierbar implementierende Klassen koennen auf jeden einzelnen <b>Rechtsklick</b> reagieren,
- *  unabhaengig davon, ob dies ein spezielles Objekt trifft oder nicht.
+ * KlickReagierbar implementierende Klassen koennen auf jeden einzelnen <b>Rechtsklick</b> reagieren,
+ * unabhaengig davon, ob dies ein spezielles Objekt trifft oder nicht.
  * 
  * @author Michael Andonie
  */

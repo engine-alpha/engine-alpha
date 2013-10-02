@@ -4,7 +4,8 @@
  */
 
 package ea;
-import java.awt.*;
+import java.awt.Graphics;
+
 /**
  * Simple grafische Klassen bestehen nicht aus Flaechen. Sie haben nicht die vielfaeltigen
  * Eigenschaften von Objekten der Klasse <code>Raum</code>.<br />

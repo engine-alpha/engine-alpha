@@ -26,7 +26,8 @@ package ea;
  * MausLosgelassenReagierbar listener; //<- Mein Listener
  * maus.mausLosgelassenReagierbarAnmelden(listener);
  * </code>
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public interface MausLosgelassenReagierbar {
     /**

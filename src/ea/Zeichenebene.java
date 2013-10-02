@@ -23,8 +23,7 @@ package ea;
  * Die Zeichenebene ist die Sammlung aller zu malenden Objekte.<br />
  * Aufgrund ihrer Einfachheit hat sie mehr symbolische Bedeutung.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Zeichenebene
 {

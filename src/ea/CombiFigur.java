@@ -12,7 +12,8 @@ import java.util.ArrayList;
  * Eine Combifigur ist eine Figur, die aus verschiedenen "Unterfiguren" besteht.
  * Im Gegensatz zu einer <code>ActionFigur</code> bedeutet dies, dass <b>alle</b>
  * "Unterfiguren" gleichzeitig zu sehen sind, und <b>nicht nur eine</b> aktuelle.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class CombiFigur
 extends Raum {

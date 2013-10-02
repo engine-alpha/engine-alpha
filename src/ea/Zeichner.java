@@ -30,8 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Dies ist das Panel, in dem die einzelnen Dinge gezeichnet werden
  * 
- * @author (Ihr Name)
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Zeichner extends Canvas implements Runnable {
 

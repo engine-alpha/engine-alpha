@@ -26,8 +26,7 @@ package ea;
  * <b>gleichzeitig auch noch von einer zweiten Animierer-Klasse</b> bewegt werden, z.B. einer Kreisanimation. Das 
  * Ergebnis hieraus waere eine "eiernde" Bewegung vorwaerts.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public abstract class Animierer
 implements Ticker

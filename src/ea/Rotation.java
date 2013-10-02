@@ -30,8 +30,7 @@ package ea;
  * //Baustelle: wird vervollstaendigt, wenn Rotationen vollstaendig in Raum implementiert sind
  * </code>
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Rotation
 {

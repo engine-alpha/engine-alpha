@@ -26,7 +26,8 @@ import java.io.BufferedWriter;
  * (<code>NetwerkInterpreter</code>, der die Informationen an alle angemeldeten 
  * <code>Empfaenger</code> weitergibt sowie dem <code>Sender</code>, mit dem man
  * Informationen an die andere Seite schicken kann)und gibt dieser einen Namen.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class NetzwerkVerbindung 
 extends Sender {
@@ -51,7 +52,7 @@ extends Sender {
 	
 	/**
 	 * Gibt an, ob diese Verbindung aktiv ist, also derzeit eine Kommunikation
-	 * über diese Sender / Empfaenger denkbar ist.
+	 * ï¿½ber diese Sender / Empfaenger denkbar ist.
 	 * @return	<code>true</code>, wenn man ueber diese Verbindung senden und
 	 * 			empfangen kann. Sonst <code>false</code>.
 	 */

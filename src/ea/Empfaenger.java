@@ -23,7 +23,8 @@ package ea;
  * Informationsnachrichten bei der Netzwerkkommunikation hat.<br />
  * Implementierende Klassen ermoeglichen also die Kommunikation mit anderen
  * EA-Instanzen.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public interface Empfaenger {
 	

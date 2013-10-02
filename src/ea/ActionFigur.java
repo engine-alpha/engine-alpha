@@ -33,7 +33,8 @@ import java.util.ArrayList;
  * Damit eine Actionfigur <i>immer</i> ordnungsgemaess funktioniert (Spiegelungen), sollten alle Figuren die selben Masse ("Pixel"-Hoehe/-Breite) haben.<br />
  * Es muessen nicht alle Felder ausgefuellt sein, damit Kollisionstests etc. immer funktionieren. Es sei denn, die rechenintensive Arbeit
  * wurde durch die Klasse <code>Game</code> ausgeschaltet (Methode <code>rechenintensiveArbeitSetzen(...)</code> ).
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class ActionFigur
 extends Raum {

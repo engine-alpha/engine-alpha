@@ -22,7 +22,8 @@ package ea;
 /**
  * Ein FallDummy ist das <i>Null-Objekt</i> fuer einen Gravitator-Listener und wird intern solange
  * gehalten, bis ein eigenes FallReagierbar-Interface genutz wird.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class FallDummy
 implements FallReagierbar {

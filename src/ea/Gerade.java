@@ -23,8 +23,7 @@ package ea;
  * Eine Gerade ist die Verbindungslinie zwischen 2 Punkten.<br />
  * Sie ist definiert ueber ihre Steigung und einen Y-Achsenabschnitt.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Gerade
 {

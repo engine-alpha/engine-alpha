@@ -19,17 +19,16 @@
 
 package ea;
 
-import java.awt.*;
-import java.awt.image.*;
-import javax.imageio.ImageIO;
-import java.net.URL;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 /**
  * Die Objektmaessige Repraesentation der (Computer)Maus.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Maus {
 
@@ -226,9 +225,9 @@ public class Maus {
     
     /**
      * Uebernimmt alle Listener von einer anderen Maus.
-     * @param von	Von dieser Maus, werden alle Listener-Listen übernommen.
+     * @param von	Von dieser Maus, werden alle Listener-Listen ï¿½bernommen.
      * 				Bereits vorhandene Listener bleiben dabei erhalten, werden aber
-     * 				eventuell <b>DOPPELT</b> eingefügt.
+     * 				eventuell <b>DOPPELT</b> eingefï¿½gt.
      */
     public void uebernehmeAlleListener(Maus von) {
     	for(Auftrag a : von.mausListe) {

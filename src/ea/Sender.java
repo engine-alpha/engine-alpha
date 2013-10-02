@@ -25,7 +25,8 @@ import java.io.*;
  * zu <b>senden</b>. Sie bietet eine einfache <i>Schnittstelle</i> zur Kommunikation,
  * da Exceptions etc. nicht zu beachten sind.<br />
  * Ein Sender bekommt also einen <code>OutputStream</code>, ueber den die Kommunikation verlaeuft.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class Sender 
 implements SenderInterface {
@@ -70,7 +71,7 @@ implements SenderInterface {
 	 */
 	private boolean sende(String s) {
 		if(!active) {
-			System.err.println("Kann nach dem Schließen nicht mehr senden.");
+			System.err.println("Kann nach dem Schlieï¿½en nicht mehr senden.");
 			return false;
 		}
 		try {
@@ -143,7 +144,7 @@ implements SenderInterface {
 		try {
 			writer.close();
 		} catch(IOException e) {
-			System.err.println("Konnte die Verbindung nicht schließen.");
+			System.err.println("Konnte die Verbindung nicht schlieï¿½en.");
 		}
 	}
 }

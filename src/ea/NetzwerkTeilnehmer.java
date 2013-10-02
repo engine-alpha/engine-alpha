@@ -22,17 +22,17 @@ package ea;
  * Diese abstrakte Klasse beschreibt die allgemeinen Eigenschaften
  * einer Netzwerkkommunikation. Ist sie etabliert, kann man darueber
  * Informationen austauschen, also Daten senden und empfangen.
- * @author Andonie
- *
+ * 
+ * @author Michael Andonie
  */
 public abstract class NetzwerkTeilnehmer {
 	
 	/**
 	 * Prueft bzw. gibt an, ob eine Verbindung bereits besteht.
-	 * @return	Ist der Rückgabewert <code>true</code>, so besteht eine
+	 * @return	Ist der Rï¿½ckgabewert <code>true</code>, so besteht eine
 	 * 			Verbindung. Das Senden bzw. Empfangen macht also in
 	 * 			diesem Sinn.
-	 * 			Ist dieser Rückgabewert <code>false</code>, besteht noch keine
+	 * 			Ist dieser Rï¿½ckgabewert <code>false</code>, besteht noch keine
 	 * 			Verbindung.
 	 */
 	public abstract boolean verbindungSteht();

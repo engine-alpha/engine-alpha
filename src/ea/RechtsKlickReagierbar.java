@@ -21,7 +21,8 @@ package ea;
 
 /**
  * Eine Klasse, die dieses Interface implementiert, kann auf Rechtsklicks der Maus reagieren
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public interface RechtsKlickReagierbar {
 

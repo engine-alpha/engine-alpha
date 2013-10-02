@@ -22,6 +22,7 @@ package ea;
 import javax.sound.sampled.*;
 import javax.sound.midi.*;
 import java.io.*;
+
 /**
  * Sound beschreibt eine Sounddatei.<br />
  * Diese kann unterschiedlichen Typs sein. Bis jetzt werden folgende Formate unterstuetzt:<br /><br />
@@ -33,9 +34,7 @@ import java.io.*;
  * 
  * Als beste Moeglichkeit fuer Sound in der EngineAlpha ist das .wav-Format zu empfehlen
  * 
- * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Sound
 {
@@ -94,7 +93,7 @@ public class Sound
     private AudioFormat format;
     
     /**
-     * Konstruktor für Objekte der Klasse Sound
+     * Konstruktor fï¿½r Objekte der Klasse Sound
      * @param   verzeichnis Das Verzeichnis der Sound-Datei. Mit Endung angeben! (z.B. "meinSound.wav")
      * @param   tempoBPM    Das Abspieltempo in Beats per Minute; nur fuer MIDI-Dateien relevant.
      */

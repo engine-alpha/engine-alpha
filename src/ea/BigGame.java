@@ -22,7 +22,8 @@ package ea;
 /**
  * Diese Klasse ist ein groesseres Spiel.<br />
  * Es gibt hier Reaktionsmoeglichkeiten auf Tastendruck/-Loslassen und Gedrueckthalten.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public abstract class BigGame
 extends Game

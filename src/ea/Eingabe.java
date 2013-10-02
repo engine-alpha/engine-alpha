@@ -24,8 +24,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
- *
- * @author Andonie
+ * TODO Doc fehlt!
+ * 
+ * @author Michael Andonie
  */
 public class Eingabe 
 extends JDialog{

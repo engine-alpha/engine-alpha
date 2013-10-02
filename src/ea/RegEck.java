@@ -24,12 +24,10 @@ package ea;
  * Tatsaechlich ist aufgrund von moeglicherweise Auftretenden Rundungsfehlern dies ein n+1 - Eck.<br />
  * Dies faellt jedoch nicht auf und ist nur da um eventuell auftretende Abrundungsfehler wieder auszuduennen.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class RegEck
-extends Geometrie
-{
+extends Geometrie {
     /**
      * Die Anzahl an Ecken.<br />
      * Es kann keine Form mit weniger als 3 Ecken geben!

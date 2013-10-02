@@ -19,7 +19,6 @@
 
 package ea;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 /**
@@ -28,8 +27,7 @@ import java.awt.Graphics;
  * an Ecken gewaehlt. Diese ist ueber die Genauigkeit im Konstruktor mitzugeben oder im vereinfachten konstruktor
  * bereits voreingestellt.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Kreis
 extends RegEck

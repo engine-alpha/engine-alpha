@@ -22,7 +22,8 @@ package ea;
 /**
  * Der Client fuer nicht vorhandene Teilnahme an der Physik.<br />
  * Standartmaessig der Initialclient.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class NullClient 
 extends PhysikClient {

@@ -23,8 +23,7 @@ package ea;
  * Ein Linienanimierer laesst ein Raum-Objekt zwischen verschiedenen Punkten zusammenlaufen.
  * sich fest zwischen 2 Punkten gleichmaessig hin- und herbewegen.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class StreckenAnimierer 
 extends Animierer

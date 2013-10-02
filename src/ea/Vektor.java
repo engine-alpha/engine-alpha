@@ -24,8 +24,7 @@ package ea;
  * Ansonsten unterscheidet er sich hier nicht weiter von einem Punkt.<br />
  * Vektoren werden meist fuer die BEschreibung einer bewegung benutzt.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public final class Vektor
 {

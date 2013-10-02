@@ -31,7 +31,8 @@ import java.net.UnknownHostException;
 /**
  * Diese Klasse ermoeglicht das Aufbauen einer Client-Verbindung zu einem
  * Server.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class Client 
 extends Thread 
@@ -43,7 +44,7 @@ implements Empfaenger, SenderInterface {
 	private Socket socket;
 	
 	/**
-	 * Die gewünschte Ziel-IP-Adresse des Socket
+	 * Die gewï¿½nschte Ziel-IP-Adresse des Socket
 	 */
 	private final String ipAdresse;
 	
@@ -117,13 +118,13 @@ implements Empfaenger, SenderInterface {
 			System.err.println("Konnte die IP-Adresse nicht zuordnen...");
 		} catch (IOException e) {
 			System.err.println("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer"
-					+ " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
+					+ " Internet etc. vorhanden? Das System kï¿½nnte die Netzwerkanfrage ablehnen.");
 		}
 	}
 	
 	/**
 	 * Diese Methode <b>stellt sicher</b>, dass eine Verbindung mit dem Server besteht.<br />
-	 * Diese Methode friert den ausführenden Thread ein, wenn noch keine Verbindung besteht
+	 * Diese Methode friert den ausfï¿½hrenden Thread ein, wenn noch keine Verbindung besteht
 	 * und endet erst, wenn die Verbindung aufgebaut wurde.
 	 */
 	public void warteAufVerbindung() {
@@ -132,7 +133,7 @@ implements Empfaenger, SenderInterface {
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					System.err.println("Achtung. Es könnte trotz warteAufVerbindung() noch "
+					System.err.println("Achtung. Es kï¿½nnte trotz warteAufVerbindung() noch "
 							+ "keine Verbindung bestehen, da der Warteprozess unterbrochen wurde.");
 				}
 			}

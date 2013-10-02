@@ -24,7 +24,8 @@ package ea;
  * Raum-Objekte beinhaltet. Hierzu zaehlen bis jetzt nur die Klassen <code>Knoten</code> und <code>Geometrie</code>.<br />
  * Diese Schnittstelle hat keinerlei Konstanten oder abstrakte Methoden; ihr Implementieren dient nur der Kennzeichnung fuer
  * die Engine intern. Es findet so verwendung bei Kollisionstests.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public interface Listung {
 

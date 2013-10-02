@@ -19,20 +19,18 @@
 
 package ea;
 
-import java.awt.*;
-import java.io.*;
+import java.awt.Color;
 import java.util.Locale;
+
 /**
  * Raum bezeichnet alles, was sich auf der Zeichenebene befindet.<br />
  * Dies ist die absolute Superklasse aller grafischen Objekte. Umgekehrt kann somit jedes
  * grafische Objekt die folgenden Methoden nutzen.
  * 
  * @author Michael Andonie
- * @version (eine Versionsnummer oder ein Datum)
  */
 public abstract class Raum
-implements java.io.Serializable
-{
+implements java.io.Serializable {
     /**Die Serialisierungs-Konstante dieser Klasse. In keiner Weise fuer die Programmierung mit der Engine bedeutsam.*/
     private static final long serialVersionUID = 98L;
 

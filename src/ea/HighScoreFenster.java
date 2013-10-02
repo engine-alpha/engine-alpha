@@ -25,7 +25,8 @@ import javax.swing.*;
 
 /**
  * Dieses Fenster ist ein Dialog, der ein Array von Namen neben ein Array von Punkten Setzt.
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class HighScoreFenster
 extends JDialog{

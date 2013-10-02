@@ -20,8 +20,11 @@
 package ea;
 
 import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * Der Leuchtmacher sorgt fuer das Leuchten seiner angemeldeten Leuchtend-Objekte.
+ * 
+ * @author Michael Andonie
  */
 public class LeuchtMacher 
 implements Ticker{

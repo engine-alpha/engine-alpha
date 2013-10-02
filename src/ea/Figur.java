@@ -34,7 +34,6 @@ import java.util.ArrayList;
  * Der Figureneditor zum Erstellen der zu ladenden ".eaf"-Dateien ist als ausfuehrbare ".jar"-Datei fester Bestandteil des Engine-Alpha-Programmierkits.
  * 
  * @author Michael Andonie
- * @version 1
  */
 public class Figur
 extends Raum

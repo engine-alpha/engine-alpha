@@ -22,8 +22,7 @@ package ea;
 /**
  * Dieses Interface wird implementiert, um auf Die verschiedenen Tastaturbefehle ans Fenster Reagieren zu koennen.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 
 public interface TastenReagierbar

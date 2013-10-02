@@ -36,8 +36,8 @@ import javax.swing.*;
  * </code><br />
  * Das <code>true</code> bei der Methode sorgt dafuer, das die Nachricht erst beendet werden muss, bevor 
  * die Methode beendet ist. Fuer naeheres siehe die Dokumentation der Methode in der Klasse Fenster.
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * 
+ * @author Michael Andonie
  */
 public class Nachricht 
 extends JDialog {

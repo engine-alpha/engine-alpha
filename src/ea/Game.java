@@ -37,7 +37,6 @@ import javax.swing.filechooser.FileFilter;
  * Aus ihr sollte die Klasse abgleitet werden, die die Spielorganisation innehat.
  * 
  * @author Michael Andonie
- * @version 1.0 (Juni 2010)
  */
 public abstract class Game
 implements TastenReagierbar {

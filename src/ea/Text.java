@@ -26,8 +26,7 @@ import java.util.*;
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Text
 extends Raum

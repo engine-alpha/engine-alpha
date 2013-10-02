@@ -24,6 +24,8 @@ import java.awt.event.*;
 /**
  * Der Adapter bietet die Moeglickeit, bei deaktivierung des Fenster die essentiellen Listenermethode abzuschalten, um 
  * unerwartete Ausfuehrungen dieser Methoden zu verhindern.
+ * 
+ * @author Michael Andonie
  */
 public class Adapter
 extends WindowAdapter

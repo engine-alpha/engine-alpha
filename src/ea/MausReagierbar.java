@@ -22,12 +22,10 @@ package ea;
 /**
  * MausReagierbar ist ein Interface, das die Reaktionsmoeglichkeit auf einen Mausklick auf ein bestimmtes Objekt darstellt.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 
-public interface MausReagierbar
-{
+public interface MausReagierbar {
     /**
      * Die Reaktion auf ein bestimmtes angeklicktes Element.
      * @param   code    Der der Maus bei der Anmeldung vorgegebene Code, der fuer ein bestimmtes angeklicktes Objekt steht.<br />

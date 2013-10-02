@@ -32,8 +32,7 @@ package ea;
  * </code><br />
  * 
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 
 public interface KollisionsReagierbar

@@ -23,8 +23,7 @@ package ea;
  * Der Audiomanager organisiert das Abspielen verschiedener Sounddateien.<br />
  * Er organisiert deren Abspielen ueber mehrere Threads.
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class AudioManager
 extends Manager

@@ -7,7 +7,8 @@ package ea;
 import java.awt.*;
 /**
  * Ein Strich ist ein einfaches zeichenbares Objekt.<br />
- * @author Andonie
+ * 
+ * @author Michael Andonie
  */
 public class Strich
 extends SimpleGraphic{

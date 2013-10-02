@@ -19,15 +19,18 @@
 
 package ea;
 
-import javax.sound.sampled.*;
-import javax.sound.midi.*;
 import java.io.IOException;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.SourceDataLine;
 
 /**
  * Diese Klasse ist diejenige, die das eigentliche abspielen auf einem eigenen Thread, aus dem sie sich ableitet,<br />
  * Auf einem Kanal kann eine Sounddatei abgespielt werden.<br /><br />
  * Auch bietet diese Klasse eine Moeglichkeit, mp3-Dateien nach selbst verfasstem Algorythmus wiederzugeben, jedoch ist dieser nicht so 
  * konsistent und vielfaeltig wie der fuer ".wav"-Dateien, daher werden ".wav"-Dateien am ehesten fuer die Soundwiedergabe in der Engine empfohlen
+ * 
+ * @author Michael Andonie
  */
 public class Kanal
 implements Ticker

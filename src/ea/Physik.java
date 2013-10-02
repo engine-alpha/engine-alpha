@@ -32,8 +32,8 @@ import java.util.ArrayList;
  * passive Raum-Objekte (<b>PassivObjekte</b>, zum Beispiel Mauer, Waende, Boeden) zu schneiden.<br /><br />
  * Diese beiden Eigenschaften in Kombination erzeugen die Moeglichkeit, sehr einfach eine funktionierende Spielewelt zu programmieren, 
  * in der bereits ein funktionierendes System zum Fallen und Grenzen abstecken existiert.<br /><br />
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * 
+ * @author Michael Andonie
  */
 public class Physik
 extends Manager

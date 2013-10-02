@@ -46,7 +46,6 @@ import java.awt.image.BufferedImage;
  * Betreten verlassen.
  * 
  * @author Michael Andonie, Niklas Keller
- * @version 3.0 (September 2013)
  */
 public class Fenster extends Frame {
 	private static final long serialVersionUID = 1L;
@@ -177,7 +176,7 @@ public class Fenster extends Frame {
 			} else {
 				System.err.println("Achtung!");
 				System.err
-						.println("Vollbild war nicht möglich, weil dieser PC dies nicht unterstützt!");
+						.println("Vollbild war nicht mï¿½glich, weil dieser PC dies nicht unterstï¿½tzt!");
 
 				windowMode = WINDOW_FULLSCREEN_FRAME;
 			}
@@ -210,7 +209,7 @@ public class Fenster extends Frame {
 
 				for (int i = 0; i < displayMode.length; i++) {
 					System.out.println((i + 1) + ": " + "Breite: "
-							+ displayMode[i].getWidth() + ", Höhe: "
+							+ displayMode[i].getWidth() + ", Hï¿½he: "
 							+ displayMode[i].getHeight());
 
 					if (displayMode[i].getWidth() == breite
@@ -227,20 +226,20 @@ public class Fenster extends Frame {
 				if (!success) {
 					System.err.println("Achtung!");
 					System.err
-							.println("Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!");
+							.println("Die angegebene Auflï¿½sung wird von diesem Bildschirm nicht unterstï¿½tzt!");
 					System.err
-							.println("Nur besondere Auflösungen sind möglich, z.B. 800 x 600.");
+							.println("Nur besondere Auflï¿½sungen sind mï¿½glich, z.B. 800 x 600.");
 					System.err
 							.println("Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
 				}
 			} else {
 				System.err
-						.println("Dieser Bildschirm unterstützt keine Auflösungsänderung!");
+						.println("Dieser Bildschirm unterstï¿½tzt keine Auflï¿½sungsï¿½nderung!");
 			}
 
 			if (!success) {
 				System.err
-						.println("Die gewünschte Auflösung wird nicht vom Hauptbildschirm des Computers unterstützt!");
+						.println("Die gewï¿½nschte Auflï¿½sung wird nicht vom Hauptbildschirm des Computers unterstï¿½tzt!");
 			}
 		}
 
@@ -274,7 +273,7 @@ public class Fenster extends Frame {
 			robot = new Robot(devices[0]);
 		} catch (AWTException e) {
 			System.err.println("Achtung!");
-			System.err.println("Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!");
+			System.err.println("Es war nicht mï¿½glich ein GUI-Controlobjekt zu erstelllen!");
 			System.err.println("Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren.");
 			System.err.println("Grund: Dies liegt an diesem Computer.");
 		}
@@ -815,7 +814,7 @@ public class Fenster extends Frame {
 
 				maus.klick(r.x + p.x + getCam().getX(), r.y + p.y
 						+ getCam().getY(), links, losgelassen); // Mit
-																// zurückrechnen
+																// zurï¿½ckrechnen
 																// auf die
 																// Bildebene!
 			} else {

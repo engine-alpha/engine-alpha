@@ -27,7 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * mit relativen Verschiebungen ueber die Methode <code>verschieben()</code>.
  * 
  * @author Michael Andonie
- * @version XX
  * @see Animierer
  */
 public class AnimationsManager

@@ -24,8 +24,7 @@ package ea;
  * Jeder Koerper laesst sich aus solchen darstellen.<br />
  * Daher ist dies die <b>einzige</b> Klasse, die in sich eine Zeichenroutine hat
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public class Dreieck
 extends Geometrie

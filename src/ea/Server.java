@@ -32,9 +32,9 @@ import java.util.Queue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Server-Klasse für einfache Verwendung von Kommunikation.
- * @author Andonie
- *
+ * Server-Klasse fÃ¼r einfache Verwendung von Kommunikation.
+ * 
+ * @author Michael Andonie
  */
 public class Server
 extends Thread
@@ -47,10 +47,10 @@ implements Empfaenger, SenderInterface {
 			new CopyOnWriteArrayList<NetzwerkVerbindung>();
 	
 	/**
-	 * Die Queue, in der Verbindungen liegen, um vom API-Nutzer zusätzlichen Empfaengern
+	 * Die Queue, in der Verbindungen liegen, um vom API-Nutzer zusï¿½tzlichen Empfaengern
 	 * zugeordnet zu werden sowie die Sender auszugeben.<br />
 	 * Diese Struktur wird benutzt, um den eigentliche (ggf. vorhandenen) Warteprozess auf einem
-	 * dem API-Nutzer zugänglichen Thread zu simulieren.<br /><br />
+	 * dem API-Nutzer zugï¿½nglichen Thread zu simulieren.<br /><br />
 	 * Damit ist diese Referenz das Verbindungsglied fuer eine <i>Consumer/Producer - Struktur</i>.
 	 */
 	private final Queue<NetzwerkVerbindung> waitingQueue = new LinkedList<NetzwerkVerbindung>();
@@ -61,7 +61,7 @@ implements Empfaenger, SenderInterface {
 	private final int port;
 	
 	/**
-	 * Der Server-Socket, über den die Streams gezogen werden.
+	 * Der Server-Socket, ï¿½ber den die Streams gezogen werden.
 	 */
 	private ServerSocket socket;
 
@@ -179,14 +179,14 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	/**
-	 * Gibt die nächste Verbindung mit diesem Server aus, die noch nicht 
+	 * Gibt die nï¿½chste Verbindung mit diesem Server aus, die noch nicht 
 	 * ausgegeben wurde. Gibt es keine Verbindung, die noch nicht ueber diese Methode
-	 * ausgegeben wurde, so <b>hält der Thread solange an, bis eine neue Verbindung
-	 * entstanden ist und diese zurückgegeben werden kann</b>.
-	 * @return	Die älteste, noch nicht über diese Methode zurückgegebene Verbindung.
-	 * 			Diese Methode hat stets einen Rückgabewert <code>!= null</code>. Nötigenfalls
-	 * 			hält sie so lange wie nötig den laufenden Thread an, bis eine Verbindung
-	 * 			zurückgegeben werden kann.
+	 * ausgegeben wurde, so <b>hï¿½lt der Thread solange an, bis eine neue Verbindung
+	 * entstanden ist und diese zurï¿½ckgegeben werden kann</b>.
+	 * @return	Die ï¿½lteste, noch nicht ï¿½ber diese Methode zurï¿½ckgegebene Verbindung.
+	 * 			Diese Methode hat stets einen Rï¿½ckgabewert <code>!= null</code>. Nï¿½tigenfalls
+	 * 			hï¿½lt sie so lange wie nï¿½tig den laufenden Thread an, bis eine Verbindung
+	 * 			zurï¿½ckgegeben werden kann.
 	 */
 	public NetzwerkVerbindung naechsteVerbindungAusgeben() {
 		if(waitingQueue.isEmpty()) {
@@ -206,7 +206,7 @@ implements Empfaenger, SenderInterface {
 	 * globale Empfaenger wird ueber jede Nachricht an diesen Server informiert,
 	 * immer. Bei dem <b>Beenden</b> einer einzelnen Verbindung ist allerdings
 	 * vorsichtig geboten. Nicht unbedingt muss zu diesem Zeitpunkt <i>jede 
-	 * Verbindung</i> bereits aufgelöst sein.
+	 * Verbindung</i> bereits aufgelï¿½st sein.
 	 * @param e	Der neue globale Empfaenger.
 	 */
 	public void globalenEmpfaengerSetzen(Empfaenger e) {
@@ -299,7 +299,7 @@ implements Empfaenger, SenderInterface {
 
 	/**
 	 * {@inheritDoc}
-	 * Gibt die Nachricht an den globalen Empfänger 
+	 * Gibt die Nachricht an den globalen Empfï¿½nger 
 	 * weiter, sofern einer vorhanden ist.
 	 * @param string	Die Nachricht vom Client.
 	 */
@@ -311,7 +311,7 @@ implements Empfaenger, SenderInterface {
 
 	/**
 	 * {@inheritDoc}
-	 * Gibt die Nachricht an den globalen Empfänger 
+	 * Gibt die Nachricht an den globalen Empfï¿½nger 
 	 * weiter, sofern einer vorhanden ist.
 	 * @param i	Die Nachricht vom Client.
 	 */
@@ -323,7 +323,7 @@ implements Empfaenger, SenderInterface {
 
 	/**
 	 * {@inheritDoc}
-	 * Gibt die Nachricht an den globalen Empfänger 
+	 * Gibt die Nachricht an den globalen Empfï¿½nger 
 	 * weiter, sofern einer vorhanden ist.
 	 * @param string	Die Nachricht vom Client.
 	 */
@@ -335,7 +335,7 @@ implements Empfaenger, SenderInterface {
 
 	/**
 	 * {@inheritDoc}
-	 * Gibt die Nachricht an den globalen Empfänger 
+	 * Gibt die Nachricht an den globalen Empfï¿½nger 
 	 * weiter, sofern einer vorhanden ist.
 	 * @param d	Die Nachricht vom Client.
 	 */
@@ -347,7 +347,7 @@ implements Empfaenger, SenderInterface {
 
 	/**
 	 * {@inheritDoc}
-	 * Gibt die Nachricht an den globalen Empfänger 
+	 * Gibt die Nachricht an den globalen Empfï¿½nger 
 	 * weiter, sofern einer vorhanden ist.
 	 * @param c	Die Nachricht vom Client.
 	 */
@@ -359,7 +359,7 @@ implements Empfaenger, SenderInterface {
 
 	/**
 	 * {@inheritDoc}
-	 * Gibt die Nachricht an den globalen Empfänger 
+	 * Gibt die Nachricht an den globalen Empfï¿½nger 
 	 * weiter, sofern einer vorhanden ist.
 	 * @param b	Die Nachricht vom Client.
 	 */
@@ -371,10 +371,10 @@ implements Empfaenger, SenderInterface {
 
 	/**
 	 * {@inheritDoc}
-	 * Gibt die Nachricht an den globalen Empfänger 
+	 * Gibt die Nachricht an den globalen Empfï¿½nger 
 	 * weiter, sofern einer vorhanden ist.<br />
 	 * <b>ACHTUNG:</b> Dies betrifft stets nur eine Verbindung. 
-	 * Es ist daher gut möglich, dass der Server trotzdem noch 
+	 * Es ist daher gut mï¿½glich, dass der Server trotzdem noch 
 	 * kommunizieren kann und muss - mit anderen Clients.
 	 */
 	@Override

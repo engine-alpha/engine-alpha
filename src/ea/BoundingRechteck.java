@@ -23,8 +23,7 @@ package ea;
 /**
  * Ein nicht grafisches Rechteck auf der Zeichenebene, das eine allgemeine Flaeche beschreibt
  * 
- * @author (Ihr Name) 
- * @version (eine Versionsnummer oder ein Datum)
+ * @author Michael Andonie
  */
 public final class BoundingRechteck
 implements java.io.Serializable
