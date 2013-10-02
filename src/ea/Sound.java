@@ -93,7 +93,7 @@ public class Sound
     private AudioFormat format;
     
     /**
-     * Konstruktor f�r Objekte der Klasse Sound
+     * Konstruktor für Objekte der Klasse Sound
      * @param   verzeichnis Das Verzeichnis der Sound-Datei. Mit Endung angeben! (z.B. "meinSound.wav")
      * @param   tempoBPM    Das Abspieltempo in Beats per Minute; nur fuer MIDI-Dateien relevant.
      */
@@ -213,7 +213,7 @@ public class Sound
             sequencer = MidiSystem.getSequencer();
             Transmitter trans = sequencer.getTransmitter();
             Receiver rcvr = synth.getReceiver();
-            //Beide �ffnen und verbinden
+            //Beide öffnen und verbinden
             sequencer.open();
             synth.open();
             trans.setReceiver(rcvr);

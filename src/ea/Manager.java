@@ -343,7 +343,7 @@ extends Timer {
         
         /**
          * Setzt den Task neu.
-         * @param task	Der neue tats�chliche TimerTask, der ausgef�hrt wird.
+         * @param task	Der neue tatsächliche TimerTask, der ausgeführt wird.
          */
         public void taskSetzen(TimerTask task) {
         	this.task = task;

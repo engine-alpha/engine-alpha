@@ -118,13 +118,13 @@ implements Empfaenger, SenderInterface {
 			System.err.println("Konnte die IP-Adresse nicht zuordnen...");
 		} catch (IOException e) {
 			System.err.println("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer"
-					+ " Internet etc. vorhanden? Das System k�nnte die Netzwerkanfrage ablehnen.");
+					+ " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
 		}
 	}
 	
 	/**
 	 * Diese Methode <b>stellt sicher</b>, dass eine Verbindung mit dem Server besteht.<br />
-	 * Diese Methode friert den ausf�hrenden Thread ein, wenn noch keine Verbindung besteht
+	 * Diese Methode friert den ausführenden Thread ein, wenn noch keine Verbindung besteht
 	 * und endet erst, wenn die Verbindung aufgebaut wurde.
 	 */
 	public void warteAufVerbindung() {
@@ -133,7 +133,7 @@ implements Empfaenger, SenderInterface {
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					System.err.println("Achtung. Es k�nnte trotz warteAufVerbindung() noch "
+					System.err.println("Achtung. Es könnte trotz warteAufVerbindung() noch "
 							+ "keine Verbindung bestehen, da der Warteprozess unterbrochen wurde.");
 				}
 			}

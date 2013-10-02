@@ -71,7 +71,7 @@ implements SenderInterface {
 	 */
 	private boolean sende(String s) {
 		if(!active) {
-			System.err.println("Kann nach dem Schlie�en nicht mehr senden.");
+			System.err.println("Kann nach dem Schließen nicht mehr senden.");
 			return false;
 		}
 		try {
@@ -144,7 +144,7 @@ implements SenderInterface {
 		try {
 			writer.close();
 		} catch(IOException e) {
-			System.err.println("Konnte die Verbindung nicht schlie�en.");
+			System.err.println("Konnte die Verbindung nicht schließen.");
 		}
 	}
 }

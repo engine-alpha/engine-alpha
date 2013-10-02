@@ -225,9 +225,9 @@ public class Maus {
     
     /**
      * Uebernimmt alle Listener von einer anderen Maus.
-     * @param von	Von dieser Maus, werden alle Listener-Listen �bernommen.
+     * @param von	Von dieser Maus, werden alle Listener-Listen übernommen.
      * 				Bereits vorhandene Listener bleiben dabei erhalten, werden aber
-     * 				eventuell <b>DOPPELT</b> eingef�gt.
+     * 				eventuell <b>DOPPELT</b> eingefügt.
      */
     public void uebernehmeAlleListener(Maus von) {
     	for(Auftrag a : von.mausListe) {

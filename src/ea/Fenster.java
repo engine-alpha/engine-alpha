@@ -176,7 +176,7 @@ public class Fenster extends Frame {
 			} else {
 				System.err.println("Achtung!");
 				System.err
-						.println("Vollbild war nicht m�glich, weil dieser PC dies nicht unterst�tzt!");
+						.println("Vollbild war nicht möglich, weil dieser PC dies nicht unterstützt!");
 
 				windowMode = WINDOW_FULLSCREEN_FRAME;
 			}
@@ -209,7 +209,7 @@ public class Fenster extends Frame {
 
 				for (int i = 0; i < displayMode.length; i++) {
 					System.out.println((i + 1) + ": " + "Breite: "
-							+ displayMode[i].getWidth() + ", H�he: "
+							+ displayMode[i].getWidth() + ", Höhe: "
 							+ displayMode[i].getHeight());
 
 					if (displayMode[i].getWidth() == breite
@@ -226,20 +226,20 @@ public class Fenster extends Frame {
 				if (!success) {
 					System.err.println("Achtung!");
 					System.err
-							.println("Die angegebene Aufl�sung wird von diesem Bildschirm nicht unterst�tzt!");
+							.println("Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!");
 					System.err
-							.println("Nur besondere Aufl�sungen sind m�glich, z.B. 800 x 600.");
+							.println("Nur besondere Auflösungen sind möglich, z.B. 800 x 600.");
 					System.err
 							.println("Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
 				}
 			} else {
 				System.err
-						.println("Dieser Bildschirm unterst�tzt keine Aufl�sungs�nderung!");
+						.println("Dieser Bildschirm unterstützt keine Auflösungsänderung!");
 			}
 
 			if (!success) {
 				System.err
-						.println("Die gew�nschte Aufl�sung wird nicht vom Hauptbildschirm des Computers unterst�tzt!");
+						.println("Die gewünschte Auflösung wird nicht vom Hauptbildschirm des Computers unterstützt!");
 			}
 		}
 
@@ -273,7 +273,7 @@ public class Fenster extends Frame {
 			robot = new Robot(devices[0]);
 		} catch (AWTException e) {
 			System.err.println("Achtung!");
-			System.err.println("Es war nicht m�glich ein GUI-Controlobjekt zu erstelllen!");
+			System.err.println("Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!");
 			System.err.println("Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren.");
 			System.err.println("Grund: Dies liegt an diesem Computer.");
 		}
@@ -814,7 +814,7 @@ public class Fenster extends Frame {
 
 				maus.klick(r.x + p.x + getCam().getX(), r.y + p.y
 						+ getCam().getY(), links, losgelassen); // Mit
-																// zur�ckrechnen
+																// zurückrechnen
 																// auf die
 																// Bildebene!
 			} else {

@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * <b>
  * zu verarbeiten und die enthaltene Information an einen oder
  * auch mehrere <code>Empfaenger</code> weiterzugeben.<br />
- * Die Weitergabe der Signale erfolg <b>sequentiell �ber einen eigenen
+ * Die Weitergabe der Signale erfolg <b>sequentiell über einen eigenen
  * Thread</b>. Die Signale werden ebenso <b>sequentiell verarbeitet</b>.
  * 
  * @author Michael Andonie
@@ -42,7 +42,7 @@ extends Thread {
 	private final ArrayList<Empfaenger> outputListe = new ArrayList<Empfaenger>();
 	
 	/**
-	 * Der Reader, �ber den die Informationen gelesen werden.
+	 * Der Reader, über den die Informationen gelesen werden.
 	 */
 	private BufferedReader reader;
 	
@@ -80,7 +80,7 @@ extends Thread {
 	/**
 	 * Diese Methode verarbeitet die unveraenderte Ausgabe des 
 	 * Kommunikationspartners. Diese wird analysiert und
-	 * anschlie�end die entsprechende Information
+	 * anschließend die entsprechende Information
 	 * an alle angehaengten <code>Empfaenger</code> weitergegeben.
 	 * @param communication	Die ungeschnittene Nachricht
 	 * des Partners.
@@ -130,7 +130,7 @@ extends Thread {
 		try {
 			reader.close();
 		} catch (IOException e1) {
-			System.err.println("Konnte den Kommunikationskanal nicht mehr schlie�en.");
+			System.err.println("Konnte den Kommunikationskanal nicht mehr schließen.");
 		}
 		connectionActive = false;
 	}
@@ -155,7 +155,7 @@ extends Thread {
 		try {
 			reader.close();
 		} catch (IOException e)  {
-			System.err.println("Konnte die Verbindung nicht schlie�en.");
+			System.err.println("Konnte die Verbindung nicht schließen.");
 		}
 	}
 	
