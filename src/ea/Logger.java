@@ -80,8 +80,10 @@ public class Logger {
                 }
                 else
                 {
-                    BufferedWriter w = new BufferedWriter(new FileWriter(f));
-                    w.write(text);
+                    FileWriter fstream = new FileWriter(f,true);
+                    BufferedWriter w = new BufferedWriter(fstream);
+                    w.write(text.toString());
+                    w.newLine();
                     w.close();
             }
         }
