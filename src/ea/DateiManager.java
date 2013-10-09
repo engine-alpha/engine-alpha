@@ -91,15 +91,15 @@ public class DateiManager {
 	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
 	 *         wurde, ansonsten <code>false</code>.
 	 */
-	public static boolean stringArraySchreiben(String[] array, String pfad) throws IOException {
+	public static boolean stringArraySchreiben(String[] array, String pfad) {
 		if (array == null) {
-            Logger.error("Das Eingabearray war null ",96,"DateiManager.java");
+            Logger.error("Das Eingabearray war null!");
 			return false;
 		}
 		
 		if (!pfad.endsWith(".eaa")) {
 			if (pfad.contains(".")) {
-				System.err.println("Der Verzeichnisname ist ungültig! Die Datei sollte mit '.eaa' enden und darf sonst keine '.'-Zeichen enthalten");
+				Logger.error("Der Verzeichnisname ist ungültig! Die Datei sollte mit '.eaa' enden und darf sonst keine '.'-Zeichen enthalten");
 				return false;
 			}
 			
@@ -134,7 +134,7 @@ public class DateiManager {
 			
 			return true;
 		} catch (IOException e) {
-			System.err.println("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?");
+			Logger.error("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?");
 			return false;
 		}
 	}
@@ -215,9 +215,9 @@ public class DateiManager {
 	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
 	 *         wurde, ansonsten <code>false</code>.
 	 */
-	public static boolean integerArraySchreiben(int[] array, String pfad) throws IOException {
+	public static boolean integerArraySchreiben(int[] array, String pfad) {
 		if (array == null) {
-            Logger.error("Das Eingabearray war null ",220,"DateiManager.java");
+            Logger.error("Das Eingabearray war null!");
 			return false;
 		}
 		if (!pfad.endsWith(".eaa")) {
