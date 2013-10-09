@@ -51,7 +51,7 @@ public class Logger {
 	 * Logger-Funktion für Warnungen
 	 */
 	public static void warning(String s) {
-		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
+		StackTraceElement e = Thread.currentThread().getStackTrace()[3];
 		write("WARNUNG", e.getFileName(), e.getLineNumber(), s);
 	}
 	
@@ -59,7 +59,7 @@ public class Logger {
 	 * Logger-Funktion für Fehler
 	 */
 	public static void error(String s) {
-		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
+		StackTraceElement e = Thread.currentThread().getStackTrace()[3];
 		write("ERROR", e.getFileName(), e.getLineNumber(), s, true);
 	}
 	
@@ -67,7 +67,7 @@ public class Logger {
 	 * Logger-Funktion für Informationen
 	 */
 	public static void info(String s) {
-		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
+		StackTraceElement e = Thread.currentThread().getStackTrace()[3];
 		write("INFO", e.getFileName(), e.getLineNumber(), s);
 	}
 	
