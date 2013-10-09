@@ -91,9 +91,9 @@ public class DateiManager {
 	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
 	 *         wurde, ansonsten <code>false</code>.
 	 */
-	public static boolean stringArraySchreiben(String[] array, String pfad) {
+	public static boolean stringArraySchreiben(String[] array, String pfad) throws IOException {
 		if (array == null) {
-			System.err.println("Das Eingabearray war null!");
+            Logger.error("Das Eingabearray war null ",96,"DateiManager.java");
 			return false;
 		}
 		
@@ -215,9 +215,9 @@ public class DateiManager {
 	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
 	 *         wurde, ansonsten <code>false</code>.
 	 */
-	public static boolean integerArraySchreiben(int[] array, String pfad) {
+	public static boolean integerArraySchreiben(int[] array, String pfad) throws IOException {
 		if (array == null) {
-			System.err.println("Das Eingabearray war null!");
+            Logger.error("Das Eingabearray war null ",220,"DateiManager.java");
 			return false;
 		}
 		if (!pfad.endsWith(".eaa")) {
