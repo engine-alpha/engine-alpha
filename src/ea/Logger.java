@@ -26,8 +26,8 @@ public class Logger {
      * @throws IOException
      */
     public static void warn(String text, int line, String file) throws IOException  {
-      System.out.println("[" + date() + "]" + " WARNUNG: " + text + ":" + file + " in der Linie " + line);
-        write("[" + date() + "]" + " WARNUNG: " + text + ":" + file + " in der Linie " + line);
+      System.out.println("[" + date() + "]" + " WARNUNG: " + text + ":" + file + " in der Zeile " + line);
+        write("[" + date() + "]" + " WARNUNG: " + text + ":" + file + " in der Zeile " + line);
     }
     /**
      * Logger-Funktion für Fehler
@@ -40,8 +40,8 @@ public class Logger {
      * @throws IOException
      */
     public static void error(String text, int line, String file) throws IOException  {
-       System.out.println("[" + date() + "]" + " FEHLER: " + text + ":" + file + " in der Linie " + line);
-        write("[" + date() + "]" + " FEHLER: " + text + ":" + file + " in der Linie " + line);
+       System.out.println("[" + date() + "]" + " FEHLER: " + text + ":" + file + " in der Zeile " + line);
+        write("[" + date() + "]" + " FEHLER: " + text + ":" + file + " in der Zeile " + line);
     }
     /**
      * Logger-Funktion für Informationen
@@ -54,8 +54,8 @@ public class Logger {
      * @throws IOException
      */
     public static void info(String text, int line, String file) throws IOException {
-        System.out.println("[" + date() + "]" + " INFORMATION: " + text + ":" + file + " in der Linie " + line);
-        write("[" + date() + "]" + " INFORMATION: " + text + ":" + file + " in der Linie " + line);
+        System.out.println("[" + date() + "]" + " INFORMATION: " + text + ":" + file + " in der Zeile " + line);
+        write("[" + date() + "]" + " INFORMATION: " + text + ":" + file + " in der Zeile " + line);
     }
 
     /**
