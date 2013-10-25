@@ -19,13 +19,17 @@
 package ea;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -40,12 +44,18 @@ import javax.imageio.ImageIO;
 @SuppressWarnings("serial")
 public class EngineAlpha
 extends Frame {
-	// 1.0, 1.1, 1.2, 2.0, 3.0pre
-	public static final int VERSION_CODE = 5;
-	public static final String VERSION_STRING = "v3.0pre";
+	// 1 => 1.0
+	// 2 => 1.1
+	// 3 => 1.2
+	// 4 => 2.0
+	// 5 => 3.0pre
+	// 6 => 3.0
+	
+	public static final int VERSION_CODE = 6;
+	public static final String VERSION_STRING = "v3.0";
 
 	public EngineAlpha() {
-		super("Engine Alpha " + EngineAlpha.VERSION_STRING);
+		super("Engine Alpha " + VERSION_STRING);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				setVisible(false);
@@ -63,10 +73,13 @@ extends Frame {
 	implements Runnable {
 		
 		private BufferedImage about;
+		private double alpha = 0;
+		private boolean loading = true;
+		private int availableVersion = -1;
 		
 		public EngineAlphaPromotion(EngineAlpha parent) {
 			try {
-				URL url = EngineAlpha.class.getResource("/ea/about.png");
+				URL url = EngineAlpha.class.getResource("/ea/assets/about.png");
 				
 				if(url == null)
 					System.exit(1);
@@ -85,15 +98,71 @@ extends Frame {
 			parent.setLocation((screen.width-parent.getWidth())/2, (screen.height-parent.getHeight())/2);
 			
 			parent.setVisible(true);
-			new Thread(this).start();
+			
+			new Thread(this) {
+				{
+					setDaemon(true);
+				}
+			}.start();
+			
+			new Thread() {
+				{
+					setDaemon(true);
+				}
+				
+				public void run() {
+					BufferedInputStream bis = null;
+					URL url = null;
+					
+					try {
+						url = new URL("http://engine-alpha.org/api/v1/version");
+						bis = new BufferedInputStream(url.openStream());
+						
+						StringBuilder builder = new StringBuilder();
+						byte[] data = new byte[1024];
+						int read = 0;
+						
+						while((read = bis.read(data)) != -1) {
+							builder.append(new String(data, 0, read));
+						}
+						
+						try {
+							availableVersion = Integer.parseInt(builder.toString().trim());
+						} catch(NumberFormatException e) {
+							
+						}
+					} catch (IOException e) {
+						System.err.println("error");
+					} finally {
+						if(bis != null) {
+							try {
+								bis.close();
+							} catch (IOException e) {
+								
+							}
+						}
+					}
+					
+					loading = false;
+				}
+			}.start();
 		}
 		
 		public void run() {
 			createBufferStrategy(2);
 			BufferStrategy bs = getBufferStrategy();
 			Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			long lastTime = System.currentTimeMillis();
+			long currTime = System.currentTimeMillis();
 			
 			while(isVisible()) {
+				lastTime = currTime;
+				currTime = System.currentTimeMillis();
+				
+				update(currTime - lastTime);
+				
 				render(g);
 				bs.show();
 				
@@ -105,8 +174,46 @@ extends Frame {
 			}
 		}
 		
+		private void update(long passedTime) {
+			alpha += passedTime * .01;
+			alpha %= 360;
+		}
+
 		public void render(Graphics2D g) {
 			g.drawImage(about, 0, 0, null);
+			
+			if(loading) {
+				g.setColor(new Color(255,255,255,150));
+				g.fillOval((int) (getWidth()/2+8*Math.cos(alpha))-2, (int) (getHeight()-25+8*Math.sin(alpha))-2, 4, 4);
+				g.fillOval((int) (getWidth()/2+8*Math.cos(180+alpha))-2, (int) (getHeight()-25+8*Math.sin(180+alpha))-2, 4, 4);
+				g.drawLine((int) (getWidth()/2+8*Math.cos(alpha)), (int) (getHeight()-25+8*Math.sin(alpha)),
+						(int) (getWidth()/2+8*Math.cos(180+alpha)), (int) (getHeight()-25+8*Math.sin(180+alpha)));
+			} else {
+				String message = "";
+				Color color = new Color(250,250,250);
+				
+				if(availableVersion == -1) {
+					message = "Server für Versionsabgleich nicht erreichbar.";
+				}
+				
+				else if(availableVersion == VERSION_CODE) {
+					message = "Diese Version ist aktuell.";
+				}
+				
+				else if(availableVersion > VERSION_CODE) {
+					message = "Es ist eine neue Version verfügbar.";
+					color = new Color(200,50,0);
+				}
+				
+				else if(availableVersion < VERSION_CODE) {
+					message = "Du arbeitest bereits mit einer Preview.";
+					color = new Color(0,150,200);
+				}
+				
+				g.setColor(color);
+				FontMetrics fm = g.getFontMetrics();
+				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 15);
+			}
 		}
 	}
 	
