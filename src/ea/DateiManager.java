@@ -23,6 +23,8 @@ import java.io.*;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import ea.util.Logger;
+
 /**
  * Der Dateimanager ist eine Klasse, die die Systemspezifischen Pfadregeln
  * beachtend die jeweils korrekten Zeichenketten fuer die entsprechenden
@@ -465,7 +467,8 @@ public class DateiManager {
 		String verzeichnis = file.getAbsolutePath();
 		
 		if (!verzeichnis.endsWith(".eaf")) {
-			System.err.println("Die Datei " + verzeichnis + " endet nicht mit dem korrekten Dateiformat(.eaf)");
+			Logger.error("Die Datei " + verzeichnis + " endet nicht mit dem korrekten Dateiformat(.eaf)");
+			
 			return null;
 		}
 		
@@ -475,21 +478,22 @@ public class DateiManager {
 		
 		try {
 			String add = "";
+			
 			// if(relativ) {
 			// add = verz;
 			// }
+			
 			f = new LineNumberReader(new FileReader(add + verzeichnis));
 			line = f.readLine();
-			if (line.equals(line.compareTo("_fig_") != 0)) { // Format
-																// bestaetigen
-				System.err.println("Die Datei ist keine Figur-Datei!" + line);
+			
+			if (line.equals(line.compareTo("_fig_") != 0)) { // Format  bestätigen
+				Logger.error("Die Datei ist keine Figur-Datei!" + line);
+				
 				return null;
 			}
+			
 			line = f.readLine();
-			final int animationsLaenge = Integer.valueOf(line.substring(3)); // Die
-																				// Anzahl
-																				// an
-																				// PixelFeldern
+			final int animationsLaenge = Integer.valueOf(line.substring(3)); // Die Anzahl an PixelFeldern
 			// System.out.println("PixelFelder: " + animationsLaenge);
 			line = f.readLine();
 			final int fakt = Integer.valueOf(line.substring(2)); // Der
@@ -509,7 +513,7 @@ public class DateiManager {
 			PixelFeld[] ergebnis = new PixelFeld[animationsLaenge];
 			for (int i = 0; i < ergebnis.length; i++) { // Felder basteln
 				if ((line = f.readLine()).compareTo("-") != 0) { // Sicherheitstest
-					System.err.println("Die Datei ist beschaedigt");
+					Logger.error("Die Datei ist beschädigt");
 				}
 				ergebnis[i] = new PixelFeld(x, y, fakt);
 				for (int xT = 0; xT < x; xT++) { // X
@@ -528,8 +532,7 @@ public class DateiManager {
 			fig.animiertSetzen((animationsLaenge != 1));
 			f.close();
 		} catch (IOException e) {
-			System.err
-					.println("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?"
+			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?"
 							+ bruch + verzeichnis);
 			e.printStackTrace();
 		} finally {

@@ -60,6 +60,7 @@ public class Fenster extends Frame {
 	 * Fensterbereiches liegt.<br />
 	 * Gibt es keine solche ist dieser Wert irrelevant.
 	 */
+	@SuppressWarnings("unused")
 	private volatile boolean mausAusBild = false;
 
 	/**
@@ -144,6 +145,7 @@ public class Fenster extends Frame {
 	 * @param fensterY
 	 *            Die Y-Koordinate des Fensters auf dem Computerbildschirm.
 	 */
+	@SuppressWarnings("serial")
 	public Fenster(int breite, int hoehe, String titel, boolean vollbild,
 			int fensterX, int fensterY) {
 		super(titel);

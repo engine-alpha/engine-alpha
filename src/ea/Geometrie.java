@@ -25,10 +25,8 @@ import java.awt.Color;
  * 
  * @author Michael Andonie
  */
-public abstract class Geometrie
-extends Raum
-implements Leuchtend, Listung
-{
+@SuppressWarnings("serial")
+public abstract class Geometrie extends Raum implements Leuchtend, Listung {
     /**
      * Die einzelnen, grafisch darstellbaren Formen, aus denen dieses Geometrie-Objekt besteht.
      */
