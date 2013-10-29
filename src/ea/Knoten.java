@@ -20,6 +20,8 @@
 package ea;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Ein Knoten ist eine Sammlung vielen Raum-Objekten, die hierdurch einheitlich bewegt, und einheitlich behandelt werden koennen.
@@ -31,13 +33,13 @@ public class Knoten extends Raum implements Listung {
 	/**
 	 * Die Liste aller Raum-Objekte, die dieser Knoten fasst.
 	 */
-	private java.util.concurrent.CopyOnWriteArrayList<Raum> list;
+	private CopyOnWriteArrayList<Raum> list;
 	
 	/**
 	 * Konstruktor fuer Objekte der Klasse Knoten
 	 */
 	public Knoten() {
-		list = new java.util.concurrent.CopyOnWriteArrayList<Raum>();
+		list = new CopyOnWriteArrayList<Raum>();
 	}
 	
 	/**
@@ -169,6 +171,10 @@ public class Knoten extends Raum implements Listung {
 	 */
 	public void add(Raum m) {
 		list.add(m);
+		
+		ArrayList<Raum> temp = new ArrayList<>(list);
+		Collections.sort(temp);
+		list = new CopyOnWriteArrayList<>(temp);
 	}
 	
 	/**

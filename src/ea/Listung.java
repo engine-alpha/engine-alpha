@@ -28,5 +28,5 @@ package ea;
  * @author Michael Andonie
  */
 public interface Listung {
-
+	
 }
