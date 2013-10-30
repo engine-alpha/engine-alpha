@@ -7,7 +7,7 @@ import ea.Bild;
 
 /**
  * Diese Klasse wrapt die Funktionen der Klasse <code>Bild</code> und 
- * stellt sie für die lokale BlueJ-API mieglichst klar bereit.
+ * stellt sie fÃ¼r die lokale BlueJ-API mieglichst klar bereit.
  * @author Andonie
  *
  */

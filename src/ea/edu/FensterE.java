@@ -45,9 +45,9 @@ extends Game {
     
     /**
      * Konstruktor Typ 2: Freie Wahl der Fenstereigenschaften.
-     * @param breite	Die gewünschte Breite.
-     * @param hoehe		Die gewünschte Höhe.
-     * @param titel		Der gewünschte Titel.
+     * @param breite	Die gewÃ¼nschte Breite.
+     * @param hoehe		Die gewÃ¼nschte HÃ¶he.
+     * @param titel		Der gewÃ¼nschte Titel.
      */
     private FensterE(int breite, int hoehe, String titel) {
     	super(breite, hoehe, titel);
@@ -70,7 +70,7 @@ extends Game {
      * - Es gibt nur <b>ein einziges</b> Fenster in jedem laufenden Programm. Dieses Fenster wird beim
      * ersten Aufruf dieser Methode erstellt.
      * @param breite	Die Wunschbreite, falls noch kein Fenster erstellt wurde.
-     * @param hoehe		Die Wunschhöhe, falls noch kein Fenster erstellt wurde.
+     * @param hoehe		Die WunschhÃ¶he, falls noch kein Fenster erstellt wurde.
      * @return  Das Fenster, in dem alle "edu"-Grafiken wiedergegeben werden.
      */
     public static final FensterE getFenster(int breite, int hoehe) {

@@ -83,8 +83,8 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
 
     /**
      * Konstruktor. Erstellt die Texte fuer Links- und Rechtspunkte.
-     * @param breite	Die gewünschte Breite der Anzeige in Pixel.
-     * @param hoehe		Die gewünschtte Höhe der Anzeige in Pixel.
+     * @param breite	Die gewÃ¼nschte Breite der Anzeige in Pixel.
+     * @param hoehe		Die gewÃ¼nschtte HÃ¶he der Anzeige in Pixel.
      */
     public AnzeigeE(int breite, int hoehe) {
         links = new Text(0, 10, "0");
@@ -100,7 +100,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
     }
 
     /**
-     * Interne Align-Methode für harmonisches Aussehen der Punkte
+     * Interne Align-Methode fÃ¼r harmonisches Aussehen der Punkte
      */
     private void punkteAlignen() {
 		int lLinks = links.dimension().breite;
@@ -119,7 +119,7 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
 
 	public int zufallszahlVonBis(int von, int bis) {
         if(von > bis) {
-            System.err.println("Die Zufallszahl von ("+von+") war größer als die "
+            System.err.println("Die Zufallszahl von ("+von+") war grÃ¶ÃŸer als die "
                     + "Zufallszahl bis (" + bis +").");
             return -1;
         }
