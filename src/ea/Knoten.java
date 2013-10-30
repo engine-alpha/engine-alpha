@@ -21,7 +21,8 @@ package ea;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.CopyOnWriteArrayList;
+
+import ea.util.Logger;
 
 /**
  * Ein Knoten ist eine Sammlung vielen Raum-Objekten, die hierdurch einheitlich bewegt, und einheitlich behandelt werden koennen.
@@ -33,13 +34,13 @@ public class Knoten extends Raum implements Listung {
 	/**
 	 * Die Liste aller Raum-Objekte, die dieser Knoten fasst.
 	 */
-	private CopyOnWriteArrayList<Raum> list;
+	private ArrayList<Raum> list;
 	
 	/**
 	 * Konstruktor fuer Objekte der Klasse Knoten
 	 */
 	public Knoten() {
-		list = new CopyOnWriteArrayList<Raum>();
+		list = new ArrayList<Raum>();
 	}
 	
 	/**
@@ -52,7 +53,7 @@ public class Knoten extends Raum implements Listung {
 	 * 
 	 * @see leerenOhnePhysikAbmelden()
 	 */
-	public void leeren() {
+	public synchronized void leeren() {
 		for (Raum r : list) {
 			r.neutralMachen();
 			r.loeschen();
@@ -66,12 +67,8 @@ public class Knoten extends Raum implements Listung {
 	 * Loescht alle Raum-Objekte, die an diesem Knoten gelagert sind, ohne sie jedoch von ihrer
 	 * Physik her zu beeinflussen.
 	 */
-	public void leerenOhnePhysikAbmelden() {
-		for (Raum r : list) {
-			if (!list.remove(r)) {
-				System.err.println("FATAL ERROR - Beim leeren() in Knoten " + this);
-			}
-		}
+	public synchronized void leerenOhnePhysikAbmelden() {
+		list.clear();
 	}
 	
 	/**
@@ -88,16 +85,16 @@ public class Knoten extends Raum implements Listung {
 	 *            Das von diesem Knoten zu entfernende Raum-Objekt
 	 * @see entfernenOhnePhysikAbmelden(Raum)
 	 */
-	public void entfernen(Raum m) {
+	public synchronized void entfernen(Raum m) {
 		if (list.contains(m)) {
 			m.neutralMachen();
 			m.loeschen();
 		} else {
-			System.err.println("Achtung! Das am Knoten zu entfernende Raum-Objekt war gar nicht am Knoten angemeldet!");
+			Logger.warning("Achtung! Das am Knoten zu entfernende Raum-Objekt war gar nicht am Knoten angemeldet!");
 		}
-		while (list.remove(m)) {
-			// Nichts zu tun
-		}
+		
+
+		while(list.remove(m));
 	}
 	
 	/**
@@ -108,10 +105,8 @@ public class Knoten extends Raum implements Listung {
 	 * @param m
 	 *            Das von diesem Knoten zu entfernende Raum-Objekt
 	 */
-	public void entfernenOhnePhysikAbmelden(Raum m) {
-		while (list.remove(m)) {
-			// Nichts zu tun
-		}
+	public synchronized void entfernenOhnePhysikAbmelden(Raum m) {
+		list.remove(m);
 	}
 	
 	/**
@@ -124,7 +119,7 @@ public class Knoten extends Raum implements Listung {
 	 *            Das Raum-Objekt, das auf Vorkommen in diesem Knoten ueberprueft werden soll
 	 * @return <code>true</code>, wenn das Raum-Objekt <b>ein- oder auch mehrmals</b> an diesem Knoten liegt
 	 */
-	public boolean besitzt(Raum m) {
+	public synchronized boolean besitzt(Raum m) {
 		return list.contains(m);
 	}
 	
@@ -155,10 +150,9 @@ public class Knoten extends Raum implements Listung {
 	 * </code><br />
 	 * Das Ergebnis: 11 Zeilen Programmcode gespart.
 	 */
-	public void add(Raum... m) {
-		for (int i = 0; i < m.length; i++) {
-			list.add(m[i]);
-		}
+	public synchronized void add(Raum... m) {
+		for (Raum n : m)
+			list.add(n);
 	}
 	
 	/**
@@ -169,12 +163,10 @@ public class Knoten extends Raum implements Listung {
 	 * @param m
 	 *            Das hinzuzufuegende Raum-Objekt
 	 */
-	public void add(Raum m) {
+	public synchronized void add(Raum m) {
 		list.add(m);
 		
-		ArrayList<Raum> temp = new ArrayList<>(list);
-		Collections.sort(temp);
-		list = new CopyOnWriteArrayList<>(temp);
+		Collections.sort(list);
 	}
 	
 	/**
@@ -251,11 +243,10 @@ public class Knoten extends Raum implements Listung {
 	@Override
 	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
 		try {
-			for (Raum raum : list) {
-				raum.zeichnenBasic(g, r);
-			}
-		} catch (java.util.ConcurrentModificationException e) {
-			//
+			for (int i = list.size(); i > -1; i--)
+				list.get(0).zeichnenBasic(g, r);
+		} catch (Exception e) {
+			/* don't care */
 		}
 	}
 	
@@ -293,12 +284,14 @@ public class Knoten extends Raum implements Listung {
 	@Override
 	public BoundingRechteck[] flaechen() {
 		ArrayList<BoundingRechteck> data = new ArrayList<BoundingRechteck>();
+		
 		for (Raum r : list) {
 			BoundingRechteck[] arr = r.flaechen();
-			for (int i = 0; i < arr.length; i++) {
-				data.add(arr[i]);
-			}
+			
+			for (BoundingRechteck br : arr)
+				data.add(br);
 		}
+		
 		return data.toArray(new BoundingRechteck[0]);
 	}
 }
