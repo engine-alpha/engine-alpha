@@ -19,6 +19,7 @@
 
 package ea;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -54,12 +55,10 @@ public class Knoten extends Raum implements Listung {
 	 * @see leerenOhnePhysikAbmelden()
 	 */
 	public synchronized void leeren() {
-		for (Raum r : list) {
-			r.neutralMachen();
-			r.loeschen();
-			if (!list.remove(r)) {
-				System.err.println("FATAL ERROR - Beim leeren() in Knoten " + this);
-			}
+		for (int i = list.size() - 1; i > -1; i--) {
+			list.get(i).neutralMachen();
+			list.get(i).loeschen();
+			list.remove(i);
 		}
 	}
 	
@@ -241,10 +240,10 @@ public class Knoten extends Raum implements Listung {
 	 *            Das Rechteck, dass die Kameraposition definiert
 	 */
 	@Override
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics g, BoundingRechteck r) {
 		try {
-			for (int i = list.size(); i > -1; i--)
-				list.get(0).zeichnenBasic(g, r);
+			for (int i = list.size() - 1; i > -1; i--)
+				list.get(i).zeichnenBasic(g, r);
 		} catch (Exception e) {
 			/* don't care */
 		}
