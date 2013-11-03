@@ -162,9 +162,10 @@ public class Knoten extends Raum implements Listung {
 	 * @param m
 	 *            Das hinzuzufuegende Raum-Objekt
 	 */
-	public synchronized void add(Raum m) {
+	public synchronized void add(Raum m) { // reverse to keep backwardscompability
+		//Collections.reverse(list);
 		list.add(m);
-		
+		//Collections.reverse(list);
 		Collections.sort(list);
 	}
 	

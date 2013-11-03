@@ -29,10 +29,9 @@ import java.util.Locale;
  * 
  * @author Michael Andonie, Niklas Keller
  */
-public abstract class Raum
-		implements java.io.Serializable, Comparable<Raum> {
+public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	/**
-	 * Die Serialisierungs-Konstante dieser Klasse. In keiner Weise fuer die Programmierung mit der Engine bedeutsam.
+	 * Die Serialisierungs-Konstante dieser Klasse. <b>In keiner Weise fuer die Programmierung mit der Engine bedeutsam!</b>
 	 */
 	private static final long serialVersionUID = 98L;
 	
@@ -42,8 +41,8 @@ public abstract class Raum
 	private static final LeuchtMacher macher = new LeuchtMacher();
 	
 	/**
-	 * Der Animations-Manager, ueber den alle Animationen laufen.<br />
-	 * Wird zum Loeschen aller Referenzen auf dieses Objekt verwendet.
+	 * Der Animations-Manager, über den alle Animationen laufen.<br />
+	 * Wird zum Löschen aller Referenzen auf dieses Objekt verwendet.
 	 */
 	private static final AnimationsManager animationsManager = AnimationsManager.getAnimationsManager();
 	
@@ -101,7 +100,8 @@ public abstract class Raum
 	 * Setzt den Z-Index dieses Raumes. Je größer, desto weiter vorne wird ein Raum gezeichnet.
 	 * <b>Diese Methode muss ausgeführt werden, bevor der Raum zu einem Knoten hinzugefügt wird.</b>
 	 * 
-	 * @param z zu setzender Index 
+	 * @param z
+	 *            zu setzender Index
 	 */
 	public void zIndex(int z) {
 		zIndex = z;
@@ -342,44 +342,52 @@ public abstract class Raum
 	 * @return Das Farbobjekt zum String; ist Color.black bei unzuordnembaren String
 	 */
 	public static final Color zuFarbeKonvertieren(String t) {
-		Color c = Color.black;
-		t = t.toLowerCase(Locale.ENGLISH);
-		if (t.compareTo("gelb") == 0) {
-			c = Color.yellow;
+		Color c;
+		
+		switch (t.toLowerCase(Locale.GERMAN)) {
+			case "gelb":
+				c = Color.yellow;
+				break;
+			case "weiss":
+				c = Color.white;
+				break;
+			case "orange":
+				c = Color.orange;
+				break;
+			case "grau":
+				c = Color.gray;
+				break;
+			case "gruen":
+				c = Color.green;
+				break;
+			case "blau":
+				c = Color.blue;
+				break;
+			case "rot":
+				c = Color.red;
+				break;
+			case "pink":
+				c = Color.pink;
+				break;
+			case "magenta":
+			case "lila":
+				c = Color.magenta;
+				break;
+			case "cyan":
+			case "tuerkis":
+				c = Color.cyan;
+				break;
+			case "dunkelgrau":
+				c = Color.darkGray;
+				break;
+			case "hellgrau":
+				c = Color.lightGray;
+				break;
+			default:
+				c = Color.black;
+				break;
 		}
-		else if (t.compareTo("weiss") == 0) {
-			c = Color.white;
-		}
-		else if (t.compareTo("orange") == 0) {
-			c = Color.orange;
-		}
-		else if (t.compareTo("grau") == 0) {
-			c = Color.gray;
-		}
-		else if (t.compareTo("gruen") == 0) {
-			c = Color.green;
-		}
-		else if (t.compareTo("blau") == 0) {
-			c = Color.blue;
-		}
-		else if (t.compareTo("rot") == 0) {
-			c = Color.red;
-		}
-		else if (t.compareTo("pink") == 0) {
-			c = Color.pink;
-		}
-		else if (t.compareTo("magenta") == 0 || t.compareTo("lila") == 0) {
-			c = Color.magenta;
-		}
-		else if (t.compareTo("cyan") == 0 || t.compareTo("tuerkis") == 0) {
-			c = Color.cyan;
-		}
-		else if (t.compareTo("dunkelgrau") == 0) {
-			c = Color.darkGray;
-		}
-		else if (t.compareTo("hellgrau") == 0) {
-			c = Color.lightGray;
-		}
+		
 		return DateiManager.ausListe(c);
 	}
 	
@@ -721,9 +729,9 @@ public abstract class Raum
 	 */
 	@Override
 	public int compareTo(Raum r) {
-		if (zIndex > r.zIndex)
-			return 1;
 		if (zIndex < r.zIndex)
+			return 1;
+		if (zIndex > r.zIndex)
 			return -1;
 		return 0;
 	}
