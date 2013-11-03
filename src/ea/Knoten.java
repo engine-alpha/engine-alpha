@@ -245,7 +245,7 @@ public class Knoten extends Raum implements Listung {
 			for (int i = list.size() - 1; i > -1; i--)
 				list.get(i).zeichnenBasic(g, r);
 		} catch (Exception e) {
-			/* don't care */
+			Logger.error(e.getMessage());
 		}
 	}
 	

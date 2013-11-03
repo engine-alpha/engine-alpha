@@ -118,16 +118,19 @@ public class Text extends Raum implements Leuchtend {
 	
 	private static void fontsEinbauen(final ArrayList<File> liste, File akt) {
 		File[] files = akt.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].equals(akt)) {
-				System.err.println("Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
-				continue;
-			}
-			if (files[i].isDirectory()) {
-				fontsEinbauen(liste, files[i]);
-			}
-			if (files[i].getName().endsWith(".ttf")) {
-				liste.add(files[i]);
+		
+		if(files != null) {
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].equals(akt)) {
+					System.err.println("Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
+					continue;
+				}
+				if (files[i].isDirectory()) {
+					fontsEinbauen(liste, files[i]);
+				}
+				if (files[i].getName().endsWith(".ttf")) {
+					liste.add(files[i]);
+				}
 			}
 		}
 	}
