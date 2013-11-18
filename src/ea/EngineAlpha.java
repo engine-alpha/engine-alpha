@@ -21,6 +21,7 @@ package ea;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics2D;
@@ -42,8 +43,7 @@ import javax.imageio.ImageIO;
  * @author Niklas Keller
  */
 @SuppressWarnings("serial")
-public class EngineAlpha
-extends Frame {
+public class EngineAlpha extends Frame {
 	// 1 => 1.0
 	// 2 => 1.1
 	// 3 => 1.2
@@ -53,9 +53,20 @@ extends Frame {
 	
 	public static final int VERSION_CODE = 6;
 	public static final String VERSION_STRING = "v3.0";
-
+	
+	private BufferedImage favicon;
+	
 	public EngineAlpha() {
 		super("Engine Alpha " + VERSION_STRING);
+		
+		try {
+			favicon = ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png"));
+			
+			this.setIconImage(favicon);
+		} catch(IOException e) {
+			System.exit(1); // should never happen
+		}
+		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				setVisible(false);
@@ -68,25 +79,17 @@ extends Frame {
 		new EngineAlphaPromotion(this);
 	}
 	
-	private class EngineAlphaPromotion
-	extends Canvas
-	implements Runnable {
-		
-		private BufferedImage about;
+	private class EngineAlphaPromotion extends Canvas implements Runnable {
+		private BufferedImage logo;
 		private double alpha = 0;
 		private boolean loading = true;
 		private int availableVersion = -1;
 		
 		public EngineAlphaPromotion(EngineAlpha parent) {
 			try {
-				URL url = EngineAlpha.class.getResource("/ea/assets/about.png");
-				
-				if(url == null)
-					System.exit(1);
-				
-				about = ImageIO.read(url);
+				logo = ImageIO.read(getClass().getResource("/ea/assets/logo.png"));
 			} catch (IOException e) {
-				System.exit(1);
+				System.exit(1); // should never happen
 			}
 			
 			setSize(300, 200);
@@ -132,7 +135,7 @@ extends Frame {
 							
 						}
 					} catch (IOException e) {
-						System.err.println("error");
+						/////
 					} finally {
 						if(bis != null) {
 							try {
@@ -180,17 +183,20 @@ extends Frame {
 		}
 
 		public void render(Graphics2D g) {
-			g.drawImage(about, 0, 0, null);
+			g.setColor(new Color(250, 250, 250));
+			g.fillRect(0, 0, getWidth(), getHeight());
+			
+			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 22, null);
 			
 			if(loading) {
-				g.setColor(new Color(255,255,255,150));
+				g.setColor(new Color(0,0,0,150));
 				g.fillOval((int) (getWidth()/2+8*Math.cos(alpha))-2, (int) (getHeight()-25+8*Math.sin(alpha))-2, 4, 4);
 				g.fillOval((int) (getWidth()/2+8*Math.cos(180+alpha))-2, (int) (getHeight()-25+8*Math.sin(180+alpha))-2, 4, 4);
 				g.drawLine((int) (getWidth()/2+8*Math.cos(alpha)), (int) (getHeight()-25+8*Math.sin(alpha)),
 						(int) (getWidth()/2+8*Math.cos(180+alpha)), (int) (getHeight()-25+8*Math.sin(180+alpha)));
 			} else {
 				String message = "";
-				Color color = new Color(250,250,250);
+				Color color = new Color(30,30,30);
 				
 				if(availableVersion == -1) {
 					message = "Server für Versionsabgleich nicht erreichbar.";
@@ -207,12 +213,13 @@ extends Frame {
 				
 				else if(availableVersion < VERSION_CODE) {
 					message = "Du arbeitest bereits mit einer Preview.";
-					color = new Color(0,150,200);
+					color = new Color(0,100,150);
 				}
 				
 				g.setColor(color);
+				g.setFont(new Font("SansSerif", Font.ITALIC, 14));
 				FontMetrics fm = g.getFontMetrics();
-				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 15);
+				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 22);
 			}
 		}
 	}
