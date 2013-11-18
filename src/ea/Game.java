@@ -26,11 +26,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+
+import ea.util.Logger;
 
 /**
  * Diese Klasse ist fuer die sofortige, einfache Verwendung der Engine verantwortlich.<br />
@@ -38,8 +41,7 @@ import javax.swing.filechooser.FileFilter;
  * 
  * @author Michael Andonie
  */
-public abstract class Game
-		implements TastenReagierbar {
+public abstract class Game implements TastenReagierbar {
 	/**
 	 * Das Spielfenster
 	 */
@@ -152,15 +154,25 @@ public abstract class Game
 	 */
 	public Game(int x, int y, String titel, boolean vollbild, boolean exitOnEsc, int fensterX, int fensterY) {
 		fenster = new Fenster(x, y, titel, vollbild, fensterX, fensterY);
-		fenster.getCam().wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
-		statischeWurzel = fenster.getStatNode();
-		cam = fenster.getCam();
 		this.exitOnEsc = exitOnEsc;
-		fenster.anmelden(this);
+		
+		cam = fenster.getCam();
+		cam.wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
+		
 		blende = fenster.fenstermasse().ausDiesem();
 		blende.farbeSetzen(new Farbe(255, 255, 255, 190));
 		blende.sichtbarSetzen(false);
+		
+		statischeWurzel = fenster.getStatNode();
 		statischeWurzel.add(blende);
+		
+		fenster.anmelden(this);
+		
+		try {
+			fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png")));
+		} catch(Exception e) {
+			Logger.warning("Standard-Icon konnte nicht geladen werden.");
+		}
 	}
 	
 	/**
@@ -264,6 +276,12 @@ public abstract class Game
 		this(500, 500, "", false);
 	}
 	
+	/**
+	 * Setzt das übergebene Bild als Icon des Fensters
+	 * 
+	 * @param icon
+	 *            zu setzendes Icon
+	 */
 	public void iconSetzen(Bild icon) {
 		fenster.setIconImage(icon.bild());
 	}
