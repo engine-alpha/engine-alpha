@@ -22,7 +22,7 @@ package ea;
 /**
  * Ein Physik-Client ueberwacht ganz generell ein Raum-Objekt in der Physik.<br />
  * Es ist die Ausgangsklasse fuer Gravitatoren und Passivatoren - aber auch fuer die NullClient-Klasse.
- * Diese ist die Standart-Physikklasse fuer nicht an der Physik beteiligte, neutrale Objekte
+ * Diese ist die Standart-Physikklasse fuer nicht an der Physik beteiligte, neutrale Objekte.
  * 
  * @author Michael Andonie
  */
