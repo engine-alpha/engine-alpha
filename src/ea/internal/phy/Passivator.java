@@ -17,7 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.phy;
+
+import ea.BoundingRechteck;
+import ea.FallReagierbar;
+import ea.Knoten;
+import ea.Raum;
+import ea.StehReagierbar;
+import ea.Vektor;
 
 /**
  * Ein Passivator ueberwacht und steuert ein passives Objekt in der Physik.

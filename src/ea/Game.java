@@ -33,7 +33,12 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import ea.util.Logger;
+import ea.internal.gui.Eingabe;
+import ea.internal.gui.Fenster;
+import ea.internal.gui.Frage;
+import ea.internal.gui.HighScoreFenster;
+import ea.internal.gui.Nachricht;
+import ea.internal.util.Logger;
 
 /**
  * Diese Klasse ist fuer die sofortige, einfache Verwendung der Engine verantwortlich.<br />

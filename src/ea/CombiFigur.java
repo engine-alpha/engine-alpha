@@ -8,7 +8,7 @@ package ea;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import ea.util.Logger;
+import ea.internal.util.Logger;
 
 /**
  * Eine Combifigur ist eine Figur, die aus verschiedenen "Unterfiguren" besteht.

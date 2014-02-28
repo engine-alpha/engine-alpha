@@ -17,7 +17,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.ani;
+
+import ea.AnimationsEndeReagierbar;
+import ea.Animierer;
+import ea.Gerade;
+import ea.Manager;
+import ea.Punkt;
+import ea.Raum;
+import ea.RegEck;
+import ea.Vektor;
 
 /**
  * Beschreiben Sie hier die Klasse KreisAnimierer.

@@ -17,16 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.phy;
+
+import ea.FallDummy;
+import ea.StehReagierbar;
 
 /**
- * Dieses Interface bezeichnet eine Raum-Klasse, die Wiederum eine Anreihung mehrer anderer
- * Raum-Objekte beinhaltet. Hierzu zaehlen bis jetzt nur die Klassen <code>Knoten</code> und <code>Geometrie</code>.<br />
- * Diese Schnittstelle hat keinerlei Konstanten oder abstrakte Methoden; ihr Implementieren dient nur der Kennzeichnung fuer
- * die Engine intern. Es findet so verwendung bei Kollisionstests.
+ * Die Nichtstuende Dummy-Standartklasse, die fuer einen Gravitator der nichtstuende Initial-StehReagierbar-Listener ist.
  * 
  * @author Michael Andonie
+ * @see ea.StehReagierbar
  */
-public interface Listung {
+public class StehDummy
+implements StehReagierbar  {
+
+	/**
+	 * <i>Singleton</i>-Referenz auf die eine Instanz.
+	 */
+	private static StehDummy instance = null;
 	
+    /**
+     * In der Verarbeitung des stehens passiert <b>nichts</b>.
+     */
+    @Override
+    public void stehReagieren() {
+        //
+    }
+
+    /**
+     * <i>Singleton</i>-Getter-Methode für den Dummy.
+     * @return	Die eine existente Instanz des <code>StehDummy</code>-Objekts.
+     */
+	public static StehReagierbar getDummy() {
+		return instance == null ? instance = new StehDummy() : instance;
+	}
+
 }

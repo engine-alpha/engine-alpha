@@ -21,6 +21,10 @@ package ea;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import ea.internal.ani.GeradenAnimierer;
+import ea.internal.ani.KreisAnimierer;
+import ea.internal.ani.StreckenAnimierer;
+
 /**
  * Der AnimationsManager handelt benutzerfreundlich einfache Animationen.<br />
  * Er arbeitet intern mit unterschiedlichen Objekten der Klasse Animierer.<br />

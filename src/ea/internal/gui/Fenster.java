@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.gui;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
@@ -39,6 +39,22 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+
+import ea.BoundingRechteck;
+import ea.Kamera;
+import ea.Knoten;
+import ea.Manager;
+import ea.Maus;
+import ea.Punkt;
+import ea.Raum;
+import ea.SimpleGraphic;
+import ea.TastenGedruecktReagierbar;
+import ea.TastenLosgelassenReagierbar;
+import ea.TastenReagierbar;
+import ea.Ticker;
+import ea.Vektor;
+import ea.internal.gra.Zeichenebene;
+import ea.internal.gra.Zeichner;
 
 /**
  * Das Fenster als Oberfenster.<br />

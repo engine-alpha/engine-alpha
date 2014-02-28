@@ -23,7 +23,8 @@ import java.io.*;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import ea.util.Logger;
+import ea.internal.gra.PixelFeld;
+import ea.internal.util.Logger;
 
 /**
  * Der Dateimanager ist eine Klasse, die die Systemspezifischen Pfadregeln

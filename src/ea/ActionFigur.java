@@ -22,7 +22,7 @@ package ea;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
-import ea.util.Logger;
+import ea.internal.util.Logger;
 
 /**
  * Eine Actionfigur ist eine besondere Figur. Diese hat verschiedene <b>Zustaende</b> und kann verschiedene

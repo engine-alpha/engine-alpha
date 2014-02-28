@@ -28,7 +28,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import ea.util.Logger;
+import ea.internal.util.Logger;
 
 /**
  * Diese Klasse ermoeglicht das Aufbauen einer Client-Verbindung zu einem

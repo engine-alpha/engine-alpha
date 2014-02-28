@@ -22,6 +22,13 @@ package ea;
 import java.awt.Color;
 import java.util.Locale;
 
+import ea.internal.gui.Fenster;
+import ea.internal.phy.Gravitator;
+import ea.internal.phy.NullClient;
+import ea.internal.phy.Passivator;
+import ea.internal.phy.Physik;
+import ea.internal.phy.PhysikClient;
+
 /**
  * Raum bezeichnet alles, was sich auf der Zeichenebene befindet.<br />
  * Dies ist die absolute Superklasse aller grafischen Objekte. Umgekehrt kann somit jedes

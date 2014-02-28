@@ -28,6 +28,11 @@ package ea;
 public class FallDummy
 implements FallReagierbar {
 
+	/**
+	 * <i>Singleton</i>-Referenz auf die eine Instanz.
+	 */
+	private static FallDummy instance = null;
+	
     /**
      * Ueberschrieben Reaktionsmethode. Hierin passiert GAR NICHTS.
      */
@@ -35,5 +40,13 @@ implements FallReagierbar {
     public void fallReagieren() {
         //Nichts tun
     }
+
+    /**
+     * <i>Singleton</i>-Getter-Methode für den Dummy.
+     * @return	Die eine existente Instanz des <code>FallDummy</code>-Objekts.
+     */
+	public static FallReagierbar getDummy() {
+		return instance == null ? instance = new FallDummy() : instance;
+	}
 
 }

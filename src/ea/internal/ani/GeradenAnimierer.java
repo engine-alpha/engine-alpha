@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+e * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
  * 
  * Copyright (C) 2011 Michael Andonie
  * 
@@ -17,7 +17,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.ani;
+
+import ea.AnimationsEndeReagierbar;
+import ea.AnimationsManager;
+import ea.Animierer;
+import ea.Manager;
+import ea.Punkt;
+import ea.Raum;
+import ea.Vektor;
 
 /**
  * Animiert ein Raum-Objekt auf einer Geraden, bis eine gewisse Maximallaenge abgelaufen wurde,

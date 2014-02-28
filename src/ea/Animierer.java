@@ -19,7 +19,7 @@
 
 package ea;
 
-import ea.util.Logger;
+import ea.internal.util.Logger;
 
 /**
  * Jede Klasse, die ein Raum-Objekt animieren kann, leitet sich hieraus ab.<br />

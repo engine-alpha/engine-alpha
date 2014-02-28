@@ -17,10 +17,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.phy;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.ArrayList;
+
+import ea.BoundingRechteck;
+import ea.Knoten;
+import ea.KollisionsReagierbar;
+import ea.Manager;
+import ea.Raum;
+import ea.Ticker;
+import ea.Vektor;
 
 /**
  * Ein Objekt der Klasse Physik behandelt eigenstaendig verschiedene Raum-Objekte als Physik-Engine.<br />

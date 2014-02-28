@@ -52,7 +52,7 @@ public class Manager extends Timer {
 	 * - Die Figurenanimationsroutine<br />
 	 * - Die Leuchtanimationsroutine
 	 */
-	static Manager standard = new Manager("Interner Routinenmanager");
+	public static final Manager standard = new Manager("Interner Routinenmanager");
 	
 	/**
 	 * Die Liste aller Auftraege.

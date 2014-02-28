@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.gra.Zeichenebene;
+
 /**
  * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene; das, was im Fenster dargestellt wird.<br />
  * Sie kann ein Objekt fokussieren und ihm so folgen. Hierbei besteht auch die Moeglichkeit, diesen Fokus in Grenzen zu halten. Und zwar 
@@ -267,7 +269,7 @@ public class Kamera
     /**
      * Zeichnet alle Objekte neu, die sich auf der Zeichenebene und im Blickfeld der Kamera befinden.
      */
-    void zeichne(java.awt.Graphics g) {
+    public void zeichne(java.awt.Graphics g) {
         if(hatFokus()) {
             //Nachjustieren
             bild = bild.mittenAngleichInstanz(fokus.dimension());

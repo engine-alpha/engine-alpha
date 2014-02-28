@@ -6,6 +6,8 @@
 package ea;
 import java.awt.Graphics;
 
+import ea.internal.gui.Fenster;
+
 /**
  * Simple grafische Klassen bestehen nicht aus Flaechen. Sie haben nicht die vielfaeltigen
  * Eigenschaften von Objekten der Klasse <code>Raum</code>.<br />

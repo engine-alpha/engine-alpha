@@ -17,7 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.phy;
+
+import ea.BoundingRechteck;
+import ea.FallDummy;
+import ea.FallReagierbar;
+import ea.Raum;
+import ea.StehReagierbar;
+import ea.Vektor;
 
 /**
  * Ein Gravitator sorgt fuer das Verhalten eines Aktiv-Raum-Objektes in der Physik.
@@ -65,12 +72,12 @@ extends PhysikClient {
     /**
      * Das FallReagierbar-Interface, das auf zu tiefes Fallen reagieren soll.
      */
-    private FallReagierbar fListener = new FallDummy();
+    private FallReagierbar fListener = FallDummy.getDummy();
 
     /**
      * Das StehReagierbar-Interface, das auf stehen reagieren soll.
      */
-    private StehReagierbar sListener = new StehDummy();
+    private StehReagierbar sListener = StehDummy.getDummy();
 
     /**
      * Die kritische Tiefe, ab der der Listener regelmaessig informiert wird.

@@ -17,7 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.phy;
+
+import ea.FallReagierbar;
+import ea.Raum;
+import ea.StehReagierbar;
+import ea.Vektor;
 
 /**
  * Der Client fuer nicht vorhandene Teilnahme an der Physik.<br />

@@ -20,6 +20,8 @@
 package ea;
 
 import java.awt.Color;
+
+import ea.internal.gra.Listung;
 /**
  * Ein Objekt, das aus n primitiven Geometrischen Formen - <b>Dreiecken</b> - besteht
  * 

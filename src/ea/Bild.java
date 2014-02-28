@@ -30,7 +30,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import ea.util.Logger;
+import ea.internal.gui.Fenster;
+import ea.internal.util.Logger;
 
 /**
  * Ein Bild als Grafische Repraesentation einer Bilddatei, die gezeichnet werden kann.

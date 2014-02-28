@@ -17,7 +17,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.ani;
+
+import ea.AnimationsEndeReagierbar;
+import ea.Animierer;
+import ea.Manager;
+import ea.Punkt;
+import ea.Raum;
+import ea.Vektor;
 
 /**
  * Ein Linienanimierer laesst ein Raum-Objekt zwischen verschiedenen Punkten zusammenlaufen.

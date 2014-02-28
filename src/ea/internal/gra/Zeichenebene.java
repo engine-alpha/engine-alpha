@@ -17,23 +17,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.gra;
+
+import ea.Knoten;
 
 /**
- * Die Nichtstuende Dummy-Standartklasse, die fuer einen Gravitator der nichtstuende Initial-StehReagierbar-Listener ist.
+ * Die Zeichenebene ist die Sammlung aller zu malenden Objekte.<br />
+ * Aufgrund ihrer Einfachheit hat sie mehr symbolische Bedeutung.
  * 
  * @author Michael Andonie
- * @see ea.StehReagierbar
  */
-public class StehDummy
-implements StehReagierbar  {
+public class Zeichenebene
+{
+    /**
+     * Der absolute Basisknoten.<br />
+     * Hieran
+     */
+    private Knoten basis = new Knoten();
 
     /**
-     * In der Verarbeitung des stehens passiert <b>nichts</b>.
+     * Konstruktor f�r Objekte der Klasse Zeichenebene
      */
-    @Override
-    public void stehReagieren() {
+    public Zeichenebene()
+    {
         //
     }
-
+    
+    /**
+     * @return  Der Basisknoten
+     */
+    public Knoten basis() {
+        return basis;
+    }
 }

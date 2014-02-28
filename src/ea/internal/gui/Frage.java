@@ -1,4 +1,4 @@
-package ea;
+package ea.internal.gui;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -1,4 +1,4 @@
-package ea.util;
+package ea.internal.util;
 
 import java.io.BufferedWriter;
 import java.io.File;

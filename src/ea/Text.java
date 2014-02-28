@@ -23,6 +23,8 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 
+import ea.internal.gui.Fenster;
+
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
  * 

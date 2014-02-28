@@ -21,6 +21,8 @@ package ea;
 
 import java.util.ArrayList;
 
+import ea.internal.gra.PixelFeld;
+
 /**
  * Eine Figur ist eine aus einer Datei geladene Sammlung von Pixeln, die orientierungsmaessig rechteckig gehandelt werden.<br />
  * <code>

@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.gra.Listung;
+
 /**
  * Das Dreieck ist die Basiszeichenklasse.<br />
  * Jeder Koerper laesst sich aus solchen darstellen.<br />

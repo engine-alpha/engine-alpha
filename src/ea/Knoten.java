@@ -23,7 +23,8 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import ea.util.Logger;
+import ea.internal.gra.Listung;
+import ea.internal.util.Logger;
 
 /**
  * Ein Knoten ist eine Sammlung vielen Raum-Objekten, die hierdurch einheitlich bewegt, und einheitlich behandelt werden koennen.

@@ -17,34 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.gra;
 
 /**
- * Die Zeichenebene ist die Sammlung aller zu malenden Objekte.<br />
- * Aufgrund ihrer Einfachheit hat sie mehr symbolische Bedeutung.
+ * Dieses Interface bezeichnet eine Raum-Klasse, die Wiederum eine Anreihung mehrer anderer
+ * Raum-Objekte beinhaltet. Hierzu zaehlen bis jetzt nur die Klassen <code>Knoten</code> und <code>Geometrie</code>.<br />
+ * Diese Schnittstelle hat keinerlei Konstanten oder abstrakte Methoden; ihr Implementieren dient nur der Kennzeichnung fuer
+ * die Engine intern. Es findet so verwendung bei Kollisionstests.
  * 
  * @author Michael Andonie
  */
-public class Zeichenebene
-{
-    /**
-     * Der absolute Basisknoten.<br />
-     * Hieran
-     */
-    private Knoten basis = new Knoten();
-
-    /**
-     * Konstruktor f�r Objekte der Klasse Zeichenebene
-     */
-    public Zeichenebene()
-    {
-        //
-    }
-    
-    /**
-     * @return  Der Basisknoten
-     */
-    public Knoten basis() {
-        return basis;
-    }
+public interface Listung {
+	
 }

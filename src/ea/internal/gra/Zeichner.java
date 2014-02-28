@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.gra;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -26,6 +26,15 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferStrategy;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import ea.AnimationsManager;
+import ea.BoundingRechteck;
+import ea.Kamera;
+import ea.Knoten;
+import ea.Raum;
+import ea.SimpleGraphic;
+import ea.Vektor;
+import ea.internal.phy.Physik;
 
 /**
  * Dies ist das Panel, in dem die einzelnen Dinge gezeichnet werden
@@ -155,7 +164,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * @param vordergrund
 	 *            Der neue Vordergrund
 	 */
-	void anmelden(Raum vordergrund) {
+	public void anmelden(Raum vordergrund) {
 		this.vordergrund = vordergrund;
 	}
 	

@@ -17,9 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.gra;
 
 import java.awt.*;
+
+import ea.BoundingRechteck;
 
 /**
  * Ein PixelFeld ist eine Ansammlzung vieler Pixel, es kann gezeichnet werden.<br />
