@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.util.Logger;
+
 /**
  * Jede Klasse, die ein Raum-Objekt animieren kann, leitet sich hieraus ab.<br />
  * <b>!!!!!ACHTUNG!!!!!<b><br />
@@ -96,7 +98,7 @@ public abstract class Animierer implements Ticker {
 		if (angemeldet) {
 			manager.starten(this, intervall);
 		} else {
-			System.err.println("Dieser Animierer ist bereits abgemeldet!");
+			Logger.error("Dieser Animierer ist bereits abgemeldet!");
 		}
 	}
 	
@@ -108,7 +110,7 @@ public abstract class Animierer implements Ticker {
 			manager.anhalten(this);
 			angemeldet = false;
 		} else {
-			System.err.println("Dieser Animierer kann nicht angehalten werden, da seine Animation bereits beendet wurde!!!!");
+			Logger.error("Dieser Animierer kann nicht angehalten werden, da seine Animation bereits beendet wurde!!!!");
 		}
 	}
 	

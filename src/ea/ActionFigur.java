@@ -41,8 +41,7 @@ import ea.util.Logger;
  * @author Michael Andonie
  */
 @SuppressWarnings("serial")
-public class ActionFigur
-		extends Raum {
+public class ActionFigur extends Raum {
 	
 	/**
 	 * Die Sammlung aller Zustaende
@@ -97,7 +96,7 @@ public class ActionFigur
 					}
 				} catch (ConcurrentModificationException e) {
 					
-				} catch (NullPointerException npe) {
+				} catch (NullPointerException e) {
 					
 				}
 			}
@@ -189,6 +188,7 @@ public class ActionFigur
 				return;
 			}
 		}
+		
 		Logger.error("Achtung! Der Name des auszufuehrenden Zustandes wurde nie bei einer Anmeldung mitgegeben! " +
 				"Der Name, der nicht unter den Zustaenden gefunden wurde war: " + name);
 	}
@@ -210,6 +210,7 @@ public class ActionFigur
 				return;
 			}
 		}
+		
 		Logger.error("Achtung! Der Name der auszufuehrenden Aktion wurde nie bei einer Anmeldung mitgegeben! " +
 				"Der Name, der nicht unter den angemeldeten Aktionen gefunden wurde war: " + name);
 	}

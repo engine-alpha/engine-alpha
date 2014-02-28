@@ -1,21 +1,21 @@
-/* Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
- *
- * Copyright (C) 2011  Michael Andonie
- *
+/*
+ * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * 
+ * Copyright (C) 2011 Michael Andonie
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 
 package ea;
 
@@ -28,15 +28,17 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import ea.util.Logger;
+
 /**
  * Diese Klasse ermoeglicht das Aufbauen einer Client-Verbindung zu einem
  * Server.
  * 
  * @author Michael Andonie
  */
-public class Client 
-extends Thread 
-implements Empfaenger, SenderInterface {
+public class Client
+		extends Thread
+		implements Empfaenger, SenderInterface {
 	
 	/**
 	 * Der socket, ueber den die Verbindung aufgebaut wird.
@@ -44,7 +46,7 @@ implements Empfaenger, SenderInterface {
 	private Socket socket;
 	
 	/**
-	 * Die gew�nschte Ziel-IP-Adresse des Socket
+	 * Die gewünschte Ziel-IP-Adresse des Socket
 	 */
 	private final String ipAdresse;
 	
@@ -79,7 +81,7 @@ implements Empfaenger, SenderInterface {
 	
 	/**
 	 * Die run-Methode des Threads baut eine Verbindung zum Server aus.
-	 * Sobald dieser Thread erfolgreich abgeschlossen ist, kann die Verbindung 
+	 * Sobald dieser Thread erfolgreich abgeschlossen ist, kann die Verbindung
 	 * zur Kommunikation genutzt werden.
 	 */
 	@Override
@@ -87,7 +89,7 @@ implements Empfaenger, SenderInterface {
 		try {
 			socket = new Socket(ipAdresse, port);
 			
-			//Stelle sicher, dass der Socket auch wieder geschlossen wird.
+			// Stelle sicher, dass der Socket auch wieder geschlossen wird.
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
 				public void run() {
@@ -99,25 +101,24 @@ implements Empfaenger, SenderInterface {
 					socket.getOutputStream()));
 			InputStream is = socket.getInputStream();
 			
-			bw.write("xe"+name);
+			bw.write("xe" + name);
 			bw.newLine();
 			bw.flush();
 			
-			//Set up interpreter
-			NetzwerkInterpreter interpreter = new NetzwerkInterpreter(
-					new BufferedReader(new InputStreamReader(is)));
+			// Set up interpreter
+			NetzwerkInterpreter interpreter = new NetzwerkInterpreter(new BufferedReader(new InputStreamReader(is)));
 			interpreter.empfaengerHinzufuegen(this);
 			
 			NetzwerkVerbindung vb = new NetzwerkVerbindung(
 					name, bw, interpreter);
 			verbindung = vb;
-			synchronized(this) {
+			synchronized (this) {
 				this.notifyAll();
 			}
 		} catch (UnknownHostException e) {
-			System.err.println("Konnte die IP-Adresse nicht zuordnen...");
+			Logger.error("Konnte die IP-Adresse nicht zuordnen...");
 		} catch (IOException e) {
-			System.err.println("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer"
+			Logger.error("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer"
 					+ " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
 		}
 	}
@@ -128,8 +129,8 @@ implements Empfaenger, SenderInterface {
 	 * und endet erst, wenn die Verbindung aufgebaut wurde.
 	 */
 	public void warteAufVerbindung() {
-		if(verbindung == null) {
-			synchronized(this) {
+		if (verbindung == null) {
+			synchronized (this) {
 				try {
 					wait();
 				} catch (InterruptedException e) {
@@ -141,21 +142,23 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	public void verbindungSchliessen() {
-		if(!socket.isClosed()) {
+		if (!socket.isClosed()) {
 			verbindung.beendeVerbindung();
 			try {
 				socket.close();
-			} catch(IOException e) {
+			} catch (IOException e) {
 				System.err.println("Konnte den Verbindungs-Socket nicht mehr schliessen.");
 			}
 		}
 	}
 	
 	/**
-	 * Setzt den Empfaenger, der ueber jede Nachricht an diesen 
+	 * Setzt den Empfaenger, der ueber jede Nachricht an diesen
 	 * Client informiert wird.
-	 * @param e	Der Empfaenger, and den alle Nachrichten an 
-	 * diesen Client weitergereicht werden sollen.
+	 * 
+	 * @param e
+	 *            Der Empfaenger, and den alle Nachrichten an
+	 *            diesen Client weitergereicht werden sollen.
 	 */
 	public void empfaengerHinzufuegen(Empfaenger e) {
 		warteAufVerbindung();
@@ -163,8 +166,7 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * {@inheritDoc} Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
 	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
 	 * mit einem Server verbinden konnte.</b>.
 	 */
@@ -175,8 +177,7 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * {@inheritDoc} Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
 	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
 	 * mit einem Server verbinden konnte.</b>.
 	 */
@@ -187,8 +188,7 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * {@inheritDoc} Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
 	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
 	 * mit einem Server verbinden konnte.</b>.
 	 */
@@ -199,8 +199,7 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * {@inheritDoc} Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
 	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
 	 * mit einem Server verbinden konnte.</b>.
 	 */
@@ -211,8 +210,7 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * {@inheritDoc} Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
 	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
 	 * mit einem Server verbinden konnte.</b>.
 	 */
@@ -223,8 +221,7 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * {@inheritDoc} Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
 	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
 	 * mit einem Server verbinden konnte.</b>.
 	 */
@@ -235,114 +232,105 @@ implements Empfaenger, SenderInterface {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
+	 * {@inheritDoc} Sendet, sofern die Verbindung zum Server bereits aufgebaut wurde.
 	 * Sonst passiert <b>wird solange gewartet, bis der Client sich
 	 * mit einem Server verbinden konnte.</b>.
 	 */
 	@Override
 	public void beendeVerbindung() {
 		warteAufVerbindung();
-		if(!verbindung.istAktiv()) {
-			System.err.println("Die Verbindung zum Server wurde "
-					+ "bereits beendet.");
+		if (!verbindung.istAktiv()) {
+			Logger.error("Die Verbindung zum Server wurde bereits beendet.");
 		}
 		verbindung.beendeVerbindung();
 		try {
 			socket.close();
-		} catch(IOException e) {
-			System.err.println("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+		} catch (IOException e) {
+			Logger.error("Konnte den Verbindungs-Socket nicht mehr schliessen.");
 		}
 	}
-
+	
 	/**
-	 * {@inheritDoc}
-	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
 	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
-	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
-	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist derselbe.
+	 * 
 	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeString(String string) {
-		//To be overwritten
+		// To be overwritten
 	}
-
+	
 	/**
-	 * {@inheritDoc}
-	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
 	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
-	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
-	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist derselbe.
+	 * 
 	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeInt(int i) {
-		//To be overwritten
+		// To be overwritten
 	}
-
+	
 	/**
-	 * {@inheritDoc}
-	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
 	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
-	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
-	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist derselbe.
+	 * 
 	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeByte(byte b) {
-		//To be overwritten
+		// To be overwritten
 	}
-
+	
 	/**
-	 * {@inheritDoc}
-	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
 	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
-	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
-	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist derselbe.
+	 * 
 	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeDouble(double d) {
-		//To be overwritten
+		// To be overwritten
 	}
-
+	
 	/**
-	 * {@inheritDoc}
-	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
 	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
-	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
-	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist derselbe.
+	 * 
 	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeChar(char c) {
-		//To be overwritten
+		// To be overwritten
 	}
-
+	
 	/**
-	 * {@inheritDoc}
-	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
 	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
-	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
-	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist derselbe.
+	 * 
 	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void empfangeBoolean(boolean b) {
-		//To be overwritten
+		// To be overwritten
 	}
-
+	
 	/**
-	 * {@inheritDoc}
-	 * Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
+	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br />
 	 * So wird man moeglichst einfach von neuen Nachrichten an den Client
-	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code>
-	 * an diesem Client anmelden. Der Effekt ist derselbe.
+	 * informiert. Natuerlich kann man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist derselbe.
+	 * 
 	 * @see #empfaengerHinzufuegen(Empfaenger)
 	 */
 	@Override
 	public void verbindungBeendet() {
-		//To be overwritten
+		// To be overwritten
 	}
 }
