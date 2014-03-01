@@ -103,13 +103,13 @@ implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
      * Interne Align-Methode für harmonisches Aussehen der Punkte
      */
     private void punkteAlignen() {
-		int lLinks = links.dimension().breite;
-		int lRechts = rechts.dimension().breite;
-		int lStrich = strich.dimension().breite;
+		float lLinks = links.dimension().breite;
+		float lRechts = rechts.dimension().breite;
+		float lStrich = strich.dimension().breite;
 		
-		int groesser = lLinks>lRechts ? lLinks : lRechts;
+		float groesser = lLinks>lRechts ? lLinks : lRechts;
 		
-		int breite = FensterE.getFenster().fensterGroesse().breite;
+		float breite = FensterE.getFenster().fensterGroesse().breite;
 		
 		strich.positionSetzen((breite-lStrich)/2, 10);
 		links.positionSetzen(((breite-lStrich)/2)-groesser-5, 10);

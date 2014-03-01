@@ -35,18 +35,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
     private Dreieck[] formen;
     
     /**
-     * Eine X-Koordinate.<br />
-     * Ob sie ein Zentrum, eine Ecke o.Ae. angibt, kommt auf die Erbende Klasse und deren Zeichenroutine an.
-     */
-    protected int x;
-    
-    /**
-     * Eine Y-Koordinate.<br />
-     * Ob sie ein Zentrum, eine Ecke o.Ae. angibt, kommt auf die Erbende Klasse und deren Zeichenroutine an.
-     */
-    protected int y;
-    
-    /**
      * Die Dimension des Objektes; zur schnellen Ausgabe
      */
     protected BoundingRechteck dimension;
@@ -72,9 +60,8 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
      * @param   x   Die bestimmende X-Koordinate
      * @param   y   Die bestimmende Y-Koordinate
      */
-    public Geometrie(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Geometrie(float x, float y) {
+        super.position = new Punkt(x,y);
         dimension = new BoundingRechteck(x, y, 0, 0);
         super.leuchterAnmelden(this);
     }
@@ -90,8 +77,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
             formen[i].verschieben(v);
         }
         dimension = dimension.verschobeneInstanz(v);
-        x += v.x;
-        y += v.y;
     }
     
     /**

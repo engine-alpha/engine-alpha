@@ -209,7 +209,7 @@ public class Zeichner extends Canvas implements Runnable {
 	public void render(Graphics g) {
 		// Absoluter Hintergrund
 		g.setColor(Color.black);
-		g.fillRect(0, 0, groesse.breite, groesse.hoehe);
+		g.fillRect(0, 0, (int)groesse.breite, (int)groesse.hoehe);
 		// Relativer Hintergrund
 		if (hintergrund != null) {
 			hintergrund.zeichnenBasic(g, groesse.verschobeneInstanz(new Vektor(
@@ -220,7 +220,7 @@ public class Zeichner extends Canvas implements Runnable {
 		// Die simplen Grafikobjekte (nicht in Raum)
 		BoundingRechteck camBounds = cam.position();
 		for (SimpleGraphic gr : simples) {
-			gr.paint(g, camBounds.x, camBounds.y);
+			gr.paint(g, (int)camBounds.x, (int)camBounds.y);
 		}
 		// Die statischen Objekte
 		statNode.zeichnen(g, groesse);

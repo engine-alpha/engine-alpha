@@ -31,27 +31,27 @@ public final class BoundingRechteck implements Serializable {
 	public static final long serialVersionUID = 99L;
 	
 	/**
-	 * Die X-Position des Rechtecks
+	 * Die <b>reelle</b> X-Position des Rechtecks
 	 */
-	public final int x;
+	public final float x;
 	
 	/**
-	 * Die Y-Position des Rechtecks
+	 * Die <b>reelle</b> Y-Position des Rechtecks
 	 */
-	public final int y;
+	public final float y;
 	
 	/**
-	 * Die Breite des Rechtecks
+	 * Die <b>reelle</b> Breite des Rechtecks
 	 */
-	public final int breite;
+	public final float breite;
 	
 	/**
-	 * Die Laenge des Rechtecks
+	 * Die <b>reelle</b> Laenge des Rechtecks
 	 */
-	public final int hoehe;
+	public final float hoehe;
 	
 	/**
-	 * Konstruktor fuer Objekte der Klasse <code>BoundingRechteck</code>.
+	 * Konstruktor fuer Objekte der Klasse <code>BoundingRechteck</code> mit <b>reellen</b> Werten. 
 	 * 
 	 * @param x
 	 *            Die X-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
@@ -62,11 +62,12 @@ public final class BoundingRechteck implements Serializable {
 	 * @param dY
 	 *            Die Hoehe des Bounding-Rechtecks
 	 */
-	public BoundingRechteck(int x, int y, int dX, int dY) {
+	public BoundingRechteck(float x, float y, float dX, float dY) {
+		
 		this.x = x;
 		this.y = y;
-		breite = dX;
-		hoehe = dY;
+		this.breite = dX;
+		this.hoehe = dY;
 	}
 	
 	/**
@@ -77,7 +78,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return Ein neues <code>BoundingRechteck</code>-Objekt, das die selbe Masse wie dieses hat, jedoch um die entsprechende Verschiebung verschoben ist.
 	 */
 	public BoundingRechteck verschobeneInstanz(Vektor v) {
-		return new BoundingRechteck(x + v.x, y + v.y, breite, hoehe);
+		return new BoundingRechteck(x + v.realX, y + v.realY, breite, hoehe);
 	}
 	
 	/**
@@ -99,7 +100,7 @@ public final class BoundingRechteck implements Serializable {
 	 */
 	public BoundingRechteck mittenAngleichInstanz(Punkt p) {
 		Punkt z = this.zentrum();
-		return this.verschobeneInstanz(new Vektor(p.x - z.x, p.y - z.y));
+		return this.verschobeneInstanz(new Vektor(p.realX - z.realX, p.realY - z.realY));
 	}
 	
 	/**
@@ -120,7 +121,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return Ein neues BoundingRechteck, dass die beiden Rechtecke genau umfasst.
 	 */
 	public BoundingRechteck summe(BoundingRechteck r) {
-		int x, y, dX, dY;
+		float x, y, dX, dY;
 		if (r.x < this.x) {
 			x = r.x;
 		} else {
@@ -149,7 +150,7 @@ public final class BoundingRechteck implements Serializable {
 	 * das gerade so an der Untergrenze liegt.
 	 * 
 	 * @param untergrenze
-	 *            Die Grenze, auf der das Ergebnis maximal liegen darf.
+	 *            Die Grenze, auf der das Ergebnis marealXimal liegen darf.
 	 * @return Ein BoundingRechteck derselben Hoehe und Breite wie dieses, das in jedem Fall ueber, oder auf der Grenze liegt, wenn es passt, ist es <code>this</code>.
 	 */
 	public BoundingRechteck ueber(int untergrenze) {
@@ -165,7 +166,7 @@ public final class BoundingRechteck implements Serializable {
 	 * das gerade so an der Obergrenze liegt.
 	 * 
 	 * @param obergrenze
-	 *            Die Grenze, auf der das Ergebnis maximal liegen darf.
+	 *            Die Grenze, auf der das Ergebnis marealXimal liegen darf.
 	 * @return Ein BoundingRechteck derselben Hoehe und Breite wie dieses, das in jedem Fall unter, oder auf der Grenze liegt, wenn es passt, ist es <code>this</code>.
 	 */
 	public BoundingRechteck unter(int obergrenze) {
@@ -178,10 +179,10 @@ public final class BoundingRechteck implements Serializable {
 	
 	/**
 	 * Berechnet, ob dieses Rechteck rechts von einer bestimmten Grenze liegt, und wenn <b>nicht</b>, dann berechnet es eines,
-	 * das gerade so an der linken Extremgrenze liegt.
+	 * das gerade so an der linken ErealXtremgrenze liegt.
 	 * 
 	 * @param grenzeLinks
-	 *            Der Wert, den das Ergebnisrechteck maximal links sein darf
+	 *            Der Wert, den das Ergebnisrechteck marealXimal links sein darf
 	 * @return Ein BoundingRechteck derselben Hoehe und Breite, das in jedem rechts jenseits oder auf der Grenze liegt.<br />
 	 *         Wenn diese Eigenschaften bereits von diesem Objekt erfuellt werden, so wird <code>this</code> zurueckgegeben.
 	 */
@@ -195,10 +196,10 @@ public final class BoundingRechteck implements Serializable {
 	
 	/**
 	 * Berechnet, ob dieses Rechteck links von einer bestimmten Grenze liegt, und wenn <b>nicht</b>, dann berechnet es eines,
-	 * das gerade so an der rechten Extremgrenze liegt.
+	 * das gerade so an der rechten ErealXtremgrenze liegt.
 	 * 
 	 * @param grenzeRechts
-	 *            Der Wert, den das Ergebnisrechteck maximal rechts sein darf
+	 *            Der Wert, den das Ergebnisrechteck marealXimal rechts sein darf
 	 * @return Ein BoundingRechteck derselben Hoehe und Breite, das in jedem Fall links jenseits oder auf der Grenze liegt.<br />
 	 *         Wenn diese Eigenschaften bereits von diesem Objekt erfuellt werden, so wird <code>this</code> zurueckgegeben.
 	 */
@@ -214,14 +215,14 @@ public final class BoundingRechteck implements Serializable {
 	 * Gibt ein neues BoundingRechteck mit selber Hoehe und Breite, jedoch einer bestimmten, zu definierenden Position.<br />
 	 * Diese Position ist die der <i>linken oberen Ecke</i> des BoundingRechtecks.
 	 * 
-	 * @param x
+	 * @param realX
 	 *            Die <i>X-Koordinate der linken oberen Ecke</i> des BoundingRechtecks
-	 * @param y
+	 * @param realY
 	 *            Die <i>Y-Koordinate der linken oberen Ecke</i> des BoundingRechtecks
 	 * @return Ein neues BoundingRechteck mit der eingegebenen Position und derselben Breite und Hoehe.
 	 */
-	public BoundingRechteck anPosition(int x, int y) {
-		return new BoundingRechteck(x, y, breite, hoehe);
+	public BoundingRechteck anPosition(int realX, int realY) {
+		return new BoundingRechteck(realX, realY, breite, hoehe);
 	}
 	
 	/**
@@ -252,7 +253,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return true, wenn der Punkt in dem BoundingRechteck ist
 	 */
 	public boolean istIn(Punkt p) {
-		return (p.x >= this.x && p.y >= this.y && p.x <= (x + breite) && p.y <= (y + hoehe));
+		return (p.realX >= this.x && p.realY >= this.y && p.realX <= (x + breite) && p.realY <= (y + hoehe));
 	}
 	
 	/**
@@ -265,7 +266,7 @@ public final class BoundingRechteck implements Serializable {
 	}
 	
 	/**
-	 * @return Ein Punkt-Array der Laenge 4, dessen Inhalt die 4 beschreibenden Punkte des BoundingRechteck 's darstellt.
+	 * @return Ein Punkt-ArrarealY der Laenge 4, dessen Inhalt die 4 beschreibenden Punkte des BoundingRechteck 's darstellt.
 	 */
 	public Punkt[] punkte() {
 		Punkt[] p = {
@@ -352,7 +353,7 @@ public final class BoundingRechteck implements Serializable {
 	 *            Das BoundingRechteck, das eventuell verschoben werden muesste.
 	 * @return Die Zahl, die angibt, wie weit man es verschieben muesste, oder 0 wenn sich die beiden nicht beruehren.
 	 */
-	public int verschiebenX(BoundingRechteck r) {
+	public float verschiebenX(BoundingRechteck r) {
 		if (!this.schneidetBasic(r)) {
 			return 0;
 		}
@@ -370,7 +371,7 @@ public final class BoundingRechteck implements Serializable {
 	 *            Das BoundingRechteck, das eventuell verschoben werden muesste.
 	 * @return Die Zahl, die angibt, wie weit man es verschieben muesste, oder 0 wenn sich die beiden nicht beruehren.
 	 */
-	public int verschiebenY(BoundingRechteck r) {
+	public float verschiebenY(BoundingRechteck r) {
 		if (!this.schneidetBasic(r)) {
 			return 0;
 		}
@@ -382,19 +383,19 @@ public final class BoundingRechteck implements Serializable {
 	}
 	
 	/**
-	 * Berechnet den Hoehenunterschied zwischen dem Fuss des hoeheren und dem Kopf des tieferen BoundingRechtecks.
+	 * Berechnet den Hoehenunterschied zwischen dem Fuss des realHoeheren und dem Kopf des tieferen BoundingRechtecks.
 	 * 
 	 * @param r
 	 *            Das BoundingRechteck, dessen Hoehenunterschied zu diesem gefunden werden soll
 	 * @return Der <b>absolute (also niemals negative)</b> Unterschied in der Hoehe zwischen den beiden Objekten. <b>Ueberlagern sie sich, so ist der Rueckgabewert 0</b>!
 	 */
-	public int hoehenUnterschied(BoundingRechteck r) {
+	public float hoehenUnterschied(BoundingRechteck r) {
 		if (this.schneidetBasic(r)) {
 			return 0;
 		}
 		if (this.y < r.y) { // Dieses Rechteck ist das Hoehere!!
 			return r.y - (this.y + this.hoehe);
-		} else { // Das andere Rechteck ist hoeher!!
+		} else { // Das andere Rechteck ist realHoeher!!
 			return this.y - (r.y + r.hoehe);
 		}
 	}
@@ -410,7 +411,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return Ein neues BoundingRechteck, das verschoben und in seiner Hoehe geaendert ist.
 	 */
 	public BoundingRechteck verschErhoeht(Vektor v, int dHoehe) {
-		return new BoundingRechteck(x + v.x, y + v.y, breite, hoehe + dHoehe);
+		return new BoundingRechteck(x + v.realX, y + v.realY, breite, hoehe + dHoehe);
 	}
 	
 	/**
@@ -429,68 +430,20 @@ public final class BoundingRechteck implements Serializable {
 	 * @return Das Ergebnis-Rechteck, das sich im aeusseren Rechteck befinden wird.
 	 */
 	public BoundingRechteck in(BoundingRechteck aussen) {
-		int x = this.x, y = this.y;
+		float realX = this.x, realY = this.y;
 		if (this.x < aussen.x) {
-			x = aussen.x;
+			realX = aussen.x;
 		}
 		if (this.x + this.breite > aussen.x + aussen.breite) {
-			x = aussen.x + aussen.breite - this.breite;
+			realX = aussen.x + aussen.breite - this.breite;
 		}
 		if (this.y < aussen.y) {
-			y = aussen.y;
+			realY = aussen.y;
 		}
 		if (this.y + this.hoehe > aussen.y + aussen.hoehe) {
-			y = aussen.y + aussen.hoehe - this.hoehe;
+			realY = aussen.y + aussen.hoehe - this.hoehe;
 		}
-		return new BoundingRechteck(x, y, this.breite, this.hoehe);
-	}
-	
-	/**
-	 * Gibt die X-Koordinate der oberen linken Ecke aus.
-	 * 
-	 * @return Die X-Koordinate der oberen linken Ecke dieses BoundingRechtecks.
-	 * @see y()
-	 * @see breite()
-	 * @see hoehe()
-	 */
-	public int x() {
-		return x;
-	}
-	
-	/**
-	 * Gibt die Y-Koordinate der oberen linken Ecke aus.
-	 * 
-	 * @return Die Y-Koordinate der oberen linken Ecke dieses BoundingRechtecks.
-	 * @see x()
-	 * @see breite()
-	 * @see hoehe()
-	 */
-	public int y() {
-		return y;
-	}
-	
-	/**
-	 * Gibt die Breite aus.
-	 * 
-	 * @return Die Breite dieses BoundingRechtecks.
-	 * @see x()
-	 * @see y()
-	 * @see hoehe()
-	 */
-	public int breite() {
-		return breite;
-	}
-	
-	/**
-	 * Gibt die Hoehe aus.
-	 * 
-	 * @return Die Hoehe dieses BoundingRechtecks.
-	 * @see x()
-	 * @see y()
-	 * @see breite()
-	 */
-	public int hoehe() {
-		return hoehe;
+		return new BoundingRechteck(realX, realY, this.breite, this.hoehe);
 	}
 	
 	/**
@@ -511,5 +464,53 @@ public final class BoundingRechteck implements Serializable {
 	@Override
 	public String toString() {
 		return "Bounding-Rechteck: x:" + x + " y: " + y + " dX: " + breite + " dY: " + hoehe;
+	}
+
+	/**
+	 * Gibt die <b>reelle</b> X-Koordinate der oberen linken Ecke aus.
+	 * 
+	 * @return Die <b>reelle</b> X-Koordinate der oberen linken Ecke dieses BoundingRechtecks.
+	 * @see #getRealY()
+	 * @see #getRealBreite()
+	 * @see #getRealHoehe()
+	 */
+	public float getRealX() {
+		return x;
+	}
+
+	/**
+	 * Gibt die <b>reelle</b> Y-Koordinate der oberen linken Ecke aus.
+	 * 
+	 * @return Die <b>reelle</b> Y-Koordinate der oberen linken Ecke dieses BoundingRechtecks.
+	 * @see #getRealX(
+	 * @see #getRealBreite()
+	 * @see #getRealHoehe()
+	 */
+	public float getRealY() {
+		return y;
+	}
+
+	/**
+	 * Gibt die <b>reelle</b> Breite aus.
+	 * 
+	 * @return Die <b>reelle</b> Breite dieses BoundingRechtecks.
+	 * @see #getRealX()
+	 * @see #getRealY()
+	 * @see #getRealHoehe()
+	 */
+	public float getRealBreite() {
+		return breite;
+	}
+
+	/**
+	 * Gibt die <b>reelle</b> Hoehe aus.
+	 * 
+	 * @return Die <b>reelle</b> Hoehe dieses BoundingRechtecks.
+	 * @see #getRealX()
+	 * @see #getRealY()
+	 * @see #getRealBreite()
+	 */
+	public float getRealHoehe() {
+		return hoehe;
 	}
 }

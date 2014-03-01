@@ -830,8 +830,8 @@ public class Fenster extends Frame {
 				BoundingRechteck r = mausBild.dimension();
 				Punkt p = maus.hotSpot();
 
-				maus.klick(r.x + p.x + getCam().getX(), r.y + p.y
-						+ getCam().getY(), links, losgelassen); // Mit
+				maus.klick((int)(r.x + p.x + getCam().getX()), (int)(r.y + p.y
+						+ getCam().getY()), links, losgelassen); // Mit
 																// zurückrechnen
 																// auf die
 																// Bildebene!
@@ -839,7 +839,7 @@ public class Fenster extends Frame {
 				Dimension dim = this.getSize();
 				int startX = (dim.width / 2);
 				int startY = (dim.height / 2);
-				maus.klick(startX + getCam().getX(), startY + getCam().getY(),
+				maus.klick((int)(startX + getCam().getX()), (int)(startY + getCam().getY()),
 						links, losgelassen);
 			}
 		}

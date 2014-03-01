@@ -738,7 +738,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see #screenshot(java.lang.String, int, int, int, int)
 	 */
 	public void screenshot(String pfad, BoundingRechteck ausschnitt) {
-		BufferedImage img = new BufferedImage(ausschnitt.breite, ausschnitt.hoehe, BufferedImage.TYPE_INT_RGB);
+		BufferedImage img = new BufferedImage((int)ausschnitt.breite, (int)ausschnitt.hoehe, BufferedImage.TYPE_INT_RGB);
 		cam.wurzel().zeichnen(img.createGraphics(), ausschnitt);
 		if (pfad.toLowerCase().endsWith(".jpg"))
 			try {

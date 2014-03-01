@@ -107,15 +107,42 @@ public final class Vektor
      * Die Y-Relation
      */
     public final int y;
+    
+    /**
+     * Der kontinuierliche(re) DeltaX-Wert des Punktes. Die anderen Koordinaten sind ggf.
+     * nur gerundet.
+     */
+    public final float realX;
+    
+    /**
+     * Der kontinuierliche(re) DeltaY-Wert des Punktes. Die anderen Koordinaten sind ggf.
+     * nur gerundet.
+     */
+    public final float realY;
 
     /**
-     * Konstruktor fuer Objekte der Klasse Vektor
+     * Konstruktor fuer Objekte der Klasse Vektor. Werte werden hier als <code>int</code> angegeben.
+     * Intern wird trotzdem mit genaueren Fließkommazahlen gerechnet.
      * @param   x   Der Bewegungsanteil in Richtung X
      * @param   y   Der Bewegungsanteil in Richtung Y
      */
     public Vektor(int x, int y) {
         this.x = x;
         this.y = y;
+        this.realX = (float)x;
+        this.realY = (float)y;
+    }
+    
+    /**
+     * Konstruktor fuer Objekte der Klasse Vektor
+     * @param   x   Der Bewegungsanteil in Richtung X
+     * @param   y   Der Bewegungsanteil in Richtung Y
+     */
+    public Vektor(float x, float y) {
+        this.x = (int)x;
+        this.y = (int)y;
+        this.realX = x;
+        this.realY = y;
     }
     
     /**
@@ -125,8 +152,10 @@ public final class Vektor
      * @param   ziel    Der Zielpunkt der Bewegung
      */
     public Vektor(Punkt start, Punkt ziel) {
-        this.x = ziel.x-start.x;
-        this.y = ziel.y-start.y;
+        this.realX = ziel.realX-start.realX;
+        this.realY = ziel.realY-start.realY;
+        this.x = (int)realX;
+        this.y = (int)realY;
     }
     
     /**
@@ -134,7 +163,7 @@ public final class Vektor
      * @return  Ein neues Vektor-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
      */
     public Vektor gegenrichtung() {
-        return new Vektor(-this.x, - this.y);
+        return new Vektor(-this.realX, - this.realY);
     }
     
     /**
@@ -143,7 +172,7 @@ public final class Vektor
      * @return  Ein neues Vektor-Objekt, das die Summe der beiden urspruenglichen Bewegungen darstellt.
      */
     public Vektor summe(Vektor v) {
-        return new Vektor(this.x+v.x, this.y+v.y);
+        return new Vektor(this.realX+v.realX, this.realY+v.realY);
     }
     
     /**
@@ -160,7 +189,7 @@ public final class Vektor
             System.err.println("Achtung! Der Divisor war kleiner als 1! Er muss mindestens 1 sein!");
             return null;
         }
-        return new Vektor(x/divisor, y/divisor);
+        return new Vektor(realX/divisor, realY/divisor);
     }
     
     /**
@@ -171,7 +200,18 @@ public final class Vektor
      * @see teilen(int)
      */
     public Vektor multiplizieren(int faktor) {
-        return new Vektor(x*faktor, y*faktor);
+        return new Vektor(realX*faktor, realY*faktor);
+    }
+    
+    /**
+     * Multipliziert die effektiven Laengen beider Anteile des Vektors (X und Y) mit einem festen Faktor.
+     * Dadurch entsteht ein neuer Vektor mit anderen Werten (es sei denn, der Faktor ist 1); dieser wird dann zurueck gegeben.
+     * @param faktor    Der Faktor, mit dem die X- und Y-Werte des Vektors multipliziert werden
+     * @return  Der Vektor mit den multiplizierten Werten
+     * @see teilen(int)
+     */
+    public Vektor multiplizieren(float faktor) {
+        return new Vektor(x*faktor, realY*faktor);
     }
 
     /**
@@ -179,7 +219,7 @@ public final class Vektor
      * @return  <code>true</code>, wenn dieser keine Auswirkungen als Bewegender Vektor machen wuerde.
      */
     public boolean unwirksam() {
-        return (this.x == 0 && this.y == 0);
+        return (this.realX == 0 && this.realY == 0);
     }
     
     /**
@@ -260,6 +300,16 @@ public final class Vektor
     }
 
     /**
+	 * Gibt zurück, ob dieser Vektor <i>echt ganzzahlig</i> ist, also ob seine <b>tatsächlichen Delta-Werte</b>
+	 * beide Ganzzahlen sind.
+	 * 
+	 * @return <code>true</code>, wenn <b>beide</b> Delta-Werte dieses Punktes ganzzahlig sind, sonst <code>false</code>.
+	 */
+	public boolean istEchtGanzzahlig() {
+		return this.realX == (float) x && this.realY == (float) y;
+	}
+    
+    /**
      * Gibt die X-Verschiebung dieses Vektors wieder.
      * @return  Die X-Verschiebung dieses Vektors. Positive Werte verschieben nach
      * rechts, negative Werte verschieben nach links.
@@ -294,12 +344,13 @@ public final class Vektor
      */
     @Override
     public String toString() {
-        return "Vektor: " + x + "|" + y;
+        return "Vektor: (" + realX + "|" + realY + ")";
     }
 
     /**
+     * {@inheritDoc}
      * Prueft, ob ein beliebiges Objekt gleich diesem Vektor ist. Ueberschrieben aus der Superklasse <code>Object</code>.<br />
-     * 2 Vektoren gelten als gleich, wenn sie in ihrem Delta-X und ihrem Delta-Y Uebereinstimmen.
+     * 2 Vektoren gelten als gleich, wenn sie in ihrem Delta-X und ihrem Delta-Y (und zwar <b>reell exakt</b>) uebereinstimmen.
      * @param o Das auf gleichheit mit diesem zu ueberpruefende Objekt.
      * @return  <code>true</code>, wenn beide Vektoren das gleiche dX und dY haben, sonst <code>false</code>.
      */
@@ -307,21 +358,8 @@ public final class Vektor
     public boolean equals(Object o) {
         if(o instanceof Vektor) {
             Vektor v = (Vektor)o;
-            return (this.x==v.x&&this.y==v.y);
+            return (this.realX==v.realX&&this.realY==v.realY);
         }
         return false;
-    }
-
-    /**
-     * Die Hashcode-Methode fuer Vektoren. Ueberschrieben aus der Superklasse <code>Object</code>.<br />
-     * Diese Methode wird in keiner Weise bei der Spieleprogrammierung gebraucht. Sie wird intern verwendet.
-     * @return  Der Hash-Code dieses Objektes.
-     */
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + this.x;
-        hash = 67 * hash + this.y;
-        return hash;
     }
 }

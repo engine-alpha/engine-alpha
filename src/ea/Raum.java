@@ -37,6 +37,7 @@ import ea.internal.phy.PhysikClient;
  * @author Michael Andonie, Niklas Keller
  */
 public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
+	
 	/**
 	 * Die Serialisierungs-Konstante dieser Klasse. <b>In keiner Weise fuer die Programmierung mit der Engine bedeutsam!</b>
 	 */
@@ -57,6 +58,14 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Ob die Kollisionstests Roh oder fein ablaufen sollen.
 	 */
 	protected static boolean roh = false;
+	
+	/**
+	 * Die absolute Position des Raum-Objekts. Die Interpretation dieses Parameters
+	 * hängt von den sich <b>ableitenden</b> Klassen ab.
+	 * Er kann komplett irrelevant sein (Knoten), oder - im Regelfall - die linke 
+	 * obere Ecke des Objektes bezeichnen. Default
+	 */
+	protected Punkt position = Punkt.ZENTRUM;
 	
 	/**
 	 * Ein einfacher Farbzyklus, der fuer die Leucht-Animationen genommen wird
@@ -474,6 +483,17 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Das heisst, dass bei Kreisen zum Beispiel <b>nicht</b> die des Mittelpunktes
 	 * ist! Hierfuer gibt es die Sondermethode <code>mittelpunktSetzen(int x, int y)</code>.
 	 * 
+	 * @param p
+	 *            Der neue Zielpunkt
+	 * @see positionSetzen(int, int)
+	 */
+	public void positionSetzen(Punkt p) {
+		BoundingRechteck r = this.dimension();
+		this.verschieben(new Vektor(position.realX - r.x, position.realY - r.y));
+	}
+	
+	/**
+	 *
 	 * @param x
 	 *            Die neue X-Koordinate
 	 * @param y
@@ -482,8 +502,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see positionSetzen(Punkt)
 	 */
 	public void positionSetzen(int x, int y) {
-		BoundingRechteck r = this.dimension();
-		this.verschieben(new Vektor(x - r.x, y - r.y));
+		this.positionSetzen(new Punkt(x,y));
+	}
+	
+	public void positionSetzen(float x, float y) {
+		this.positionSetzen(new Punkt(x,y));
 	}
 	
 	/**
@@ -522,16 +545,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		this.mittelpunktSetzen(p.x, p.y);
 	}
 	
-	/**
-	 * Die selbe Methode wie <code>positionSetzen(int x, int y)</code>, nur mit einem einzigen <code>Punkt</code>-Argument. Der Algorythmus ist exakt der gleiche.
-	 * 
-	 * @param p
-	 *            Der neue Zielpunkt
-	 * @see positionSetzen(int, int)
-	 */
-	public void positionSetzen(Punkt p) {
-		this.positionSetzen(p.x, p.y);
-	}
+	
 	
 	/**
 	 * Methode zum schnellen Herausfinden der Position des Raum-Objektes.<br />
@@ -565,7 +579,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @return Die die X-Koordinate der linken oberen Ecke auf der Zeichenebene
 	 */
 	public int positionX() {
-		return this.dimension().x;
+		return (int)this.dimension().x;
 	}
 	
 	/**
@@ -575,18 +589,20 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @return Die die Y-Koordinate der linken oberen Ecke auf der Zeichenebene
 	 */
 	public int positionY() {
-		return this.dimension().y;
+		return (int)this.dimension().y;
 	}
 	
 	/**
-	 * Verschiebt das Objekt.
+	 * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene.
 	 * 
 	 * @param v
 	 *            Der Vektor, der die Verschiebung des Objekts angibt.
 	 * @see Vektor
 	 * @see verschieben(int, int)
 	 */
-	public abstract void verschieben(Vektor v);
+	public void verschieben(Vektor v) {
+		position = position.verschobeneInstanz(v);
+	}
 	
 	/**
 	 * Verschiebt das Objekt.<br />
@@ -700,7 +716,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @return Der <b>absolute (also niemals negative)</b> Unterschied in der Hoehe zwiscchen den beiden Objekten. <b>Ueberlagern sie sich, so ist der Rueckgabewert 0</b>!
 	 */
 	public int hoehenUnterschied(Raum m) {
-		return this.dimension().hoehenUnterschied(m.dimension());
+		return (int)this.dimension().hoehenUnterschied(m.dimension());
 	}
 	
 	/**

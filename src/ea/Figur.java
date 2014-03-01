@@ -42,17 +42,6 @@ import ea.internal.gra.PixelFeld;
  */
 @SuppressWarnings("serial")
 public class Figur extends Raum {
-	/**
-	 * Die Position X dieser Figur<br />
-	 * Die Position gibt den links oberen Rand der Figur an.
-	 */
-	private int x;
-	
-	/**
-	 * Die Position Y dieser Figur<br />
-	 * Die Position gibt den links oberen Rand der Figur an.
-	 */
-	private int y;
 	
 	/**
 	 * In diesem Intervall wird die Figur animiert.
@@ -125,10 +114,9 @@ public class Figur extends Raum {
 	 * @param add
 	 *            Ob diese Figur am Animationssystem direkt teilnehmen soll. (Standard)
 	 */
-	public Figur(int x, int y, String verzeichnis, boolean add) {
+	public Figur(float x, float y, String verzeichnis, boolean add) {
 		super();
-		this.x = x;
-		this.y = y;
+		super.position = new Punkt(x,y);
 		Figur spiegel = DateiManager.figurEinlesen(verzeichnis);
 		this.animation = spiegel.animation;
 		if (add) {
@@ -147,7 +135,7 @@ public class Figur extends Raum {
 	 * @param verzeichnis
 	 *            Das verzeichnis, aus dem die Figur zu laden ist.
 	 */
-	public Figur(int x, int y, String verzeichnis) {
+	public Figur(float x, float y, String verzeichnis) {
 		this(x, y, verzeichnis, true);
 	}
 	
@@ -157,8 +145,6 @@ public class Figur extends Raum {
 	 * Dieser Konstruktor wird intern verwendet, um Figurdaten zu laden.
 	 */
 	public Figur() {
-		this.x = 0;
-		this.y = 0;
 		liste.add(this);
 	}
 	
@@ -475,18 +461,6 @@ public class Figur extends Raum {
 	}
 	
 	/**
-	 * Verschiebt das Objekt.
-	 * 
-	 * @param v
-	 *            Der Vektor, der die Verschiebung des Objekts angibt.
-	 */
-	@Override
-	public void verschieben(Vektor v) {
-		this.x += v.x;
-		this.y += v.y;
-	}
-	
-	/**
 	 * Diese Methode wird verwendet, um die Figur vom direkten Animationssystem zu
 	 * loesen. Sie ist <i>package private</i>, da diese Einstellung nur intern vorgenommen
 	 * werden soll.
@@ -522,7 +496,7 @@ public class Figur extends Raum {
 	
 	@Override
 	public BoundingRechteck[] flaechen() {
-		return animation[aktuelle].flaechen(x, y);
+		return animation[aktuelle].flaechen(position.x, position.y);
 	}
 	
 	/**
@@ -537,7 +511,7 @@ public class Figur extends Raum {
 	@Override
 	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
 		if (r.schneidetBasic(this.dimension())) {
-			animation[aktuelle].zeichnen(g, x - r.x, y - r.y, spiegelX, spiegelY);
+			animation[aktuelle].zeichnen(g, (int)(position.x - r.x), (int)(position.y - r.y), spiegelX, spiegelY);
 		}
 	}
 	
@@ -547,9 +521,9 @@ public class Figur extends Raum {
 	@Override
 	public BoundingRechteck dimension() {
 		if (animation != null && animation[aktuelle] != null)
-			return new BoundingRechteck(x, y, animation[0].breite(), animation[0].hoehe());
+			return new BoundingRechteck(position.x, position.y, animation[0].breite(), animation[0].hoehe());
 		else
-			return new BoundingRechteck(x, y, animation[aktuelle].breite(), animation[aktuelle].hoehe());
+			return new BoundingRechteck(position.x, position.y, animation[aktuelle].breite(), animation[aktuelle].hoehe());
 	}
 	
 	/**
