@@ -143,6 +143,28 @@ public final class Vektor
     }
     
     /**
+     * Gibt eine <b>Normierung</b> des Vektors aus.
+     * Dies ist ein Vektor, der<br />
+     * <ul>
+     * <li>In die selbe Richtung wie der ursprüngliche Vektor zeigt.</li>
+     * <li>Eine Länge von (möglichst) exakt 1 hat.</li>
+     * </ul>
+     * @return der normierte Vektor zu diesem Vektor.
+     */
+    public Vektor normiert() {
+    	return this.teilen(this.laenge());
+    }
+    
+    /**
+     * Gibt die Länge dieses Vektors aus.
+     * @return	Die Länge dieses Vektors.
+     */
+    public float laenge() {
+    	//Nimm euklidische Norm
+    	return (float)Math.sqrt(x*x + y*y);
+    }
+    
+    /**
      * Berechnet die Gegenrichtung des Vektors.
      * @return  Ein neues Vektor-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
      */
@@ -168,10 +190,9 @@ public final class Vektor
      * Ist <code>null</code>, wenn die Eingabe <= 0 war!
      * @see multiplizieren(int)
      */
-    public Vektor teilen(int divisor) {
-        if(divisor <= 0) {
-            System.err.println("Achtung! Der Divisor war kleiner als 1! Er muss mindestens 1 sein!");
-            return null;
+    public Vektor teilen(float divisor) {
+        if(divisor == 0) {
+            throw new ArithmeticException("Der Divisor für das Teilen war 0!");
         }
         return new Vektor(x/divisor, y/divisor);
     }

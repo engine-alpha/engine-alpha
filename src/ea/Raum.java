@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import ea.internal.gui.Fenster;
 import ea.internal.phy.Gravitator;
+import ea.internal.phy.MechanikClient;
 import ea.internal.phy.NullClient;
 import ea.internal.phy.Passivator;
 import ea.internal.phy.Physik;
@@ -170,6 +171,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	public void aktivMachen() {
 		phClient.aufloesen();
 		phClient = new Gravitator(this);
+	}
+	
+	public void newtonschMachen() {
+		phClient.aufloesen();
+		phClient = new MechanikClient(this);
 	}
 	
 	/**
