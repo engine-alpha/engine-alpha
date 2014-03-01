@@ -19,6 +19,8 @@
 
 package ea;
 
+import java.awt.Graphics2D;
+
 import ea.internal.gra.Listung;
 
 /**
@@ -274,7 +276,7 @@ public class Dreieck extends Geometrie {
 	 *            Das BoundingRechteck, das das Kamerabild beschreibt.
 	 */
 	@Override
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}

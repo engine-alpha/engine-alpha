@@ -80,7 +80,6 @@ public class RegEck extends Geometrie {
 		aktualisieren();
 	}
 	
-	
 	/**
 	 * In dieser Methode werden saemtliche Dreiecke neu berechnet und die Referenz bei Aufruf in der Superklasse hierauf gesetzt.<br />
 	 * Hierbei wird ein Dreieck mehr zurueckgegeben als Ecken eingegeben wurden, um das Eck auch schliessen zu koennen. Dies ist aufgrund des rundens innerhalb des Algorythmusses nicht garantiert.
@@ -92,12 +91,12 @@ public class RegEck extends Geometrie {
 		float x = position.x + (radius);
 		float y = position.y + (radius);
 		final Punkt zentrum = new Punkt(x + (radius / 2), y + (radius / 2));
-		Punkt letzter = new Punkt((float)((Math.sin(winkel + (Math.PI / 2)) * radius)) + x, (float)((Math.sin(winkel) * radius)) + y);
+		Punkt letzter = new Punkt((float) ((Math.sin(winkel + (Math.PI / 2)) * radius)) + x, (float) ((Math.sin(winkel) * radius)) + y);
 		final Punkt erster = letzter;
 		for (int i = 0; i < ret.length - 1; i++) {
 			winkel = winkel + winkelSchritt;
-			float koordX = (float)((Math.sin(winkel + (Math.PI / 2)) * radius)) + x;
-			float koordY = (float)((Math.sin(winkel) * radius)) + y;
+			float koordX = (float) ((Math.sin(winkel + (Math.PI / 2)) * radius)) + x;
+			float koordY = (float) ((Math.sin(winkel) * radius)) + y;
 			Punkt neuer = new Punkt(koordX, koordY);
 			ret[i] = new Dreieck(zentrum, letzter, neuer);
 			letzter = neuer;

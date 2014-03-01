@@ -19,6 +19,7 @@
 
 package ea;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import ea.internal.gra.PixelFeld;
@@ -116,7 +117,7 @@ public class Figur extends Raum {
 	 */
 	public Figur(float x, float y, String verzeichnis, boolean add) {
 		super();
-		super.position = new Punkt(x,y);
+		super.position = new Punkt(x, y);
 		Figur spiegel = DateiManager.figurEinlesen(verzeichnis);
 		this.animation = spiegel.animation;
 		if (add) {
@@ -509,9 +510,9 @@ public class Figur extends Raum {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (r.schneidetBasic(this.dimension())) {
-			animation[aktuelle].zeichnen(g, (int)(position.x - r.x), (int)(position.y - r.y), spiegelX, spiegelY);
+			animation[aktuelle].zeichnen(g, (int) (position.x - r.x), (int) (position.y - r.y), spiegelX, spiegelY);
 		}
 	}
 	

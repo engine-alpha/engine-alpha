@@ -20,6 +20,8 @@
 package ea;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.Locale;
 
 import ea.internal.gui.Fenster;
@@ -62,7 +64,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	/**
 	 * Die absolute Position des Raum-Objekts. Die Interpretation dieses Parameters
 	 * hängt von den sich <b>ableitenden</b> Klassen ab.
-	 * Er kann komplett irrelevant sein (Knoten), oder - im Regelfall - die linke 
+	 * Er kann komplett irrelevant sein (Knoten), oder - im Regelfall - die linke
 	 * obere Ecke des Objektes bezeichnen. Default
 	 */
 	protected Punkt position = Punkt.ZENTRUM;
@@ -103,6 +105,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Z-Index des Raumes, je höher, desto weiter oben wird der Raum gezeichnet
 	 */
 	private int zIndex = 1;
+	
+	/**
+	 * Aktuelle Drehung des Objekts
+	 */
+	private AffineTransform affineTransform;
 	
 	/**
 	 * Der eine und einziege Konstruktor fuer Objekte der Klasse Raum.<br />
@@ -466,8 +473,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 * @see zeichnen(java.awt.Graphics, BoundingRechteck)
 	 */
-	public final void zeichnenBasic(java.awt.Graphics g, BoundingRechteck r) {
+	public final void zeichnenBasic(Graphics2D g, BoundingRechteck r) {
 		statisch = (r.x == 0) && (r.y == 0);
+		
 		if (sichtbar) {
 			zeichnen(g, r);
 		}
@@ -493,7 +501,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 *
+	 * 
 	 * @param x
 	 *            Die neue X-Koordinate
 	 * @param y
@@ -502,11 +510,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see positionSetzen(Punkt)
 	 */
 	public void positionSetzen(int x, int y) {
-		this.positionSetzen(new Punkt(x,y));
+		this.positionSetzen(new Punkt(x, y));
 	}
 	
 	public void positionSetzen(float x, float y) {
-		this.positionSetzen(new Punkt(x,y));
+		this.positionSetzen(new Punkt(x, y));
 	}
 	
 	/**
@@ -545,8 +553,6 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		this.mittelpunktSetzen(p.x, p.y);
 	}
 	
-	
-	
 	/**
 	 * Methode zum schnellen Herausfinden der Position des Raum-Objektes.<br />
 	 * <b>Achtung:</b> Diese Methode gibt nur die Position der <b>linken, oberen Ecke</b> aus fuer mehr Informationen
@@ -579,7 +585,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @return Die die X-Koordinate der linken oberen Ecke auf der Zeichenebene
 	 */
 	public int positionX() {
-		return (int)this.dimension().x;
+		return (int) this.dimension().x;
 	}
 	
 	/**
@@ -589,7 +595,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @return Die die Y-Koordinate der linken oberen Ecke auf der Zeichenebene
 	 */
 	public int positionY() {
-		return (int)this.dimension().y;
+		return (int) this.dimension().y;
 	}
 	
 	/**
@@ -637,7 +643,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br />
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
-	public abstract void zeichnen(java.awt.Graphics g, BoundingRechteck r);
+	public abstract void zeichnen(Graphics2D g, BoundingRechteck r);
 	
 	/**
 	 * Prueft, ob ein bestimmter Punkt innerhalb des Raum-Objekts liegt.
@@ -716,7 +722,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @return Der <b>absolute (also niemals negative)</b> Unterschied in der Hoehe zwiscchen den beiden Objekten. <b>Ueberlagern sie sich, so ist der Rueckgabewert 0</b>!
 	 */
 	public int hoehenUnterschied(Raum m) {
-		return (int)this.dimension().hoehenUnterschied(m.dimension());
+		return (int) this.dimension().hoehenUnterschied(m.dimension());
 	}
 	
 	/**
@@ -745,6 +751,32 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Dreht ein Objekt um die angegebene Gradzahl um den Punkt P(mx / my).
+	 * 
+	 * @param grad
+	 *            Grad, um die gedreht werden soll.
+	 * @param mx
+	 *            x-Koordinate des Drehpunktes
+	 * @param my
+	 *            y-Koordinate des Drehpunktes
+	 */
+	public void drehen(double grad, double mx, double my) {
+		this.affineTransform = AffineTransform.getRotateInstance(grad, mx, my);
+	}
+	
+	/**
+	 * Dreht ein Objekt um die angegebene Gradzahl um den Mittelpunkt des Raumes.
+	 * 
+	 * @param grad
+	 *            Grad, um die gedreht werden soll.
+	 */
+	public void drehen(double grad) {
+		Punkt m = mittelPunkt();
+		
+		this.drehen(grad, m.realX, m.realY);
 	}
 	
 	/**

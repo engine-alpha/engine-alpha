@@ -5,7 +5,7 @@
 
 package ea;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import ea.internal.util.Logger;
@@ -123,7 +123,7 @@ public class CombiFigur extends Raum {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen(Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		for (int i = 0; i < figuren.length; i++) {
 			figuren[i].zeichnen(g, r);
 		}
@@ -141,7 +141,7 @@ public class CombiFigur extends Raum {
 		
 		for (ActionFigur f : figuren)
 			dim = dim.summe(f.dimension());
-			
+		
 		return dim;
 	}
 	

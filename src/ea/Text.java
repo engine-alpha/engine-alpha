@@ -19,9 +19,16 @@
 
 package ea;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import ea.internal.gui.Fenster;
 
@@ -112,7 +119,7 @@ public class Text extends Raum implements Leuchtend {
 	private static void fontsEinbauen(final ArrayList<File> liste, File akt) {
 		File[] files = akt.listFiles();
 		
-		if(files != null) {
+		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].equals(akt)) {
 					System.err.println("Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
@@ -160,7 +167,7 @@ public class Text extends Raum implements Leuchtend {
 	public Text(String inhalt, float x, float y, String fontName, int schriftGroesse, int schriftart, String farbe)
 	{
 		this.inhalt = inhalt;
-		this.position = new Punkt(x,y);
+		this.position = new Punkt(x, y);
 		this.groesse = schriftGroesse;
 		this.farbe = zuFarbeKonvertieren(farbe);
 		if (schriftart >= 0 && schriftart <= 3) {
@@ -500,13 +507,13 @@ public class Text extends Raum implements Leuchtend {
 	 *            Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br />
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
 		g.setColor(farbe);
 		g.setFont(font);
-		g.drawString(inhalt, (int)(position.x - r.x), (int)(position.y - r.y + groesse));
+		g.drawString(inhalt, (int) (position.x - r.x), (int) (position.y - r.y + groesse));
 	}
 	
 	/**

@@ -19,7 +19,7 @@
 
 package ea;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  * Ein Kreis ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br />
@@ -51,6 +51,7 @@ public class Kreis extends RegEck {
 	
 	/**
 	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
+	 * 
 	 * @param x
 	 *            Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des MIttelpunktes</b>
 	 * @param y
@@ -96,11 +97,12 @@ public class Kreis extends RegEck {
 	}
 	
 	@Override
-	public void zeichnen(Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+		
 		g.setColor(this.formen()[0].getColor());
-		g.fillOval((int)(position.x - r.x), (int)(position.y - r.y), (int)(2 * radius), (int)(2 * radius));
+		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
 	}
 }

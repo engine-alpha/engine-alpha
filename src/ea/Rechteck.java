@@ -19,6 +19,8 @@
 
 package ea;
 
+import java.awt.Graphics2D;
+
 /**
  * Beschreiben Sie hier die Klasse Rechteck.
  * 
@@ -118,11 +120,12 @@ public class Rechteck extends Geometrie {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+		
 		g.setColor(super.formen()[0].getColor());
-		g.fillRect((int)(position.x - r.x), (int)(position.y - r.y), (int)breite, (int)laenge);
+		g.fillRect((int) (position.x - r.x), (int) (position.y - r.y), (int) breite, (int) laenge);
 	}
 }

@@ -85,7 +85,7 @@ public class Bild extends Raum {
 	 *            Der Verzeichnispfad des Bildes, das geladen werden soll.
 	 */
 	public Bild(float x, float y, String verzeichnis) {
-		super.position = new Punkt(x,y);
+		super.position = new Punkt(x, y);
 		this.wiederholen = false;
 		img = imageModernLaden(verzeichnis);
 		urHoehe = img.getHeight();
@@ -164,7 +164,7 @@ public class Bild extends Raum {
 	 * Dieser Konstruktor wird innerhalb der Engine verwendet fuer die Maus.
 	 */
 	public Bild(float x, float y, BufferedImage img) {
-		super.positionSetzen(new Punkt(x,y));
+		super.positionSetzen(new Punkt(x, y));
 		this.img = img;
 		
 		urHoehe = img.getHeight();
@@ -282,20 +282,17 @@ public class Bild extends Raum {
 	 *            Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br />
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (r.schneidetBasic(this.dimension())) {
 			if (!wiederholen) {
-				g.drawImage(img,(int)( position.realX - r.x), (int)(position.realY - r.y), Fenster.instanz);
+				g.drawImage(img, (int) (position.realX - r.x), (int) (position.realY - r.y), Fenster.instanz);
 			} else {
-				// Upcast --> mehr Funktionen in Graphics2D
-				Graphics2D g2d = (Graphics2D) g;
 				// Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmasse
-				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX, -r.y + position.y, img.getWidth(), img.getHeight())
-						);
+				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX, -r.y + position.y, img.getWidth(), img.getHeight()));
 				// Texturfarbe setzen
-				g2d.setPaint(tp);
+				g.setPaint(tp);
 				// Rechteck fuellen
-				g2d.fill(new Rectangle2D.Double(position.x - r.x, position.y - r.y, breite, hoehe));
+				g.fill(new Rectangle2D.Double(position.x - r.x, position.y - r.y, breite, hoehe));
 			}
 		}
 	}
