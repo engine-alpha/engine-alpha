@@ -19,6 +19,8 @@
 
 package ea;
 
+import java.awt.Graphics2D;
+
 /**
  * Beschreiben Sie hier die Klasse Rechteck.
  * 
@@ -29,12 +31,12 @@ public class Rechteck extends Geometrie {
 	/**
 	 * Die Laenge
 	 */
-	private int laenge;
+	private float laenge;
 	
 	/**
 	 * Die Breite
 	 */
-	private int breite;
+	private float breite;
 	
 	/**
 	 * Konstruktor fuer Objekte der Klasse Rechteck
@@ -48,7 +50,7 @@ public class Rechteck extends Geometrie {
 	 * @param hoehe
 	 *            Die hoehe des Rechtecks
 	 */
-	public Rechteck(int x, int y, int breite, int hoehe)
+	public Rechteck(float x, float y, float breite, float hoehe)
 	{
 		super(x, y);
 		this.breite = breite;
@@ -102,8 +104,8 @@ public class Rechteck extends Geometrie {
 	@Override
 	public Dreieck[] neuBerechnen() {
 		Dreieck[] i = {
-			new Dreieck(new Punkt(x, y), new Punkt(x + breite, y), new Punkt(x, y + laenge)),
-			new Dreieck(new Punkt(x, y + laenge), new Punkt(x + breite, y + laenge), new Punkt(x + breite, y))
+			new Dreieck(new Punkt(position.x, position.y), new Punkt(position.x + breite, position.y), new Punkt(position.x, position.y + laenge)),
+			new Dreieck(new Punkt(position.x, position.y + laenge), new Punkt(position.x + breite, position.y + laenge), new Punkt(position.x + breite, position.y))
 		};
 		return i;
 	}
@@ -118,11 +120,12 @@ public class Rechteck extends Geometrie {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+		
 		g.setColor(super.formen()[0].getColor());
-		g.fillRect(x - r.x, y - r.y, breite, laenge);
+		g.fillRect((int) (position.x - r.x), (int) (position.y - r.y), (int) breite, (int) laenge);
 	}
 }

@@ -1,5 +1,7 @@
 package ea;
 
+import ea.internal.ani.Animierer;
+
 /**
  * AnimationsEndeReagierbar kann auf das Ende einer Animation reagieren und entsprechend der Lage 
  * etwas tun.

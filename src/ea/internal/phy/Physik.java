@@ -251,7 +251,7 @@ public class Physik extends Manager implements Ticker {
 	public synchronized Vektor entblocken(BoundingRechteck r) {
 		for (Passivator p : passive) {
 			if (p.in(r)) {
-				int x = 0, y = 0;
+				float x = 0, y = 0;
 				BoundingRechteck pas = p.ziel().dimension();
 				if (pas.y < r.y && pas.y + pas.hoehe > r.y + r.hoehe) {
 					// X
@@ -289,7 +289,7 @@ public class Physik extends Manager implements Ticker {
 	private synchronized Vektor entblocken(BoundingRechteck r, Vektor letzte) {
 		for (Passivator p : passive) {
 			if (p.in(r)) {
-				int x = 0, y = 0;
+				float x = 0, y = 0;
 				BoundingRechteck pas = p.ziel().dimension();
 				if (letzte.x != 0) {
 					// X

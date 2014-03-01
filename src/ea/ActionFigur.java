@@ -19,6 +19,7 @@
 
 package ea;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
@@ -417,7 +418,7 @@ public class ActionFigur extends Raum {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (performsAction) {
 			aktion[indexAction].zeichnen(g, r);
 		} else {

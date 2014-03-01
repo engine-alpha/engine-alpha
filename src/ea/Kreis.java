@@ -19,7 +19,7 @@
 
 package ea;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  * Ein Kreis ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br />
@@ -44,15 +44,23 @@ public class Kreis extends RegEck {
 	 *            Die Genauigkeitsstufe des Kreises.<br />
 	 *            <b>je hoeher sie ist, desto besser sieht der KReis aus, jedoch auch desto hoeher ist die Computerbelastung</b>
 	 */
-	public Kreis(int x, int y, int durchmesser, int genauigkeit) {
+	@Deprecated
+	public Kreis(int x, int y, float durchmesser, int genauigkeit) {
 		super(x, y, (int) Math.pow(genauigkeit, 2), durchmesser);
 	}
 	
 	/**
 	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
+	 * 
+	 * @param x
+	 *            Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des MIttelpunktes</b>
+	 * @param y
+	 *            Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des MIttelpunktes</b>
+	 * @param durchmesser
+	 *            Der Durchmesser des Kreises
 	 */
 	public Kreis(int x, int y, int durchmesser) {
-		this(x, y, durchmesser, 6);
+		super(x, y, 6, durchmesser);
 	}
 	
 	/**
@@ -60,7 +68,7 @@ public class Kreis extends RegEck {
 	 * 
 	 * @return Der Radius des Kreises
 	 */
-	public int radius() {
+	public float radius() {
 		return radius;
 	}
 	
@@ -89,11 +97,12 @@ public class Kreis extends RegEck {
 	}
 	
 	@Override
-	public void zeichnen(Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+		
 		g.setColor(this.formen()[0].getColor());
-		g.fillOval(x - r.x, y - r.y, 2 * radius, 2 * radius);
+		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
 	}
 }

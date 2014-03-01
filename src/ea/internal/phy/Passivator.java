@@ -62,8 +62,8 @@ extends PhysikClient {
      */
     @Override
     public boolean bewegen(Vektor v) {
-        xVersch(v.x);
-        yVersch(v.y);
+        xVersch((int)v.x);
+        yVersch((int)v.y);
         return true;
     }
 

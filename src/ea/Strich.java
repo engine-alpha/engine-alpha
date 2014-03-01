@@ -99,6 +99,6 @@ extends SimpleGraphic{
     @Override
     public void paint(Graphics g, int dx, int dy) {
         g.setColor(c);
-        g.drawLine(b.x-dx, b.y-dy, a.x-dx, a.y-dy);
+        g.drawLine((int)(b.x-dx), (int)(b.y-dy), (int)(a.x-dx), (int)(a.y-dy));
     }
 }

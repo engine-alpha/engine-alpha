@@ -19,9 +19,16 @@
 
 package ea;
 
-import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import ea.internal.gui.Fenster;
 
@@ -32,15 +39,6 @@ import ea.internal.gui.Fenster;
  */
 @SuppressWarnings("serial")
 public class Text extends Raum implements Leuchtend {
-	/**
-	 * Die X-Koordinate des Anfangs des Textes
-	 */
-	protected int x;
-	
-	/**
-	 * Die Y-Koordinate des Anfangs des Textes
-	 */
-	protected int y;
 	
 	/**
 	 * Die Schriftgroesse des Textes
@@ -121,7 +119,7 @@ public class Text extends Raum implements Leuchtend {
 	private static void fontsEinbauen(final ArrayList<File> liste, File akt) {
 		File[] files = akt.listFiles();
 		
-		if(files != null) {
+		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].equals(akt)) {
 					System.err.println("Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
@@ -166,11 +164,10 @@ public class Text extends Raum implements Leuchtend {
 	 * @param farbe
 	 *            Die Farbe, die fuer den Text benutzt werden soll.
 	 */
-	public Text(String inhalt, int x, int y, String fontName, int schriftGroesse, int schriftart, String farbe)
+	public Text(String inhalt, float x, float y, String fontName, int schriftGroesse, int schriftart, String farbe)
 	{
 		this.inhalt = inhalt;
-		this.x = x;
-		this.y = y;
+		this.position = new Punkt(x, y);
 		this.groesse = schriftGroesse;
 		this.farbe = zuFarbeKonvertieren(farbe);
 		if (schriftart >= 0 && schriftart <= 3) {
@@ -196,7 +193,7 @@ public class Text extends Raum implements Leuchtend {
 	 *            Wird hierfuer ein Font verwendet, der in dem Projektordner vorhanden sein soll, <b>und dies ist immer
 	 *            und in jedem Fall zu empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden.
 	 */
-	public Text(String inhalt, int x, int y, String fontName, int schriftGroesse) {
+	public Text(String inhalt, float x, float y, String fontName, int schriftGroesse) {
 		this(inhalt, x, y, fontName, schriftGroesse, 0, "Weiss");
 	}
 	
@@ -216,7 +213,7 @@ public class Text extends Raum implements Leuchtend {
 	 *            und in jedem Fall zu empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden, <b>nicht der Name der
 	 *            schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
 	 */
-	public Text(String inhalt, int x, int y, String fontName) {
+	public Text(String inhalt, float x, float y, String fontName) {
 		this(inhalt, x, y, fontName, 24);
 	}
 	
@@ -233,7 +230,7 @@ public class Text extends Raum implements Leuchtend {
 	 * @param schriftGroesse
 	 *            Die Groesse, in der die Schrift dargestellt werden soll
 	 */
-	public Text(String inhalt, int x, int y, int schriftGroesse) {
+	public Text(String inhalt, float x, float y, int schriftGroesse) {
 		this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
 	}
 	
@@ -248,7 +245,7 @@ public class Text extends Raum implements Leuchtend {
 	 * @param y
 	 *            Y-Koordinate
 	 */
-	public Text(String inhalt, int x, int y) {
+	public Text(String inhalt, float x, float y) {
 		this(inhalt, x, y, "SansSerif", 24, 0, "Weiss");
 	}
 	
@@ -265,7 +262,7 @@ public class Text extends Raum implements Leuchtend {
 	 * @param y
 	 *            Y-Koordinate
 	 */
-	public Text(int x, int y, String inhalt) {
+	public Text(float x, float y, String inhalt) {
 		this(inhalt, x, y, "SansSerif", 24, 0, "Weiss");
 	}
 	
@@ -491,17 +488,6 @@ public class Text extends Raum implements Leuchtend {
 	}
 	
 	/**
-	 * Verschiebt das Objekt.
-	 * 
-	 * @param v
-	 *            Der Vektor, der die Verschiebung des Objekts angibt.
-	 */
-	public void verschieben(Vektor v) {
-		this.x += v.x;
-		this.y += v.y;
-	}
-	
-	/**
 	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
 	 * 
 	 * @param r
@@ -521,13 +507,13 @@ public class Text extends Raum implements Leuchtend {
 	 *            Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br />
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
 		g.setColor(farbe);
 		g.setFont(font);
-		g.drawString(inhalt, x - r.x, y - r.y + groesse);
+		g.drawString(inhalt, (int) (position.x - r.x), (int) (position.y - r.y + groesse));
 	}
 	
 	/**
@@ -535,7 +521,7 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	public BoundingRechteck dimension() {
 		FontMetrics f = Fenster.metrik(font);
-		return new BoundingRechteck(x, y, f.stringWidth(inhalt), f.getHeight());
+		return new BoundingRechteck(position.x, position.y, f.stringWidth(inhalt), f.getHeight());
 	}
 	
 	/**

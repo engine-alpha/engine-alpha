@@ -67,6 +67,12 @@ public class Fenster extends Frame {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * Counter, der die Anzahl der effektiv vorhandenen Frames zählt.
+	 */
+	private static volatile int frameCount = 0;
+	
+	
+	/**
 	 * Gibt an, ob das Fenster im Vollbildmodus arbeitet
 	 */
 	private final boolean vollbild;
@@ -166,6 +172,8 @@ public class Fenster extends Frame {
 			int fensterX, int fensterY) {
 		super(titel);
 
+		frameCount++;
+		
 		int WINDOW_FRAME = 1;
 		int WINDOW_FULLSCREEN = 2;
 		int WINDOW_FULLSCREEN_FRAME = 4;
@@ -303,11 +311,10 @@ public class Fenster extends Frame {
 		addWindowListener(new Adapter(this));
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				e.getWindow().setVisible(false);
-				e.getWindow().dispose();
+				loeschen();
 			}
 		});
-		addCursor();
+		removeCursor();
 
 		// Mausfang
 		Manager.standard.anmelden(new Ticker() {
@@ -369,7 +376,7 @@ public class Fenster extends Frame {
 	}
 
 	private void addMouseListener() {
-		this.addMouseListener(new MouseListener() {
+		zeichner.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {
 			}
 
@@ -403,7 +410,7 @@ public class Fenster extends Frame {
 	}
 
 	private void addMouseMotionListener() {
-		this.addMouseMotionListener(new MouseMotionListener() {
+		zeichner.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseMoved(MouseEvent e) {
 				mausBewegung(e);
 			}
@@ -414,10 +421,8 @@ public class Fenster extends Frame {
 		});
 	}
 
-	private void addCursor() {
-		this.setCursor(getToolkit().createCustomCursor(
-				new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
-				new Point(0, 0), "NOCURSOR"));
+	private void removeCursor() {
+		mausLoeschen();
 	}
 
 	/**
@@ -582,8 +587,6 @@ public class Fenster extends Frame {
 			BoundingRechteck r = maus.getImage().dimension();
 			maus.getImage().positionSetzen(((getWidth() - r.breite) / 2),
 					(getHeight() - r.hoehe) / 2);
-			// mausBild = new Bild((d.width-i.getWidth(this))/2,
-			// (d.height-i.getHeight(this))/2, i);
 			mausBild = maus.getImage();
 
 			zeichner.anmelden(mausBild);
@@ -718,18 +721,8 @@ public class Fenster extends Frame {
 	public void loeschen() {
 		this.setVisible(false);
 		this.dispose();
-		System.exit(0);
-	}
-
-	/**
-	 * Faehrt das Fenster runter, ohne die virtuelle Maschine zu beenden.
-	 */
-	public void softLoeschen() {
-		zeichner.kill();
-		zeichner = null;
-
-		setVisible(false);
-		dispose();
+		if(--frameCount == 0)
+			System.exit(0);
 	}
 
 	/**
@@ -774,11 +767,15 @@ public class Fenster extends Frame {
 	 */
 	private void mausBewegung(MouseEvent e) {
 		if (hatMaus()) {
-			int startX = getWidth() / 2;
-			int startY = getHeight() / 2;
+			Insets insets = this.getInsets();
+			
+			int startX = getWidth() / 2 ;
+			int startY = getHeight() / 2 ;
 			Point loc = getLocation();
 			Point click = e.getPoint();
 
+			
+			
 			if (maus.bewegend()) {
 				if (maus.absolut()) {
 					getCam().verschieben(
@@ -787,8 +784,8 @@ public class Fenster extends Frame {
 			}
 
 			if (!maus.absolut()) {
-				int x = click.x - startX;
-				int y = click.y - startY;
+				int x = click.x + insets.left - startX;
+				int y = click.y + insets.top - startY;
 
 				BoundingRechteck bounds = mausBild.dimension();
 				Punkt spot = maus.hotSpot();
@@ -830,8 +827,8 @@ public class Fenster extends Frame {
 				BoundingRechteck r = mausBild.dimension();
 				Punkt p = maus.hotSpot();
 
-				maus.klick(r.x + p.x + getCam().getX(), r.y + p.y
-						+ getCam().getY(), links, losgelassen); // Mit
+				maus.klick((int)(r.x + p.x + getCam().getX()), (int)(r.y + p.y
+						+ getCam().getY()), links, losgelassen); // Mit
 																// zurückrechnen
 																// auf die
 																// Bildebene!
@@ -839,7 +836,7 @@ public class Fenster extends Frame {
 				Dimension dim = this.getSize();
 				int startX = (dim.width / 2);
 				int startY = (dim.height / 2);
-				maus.klick(startX + getCam().getX(), startY + getCam().getY(),
+				maus.klick((int)(startX + getCam().getX()), (int)(startY + getCam().getY()),
 						links, losgelassen);
 			}
 		}

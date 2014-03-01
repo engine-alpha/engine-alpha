@@ -17,8 +17,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.internal.ani;
 
+import ea.AnimationsEndeReagierbar;
+import ea.Manager;
+import ea.Raum;
+import ea.Ticker;
 import ea.internal.util.Logger;
 
 /**
@@ -127,7 +131,7 @@ public abstract class Animierer implements Ticker {
 	/**
 	 * Beendet diese Animation ein fuer alle mal.
 	 */
-	protected void beenden() {
+	public void beenden() {
 		manager.abmelden(this);
 		listener.endeReagieren(this);
 	}

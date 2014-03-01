@@ -19,6 +19,8 @@
 
 package ea;
 
+import java.awt.Graphics2D;
+
 import ea.internal.gra.Listung;
 
 /**
@@ -33,12 +35,12 @@ public class Dreieck extends Geometrie {
 	/**
 	 * Die X-Koordinaten der Punkte
 	 */
-	private int[] x = new int[3];
+	private float[] x = new float[3];
 	
 	/**
 	 * Die Y-Koordinaten der Punkte
 	 */
-	private int[] y = new int[3];
+	private float[] y = new float[3];
 	
 	/**
 	 * Die Darstellungsfarbe
@@ -75,7 +77,7 @@ public class Dreieck extends Geometrie {
 	 * @param y
 	 *            Alle Y-Koordinaten als Feld
 	 */
-	public Dreieck(int[] x, int[] y) {
+	public Dreieck(float[] x, float[] y) {
 		super(0, 0);
 		if (x.length == 3 && y.length == 3) {
 			this.x = x;
@@ -130,7 +132,7 @@ public class Dreieck extends Geometrie {
 	 * @param y
 	 *            Die Koordinaten aller Y-Punkte. Der Index gibt den Punkt an (x[0] und y[0] bilden einen Punkt)
 	 */
-	public void punkteSetzen(int[] x, int[] y) {
+	public void punkteSetzen(float[] x, float[] y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -193,10 +195,10 @@ public class Dreieck extends Geometrie {
 	 */
 	@Override
 	public BoundingRechteck dimension() {
-		int kleinstesX = x[0];
-		int groesstesX = x[0];
-		int kleinstesY = y[0];
-		int groesstesY = y[0];
+		float kleinstesX = x[0];
+		float groesstesX = x[0];
+		float kleinstesY = y[0];
+		float groesstesY = y[0];
 		
 		for (int i = 0; i < 3; i++) {
 			if (x[i] > groesstesX) {
@@ -274,19 +276,19 @@ public class Dreieck extends Geometrie {
 	 *            Das BoundingRechteck, das das Kamerabild beschreibt.
 	 */
 	@Override
-	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
 		int[] x = {
-			this.x[0],
-			this.x[1],
-			this.x[2]
+			(int)this.x[0],
+			(int)this.x[1],
+			(int)this.x[2]
 		};
 		int[] y = {
-			this.y[0],
-			this.y[1],
-			this.y[2]
+			(int)this.y[0],
+			(int)this.y[1],
+			(int)this.y[2]
 		};
 		for (int i = 0; i < 3; i++) {
 			x[i] -= r.x;

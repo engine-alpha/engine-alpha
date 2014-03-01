@@ -97,23 +97,36 @@ public final class Vektor
      * Die Konstante fuer die Richtung Suedosten
      */
     public static final int SO = 7;
-
-    /**
-     * Die X-Relation
-     */
-    public final int x;
     
     /**
-     * Die Y-Relation
+     * Der kontinuierliche(re) DeltaX-Wert des Punktes. Die anderen Koordinaten sind ggf.
+     * nur gerundet.
      */
-    public final int y;
+    public final float x;
+    
+    /**
+     * Der kontinuierliche(re) DeltaY-Wert des Punktes. Die anderen Koordinaten sind ggf.
+     * nur gerundet.
+     */
+    public final float y;
 
+    /**
+     * Konstruktor fuer Objekte der Klasse Vektor. Werte werden hier als <code>int</code> angegeben.
+     * Intern wird trotzdem mit genaueren Fließkommazahlen gerechnet.
+     * @param   x   Der Bewegungsanteil in Richtung X
+     * @param   y   Der Bewegungsanteil in Richtung Y
+     */
+    public Vektor(int x, int y) {
+        this.x = (float)x;
+        this.y = (float)y;
+    }
+    
     /**
      * Konstruktor fuer Objekte der Klasse Vektor
      * @param   x   Der Bewegungsanteil in Richtung X
      * @param   y   Der Bewegungsanteil in Richtung Y
      */
-    public Vektor(int x, int y) {
+    public Vektor(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -171,6 +184,17 @@ public final class Vektor
      * @see teilen(int)
      */
     public Vektor multiplizieren(int faktor) {
+        return new Vektor(x*faktor, y*faktor);
+    }
+    
+    /**
+     * Multipliziert die effektiven Laengen beider Anteile des Vektors (X und Y) mit einem festen Faktor.
+     * Dadurch entsteht ein neuer Vektor mit anderen Werten (es sei denn, der Faktor ist 1); dieser wird dann zurueck gegeben.
+     * @param faktor    Der Faktor, mit dem die X- und Y-Werte des Vektors multipliziert werden
+     * @return  Der Vektor mit den multiplizierten Werten
+     * @see teilen(int)
+     */
+    public Vektor multiplizieren(float faktor) {
         return new Vektor(x*faktor, y*faktor);
     }
 
@@ -260,12 +284,22 @@ public final class Vektor
     }
 
     /**
+	 * Gibt zurück, ob dieser Vektor <i>echt ganzzahlig</i> ist, also ob seine <b>tatsächlichen Delta-Werte</b>
+	 * beide Ganzzahlen sind.
+	 * 
+	 * @return <code>true</code>, wenn <b>beide</b> Delta-Werte dieses Punktes ganzzahlig sind, sonst <code>false</code>.
+	 */
+	public boolean istEchtGanzzahlig() {
+		return this.x == (float)Math.floor(x) && this.y == (float)Math.floor(y);
+	}
+    
+    /**
      * Gibt die X-Verschiebung dieses Vektors wieder.
      * @return  Die X-Verschiebung dieses Vektors. Positive Werte verschieben nach
      * rechts, negative Werte verschieben nach links.
      * @see dY()
      */
-    public int dX() {
+    public float dX() {
         return x;
     }
 
@@ -275,7 +309,7 @@ public final class Vektor
      * unten, negative Werte verschieben nach oben.
      * @see dX()
      */
-    public int dY() {
+    public float dY() {
         return y;
     }
 
@@ -294,12 +328,13 @@ public final class Vektor
      */
     @Override
     public String toString() {
-        return "Vektor: " + x + "|" + y;
+        return "Vektor: (" + x + "|" + y + ")";
     }
 
     /**
+     * {@inheritDoc}
      * Prueft, ob ein beliebiges Objekt gleich diesem Vektor ist. Ueberschrieben aus der Superklasse <code>Object</code>.<br />
-     * 2 Vektoren gelten als gleich, wenn sie in ihrem Delta-X und ihrem Delta-Y Uebereinstimmen.
+     * 2 Vektoren gelten als gleich, wenn sie in ihrem Delta-X und ihrem Delta-Y (und zwar <b>reell exakt</b>) uebereinstimmen.
      * @param o Das auf gleichheit mit diesem zu ueberpruefende Objekt.
      * @return  <code>true</code>, wenn beide Vektoren das gleiche dX und dY haben, sonst <code>false</code>.
      */
@@ -310,18 +345,5 @@ public final class Vektor
             return (this.x==v.x&&this.y==v.y);
         }
         return false;
-    }
-
-    /**
-     * Die Hashcode-Methode fuer Vektoren. Ueberschrieben aus der Superklasse <code>Object</code>.<br />
-     * Diese Methode wird in keiner Weise bei der Spieleprogrammierung gebraucht. Sie wird intern verwendet.
-     * @return  Der Hash-Code dieses Objektes.
-     */
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + this.x;
-        hash = 67 * hash + this.y;
-        return hash;
     }
 }

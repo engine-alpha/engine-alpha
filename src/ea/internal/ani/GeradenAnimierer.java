@@ -21,7 +21,6 @@ package ea.internal.ani;
 
 import ea.AnimationsEndeReagierbar;
 import ea.AnimationsManager;
-import ea.Animierer;
 import ea.Manager;
 import ea.Punkt;
 import ea.Raum;

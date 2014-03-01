@@ -357,9 +357,9 @@ public class DateiManager {
 			w.newLine();
 			w.write("y:" + feld[0].hoeheN()); // Die Y-Groesse
 			w.newLine();
-			w.write("p:" + f.dimension().x); // Die Position X
+			w.write("p:" + (int)f.dimension().x); // Die Position X
 			w.newLine();
-			w.write("q:" + f.dimension().y); // Die Position Y
+			w.write("q:" + (int)f.dimension().y); // Die Position Y
 			w.newLine();
 			// Die Felder
 			for (int i = 0; i < feld.length; i++) {

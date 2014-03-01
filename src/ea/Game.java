@@ -462,9 +462,9 @@ public abstract class Game implements TastenReagierbar {
 	 * -> Die virtuelle Maschine wird <b>nicht</b> beendet.
 	 */
 	public void schliessen() {
-		fenster.softLoeschen();
 		manager.kill();
 		audioManager.neutralize();
+		fenster.loeschen();
 	}
 	
 	/**
@@ -596,11 +596,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see Maus
 	 */
 	public void mausAnmelden(Maus maus) {
-		if (maus == null) {
-			System.err.println("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
-		}
-		fenster.mausLoeschen();
-		fenster.anmelden(maus);
+		mausAnmelden(maus, false);
 	}
 	
 	/**
@@ -743,7 +739,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see #screenshot(java.lang.String, int, int, int, int)
 	 */
 	public void screenshot(String pfad, BoundingRechteck ausschnitt) {
-		BufferedImage img = new BufferedImage(ausschnitt.breite, ausschnitt.hoehe, BufferedImage.TYPE_INT_RGB);
+		BufferedImage img = new BufferedImage((int)ausschnitt.breite, (int)ausschnitt.hoehe, BufferedImage.TYPE_INT_RGB);
 		cam.wurzel().zeichnen(img.createGraphics(), ausschnitt);
 		if (pfad.toLowerCase().endsWith(".jpg"))
 			try {

@@ -59,7 +59,7 @@ public class Logger {
 	 * Logger-Funktion für Fehler
 	 */
 	public static void error(String s) {
-		StackTraceElement e = Thread.currentThread().getStackTrace()[3];
+		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
 		write("ERROR", e.getFileName(), e.getLineNumber(), s, true);
 	}
 	

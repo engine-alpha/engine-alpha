@@ -19,7 +19,7 @@
 
 package ea;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -247,7 +247,7 @@ public class Knoten extends Raum implements Listung {
 	 *            Das Rechteck, dass die Kameraposition definiert
 	 */
 	@Override
-	public void zeichnen(Graphics g, BoundingRechteck r) {
+	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		try {
 			for (int i = list.size() - 1; i > -1; i--)
 				list.get(i).zeichnenBasic(g, r);
