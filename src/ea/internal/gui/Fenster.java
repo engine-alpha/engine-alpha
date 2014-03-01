@@ -67,6 +67,12 @@ public class Fenster extends Frame {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * Counter, der die Anzahl der effektiv vorhandenen Frames zählt.
+	 */
+	private static volatile int frameCount = 0;
+	
+	
+	/**
 	 * Gibt an, ob das Fenster im Vollbildmodus arbeitet
 	 */
 	private final boolean vollbild;
@@ -166,6 +172,8 @@ public class Fenster extends Frame {
 			int fensterX, int fensterY) {
 		super(titel);
 
+		frameCount++;
+		
 		int WINDOW_FRAME = 1;
 		int WINDOW_FULLSCREEN = 2;
 		int WINDOW_FULLSCREEN_FRAME = 4;
@@ -303,8 +311,7 @@ public class Fenster extends Frame {
 		addWindowListener(new Adapter(this));
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				e.getWindow().setVisible(false);
-				e.getWindow().dispose();
+				loeschen();
 			}
 		});
 		removeCursor();
@@ -714,18 +721,8 @@ public class Fenster extends Frame {
 	public void loeschen() {
 		this.setVisible(false);
 		this.dispose();
-		System.exit(0);
-	}
-
-	/**
-	 * Faehrt das Fenster runter, ohne die virtuelle Maschine zu beenden.
-	 */
-	public void softLoeschen() {
-		zeichner.kill();
-		zeichner = null;
-
-		setVisible(false);
-		dispose();
+		if(--frameCount == 0)
+			System.exit(0);
 	}
 
 	/**

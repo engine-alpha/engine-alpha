@@ -457,9 +457,9 @@ public abstract class Game implements TastenReagierbar {
 	 * -> Die virtuelle Maschine wird <b>nicht</b> beendet.
 	 */
 	public void schliessen() {
-		fenster.softLoeschen();
 		manager.kill();
 		audioManager.neutralize();
+		fenster.loeschen();
 	}
 	
 	/**
