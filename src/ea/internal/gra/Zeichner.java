@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
  * 
- * Copyright (C) 2011 Michael Andonie
+ * Copyright (c) 2011-2014 Michael Andonie and Contributors
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ import ea.internal.phy.Physik;
 /**
  * Dies ist das Panel, in dem die einzelnen Dinge gezeichnet werden
  * 
- * @author Michael Andonie, Niklas Keller
+ * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
 @SuppressWarnings("serial")
 public class Zeichner extends Canvas implements Runnable {
@@ -210,20 +210,25 @@ public class Zeichner extends Canvas implements Runnable {
 		// Absoluter Hintergrund
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int)groesse.breite, (int)groesse.hoehe);
+		
 		// Relativer Hintergrund
 		if (hintergrund != null) {
 			hintergrund.zeichnenBasic(g, groesse.verschobeneInstanz(new Vektor(
 					cam.getX() / 5, cam.getY() / 10)));
 		}
+		
 		// Die Objekte
 		cam.zeichne(g);
+		
 		// Die simplen Grafikobjekte (nicht in Raum)
 		BoundingRechteck camBounds = cam.position();
 		for (SimpleGraphic gr : simples) {
 			gr.paint(g, (int)camBounds.x, (int)camBounds.y);
 		}
+		
 		// Die statischen Objekte
 		statNode.zeichnen(g, groesse);
+		
 		// Die Maus
 		if (vordergrund != null) {
 			vordergrund.zeichnen(g, groesse);

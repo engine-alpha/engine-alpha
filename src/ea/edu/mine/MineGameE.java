@@ -19,8 +19,8 @@
 
 package ea.edu.mine;
 
-import java.lang.reflect.*;
-import ea.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Diese Klasse der EDU-Version ermoeglicht das <b>extrem einfache, Schulunterrichtorientierte</b> umsetzen des Unterrichtszieles "Minesweeper".<br />
