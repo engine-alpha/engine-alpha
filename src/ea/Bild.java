@@ -283,12 +283,12 @@ public class Bild extends Raum {
 	public void zeichnen(java.awt.Graphics g, BoundingRechteck r) {
 		if (r.schneidetBasic(this.dimension())) {
 			if (!wiederholen) {
-				g.drawImage(img,(int)( position.realX - r.x), (int)(position.realY - r.y), Fenster.instanz);
+				g.drawImage(img,(int)( position.x - r.x), (int)(position.y - r.y), Fenster.instanz);
 			} else {
 				// Upcast --> mehr Funktionen in Graphics2D
 				Graphics2D g2d = (Graphics2D) g;
 				// Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmasse
-				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX, -r.y + position.y, img.getWidth(), img.getHeight())
+				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.x, -r.y + position.y, img.getWidth(), img.getHeight())
 						);
 				// Texturfarbe setzen
 				g2d.setPaint(tp);

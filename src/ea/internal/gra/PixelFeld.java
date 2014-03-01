@@ -329,7 +329,7 @@ implements java.io.Serializable
      * @param y Die Y-Startkoordinate der linken oberen Ecke
      * @return  Alle Flaechen dieses Pixel-Feldes als Array aus Bounding-Rechtecken.
      */
-    public BoundingRechteck[] flaechen(int x, int y) {
+    public BoundingRechteck[] flaechen(float x, float y) {
         BoundingRechteck[] ret = new BoundingRechteck[anzahlPixel()];
         int cnt = 0;
         for(int i = 0; i < farbe.length; i++) {

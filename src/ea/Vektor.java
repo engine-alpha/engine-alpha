@@ -97,28 +97,18 @@ public final class Vektor
      * Die Konstante fuer die Richtung Suedosten
      */
     public static final int SO = 7;
-
-    /**
-     * Die X-Relation
-     */
-    public final int x;
-    
-    /**
-     * Die Y-Relation
-     */
-    public final int y;
     
     /**
      * Der kontinuierliche(re) DeltaX-Wert des Punktes. Die anderen Koordinaten sind ggf.
      * nur gerundet.
      */
-    public final float realX;
+    public final float x;
     
     /**
      * Der kontinuierliche(re) DeltaY-Wert des Punktes. Die anderen Koordinaten sind ggf.
      * nur gerundet.
      */
-    public final float realY;
+    public final float y;
 
     /**
      * Konstruktor fuer Objekte der Klasse Vektor. Werte werden hier als <code>int</code> angegeben.
@@ -127,10 +117,8 @@ public final class Vektor
      * @param   y   Der Bewegungsanteil in Richtung Y
      */
     public Vektor(int x, int y) {
-        this.x = x;
-        this.y = y;
-        this.realX = (float)x;
-        this.realY = (float)y;
+        this.x = (float)x;
+        this.y = (float)y;
     }
     
     /**
@@ -139,10 +127,8 @@ public final class Vektor
      * @param   y   Der Bewegungsanteil in Richtung Y
      */
     public Vektor(float x, float y) {
-        this.x = (int)x;
-        this.y = (int)y;
-        this.realX = x;
-        this.realY = y;
+        this.x = x;
+        this.y = y;
     }
     
     /**
@@ -152,10 +138,8 @@ public final class Vektor
      * @param   ziel    Der Zielpunkt der Bewegung
      */
     public Vektor(Punkt start, Punkt ziel) {
-        this.realX = ziel.realX-start.realX;
-        this.realY = ziel.realY-start.realY;
-        this.x = (int)realX;
-        this.y = (int)realY;
+        this.x = ziel.x-start.x;
+        this.y = ziel.y-start.y;
     }
     
     /**
@@ -163,7 +147,7 @@ public final class Vektor
      * @return  Ein neues Vektor-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
      */
     public Vektor gegenrichtung() {
-        return new Vektor(-this.realX, - this.realY);
+        return new Vektor(-this.x, - this.y);
     }
     
     /**
@@ -172,7 +156,7 @@ public final class Vektor
      * @return  Ein neues Vektor-Objekt, das die Summe der beiden urspruenglichen Bewegungen darstellt.
      */
     public Vektor summe(Vektor v) {
-        return new Vektor(this.realX+v.realX, this.realY+v.realY);
+        return new Vektor(this.x+v.x, this.y+v.y);
     }
     
     /**
@@ -189,7 +173,7 @@ public final class Vektor
             System.err.println("Achtung! Der Divisor war kleiner als 1! Er muss mindestens 1 sein!");
             return null;
         }
-        return new Vektor(realX/divisor, realY/divisor);
+        return new Vektor(x/divisor, y/divisor);
     }
     
     /**
@@ -200,7 +184,7 @@ public final class Vektor
      * @see teilen(int)
      */
     public Vektor multiplizieren(int faktor) {
-        return new Vektor(realX*faktor, realY*faktor);
+        return new Vektor(x*faktor, y*faktor);
     }
     
     /**
@@ -211,7 +195,7 @@ public final class Vektor
      * @see teilen(int)
      */
     public Vektor multiplizieren(float faktor) {
-        return new Vektor(x*faktor, realY*faktor);
+        return new Vektor(x*faktor, y*faktor);
     }
 
     /**
@@ -219,7 +203,7 @@ public final class Vektor
      * @return  <code>true</code>, wenn dieser keine Auswirkungen als Bewegender Vektor machen wuerde.
      */
     public boolean unwirksam() {
-        return (this.realX == 0 && this.realY == 0);
+        return (this.x == 0 && this.y == 0);
     }
     
     /**
@@ -306,7 +290,7 @@ public final class Vektor
 	 * @return <code>true</code>, wenn <b>beide</b> Delta-Werte dieses Punktes ganzzahlig sind, sonst <code>false</code>.
 	 */
 	public boolean istEchtGanzzahlig() {
-		return this.realX == (float) x && this.realY == (float) y;
+		return this.x == (float)Math.floor(x) && this.y == (float)Math.floor(y);
 	}
     
     /**
@@ -315,7 +299,7 @@ public final class Vektor
      * rechts, negative Werte verschieben nach links.
      * @see dY()
      */
-    public int dX() {
+    public float dX() {
         return x;
     }
 
@@ -325,7 +309,7 @@ public final class Vektor
      * unten, negative Werte verschieben nach oben.
      * @see dX()
      */
-    public int dY() {
+    public float dY() {
         return y;
     }
 
@@ -344,7 +328,7 @@ public final class Vektor
      */
     @Override
     public String toString() {
-        return "Vektor: (" + realX + "|" + realY + ")";
+        return "Vektor: (" + x + "|" + y + ")";
     }
 
     /**
@@ -358,7 +342,7 @@ public final class Vektor
     public boolean equals(Object o) {
         if(o instanceof Vektor) {
             Vektor v = (Vektor)o;
-            return (this.realX==v.realX&&this.realY==v.realY);
+            return (this.x==v.x&&this.y==v.y);
         }
         return false;
     }

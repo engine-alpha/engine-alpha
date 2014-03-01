@@ -489,7 +489,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public void positionSetzen(Punkt p) {
 		BoundingRechteck r = this.dimension();
-		this.verschieben(new Vektor(p.realX - r.x, p.realY - r.y));
+		this.verschieben(new Vektor(p.x - r.x, p.y - r.y));
 	}
 	
 	/**
@@ -524,8 +524,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see zentrum()
 	 */
 	public void mittelpunktSetzen(int x, int y) {
-		Punkt p = this.zentrum();
-		this.verschieben(new Vektor(x - p.x, y - p.y));
+		this.mittelpunktSetzen(new Punkt(x,y));
 	}
 	
 	/**
@@ -542,7 +541,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see zentrum()
 	 */
 	public void mittelpunktSetzen(Punkt p) {
-		this.mittelpunktSetzen(p.x, p.y);
+		this.verschieben(this.zentrum().nach(p));
 	}
 	
 	

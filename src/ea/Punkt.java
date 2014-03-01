@@ -33,36 +33,24 @@ public final class Punkt
 	public static final Punkt ZENTRUM = new Punkt(0f,0f);
 	
 	/**
-	 * Die X-Koordinate
-	 */
-	public final int x;
-	
-	/**
-	 * Die Y-Koordinate
-	 */
-	public final int y;
-	
-	/**
 	 * Der kontinuierliche(re) X-Wert des Punktes. Die anderen Koordinaten sind ggf.
 	 * nur gerundet.
 	 */
-	public final float realX;
+	public final float x;
 	
 	/**
 	 * Der kontinuierliche(re) Y-Wert des Punktes. Die anderen Koordinaten sind ggf.
 	 * nur gerundet.
 	 */
-	public final float realY;
+	public final float y;
 	
 	/**
 	 * Standard-Konstruktor fuer Objekte der Klasse Punkt.
 	 */
 	public Punkt(int x, int y)
 	{
-		this.x = x;
-		this.y = y;
-		this.realX = (float) x;
-		this.realY = (float) y;
+		this.x = (float) x;
+		this.y = (float) y;
 	}
 	
 	/**
@@ -71,10 +59,8 @@ public final class Punkt
 	 */
 	public Punkt(float x, float y)
 	{
-		this.x = (int) x;
-		this.y = (int) y;
-		this.realX = x;
-		this.realY = y;
+		this.x = x;
+		this.y = y;
 	}
 	
 	/**
@@ -88,8 +74,8 @@ public final class Punkt
 	 */
 	public double abstand(Punkt p) {
 		double x, y;
-		x = Math.abs(this.realX - p.realX);
-		y = Math.abs(this.realY - p.realY);
+		x = Math.abs(this.x - p.x);
+		y = Math.abs(this.y - p.y);
 		return Math.sqrt((x * x) + (y * y));
 	}
 	
@@ -104,7 +90,7 @@ public final class Punkt
 	 * @see verschobeneInstanz(Vektor)
 	 */
 	public Punkt verschobenerPunkt(Vektor v) {
-		return new Punkt(this.realX + v.realX, this.realY + v.realY);
+		return new Punkt(this.x + v.x, this.y + v.y);
 	}
 	
 	/**
@@ -131,9 +117,19 @@ public final class Punkt
 	public boolean equals(Object o) {
 		if (o instanceof Punkt) {
 			Punkt p = (Punkt) o;
-			return this.realX == p.realX && this.realY == p.realY;
+			return this.x == p.x && this.y == p.y;
 		}
 		return false;
+	}
+	
+	/**
+	 * Berechnet den Vektor, der <b>von diesem Punkt zu einem anderen</b>
+	 * führt.
+	 * @param p2	Ein weiterer Punkt.
+	 * @return		Ein Vektor, der <b>von diesem</b> Punkt <b>nach <code>p2</code></b> zeigt.
+	 */
+	public Vektor nach(Punkt p2) {
+		return new Vektor(p2.x - this.x, p2.y - this.y);
 	}
 	
 	/**
@@ -143,7 +139,7 @@ public final class Punkt
 	 * @return <code>true</code>, wenn <b>beide</b> Koordinaten dieses Punktes ganzzahlig sind, sonst <code>false</code>.
 	 */
 	public boolean istEchtGanzzahlig() {
-		return this.realX == (float) x && this.realY == (float) y;
+		return this.x == (float)Math.floor(x) && this.y == (float)Math.floor(y);
 	}
 	
 	/**
@@ -152,7 +148,7 @@ public final class Punkt
 	 * @return Die X-Koordinate dieses Punktes.
 	 * @see #y()
 	 */
-	public int x() {
+	public float x() {
 		return x;
 	}
 	
@@ -162,28 +158,8 @@ public final class Punkt
 	 * @return Die Y-Koordinate dieses Punktes.
 	 * @see #x()
 	 */
-	public int y() {
+	public float y() {
 		return y;
-	}
-	
-	/**
-	 * Gibt die (annähernd) reelle X-Koordinate dieses Punktes zurueck.
-	 * 
-	 * @return Die X-Koordinate dieses Punktes.
-	 * @see #getRealY()
-	 */
-	public float getRealX() {
-		return realX;
-	}
-	
-	/**
-	 * Gibt die (annähernd) reelle Y-Koordinate dieses Punktes zurueck.
-	 * 
-	 * @return Die Y-Koordinate dieses Punktes.
-	 * @see #getRealX()
-	 */
-	public float getRealY() {
-		return realY;
 	}
 	
 }

@@ -221,7 +221,7 @@ public class Kamera
      * @param y Die <i>Y-Koordinate der linken oberen Ecke</i> der Kameraperspektive
      * @see positionSetzen(Punkt)
      */
-    public void positionSetzen(int x, int y) {
+    public void positionSetzen(float x, float y) {
         bild = bild.anPosition(x, y);
     }
 

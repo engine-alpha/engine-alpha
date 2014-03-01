@@ -48,6 +48,6 @@ extends Dreieck {
      * @param y3    Die Y-Koordinate des 3. Punktes
      */
     public void punkteSetzen(int x1, int y1, int x2, int y2, int x3, int y3) {
-        super.punkteSetzen(new int[] {x1, x2, x3}, new int[] {y1, y2, y3});
+        super.punkteSetzen(new float[] {x1, x2, x3}, new float[] {y1, y2, y3});
     }
 }
