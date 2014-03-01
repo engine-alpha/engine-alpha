@@ -56,11 +56,12 @@ public class Knoten extends Raum implements Listung {
 	 * @see leerenOhnePhysikAbmelden()
 	 */
 	public synchronized void leeren() {
-		for (int i = list.size() - 1; i > -1; i--) {
+		for (int i = list.size() - 1; i >= 0; i--) {
 			list.get(i).neutralMachen();
 			list.get(i).loeschen();
-			list.remove(i);
 		}
+		
+		list.clear();
 	}
 	
 	/**
@@ -89,12 +90,10 @@ public class Knoten extends Raum implements Listung {
 		if (list.contains(m)) {
 			m.neutralMachen();
 			m.loeschen();
-		} else {
-			Logger.warning("Achtung! Das am Knoten zu entfernende Raum-Objekt war gar nicht am Knoten angemeldet!");
 		}
 		
-
-		while(list.remove(m));
+		while (list.remove(m))
+			;
 	}
 	
 	/**
@@ -151,8 +150,9 @@ public class Knoten extends Raum implements Listung {
 	 * Das Ergebnis: 11 Zeilen Programmcode gespart.
 	 */
 	public synchronized void add(Raum... m) {
-		for (Raum n : m)
+		for (Raum n : m) {
 			list.add(n);
+		}
 	}
 	
 	/**
@@ -163,9 +163,12 @@ public class Knoten extends Raum implements Listung {
 	 * @param m
 	 *            Das hinzuzufuegende Raum-Objekt
 	 */
-	public synchronized void add(Raum m) { // reverse to keep backwardscompability
+	public synchronized void add(Raum m) {
+		// reverse to keep backwardscompability
 		Collections.reverse(list);
+		
 		list.add(m);
+		
 		Collections.reverse(list);
 		Collections.sort(list);
 	}
@@ -196,6 +199,7 @@ public class Knoten extends Raum implements Listung {
 				ret = false;
 			}
 		}
+		
 		return ret;
 	}
 	
@@ -228,6 +232,7 @@ public class Knoten extends Raum implements Listung {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 	
@@ -261,6 +266,7 @@ public class Knoten extends Raum implements Listung {
 	@Override
 	public BoundingRechteck dimension() {
 		BoundingRechteck ret = null;
+		
 		for (Raum raum : list) {
 			if (ret == null) {
 				ret = raum.dimension();
@@ -268,6 +274,7 @@ public class Knoten extends Raum implements Listung {
 				ret = ret.summe(raum.dimension());
 			}
 		}
+		
 		if (ret == null) {
 			return new BoundingRechteck(0, 0, 0, 0);
 		} else {
