@@ -307,7 +307,7 @@ public class Fenster extends Frame {
 				e.getWindow().dispose();
 			}
 		});
-		addCursor();
+		removeCursor();
 
 		// Mausfang
 		Manager.standard.anmelden(new Ticker() {
@@ -369,7 +369,7 @@ public class Fenster extends Frame {
 	}
 
 	private void addMouseListener() {
-		this.addMouseListener(new MouseListener() {
+		zeichner.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {
 			}
 
@@ -403,7 +403,7 @@ public class Fenster extends Frame {
 	}
 
 	private void addMouseMotionListener() {
-		this.addMouseMotionListener(new MouseMotionListener() {
+		zeichner.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseMoved(MouseEvent e) {
 				mausBewegung(e);
 			}
@@ -414,10 +414,8 @@ public class Fenster extends Frame {
 		});
 	}
 
-	private void addCursor() {
-		this.setCursor(getToolkit().createCustomCursor(
-				new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
-				new Point(0, 0), "NOCURSOR"));
+	private void removeCursor() {
+		mausLoeschen();
 	}
 
 	/**
@@ -582,8 +580,6 @@ public class Fenster extends Frame {
 			BoundingRechteck r = maus.getImage().dimension();
 			maus.getImage().positionSetzen(((getWidth() - r.breite) / 2),
 					(getHeight() - r.hoehe) / 2);
-			// mausBild = new Bild((d.width-i.getWidth(this))/2,
-			// (d.height-i.getHeight(this))/2, i);
 			mausBild = maus.getImage();
 
 			zeichner.anmelden(mausBild);
@@ -774,11 +770,15 @@ public class Fenster extends Frame {
 	 */
 	private void mausBewegung(MouseEvent e) {
 		if (hatMaus()) {
-			int startX = getWidth() / 2;
-			int startY = getHeight() / 2;
+			Insets insets = this.getInsets();
+			
+			int startX = getWidth() / 2 ;
+			int startY = getHeight() / 2 ;
 			Point loc = getLocation();
 			Point click = e.getPoint();
 
+			
+			
 			if (maus.bewegend()) {
 				if (maus.absolut()) {
 					getCam().verschieben(
@@ -787,8 +787,8 @@ public class Fenster extends Frame {
 			}
 
 			if (!maus.absolut()) {
-				int x = click.x - startX;
-				int y = click.y - startY;
+				int x = click.x + insets.left - startX;
+				int y = click.y + insets.top - startY;
 
 				BoundingRechteck bounds = mausBild.dimension();
 				Punkt spot = maus.hotSpot();

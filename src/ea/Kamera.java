@@ -255,15 +255,15 @@ public class Kamera
     /**
      * @return  Der Verzug in Richtung X, den die Kamera bis jetzt vom Urspruenglichen Standort (0, 0) hat.
      */
-    public float getX() {
-        return bild.x;
+    public int getX() {
+        return (int)bild.x;
     }
     
     /**
      * @return  Der Verzug in Richtung Y, den die Kamera bis jetzt vom Urspruenglichen Standort (0, 0) hat.
      */
-    public float getY() {
-        return bild.y;
+    public int getY() {
+        return (int)bild.y;
     }
     
     /**

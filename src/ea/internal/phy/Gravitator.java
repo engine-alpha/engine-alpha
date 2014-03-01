@@ -151,8 +151,8 @@ extends PhysikClient {
      * @param dX    Die X-Aenderung (Delta-X)
      * @return <code>true</code>, wenn die Bewegung in X-Richtung ohne Passiv-Block moeglich war, sonst <code>false</code>.
      */
-    public boolean xVersch(int dX) {
-        int z;
+    public boolean xVersch(float dX) {
+        float z;
         if(dX > 0) {
             z = 1;
         } else if(dX < 0) {
@@ -178,8 +178,8 @@ extends PhysikClient {
      * @param dX    Die Y-Aenderung (Delta-Y)
      * @return <code>true</code>, wenn die Bewegung in Y-Richtung ohne Passiv-Block moeglich war, sonst <code>false</code>.
      */
-    public boolean yVersch(int dY) {
-        int z;
+    public boolean yVersch(float dY) {
+    	float z;
         if(dY > 0) {
             z = 1;
         } else if(dY < 0) {

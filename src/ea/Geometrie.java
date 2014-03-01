@@ -73,6 +73,7 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
      */
     @Override
     public void verschieben(Vektor v) {
+    	super.verschieben(v);
         for(int i = 0; i < formen.length; i++) {
             formen[i].verschieben(v);
         }

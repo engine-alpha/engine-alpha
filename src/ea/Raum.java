@@ -489,7 +489,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public void positionSetzen(Punkt p) {
 		BoundingRechteck r = this.dimension();
-		this.verschieben(new Vektor(position.realX - r.x, position.realY - r.y));
+		this.verschieben(new Vektor(p.realX - r.x, p.realY - r.y));
 	}
 	
 	/**

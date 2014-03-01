@@ -591,11 +591,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see Maus
 	 */
 	public void mausAnmelden(Maus maus) {
-		if (maus == null) {
-			System.err.println("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
-		}
-		fenster.mausLoeschen();
-		fenster.anmelden(maus);
+		mausAnmelden(maus, false);
 	}
 	
 	/**
