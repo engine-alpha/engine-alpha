@@ -226,6 +226,16 @@ public final class BoundingRechteck implements Serializable {
 	}
 	
 	/**
+	 * Gibt einen <code>BoundingKreis</code> aus, der das Rechteck minimal, aber voll umschließt.
+	 * @return	der <code>BoundingKreis</code> aus, der das Rechteck minimal, aber voll umschließt.
+	 * 			Die Ecken des Rechtecks liegen alle auf dem Kreis.
+	 */
+	public KreisCollider umschliessenderKreis() {
+		Punkt z = this.zentrum();
+		return new KreisCollider(z, z.abstand(new Punkt(x,y)));
+	}
+	
+	/**
 	 * Testet, ob sich ein Dreieck in dem BoundingRechteck befindet.<br />
 	 * Hierbei wird zuerst getestet, ob ein Punkt des Dreiecks im Rechteck ist, dann, falls noetig ob ein Punkt des Rechtecks im Dreieck ist.
 	 */

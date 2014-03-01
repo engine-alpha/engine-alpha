@@ -195,6 +195,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		return phClient.sprung(kraft);
 	}
 	
+	
+	
 	/**
 	 * Setzt, ob dieses <code>Raum</code>-Objekt von Schwerkraft beeinflusst wird. Macht nur dann Sinn,
 	 * wenn das Objekt, an dem diese Methode ausgefuehrt wird, ein Aktiv-Objekt ist.

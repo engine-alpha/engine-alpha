@@ -72,11 +72,11 @@ public final class Punkt
 	 * @return Die Laenge der Luftlinie zwischen diesem und dem anderen Punkt.<br />
 	 *         Dieser Wert ist nie negativ.
 	 */
-	public double abstand(Punkt p) {
+	public float abstand(Punkt p) {
 		double x, y;
 		x = Math.abs(this.x - p.x);
 		y = Math.abs(this.y - p.y);
-		return Math.sqrt((x * x) + (y * y));
+		return (float)Math.sqrt((x * x) + (y * y));
 	}
 	
 	/**

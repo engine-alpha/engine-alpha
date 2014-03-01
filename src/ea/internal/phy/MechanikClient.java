@@ -88,16 +88,18 @@ implements Ticker {
 	private float masse = 1.0f;
 	
 	/**
-	 * Gibt an, ob das Objekt <b>beeinflussbar</b> ist. Das bedeutet:
-	 * <ul>
-	 * <li>Beeinflussbare Objekte lassen sich verschieben.</li>
-	 * <li>Unbeeinflussbare Objekte werden von Impulsen nicht beeindruckt und geben ihn so wie er
-	 * ist zurück.</li>
-	 * <li>Unbeeinflussbare Objekte sind, Wände, Decken, Ebenen, beeinflussbare sind meist Spielfiguren.</li>
-	 * <li>Auch unbeeinflussbare Objekte sind <b>bewegbar und man kann Kräfte/Impulse auf sie Auswirken</b>.</li>
+	 * Gibt an, ob das Objekt <b>beeinflussbar</b> ist. 
+	 * @see #beeinflussbarSetzen(boolean)
 	 */
 	private boolean beeinflussbar=true;
 	
+	/**
+	 * @return the velocity
+	 */
+	public Vektor getVelocity() {
+		return velocity;
+	}
+
 	/**
 	 * Der Luftwiderstandskoeffizient des Objekts ist eine Vereinfachung des
 	 * Luftwiderstandsmodells.<br />
@@ -164,6 +166,27 @@ implements Ticker {
 	}
 	
 	/**
+	 * Setzt, ob das Objekt ab sofort beeinflussbar sein soll. <br/>
+	 * Das bedeutet:<br />
+	 * <ul>
+	 * <li>Beeinflussbare Objekte lassen sich verschieben.</li>
+	 * <li>Unbeeinflussbare Objekte werden von Impulsen nicht beeindruckt und geben ihn so wie er
+	 * ist zurück.</li>
+	 * <li>Unbeeinflussbare Objekte sind, Wände, Decken, Ebenen, beeinflussbare sind meist Spielfiguren.</li>
+	 * <li>Auch unbeeinflussbare Objekte sind <b>bewegbar und man kann Kräfte/Impulse auf sie Auswirken</b>.</li>
+	 * <li>Kollidiert ein beeinflussbares Objekt mit einem nicht beeinflussbaren Objekt, so blockiert das
+	 * unbeeinflussbare Objekt das beeinflussbare Objekt. Letzteres prallt evtl. leicht ab.</li>
+	 * <li>Kollidieren 2 beeinflussbare Objekte, so prallen sie voneinander ab.</li>
+	 * <li>Kollidieren 2 unbeeinflussbare Objekte, so passiert gar nichts. Ggf. durchschneiden sie sich gegenseitig.</li>
+	 * </ul>
+	 * @param beeinflussbar ist dieser Wert <code>true</code>, ist das Objekt ab sofort beeinflussbar. Sonst ist es
+	 * 			nicht beeinflussbar.
+	 */
+	public void beeinflussbarSetzen(boolean beeinflussbar) {
+		this.beeinflussbar = beeinflussbar;
+	}
+	
+	/**
 	 * Setzt den Luftwiderstandskoeffizienten für das Client-Objekt. Dieser bestimmt,
 	 * <b>wie intensiv der Luftwiderstand das Objekt beeinträchtigt</b>. Je höher dieser
 	 * Wert ist, desto <i>stärker</i> ist der Luftwiderstand. Ist er 0, gibt es <i>keinen</i>
@@ -177,6 +200,34 @@ implements Ticker {
 					luftwiderstandskoeffizient + ".");
 		}
 		this.luftwiderstandskoeffizient = luftwiderstandskoeffizient;
+	}
+	
+	/**
+	 * @return Die aktuelle Kraft, die auf das Objekt wirkt.
+	 */
+	public Vektor getForce() {
+		return force;
+	}
+
+	/**
+	 * @return Die Masse des Objekts.
+	 */
+	public float getMasse() {
+		return masse;
+	}
+
+	/**
+	 * @return ob das Objekt beeinflussbar ist.
+	 */
+	public boolean istBeeinflussbar() {
+		return beeinflussbar;
+	}
+
+	/**
+	 * @return Der Luftwiderstandskoeffizient
+	 */
+	public float getLuftwiderstandskoeffizient() {
+		return luftwiderstandskoeffizient;
 	}
 	
 	/**
@@ -301,16 +352,5 @@ implements Ticker {
 		//bewegen um delta s
 		bewegen(velocity.multiplizieren(DELTA_T));
 	}
-
-	/**
-	 * Hilfstmethode zum möglichst effizienten Quadrieren einer Zahl.
-	 * Wird benutzt, um die doppelte Laengenberechnung zu umgehen.
-	 * @param x	eine Zahl.
-	 * @return	x*x
-	 */
-	private static float quadrieren(float x) {
-		return x*x;
-	}
-	
 	
 }
