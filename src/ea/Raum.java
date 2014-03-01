@@ -775,7 +775,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	public void drehen(double grad) {
 		Punkt m = mittelPunkt();
 		
-		this.drehen(grad, m.realX, m.realY);
+		this.drehen(grad, m.x, m.y);
 	}
 	
 	/**
