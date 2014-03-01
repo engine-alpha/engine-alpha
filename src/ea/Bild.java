@@ -32,6 +32,7 @@ import javax.imageio.ImageIO;
 
 import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
+import ea.internal.util.Optimizer;
 
 /**
  * Ein Bild als Grafische Repraesentation einer Bilddatei, die gezeichnet werden kann.
@@ -193,6 +194,7 @@ public class Bild extends Raum {
 		
 		try {
 			img = ImageIO.read(new FileInputStream(new File(verzeichnis)));
+			img = Optimizer.toCompatibleImage(img);
 		} catch (IOException e) {
 			Logger.error("Das Bild konnte nicht geladen werden: " + verzeichnis + "   Existiert dieses Verzeichnis tatsaechlich?");
 			e.printStackTrace();

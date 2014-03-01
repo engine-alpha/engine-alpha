@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ea.internal.util.Logger;
+
 /**
  * Der Manager ist eine Standartklasse und eine der wichtigsten der Engine Alpha, die zur Interaktion ausserhalb der engine benutzt werden kann.<br />
  * Neben einer Liste aller moeglichen Fonts handelt er auch das <b>Ticker-System</b>.
@@ -128,9 +130,11 @@ public class Manager extends Timer {
 	 */
 	public void anmelden(Ticker t) {
 		if (istAngemeldet(t)) {
-			System.err.println("Der Ticker ist bereits an diesem Manager angemeldet");
+			Logger.error("Der Ticker ist bereits an diesem Manager angemeldet");
+			
 			return;
 		}
+		
 		liste.add(new Auftrag(t, 1000, false));
 	}
 	
@@ -147,6 +151,7 @@ public class Manager extends Timer {
 				return a;
 			}
 		}
+		
 		return null;
 	}
 	
@@ -163,6 +168,7 @@ public class Manager extends Timer {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 	
@@ -178,14 +184,14 @@ public class Manager extends Timer {
 	 */
 	public void starten(final Ticker t, int intervall) {
 		if (!istAngemeldet(t)) {
-			System.err.println("Der Ticker ist noch nicht angemeldet.");
+			Logger.error("Der Ticker ist noch nicht angemeldet.");
 			return;
 		}
 		
 		Auftrag a = auftragZu(t);
 		
 		if (a.aktiv) {
-			System.err.println("Ticker ist bereits am Laufen!");
+			Logger.error("Ticker ist bereits am Laufen!");
 			return;
 		}
 		
@@ -212,7 +218,7 @@ public class Manager extends Timer {
 	 */
 	public void anhalten(Ticker t) {
 		if (!istAngemeldet(t)) {
-			System.err.println("Der Ticker ist noch nicht angemeldet.");
+			Logger.error("Der Ticker ist noch nicht angemeldet.");
 			return;
 		}
 		
@@ -234,7 +240,7 @@ public class Manager extends Timer {
 	 */
 	public void intervallSetzen(Ticker t, int intervall) {
 		if (!istAngemeldet(t)) {
-			System.err.println("Der Ticker ist noch nicht angemeldet.");
+			Logger.error("Der Ticker ist noch nicht angemeldet.");
 			return;
 		}
 		
@@ -258,7 +264,7 @@ public class Manager extends Timer {
 	 */
 	public void abmelden(Ticker t) {
 		if (!istAngemeldet(t)) {
-			System.err.println("Der Ticker ist noch nicht angemeldet.");
+			Logger.error("Der Ticker ist noch nicht angemeldet.");
 			return;
 		}
 		

@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -47,6 +46,12 @@ import ea.internal.util.Logger;
  * @author Michael Andonie
  */
 public abstract class Game implements TastenReagierbar {
+	static {
+		System.setProperty("sun.java2d.opengl", "true");
+		System.setProperty("sun.java2d.d3d", "false");
+		System.setProperty("sun.java2d.noddraw", "true");
+	}
+	
 	/**
 	 * Das Spielfenster
 	 */
@@ -175,7 +180,7 @@ public abstract class Game implements TastenReagierbar {
 		
 		try {
 			fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png")));
-		} catch(Exception e) {
+		} catch (Exception e) {
 			Logger.warning("Standard-Icon konnte nicht geladen werden.");
 		}
 	}

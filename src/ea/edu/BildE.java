@@ -6,15 +6,17 @@ package ea.edu;
 import ea.Bild;
 
 /**
- * Diese Klasse wrapt die Funktionen der Klasse <code>Bild</code> und 
+ * Diese Klasse wrapt die Funktionen der Klasse <code>Bild</code> und
  * stellt sie für die lokale BlueJ-API mieglichst klar bereit.
- * @author Andonie
- *
+ * 
+ * @author Michael Andonie
+ * 
  */
 public class BildE extends Bild {
+	private static final long serialVersionUID = -3131852267825713616L;
 	
 	public BildE(int x, int y, String pfad) {
-		super(x,y,pfad);
+		super(x, y, pfad);
 		FensterE.getFenster().wurzel.add(this);
 	}
 }
