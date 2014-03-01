@@ -64,7 +64,7 @@ public class EngineAlpha extends Frame {
 			
 			this.setIconImage(favicon);
 		} catch(IOException e) {
-			System.exit(1); // should never happen
+			System.exit(1); // should actually never happen
 		}
 		
 		this.addWindowListener(new WindowAdapter() {
@@ -89,7 +89,7 @@ public class EngineAlpha extends Frame {
 			try {
 				logo = ImageIO.read(getClass().getResource("/ea/assets/logo.png"));
 			} catch (IOException e) {
-				System.exit(1); // should never happen
+				System.exit(1); // should actually never happen
 			}
 			
 			setSize(300, 200);
@@ -166,8 +166,12 @@ public class EngineAlpha extends Frame {
 				
 				update(currTime - lastTime);
 				
-				render(g);
-				bs.show();
+				try {
+					render(g);
+					bs.show();
+				} catch(Exception e) {
+					// just to be sure on shutdown
+				}
 				
 				try {
 					Thread.sleep(50);

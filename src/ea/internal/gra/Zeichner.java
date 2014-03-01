@@ -39,7 +39,7 @@ import ea.internal.phy.Physik;
 /**
  * Dies ist das Panel, in dem die einzelnen Dinge gezeichnet werden
  * 
- * @author Michael Andonie, Niklas Keller
+ * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
 @SuppressWarnings("serial")
 public class Zeichner extends Canvas implements Runnable {
@@ -210,20 +210,25 @@ public class Zeichner extends Canvas implements Runnable {
 		// Absoluter Hintergrund
 		g.setColor(Color.black);
 		g.fillRect(0, 0, groesse.breite, groesse.hoehe);
+		
 		// Relativer Hintergrund
 		if (hintergrund != null) {
 			hintergrund.zeichnenBasic(g, groesse.verschobeneInstanz(new Vektor(
 					cam.getX() / 5, cam.getY() / 10)));
 		}
+		
 		// Die Objekte
 		cam.zeichne(g);
+		
 		// Die simplen Grafikobjekte (nicht in Raum)
 		BoundingRechteck camBounds = cam.position();
 		for (SimpleGraphic gr : simples) {
 			gr.paint(g, camBounds.x, camBounds.y);
 		}
+		
 		// Die statischen Objekte
 		statNode.zeichnen(g, groesse);
+		
 		// Die Maus
 		if (vordergrund != null) {
 			vordergrund.zeichnen(g, groesse);
