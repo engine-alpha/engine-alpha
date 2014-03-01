@@ -21,7 +21,6 @@ package ea;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.util.Locale;
 
 import ea.internal.gui.Fenster;
@@ -645,7 +644,13 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	public abstract void zeichnen(Graphics2D g, BoundingRechteck r);
 	
 	/**
-	 * <i>interene Methode</i>
+	 * Dreht die Zeichenfläche um den Mittelpunkt des Raumes um die gegebenen Grad, bevor mit dem Zeichenn begonnen wird.<br />
+	 * <b><i>Diese Methode sollte nicht außerhalb der Engine verwendet werden.</i></b>
+	 * 
+	 * @see #drehung
+	 * @see #gibDrehung()
+	 * @see #zeichnen(Graphics2D, BoundingRechteck)
+	 * @see #afterRender(Graphics2D)
 	 */
 	public final void beforeRender(Graphics2D g) {
 		Punkt m = mittelPunkt();
@@ -653,7 +658,13 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * <i>interene Methode</i>
+	 * Dreht die Zeichenfläche wieder zurück in den Ausgangszustand.
+	 * <b><i>Diese Methode sollte nicht außerhalb der Engine verwendet werden.</i></b>
+	 * 
+	 * @see #drehung
+	 * @see #gibDrehung()
+	 * @see #zeichnen(Graphics2D, BoundingRechteck)
+	 * @see #beforeRender(Graphics2D)
 	 */
 	public final void afterRender(Graphics2D g) {
 		Punkt m = mittelPunkt();
@@ -798,7 +809,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * <i>Nicht für die Programmierung relevant!</i>
+	 * Hilfsmethode für die Sortierung der Räume nach dem Z-Index.
+	 * <b><i>Diese Methode sollte nicht außerhalb der Engine verwendet werden.</i></b>
+	 * 
+	 * @see #zIndex
+	 * @see #zIndex(int)
 	 */
 	@Override
 	public int compareTo(Raum r) {
