@@ -511,9 +511,13 @@ public class Figur extends Raum {
 	 */
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		if (r.schneidetBasic(this.dimension())) {
 			animation[aktuelle].zeichnen(g, (int) (position.x - r.x), (int) (position.y - r.y), spiegelX, spiegelY);
 		}
+		
+		super.afterRender(g);
 	}
 	
 	/**

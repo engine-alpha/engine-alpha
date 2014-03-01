@@ -508,12 +508,17 @@ public class Text extends Raum implements Leuchtend {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+		
 		g.setColor(farbe);
 		g.setFont(font);
 		g.drawString(inhalt, (int) (position.x - r.x), (int) (position.y - r.y + groesse));
+		
+		super.afterRender(g);
 	}
 	
 	/**

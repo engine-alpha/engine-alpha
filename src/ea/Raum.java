@@ -532,7 +532,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see zentrum()
 	 */
 	public void mittelpunktSetzen(int x, int y) {
-		this.mittelpunktSetzen(new Punkt(x,y));
+		this.mittelpunktSetzen(new Punkt(x, y));
 	}
 	
 	/**
@@ -643,6 +643,22 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
 	public abstract void zeichnen(Graphics2D g, BoundingRechteck r);
+	
+	/**
+	 * <i>interene Methode</i>
+	 */
+	public final void beforeRender(Graphics2D g) {
+		Punkt m = mittelPunkt();
+		g.rotate(+Math.toRadians(drehung), m.x, m.y);
+	}
+	
+	/**
+	 * <i>interene Methode</i>
+	 */
+	public final void afterRender(Graphics2D g) {
+		Punkt m = mittelPunkt();
+		g.rotate(-Math.toRadians(drehung), m.x, m.y);
+	}
 	
 	/**
 	 * Prueft, ob ein bestimmter Punkt innerhalb des Raum-Objekts liegt.
@@ -760,6 +776,15 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public void drehenAbsolut(double grad) {
 		this.drehung = grad;
+	}
+	
+	/**
+	 * Gibt die aktuelle Drehung des Raumes in Grad zurück.
+	 * 
+	 * @return Gibt die aktuelle Drehung des Raumes in Grad zurück.
+	 */
+	public double gibDrehung() {
+		return drehung;
 	}
 	
 	/**

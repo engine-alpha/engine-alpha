@@ -419,11 +419,15 @@ public class ActionFigur extends Raum {
 	 */
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		if (performsAction) {
 			aktion[indexAction].zeichnen(g, r);
 		} else {
 			zustand[index].zeichnen(g, r);
 		}
+		
+		super.afterRender(g);
 	}
 	
 	/**

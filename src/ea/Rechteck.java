@@ -50,8 +50,7 @@ public class Rechteck extends Geometrie {
 	 * @param hoehe
 	 *            Die hoehe des Rechtecks
 	 */
-	public Rechteck(float x, float y, float breite, float hoehe)
-	{
+	public Rechteck(float x, float y, float breite, float hoehe) {
 		super(x, y);
 		this.breite = breite;
 		this.laenge = hoehe;
@@ -121,11 +120,15 @@ public class Rechteck extends Geometrie {
 	 */
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
 		
 		g.setColor(super.formen()[0].getColor());
 		g.fillRect((int) (position.x - r.x), (int) (position.y - r.y), (int) breite, (int) laenge);
+		
+		super.afterRender(g);
 	}
 }

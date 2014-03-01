@@ -46,8 +46,7 @@ import ea.internal.gra.Zeichenebene;
  * 
  * @author Michael Andonie
  */
-public class Kamera
-{
+public class Kamera {
 	/**
 	 * Die Zeichenebene, auf die sie "blickt"
 	 */

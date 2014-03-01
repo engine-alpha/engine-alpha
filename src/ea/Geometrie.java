@@ -191,9 +191,13 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	 * heisst in diesem Fall das saemtliche Unterdreiecke gezeichnet werden.
 	 */
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		for (int i = 0; i < formen.length; i++) {
 			formen[i].zeichnen(g, r);
 		}
+		
+		super.afterRender(g);
 	}
 	
 	public BoundingRechteck dimension() {

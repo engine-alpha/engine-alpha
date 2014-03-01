@@ -277,25 +277,33 @@ public class Dreieck extends Geometrie {
 	 */
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+		
 		int[] x = {
-			(int)this.x[0],
-			(int)this.x[1],
-			(int)this.x[2]
+			(int) this.x[0],
+			(int) this.x[1],
+			(int) this.x[2]
 		};
+		
 		int[] y = {
-			(int)this.y[0],
-			(int)this.y[1],
-			(int)this.y[2]
+			(int) this.y[0],
+			(int) this.y[1],
+			(int) this.y[2]
 		};
+		
 		for (int i = 0; i < 3; i++) {
 			x[i] -= r.x;
 			y[i] -= r.y;
 		}
+		
 		g.setColor(farbe);
 		g.fillPolygon(x, y, 3);
+		
+		super.afterRender(g);
 	}
 	
 	public Dreieck[] neuBerechnen() {

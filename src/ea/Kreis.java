@@ -98,11 +98,17 @@ public class Kreis extends RegEck {
 	
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		// Kreis muss nicht gedreht werden,
+		// aber es könnten hier in Zukunft noch andere wichtige Funktionen aufgerunfen werden
+		super.beforeRender(g);
+		
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
 		
 		g.setColor(this.formen()[0].getColor());
 		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
+		
+		super.afterRender(g);
 	}
 }

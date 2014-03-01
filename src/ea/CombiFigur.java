@@ -124,9 +124,13 @@ public class CombiFigur extends Raum {
 	 */
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		for (int i = 0; i < figuren.length; i++) {
 			figuren[i].zeichnen(g, r);
 		}
+		
+		super.afterRender(g);
 	}
 	
 	/**
