@@ -107,9 +107,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	private int zIndex = 1;
 	
 	/**
-	 * Aktuelle Drehung des Objekts
+	 * Speichert die aktuelle Drehung des Raumes.
 	 */
-	private AffineTransform affineTransform;
+	private double drehung;
 	
 	/**
 	 * Der eine und einziege Konstruktor fuer Objekte der Klasse Raum.<br />
@@ -753,17 +753,13 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Dreht ein Objekt um die angegebene Gradzahl um den Punkt P(mx / my).
+	 * Dreht ein Objekt auf die angegebene Gradzahl um den Mittelpunkt des Raumes.
 	 * 
 	 * @param grad
-	 *            Grad, um die gedreht werden soll.
-	 * @param mx
-	 *            x-Koordinate des Drehpunktes
-	 * @param my
-	 *            y-Koordinate des Drehpunktes
+	 *            Grad, auf die gedreht werden soll.
 	 */
-	public void drehen(double grad, double mx, double my) {
-		this.affineTransform = AffineTransform.getRotateInstance(grad, mx, my);
+	public void drehenAbsolut(double grad) {
+		this.drehung = grad;
 	}
 	
 	/**
@@ -772,10 +768,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @param grad
 	 *            Grad, um die gedreht werden soll.
 	 */
-	public void drehen(double grad) {
-		Punkt m = mittelPunkt();
-		
-		this.drehen(grad, m.x, m.y);
+	public void drehenRelativ(double grad) {
+		this.drehung += grad;
 	}
 	
 	/**

@@ -206,7 +206,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * @param g
 	 *            Das zum Zeichnen uebergebene Graphics-Objekt
 	 */
-	public void render(Graphics g) {
+	public void render(Graphics2D g) {
 		// Absoluter Hintergrund
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int)groesse.breite, (int)groesse.hoehe);
