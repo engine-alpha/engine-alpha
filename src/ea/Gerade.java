@@ -36,7 +36,7 @@ public class Gerade
      * Die Absolute. Auch als Y-Achsenabschnitt bekannt.<br />
      * Diese Variable uebernimmt eine zweite Aufgabe, sollte die Gerade ein sonderfallSenkrecht sein. In diesem Fall beschreibt sie den X-Achsenabschnitt.
      */
-    public int absolute;
+    public float absolute;
     
     /**
      * Gibt an, ob die Gerade exakt senkrecht steht.<br />
@@ -108,7 +108,7 @@ public class Gerade
             return false;
         }
         //Die Hoehe der Geraden an dem X-Wert des Punktes
-        int y = (int)(steigung*p.x)+absolute;
+        float y = (float) ((steigung*p.x)+absolute);
         return (y > p.y);
     }
     

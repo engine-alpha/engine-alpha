@@ -78,7 +78,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return Ein neues <code>BoundingRechteck</code>-Objekt, das die selbe Masse wie dieses hat, jedoch um die entsprechende Verschiebung verschoben ist.
 	 */
 	public BoundingRechteck verschobeneInstanz(Vektor v) {
-		return new BoundingRechteck(x + v.realX, y + v.realY, breite, hoehe);
+		return new BoundingRechteck(x + v.x, y + v.y, breite, hoehe);
 	}
 	
 	/**
@@ -100,7 +100,7 @@ public final class BoundingRechteck implements Serializable {
 	 */
 	public BoundingRechteck mittenAngleichInstanz(Punkt p) {
 		Punkt z = this.zentrum();
-		return this.verschobeneInstanz(new Vektor(p.realX - z.realX, p.realY - z.realY));
+		return this.verschobeneInstanz(new Vektor(p.x - z.x, p.y - z.y));
 	}
 	
 	/**
@@ -221,7 +221,7 @@ public final class BoundingRechteck implements Serializable {
 	 *            Die <i>Y-Koordinate der linken oberen Ecke</i> des BoundingRechtecks
 	 * @return Ein neues BoundingRechteck mit der eingegebenen Position und derselben Breite und Hoehe.
 	 */
-	public BoundingRechteck anPosition(int realX, int realY) {
+	public BoundingRechteck anPosition(float realX, float realY) {
 		return new BoundingRechteck(realX, realY, breite, hoehe);
 	}
 	
@@ -253,7 +253,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return true, wenn der Punkt in dem BoundingRechteck ist
 	 */
 	public boolean istIn(Punkt p) {
-		return (p.realX >= this.x && p.realY >= this.y && p.realX <= (x + breite) && p.realY <= (y + hoehe));
+		return (p.x >= this.x && p.y >= this.y && p.x <= (x + breite) && p.y <= (y + hoehe));
 	}
 	
 	/**
@@ -411,7 +411,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return Ein neues BoundingRechteck, das verschoben und in seiner Hoehe geaendert ist.
 	 */
 	public BoundingRechteck verschErhoeht(Vektor v, int dHoehe) {
-		return new BoundingRechteck(x + v.realX, y + v.realY, breite, hoehe + dHoehe);
+		return new BoundingRechteck(x + v.x, y + v.y, breite, hoehe + dHoehe);
 	}
 	
 	/**
