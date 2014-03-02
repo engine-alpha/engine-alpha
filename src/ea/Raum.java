@@ -134,7 +134,6 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	
 	/**
 	 * Setzt, ob saemtliche Kollisionstests in der Engine Alpha grob oder fein sein sollen.
-	 * 
 	 * @param heavy
 	 *            Ist dieser Wert <code>true</code>, werden intern Kollisionstests genauer, aber rechenintensiver. Ist er <code>false</code>, werden diese Kollisionstests schneller, aber ungenauer.
 	 * @see Game.rechenintensiveArbeiteSetzen(boolean)
@@ -174,6 +173,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		phClient = new Gravitator(this);
 	}
 	
+	/**
+	 * TODO
+	 */
 	public void newtonschMachen() {
 		phClient.aufloesen();
 		phClient = new MechanikClient(this);

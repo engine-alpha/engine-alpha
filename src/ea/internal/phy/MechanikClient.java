@@ -33,9 +33,9 @@ implements Ticker {
 	
 	/**
 	 * Diese Konstante gibt an, wie viele Meter ein Pixel hat. Das ist
-	 * normalerweise ein sehr <b>kleiner</b> Wert (Standard: 0.1f).
+	 * normalerweise ein sehr <b>kleiner</b> Wert (Standard: 0.01f).
 	 */
-	private static float METER_PRO_PIXEL = 0.01f;
+	private static float METER_PRO_PIXEL = 0.001f;
 	
 	/**
 	 * Setzt, wie viele Meter auf einen Pixel im Spielfenster gehen.
@@ -91,6 +91,13 @@ implements Ticker {
 	private Vektor velocity;
 	
 	/**
+	 * Die letzte Geschwindigkeit v des Client-Objekts.<br />
+	 * Wird fuer das Absterben der Reibung benutzt
+	 * <b>Einheit: m/s</b>
+	 */
+	private Vektor lastVelocity;
+	
+	/**
 	 * Die aktuelle Kraft F, die auf das Client-Objekt wirkt. <br />
 	 * <b>Einheit: N = m/s^2</b>
 	 */
@@ -124,7 +131,7 @@ implements Ticker {
 	 * 
 	 * Der Koeffizient ist <b>nichtnegativ</b>.
 	 */
-	private float luftwiderstandskoeffizient = 20f;
+	private float luftwiderstandskoeffizient = 40f;
 
 	/**
 	 * Der Collider für schnelle und effiziente Praekollisionstests.
@@ -150,6 +157,7 @@ implements Ticker {
 	public void einfluesseZuruecksetzen() {
 		force = Vektor.NULLVEKTOR;
 		velocity = Vektor.NULLVEKTOR;
+		lastVelocity = Vektor.NULLVEKTOR;
 	}
 	
 	/**
@@ -375,6 +383,16 @@ implements Ticker {
 		//Critical Depth:
 		if(ziel.positionY() > kritischeTiefe)
 			fallListener.fallReagieren();
+		
+		//Genügend für Ende? -> Heuristik: |v| < d [mit d geschickt gewählt]
+		Vektor dif = velocity.differenz(lastVelocity);
+		if(dif.laenge() < 0.0001f && dif.laenge() != 0) {
+			System.out.println("T");
+			velocity = Vektor.NULLVEKTOR;
+		}
+		
+		//Update: Lasvelocity für den nächsten Step ist die aktuelle
+		lastVelocity = velocity;
 	}
 
 	/**
