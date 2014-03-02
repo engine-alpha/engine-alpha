@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.util.Logger;
+
 /**
  * Ein Vektor bezeichnet eine relative Punktangabe.<br />
  * Ansonsten unterscheidet er sich hier nicht weiter von einem Punkt.<br />
@@ -196,12 +198,14 @@ public final class Vektor
      * @return  Ein Vektor-Objekt, das eine Bewegung in dieselbe Richtung beschreibt, allerdings in der 
      * Laenge gekuerzt um den angegebenen Divisor.<br />
      * <b>Achtung!</b><br />
-     * Ist <code>null</code>, wenn die Eingabe <= 0 war!
+     * Ist <code>(0,0)</code>, wenn die Eingabe == 0 war!
      * @see multiplizieren(int)
      */
     public Vektor teilen(float divisor) {
         if(divisor == 0) {
-            throw new ArithmeticException("Der Divisor für das Teilen war 0!");
+            //throw new ArithmeticException("Der Divisor für das Teilen war 0!");
+        	Logger.error("Der Divisor für das Teilen war 0!");
+        	return NULLVEKTOR;
         }
         return new Vektor(x/divisor, y/divisor);
     }

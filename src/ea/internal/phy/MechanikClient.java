@@ -67,7 +67,7 @@ implements Ticker {
 	 * Orientiert sich an der <b>Update-Geschwindigkeit</b> der Zeichenebene
 	 * @see ea.internal.gra.Zeichner.UPDATE_INTERVALL
 	 */
-	private static final float DELTA_T = (float)ea.internal.gra.Zeichner.UPDATE_INTERVALL * 0.001f;
+	static final float DELTA_T = (float)ea.internal.gra.Zeichner.UPDATE_INTERVALL * 0.001f;
 	
 	/**
 	 * Der Listener zum hoehren von Faellen.

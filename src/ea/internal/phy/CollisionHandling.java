@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import ea.*;
+import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
 
 /**
@@ -55,8 +56,6 @@ public class CollisionHandling {
 			synchronized (liste) {
 				for (Auftrag a : liste) {
 					int j = 0;
-					if (!a.parent.istBeeinflussbar())
-						continue;
 					for (Auftrag a2 : liste) {
 						if (j > i && a.probablehit(a2) && a.serioushit(a2)) {
 							synchronized (colQueue) {
@@ -114,9 +113,12 @@ public class CollisionHandling {
 		public void abarbeiten() {
 			final MechanikClient c1 = clients[0].parent;
 			final MechanikClient c2 = clients[1].parent;
+			
+			//Fenster.instanz.getCam().wurzel().add(c1.ziel().dimension().ausDiesem(),c2.ziel().dimension().ausDiesem());
+			//System.out.println("work: " + c1.ziel() + " - " + c2.ziel());
 			// First of all: Clients voneinander lösen
 			if (c1.istBeeinflussbar() || c2.istBeeinflussbar()) {
-				float clean = (c1.collider().getRadius() + c2.collider().getRadius()
+				/*float clean = (c1.collider().getRadius() + c2.collider().getRadius()
 						- new Punkt(c1.collider().getX(), c1.collider().getY()).abstand(
 						new Punkt(c2.collider().getX(), c2.collider().getY())));
 				// Vektor "von 1 nach 2"
@@ -124,7 +126,9 @@ public class CollisionHandling {
 						c2.collider().getY() - c1.collider().getY());
 				Vektor normiert = v1n2.normiert();
 				c2.bewegen(normiert.multiplizieren(clean / 2));
-				c1.bewegen(normiert.multiplizieren(clean / 2).gegenrichtung());
+				c1.bewegen(normiert.multiplizieren(clean / 2).gegenrichtung());*/
+				c1.bewegen(c1.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
+				c2.bewegen(c2.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
 			}
 			if (!c1.istBeeinflussbar()) {
 				if (!c2.istBeeinflussbar()) {
@@ -151,7 +155,39 @@ public class CollisionHandling {
 		 *            Das unbeeinflussbare Element.
 		 */
 		public void ungleichlogik(MechanikClient beeinflussbar, MechanikClient unbeeinflussbar) {
+			System.out.println("Passive!");
 			
+			//stupid logic: nur parallel zum Fenster.
+			Punkt zmov = beeinflussbar.ziel().zentrum();
+			BoundingRechteck bounds = unbeeinflussbar.ziel().dimension();
+			
+			Vektor vneu = beeinflussbar.getVelocity();
+			
+			if(zmov.realX() <= bounds.x + bounds.breite/2) {
+				//Aktiv LINKS von Passiv
+				if(zmov.realX() > bounds.x) {
+					//Apprall oben / unten
+					System.out.println("o/u!");
+					vneu = new Vektor(vneu.x, -vneu.y);
+				} else {
+					//Abprall rechts
+					System.out.println("r!");
+					vneu = new Vektor(-vneu.x, vneu.y);
+				}
+			} else {
+				//Aktiv RECHTS von Passiv
+				if(zmov.realX() < bounds.x + bounds.breite) {
+					//Abprall oben / unten
+					System.out.println("o/u!");
+					vneu = new Vektor(vneu.x, -vneu.y);
+				} else {
+					//Abprall links
+					System.out.println("l!");
+					vneu = new Vektor(-vneu.x, vneu.y);
+				}
+			}
+			
+			beeinflussbar.geschwindigkeitSetzen(vneu);
 		}
 		
 		/**

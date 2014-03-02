@@ -179,9 +179,6 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		phClient = new MechanikClient(this);
 	}
 	
-	public void impulsAusueben(Vektor impuls) {
-		((MechanikClient)phClient).impulsHinzunehmen(impuls);
-	}
 	
 	/**
 	 * Laesst das <code>Raum</code>-Objekt einen Sprung von variabler Kraft machen. Dies funktioniert
@@ -353,6 +350,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * <li><code>10(.0f)</code> => Auf einen Pixel fallen <b>10</b> Meter. => Ein Meter = 0,1 Pixel</li>
 	 * <li><code>0.1f</code> => Auf einen Pixel fallen <b>0,1</b> Meter. => Ein Meter = 10 Pixel</li>
 	 * </ul>
+	 * @see #newtonschMachen()
 	 */
 	public void setzeMeterProPixel(float mpp) {
 		ea.internal.phy.MechanikClient.setzeMeterProPixel(mpp);
@@ -369,6 +367,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * @see #masseSetzen(float)
      * @see #kraftSetzen(Vektor)
      * @see #setzeMeterProPixel(float)
+     * @see #newtonschMachen()
      */
 	public void impulsHinzunehmen(Vektor impuls) {
 		phClient.impulsHinzunehmen(impuls);
@@ -385,6 +384,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * @see #kraftSetzen(Vektor)
      * @see #setzeMeterProPixel(float)
      * @see #luftwiderstandskoeffizientSetzen(float)
+     * @see #newtonschMachen()
      */
 	public void geschwindigkeitHinzunehmen(Vektor geschwindigkeit) {
 		phClient.geschwindigkeitHinzunehmen(geschwindigkeit);
@@ -394,6 +394,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
      * Gibt den Luftwiderstandskoeffizienten dieses <code>Raum-Objektes</code> aus.
      * @see #luftwiderstandskoeffizientSetzen(float)
+     * @see #newtonschMachen()
      */
 	public float luftwiderstandskoeffizient() {
 		return phClient.getLuftwiderstandskoeffizient();
@@ -406,6 +407,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * @return <code>true</code>, falls dieses <code>Raum</code>-Objekt beeinflussbar ist,
      * 		sonst <code>false</code>.
      * @see #beeinflussbarSetzen(boolean)
+     * @see #newtonschMachen()
      */
 	public boolean istBeeinflussbar() {
 		return phClient.istBeeinflussbar();
@@ -419,6 +421,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
      * aus der klassischen Mechanik. Die Einheit für Masse ist [kg]
      * @see #masseSetzen(float)
+     * @see #newtonschMachen()
      */
 	public float getMasse() {
 		return phClient.getMasse();
@@ -432,6 +435,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
      * aus der klassischen Mechanik. Die Einheit für Kraft ist [N] = [kg * (m / s^2)]
      * @see #beeinflussbarSetzen(boolean)
+     * @see #newtonschMachen()
      */
 	public Vektor getForce() {
 		return phClient.getForce();
@@ -448,6 +452,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * @param luftwiderstandskoeffizient Der Luftwiderstandskoeffizient, der für dieses <code>Raum</code>-Objekt
      * 		gelten soll. Ist dieser Wert <code>0</code>, so wirkt kein Luftwiderstand auf das Objekt.
      * @see #luftwiderstandskoeffizient()
+     * @see #newtonschMachen()
      */
 	public void luftwiderstandskoeffizientSetzen(float luftwiderstandskoeffizient) {
 		phClient.luftwiderstandskoeffizientSetzen(luftwiderstandskoeffizient);
@@ -473,6 +478,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * @param beeinflussbar	ist dieser Wert <code>true</code>, so ist dieses Objekt ab sofort
      * 		<i>beeinflussbar</i>. Sonst ist es ab sofort <i>nicht beeinflussbar</i>.
      * @see #istBeeinflussbar()
+     * @see #newtonschMachen()
      */
 	public void beeinflussbarSetzen(boolean beeinflussbar) {
 		phClient.beeinflussbarSetzen(beeinflussbar);
@@ -486,6 +492,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
      * aus der klassischen Mechanik. Die Einheit für Masse ist [kg]
      * @see #getMasse()
+     * @see #newtonschMachen()
      */
 	public void masseSetzen(float masse) {
 		phClient.masseSetzen(masse);
@@ -506,6 +513,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *         <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
 	 *         aus der klassischen Mechanik. Die Einheit für Kraft ist [N] = [kg * (m / s^2)]
 	 * @see #getForce()
+	 * @see #newtonschMachen()
 	 */
 	public void kraftSetzen(Vektor kraft) {
 		phClient.kraftSetzen(kraft);
@@ -517,6 +525,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @param kraft die Geschwindikeit, die auf dieses <code>Raum</code>-Objekt mit sofortiger Wirkung annehmen soll.
 	 *         <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
 	 *         aus der klassischen Mechanik. Die Einheit für Geschwindigkeit ist [m / s]
+	 * @see #newtonschMachen()
 	 */
 	public void geschwindigkeitSetzen(Vektor geschwindigkeit) {
 		phClient.geschwindigkeitSetzen(geschwindigkeit);
@@ -528,6 +537,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
      * <ul>
      * <li>die auf dieses Objekt einwirkende, konstante Kraft wird zu 0.</li>
      * <li>die Geschwindigkeit dieses Objekts wird zu 0.</li>
+     * @see #newtonschMachen()
      */
 	public void einfluesseZuruecksetzen() {
 		phClient.einfluesseZuruecksetzen();
@@ -546,6 +556,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 			wirken soll.
 	 * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
 	 *         aus der klassischen Mechanik. Die Einheit für Zeit ist [s]
+	 * @see #newtonschMachen()
 	 */
 	public void kraftAnwenden(Vektor kraft, float t_kraftuebertrag) {
 		phClient.kraftAnwenden(kraft, t_kraftuebertrag);
