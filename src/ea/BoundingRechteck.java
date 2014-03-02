@@ -100,7 +100,7 @@ public final class BoundingRechteck implements Serializable {
 	 */
 	public BoundingRechteck mittenAngleichInstanz(Punkt p) {
 		Punkt z = this.zentrum();
-		return this.verschobeneInstanz(new Vektor(p.x - z.x, p.y - z.y));
+		return this.verschobeneInstanz(new Vektor(p.realX() - z.realX(), p.realY() - z.realY()));
 	}
 	
 	/**
@@ -263,7 +263,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return true, wenn der Punkt in dem BoundingRechteck ist
 	 */
 	public boolean istIn(Punkt p) {
-		return (p.x >= this.x && p.y >= this.y && p.x <= (x + breite) && p.y <= (y + hoehe));
+		return (p.realX() >= this.x && p.realY() >= this.y && p.realX() <= (x + breite) && p.realY() <= (y + hoehe));
 	}
 	
 	/**

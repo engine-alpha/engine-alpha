@@ -324,7 +324,7 @@ public class Fenster extends Frame {
 						BoundingRechteck r = mausBild.dimension();
 						Punkt hs = maus.hotSpot();
 						BoundingRechteck praeferenz = mausPlatz();
-						Punkt p = new Punkt(r.x + hs.x, r.y + hs.y);
+						Punkt p = new Punkt(r.x + hs.realX(), r.y + hs.realY());
 						if (!praeferenz.istIn(p) && maus.bewegend()) {
 							getCam().verschieben(
 									(new Vektor(praeferenz.zentrum(), p)
@@ -789,8 +789,8 @@ public class Fenster extends Frame {
 
 				BoundingRechteck bounds = mausBild.dimension();
 				Punkt spot = maus.hotSpot();
-				Punkt hx = new Punkt(bounds.x + spot.x + x, bounds.y + spot.y);
-				Punkt hy = new Punkt(bounds.x + spot.x, bounds.y + spot.y + y);
+				Punkt hx = new Punkt(bounds.x + spot.realX() + x, bounds.y + spot.realY());
+				Punkt hy = new Punkt(bounds.x + spot.realX(), bounds.y + spot.realY() + y);
 
 				if (!zeichner.masse().istIn(hx))
 					x = 0;
@@ -827,7 +827,7 @@ public class Fenster extends Frame {
 				BoundingRechteck r = mausBild.dimension();
 				Punkt p = maus.hotSpot();
 
-				maus.klick((int)(r.x + p.x + getCam().getX()), (int)(r.y + p.y
+				maus.klick((int)(r.x + p.realX() + getCam().getX()), (int)(r.y + p.realY()
 						+ getCam().getY()), links, losgelassen); // Mit
 																// zurückrechnen
 																// auf die

@@ -94,8 +94,8 @@ public class StreckenAnimierer extends Animierer {
 		}
 		punkteCount = 1;
 		Punkt p2 = punkte[1];
-		vektor = new Vektor((p2.x - punkte[0].x) / schritte, (p2.y - punkte[0].y) / schritte);
-		modulo = new Vektor((p2.x - punkte[0].x) % schritte, (p2.y - punkte[0].y) % schritte);
+		vektor = new Vektor((p2.realX() - punkte[0].realX()) / schritte, (p2.realY() - punkte[0].realY()) / schritte);
+		modulo = new Vektor((p2.realX() - punkte[0].realX()) % schritte, (p2.realY() - punkte[0].realY()) % schritte);
 	}
 	
 	/**
@@ -177,8 +177,8 @@ public class StreckenAnimierer extends Animierer {
 				}
 				p2 = punkte[punkteCount];
 			}
-			vektor = new Vektor((p2.x - p1.x) / schritte, (p2.y - p1.y) / schritte);
-			modulo = new Vektor((p2.x - p1.x) % schritte, (p2.y - p1.y) % schritte);
+			vektor = new Vektor((p2.realX() - p1.realX()) / schritte, (p2.realY() - p1.realY()) / schritte);
+			modulo = new Vektor((p2.realX() - p1.realX()) % schritte, (p2.realY() - p1.realY()) % schritte);
 			count = 0;
 		}
 	}

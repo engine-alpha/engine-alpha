@@ -50,7 +50,7 @@ public class KreisCollider {
 	 * 				oder berührt</i>. Sonst <code>false</code>.
 	 */
 	public boolean schneidet(KreisCollider k2) {
-		return quadrieren(x - k2.x) + quadrieren(y - k2.y) >= quadrieren(radius + k2.radius);
+		return quadrieren(x - k2.x) + quadrieren(y - k2.y) <= quadrieren(radius + k2.radius);
 	}
 	
 	/**
@@ -59,7 +59,30 @@ public class KreisCollider {
 	 * @param x	eine Zahl.
 	 * @return	x*x
 	 */
-	private static float quadrieren(float x) {
+	public static float quadrieren(float x) {
 		return x*x;
 	}
+
+	/**
+	 * @return the x
+	 */
+	public float getX() {
+		return x;
+	}
+
+	/**
+	 * @return the y
+	 */
+	public float getY() {
+		return y;
+	}
+
+	/**
+	 * @return the radius
+	 */
+	public float getRadius() {
+		return radius;
+	}
+	
+	
 }

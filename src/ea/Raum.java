@@ -178,6 +178,10 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		phClient = new MechanikClient(this);
 	}
 	
+	public void impulsAusueben(Vektor impuls) {
+		((MechanikClient)phClient).impulsHinzunehmen(impuls);
+	}
+	
 	/**
 	 * Laesst das <code>Raum</code>-Objekt einen Sprung von variabler Kraft machen. Dies funktioniert
 	 * jedoch nur dann, wenn das Objekt auch ein <i>Aktiv-Objekt</i> ist. Ansonsten ist wird hier

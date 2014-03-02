@@ -25,6 +25,7 @@ import ea.Knoten;
 import ea.Raum;
 import ea.StehReagierbar;
 import ea.Vektor;
+import ea.internal.util.Logger;
 
 /**
  * Ein Passivator ueberwacht und steuert ein passives Objekt in der Physik.
@@ -223,4 +224,112 @@ extends PhysikClient {
         System.err.println("Achtung! Ein passives Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. "
                 + "Nur Aktiv-Objekte koennen eine Schwerkraft gesetzt bekommen.");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public void impulsHinzunehmen(Vektor impuls) {
+		Logger.error("Passivobjekte unterstützen leider keine Impulsrechnung. Dafür gibt es die Newton-Körper!");
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public void geschwindigkeitHinzunehmen(Vektor geschwindigkeit) {
+		Logger.error("Passivobjekte unterstützen leider keine Geschwindigkeit. Dafür gibt es die Newton-Körper!");
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public float getLuftwiderstandskoeffizient() {
+		Logger.error("Passivobjekte unterstützen leider keinen Luftwiderstand. Dafür gibt es die Newton-Körper!");
+		return 0;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public boolean istBeeinflussbar() {
+		Logger.error("Passivobjekte unterstützen leider keinen Beeinflussbarkeit. Dafür gibt es die Newton-Körper!");
+		return false;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public float getMasse() {
+		Logger.error("Passivobjekte unterstützen leider keine Masse. Dafür gibt es die Newton-Körper!");
+		return 0;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public Vektor getForce() {
+		Logger.error("Passivobjekte unterstützen leider keine Kraftrechnung. Dafür gibt es die Newton-Körper!");
+		return null;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public void luftwiderstandskoeffizientSetzen(float luftwiderstandskoeffizient) {
+		Logger.error("Passivobjekte unterstützen leider keinen Luftwiderstand. Dafür gibt es die Newton-Körper!");
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public void beeinflussbarSetzen(boolean beeinflussbar) {
+		Logger.error("Passivobjekte unterstützen leider keinen Beeinflussbarkeit. Dafür gibt es die Newton-Körper!");
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public void masseSetzen(float masse) {
+		Logger.error("Passivobjekte unterstützen leider keine Masse. Dafür gibt es die Newton-Körper!");
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public void kraftSetzen(Vektor kraft) {
+		Logger.error("Passivobjekte unterstützen leider keine Kraftrechnung. Dafür gibt es die Newton-Körper!");
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public void geschwindigkeitSetzen(Vektor geschwindigkeit) {
+		Logger.error("Passivobjekte unterstützen leider keine Geschwindigkeit. Dafür gibt es die Newton-Körper!");
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public void einfluesseZuruecksetzen() {
+		Logger.error("Passivobjekte unterstützen leider keine Einflüsse. Dafür gibt es die Newton-Körper!");
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+	@Override
+	public void kraftAnwenden(Vektor kraft, float t_kraftuebertrag) {
+		Logger.error("Passivobjekte unterstützen leider keine Kraftrechnung. Dafür gibt es die Newton-Körper!");
+	}
 }

@@ -35,7 +35,7 @@ implements Ticker {
 	 * Diese Konstante gibt an, wie viele Meter ein Pixel hat. Das ist
 	 * normalerweise ein sehr <b>kleiner</b> Wert (Standard: 0.1f).
 	 */
-	private static float METER_PRO_PIXEL = 0.1f;
+	private static float METER_PRO_PIXEL = 0.01f;
 	
 	/**
 	 * Setzt, wie viele Meter auf einen Pixel im Spielfenster gehen.
@@ -70,6 +70,21 @@ implements Ticker {
 	private static final float DELTA_T = (float)ea.internal.gra.Zeichner.UPDATE_INTERVALL * 0.001f;
 	
 	/**
+	 * Der Listener zum hoehren von Faellen.
+	 */
+	private FallReagierbar fallListener = FallDummy.getDummy();
+	
+	/**
+     * Das StehReagierbar-Interface, das auf stehen reagieren soll.
+     */
+    private StehReagierbar sListener = StehDummy.getDummy();
+	
+	/**
+	 * Die kritische Tiefe, bei der der Fall-Listener informiert wird.
+	 */
+	private int kritischeTiefe = 0;
+	
+	/**
 	 * Die aktuelle Geschwindigkeit v des Client-Objekts.<br />
 	 * <b>Einheit: m/s</b>
 	 */
@@ -85,7 +100,7 @@ implements Ticker {
 	 * Die aktuelle Masse m des Objekts. <br/>
 	 * <b>Einheit: Kilogramm</b>
 	 */
-	private float masse = 1.0f;
+	private float masse = 30.0f;
 	
 	/**
 	 * Gibt an, ob das Objekt <b>beeinflussbar</b> ist. 
@@ -109,7 +124,12 @@ implements Ticker {
 	 * 
 	 * Der Koeffizient ist <b>nichtnegativ</b>.
 	 */
-	private float luftwiderstandskoeffizient = 1.0f;
+	private float luftwiderstandskoeffizient = 20f;
+
+	/**
+	 * Der Collider für schnelle und effiziente Praekollisionstests.
+	 */
+	private KreisCollider collider;
 	
 	/**
 	 * Konstruktor erstellt einen neuen Mechanik-Client.
@@ -117,83 +137,57 @@ implements Ticker {
 	 */
 	public MechanikClient(Raum ziel) {
 		super(ziel);
+		collider = ziel.dimension().umschliessenderKreis();
 		einfluesseZuruecksetzen();
 		MECH_TIMER.anmelden(this, ea.internal.gra.Zeichner.UPDATE_INTERVALL);
+		CollisionHandling.anmelden(this);
 	}
 	
 	/**
-	 * Setzt alle Einfluesse auf das Client-Objekt zurück. Dies sind:
-	 * <ul>
-	 * <li>Die Kraft F, die gerade auf das Objekt wirkt.</li>
-	 * <li>Die Geschwindigkeit v, die das Objekt gerade hat.</li>
-	 * </ul>
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void einfluesseZuruecksetzen() {
 		force = Vektor.NULLVEKTOR;
 		velocity = Vektor.NULLVEKTOR;
 	}
 	
 	/**
-	 * Setzt <b>hart</b> die Geschwindigkeit des Client-Objekts.
-	 * Das bedeutet, dass die vorher gegoltene Geschwindikeit gelöscht wird
-	 * ohne Rücksicht auf mögliche Implikationen/Probleme.
-	 * @param geschwindigkeit	Die neue Geschwindigkeit für das
-	 * 							Client-Objekt. <b>(in [m / s])</b>
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void geschwindigkeitSetzen(Vektor geschwindigkeit) {
 		this.velocity = geschwindigkeit;
 	}
 	
 	/**
-	 * Setzt <b>hart</b> die <b>konstante</b> Kraft, die auf das Client-Objekt wirkt.
-	 * Das bedeutet, dass die vorher gegoltene Kraft gelöscht wird
-	 * ohne Rücksicht auf mögliche Implikationen/Probleme.
-	 * @param kraft	Die neue Kraft, die auf das
-	 * 							Client-Objekt wirken soll.<b>(in [m / s^2] = [N])</b>
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void kraftSetzen(Vektor kraft) {
 		this.force = kraft;
 	}
 	
 	/**
-	 * Setzt die Masse des Clien-Objekts neu. Das kann auch mitten im Spiel geändert
-	 * werden. Die Masse bestimmt zum Beispiel, wie sich das Objekt bei Kollisionen
-	 * oder einem neuen Impuls verhält.
-	 * @param masse die neue Masse des Client-Objekts.<b>(in [kg])</b>
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void masseSetzen(float masse) {
 		this.masse = masse;
 	}
 	
 	/**
-	 * Setzt, ob das Objekt ab sofort beeinflussbar sein soll. <br/>
-	 * Das bedeutet:<br />
-	 * <ul>
-	 * <li>Beeinflussbare Objekte lassen sich verschieben.</li>
-	 * <li>Unbeeinflussbare Objekte werden von Impulsen nicht beeindruckt und geben ihn so wie er
-	 * ist zurück.</li>
-	 * <li>Unbeeinflussbare Objekte sind, Wände, Decken, Ebenen, beeinflussbare sind meist Spielfiguren.</li>
-	 * <li>Auch unbeeinflussbare Objekte sind <b>bewegbar und man kann Kräfte/Impulse auf sie Auswirken</b>.</li>
-	 * <li>Kollidiert ein beeinflussbares Objekt mit einem nicht beeinflussbaren Objekt, so blockiert das
-	 * unbeeinflussbare Objekt das beeinflussbare Objekt. Letzteres prallt evtl. leicht ab.</li>
-	 * <li>Kollidieren 2 beeinflussbare Objekte, so prallen sie voneinander ab.</li>
-	 * <li>Kollidieren 2 unbeeinflussbare Objekte, so passiert gar nichts. Ggf. durchschneiden sie sich gegenseitig.</li>
-	 * </ul>
-	 * @param beeinflussbar ist dieser Wert <code>true</code>, ist das Objekt ab sofort beeinflussbar. Sonst ist es
-	 * 			nicht beeinflussbar.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void beeinflussbarSetzen(boolean beeinflussbar) {
 		this.beeinflussbar = beeinflussbar;
 	}
 	
 	/**
-	 * Setzt den Luftwiderstandskoeffizienten für das Client-Objekt. Dieser bestimmt,
-	 * <b>wie intensiv der Luftwiderstand das Objekt beeinträchtigt</b>. Je höher dieser
-	 * Wert ist, desto <i>stärker</i> ist der Luftwiderstand. Ist er 0, gibt es <i>keinen</i>
-	 * Luftwiderstand.
-	 * @param luftwiderstandskoeffizient	Der Luftwiderstandskoeffizient. Darf nicht
-	 * 					kleiner als 0 sein!
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void luftwiderstandskoeffizientSetzen(float luftwiderstandskoeffizient) {
 		if(luftwiderstandskoeffizient < 0) {
 			throw new IllegalArgumentException("Der Luftwiderstandskoeffizient darf nicht negativ sein! Eingabe war " +
@@ -203,49 +197,50 @@ implements Ticker {
 	}
 	
 	/**
-	 * @return Die aktuelle Kraft, die auf das Objekt wirkt.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public Vektor getForce() {
 		return force;
 	}
 
 	/**
-	 * @return Die Masse des Objekts.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public float getMasse() {
 		return masse;
 	}
 
 	/**
-	 * @return ob das Objekt beeinflussbar ist.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean istBeeinflussbar() {
 		return beeinflussbar;
 	}
 
 	/**
-	 * @return Der Luftwiderstandskoeffizient
+	 * {@inheritDoc}
 	 */
+	@Override
 	public float getLuftwiderstandskoeffizient() {
 		return luftwiderstandskoeffizient;
 	}
 	
 	/**
-	 * Addiert eine Geschwindigkeit v' zur aktuellen Geschwindigkeit v.
-	 * Die neue Geschwindigkeit des Client-Objekts ist damit:<br />
-	 * <code>v_neu = v + v'</code>
-	 * @param geschwindigkeit	Die neue Geschwindigkeit v', die zur
-	 * 			aktuellen Geschwindigkeit v hinzuaddiert werden soll.<b>(in [m / s])</b>
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void geschwindigkeitHinzunehmen(Vektor geschwindigkeit) {
 		//v_neu = v_alt + delta v
 		this.velocity = velocity.summe(geschwindigkeit);
 	}
 	
 	/**
-	 * Berechnet einen <b>neuen Impuls</b> auf das Client-Objekt.
-	 * @param impuls der neue Impuls, der auf das Objekt wirken soll. <b>(in [kg* (m / s)])</b>
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void impulsHinzunehmen(Vektor impuls) {
 		//Grundrechnung: 
 		//p + delta p = m * v_neu
@@ -255,15 +250,9 @@ implements Ticker {
 	}
 	
 	/**
-	 * Wendet eine Kraft für einen bestimmten Zeitraum auf das Client-Objekt an.
-	 * Hierdurch entsteht ein <b>neuer Impuls</b> auf das Objekt, der dessen
-	 * Geschwindigkeit (und Richtung) ändern kann.<br />
-	 * Wichtig: Dies ist eine <i>Heuristik</i>: Die Dauer sein <i>genügend klein</i>
-	 * und die Kraft <i>konstant</i>, solange sie wirkt. Die rein physikalische Rechnung
-	 * wäre wesentlich rechenintensiver.
-	 * @param kraft	Die Kraft, die auf das Objekt anliegen soll. <b>(in [kg* (m / s^2)] = [N])</b>
-	 * @param t_kraftuebertrag Die Dauer, für die die Kraft auf das Objekt wirkt. <b>(in [s)])</b>
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void kraftAnwenden(Vektor kraft, float t_kraftuebertrag) {
 		//es gilt in dieser Heuristik: p = F * t_kraftübertrag
 		//=>p = kraft * t_kraftübertrag
@@ -271,58 +260,88 @@ implements Ticker {
 		impulsHinzunehmen(kraft.multiplizieren(t_kraftuebertrag));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean bewegen(Vektor v) {
 		// TODO Auto-generated method stub
+		ziel.verschieben(v);
+		collider.verschieben(v);
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void aufloesen() {
-		// TODO Auto-generated method stub
-		
+		CollisionHandling.abmelden(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Löst einen Impulssprung aus. Nur aus Kompatibilitätsgründen vorhanden.
+	 * @return always <code>true</code>.
+	 */
 	@Override
+	@Deprecated
 	public boolean sprung(int kraft) {
-		// TODO Auto-generated method stub
-		return false;
+		this.impulsHinzunehmen(new Vektor(60, 0));
+		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * Aktiviert / Deaktiviert eine Standardschwerkraft. Nur aus Kompatibilitätsgründen vorhanden.
+	 */
 	@Override
+	@Deprecated
 	public void schwerkraftAktivSetzen(boolean aktiv) {
-		// TODO Auto-generated method stub
-		
+		force = aktiv ? new Vektor(0, 10) : Vektor.NULLVEKTOR;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void kritischeTiefeSetzen(int tiefe) {
-		// TODO Auto-generated method stub
-		
+		this.kritischeTiefe = tiefe;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void fallReagierbarAnmelden(FallReagierbar f, int tiefe) {
-		// TODO Auto-generated method stub
-		
+		this.fallListener = f;
+		this.kritischeTiefeSetzen(tiefe);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void stehReagierbarAnmelden(StehReagierbar s) {
-		// TODO Auto-generated method stub
-		
+		this.sListener = s;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean steht() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@Deprecated
 	public void schwerkraftSetzen(int schwerkraft) {
-		// TODO Auto-generated method stub
-		
+		this.kraftSetzen(new Vektor(0, 0.01f*schwerkraft));
 	}
 
 	/**
@@ -350,7 +369,20 @@ implements Ticker {
 		//Delta s bestimmen -> delta s = v_neu * delta t + [1/2 * a_neu * (delta t)^2]
 		// =~= v_neu * delta t  [heuristik]
 		//bewegen um delta s
-		bewegen(velocity.multiplizieren(DELTA_T));
+		bewegen(velocity.multiplizieren(DELTA_T).teilen(METER_PRO_PIXEL));
+		//System.out.println("Move:" + velocity.multiplizieren(DELTA_T));
+		
+		//Critical Depth:
+		if(ziel.positionY() > kritischeTiefe)
+			fallListener.fallReagieren();
+	}
+
+	/**
+	 * Gibt den Collider zurück.
+	 * @return	Der Collider des Elements.
+	 */
+	public KreisCollider collider() {
+		return collider;
 	}
 	
 }

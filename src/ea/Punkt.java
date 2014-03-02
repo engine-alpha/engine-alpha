@@ -36,13 +36,13 @@ public final class Punkt
 	 * Der kontinuierliche(re) X-Wert des Punktes. Die anderen Koordinaten sind ggf.
 	 * nur gerundet.
 	 */
-	public final float x;
+	final float x;
 	
 	/**
 	 * Der kontinuierliche(re) Y-Wert des Punktes. Die anderen Koordinaten sind ggf.
 	 * nur gerundet.
 	 */
-	public final float y;
+	final float y;
 	
 	/**
 	 * Standard-Konstruktor fuer Objekte der Klasse Punkt.
@@ -146,10 +146,30 @@ public final class Punkt
 	 * Gibt die X-Koordinate dieses Punktes zurueck.
 	 * 
 	 * @return Die X-Koordinate dieses Punktes.
+	 * @see #realY()
+	 */
+	public float realX() {
+		return x;
+	}
+	
+	/**
+	 * Gibt die Y-Koordinate dieses Punktes zurueck.
+	 * 
+	 * @return Die Y-Koordinate dieses Punktes.
+	 * @see #realX()
+	 */
+	public float realY() {
+		return y;
+	}
+	
+	/**
+	 * Gibt die X-Koordinate dieses Punktes zurueck.
+	 * 
+	 * @return Die X-Koordinate dieses Punktes.
 	 * @see #y()
 	 */
-	public float x() {
-		return x;
+	public int x() {
+		return (int)x;
 	}
 	
 	/**
@@ -158,8 +178,8 @@ public final class Punkt
 	 * @return Die Y-Koordinate dieses Punktes.
 	 * @see #x()
 	 */
-	public float y() {
-		return y;
+	public int y() {
+		return (int)y;
 	}
 	
 }

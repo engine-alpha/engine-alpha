@@ -182,6 +182,15 @@ public final class Vektor
     }
     
     /**
+     * Berechnet die Differenz zwischen diesem und einem weiteren Vektor.
+     * @param v	ein weiterer Vektor.
+     * @return	Die Differenz "this - v" der beiden Vektoren.
+     */
+    public Vektor differenz(Vektor v) {
+    	return new Vektor(this.x-v.x, this.y-v.y);
+	}
+    
+    /**
      * Teilt die effektive Laenge des Vektors durch eine ganze Zahl und kuerzt dadurch seine Effektivitaet.
      * @param   divisor Hierdurch wird die Laenge des Vektors auf der Zeichenebene geteilt.
      * @return  Ein Vektor-Objekt, das eine Bewegung in dieselbe Richtung beschreibt, allerdings in der 
@@ -320,7 +329,7 @@ public final class Vektor
      * rechts, negative Werte verschieben nach links.
      * @see dY()
      */
-    public float dX() {
+    public float realX() {
         return x;
     }
 
@@ -330,7 +339,7 @@ public final class Vektor
      * unten, negative Werte verschieben nach oben.
      * @see dX()
      */
-    public float dY() {
+    public float realY() {
         return y;
     }
 
@@ -367,4 +376,24 @@ public final class Vektor
         }
         return false;
     }
+
+    /**
+     * Gibt die X-Verschiebung dieses Vektors mit Ganzzahlen wieder.
+     * @return  Die X-Verschiebung dieses Vektors. Positive Werte verschieben nach
+     * rechts, negative Werte verschieben nach links.
+     * @see dY()
+     */
+	public int dX() {
+		return (int)x;
+	}
+	
+	/**
+     * Gibt die Y-Verschiebung dieses Vektors mit Ganzzahlen wieder.
+     * @return  Die Y-Verschiebung dieses Vektors. Positive Werte verschieben nach
+     * unten, negative Werte verschieben nach oben.
+     * @see dX()
+     */
+	public int dY() {
+		return (int)y;
+	}
 }

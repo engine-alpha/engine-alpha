@@ -82,7 +82,7 @@ public class KreisAnimierer extends Animierer {
 		Punkt zielMitte = ziel.zentrum();
 		radius = zentrum.abstand(zielMitte);
 		winkel = new Gerade(zielMitte, zentrum).winkel();
-		if (zentrum.x < zielMitte.x && zentrum.y < zielMitte.y) {
+		if (zentrum.realX() < zielMitte.realX() && zentrum.realY() < zielMitte.realY()) {
 			winkel = Math.PI - winkel;
 		}
 	}
@@ -90,9 +90,9 @@ public class KreisAnimierer extends Animierer {
 	public void animationsSchritt() {
 		winkel += schritt;
 		float x, y;
-		x = (float)((-Math.sin(winkel)) * radius) + zentrum.x;
-		y = (float)((Math.cos(winkel)) * radius) + zentrum.y;
-		Vektor v = new Vektor(x - letzter.x, y - letzter.y);
+		x = (float)((-Math.sin(winkel)) * radius) + zentrum.realX();
+		y = (float)((Math.cos(winkel)) * radius) + zentrum.realY();
+		Vektor v = new Vektor(x - letzter.realX(), y - letzter.realY());
 		ziel.bewegen(v);
 		letzter = letzter.verschobenerPunkt(v);
 	}
