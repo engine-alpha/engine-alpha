@@ -110,6 +110,20 @@ public final class Punkt
 	}
 	
 	/**
+	 * Gibt diesen Punkt als Ortsvektor vom Ursprung der Zeichenebene aus.<br />
+	 * Dieser hat die exakt selben X/Y-Komponenten. Das bedeutet:<br />
+	 * <code>
+	 * Punkt p = new Punkt(10, 20);
+	 * Vektor v = p.alsVektor();
+	 * -> v == new Vektor(10, 20);
+	 * </code>
+	 * @return
+	 */
+	public Vektor alsVektor() {
+		return new Vektor(x,y);
+	}
+	
+	/**
 	 * {@inheritDoc} Überschriebene Equals-Methode. Zwei Punkte sind gleich, wenn sie <b>Exakt</b> aufeinanderliegen.
 	 * Daher müssen die <b>reellen</b> Koordinaten übereinstimmen.
 	 */

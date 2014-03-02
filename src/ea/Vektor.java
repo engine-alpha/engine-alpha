@@ -231,6 +231,17 @@ public final class Vektor
     public Vektor multiplizieren(float faktor) {
         return new Vektor(x*faktor, y*faktor);
     }
+    
+    /**
+     * Berechnet das <b>Skalarprodukt</b> von diesem Vektor mit einem weiteren. Das Skalarprodukt für zweidimensionale
+     * Vektoren ist: <br/>
+     * (a,b) o (c, d) = a*b + c*d
+     * @param v	Ein zweiter Vektor.
+     * @return	Das Skalarprodukt dieses Vektoren mit dem Vektor <code>v</code>.
+     */
+    public float skalarprodukt(Vektor v) {
+    	return this.x * v.x + this.y * v.y;
+    }
 
     /**
      * Berechnet, ob dieser Vektor keine Wirkung hat, dies ist der Fall, wenn beide Komponenten, X und Y gleich 0 sind.

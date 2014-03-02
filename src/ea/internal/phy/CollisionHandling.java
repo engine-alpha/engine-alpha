@@ -117,32 +117,12 @@ public class CollisionHandling {
 			//Fenster.instanz.getCam().wurzel().add(c1.ziel().dimension().ausDiesem(),c2.ziel().dimension().ausDiesem());
 			//System.out.println("work: " + c1.ziel() + " - " + c2.ziel());
 			// First of all: Clients voneinander lösen
-			if (c1.istBeeinflussbar() || c2.istBeeinflussbar()) {
-				/*float clean = (c1.collider().getRadius() + c2.collider().getRadius()
-						- new Punkt(c1.collider().getX(), c1.collider().getY()).abstand(
-						new Punkt(c2.collider().getX(), c2.collider().getY())));
-				// Vektor "von 1 nach 2"
-				Vektor v1n2 = new Vektor(c2.collider().getX() - c1.collider().getX(),
-						c2.collider().getY() - c1.collider().getY());
-				Vektor normiert = v1n2.normiert();
-				c2.bewegen(normiert.multiplizieren(clean / 2));
-				c1.bewegen(normiert.multiplizieren(clean / 2).gegenrichtung());*/
-				c1.bewegen(c1.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
-				c2.bewegen(c2.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
-			}
-			if (!c1.istBeeinflussbar()) {
-				if (!c2.istBeeinflussbar()) {
-					// Nothing to do
-					return;
-				} else {
-					ungleichlogik(c2, c1);
-				}
-			} else {
-				if (!c2.istBeeinflussbar()) {
-					ungleichlogik(c1, c2);
-				} else {
-					doppelaktivlogik(c1, c2);
-				}
+			if (c1.istBeeinflussbar() && c2.istBeeinflussbar()) {
+				doppelaktivlogik(c1,c2);
+			} if(c1.istBeeinflussbar() && !c2.istBeeinflussbar()) {
+				ungleichlogik(c1, c2);
+			} if(!c1.istBeeinflussbar() && c2.istBeeinflussbar()) {
+				ungleichlogik(c2, c1);
 			}
 		}
 		
@@ -154,8 +134,10 @@ public class CollisionHandling {
 		 * @param unbeeinflussbar
 		 *            Das unbeeinflussbare Element.
 		 */
-		public void ungleichlogik(MechanikClient beeinflussbar, MechanikClient unbeeinflussbar) {
-			System.out.println("Passive!");
+		public static void ungleichlogik(MechanikClient beeinflussbar, MechanikClient unbeeinflussbar) {
+			do {
+				beeinflussbar.bewegen(beeinflussbar.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
+			} while(beeinflussbar.ziel().schneidet(unbeeinflussbar.ziel()));
 			
 			//stupid logic: nur parallel zum Fenster.
 			Punkt zmov = beeinflussbar.ziel().zentrum();
@@ -167,22 +149,18 @@ public class CollisionHandling {
 				//Aktiv LINKS von Passiv
 				if(zmov.realX() > bounds.x) {
 					//Apprall oben / unten
-					System.out.println("o/u!");
 					vneu = new Vektor(vneu.x, -vneu.y);
 				} else {
 					//Abprall rechts
-					System.out.println("r!");
 					vneu = new Vektor(-vneu.x, vneu.y);
 				}
 			} else {
 				//Aktiv RECHTS von Passiv
 				if(zmov.realX() < bounds.x + bounds.breite) {
 					//Abprall oben / unten
-					System.out.println("o/u!");
 					vneu = new Vektor(vneu.x, -vneu.y);
 				} else {
 					//Abprall links
-					System.out.println("l!");
 					vneu = new Vektor(-vneu.x, vneu.y);
 				}
 			}
@@ -198,22 +176,39 @@ public class CollisionHandling {
 		 * @param c2
 		 *            Client 2
 		 */
-		public void doppelaktivlogik(MechanikClient c1, MechanikClient c2) {
+		public static void doppelaktivlogik(MechanikClient c1, MechanikClient c2) {
+			//Solve Collision
+			do {
+				c1.bewegen(c1.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
+				c2.bewegen(c2.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
+			} while(c1.ziel().schneidet(c2.ziel()));
+			
 			// Elastischer Stoß! -> Impulserhaltung
+			
+			//Parameter bestimmen, parallele und senkrechte Komponente bestimmen.
 			Vektor v1 = c1.getVelocity(), v2 = c2.getVelocity();
+			Punkt s1 = c1.ziel().zentrum(), s2 = c2.ziel().zentrum();
+			
+			//Die Massen der Objekte
 			float m1 = c1.getMasse(), m2 = c2.getMasse();
-			float vx1 = v1.realX(), vx2 = v2.realX(), vy1 = v1.realY(), vy2 = v2.realY();
 			
-			float vx1neu = (m1 * vx1 + m2 * (2 * vx2 - vx1)) / (m1 + m2);
-			float vy1neu = (m1 * vy1 + m2 * (2 * vy2 - vy1)) / (m1 + m2);
+			Vektor normale = s1.nach(s2).normiert(); //Normale als Vektor von Zentrum 1 nach Zentrum 2, auf Länge 1 normiert.
 			
-			float vx2neu = (m2 * vx2 + m1 * (2 * vx1 - vx2)) / (m1 + m2);
-			float vy2neu = (m2 * vy2 + m1 * (2 * vy1 - vy2)) / (m1 + m2);
+			//Parallelkomponenten der Geschwindigkeiten (zur Normalen)
+			Vektor v1p = normale.multiplizieren(v1.skalarprodukt(normale)),
+					v2p = normale.multiplizieren(v2.skalarprodukt(normale));
 			
-			// c1.geschwindigkeitSetzen(v1.multiplizieren(m1).summe(v2.multiplizieren(2).differenz(v1).multiplizieren(m2)).teilen(m1+m2));
-			// c2.geschwindigkeitSetzen(v2.multiplizieren(m2).summe(v1.multiplizieren(2).differenz(v2).multiplizieren(m1)).teilen(m1+m2));
-			c1.geschwindigkeitSetzen(new Vektor(vx1neu, vy1neu));
-			c2.geschwindigkeitSetzen(new Vektor(vx2neu, vy2neu));
+			//Senkrechtkomponenten der Geschwindigkeiten (zur Normalen)
+			Vektor v1s = v1.differenz(v1p), 
+					v2s = v2.differenz(v2p);
+			
+			//Parallelkomponenten -> EINDIMENSIONALES Problem, Standard.
+			Vektor v1pNeu = v1p.multiplizieren(m1).summe(v2p.multiplizieren(2).differenz(v1p).multiplizieren(m2)).teilen(m1+m2),
+					v2pNeu = v2p.multiplizieren(m2).summe(v1p.multiplizieren(2).differenz(v2p).multiplizieren(m1)).teilen(m1+m2);
+			
+			//Neue Geschwindigkeiten: jeweils neue Parallelkomponente + alte Senkrechtkomponente (unberührt!)
+			c1.geschwindigkeitSetzen(v1pNeu.summe(v1s));
+			c2.geschwindigkeitSetzen(v2pNeu.summe(v2s));
 		}
 	}
 	
