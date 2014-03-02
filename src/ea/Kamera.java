@@ -113,7 +113,7 @@ public class Kamera {
 	 * 
 	 * @param r
 	 *            Der Fokuspunkt.
-	 * @see setzeFokus(Raum)
+	 * @see #setzeFokus(Raum)
 	 */
 	public void fokusSetzen(Raum r) {
 		this.setzeFokus(r);
@@ -142,7 +142,7 @@ public class Kamera {
 	 * 
 	 * @param b
 	 *            Ob die gesetzten Minimum- und Maximum-Werte auch aktiviert werden sollen.
-	 * @see boundSetzen(BoundingRechteck)
+	 * @see #boundsSetzen(BoundingRechteck)
 	 */
 	public void hatBoundsSetzen(boolean b) {
 		hatBounds = b;
@@ -156,7 +156,7 @@ public class Kamera {
 	 * 
 	 * @param r
 	 *            Das BoundingRechteck, das die Begrenzung des Raumes angibt
-	 * @see hatBoundsSetzen(boolean)
+	 * @see #hatBoundsSetzen(boolean)
 	 */
 	public void boundsSetzen(BoundingRechteck r) {
 		if (r == null) {
@@ -181,7 +181,7 @@ public class Kamera {
 	 * oder sie einfach nur verschoben wird.<br />
 	 * Diese Methode macht das selbe wie <code>loescheFokus</code>, und ist wegen einer einheitlichen Schreibweise eingeführt.
 	 * 
-	 * @see loescheFokus()
+	 * @see #loescheFokus()
 	 */
 	public void fokusLoeschen() {
 		loescheFokus();
@@ -199,7 +199,7 @@ public class Kamera {
 	 * 
 	 * @param v
 	 *            Der die Bewegung beschreibende Vektor.
-	 * @see verschieben(int, int)
+	 * @see #verschieben(int, int)
 	 */
 	public void verschieben(Vektor v) {
 		bild = bild.verschobeneInstanz(v);
@@ -213,7 +213,7 @@ public class Kamera {
 	 *            Die Verschiebung in X-Richtung
 	 * @param y
 	 *            Die Verschiebung in Y-Richtung
-	 * @see verschieben(Vektor)
+	 * @see #verschieben(Vektor)
 	 */
 	public void verschieben(int x, int y) {
 		this.verschieben(new Vektor(x, y));
@@ -224,7 +224,7 @@ public class Kamera {
 	 * 
 	 * @param zentrum
 	 *            Das neue Zentrum der Kamera
-	 * @see zentrumSetzen(int, int)
+	 * @see #zentrumSetzen(int, int)
 	 */
 	public void zentrumSetzen(Punkt zentrum) {
 		bild = bild.mittenAngleichInstanz(zentrum);
@@ -237,7 +237,7 @@ public class Kamera {
 	 *            Die X-Koordinate des Zentrums des Bildes
 	 * @param y
 	 *            Die Y-Koordinate des Zentrums des Bildes
-	 * @see zentrumSetzen(Punkt)
+	 * @see #zentrumSetzen(Punkt)
 	 */
 	public void zentrumSetzen(int x, int y) {
 		this.zentrumSetzen(new Punkt(x, y));
@@ -250,7 +250,7 @@ public class Kamera {
 	 *            Die <i>X-Koordinate der linken oberen Ecke</i> der Kameraperspektive
 	 * @param y
 	 *            Die <i>Y-Koordinate der linken oberen Ecke</i> der Kameraperspektive
-	 * @see positionSetzen(Punkt)
+	 * @see #positionSetzen(Punkt)
 	 */
     public void positionSetzen(float x, float y) {
 		bild = bild.anPosition(x, y);
@@ -263,7 +263,7 @@ public class Kamera {
 	 *            Die <i>X-Koordinate der linken oberen Ecke</i> der Kameraperspektive
 	 * @param y
 	 *            Die <i>Y-Koordinate der linken oberen Ecke</i> der Kameraperspektive
-	 * @see positionSetzen(int, int)
+	 * @see #positionSetzen(float, float)
 	 */
 	public void positionSetzen(Punkt p) {
 		positionSetzen(p.x, p.y);

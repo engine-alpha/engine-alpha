@@ -106,7 +106,7 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 *            Gibt in <b>Millisekunden</b> an, wie lange eine Umdrehung um das Zentrum dauern soll.<br />
 	 *            <b>ACHTUNG:</b><br />
 	 *            Dieser Wert muss groesser sein als <b>200</b>, da intern eine Umdrehung 200 Einzelschritte hat.
-	 * @see kreisAnimation(Raum, Punkt, boolean, int)
+	 * @see #kreisAnimation(Raum, Punkt, boolean, int)
 	 */
 	public void kreisAnimation(Raum ziel, Punkt zentrum, int umlaufzeit) {
 		kreisAnimation(ziel, zentrum, true, umlaufzeit);
@@ -121,8 +121,8 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 *            Das zu animierende Raum-Objekt. Hierbei ist dessen Zentrum auf der Kreisbahn.
 	 * @param zentrum
 	 *            Das Zentrum des Animationskreises
-	 * @see kreisAnimation(Raum, Punkt, boolean, int)
-	 * @see kreisAnimation(Raum, Punkt, int)
+	 * @see #kreisAnimation(Raum, Punkt, boolean, int)
+	 * @see #kreisAnimation(Raum, Punkt, int)
 	 */
 	public void kreisAnimation(Raum ziel, Punkt zentrum) {
 		kreisAnimation(ziel, zentrum, 1500);
@@ -136,9 +136,9 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 * 
 	 * @param ziel
 	 *            Das zu animierende Raum-Objekt. Hierbei ist dessen Zentrum auf der Kreisbahn.
-	 * @see kreisAnimation(Raum, Punkt, boolean, int)
-	 * @see kreisAnimation(Raum, Punkt, int)
-	 * @see kreisAnimation(Raum, Punkt)
+	 * @see #kreisAnimation(Raum, Punkt, boolean, int)
+	 * @see #kreisAnimation(Raum, Punkt, int)
+	 * @see #kreisAnimation(Raum, Punkt)
 	 */
 	public void kreisAnimation(Raum ziel) {
 		kreisAnimation(ziel, unterhalb(ziel));
@@ -213,7 +213,7 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 *            Eine beliebige Anzahl von "Ettappen"-Punkten. Das Zielobjekt wird sich zwischen diesen bewegen,
 	 *            wobei die Bewegung zwischen 2 Punkten immer gleich lang ist, unnabhaengig von ihrer Entfernung zueinander!<br />
 	 *            Die Erste Ettappe ist das aktuelle Zentrum des Zielobjekts.
-	 * @see streckenAnimation(Raum, int, boolean, boolean, Punkt...)
+	 * @see #streckenAnimation(Raum, int, boolean, boolean, Punkt...)
 	 */
 	public void streckenAnimation(Raum ziel, int laufDauer, boolean wiederholen, Punkt... strecke) {
 		streckenAnimation(ziel, laufDauer, wiederholen, wiederholen, strecke);
@@ -233,8 +233,8 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 *            Eine beliebige Anzahl von "Ettappen"-Punkten. Das Zielobjekt wird sich zwischen diesen bewegen,
 	 *            wobei die Bewegung zwischen 2 Punkten immer gleich lang ist, unnabhaengig von ihrer Entfernung zueinander!<br />
 	 *            Die Erste Ettappe ist das aktuelle Zentrum des Zielobjekts.
-	 * @see streckenAnimation(Raum, int, boolean, boolean, Punkt...)
-	 * @see streckenAnimation(Raum, int, boolean, Punkt...)
+	 * @see #streckenAnimation(Raum, int, boolean, boolean, Punkt...)
+	 * @see #streckenAnimation(Raum, int, boolean, Punkt...)
 	 */
 	public void streckenAnimation(Raum ziel, int laufDauer, Punkt... strecke) {
 		streckenAnimation(ziel, laufDauer, true, true, strecke);
@@ -252,9 +252,9 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 *            Eine beliebige Anzahl von "Ettappen"-Punkten. Das Zielobjekt wird sich zwischen diesen bewegen,
 	 *            wobei die Bewegung zwischen 2 Punkten immer gleich lang ist, unnabhaengig von ihrer Entfernung zueinander!<br />
 	 *            Die Erste Ettappe ist das aktuelle Zentrum des Zielobjekts.
-	 * @see streckenAnimation(Raum, int, boolean, boolean, Punkt...)
-	 * @see streckenAnimation(Raum, int, boolean, Punkt...)
-	 * @see streckenAnimation(Raum, int, Punkt...)
+	 * @see #streckenAnimation(Raum, int, boolean, boolean, Punkt...)
+	 * @see #streckenAnimation(Raum, int, boolean, Punkt...)
+	 * @see #streckenAnimation(Raum, int, Punkt...)
 	 */
 	public void streckenAnimation(Raum ziel, Punkt... strecke) {
 		streckenAnimation(ziel, (strecke.length + 1) * 1000, true, true, strecke);
@@ -312,7 +312,7 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 *            Der Punkt, durch den die Animationslinie verlaeuft.
 	 * @param zielGeschwindigkeit
 	 *            Die <b>Zeit, die vergeht</b> (in millisekunden), bis die Animation den Zielpunkt erreicht.
-	 * @see geradenAnimation(Raum, Punkt, int, int)
+	 * @see #geradenAnimation(Raum, Punkt, int, int)
 	 */
 	public void geradenAnimation(Raum ziel, Punkt orientierung, int zielGeschwindigkeit) {
 		geradenAnimation(ziel, orientierung, zielGeschwindigkeit, zielGeschwindigkeit * 2);
@@ -327,8 +327,8 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 *            Das zu animierende Raum-Objekt
 	 * @param orientierung
 	 *            Der Punkt, durch den die Animationslinie verlaeuft.
-	 * @see geradenAnimation(Raum, Punkt, int, int)
-	 * @see geradenAnimation(Raum, Punkt, int)
+	 * @see #geradenAnimation(Raum, Punkt, int, int)
+	 * @see #geradenAnimation(Raum, Punkt, int)
 	 */
 	public void geradenAnimation(Raum ziel, Punkt orientierung) {
 		geradenAnimation(ziel, orientierung, 1000);

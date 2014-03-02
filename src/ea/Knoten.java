@@ -53,7 +53,7 @@ public class Knoten extends Raum implements Listung {
 	 * Diese Methode macht alle abgemeldeten <code>Raum</code>-Objekt fuer die Physik neutral!!!<br />
 	 * Sollte dies NICHT gewuenscht sein, gibt es hierfuer die Methode <code>leerenOhnePhysikAbmelden()</code>.
 	 * 
-	 * @see leerenOhnePhysikAbmelden()
+	 * @see #leerenOhnePhysikAbmelden()
 	 */
 	public synchronized void leeren() {
 		for (int i = list.size() - 1; i >= 0; i--) {
@@ -84,7 +84,7 @@ public class Knoten extends Raum implements Listung {
 	 * 
 	 * @param m
 	 *            Das von diesem Knoten zu entfernende Raum-Objekt
-	 * @see entfernenOhnePhysikAbmelden(Raum)
+	 * @see #entfernenOhnePhysikAbmelden(Raum)
 	 */
 	public synchronized void entfernen(Raum m) {
 		if (list.contains(m)) {

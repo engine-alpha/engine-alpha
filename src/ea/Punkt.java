@@ -87,7 +87,7 @@ public final class Punkt
 	 *            Die Verschiebung, die dieser Punkt erhalten wuerde, um mit der Ausgabe uebereinzustimmen.
 	 * @return Ein Punkt, mit der X-Koordinate <code>p.x + v.x</code> und der Y-Koordinate <code>p.y + v.y</code>. (tatsächlich
 	 *         werden die <b>reellen</b> Werte addiert.
-	 * @see verschobeneInstanz(Vektor)
+	 * @see #verschobeneInstanz(Vektor)
 	 */
 	public Punkt verschobenerPunkt(Vektor v) {
 		return new Punkt(this.x + v.x, this.y + v.y);
@@ -103,7 +103,7 @@ public final class Punkt
 	 * @param v
 	 *            Der Vektor, der diese Verschiebung beschreibt.
 	 * @return Der Punkt, der die Koordinaten dieses Punktes - verschoben um den Vektor - hat.
-	 * @see verschobenerPunkt(Vektor)
+	 * @see #verschobenerPunkt(Vektor)
 	 */
 	public Punkt verschobeneInstanz(Vektor v) {
 		return verschobenerPunkt(v);

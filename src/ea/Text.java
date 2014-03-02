@@ -37,8 +37,8 @@ import ea.internal.gui.Fenster;
  * 
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
 public class Text extends Raum implements Leuchtend {
+	private static final long serialVersionUID = -2145724725115670955L;
 	
 	/**
 	 * Die Schriftgroesse des Textes
@@ -192,6 +192,8 @@ public class Text extends Raum implements Leuchtend {
 	 *            Der Name des zu verwendenden Fonts.<br />
 	 *            Wird hierfuer ein Font verwendet, der in dem Projektordner vorhanden sein soll, <b>und dies ist immer
 	 *            und in jedem Fall zu empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden.
+	 * @param schriftGroesse
+	 *            Die Groesse, in der die Schrift dargestellt werden soll
 	 */
 	public Text(String inhalt, float x, float y, String fontName, int schriftGroesse) {
 		this(inhalt, x, y, fontName, schriftGroesse, 0, "Weiss");
@@ -301,7 +303,7 @@ public class Text extends Raum implements Leuchtend {
 	 * 
 	 * @param inhalt
 	 *            Der neue Inhalt des Textes
-	 * @see setzeInhalt(String)
+	 * @see #setzeInhalt(String)
 	 */
 	public void inhaltSetzen(String inhalt) {
 		setzeInhalt(inhalt);
@@ -338,7 +340,7 @@ public class Text extends Raum implements Leuchtend {
 	 * <br />
 	 *            Ist die Eingabe nicht eine dieser 4 Zahlen, so wird nichts geaendert.<br />
 	 *            Parallele Methode zu <code>setzeSchriftart()</code>
-	 * @see setzeSchriftart(int)
+	 * @see #setzeSchriftart(int)
 	 */
 	public void schriftartSetzen(int art) {
 		setzeSchriftart(art);
@@ -371,8 +373,8 @@ public class Text extends Raum implements Leuchtend {
 	 * 
 	 * @param farbe
 	 *            Der Name der neuen Fuellfarbe
-	 * @see setzeFarbe(String)
-	 * @see farbeSetzen(Farbe)
+	 * @see #setzeFarbe(String)
+	 * @see #farbeSetzen(Farbe)
 	 */
 	public void farbeSetzen(String farbe) {
 		setzeFarbe(farbe);
@@ -383,7 +385,7 @@ public class Text extends Raum implements Leuchtend {
 	 * 
 	 * @param f
 	 *            Das Farbe-Objekt, das die neue Fuellfarbe beschreibt
-	 * @see farbeSetzen(String)
+	 * @see #farbeSetzen(String)
 	 */
 	public void farbeSetzen(Farbe f) {
 		setzeFarbe(f.wert());
@@ -448,6 +450,11 @@ public class Text extends Raum implements Leuchtend {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param fontName
+	 * @return
+	 */
 	public static Font holeFont(String fontName) {
 		Font base = null;
 		for (int i = 0; i < eigene.length; i++) {
@@ -474,7 +481,7 @@ public class Text extends Raum implements Leuchtend {
 	 * 
 	 * @param name
 	 *            Der Name des neuen Fonts fuer den Text
-	 * @see setzeFont(String)
+	 * @see #setzeFont(String)
 	 */
 	public void fontSetzen(String name) {
 		setzeFont(name);
@@ -494,6 +501,7 @@ public class Text extends Raum implements Leuchtend {
 	 *            Das Objekt, das auf Kollision mit diesem getestet werden soll.
 	 * @return TRUE, wenn sich beide Objekte schneiden.
 	 */
+	@Override
 	public boolean schneidet(Raum r) {
 		return r.dimension().schneidetBasic(this.dimension());
 	}
@@ -507,6 +515,7 @@ public class Text extends Raum implements Leuchtend {
 	 *            Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br />
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
+	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		super.beforeRender(g);
 		
@@ -524,6 +533,7 @@ public class Text extends Raum implements Leuchtend {
 	/**
 	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll einzuschliessen</b>.
 	 */
+	@Override
 	public BoundingRechteck dimension() {
 		FontMetrics f = Fenster.metrik(font);
 		return new BoundingRechteck(position.x, position.y, f.stringWidth(inhalt), f.getHeight());

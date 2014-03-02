@@ -249,7 +249,7 @@ extends PhysikClient {
      * Diese Methode setzt die kritische Tiefe eines Aktiv-Objektes. Ab dieser wird das entsprechende <code>FallReagierbar</code>-Inteface,
      * <b>das angemeldet wurde</b>, ueber den Fall informiert.
      * @param tiefe Die Tiefe, ab der das anliegende <code>FallReagierbar</code>-Interface informiert werden soll. Als Y-Koordinate.
-     * @see fallReagierbarAnmelden(FallReagierbar, int)
+     * @see #fallReagierbarAnmelden(FallReagierbar, int)
      */
     @Override
     public void kritischeTiefeSetzen(int tiefe) {
@@ -262,7 +262,7 @@ extends PhysikClient {
      * Toleranzgrenze liegt.
      * @param f     Das <code>FallReagierbar</code>-Objekt, das ab sofort im Grenzfall informiert wird.
      * @param tiefe Die kritische Tiefe, ab der das Interface informiert wird.
-     * @see kritischeTiefeSetzen
+     * @see #kritischeTiefeSetzen(int tiefe)
      */
     @Override
     public void fallReagierbarAnmelden(FallReagierbar f, int tiefe) {

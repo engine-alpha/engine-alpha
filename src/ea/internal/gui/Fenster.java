@@ -1,20 +1,20 @@
 /*
  * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
- *
- * Copyright (C) 2011  Michael Andonie
- *
+ * 
+ * Copyright (C) 2011 Michael Andonie
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package ea.internal.gui;
@@ -55,6 +55,7 @@ import ea.Ticker;
 import ea.Vektor;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gra.Zeichner;
+import ea.internal.util.Logger;
 
 /**
  * Das Fenster als Oberfenster.<br />
@@ -65,18 +66,17 @@ import ea.internal.gra.Zeichner;
  */
 public class Fenster extends Frame {
 	private static final long serialVersionUID = 1L;
-
+	
 	/**
 	 * Counter, der die Anzahl der effektiv vorhandenen Frames zählt.
 	 */
 	private static volatile int frameCount = 0;
 	
-	
 	/**
 	 * Gibt an, ob das Fenster im Vollbildmodus arbeitet
 	 */
 	private final boolean vollbild;
-
+	
 	/**
 	 * Gibt an, ob die aktuelle (relative) Maus innerhalb des passablen
 	 * Fensterbereiches liegt.<br />
@@ -84,49 +84,49 @@ public class Fenster extends Frame {
 	 */
 	@SuppressWarnings("unused")
 	private volatile boolean mausAusBild = false;
-
+	
 	/**
 	 * Gibt an, ob der gerade Verarbeitete Klick mitzaehlt, also vom Benutzer
 	 * selbst gemacht wurde.
 	 */
 	private boolean zaehlt = true;
-
+	
 	/**
 	 * Das Panel, das fuer die Zeichenroutine verantwortlich ist.
 	 */
 	private Zeichner zeichner;
-
+	
 	/**
 	 * Die Liste aller TastenListener.
 	 */
 	private java.util.ArrayList<TastenReagierbar> listener = new java.util.ArrayList<TastenReagierbar>();
-
+	
 	/**
 	 * Die Liste aller TastenGedrueckt-Listener
 	 */
 	private java.util.ArrayList<TastenGedruecktReagierbar> gedrListener = new java.util.ArrayList<TastenGedruecktReagierbar>();
-
+	
 	/**
 	 * Die Liste aller TastenLosgelassen-Listener
 	 */
 	private java.util.ArrayList<TastenLosgelassenReagierbar> losListener = new java.util.ArrayList<TastenLosgelassenReagierbar>();
-
+	
 	/**
 	 * Die Maus, die in dem Fenster sichtbar ist.<br />
 	 * Ist diese Referenz null, kann man keine Maus sehen.
 	 */
 	private volatile Maus maus = null;
-
+	
 	/**
 	 * Ein Roboter, der die Maus bei austritt im Fenster haelt.
 	 */
 	private Robot robot;
-
+	
 	/**
 	 * Das Bild der Maus.
 	 */
 	private Raum mausBild;
-
+	
 	/**
 	 * Ein boolean-Array als die Tastentabelle, nach der fuer die
 	 * gedrueckt-Methoden vorgegangen wird.<br />
@@ -134,12 +134,12 @@ public class Fenster extends Frame {
 	 * heruntergedrueckt.
 	 */
 	private volatile boolean[] tabelle;
-
+	
 	/**
 	 * Statische Hilfsinstanz zur Vereinfachung der Frameabhaengigen Abfragen
 	 */
 	public static Fenster instanz = null;
-
+	
 	/**
 	 * Konstruktor fuer Objekte der Klasse Fenster.
 	 * 
@@ -171,73 +171,73 @@ public class Fenster extends Frame {
 	public Fenster(int breite, int hoehe, String titel, boolean vollbild,
 			int fensterX, int fensterY) {
 		super(titel);
-
+		
 		frameCount++;
 		
 		int WINDOW_FRAME = 1;
 		int WINDOW_FULLSCREEN = 2;
 		int WINDOW_FULLSCREEN_FRAME = 4;
-
+		
 		int windowMode = vollbild ? WINDOW_FULLSCREEN : WINDOW_FRAME;
-
+		
 		tabelle = new boolean[45];
-
+		
 		this.vollbild = vollbild;
 		this.setSize(breite, hoehe);
 		this.setResizable(false);
-
+		
 		// ------------------------------------- //
-
+		
 		GraphicsEnvironment env = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
 		GraphicsDevice[] devices = env.getScreenDevices();
 		Dimension screenSize = getToolkit().getScreenSize();
-
+		
 		if (vollbild) {
 			if (devices[0].isFullScreenSupported()) {
 				breite = screenSize.width;
 				hoehe = screenSize.height;
-
+				
 				windowMode = WINDOW_FULLSCREEN;
 			} else {
 				System.err.println("Achtung!");
 				System.err
 						.println("Vollbild war nicht möglich, weil dieser PC dies nicht unterstützt!");
-
+				
 				windowMode = WINDOW_FULLSCREEN_FRAME;
 			}
 		} else {
 			int x = screenSize.width / 8, y = screenSize.height / 8;
-
+			
 			if (fensterX > -1 && fensterX < screenSize.width)
 				x = fensterX;
 			if (fensterY > -1 && fensterY < screenSize.height)
 				y = fensterY;
-
+			
 			setLocation(x, y);
-
+			
 			windowMode = WINDOW_FRAME;
 		}
-
+		
 		// ------------------------------------- //
-
+		
 		if (windowMode == WINDOW_FULLSCREEN) {
 			setUndecorated(true);
 			devices[0].setFullScreenWindow(this);
-
+			
 			// Resolution-Check
 			boolean success = false;
-
+			
 			if (devices[0].isDisplayChangeSupported()) {
 				DisplayMode[] displayMode = devices[0].getDisplayModes();
-
+				
 				System.out.println("DisplayModes: " + displayMode.length);
-
+				
 				for (int i = 0; i < displayMode.length; i++) {
 					System.out.println((i + 1) + ": " + "Breite: "
 							+ displayMode[i].getWidth() + ", Höhe: "
 							+ displayMode[i].getHeight());
-
+					
 					if (displayMode[i].getWidth() == breite
 							&& displayMode[i].getHeight() == hoehe) {
 						devices[0].setDisplayMode(new DisplayMode(breite,
@@ -248,7 +248,7 @@ public class Fenster extends Frame {
 						break;
 					}
 				}
-
+				
 				if (!success) {
 					System.err.println("Achtung!");
 					System.err
@@ -262,38 +262,38 @@ public class Fenster extends Frame {
 				System.err
 						.println("Dieser Bildschirm unterstützt keine Auflösungsänderung!");
 			}
-
+			
 			if (!success) {
 				System.err
 						.println("Die gewünschte Auflösung wird nicht vom Hauptbildschirm des Computers unterstützt!");
 			}
 		}
-
+		
 		else if (windowMode == WINDOW_FULLSCREEN_FRAME) {
 			setVisible(true);
-
+			
 			setBounds(env.getMaximumWindowBounds());
 			setExtendedState(MAXIMIZED_BOTH);
-
+			
 			Insets insets = getInsets();
 			breite = getWidth() - insets.left - insets.right;
 			hoehe = getHeight() - insets.top - insets.bottom;
 		}
-
+		
 		else if (windowMode == WINDOW_FRAME) {
 			setVisible(true);
 		}
-
+		
 		zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe,
 				new Zeichenebene()));
 		add(zeichner);
 		zeichner.init();
-
+		
 		if (windowMode == (WINDOW_FULLSCREEN_FRAME | WINDOW_FRAME))
 			pack();
-
+		
 		// ------------------------------------- //
-
+		
 		// Der Roboter
 		try {
 			robot = new Robot(devices[0]);
@@ -303,7 +303,7 @@ public class Fenster extends Frame {
 			System.err.println("Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren.");
 			System.err.println("Grund: Dies liegt an diesem Computer.");
 		}
-
+		
 		// Die Listener
 		addKeyListener();
 		addMouseListener();
@@ -315,7 +315,7 @@ public class Fenster extends Frame {
 			}
 		});
 		removeCursor();
-
+		
 		// Mausfang
 		Manager.standard.anmelden(new Ticker() {
 			public void tick() {
@@ -345,28 +345,28 @@ public class Fenster extends Frame {
 				}
 			}
 		}, 50);
-
+		
 		instanz = this;
 	}
-
+	
 	private void addKeyListener() {
 		KeyListener keyListener = new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				tastenAktion(e);
 			}
-
+			
 			public void keyReleased(KeyEvent e) {
 				int i = zuordnen(e.getKeyCode());
-
+				
 				if (i == -1)
 					return;
-
+				
 				tabelle[i] = false;
-
+				
 				for (TastenLosgelassenReagierbar l : losListener)
 					l.tasteLosgelassen(i);
 			}
-
+			
 			public void keyTyped(KeyEvent e) {
 			}
 		};
@@ -374,57 +374,57 @@ public class Fenster extends Frame {
 		addKeyListener(keyListener);
 		zeichner.addKeyListener(keyListener);
 	}
-
+	
 	private void addMouseListener() {
 		zeichner.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {
 			}
-
+			
 			public void mouseEntered(MouseEvent e) {
 				if (hatMaus()) {
 					Point po = getLocation();
-
+					
 					int startX = (getWidth() / 2);
 					int startY = (getHeight() / 2);
-
+					
 					robot.mouseMove(startX + po.x, startY + po.y);
 				}
-
+				
 				zaehlt = false;
-
+				
 				robot.mousePress(InputEvent.BUTTON1_MASK);
 				robot.mouseRelease(InputEvent.BUTTON1_MASK);
 			}
-
+			
 			public void mouseReleased(MouseEvent e) {
 				mausAktion(e, true);
 			}
-
+			
 			public void mousePressed(MouseEvent e) {
 				mausAktion(e, false);
 			}
-
+			
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
 	}
-
+	
 	private void addMouseMotionListener() {
 		zeichner.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseMoved(MouseEvent e) {
 				mausBewegung(e);
 			}
-
+			
 			public void mouseDragged(MouseEvent e) {
 				mausBewegung(e);
 			}
 		});
 	}
-
+	
 	private void removeCursor() {
 		mausLoeschen();
 	}
-
+	
 	/**
 	 * Einfacher Alternativkonstruktor.<br />
 	 * Erstellt ein normales Fenster mit der eingegeben Groesse.
@@ -438,14 +438,14 @@ public class Fenster extends Frame {
 		this(x, y, "EngineAlpha - Ein Projekt von Michael Andonie", false, 50,
 				50);
 	}
-
+	
 	/**
 	 * Minimiert das Fenster (bringt es in die Taskleiste).
 	 */
 	public void minimieren() {
 		setState(ICONIFIED);
 	}
-
+	
 	/**
 	 * Maximiert das Fenster (bringt es aus der Taskleiste wieder auf den
 	 * Bildschirm)
@@ -453,17 +453,16 @@ public class Fenster extends Frame {
 	public void maximieren() {
 		setState(NORMAL);
 	}
-
+	
 	/**
 	 * Gibt zurueck, ob dieses Fenster ein Vollbild ist oder nicht.
 	 * 
-	 * @return <code>true</code>, wenn das Fenster ein Vollbild ist, sonst
-	 *         <code>false</code>.
+	 * @return <code>true</code>, wenn das Fenster ein Vollbild ist, sonst <code>false</code>.
 	 */
 	public boolean vollbild() {
 		return vollbild;
 	}
-
+	
 	/**
 	 * Meldet den hintergrund dieses Fensters und damit des Spiels an.<br />
 	 * Gibt es bereits einen, so wird dieser fortan nicht mehr gezeichnet,
@@ -480,7 +479,7 @@ public class Fenster extends Frame {
 	public void hintergrundAnmelden(Raum hintergrund) {
 		zeichner.hintergrundAnmelden(hintergrund);
 	}
-
+	
 	/**
 	 * Meldet einen TastenReagierbar - Listener an.
 	 * 
@@ -492,10 +491,10 @@ public class Fenster extends Frame {
 			System.err.println("Der Listener war null !!!");
 			return;
 		}
-
+		
 		listener.add(t);
 	}
-
+	
 	/**
 	 * Meldet einen TastenGedruecktReagierbar-Listener an.<br />
 	 * <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
@@ -514,26 +513,25 @@ public class Fenster extends Frame {
 			System.err.println("Der Listener war null !!!");
 			return;
 		}
-
+		
 		gedrListener.add(t);
 	}
-
+	
 	/**
 	 * Meldet einen TastenGedruecktReagierbar-Listener an.<br />
-	 * Diese Methode warappt lediglich
-	 * <code>tastenGedruecktAnmelden(TastenGedruecktReagierbar)</code> und dient
+	 * Diese Methode warappt lediglich <code>tastenGedruecktAnmelden(TastenGedruecktReagierbar)</code> und dient
 	 * der Praevention unnoetiger Compilermeldungen wegen nichtfindens einer
 	 * Methode.
 	 * 
 	 * @param t
 	 *            Der listener, der ab sofort ueber gedrueckte Tasten informiert
 	 *            wird.
-	 * @see tastenGedruecktAnmelden(TastengedruecktReagierbar)
+	 * @see #tastenGedruecktAnmelden(TastenGedruecktReagierbar)
 	 */
 	public void tastenGedruecktReagierbarAnmelden(TastenGedruecktReagierbar t) {
 		this.tastenGedruecktAnmelden(t);
 	}
-
+	
 	/**
 	 * Meldet einen TastenLosgelassenReagierbar-Listener an.<br />
 	 * <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
@@ -544,13 +542,13 @@ public class Fenster extends Frame {
 	 */
 	public void tastenLosgelassenAnmelden(TastenLosgelassenReagierbar t) {
 		if (t == null) { // TODO Exception? => breaks backwards comp.
-			System.err.println("Der Listener war null !!!");
+			Logger.error("Der Listener war null !!!");
 			return;
 		}
-
+		
 		losListener.add(t);
 	}
-
+	
 	/**
 	 * Meldet einen TastenLosgelassenReagierbar-Listener an als exakt parallele
 	 * Methode zu <code>tastenLosgelassenAnmelden()</code>, jedoch eben ein
@@ -558,8 +556,7 @@ public class Fenster extends Frame {
 	 * exakt die selbe Methode aus!<br />
 	 * <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
 	 * !!!!!!!!!!!!!!!</b><br />
-	 * <code>TastenReagierbar</code> und
-	 * <code>TastenLosgelassenReagierbar</code> sind 2 vollkommen
+	 * <code>TastenReagierbar</code> und <code>TastenLosgelassenReagierbar</code> sind 2 vollkommen
 	 * unterschiedliche Interfaces! Das eine wird beim Runterdruecken, das
 	 * andere beim Loslassen der Tasten aktiviert.
 	 * 
@@ -569,7 +566,7 @@ public class Fenster extends Frame {
 			TastenLosgelassenReagierbar t) {
 		this.tastenLosgelassenAnmelden(t);
 	}
-
+	
 	/**
 	 * Meldet eine Maus an.<br />
 	 * Im Gegensatz zu den TastenReagierbar-Listenern kann nur eine Maus am
@@ -583,16 +580,16 @@ public class Fenster extends Frame {
 			System.err.println("Es ist bereits eine Maus angemeldet!");
 		} else {
 			maus = m;
-
+			
 			BoundingRechteck r = maus.getImage().dimension();
 			maus.getImage().positionSetzen(((getWidth() - r.breite) / 2),
 					(getHeight() - r.hoehe) / 2);
 			mausBild = maus.getImage();
-
+			
 			zeichner.anmelden(mausBild);
 		}
 	}
-
+	
 	/**
 	 * Loescht das Maus-Objekt des Fensters.<br />
 	 * Hatte das Fenster keine, ergibt sich selbstredend keine Aenderung.
@@ -603,7 +600,7 @@ public class Fenster extends Frame {
 				new Point(0, 0), "NOCURSOR"));
 		maus = null;
 	}
-
+	
 	/**
 	 * Testet, ob eine Maus im Spiel vorhanden ist.
 	 * 
@@ -612,7 +609,7 @@ public class Fenster extends Frame {
 	public boolean hatMaus() {
 		return (maus != null);
 	}
-
+	
 	/**
 	 * Gibt an, ob die Maus den Bildschirm bewegen kann.
 	 * 
@@ -624,17 +621,17 @@ public class Fenster extends Frame {
 		if (hatMaus()) {
 			return maus.bewegend();
 		}
-
+		
 		return false;
 	}
-
+	
 	/**
 	 * @return Die Kamera, passend zu diesem Fenster
 	 */
 	public Kamera getCam() {
 		return zeichner.cam();
 	}
-
+	
 	/**
 	 * @return Der Statische Basisknoten.
 	 */
@@ -643,13 +640,14 @@ public class Fenster extends Frame {
 	}
 	
 	/**
-	* Gibt die Maus aus.
-	* @return Die aktuelle Maus. Kann <code>null</code> sein!!
-	*/
-    public Maus getMaus() {
-    	return maus;
-    }
-
+	 * Gibt die Maus aus.
+	 * 
+	 * @return Die aktuelle Maus. Kann <code>null</code> sein!!
+	 */
+	public Maus getMaus() {
+		return maus;
+	}
+	
 	/**
 	 * Gibt die Fenstermasse in einem BoundingRechteck an.
 	 * 
@@ -660,7 +658,7 @@ public class Fenster extends Frame {
 	public BoundingRechteck fenstermasse() {
 		return zeichner.masse();
 	}
-
+	
 	/**
 	 * Statische Methode zum Oeffentlichen Berechnen der Fontmetriken des
 	 * offenen Fensters.
@@ -672,7 +670,7 @@ public class Fenster extends Frame {
 	public static FontMetrics metrik(Font f) {
 		return instanz.getFontMetrics(f);
 	}
-
+	
 	/**
 	 * Gibt die aktuellste Instanz dieser KLasse wieder.
 	 * 
@@ -681,7 +679,7 @@ public class Fenster extends Frame {
 	public static Fenster instanz() {
 		return instanz;
 	}
-
+	
 	/**
 	 * Gibt den Zeichner des Fensters aus.
 	 * 
@@ -690,7 +688,7 @@ public class Fenster extends Frame {
 	public Zeichner zeichner() {
 		return zeichner;
 	}
-
+	
 	/**
 	 * Entfernt ein simples Grafikobjekt.
 	 * 
@@ -700,7 +698,7 @@ public class Fenster extends Frame {
 	public void removeSimple(SimpleGraphic g) {
 		zeichner.removeSimple(g);
 	}
-
+	
 	/**
 	 * Fuellt ein simples Grafikobjekt in die anzeige.
 	 * 
@@ -710,21 +708,20 @@ public class Fenster extends Frame {
 	public void fillSimple(SimpleGraphic g) {
 		zeichner.addSimple(g);
 	}
-
+	
 	/**
 	 * Loescht das Fenster und terminiert damit das Spiel.<br />
 	 * <b>Daher nur dann einsetzen, wenn die Anwendung beendet werden soll!! Der
 	 * vorherige Zustand ist nicht wiederherstellbar!!</b><br />
-	 * Als alternative Methode zum ausschliesslichen Loeschen des Fensters steht
-	 * <code>softLoeschen()</code> zur Verfuegung.
+	 * Als alternative Methode zum ausschliesslichen Loeschen des Fensters steht <code>softLoeschen()</code> zur Verfuegung.
 	 */
 	public void loeschen() {
 		this.setVisible(false);
 		this.dispose();
-		if(--frameCount == 0)
+		if (--frameCount == 0)
 			System.exit(0);
 	}
-
+	
 	/**
 	 * Gibt das gespeicherte Bild-Objekt der Maus wieder.
 	 * 
@@ -733,7 +730,7 @@ public class Fenster extends Frame {
 	public Raum mausBild() {
 		return this.mausBild;
 	}
-
+	
 	/**
 	 * @return Das BoundingRechteck, dass den Spielraum der Maus ohne Einbezug
 	 *         der Relativen Koordinaten (Kameraposition)<br />
@@ -747,7 +744,7 @@ public class Fenster extends Frame {
 		int y = (d.height / 4) * 3;
 		return new BoundingRechteck((d.width / 8), (d.height / 8), x, y);
 	}
-
+	
 	/**
 	 * Deaktiviert den eventuell vorhandenen gemerkten Druck auf allen Tasten.<br />
 	 * Wird innerhalb der Engine benutzt, sobald das Fenster deaktiviert etc.
@@ -758,7 +755,7 @@ public class Fenster extends Frame {
 			tabelle[i] = false;
 		}
 	}
-
+	
 	/**
 	 * Diese Methode wird ausgefuehrt, wenn die Maus bewegt wird.
 	 * 
@@ -769,12 +766,10 @@ public class Fenster extends Frame {
 		if (hatMaus()) {
 			Insets insets = this.getInsets();
 			
-			int startX = getWidth() / 2 ;
-			int startY = getHeight() / 2 ;
+			int startX = getWidth() / 2;
+			int startY = getHeight() / 2;
 			Point loc = getLocation();
 			Point click = e.getPoint();
-
-			
 			
 			if (maus.bewegend()) {
 				if (maus.absolut()) {
@@ -782,28 +777,28 @@ public class Fenster extends Frame {
 							new Vektor(click.x - startX, click.y - startY));
 				}
 			}
-
+			
 			if (!maus.absolut()) {
 				int x = click.x + insets.left - startX;
 				int y = click.y + insets.top - startY;
-
+				
 				BoundingRechteck bounds = mausBild.dimension();
 				Punkt spot = maus.hotSpot();
 				Punkt hx = new Punkt(bounds.x + spot.x + x, bounds.y + spot.y);
 				Punkt hy = new Punkt(bounds.x + spot.x, bounds.y + spot.y + y);
-
+				
 				if (!zeichner.masse().istIn(hx))
 					x = 0;
 				if (!zeichner.masse().istIn(hy))
 					y = 0;
-
+				
 				mausBild.verschieben(new Vektor(x, y));
 			}
-
+			
 			robot.mouseMove(startX + loc.x, startY + loc.y);
 		}
 	}
-
+	
 	/**
 	 * Diese Methode wird immer dann ausgefuehrt, wenn ein einfacher Linksklick
 	 * der Maus ausgefuehrt wird.
@@ -818,30 +813,30 @@ public class Fenster extends Frame {
 			zaehlt = true;
 			return;
 		}
-
+		
 		// Linksklick? 1: Links - 2: Mausrad? - 3: Rechts
 		final boolean links = !(e.getButton() == MouseEvent.BUTTON3);
-
+		
 		if (hatMaus()) {
 			if (!maus.absolut()) {
 				BoundingRechteck r = mausBild.dimension();
 				Punkt p = maus.hotSpot();
-
-				maus.klick((int)(r.x + p.x + getCam().getX()), (int)(r.y + p.y
+				
+				maus.klick((int) (r.x + p.x + getCam().getX()), (int) (r.y + p.y
 						+ getCam().getY()), links, losgelassen); // Mit
-																// zurückrechnen
-																// auf die
-																// Bildebene!
+																	// zurückrechnen
+																	// auf die
+																	// Bildebene!
 			} else {
 				Dimension dim = this.getSize();
 				int startX = (dim.width / 2);
 				int startY = (dim.height / 2);
-				maus.klick((int)(startX + getCam().getX()), (int)(startY + getCam().getY()),
+				maus.klick((int) (startX + getCam().getX()), (int) (startY + getCam().getY()),
 						links, losgelassen);
 			}
 		}
 	}
-
+	
 	/**
 	 * Die Listener-Methode, die vom Fenster selber bei jeder gedrueckten Taste
 	 * aktiviert wird.<br />
@@ -867,7 +862,7 @@ public class Fenster extends Frame {
 		}
 		tabelle[z] = true;
 	}
-
+	
 	/**
 	 * Ordnet vom JAVA-KeyCode System in das EA-System um.
 	 * 
@@ -880,141 +875,141 @@ public class Fenster extends Frame {
 		// ANALYSIS
 		// <editor-fold defaultstate="collapsed" desc="Fallunterscheidung">
 		switch (keyCode) {
-		case KeyEvent.VK_A:
-			z = 0;
-			break;
-		case KeyEvent.VK_B:
-			z = 1;
-			break;
-		case KeyEvent.VK_C:
-			z = 2;
-			break;
-		case KeyEvent.VK_D:
-			z = 3;
-			break;
-		case KeyEvent.VK_E:
-			z = 4;
-			break;
-		case KeyEvent.VK_F:
-			z = 5;
-			break;
-		case KeyEvent.VK_G:
-			z = 6;
-			break;
-		case KeyEvent.VK_H:
-			z = 7;
-			break;
-		case KeyEvent.VK_I:
-			z = 8;
-			break;
-		case KeyEvent.VK_J:
-			z = 9;
-			break;
-		case KeyEvent.VK_K:
-			z = 10;
-			break;
-		case KeyEvent.VK_L:
-			z = 11;
-			break;
-		case KeyEvent.VK_M:
-			z = 12;
-			break;
-		case KeyEvent.VK_N:
-			z = 13;
-			break;
-		case KeyEvent.VK_O:
-			z = 14;
-			break;
-		case KeyEvent.VK_P:
-			z = 15;
-			break;
-		case KeyEvent.VK_Q:
-			z = 16;
-			break;
-		case KeyEvent.VK_R:
-			z = 17;
-			break;
-		case KeyEvent.VK_S:
-			z = 18;
-			break;
-		case KeyEvent.VK_T:
-			z = 19;
-			break;
-		case KeyEvent.VK_U:
-			z = 20;
-			break;
-		case KeyEvent.VK_V:
-			z = 21;
-			break;
-		case KeyEvent.VK_W:
-			z = 22;
-			break;
-		case KeyEvent.VK_X:
-			z = 23;
-			break;
-		case KeyEvent.VK_Y:
-			z = 24;
-			break;
-		case KeyEvent.VK_Z:
-			z = 25;
-			break;
-		case KeyEvent.VK_UP:
-			z = 26;
-			break;
-		case KeyEvent.VK_RIGHT:
-			z = 27;
-			break;
-		case KeyEvent.VK_DOWN:
-			z = 28;
-			break;
-		case KeyEvent.VK_LEFT:
-			z = 29;
-			break;
-		case KeyEvent.VK_SPACE:
-			z = 30;
-			break;
-		case KeyEvent.VK_ENTER:
-			z = 31;
-			break;
-		case KeyEvent.VK_ESCAPE:
-			z = 32;
-			break;
-		case KeyEvent.VK_0:
-			z = 33;
-			break;
-		case KeyEvent.VK_1:
-			z = 34;
-			break;
-		case KeyEvent.VK_2:
-			z = 35;
-			break;
-		case KeyEvent.VK_3:
-			z = 36;
-			break;
-		case KeyEvent.VK_4:
-			z = 37;
-			break;
-		case KeyEvent.VK_5:
-			z = 38;
-			break;
-		case KeyEvent.VK_6:
-			z = 39;
-			break;
-		case KeyEvent.VK_7:
-			z = 40;
-			break;
-		case KeyEvent.VK_8:
-			z = 41;
-			break;
-		case KeyEvent.VK_9:
-			z = 42;
-			break;
-		case KeyEvent.VK_PLUS:
-			z = 43;
-			break;
-		case KeyEvent.VK_MINUS:
-			z = 44;
-			break;
+			case KeyEvent.VK_A:
+				z = 0;
+				break;
+			case KeyEvent.VK_B:
+				z = 1;
+				break;
+			case KeyEvent.VK_C:
+				z = 2;
+				break;
+			case KeyEvent.VK_D:
+				z = 3;
+				break;
+			case KeyEvent.VK_E:
+				z = 4;
+				break;
+			case KeyEvent.VK_F:
+				z = 5;
+				break;
+			case KeyEvent.VK_G:
+				z = 6;
+				break;
+			case KeyEvent.VK_H:
+				z = 7;
+				break;
+			case KeyEvent.VK_I:
+				z = 8;
+				break;
+			case KeyEvent.VK_J:
+				z = 9;
+				break;
+			case KeyEvent.VK_K:
+				z = 10;
+				break;
+			case KeyEvent.VK_L:
+				z = 11;
+				break;
+			case KeyEvent.VK_M:
+				z = 12;
+				break;
+			case KeyEvent.VK_N:
+				z = 13;
+				break;
+			case KeyEvent.VK_O:
+				z = 14;
+				break;
+			case KeyEvent.VK_P:
+				z = 15;
+				break;
+			case KeyEvent.VK_Q:
+				z = 16;
+				break;
+			case KeyEvent.VK_R:
+				z = 17;
+				break;
+			case KeyEvent.VK_S:
+				z = 18;
+				break;
+			case KeyEvent.VK_T:
+				z = 19;
+				break;
+			case KeyEvent.VK_U:
+				z = 20;
+				break;
+			case KeyEvent.VK_V:
+				z = 21;
+				break;
+			case KeyEvent.VK_W:
+				z = 22;
+				break;
+			case KeyEvent.VK_X:
+				z = 23;
+				break;
+			case KeyEvent.VK_Y:
+				z = 24;
+				break;
+			case KeyEvent.VK_Z:
+				z = 25;
+				break;
+			case KeyEvent.VK_UP:
+				z = 26;
+				break;
+			case KeyEvent.VK_RIGHT:
+				z = 27;
+				break;
+			case KeyEvent.VK_DOWN:
+				z = 28;
+				break;
+			case KeyEvent.VK_LEFT:
+				z = 29;
+				break;
+			case KeyEvent.VK_SPACE:
+				z = 30;
+				break;
+			case KeyEvent.VK_ENTER:
+				z = 31;
+				break;
+			case KeyEvent.VK_ESCAPE:
+				z = 32;
+				break;
+			case KeyEvent.VK_0:
+				z = 33;
+				break;
+			case KeyEvent.VK_1:
+				z = 34;
+				break;
+			case KeyEvent.VK_2:
+				z = 35;
+				break;
+			case KeyEvent.VK_3:
+				z = 36;
+				break;
+			case KeyEvent.VK_4:
+				z = 37;
+				break;
+			case KeyEvent.VK_5:
+				z = 38;
+				break;
+			case KeyEvent.VK_6:
+				z = 39;
+				break;
+			case KeyEvent.VK_7:
+				z = 40;
+				break;
+			case KeyEvent.VK_8:
+				z = 41;
+				break;
+			case KeyEvent.VK_9:
+				z = 42;
+				break;
+			case KeyEvent.VK_PLUS:
+				z = 43;
+				break;
+			case KeyEvent.VK_MINUS:
+				z = 44;
+				break;
 		}// </editor-fold>
 		return z;
 	}

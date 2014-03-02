@@ -134,7 +134,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 
 	 * @param heavy
 	 *            Ist dieser Wert <code>true</code>, werden intern Kollisionstests genauer, aber rechenintensiver. Ist er <code>false</code>, werden diese Kollisionstests schneller, aber ungenauer.
-	 * @see Game.rechenintensiveArbeiteSetzen(boolean)
+	 * @see Game#rechenintensiveArbeitSetzen(boolean)
 	 */
 	public static void heavyComputingSetzen(boolean heavy) {
 		roh = heavy;
@@ -164,7 +164,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Ab dem Aufruf dieser Methode laesst es sich von Passiv-Objekten aufhalten und wird -
 	 * solange dies nicht ueber den Methodenaufruf <code>schwerkraftAktivSetzen(false)</code> deaktiviert wird - von einer kuenstlichen Schwerkraft angezogen.
 	 * 
-	 * @see schwerkraftAktivSetzen(boolean)
+	 * @see #schwerkraftAktivSetzen(boolean)
 	 */
 	public void aktivMachen() {
 		phClient.aufloesen();
@@ -194,7 +194,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 
 	 * @param aktiv
 	 *            <code>true</code>, wenn Schwerkraft aktiv sein soll, sonst <code>false</code>.
-	 * @see aktivMachen()
+	 * @see #aktivMachen()
 	 */
 	public void schwerkraftAktivSetzen(boolean aktiv) {
 		phClient.schwerkraftAktivSetzen(aktiv);
@@ -240,8 +240,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @param kritischeTiefe
 	 *            Die Tiefe ab der der Listener <i>dauerhaft</i> durch den Aufruf seiner Reaktionsmethode
 	 *            informiert wird, solange das <code>Raum</code>-Objekt hierunter ist.
-	 * @see ea.FallReagierbar
-	 * @see kritischeTiefeSetzen(int)
+	 * @see FallReagierbar
+	 * @see #kritischeTiefeSetzen(int)
 	 */
 	public void fallReagierbarAnmelden(FallReagierbar f, int kritischeTiefe) {
 		phClient.fallReagierbarAnmelden(f, kritischeTiefe);
@@ -254,8 +254,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @param tiefe
 	 *            Die neue kritische Tiefe. Die Tiefe ab der der Listener <i>dauerhaft</i> durch den Aufruf seiner Reaktionsmethode
 	 *            informiert wird, solange das <code>Raum</code>-Objekt hierunter ist.
-	 * @see ea.FallReagierbar
-	 * @see fallReagierbarAnmelden(FallReagierbar, int)
+	 * @see FallReagierbar
+	 * @see #fallReagierbarAnmelden(FallReagierbar, int)
 	 */
 	public void kritischeTiefeSetzen(int tiefe) {
 		phClient.kritischeTiefeSetzen(tiefe);
@@ -303,10 +303,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 
 	 * @param v
 	 *            Die Bewegung beschreibender Vektor
-	 * @see bewegen(int, int)
 	 * @return <code>true</code>, wenn sich dieses <code>Raum</code>-Objekt ohne Probleme bewegen liess. Konnte es wegen der Physik
 	 *         (Aktiv-Objekt von Passiv-Objekt geblockt) <b>nicht vollstaendig verschoben werden</b>, so wird <code>false</code> zurueckgegeben.<br />
 	 *         Die Rueckgabe ist bei Passiv-Objekten und neutralen Objekten immer <code>true</code>, da diese Problemlos verschoben werden können.
+	 *         
+	 * @see #bewegen(int, int)
 	 */
 	public boolean bewegen(Vektor v) {
 		synchronized (this) {
@@ -323,7 +324,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Der X-Anteil der Verschiebung (Delta-X)
 	 * @param dY
 	 *            Der Y-Anteil der Verschiebung (Delta-Y)
-	 * @see bewegen(Vektor)
+	 * @see #bewegen(Vektor)
 	 */
 	public void bewegen(int dX, int dY) {
 		phClient.bewegen(new Vektor(dX, dY));
@@ -337,7 +338,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Ist dieser Wert <code>false</code>, so wird es nicht im Fenster gezeichnet.<br />
 	 *            <b>Aber:</b> Es existiert weiterhin ohne Einschraenkungen. <b>Allerdings</b> gilt ein Treffer mit einem unsichtbaren
 	 *            Raum-Objekt in der Klasse <code>Physik</code> nicht als Kollision. Unsichtbare Raum-Objekte werden somit bei Trefferkollisionen ausgelassen.
-	 * @see sichtbar()
+	 * @see #sichtbar()
 	 * @see Physik
 	 */
 	public final void sichtbarSetzen(boolean sichtbar) {
@@ -348,7 +349,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Gibt an, ob das Raum-Objekt sichtbar ist.
 	 * 
 	 * @return Ist <code>true</code>, wenn das Raum-Objekt zur Zeit sichtbar ist.
-	 * @see sichtbarSetzen(boolean)
+	 * @see #sichtbarSetzen(boolean)
 	 */
 	public final boolean sichtbar() {
 		return this.sichtbar;
@@ -470,7 +471,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @param r
 	 *            Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br />
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
-	 * @see zeichnen(java.awt.Graphics, BoundingRechteck)
+	 * @see #zeichnen(Graphics2D, BoundingRechteck)
 	 */
 	public final void zeichnenBasic(Graphics2D g, BoundingRechteck r) {
 		statisch = (r.x == 0) && (r.y == 0);
@@ -492,7 +493,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 
 	 * @param p
 	 *            Der neue Zielpunkt
-	 * @see positionSetzen(int, int)
+	 * @see #positionSetzen(int, int)
 	 */
 	public void positionSetzen(Punkt p) {
 		BoundingRechteck r = this.dimension();
@@ -505,8 +506,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Die neue X-Koordinate
 	 * @param y
 	 *            Die neue Y-Koordinate
-	 * @see mittelpunktSetzen(int, int)
-	 * @see positionSetzen(Punkt)
+	 * @see #mittelpunktSetzen(int, int)
+	 * @see #positionSetzen(Punkt)
 	 */
 	public void positionSetzen(int x, int y) {
 		this.positionSetzen(new Punkt(x, y));
@@ -525,10 +526,10 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Die X-Koordinate des neuen Mittelpunktes des Objektes
 	 * @param y
 	 *            Die Y-Koordinate des neuen Mittelpunktes des Objektes
-	 * @see mittelpunktSetzen(Punkt)
-	 * @see verschieben(Vektor)
-	 * @see positionSetzen(int, int)
-	 * @see zentrum()
+	 * @see #mittelpunktSetzen(Punkt)
+	 * @see #verschieben(Vektor)
+	 * @see #positionSetzen(int, int)
+	 * @see #zentrum()
 	 */
 	public void mittelpunktSetzen(int x, int y) {
 		this.mittelpunktSetzen(new Punkt(x, y));
@@ -542,10 +543,10 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 
 	 * @param p
 	 *            Der neue Mittelpunkt des Raum-Objekts
-	 * @see mittelpunktSetzen(int, int)
-	 * @see verschieben(Vektor)
-	 * @see positionSetzen(int, int)
-	 * @see zentrum()
+	 * @see #mittelpunktSetzen(int, int)
+	 * @see #verschieben(Vektor)
+	 * @see #positionSetzen(int, int)
+	 * @see #zentrum()
 	 */
 	public void mittelpunktSetzen(Punkt p) {
 		this.verschieben(this.zentrum().nach(p));
@@ -557,7 +558,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * ist die Methode <code>dimension()</code> zu empfehlen, die mehr Information bietet.
 	 * 
 	 * @return Die Koordinaten des Punktes der linken, oberen Ecke in Form eines <code>Punkt</code>-Objektes
-	 * @see dimension()
+	 * @see #dimension()
 	 */
 	public Punkt position() {
 		BoundingRechteck b = this.dimension();
@@ -568,8 +569,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Methode zum schnellen Herausfinden des Mittelpunktes des Raum-Objektes.
 	 * 
 	 * @return Die Koordinaten des Mittelpunktes des Objektes
-	 * @see dimension()
-	 * @see position()
+	 * @see #dimension()
+	 * @see #position()
 	 */
 	public Punkt mittelPunkt() {
 		BoundingRechteck b = this.dimension();
@@ -602,7 +603,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @param v
 	 *            Der Vektor, der die Verschiebung des Objekts angibt.
 	 * @see Vektor
-	 * @see verschieben(int, int)
+	 * @see #verschieben(int, int)
 	 */
 	public void verschieben(Vektor v) {
 		position = position.verschobeneInstanz(v);
@@ -617,7 +618,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Die Verschiebung in Richtung X
 	 * @param dY
 	 *            Die Verschiebung in Richtung Y
-	 * @see verschieben(Vektor)
+	 * @see #verschieben(Vektor)
 	 */
 	public void verschieben(int dX, int dY) {
 		this.verschieben(new Vektor(dX, dY));

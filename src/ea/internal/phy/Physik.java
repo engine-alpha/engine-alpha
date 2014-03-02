@@ -410,7 +410,7 @@ public class Physik extends Manager implements Ticker {
 	 *            Der erste Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt benachrichtigt
 	 * @param r2
 	 *            Der zweite Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt benachrichtigt
-	 * @see anmelden(KollisionsReagierbar, Raum, Raum, int)
+	 * @see #anmelden(KollisionsReagierbar, Raum, Raum, int)
 	 */
 	public void anmelden(KollisionsReagierbar k, Raum r1, Raum r2) {
 		anmelden(k, r1, r2, 0);

@@ -31,6 +31,7 @@ import ea.RechtsKlickReagierbar;
 import ea.TastenReagierbar;
 import ea.Text;
 import ea.Ticker;
+import ea.internal.util.Logger;
 
 /**
  * Die Anzeige ermoeglicht Punktedarstellung im EDU-Konzept.<br />
@@ -40,12 +41,10 @@ import ea.Ticker;
  * 
  * @author Michael Andonie
  */
-public class AnzeigeE
-		extends Manager
-		implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
+public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
 	
 	private static final long serialVersionUID = 3387123025090347796L;
-
+	
 	/**
 	 * Der Linke (Punkte-)Text.
 	 */
@@ -89,7 +88,7 @@ public class AnzeigeE
 	/**
 	 * Zufallsgenerator
 	 */
-	private Random random = new Random();
+	private final Random random = new Random();
 	
 	/**
 	 * Konstruktor. Erstellt die Texte fuer Links- und Rechtspunkte.
@@ -120,18 +119,27 @@ public class AnzeigeE
 		float lRechts = rechts.dimension().breite;
 		float lStrich = strich.dimension().breite;
 		
-		float groesser = lLinks>lRechts ? lLinks : lRechts;
+		float groesser = lLinks > lRechts ? lLinks : lRechts;
 		
 		float breite = FensterE.getFenster().fensterGroesse().breite;
 		
-		strich.positionSetzen((breite-lStrich)/2, 10);
-		links.positionSetzen(((breite-lStrich)/2)-groesser-5, 10);
-		rechts.positionSetzen((breite+lStrich)/2+5, 10);
+		strich.positionSetzen((breite - lStrich) / 2, 10);
+		links.positionSetzen(((breite - lStrich) / 2) - groesser - 5, 10);
+		rechts.positionSetzen((breite + lStrich) / 2 + 5, 10);
 	}
 	
+	/**
+	 * Gibt eine Zufallszahl zurück
+	 * 
+	 * @param von
+	 *            untere Grenze (inklusive)
+	 * @param bis
+	 *            obere Grenze (inklusive)
+	 * @return Zufallszahl im Bereich <code>von</code> - <code>bis</code>
+	 */
 	public int zufallszahlVonBis(int von, int bis) {
 		if (von > bis) {
-			System.err.println("Die Zufallszahl von (" + von + ") war größer als die "
+			Logger.error("Die Zufallszahl von (" + von + ") war größer als die "
 					+ "Zufallszahl bis (" + bis + ").");
 			return -1;
 		}
@@ -209,8 +217,8 @@ public class AnzeigeE
 	 *            Es <b>MUSS</b> eine Methode <code>tick()</code> haben.
 	 * @param intervall
 	 *            Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
-	 * @see ea.Ticker
-	 * @see tickerAbmelden(Object)
+	 * @see Ticker
+	 * @see #tickerAbmelden(Object)
 	 */
 	public void tickerAnmelden(Object o, int intervall) {
 		Class<?> klasse = o.getClass();
@@ -228,7 +236,7 @@ public class AnzeigeE
 	 * 
 	 * @param o
 	 *            Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
-	 * @see tickerAnmelden(Object, int)
+	 * @see #tickerAnmelden(Object, int)
 	 */
 	public void tickerAbmelden(Object o) {
 		for (int i = aufgabenT.size() - 1; i >= 0; i--) {
@@ -275,21 +283,23 @@ public class AnzeigeE
 	 * 
 	 * @param client
 	 *            Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Mausklick informiert.
-	 * @see ea.KlickReagierbar
-	 * @see ea.RechtsKlickReagierbar
+	 * @param linksklick
+	 *            Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
+	 * @see KlickReagierbar
+	 * @see RechtsKlickReagierbar
 	 */
-	public void klickReagierbarAnmelden(Object o, boolean linksklick) {
+	public void klickReagierbarAnmelden(Object client, boolean linksklick) {
 		if (maus == null) {
 			// Erstmal Maus erstellen
 			maus = new Maus(1);
 			FensterE.getFenster().mausAnmelden(maus);
 			maus.klickReagierbarAnmelden(this);
 		}
-		Class<?> klasse = o.getClass();
+		Class<?> klasse = client.getClass();
 		Method[] methoden = klasse.getMethods();
 		for (int i = 0; i < methoden.length; i++) {
 			if (methoden[i].getName().equals("klickReagieren")) {
-				aufgabenKlick.add(new KlickAuftrag(o, methoden[i], linksklick));
+				aufgabenKlick.add(new KlickAuftrag(client, methoden[i], linksklick));
 				return;
 			}
 		}
@@ -303,6 +313,7 @@ public class AnzeigeE
 	 * @param y
 	 *            Y-Koordinate des Klicks
 	 */
+	@Override
 	public void klickReagieren(int x, int y) {
 		klickSub(x, y, true);
 	}
@@ -315,6 +326,7 @@ public class AnzeigeE
 	 * @param y
 	 *            Y-Koordinate des Klicks
 	 */
+	@Override
 	public void rechtsKlickReagieren(int x, int y) {
 		klickSub(x, y, false);
 	}

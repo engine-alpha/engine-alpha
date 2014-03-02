@@ -89,7 +89,7 @@ public class Manager extends Timer {
 	 * @param name
 	 *            Der Name, den der Thread haben wird, ueber den dieser Manager laeuft.<br />
 	 *            Dieser Parameter kann auch einfach weggelassen werden; in diesem Fall erhaelt der Ticker einen standartisierten Namen.
-	 * @see Manager()
+	 * @see #Manager()
 	 */
 	public Manager(String name) {
 		this.name = name;
@@ -113,7 +113,7 @@ public class Manager extends Timer {
 	 * 
 	 * @param t
 	 *            Der anzumeldende Ticker
-	 * @see anmelden(Ticker)
+	 * @see #anmelden(Ticker)
 	 */
 	public void anmelden(Ticker t, int intervall) {
 		anmelden(t);
@@ -126,7 +126,7 @@ public class Manager extends Timer {
 	 * 
 	 * @param t
 	 *            Der anzumeldende Ticker
-	 * @see anmelden(Ticker, int)
+	 * @see #anmelden(Ticker, int)
 	 */
 	public void anmelden(Ticker t) {
 		if (istAngemeldet(t)) {
@@ -180,7 +180,7 @@ public class Manager extends Timer {
 	 *            Der zu startende, <b>bereits am Manager angemeldete</b> Ticker.
 	 * @param intervall
 	 *            Das Intervall, in dem dieser Ticker ab sofort immer wieder aufgerufen wird.
-	 * @see anhalten(Ticker)
+	 * @see #anhalten(Ticker)
 	 */
 	public void starten(final Ticker t, int intervall) {
 		if (!istAngemeldet(t)) {
@@ -214,7 +214,7 @@ public class Manager extends Timer {
 	 * 
 	 * @param t
 	 *            Der anzuhaltende Ticker
-	 * @see starten(Ticker, int)
+	 * @see #starten(Ticker, int)
 	 */
 	public void anhalten(Ticker t) {
 		if (!istAngemeldet(t)) {

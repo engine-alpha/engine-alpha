@@ -76,7 +76,7 @@ public class Rechteck extends Geometrie {
 	 * 
 	 * @param breite
 	 *            Die neue Breite des Rechtecks
-	 * @see hoeheSetzen(int)
+	 * @see #hoeheSetzen(int)
 	 */
 	public void breiteSetzen(int breite) {
 		this.breite = breite;
@@ -88,7 +88,7 @@ public class Rechteck extends Geometrie {
 	 * 
 	 * @param hoehe
 	 *            Die neue Hoehe des Rechtecks
-	 * @see breiteSetzen(int)
+	 * @see #breiteSetzen(int)
 	 */
 	public void hoeheSetzen(int hoehe) {
 		this.laenge = hoehe;

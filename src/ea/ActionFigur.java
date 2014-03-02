@@ -128,7 +128,7 @@ public class ActionFigur extends Raum {
 	 *            Die Figur, die diesen Zustand beschreibt.
 	 * @param name
 	 *            Der Name, unter dem dieser Zustand aufgerufen wird.
-	 * @see neueAktion(Figur, String)
+	 * @see #neueAktion(Figur, String)
 	 */
 	public void neuerZustand(Figur zustandFigur, String name) {
 		zustandFigur.entfernen();
@@ -154,7 +154,7 @@ public class ActionFigur extends Raum {
 	 *            Die Figur, die diese Aktion beschreibt.
 	 * @param name
 	 *            Der Name, unter dem diese Aktion aufgerufen wird.
-	 * @see neuerZustand(Figur, String)
+	 * @see #neuerZustand(Figur, String)
 	 */
 	public void neueAktion(Figur aktionsFigur, String name) {
 		aktionsFigur.entfernen();
@@ -179,7 +179,7 @@ public class ActionFigur extends Raum {
 	 * @param name
 	 *            Der Name des Zustandes, in den die Figur versetzt werden soll.
 	 *            Dies ist der Name, der beim Anmelden des Zustandes mitgegeben wurde.
-	 * @see aktionSetzen(String)
+	 * @see #aktionSetzen(String)
 	 */
 	public void zustandSetzen(String name) {
 		String s = name.toLowerCase();
@@ -200,7 +200,7 @@ public class ActionFigur extends Raum {
 	 * @param name
 	 *            Der Name der Aktion, die die Figur ausfuehren soll.
 	 *            Dies ist der Name, der beim Anmelden der Aktion mitgegeben wurde.
-	 * @see zustandSetzen(String)
+	 * @see #zustandSetzen(String)
 	 */
 	public void aktionSetzen(String name) {
 		String s = name.toLowerCase();
@@ -272,7 +272,7 @@ public class ActionFigur extends Raum {
 	 * @param spiegel
 	 *            Ob alle angelegten Figuren (der <i>Zustaende</i> und <i>Aktionen</i>) an der X-Achse gespiegelt
 	 *            werden sollen.
-	 * @see Figur.spiegelXSetzen(boolean)
+	 * @see Figur#spiegelXSetzen(boolean)
 	 */
 	public void spiegelXSetzen(boolean spiegel) {
 		for (int i = 0; i < aktion.length; i++) {
@@ -296,7 +296,7 @@ public class ActionFigur extends Raum {
 	 * @param spiegel
 	 *            Ob alle angelegten Figuren (der <i>Zustaende</i> und <i>Aktionen</i>) an der Y-Achse gespiegelt
 	 *            werden sollen.
-	 * @see Figur.spiegelYSetzen(boolean)
+	 * @see Figur#spiegelYSetzen(boolean)
 	 */
 	public void spiegelYSetzen(boolean spiegel) {
 		for (int i = 0; i < aktion.length; i++) {
@@ -312,8 +312,8 @@ public class ActionFigur extends Raum {
 	 * 
 	 * @param f
 	 *            Die Farbe, die alle Felder aller Figuren annehmen werden.
-	 * @see Figur.einfaerben(Farbe)
-	 * @see einfaerben(String)
+	 * @see Figur#einfaerben(Farbe)
+	 * @see #einfaerben(String)
 	 */
 	public void einfaerben(Farbe f) {
 		for (int i = 0; i < aktion.length; i++) {
@@ -329,8 +329,8 @@ public class ActionFigur extends Raum {
 	 * 
 	 * @param farbe
 	 *            Die Farbe, die alle Felder aller Figuren annehmen werden. Als Standardfarben-String.
-	 * @see Figur.einfaerben(Farbe)
-	 * @see einfaerben(Farbe)
+	 * @see Figur#einfaerben(Farbe)
+	 * @see #einfaerben(Farbe)
 	 */
 	public void einfaerben(String farbe) {
 		einfaerben(Farbe.vonString(farbe));
@@ -342,7 +342,7 @@ public class ActionFigur extends Raum {
 	 * 
 	 * @param faktor
 	 *            Der neue Groessenfaktor
-	 * @see ea.Figur.faktorSetzen(int)
+	 * @see Figur#faktorSetzen(int)
 	 */
 	public void faktorSetzen(int faktor) {
 		for (int i = 0; i < aktion.length; i++) {
@@ -453,7 +453,7 @@ public class ActionFigur extends Raum {
 	
 	/**
 	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll einzuschliessen</b>.
-	 * @see ea.Raum.dimension()
+	 * @see Raum#dimension()
 	 */
 	@Override
 	public BoundingRechteck dimension() {
