@@ -79,9 +79,9 @@ public class GeradenAnimierer extends Animierer {
 	 * Sie wird automatisch von der Super-Klasse <code>Animierer</code> aufgerufen, sooft, bis sie intern beendet oder
 	 * angehalten wird.
 	 * 
-	 * @see tick()
-	 * @see beenden()
-	 * @see anhalten()
+	 * @see #tick()
+	 * @see #beenden()
+	 * @see #anhalten()
 	 */
 	@Override
 	public void animationsSchritt() {

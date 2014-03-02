@@ -90,7 +90,7 @@ public abstract class PhysikClient {
 	 * 
 	 * @param tiefe
 	 *            Die Tiefe, ab der das anliegende <code>FallReagierbar</code>-Interface informiert werden soll.
-	 * @see fallReagierbarAnmelden(FallReagierbar, int)
+	 * @see #fallReagierbarAnmelden(FallReagierbar, int)
 	 */
 	public abstract void kritischeTiefeSetzen(int tiefe);
 	

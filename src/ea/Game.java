@@ -47,9 +47,12 @@ import ea.internal.util.Logger;
  */
 public abstract class Game implements TastenReagierbar {
 	static {
-		System.setProperty("sun.java2d.opengl", "true");
-		System.setProperty("sun.java2d.d3d", "false");
-		System.setProperty("sun.java2d.noddraw", "true");
+		System.setProperty("sun.java2d.opengl", "true"); // ok
+		System.setProperty("sun.java2d.d3d", "false"); // ok
+		System.setProperty("sun.java2d.noddraw", "true"); // set false if possible, linux
+		System.setProperty("sun.java2d.pmoffscreen", "false"); // set true if possible, linux
+		System.setProperty("sun.java2d.ddoffscreen", "true"); // ok, windows
+		System.setProperty("sun.java2d.ddscale", "true"); // ok, hardware accelerated image scaling on windows
 	}
 	
 	/**
@@ -406,7 +409,7 @@ public abstract class Game implements TastenReagierbar {
 	 *            Die Namen der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum schlechtesten auf der Liste
 	 * @param punkte
 	 *            Die Punktestaende der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum schlechtesten auf der Liste
-	 * @see highscoreAnzeigen(String[], int[])
+	 * @see #highscoreAnzeigen(String[], int[])
 	 */
 	public void highscoreAnzeigen(String[] namen, int[] punkte) {
 		highscoreAnzeigen(namen, punkte, "");
@@ -637,7 +640,7 @@ public abstract class Game implements TastenReagierbar {
 	 *            ob die Blende aktiviert oder deaktiviert werden soll
 	 * @param farbe
 	 *            Die neue Farbe der Blende
-	 * @see ueberblendeSetzen(boolean)
+	 * @see #ueberblendeSetzen(boolean)
 	 */
 	public void ueberblendeSetzen(boolean aktiv, Farbe farbe) {
 		if (farbe.undurchsichtig()) {

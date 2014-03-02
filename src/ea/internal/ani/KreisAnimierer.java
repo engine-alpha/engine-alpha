@@ -24,7 +24,6 @@ import ea.Gerade;
 import ea.Manager;
 import ea.Punkt;
 import ea.Raum;
-import ea.RegEck;
 import ea.Vektor;
 
 /**

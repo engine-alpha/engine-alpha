@@ -122,7 +122,7 @@ public abstract class Animierer implements Ticker {
 	 * Haelt den Tick-Algorythmus an. macht genau dasselbe wie <code>anhalten</code> und ist nur dazu da,
 	 * eine weitere Assoziation der Verwendung dieser Methode zu repraesentieren.
 	 * 
-	 * @see anhalten()
+	 * @see #anhalten()
 	 */
 	public void pausieren() {
 		this.anhalten();
@@ -160,9 +160,9 @@ public abstract class Animierer implements Ticker {
 	 * In ihr sollte <b>hoechstens einmal</b> das Ziel-Objekt bewegt werden! Ansonsten wird die Interaktion mit der Klasse <code>Physik</code> und damit das moegliche Einrechnen fuer die Objekte nicht
 	 * moeglich.
 	 * 
-	 * @see tick()
-	 * @see beenden()
-	 * @see anhalten()
+	 * @see #tick()
+	 * @see #beenden()
+	 * @see #anhalten()
 	 */
 	public abstract void animationsSchritt();
 }

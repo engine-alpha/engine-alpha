@@ -63,7 +63,7 @@ public final class Farbe implements Serializable {
 	 * @param s
 	 *            Der Name der Farbe.
 	 * @return Das Farb-Objekt, das diese Farbe beinhaltet.
-	 * @see Raum.zuFarbeKonvertieren(String)
+	 * @see Raum#zuFarbeKonvertieren(String)
 	 */
 	public static final Farbe vonString(String s) {
 		return new Farbe(Raum.zuFarbeKonvertieren(s));
@@ -101,7 +101,7 @@ public final class Farbe implements Serializable {
 	 *            Der Gruen-Anteil dieser Farben(zwischen 0 und 255)
 	 * @param b
 	 *            Der Blau-Anteil dieser Farbe (zwischen 0 und 255)
-	 * @see Farbe(int, int, int, int)
+	 * @see #Farbe(int, int, int, int)
 	 */
 	public Farbe(int r, int g, int b) {
 		this(r, g, b, 255);

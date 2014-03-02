@@ -283,6 +283,8 @@ public class Bild extends Raum {
 	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
 	 */
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		if (r.schneidetBasic(this.dimension())) {
 			if (!wiederholen) {
 				g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), Fenster.instanz);
@@ -295,6 +297,8 @@ public class Bild extends Raum {
 				g.fill(new Rectangle2D.Double(position.realX() - r.x, position.realY() - r.y, breite, hoehe));
 			}
 		}
+		
+		super.afterRender(g);
 	}
 	
 	/**

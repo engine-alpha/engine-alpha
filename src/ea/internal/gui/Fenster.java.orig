@@ -784,9 +784,15 @@ public class Fenster extends Frame {
 				
 				BoundingRechteck bounds = mausBild.dimension();
 				Punkt spot = maus.hotSpot();
+<<<<<<< HEAD
 				Punkt hx = new Punkt(bounds.x + spot.realX() + x, bounds.y + spot.realY());
 				Punkt hy = new Punkt(bounds.x + spot.realX(), bounds.y + spot.realY() + y);
+
+=======
+				Punkt hx = new Punkt(bounds.x + spot.x + x, bounds.y + spot.y);
+				Punkt hy = new Punkt(bounds.x + spot.x, bounds.y + spot.y + y);
 				
+>>>>>>> master
 				if (!zeichner.masse().istIn(hx))
 					x = 0;
 				if (!zeichner.masse().istIn(hy))
@@ -821,8 +827,13 @@ public class Fenster extends Frame {
 			if (!maus.absolut()) {
 				BoundingRechteck r = mausBild.dimension();
 				Punkt p = maus.hotSpot();
-				
+<<<<<<< HEAD
+
 				maus.klick((int)(r.x + p.realX() + getCam().getX()), (int)(r.y + p.realY()
+=======
+				
+				maus.klick((int) (r.x + p.x + getCam().getX()), (int) (r.y + p.y
+>>>>>>> master
 						+ getCam().getY()), links, losgelassen); // Mit
 																	// zurückrechnen
 																	// auf die

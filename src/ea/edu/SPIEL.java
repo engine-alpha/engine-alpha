@@ -22,6 +22,7 @@ package ea.edu;
 import ea.Bild;
 import ea.Maus;
 import ea.Punkt;
+import ea.internal.util.Logger;
 
 /**
  * Die Klasse SPIEL ist ein Template, das so wie es ist an Schueler ausgegeben werden kann.
@@ -135,7 +136,7 @@ public class SPIEL
 	 *            Tastaturkuerzel</i> abgelesen werden.
 	 */
 	public void tasteReagieren(int tastenkuerzel) {
-		System.out.println("Taste mit Kuerzel " + tastenkuerzel +
+		Logger.info("Taste mit Kuerzel " + tastenkuerzel +
 				" wurde gedrueckt");
 	}
 	

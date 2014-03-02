@@ -298,9 +298,9 @@ public class Figur extends Raum {
 	 * Setzt saemtlicher Farbwerte saemtlicher Bilder der Figur ins negative.<br />
 	 * Dadurch aendert sich die Erscheinung der Figur.
 	 * 
-	 * @see heller()
-	 * @see dunkler()
-	 * @see farbenTransformieren(int, int, int)
+	 * @see #heller()
+	 * @see #dunkler()
+	 * @see #farbenTransformieren(int, int, int)
 	 */
 	public void negativ() {
 		for (int i = 0; i < animation.length; i++) {
@@ -315,9 +315,9 @@ public class Figur extends Raum {
 	 * Wegen Rundungsfehlern muss der Aufruf von <code>dunkler()</code> nach dem Aufruf
 	 * von <code>heller()</code> nicht zwanghaft zum urspruenglichen Zustand fuehren!
 	 * 
-	 * @see dunkler()
-	 * @see negativ()
-	 * @see farbenTransformieren(int, int, int)
+	 * @see #dunkler()
+	 * @see #negativ()
+	 * @see #farbenTransformieren(int, int, int)
 	 */
 	public void heller() {
 		for (int i = 0; i < animation.length; i++) {
@@ -332,9 +332,9 @@ public class Figur extends Raum {
 	 * Wegen Rundungsfehlern muss der Aufruf von <code>dunkler()</code> nach dem Aufruf
 	 * von <code>heller()</code> nicht zwanghaft zum urspruenglichen Zustand fuehren!
 	 * 
-	 * @see heller()
-	 * @see negativ()
-	 * @see farbenTransformieren(int, int, int)
+	 * @see #heller()
+	 * @see #negativ()
+	 * @see #farbenTransformieren(int, int, int)
 	 */
 	public void dunkler() {
 		for (int i = 0; i < animation.length; i++) {
@@ -354,9 +354,9 @@ public class Figur extends Raum {
 	 *            Der Gruen-Aenderungswert (positiv und negativ moeglich)
 	 * @param b
 	 *            Der Blau-Aenderungswert (positiv und negativ moeglich)
-	 * @see heller()
-	 * @see dunkler()
-	 * @see negativ()
+	 * @see #heller()
+	 * @see #dunkler()
+	 * @see #negativ()
 	 */
 	public void farbenTransformieren(int r, int g, int b) {
 		for (int i = 0; i < animation.length; i++) {
@@ -370,8 +370,8 @@ public class Figur extends Raum {
 	 * 
 	 * @param f
 	 *            Die Farbe, mit der alle farbenthaltenden Unterquadrate der Figur eingefaerbt werden.
-	 * @see zurueckFaerben()
-	 * @see einfaerben(String)
+	 * @see #zurueckFaerben()
+	 * @see #einfaerben(String)
 	 */
 	public void einfaerben(Farbe f) {
 		for (int i = 0; i < animation.length; i++) {
@@ -386,8 +386,8 @@ public class Figur extends Raum {
 	 * @param farbe
 	 *            Die Farbe, mit der alle farbenthaltenden Unterquadrate der Figur eingefaerbt werden.<br />
 	 *            Eingabe als <code>String</code>, so wie bei den anderen einfachen Farbeingaben auch.
-	 * @see zurueckFaerben()
-	 * @see einfaerben(Farbe)
+	 * @see #zurueckFaerben()
+	 * @see #einfaerben(Farbe)
 	 */
 	public void einfaerben(String farbe) {
 		einfaerben(Farbe.vonString(farbe));
@@ -453,7 +453,8 @@ public class Figur extends Raum {
 	 * Sorgt dafuer, dass nach dem Aufruf von <code>einfaerben(Farbe)</code> die Figur wieder
 	 * ihre normalen Farbgegebenheiten kriegt.
 	 * 
-	 * @see #einfaerben()
+	 * @see #einfaerben(Farbe)
+	 * @see #einfaerben(String)
 	 */
 	public void zurueckFaerben() {
 		for (int i = 0; i < animation.length; i++) {
@@ -511,9 +512,13 @@ public class Figur extends Raum {
 	 */
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		if (r.schneidetBasic(this.dimension())) {
 			animation[aktuelle].zeichnen(g, (int) (position.x - r.x), (int) (position.y - r.y), spiegelX, spiegelY);
 		}
+		
+		super.afterRender(g);
 	}
 	
 	/**
@@ -551,7 +556,7 @@ public class Figur extends Raum {
 	 * 
 	 * @return Das Intervall dieser Figur. Dies ist die Zeit in Millisekunden, die ein Animationsbild
 	 *         zu sehen bleibt
-	 * @see animationsGeschwindigkeitSetzen(int)
+	 * @see #animationsGeschwindigkeitSetzen(int)
 	 */
 	public int intervall() {
 		return intervall;

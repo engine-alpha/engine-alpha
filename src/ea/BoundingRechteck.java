@@ -492,7 +492,7 @@ public final class BoundingRechteck implements Serializable {
 	 * Gibt die <b>reelle</b> Y-Koordinate der oberen linken Ecke aus.
 	 * 
 	 * @return Die <b>reelle</b> Y-Koordinate der oberen linken Ecke dieses BoundingRechtecks.
-	 * @see #getRealX(
+	 * @see #getRealX()
 	 * @see #getRealBreite()
 	 * @see #getRealHoehe()
 	 */

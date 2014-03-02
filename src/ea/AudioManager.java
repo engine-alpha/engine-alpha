@@ -61,7 +61,7 @@ public class AudioManager extends Manager {
 	 *            Ob der Sound als dauerschleife gespielt werden soll.<br />
 	 *            Dies bietet sich vor allem fuer Hintergrundmusik an, aber auch
 	 *            zum Beispiel fuer ein Maschinengewehrrattern.
-	 * @see anhalten(Sound)
+	 * @see #anhalten(Sound)
 	 */
 	public void abspielen(Sound s, boolean wiederholen) {
 		Kanal k = null;
@@ -85,7 +85,7 @@ public class AudioManager extends Manager {
 	 * 
 	 * @param s
 	 *            Der abzuspielende Sound
-	 * @see abspielen(Sound, boolean)
+	 * @see #abspielen(Sound, boolean)
 	 */
 	public void abspielen(Sound s) {
 		abspielen(s, false);
@@ -99,7 +99,7 @@ public class AudioManager extends Manager {
 	 * 
 	 * @param s
 	 *            Der anzuhaltende Sound
-	 * @see pausieren(Sound)
+	 * @see #pausieren(Sound)
 	 */
 	public void anhalten(Sound s) {
 		for (int i = 0; i < kanal.length; i++) {
@@ -115,7 +115,7 @@ public class AudioManager extends Manager {
 	 * allerdings gewuenscht, so bietet sich die Methode <code>anhalten(Sound s)</code> an.
 	 * 
 	 * @param s
-	 * @see anhalten(Sound)
+	 * @see #anhalten(Sound)
 	 */
 	public void pausieren(Sound s) {
 		for (int i = 0; i < kanal.length; i++) {

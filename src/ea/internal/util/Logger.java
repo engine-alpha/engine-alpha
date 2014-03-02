@@ -7,12 +7,16 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * TODO Docs
+ * Logger für die Engine Alpha, damit Probleme bei Anwendern auch von Entwicklern nachvollzogen werden können.
  * 
- * @author Julien Gelmar <master@nownewstart.net>, Niklas Keller
+ * @author Julien Gelmar <master@nownewstart.net>, Niklas Keller <me@kelunik.com>
  */
 public class Logger {
 	private static BufferedWriter writer;
+	
+	private Logger() {
+		
+	}
 	
 	static {
 		try {
@@ -37,18 +41,24 @@ public class Logger {
 				try {
 					writer.close();
 				} catch (IOException e) {
-					// don't care!
+					e.printStackTrace();
 				}
 			}
 		});
 	}
 	
-	public static String getTime() {
+	/**
+	 * Zeit im Log-Format
+	 * @return gibt die Zeit für die Logs zurück
+	 */
+	private static String getTime() {
 		return new Date().toString();
 	}
 	
 	/**
 	 * Logger-Funktion für Warnungen
+	 * 
+	 * @param s Text der Warnung
 	 */
 	public static void warning(String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[3];
@@ -57,6 +67,8 @@ public class Logger {
 	
 	/**
 	 * Logger-Funktion für Fehler
+	 * 
+	 * @param s Text des Fehlers
 	 */
 	public static void error(String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
@@ -65,18 +77,20 @@ public class Logger {
 	
 	/**
 	 * Logger-Funktion für Informationen
+	 * 
+	 * @param s Text der Information
 	 */
 	public static void info(String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[3];
 		write("INFO", e.getFileName(), e.getLineNumber(), s);
 	}
 	
-	public static void write(String t, String f, int l, String s) {
-		write(t, f, l, s, false);
+	private static String write(String type, String filename, int line, String message) {
+		return write(type, filename, line, message, false);
 	}
 	
-	public static void write(String t, String f, int l, String s, boolean error) {
-		String str = "["+getTime()+"]["+t+"] "+s+" ("+f+":"+l+")";
+	private static String write(String type, String filename, int line, String message, boolean error) {
+		String str = String.format("[%d][%s] %s (%f:%d)", getTime(), type, message, filename, line);
 		
 		if(error) {
 			System.err.println(str);
@@ -84,7 +98,7 @@ public class Logger {
 			System.out.println(str);
 		}
 		
-		write(str);
+		return write(str);
 	}
 	
 	/**
@@ -92,13 +106,18 @@ public class Logger {
 	 * 
 	 * @param text
 	 *            Meldungs-Text der zur Log übergeben wird
+	 * @return Gibt den geschrieben Text zurück, im Fehlerfall <code>null</code>
 	 */
-	public static void write(String text) {
+	private static String write(String text) {
 		try {
 			writer.write(text);
 			writer.newLine();
+			
+			return text;
 		} catch(IOException e) {
 			System.err.println("Logger konnte folgende Zeile nicht schreiben:\n"+text);
+			
+			return null;
 		}
 	}
 }

@@ -416,7 +416,7 @@ public class DateiManager {
 	 *            Verzeichnis wie auch den Dateinamen angibt.
 	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
 	 *         wurde, ansonsten <code>false</code>.
-	 * @see schreiben(Figur, String, String)
+	 * @see #schreiben(Figur, String, String)
 	 */
 	public static boolean schreiben(Figur f, String pfad) {
 		return schreiben(f, pfad, "");
@@ -438,7 +438,7 @@ public class DateiManager {
 	 *         oder nicht existiert, ist dieser wert <code>null</code>.<br />
 	 *         Trotzdem kann es sein, dass eine beschuedigte Datei nicht mehr
 	 *         korrekt einlesbar ist, dennoch ein Ergebnis liefert.
-	 * @see figurEinlesen(String)
+	 * @see #figurEinlesen(String)
 	 */
 	public static Figur figurLaden(String verzeichnis) {
 		return figurEinlesen(verzeichnis);

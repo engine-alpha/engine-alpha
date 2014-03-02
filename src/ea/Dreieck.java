@@ -19,6 +19,7 @@
 
 package ea;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import ea.internal.gra.Listung;
@@ -93,7 +94,7 @@ public class Dreieck extends Geometrie {
 	 * @param c
 	 *            Die Farbe dieses Dreiecks, anhand der Klasse <code>Color</code>.
 	 */
-	public void setColor(java.awt.Color c) {
+	public void setColor(Color c) {
 		farbe = c;
 	}
 	
@@ -113,7 +114,7 @@ public class Dreieck extends Geometrie {
 	 *            Der 2. neue Punkt des Dreiecks
 	 * @param p3
 	 *            Der 3. neue Punkt des Dreiecks
-	 * @see punkteSetzen(int[], int[])
+	 * @see #punkteSetzen(float[], float[])
 	 */
 	public void punkteSetzen(Punkt p1, Punkt p2, Punkt p3) {
 		x[0] = p1.x;
@@ -142,7 +143,7 @@ public class Dreieck extends Geometrie {
 	 * 
 	 * @param v
 	 *            Die Verschiebung als Vektor
-	 * @see Raum.verschieben(Vektor)
+	 * @see Raum#verschieben(Vektor)
 	 */
 	@Override
 	public void verschieben(Vektor v) {
@@ -277,25 +278,33 @@ public class Dreieck extends Geometrie {
 	 */
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+		
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+		
 		int[] x = {
-			(int)this.x[0],
-			(int)this.x[1],
-			(int)this.x[2]
+			(int) this.x[0],
+			(int) this.x[1],
+			(int) this.x[2]
 		};
+		
 		int[] y = {
-			(int)this.y[0],
-			(int)this.y[1],
-			(int)this.y[2]
+			(int) this.y[0],
+			(int) this.y[1],
+			(int) this.y[2]
 		};
+		
 		for (int i = 0; i < 3; i++) {
 			x[i] -= r.x;
 			y[i] -= r.y;
 		}
+		
 		g.setColor(farbe);
 		g.fillPolygon(x, y, 3);
+		
+		super.afterRender(g);
 	}
 	
 	public Dreieck[] neuBerechnen() {
