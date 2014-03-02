@@ -39,6 +39,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import ea.BoundingRechteck;
 import ea.Kamera;
@@ -62,7 +63,7 @@ import ea.internal.util.Logger;
  * In ihm 'faengt sich die Maus, sie kann also das Fenster nicht mehr nach dem
  * Betreten verlassen.
  * 
- * @author Michael Andonie, Niklas Keller
+ * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
 public class Fenster extends Frame {
 	private static final long serialVersionUID = 1L;
@@ -82,7 +83,6 @@ public class Fenster extends Frame {
 	 * Fensterbereiches liegt.<br />
 	 * Gibt es keine solche ist dieser Wert irrelevant.
 	 */
-	@SuppressWarnings("unused")
 	private volatile boolean mausAusBild = false;
 	
 	/**
@@ -94,22 +94,22 @@ public class Fenster extends Frame {
 	/**
 	 * Das Panel, das fuer die Zeichenroutine verantwortlich ist.
 	 */
-	private Zeichner zeichner;
+	private final Zeichner zeichner;
 	
 	/**
 	 * Die Liste aller TastenListener.
 	 */
-	private java.util.ArrayList<TastenReagierbar> listener = new java.util.ArrayList<TastenReagierbar>();
+	private final ArrayList<TastenReagierbar> listener = new ArrayList<>();
 	
 	/**
 	 * Die Liste aller TastenGedrueckt-Listener
 	 */
-	private java.util.ArrayList<TastenGedruecktReagierbar> gedrListener = new java.util.ArrayList<TastenGedruecktReagierbar>();
+	private final ArrayList<TastenGedruecktReagierbar> gedrListener = new ArrayList<>();
 	
 	/**
 	 * Die Liste aller TastenLosgelassen-Listener
 	 */
-	private java.util.ArrayList<TastenLosgelassenReagierbar> losListener = new java.util.ArrayList<TastenLosgelassenReagierbar>();
+	private final ArrayList<TastenLosgelassenReagierbar> losListener = new ArrayList<>();
 	
 	/**
 	 * Die Maus, die in dem Fenster sichtbar ist.<br />
@@ -167,9 +167,7 @@ public class Fenster extends Frame {
 	 * @param fensterY
 	 *            Die Y-Koordinate des Fensters auf dem Computerbildschirm.
 	 */
-	@SuppressWarnings("serial")
-	public Fenster(int breite, int hoehe, String titel, boolean vollbild,
-			int fensterX, int fensterY) {
+	public Fenster(int breite, int hoehe, String titel, boolean vollbild, int fensterX, int fensterY) {
 		super(titel);
 		
 		frameCount++;
@@ -250,22 +248,17 @@ public class Fenster extends Frame {
 				}
 				
 				if (!success) {
-					System.err.println("Achtung!");
-					System.err
-							.println("Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!");
-					System.err
-							.println("Nur besondere Auflösungen sind möglich, z.B. 800 x 600.");
-					System.err
-							.println("Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
+					Logger.error("Achtung!" + "\n"
+							+ "Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!" + "\n"
+							+ "Nur besondere Auflösungen sind möglich, z.B. 800 x 600." + "\n"
+							+ "Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
 				}
 			} else {
-				System.err
-						.println("Dieser Bildschirm unterstützt keine Auflösungsänderung!");
+				Logger.error("Dieser Bildschirm unterstützt keine Auflösungsänderung!");
 			}
 			
 			if (!success) {
-				System.err
-						.println("Die gewünschte Auflösung wird nicht vom Hauptbildschirm des Computers unterstützt!");
+				Logger.error("Die gewünschte Auflösung wird nicht vom Hauptbildschirm des Computers unterstützt!");
 			}
 		}
 		
@@ -284,13 +277,14 @@ public class Fenster extends Frame {
 			setVisible(true);
 		}
 		
-		zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe,
-				new Zeichenebene()));
+		zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe, new Zeichenebene()));
 		add(zeichner);
+		
 		zeichner.init();
 		
-		if (windowMode == (WINDOW_FULLSCREEN_FRAME | WINDOW_FRAME))
+		if ((windowMode & (WINDOW_FULLSCREEN_FRAME | WINDOW_FRAME)) > 0) {
 			pack();
+		}
 		
 		// ------------------------------------- //
 		
@@ -298,10 +292,10 @@ public class Fenster extends Frame {
 		try {
 			robot = new Robot(devices[0]);
 		} catch (AWTException e) {
-			System.err.println("Achtung!");
-			System.err.println("Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!");
-			System.err.println("Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren.");
-			System.err.println("Grund: Dies liegt an diesem Computer.");
+			Logger.error("Achtung!" + "\n"
+					+ "Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!" + "\n"
+					+ "Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren." + "\n"
+					+ "Grund: Dies liegt an diesem Computer.");
 		}
 		
 		// Die Listener
@@ -310,6 +304,7 @@ public class Fenster extends Frame {
 		addMouseMotionListener();
 		addWindowListener(new Adapter(this));
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				loeschen();
 			}
@@ -318,6 +313,9 @@ public class Fenster extends Frame {
 		
 		// Mausfang
 		Manager.standard.anmelden(new Ticker() {
+			private static final long serialVersionUID = -7552570027596373694L;
+			
+			@Override
 			public void tick() {
 				if (hatMaus() && !maus.absolut() && maus.bewegend()) {
 					try {
@@ -333,7 +331,7 @@ public class Fenster extends Frame {
 					} catch (NullPointerException e) {
 						// Einfangen der maximal einmaligen RuntimeException zum
 						// sichern
-						// ???
+						// TODO ???
 					}
 				}
 				for (TastenGedruecktReagierbar t : gedrListener) {
@@ -351,23 +349,29 @@ public class Fenster extends Frame {
 	
 	private void addKeyListener() {
 		KeyListener keyListener = new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				tastenAktion(e);
 			}
 			
+			@Override
 			public void keyReleased(KeyEvent e) {
 				int i = zuordnen(e.getKeyCode());
 				
-				if (i == -1)
+				if (i == -1) {
 					return;
+				}
 				
 				tabelle[i] = false;
 				
-				for (TastenLosgelassenReagierbar l : losListener)
+				for (TastenLosgelassenReagierbar l : losListener) {
 					l.tasteLosgelassen(i);
+				}
 			}
 			
+			@Override
 			public void keyTyped(KeyEvent e) {
+				
 			}
 		};
 		
@@ -377,9 +381,11 @@ public class Fenster extends Frame {
 	
 	private void addMouseListener() {
 		zeichner.addMouseListener(new MouseListener() {
+			@Override
 			public void mouseExited(MouseEvent e) {
 			}
 			
+			@Override
 			public void mouseEntered(MouseEvent e) {
 				if (hatMaus()) {
 					Point po = getLocation();
@@ -396,25 +402,31 @@ public class Fenster extends Frame {
 				robot.mouseRelease(InputEvent.BUTTON1_MASK);
 			}
 			
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				mausAktion(e, true);
 			}
 			
+			@Override
 			public void mousePressed(MouseEvent e) {
 				mausAktion(e, false);
 			}
 			
+			@Override
 			public void mouseClicked(MouseEvent e) {
+				
 			}
 		});
 	}
 	
 	private void addMouseMotionListener() {
 		zeichner.addMouseMotionListener(new MouseMotionListener() {
+			@Override
 			public void mouseMoved(MouseEvent e) {
 				mausBewegung(e);
 			}
 			
+			@Override
 			public void mouseDragged(MouseEvent e) {
 				mausBewegung(e);
 			}
@@ -435,8 +447,7 @@ public class Fenster extends Frame {
 	 *            Die Hoehe
 	 */
 	public Fenster(int x, int y) {
-		this(x, y, "EngineAlpha - Ein Projekt von Michael Andonie", false, 50,
-				50);
+		this(x, y, "EngineAlpha - Ein Projekt von Michael Andonie", false, 50, 50);
 	}
 	
 	/**
@@ -488,8 +499,7 @@ public class Fenster extends Frame {
 	 */
 	public void anmelden(TastenReagierbar t) {
 		if (t == null) {
-			System.err.println("Der Listener war null !!!");
-			return;
+			throw new IllegalArgumentException("Listener darf nicht NULL sein.");
 		}
 		
 		listener.add(t);
@@ -510,8 +520,7 @@ public class Fenster extends Frame {
 	 */
 	public void tastenGedruecktAnmelden(TastenGedruecktReagierbar t) {
 		if (t == null) {
-			System.err.println("Der Listener war null !!!");
-			return;
+			throw new IllegalArgumentException("Listener darf nicht NULL sein.");
 		}
 		
 		gedrListener.add(t);
@@ -541,9 +550,8 @@ public class Fenster extends Frame {
 	 * andere beim Loslassen der Tasten aktiviert.
 	 */
 	public void tastenLosgelassenAnmelden(TastenLosgelassenReagierbar t) {
-		if (t == null) { // TODO Exception? => breaks backwards comp.
-			Logger.error("Der Listener war null !!!");
-			return;
+		if (t == null) {
+			throw new IllegalArgumentException("Listener darf nicht NULL sein.");
 		}
 		
 		losListener.add(t);
@@ -822,7 +830,7 @@ public class Fenster extends Frame {
 				BoundingRechteck r = mausBild.dimension();
 				Punkt p = maus.hotSpot();
 				
-				maus.klick((int)(r.x + p.realX() + getCam().getX()), (int)(r.y + p.realY()
+				maus.klick((int) (r.x + p.realX() + getCam().getX()), (int) (r.y + p.realY()
 						+ getCam().getY()), links, losgelassen); // Mit
 																	// zurückrechnen
 																	// auf die
@@ -831,7 +839,7 @@ public class Fenster extends Frame {
 				Dimension dim = this.getSize();
 				int startX = (dim.width / 2);
 				int startY = (dim.height / 2);
-				maus.klick((int) (startX + getCam().getX()), (int) (startY + getCam().getY()),
+				maus.klick(startX + getCam().getX(), startY + getCam().getY(),
 						links, losgelassen);
 			}
 		}
@@ -851,15 +859,15 @@ public class Fenster extends Frame {
 	 */
 	private void tastenAktion(KeyEvent e) {
 		int z = zuordnen(e.getKeyCode());
-		if (z == -1) {
+		
+		if (z == -1 || tabelle[z]) {
 			return;
 		}
-		if (tabelle[z]) {
-			return;
-		}
+		
 		for (TastenReagierbar r : listener) {
 			r.reagieren(z);
 		}
+		
 		tabelle[z] = true;
 	}
 	
@@ -1010,7 +1018,8 @@ public class Fenster extends Frame {
 			case KeyEvent.VK_MINUS:
 				z = 44;
 				break;
-		}// </editor-fold>
+		}
+		
 		return z;
 	}
 }
