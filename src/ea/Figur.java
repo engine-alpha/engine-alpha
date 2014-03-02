@@ -85,6 +85,7 @@ public class Figur extends Raum {
 		Manager.standard.anmelden((new Ticker() {
 			int runde = 0;
 			
+			@Override
 			public void tick() {
 				runde++;
 				try {
@@ -141,9 +142,23 @@ public class Figur extends Raum {
 	}
 	
 	/**
+	 * Erstellt eine Figur <b>ohne Positionsangabe</b>.
+	 * Die Figur liegt an Position (0|0). Dieser Konstruktor vereinfacht
+	 * das Laden <i>vieler Figuren</i>, z.B. für eine <code>ActionFigur</code>.
+	 * 
+	 * @param verzeichnis
+	 *            Das Verzeichnis, aus dem die Figur zu laden ist.
+	 * @see ea.ActionFigur
+	 */
+	public Figur(String verzeichnis) {
+		this(0, 0, verzeichnis);
+	}
+	
+	/**
 	 * Der parameterlose Konstruktor.<br />
 	 * Hiebei wird nichts gesetzt, die Figur hat die Position (0|0) sowie keine Animationen, die Referenz auf die einzelnen Pixelfelder ist <code>null</code>.<br />
-	 * Dieser Konstruktor wird intern verwendet, um Figurdaten zu laden.
+	 * Dieser Konstruktor wird intern verwendet, um Figurdaten zu laden.<br />
+	 * Daher ist er nicht für die direkte Verwendung in Spielen gedacht.
 	 */
 	public Figur() {
 		liste.add(this);
