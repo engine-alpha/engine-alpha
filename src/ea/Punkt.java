@@ -36,13 +36,13 @@ public final class Punkt
 	 * Der kontinuierliche(re) X-Wert des Punktes. Die anderen Koordinaten sind ggf.
 	 * nur gerundet.
 	 */
-	public final float x;
+	final float x;
 	
 	/**
 	 * Der kontinuierliche(re) Y-Wert des Punktes. Die anderen Koordinaten sind ggf.
 	 * nur gerundet.
 	 */
-	public final float y;
+	final float y;
 	
 	/**
 	 * Standard-Konstruktor fuer Objekte der Klasse Punkt.
@@ -72,11 +72,11 @@ public final class Punkt
 	 * @return Die Laenge der Luftlinie zwischen diesem und dem anderen Punkt.<br />
 	 *         Dieser Wert ist nie negativ.
 	 */
-	public double abstand(Punkt p) {
+	public float abstand(Punkt p) {
 		double x, y;
 		x = Math.abs(this.x - p.x);
 		y = Math.abs(this.y - p.y);
-		return Math.sqrt((x * x) + (y * y));
+		return (float)Math.sqrt((x * x) + (y * y));
 	}
 	
 	/**
@@ -107,6 +107,20 @@ public final class Punkt
 	 */
 	public Punkt verschobeneInstanz(Vektor v) {
 		return verschobenerPunkt(v);
+	}
+	
+	/**
+	 * Gibt diesen Punkt als Ortsvektor vom Ursprung der Zeichenebene aus.<br />
+	 * Dieser hat die exakt selben X/Y-Komponenten. Das bedeutet:<br />
+	 * <code>
+	 * Punkt p = new Punkt(10, 20);
+	 * Vektor v = p.alsVektor();
+	 * -> v == new Vektor(10, 20);
+	 * </code>
+	 * @return
+	 */
+	public Vektor alsVektor() {
+		return new Vektor(x,y);
 	}
 	
 	/**
@@ -146,10 +160,30 @@ public final class Punkt
 	 * Gibt die X-Koordinate dieses Punktes zurueck.
 	 * 
 	 * @return Die X-Koordinate dieses Punktes.
+	 * @see #realY()
+	 */
+	public float realX() {
+		return x;
+	}
+	
+	/**
+	 * Gibt die Y-Koordinate dieses Punktes zurueck.
+	 * 
+	 * @return Die Y-Koordinate dieses Punktes.
+	 * @see #realX()
+	 */
+	public float realY() {
+		return y;
+	}
+	
+	/**
+	 * Gibt die X-Koordinate dieses Punktes zurueck.
+	 * 
+	 * @return Die X-Koordinate dieses Punktes.
 	 * @see #y()
 	 */
-	public float x() {
-		return x;
+	public int x() {
+		return (int)x;
 	}
 	
 	/**
@@ -158,8 +192,8 @@ public final class Punkt
 	 * @return Die Y-Koordinate dieses Punktes.
 	 * @see #x()
 	 */
-	public float y() {
-		return y;
+	public int y() {
+		return (int)y;
 	}
 	
 }

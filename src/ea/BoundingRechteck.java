@@ -100,7 +100,7 @@ public final class BoundingRechteck implements Serializable {
 	 */
 	public BoundingRechteck mittenAngleichInstanz(Punkt p) {
 		Punkt z = this.zentrum();
-		return this.verschobeneInstanz(new Vektor(p.x - z.x, p.y - z.y));
+		return this.verschobeneInstanz(new Vektor(p.realX() - z.realX(), p.realY() - z.realY()));
 	}
 	
 	/**
@@ -226,6 +226,16 @@ public final class BoundingRechteck implements Serializable {
 	}
 	
 	/**
+	 * Gibt einen <code>BoundingKreis</code> aus, der das Rechteck minimal, aber voll umschließt.
+	 * @return	der <code>BoundingKreis</code> aus, der das Rechteck minimal, aber voll umschließt.
+	 * 			Die Ecken des Rechtecks liegen alle auf dem Kreis.
+	 */
+	public KreisCollider umschliessenderKreis() {
+		Punkt z = this.zentrum();
+		return new KreisCollider(z, z.abstand(new Punkt(x,y)));
+	}
+	
+	/**
 	 * Testet, ob sich ein Dreieck in dem BoundingRechteck befindet.<br />
 	 * Hierbei wird zuerst getestet, ob ein Punkt des Dreiecks im Rechteck ist, dann, falls noetig ob ein Punkt des Rechtecks im Dreieck ist.
 	 */
@@ -253,7 +263,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return true, wenn der Punkt in dem BoundingRechteck ist
 	 */
 	public boolean istIn(Punkt p) {
-		return (p.x >= this.x && p.y >= this.y && p.x <= (x + breite) && p.y <= (y + hoehe));
+		return (p.realX() >= this.x && p.realY() >= this.y && p.realX() <= (x + breite) && p.realY() <= (y + hoehe));
 	}
 	
 	/**

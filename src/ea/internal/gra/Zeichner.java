@@ -44,6 +44,11 @@ import ea.internal.phy.Physik;
 public class Zeichner extends Canvas implements Runnable {
 	
 	/**
+	 * Das Intervall, in dem das Fenster upgedated wird.
+	 */
+	public static final int UPDATE_INTERVALL = 20;
+	
+	/**
 	 * Die Kamera.<br />
 	 * Letzendlich wird das gezeichnet, was sich in ihr befindet
 	 */
@@ -126,7 +131,7 @@ public class Zeichner extends Canvas implements Runnable {
 			}
 			
 			try {
-				Thread.sleep(20);
+				Thread.sleep(UPDATE_INTERVALL);
 			} catch (InterruptedException e) {
 				/* don't care! */
 			}

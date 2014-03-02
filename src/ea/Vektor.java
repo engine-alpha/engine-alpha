@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.util.Logger;
+
 /**
  * Ein Vektor bezeichnet eine relative Punktangabe.<br />
  * Ansonsten unterscheidet er sich hier nicht weiter von einem Punkt.<br />
@@ -152,6 +154,28 @@ public final class Vektor
 	}
 	
 	/**
+     * Gibt eine <b>Normierung</b> des Vektors aus.
+     * Dies ist ein Vektor, der<br />
+     * <ul>
+     * <li>In die selbe Richtung wie der ursprüngliche Vektor zeigt.</li>
+     * <li>Eine Länge von (möglichst) exakt 1 hat.</li>
+     * </ul>
+     * @return der normierte Vektor zu diesem Vektor.
+     */
+    public Vektor normiert() {
+    	return this.teilen(this.laenge());
+    }
+    
+    /**
+     * Gibt die Länge dieses Vektors aus.
+     * @return	Die Länge dieses Vektors.
+     */
+    public float laenge() {
+    	//Nimm euklidische Norm
+    	return (float)Math.sqrt(x*x + y*y);
+    }
+    
+    /**
 	 * Berechnet die Gegenrichtung des Vektors.
 	 * 
 	 * @return Ein neues Vektor-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
@@ -172,6 +196,15 @@ public final class Vektor
 	}
 	
 	/**
+     * Berechnet die Differenz zwischen diesem und einem weiteren Vektor.
+     * @param v	ein weiterer Vektor.
+     * @return	Die Differenz "this - v" der beiden Vektoren.
+     */
+    public Vektor differenz(Vektor v) {
+    	return new Vektor(this.x-v.x, this.y-v.y);
+	}
+    
+    /**
 	 * Teilt die effektive Laenge des Vektors durch eine ganze Zahl und kuerzt dadurch seine Effektivitaet.
 	 * 
 	 * @param divisor
@@ -179,13 +212,14 @@ public final class Vektor
 	 * @return Ein Vektor-Objekt, das eine Bewegung in dieselbe Richtung beschreibt, allerdings in der
 	 *         Laenge gekuerzt um den angegebenen Divisor.<br />
 	 *         <b>Achtung!</b><br />
-	 *         Ist <code>null</code>, wenn die Eingabe <= 0 war!
+	 * Ist <code>(0,0)</code>, wenn die Eingabe == 0 war!
 	 * @see #multiplizieren(int)
 	 */
-	public Vektor teilen(int divisor) {
-		if (divisor <= 0) {
-			System.err.println("Achtung! Der Divisor war kleiner als 1! Er muss mindestens 1 sein!");
-			return null;
+    public Vektor teilen(float divisor) {
+        if(divisor == 0) {
+            //throw new ArithmeticException("Der Divisor für das Teilen war 0!");
+        	Logger.error("Der Divisor für das Teilen war 0!");
+        	return NULLVEKTOR;
 		}
 		return new Vektor(x / divisor, y / divisor);
 	}
@@ -216,7 +250,18 @@ public final class Vektor
 		return new Vektor(x * faktor, y * faktor);
 	}
 	
-	/**
+    /**
+     * Berechnet das <b>Skalarprodukt</b> von diesem Vektor mit einem weiteren. Das Skalarprodukt für zweidimensionale
+     * Vektoren ist: <br/>
+     * (a,b) o (c, d) = a*b + c*d
+     * @param v	Ein zweiter Vektor.
+     * @return	Das Skalarprodukt dieses Vektoren mit dem Vektor <code>v</code>.
+     */
+    public float skalarprodukt(Vektor v) {
+    	return this.x * v.x + this.y * v.y;
+    }
+
+    /**
 	 * Berechnet, ob dieser Vektor keine Wirkung hat, dies ist der Fall, wenn beide Komponenten, X und Y gleich 0 sind.
 	 * 
 	 * @return <code>true</code>, wenn dieser keine Auswirkungen als Bewegender Vektor machen wuerde.
@@ -320,9 +365,9 @@ public final class Vektor
 	 * 
 	 * @return Die X-Verschiebung dieses Vektors. Positive Werte verschieben nach
 	 *         rechts, negative Werte verschieben nach links.
-	 * @see #dY()
+	 * @see #realX()
 	 */
-	public float dX() {
+    public float realX() {
 		return x;
 	}
 	
@@ -331,9 +376,9 @@ public final class Vektor
 	 * 
 	 * @return Die Y-Verschiebung dieses Vektors. Positive Werte verschieben nach
 	 *         unten, negative Werte verschieben nach oben.
-	 * @see #dX()
+	 * @see #realY()
 	 */
-	public float dY() {
+    public float realY() {
 		return y;
 	}
 	
@@ -372,5 +417,25 @@ public final class Vektor
 			return (this.x == v.x && this.y == v.y);
 		}
 		return false;
+	}
+
+    /**
+     * Gibt die X-Verschiebung dieses Vektors mit Ganzzahlen wieder.
+     * @return  Die X-Verschiebung dieses Vektors. Positive Werte verschieben nach
+     * rechts, negative Werte verschieben nach links.
+     * @see dY()
+     */
+	public int dX() {
+		return (int)x;
+	}
+	
+	/**
+     * Gibt die Y-Verschiebung dieses Vektors mit Ganzzahlen wieder.
+     * @return  Die Y-Verschiebung dieses Vektors. Positive Werte verschieben nach
+     * unten, negative Werte verschieben nach oben.
+     * @see dX()
+     */
+	public int dY() {
+		return (int)y;
 	}
 }

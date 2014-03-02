@@ -25,10 +25,12 @@ import java.util.Locale;
 
 import ea.internal.gui.Fenster;
 import ea.internal.phy.Gravitator;
+import ea.internal.phy.MechanikClient;
 import ea.internal.phy.NullClient;
 import ea.internal.phy.Passivator;
 import ea.internal.phy.Physik;
 import ea.internal.phy.PhysikClient;
+import ea.internal.util.Logger;
 
 /**
  * Raum bezeichnet alles, was sich auf der Zeichenebene befindet.<br />
@@ -131,7 +133,6 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	
 	/**
 	 * Setzt, ob saemtliche Kollisionstests in der Engine Alpha grob oder fein sein sollen.
-	 * 
 	 * @param heavy
 	 *            Ist dieser Wert <code>true</code>, werden intern Kollisionstests genauer, aber rechenintensiver. Ist er <code>false</code>, werden diese Kollisionstests schneller, aber ungenauer.
 	 * @see Game#rechenintensiveArbeitSetzen(boolean)
@@ -172,6 +173,15 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
+	 * TODO
+	 */
+	public void newtonschMachen() {
+		phClient.aufloesen();
+		phClient = new MechanikClient(this);
+	}
+	
+	
+	/**
 	 * Laesst das <code>Raum</code>-Objekt einen Sprung von variabler Kraft machen. Dies funktioniert
 	 * jedoch nur dann, wenn das Objekt auch ein <i>Aktiv-Objekt</i> ist. Ansonsten ist wird hier
 	 * eine Fehlermeldung ausgegeben.
@@ -187,6 +197,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	public boolean sprung(int kraft) {
 		return phClient.sprung(kraft);
 	}
+	
+	
 	
 	/**
 	 * Setzt, ob dieses <code>Raum</code>-Objekt von Schwerkraft beeinflusst wird. Macht nur dann Sinn,
@@ -328,6 +340,228 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public void bewegen(int dX, int dY) {
 		phClient.bewegen(new Vektor(dX, dY));
+	}
+	
+	/**
+	 * Setzt die Meter pro Pixel für die Zeichenebene.
+	 * Dies ist das <i>dynamische Bindeglied</i> zwischen der <b>physikalisch möglichst korrekten Berechnung
+	 * innerhalb der Engine</b> sowie der <b>freien Wählbarkeit der Zeichenebene</b>.
+	 * @param mpp	Die Anzahl an Metern, die auf einen Pixel fallen.<br/>
+	 * Beispiele:<br />
+	 * <ul>
+	 * <li><code>10(.0f)</code> => Auf einen Pixel fallen <b>10</b> Meter. => Ein Meter = 0,1 Pixel</li>
+	 * <li><code>0.1f</code> => Auf einen Pixel fallen <b>0,1</b> Meter. => Ein Meter = 10 Pixel</li>
+	 * </ul>
+	 * @see #newtonschMachen()
+	 */
+	public void setzeMeterProPixel(float mpp) {
+		ea.internal.phy.MechanikClient.setzeMeterProPixel(mpp);
+	}
+	
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i><br />
+     * Wirkt einen Impuls auf das <code>Raum</code>-Objekt aus. Dieser ändert - abhängig von seiner
+     * Richtung, Intensität sowie von der <i>Mass</i> des </code>Raum</code>-Objekts eine
+     * Geschwindigkeitsänderung.
+     * @param impuls Der Impuls, der diesem <code>Raum</code>-Objekt zugeführt werden soll.<br />
+     * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+     * aus der klassischen Mechanik. Die Einheit für Impuls ist [kg * (m / s)]
+     * @see #masseSetzen(float)
+     * @see #kraftSetzen(Vektor)
+     * @see #setzeMeterProPixel(float)
+     * @see #newtonschMachen()
+     */
+	public void impulsHinzunehmen(Vektor impuls) {
+		phClient.impulsHinzunehmen(impuls);
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Setzt <b>hart</b> (also ohne Rücksicht auf mögliche Umstände) die Geschwindigkeit dieses <code>Raum</code>-Objektes.
+     * Es bewegt sich ab sofort mit dieser Geschwindigkeit weiter.
+     * @param geschwindigkeit die Geschwindigkeit, die dieses <code>Raum</code>-Objekt ab sofort annehmen soll.
+     * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+     * aus der klassischen Mechanik. Die Einheit für Geschwindigkeit ist [m / s]
+     * @see #masseSetzen(float)
+     * @see #kraftSetzen(Vektor)
+     * @see #setzeMeterProPixel(float)
+     * @see #luftwiderstandskoeffizientSetzen(float)
+     * @see #newtonschMachen()
+     */
+	public void geschwindigkeitHinzunehmen(Vektor geschwindigkeit) {
+		phClient.geschwindigkeitHinzunehmen(geschwindigkeit);
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Gibt den Luftwiderstandskoeffizienten dieses <code>Raum-Objektes</code> aus.
+     * @see #luftwiderstandskoeffizientSetzen(float)
+     * @see #newtonschMachen()
+     */
+	public float luftwiderstandskoeffizient() {
+		return phClient.getLuftwiderstandskoeffizient();
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Gibt aus, ob dieses <code>Raum</code>-Objekt beeinflussbar, also durch Impulse beweglich ist.
+     * Was das heisst, kannst Du in der Setter-Methode nachlesen.
+     * @return <code>true</code>, falls dieses <code>Raum</code>-Objekt beeinflussbar ist,
+     * 		sonst <code>false</code>.
+     * @see #beeinflussbarSetzen(boolean)
+     * @see #newtonschMachen()
+     */
+	public boolean istBeeinflussbar() {
+		return phClient.istBeeinflussbar();
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Gibt aus die Masse dieses <code>Raum</code>-Objektes aus. Diese ist relevant
+     * Impulsrechnungen, z.B. wenn 2 Objekte kollidieren.
+     * @return die Masse dieses <code>Raum</code>-Objektes in korrekter Einheit.
+     * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+     * aus der klassischen Mechanik. Die Einheit für Masse ist [kg]
+     * @see #masseSetzen(float)
+     * @see #newtonschMachen()
+     */
+	public float getMasse() {
+		return phClient.getMasse();
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Gibt aus die Kraft aus, die auf dieses <code>Raum</code>-Objekt dauerhaft wirkt. So lässt sich
+     * z.B. eine dynamische Schwerkraft realisieren.
+     * @return die Kraft, die auf dieses <code>Raum</code>-Objektes konstant wirkt.
+     * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+     * aus der klassischen Mechanik. Die Einheit für Kraft ist [N] = [kg * (m / s^2)]
+     * @see #beeinflussbarSetzen(boolean)
+     * @see #newtonschMachen()
+     */
+	public Vektor getForce() {
+		return phClient.getForce();
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Setzt den Luftwiderstandskoeffizienten für dieses <code>Raum</code>-Objekt.
+     * Je größer dieser Wert ist, desto stärker ist der Luftwiderstand auf das <code>Raum-Objekt</code>.<br />
+     * Der Luftwiderstand <b>nicht</b> über die vollständige Luftwiderstandsformel (u.a. mit Querschnittsfläche
+     * des Körpers) berechnet. Der Luftwiderstand berechnet sich <b>ausschließlich aus der Geschwindigkeit
+     * und dieses Luftwiderstandskoeffizienten</b>:<br />
+     * <code> (F_w = luftwiderstandskoeffizient * v^2)</code>
+     * @param luftwiderstandskoeffizient Der Luftwiderstandskoeffizient, der für dieses <code>Raum</code>-Objekt
+     * 		gelten soll. Ist dieser Wert <code>0</code>, so wirkt kein Luftwiderstand auf das Objekt.
+     * @see #luftwiderstandskoeffizient()
+     * @see #newtonschMachen()
+     */
+	public void luftwiderstandskoeffizientSetzen(float luftwiderstandskoeffizient) {
+		phClient.luftwiderstandskoeffizientSetzen(luftwiderstandskoeffizient);
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Setzt, ob dieses <code>Raum</code>-Objekt <i>beeinflussbar</i> sein soll für Impulse
+     * von anderen Objekten, die mit diesem Kollidieren. Ist es <b>nicht beeinflussbar<b>, so prallen
+     * (beeinflussbare) Objekte einfach an ihm ab. Typische unbeeinflussbare Objekte sind:<br />
+     * <ul>
+     * <li>Böden</li><li>Wände</li><li>Decken</li><li>bewegliche Plattformen</li>
+     * </ul><br />
+     * Ist ein <code>Raum</code>-Objekt <b>beeinflussbar</b>, so kann es an anderen Objekten abprallen
+     * bzw. von ihnen blockiert werden. Es kann sie nicht verschieben. Typische beeinflussbare Objekte
+     * sind: <br />
+     * <ul>
+     * <li>Spielfiguren</li>
+     * </ul><br />
+     * 
+     * Diese Eigenschaft kann beliebig oft durchgewechselt werden.
+     * 
+     * @param beeinflussbar	ist dieser Wert <code>true</code>, so ist dieses Objekt ab sofort
+     * 		<i>beeinflussbar</i>. Sonst ist es ab sofort <i>nicht beeinflussbar</i>.
+     * @see #istBeeinflussbar()
+     * @see #newtonschMachen()
+     */
+	public void beeinflussbarSetzen(boolean beeinflussbar) {
+		phClient.beeinflussbarSetzen(beeinflussbar);
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Setzt die Masse für dieses <code>Raum</code>-Objekt. Es hat ab sofort diese Masse.
+     * Diese hat Auswirkungen auf Impulsrechnung und die Dynamik dieses Objekts..
+     * @param masse die Mass, die  dieses <code>Raum</code>-Objekt ab sofort haben soll.
+     * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+     * aus der klassischen Mechanik. Die Einheit für Masse ist [kg]
+     * @see #getMasse()
+     * @see #newtonschMachen()
+     */
+	public void masseSetzen(float masse) {
+		phClient.masseSetzen(masse);
+	}
+	
+	/**
+	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+	 * Setzt die Kraft, die auf dieses <code>Raum</code>-Objekt dauerhaft wirken soll. So lässt sich
+	 * z.B. eine dynamische Schwerkraft realisieren:<br />
+	 * Die Schwerkraft, wäre eine Kraft, die dauerhaft nach unten wirkt, also zum Beispiel:
+	 * <br /><code>
+	 * Kreis ball = ...<br />
+	 * [...] <br />
+	 * ball.kraftSetzen(new Vektor(0,9.81)); // Setze eine Schwerkraft mit 9,81 kg * m/s^2
+	 * </code>
+	 * 
+	 * @param kraft die Kraft, die auf dieses <code>Raum</code>-Objekt konstant wirken soll.
+	 *         <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+	 *         aus der klassischen Mechanik. Die Einheit für Kraft ist [N] = [kg * (m / s^2)]
+	 * @see #getForce()
+	 * @see #newtonschMachen()
+	 */
+	public void kraftSetzen(Vektor kraft) {
+		phClient.kraftSetzen(kraft);
+	}
+
+	/**
+	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+	 * Setzt die Geschwindigkeit, die dieses <code>Raum</code>-Objekt haben soll.
+	 * @param kraft die Geschwindikeit, die auf dieses <code>Raum</code>-Objekt mit sofortiger Wirkung annehmen soll.
+	 *         <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+	 *         aus der klassischen Mechanik. Die Einheit für Geschwindigkeit ist [m / s]
+	 * @see #newtonschMachen()
+	 */
+	public void geschwindigkeitSetzen(Vektor geschwindigkeit) {
+		phClient.geschwindigkeitSetzen(geschwindigkeit);
+	}
+
+	/**
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * Setzt alle Einfluesse auf dieses <code>Raum</code>-Objekt zurück. Dies bedeutet:
+     * <ul>
+     * <li>die auf dieses Objekt einwirkende, konstante Kraft wird zu 0.</li>
+     * <li>die Geschwindigkeit dieses Objekts wird zu 0.</li>
+     * @see #newtonschMachen()
+     */
+	public void einfluesseZuruecksetzen() {
+		phClient.einfluesseZuruecksetzen();
+	}
+
+	/**
+	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+	 * Setzt einen neuen <i>Impuls</i> auf dieses <code>Raum</code>-Objekt, indem eine
+	 * bestimmte <i>Kraft</i> für eine bestimmte <i>Zeit</i> auf dieses Objekt wirkt.
+	 * Es gilt für <b>ausreichend kleines t</b>: <code>p = F * t</code><br />
+	 * Dies ist die grundlegende Berechnung für den Impuls.
+	 * @param kraft		Eine Kraft, die (modellhaft) auf dieses <code>Raum</code>-Objekt wirken soll.
+	 * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+	 *         aus der klassischen Mechanik. Die Einheit für Kraft ist [N] = [kg * (m / s^2)]
+	 * @param t_kraftuebertrag	Die Zeit, über die die obige Kraft auf dieses <code>Raum</code>-Objekt
+	 * 			wirken soll.
+	 * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+	 *         aus der klassischen Mechanik. Die Einheit für Zeit ist [s]
+	 * @see #newtonschMachen()
+	 */
+	public void kraftAnwenden(Vektor kraft, float t_kraftuebertrag) {
+		phClient.kraftAnwenden(kraft, t_kraftuebertrag);
 	}
 	
 	/**

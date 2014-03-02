@@ -267,9 +267,9 @@ public class Bild extends Raum {
 	 */
 	public BoundingRechteck dimension() {
 		if (!wiederholen) {
-			return new BoundingRechteck(position.x, position.y, img.getWidth(), img.getHeight());
+			return new BoundingRechteck(position.realX(), position.realY(), img.getWidth(), img.getHeight());
 		} else {
-			return new BoundingRechteck(position.x, position.y, breite, hoehe);
+			return new BoundingRechteck(position.realX(), position.realY(), breite, hoehe);
 		}
 	}
 	
@@ -287,14 +287,14 @@ public class Bild extends Raum {
 		
 		if (r.schneidetBasic(this.dimension())) {
 			if (!wiederholen) {
-				g.drawImage(img, (int) (position.x - r.x), (int) (position.y - r.y), Fenster.instanz);
+				g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), Fenster.instanz);
 			} else {
 				// Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmasse
-				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.x, -r.y + position.y, img.getWidth(), img.getHeight()));
+				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX(), -r.y + position.realY(), img.getWidth(), img.getHeight()));
 				// Texturfarbe setzen
 				g.setPaint(tp);
 				// Rechteck fuellen
-				g.fill(new Rectangle2D.Double(position.x - r.x, position.y - r.y, breite, hoehe));
+				g.fill(new Rectangle2D.Double(position.realX() - r.x, position.realY() - r.y, breite, hoehe));
 			}
 		}
 		

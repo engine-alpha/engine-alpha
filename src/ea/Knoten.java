@@ -151,7 +151,7 @@ public class Knoten extends Raum implements Listung {
 	 */
 	public synchronized void add(Raum... m) {
 		for (Raum n : m) {
-			list.add(n);
+			add(n);
 		}
 	}
 	

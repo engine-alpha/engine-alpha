@@ -38,6 +38,10 @@ import java.io.*;
  * 
  * Als beste Moeglichkeit fuer Sound in der EngineAlpha ist das .wav-Format zu empfehlen
  * 
+ * 
+ * Sound s = new Sound("sound.wav");
+ * s.play();
+ * 
  * @author Michael Andonie
  */
 public class Sound

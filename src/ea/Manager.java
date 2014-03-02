@@ -109,6 +109,21 @@ public class Manager extends Timer {
 	}
 	
 	/**
+	 * Diese Methode prueft, ob zur Zeit <b>mindestens 1 Ticker</b> an diesem
+	 * Manager ausgeführt wird.
+	 * @return	<code>true</code>, wenn mindestens 1 Ticker an diesem Manager
+	 * 			zur Zeit mit seiner <code>tick()</code>-Methode ausgeführt wird.
+	 * 			Sonst <code>false</code>.
+	 */
+	public boolean hatAktiveTicker() {
+		for(Auftrag a : liste) {
+			if(a.aktiv)
+				return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Meldet einen Ticker am Manager an. Ab sofort laeuft er auf diesem Manager und damit wird auch dessen <code>tick()</code>-Methode immer wieder aufgerufen.
 	 * 
 	 * @param t
@@ -205,7 +220,7 @@ public class Manager extends Timer {
 		a.aktivSetzen(true);
 		a.taskSetzen(tt);
 		
-		this.schedule(tt, 0, intervall);
+		super.schedule(tt, 0, intervall);
 	}
 	
 	/**
