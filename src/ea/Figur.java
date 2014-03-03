@@ -41,8 +41,8 @@ import ea.internal.gra.PixelFeld;
  * 
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
 public class Figur extends Raum {
+	private static final long serialVersionUID = -1063599158092163887L;
 	
 	/**
 	 * In diesem Intervall wird die Figur animiert.
@@ -85,6 +85,7 @@ public class Figur extends Raum {
 		Manager.standard.anmelden((new Ticker() {
 			int runde = 0;
 			
+			@Override
 			public void tick() {
 				runde++;
 				try {
@@ -118,11 +119,13 @@ public class Figur extends Raum {
 	public Figur(float x, float y, String verzeichnis, boolean add) {
 		super();
 		super.position = new Punkt(x, y);
-		Figur spiegel = DateiManager.figurEinlesen(verzeichnis);
-		this.animation = spiegel.animation;
+		
+		this.animation = DateiManager.figurEinlesen(verzeichnis).animation;
+		
 		if (add) {
 			liste.add(this);
 		}
+		
 		laeuft = true;
 	}
 	

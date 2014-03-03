@@ -158,7 +158,8 @@ public class Passivator
 	 */
 	@Override
 	public boolean sprung(int kraft) {
-		System.err.println("Achtung! Ein fuer die Physik passives Objekt wurde zum Sprung gezwungen. Es passiert nichts.");
+		Logger.error("Achtung! Ein fuer die Physik passives Objekt wurde zum Sprung gezwungen. Es passiert nichts.");
+		
 		return false;
 	}
 	
@@ -171,7 +172,7 @@ public class Passivator
 	 */
 	@Override
 	public void schwerkraftAktivSetzen(boolean aktiv) {
-		System.err.println("Achtung! Das Objekt, bei dem der Einfluss der Schwerkraft gesetzt werden sollte, ist ein passives " +
+		Logger.error("Achtung! Das Objekt, bei dem der Einfluss der Schwerkraft gesetzt werden sollte, ist ein passives " +
 				"Objekt. Folglich macht der Aufruf dieser Methode keinen Sinn. Dafuer muesste das entsprechende Objekt ein Aktiv-Objekt sein!");
 	}
 	
@@ -185,7 +186,7 @@ public class Passivator
 	 */
 	@Override
 	public void kritischeTiefeSetzen(int tiefe) {
-		System.err.println("Achtung! Das Raum-Objekt, dem eine kritische Tiefe gegeben werden sollte, ist kein Aktiv-Objekt, sondern passiv! " +
+		Logger.error("Achtung! Das Raum-Objekt, dem eine kritische Tiefe gegeben werden sollte, ist kein Aktiv-Objekt, sondern passiv! " +
 				"Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 	
@@ -202,7 +203,7 @@ public class Passivator
 	 */
 	@Override
 	public void fallReagierbarAnmelden(FallReagierbar f, int tiefe) {
-		System.err.println("Achtung! Das Raum-Objekt, dem ein FallReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sondern passiv! " +
+		Logger.error("Achtung! Das Raum-Objekt, dem ein FallReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sondern passiv! " +
 				"Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 	
@@ -215,7 +216,7 @@ public class Passivator
 	 */
 	@Override
 	public void stehReagierbarAnmelden(StehReagierbar s) {
-		System.err.println("Achtung! Das Raum-Objekt, dem ein StehReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sonder ein " +
+		Logger.error("Achtung! Das Raum-Objekt, dem ein StehReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sonder ein " +
 				"passives Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 	
@@ -227,7 +228,7 @@ public class Passivator
 	 */
 	@Override
 	public boolean steht() {
-		System.err.println("Achtung! Das Raum-Objekt, an dem das Stehen erfragt werden sollte, ist kein Aktiv-Objekt, sonder ein " +
+		Logger.error("Achtung! Das Raum-Objekt, an dem das Stehen erfragt werden sollte, ist kein Aktiv-Objekt, sonder ein " +
 				"passives Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen! Solange ist die Rueckgabe immer false.");
 		return false;
 	}
@@ -246,7 +247,7 @@ public class Passivator
 	 */
 	@Override
 	public void schwerkraftSetzen(int schwerkraft) {
-		System.err.println("Achtung! Ein passives Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. "
+		Logger.error("Achtung! Ein passives Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. "
 				+ "Nur Aktiv-Objekte koennen eine Schwerkraft gesetzt bekommen.");
 	}
 

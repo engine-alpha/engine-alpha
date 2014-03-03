@@ -165,10 +165,14 @@ public class Bild extends Raum {
 	 */
 	public Bild(float x, float y, BufferedImage img) {
 		super.positionSetzen(new Punkt(x, y));
+		
 		this.img = img;
 		
 		urHoehe = img.getHeight();
 		urBreite = img.getWidth();
+		
+		hoehe = urHoehe;
+		breite = urBreite;
 	}
 	
 	/**
@@ -287,7 +291,7 @@ public class Bild extends Raum {
 		
 		if (r.schneidetBasic(this.dimension())) {
 			if (!wiederholen) {
-				g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), Fenster.instanz);
+				g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), null);
 			} else {
 				// Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmasse
 				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX(), -r.y + position.realY(), img.getWidth(), img.getHeight()));
@@ -327,5 +331,9 @@ public class Bild extends Raum {
 	 */
 	public BufferedImage bild() {
 		return this.img;
+	}
+	
+	public Bild clone() {
+		return new Bild(positionX(), positionY(), img);
 	}
 }

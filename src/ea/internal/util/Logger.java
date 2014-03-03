@@ -61,7 +61,7 @@ public class Logger {
 	 * @param s Text der Warnung
 	 */
 	public static void warning(String s) {
-		StackTraceElement e = Thread.currentThread().getStackTrace()[3];
+		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
 		write("WARNUNG", e.getFileName(), e.getLineNumber(), s);
 	}
 	
@@ -81,7 +81,7 @@ public class Logger {
 	 * @param s Text der Information
 	 */
 	public static void info(String s) {
-		StackTraceElement e = Thread.currentThread().getStackTrace()[3];
+		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
 		write("INFO", e.getFileName(), e.getLineNumber(), s);
 	}
 	
@@ -90,7 +90,7 @@ public class Logger {
 	}
 	
 	private static String write(String type, String filename, int line, String message, boolean error) {
-		String str = String.format("[%d][%s] %s (%f:%d)", getTime(), type, message, filename, line);
+		String str = String.format("[%s][%s] %s (%s:%s)", getTime(), type, message, filename, Integer.toString(line));
 		
 		if(error) {
 			System.err.println(str);

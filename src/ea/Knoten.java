@@ -226,7 +226,7 @@ public class Knoten extends Raum implements Listung {
 	 *         das zu testenden Objekt schneidet.
 	 */
 	@Override
-	public boolean schneidet(Raum m) {
+	public synchronized boolean schneidet(Raum m) {
 		for (Raum r : list) {
 			if (r.schneidet(m)) {
 				return true;
@@ -247,7 +247,7 @@ public class Knoten extends Raum implements Listung {
 	 *            Das Rechteck, dass die Kameraposition definiert
 	 */
 	@Override
-	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+	public synchronized void zeichnen(Graphics2D g, BoundingRechteck r) {
 		super.beforeRender(g);
 		
 		try {
@@ -255,7 +255,7 @@ public class Knoten extends Raum implements Listung {
 				list.get(i).zeichnenBasic(g, r);
 			}
 		} catch (Exception e) {
-			Logger.error(e.getMessage());
+			Logger.error(e.toString());
 		}
 		
 		super.afterRender(g);

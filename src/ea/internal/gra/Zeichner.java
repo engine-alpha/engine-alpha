@@ -24,7 +24,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferStrategy;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 
 import ea.AnimationsManager;
 import ea.BoundingRechteck;
@@ -40,9 +40,9 @@ import ea.internal.phy.Physik;
  * 
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
-@SuppressWarnings("serial")
 public class Zeichner extends Canvas implements Runnable {
-	
+	private static final long serialVersionUID = 188647530006553893L;
+
 	/**
 	 * Das Intervall, in dem das Fenster upgedated wird.
 	 */
@@ -86,7 +86,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * 
 	 * @see ea.SimpleGraphic
 	 */
-	private final CopyOnWriteArrayList<SimpleGraphic> simples = new CopyOnWriteArrayList<SimpleGraphic>();
+	private final ArrayList<SimpleGraphic> simples = new ArrayList<SimpleGraphic>();
 	
 	/**
 	 * Konstruktor fuer Objekte der Klasse Zeichner
@@ -103,12 +103,12 @@ public class Zeichner extends Canvas implements Runnable {
 		this.setPreferredSize(getSize());
 		this.setFocusable(true);
 		
-		groesse = new BoundingRechteck(0, 0, x, y);
-		cam = c;
+		this.groesse = new BoundingRechteck(0, 0, x, y);
+		this.cam = c;
 	}
 	
 	public void init() {
-		new Thread(this, "Zeichenthread").start();
+		new Thread(this, "Zeichenthread") {{ setDaemon(true); }}.start();
 	}
 	
 	/**
