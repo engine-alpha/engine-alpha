@@ -18,23 +18,21 @@
 
 package ea;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import ea.internal.util.Logger;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box
@@ -44,15 +42,33 @@ import javax.imageio.ImageIO;
  */
 @SuppressWarnings("serial")
 public class EngineAlpha extends Frame {
-	// 1 => 1.0
-	// 2 => 1.1
-	// 3 => 1.2
-	// 4 => 2.0
-	// 5 => 3.0pre
-	// 6 => 3.0
+	// 10000 => 1.0
+	// 10100 => 1.1
+	// 10200 => 1.2
+	// 20000 => 2.0
+	// 30000 => 3.0
 	
-	public static final int VERSION_CODE = 6;
+	public static final int VERSION_CODE = 30000;
 	public static final String VERSION_STRING = "v3.0";
+
+	public static final boolean IS_JAR;
+	public static final long BUILD_TIME;
+
+	static {
+		IS_JAR = isJar();
+
+		long time = -1;
+
+		if(IS_JAR) {
+			time = getBuildTime() / 1000;
+		}
+
+		BUILD_TIME = time > 0 ? time : System.currentTimeMillis() / 1000;
+
+		Logger.info("time: " + BUILD_TIME);
+		Logger.info("is jar: " + (IS_JAR ? "yes" : "no"));
+		Logger.info("jar name: " + getJarName());
+	}
 	
 	private BufferedImage favicon;
 	
@@ -92,7 +108,7 @@ public class EngineAlpha extends Frame {
 				System.exit(1); // should actually never happen
 			}
 			
-			setSize(300, 200);
+			setSize(300, 250);
 			setPreferredSize(getSize());
 			parent.add(this);
 			parent.pack();
@@ -223,6 +239,14 @@ public class EngineAlpha extends Frame {
 				g.setColor(color);
 				g.setFont(new Font("SansSerif", Font.ITALIC, 14));
 				FontMetrics fm = g.getFontMetrics();
+				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 50);
+
+				Date date = new Date(BUILD_TIME * 1000);
+				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
+				sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+				g.setColor(new Color(100, 100, 100));
+				message = "Build: " + sdf.format(date);
 				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 22);
 			}
 		}
@@ -230,5 +254,43 @@ public class EngineAlpha extends Frame {
 	
 	public static void main(String[] args) {
 		new EngineAlpha();
+	}
+
+	public static boolean isJar() {
+		String className = EngineAlpha.class.getName().replace('.', '/');
+		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
+
+		return classJar.startsWith("jar:");
+	}
+
+	public static String getJarName() {
+		String className = EngineAlpha.class.getName().replace('.', '/');
+		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
+
+		if(classJar.startsWith("jar:")) {
+			String vals[] = classJar.split("/");
+
+			for(String val: vals) {
+				if (val.contains("!")) {
+					try {
+						return java.net.URLDecoder.decode(val.substring(0, val.length() - 1), "UTF-8");
+					} catch(Exception e) {
+						return null;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public static long getBuildTime() {
+		try {
+			String uri = EngineAlpha.class.getName().replace('.', '/') + ".class";
+			JarURLConnection j = (JarURLConnection) ClassLoader.getSystemResource(uri).openConnection();
+			return j.getJarFile().getEntry("META-INF/MANIFEST.MF").getTime();
+		} catch (Exception e) {
+			return -1;
+		}
 	}
 }

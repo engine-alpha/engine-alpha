@@ -1,15 +1,19 @@
 /bin
+/classes
 /doc
 /out
 /src/ea/test
 /src/ea/example
+/src/META-INF
 
 /.idea
 /.settings
 
-.classpath
-.project
+/.classpath
+/.project
 
 *.ipr
 *.iws
 *.iml
+
+engine-alpha.log
