@@ -1,8 +1,15 @@
 /bin
+/doc
+/out
 /src/ea/test
 /src/ea/example
-/out
+
+/.idea
+/.settings
+
+.classpath
+.project
+
 *.ipr
 *.iws
 *.iml
-/doc
