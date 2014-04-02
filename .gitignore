@@ -16,4 +16,6 @@
 *.iws
 *.iml
 
+*.orig
+
 engine-alpha.log

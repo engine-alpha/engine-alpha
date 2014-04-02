@@ -18,8 +18,6 @@
 
 package ea;
 
-import ea.internal.util.Logger;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -38,7 +36,7 @@ import java.util.TimeZone;
  * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box
  * beim Ausführen der .jar-Datei.
  * 
- * @author Niklas Keller
+ * @author Niklas Keller <me@kelunik.com>
  */
 @SuppressWarnings("serial")
 public class EngineAlpha extends Frame {
@@ -56,31 +54,16 @@ public class EngineAlpha extends Frame {
 
 	static {
 		IS_JAR = isJar();
-
-		long time = -1;
-
-		if(IS_JAR) {
-			time = getBuildTime() / 1000;
-		}
-
-		BUILD_TIME = time > 0 ? time : System.currentTimeMillis() / 1000;
-
-		Logger.info("time: " + BUILD_TIME);
-		Logger.info("is jar: " + (IS_JAR ? "yes" : "no"));
-		Logger.info("jar name: " + getJarName());
+		BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;
 	}
-	
-	private BufferedImage favicon;
 	
 	public EngineAlpha() {
 		super("Engine Alpha " + VERSION_STRING);
 		
 		try {
-			favicon = ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png"));
-			
-			this.setIconImage(favicon);
+			setIconImage(ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png")));
 		} catch(IOException e) {
-			System.exit(1); // should actually never happen
+			e.printStackTrace();
 		}
 		
 		this.addWindowListener(new WindowAdapter() {
@@ -99,16 +82,17 @@ public class EngineAlpha extends Frame {
 		private BufferedImage logo;
 		private double alpha = 0;
 		private boolean loading = true;
-		private int availableVersion = -1;
+		private int version_stable = -1;
+		private int version_dev = -1;
 		
 		public EngineAlphaPromotion(EngineAlpha parent) {
 			try {
 				logo = ImageIO.read(getClass().getResource("/ea/assets/logo.png"));
 			} catch (IOException e) {
-				System.exit(1); // should actually never happen
+				e.printStackTrace();
 			}
 			
-			setSize(300, 250);
+			setSize(400, 300);
 			setPreferredSize(getSize());
 			parent.add(this);
 			parent.pack();
@@ -118,53 +102,59 @@ public class EngineAlpha extends Frame {
 			
 			parent.setVisible(true);
 			
-			new Thread(this) {
-				{
-					setDaemon(true);
-				}
-			}.start();
+			new Thread(this) {{ setDaemon(true); }}.start();
 			
-			new Thread() {
-				{
-					setDaemon(true);
-				}
-				
+			new Thread() {{ setDaemon(true); }
 				public void run() {
-					BufferedInputStream bis = null;
-					URL url = null;
-					
 					try {
-						url = new URL("http://engine-alpha.org/api/v1/version");
-						bis = new BufferedInputStream(url.openStream());
-						
-						StringBuilder builder = new StringBuilder();
-						byte[] data = new byte[1024];
-						int read = 0;
-						
-						while((read = bis.read(data)) != -1) {
-							builder.append(new String(data, 0, read));
-						}
-						
-						try {
-							availableVersion = Integer.parseInt(builder.toString().trim());
-						} catch(NumberFormatException e) {
-							
-						}
-					} catch (IOException e) {
-						/////
-					} finally {
-						if(bis != null) {
-							try {
-								bis.close();
-							} catch (IOException e) {
-								
-							}
-						}
+						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_STABLE");
+						version_stable = Integer.parseInt(body);
+					} catch(NumberFormatException e) {
+						e.printStackTrace();
+					}
+
+					try {
+						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEV");
+						version_dev = Integer.parseInt(body);
+					} catch(NumberFormatException e) {
+						e.printStackTrace();
 					}
 					
 					loading = false;
 				}
 			}.start();
+		}
+
+		private String getUrlBody(String uri) {
+			BufferedInputStream bis = null;
+			URL url;
+
+			try {
+				url = new URL(uri);
+				bis = new BufferedInputStream(url.openStream());
+
+				StringBuilder builder = new StringBuilder();
+				byte[] data = new byte[1024];
+				int read;
+
+				while((read = bis.read(data)) != -1) {
+					builder.append(new String(data, 0, read));
+				}
+
+				return builder.toString();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if(bis != null) {
+					try {
+						bis.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+			return null;
 		}
 		
 		public void run() {
@@ -173,8 +163,7 @@ public class EngineAlpha extends Frame {
 			Graphics2D g = (Graphics2D) bs.getDrawGraphics();
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
-			long lastTime = System.currentTimeMillis();
-			long currTime = System.currentTimeMillis();
+			long lastTime, currTime = System.currentTimeMillis();
 			
 			while(isVisible()) {
 				lastTime = currTime;
@@ -186,13 +175,15 @@ public class EngineAlpha extends Frame {
 					render(g);
 					bs.show();
 				} catch(Exception e) {
+					e.printStackTrace();
+					// TODO clean way
 					// just to be sure on shutdown
 				}
 				
 				try {
 					Thread.sleep(50);
 				} catch(InterruptedException e) {
-					// don't care!
+					e.printStackTrace();
 				}
 			}
 		}
@@ -203,52 +194,58 @@ public class EngineAlpha extends Frame {
 		}
 
 		public void render(Graphics2D g) {
+			g.setFont(new Font("SansSerif", Font.ITALIC, 14));
+			FontMetrics fm = g.getFontMetrics();
+
 			g.setColor(new Color(250, 250, 250));
 			g.fillRect(0, 0, getWidth(), getHeight());
 			
-			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 22, null);
+			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 40, null);
 			
 			if(loading) {
 				g.setColor(new Color(0,0,0,150));
-				g.fillOval((int) (getWidth()/2+8*Math.cos(alpha))-2, (int) (getHeight()-25+8*Math.sin(alpha))-2, 4, 4);
-				g.fillOval((int) (getWidth()/2+8*Math.cos(180+alpha))-2, (int) (getHeight()-25+8*Math.sin(180+alpha))-2, 4, 4);
-				g.drawLine((int) (getWidth()/2+8*Math.cos(alpha)), (int) (getHeight()-25+8*Math.sin(alpha)),
-						(int) (getWidth()/2+8*Math.cos(180+alpha)), (int) (getHeight()-25+8*Math.sin(180+alpha)));
+				g.fillOval((int) (getWidth()/2+8*Math.cos(alpha))-2, (int) (getHeight()-80+8*Math.sin(alpha))-2, 4, 4);
+				g.fillOval((int) (getWidth()/2+8*Math.cos(180+alpha))-2, (int) (getHeight()-80+8*Math.sin(180+alpha))-2, 4, 4);
+				g.drawLine((int) (getWidth()/2+8*Math.cos(alpha)), (int) (getHeight()-80+8*Math.sin(alpha)),
+						(int) (getWidth()/2+8*Math.cos(180+alpha)), (int) (getHeight()-80+8*Math.sin(180+alpha)));
 			} else {
-				String message = "";
+				String message;
 				Color color = new Color(30,30,30);
 				
-				if(availableVersion == -1) {
+				if(version_stable == -1) {
 					message = "Server für Versionsabgleich nicht erreichbar.";
 				}
 				
-				else if(availableVersion == VERSION_CODE) {
-					message = "Diese Version ist aktuell.";
+				else if(version_stable == VERSION_CODE) {
+					message = "Dies ist die aktuelle Stable-Version.";
+					color = new Color(50, 200, 25);
 				}
 				
-				else if(availableVersion > VERSION_CODE) {
-					message = "Es ist eine neue Version verfügbar.";
+				else if(version_stable > VERSION_CODE) {
+					message = "Es ist eine neue Version verfügbar!";
 					color = new Color(200,50,0);
 				}
 				
-				else if(availableVersion < VERSION_CODE) {
-					message = "Du arbeitest bereits mit einer Preview.";
+				else if(version_dev == VERSION_CODE) {
+					message = "Dies ist die aktuelle Dev-Version.";
 					color = new Color(0,100,150);
+				}
+
+				else {
+					message = "Du verwendest eine unbekannte Version.";
 				}
 				
 				g.setColor(color);
-				g.setFont(new Font("SansSerif", Font.ITALIC, 14));
-				FontMetrics fm = g.getFontMetrics();
-				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 50);
-
-				Date date = new Date(BUILD_TIME * 1000);
-				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
-				sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-				g.setColor(new Color(100, 100, 100));
-				message = "Build: " + sdf.format(date);
-				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 22);
+				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 70);
 			}
+
+			Date date = new Date(BUILD_TIME * 1000);
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
+			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+			g.setColor(new Color(100, 100, 100));
+			String str = "Build: " + sdf.format(date);
+			g.drawString(str, (getWidth() - fm.stringWidth(str)) / 2, getHeight() - 40);
 		}
 	}
 	
@@ -263,6 +260,7 @@ public class EngineAlpha extends Frame {
 		return classJar.startsWith("jar:");
 	}
 
+	@SuppressWarnings("unused")
 	public static String getJarName() {
 		String className = EngineAlpha.class.getName().replace('.', '/');
 		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
@@ -288,9 +286,11 @@ public class EngineAlpha extends Frame {
 		try {
 			String uri = EngineAlpha.class.getName().replace('.', '/') + ".class";
 			JarURLConnection j = (JarURLConnection) ClassLoader.getSystemResource(uri).openConnection();
-			return j.getJarFile().getEntry("META-INF/MANIFEST.MF").getTime();
+
+			long time = j.getJarFile().getEntry("META-INF/MANIFEST.MF").getTime();
+			return time > 0 ? time : System.currentTimeMillis() / 1000;
 		} catch (Exception e) {
-			return -1;
+			return System.currentTimeMillis() / 1000;
 		}
 	}
 }
