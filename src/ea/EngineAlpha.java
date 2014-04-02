@@ -114,7 +114,7 @@ public class EngineAlpha extends Frame {
 					}
 
 					try {
-						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEV");
+						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT");
 						version_dev = Integer.parseInt(body);
 					} catch(NumberFormatException e) {
 						e.printStackTrace();
@@ -126,6 +126,10 @@ public class EngineAlpha extends Frame {
 		}
 
 		private String getUrlBody(String uri) {
+			// workaround, make sure this is set to false
+			// see http://stackoverflow.com/a/14884941/2373138
+			System.setProperty("jsse.enableSNIExtension", "false");
+
 			BufferedInputStream bis = null;
 			URL url;
 
