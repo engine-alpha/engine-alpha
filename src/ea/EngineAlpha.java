@@ -56,6 +56,8 @@ public class EngineAlpha extends Frame {
 		IS_JAR = isJar();
 		BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;
 	}
+
+	private EngineAlphaPromotion promo;
 	
 	public EngineAlpha() {
 		super("Engine Alpha " + VERSION_STRING);
@@ -68,20 +70,24 @@ public class EngineAlpha extends Frame {
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				promo.shutdown();
+
 				setVisible(false);
 				dispose();
 				
 				System.exit(0);
 			}
 		});
-		
-		new EngineAlphaPromotion(this);
+
+		promo = new EngineAlphaPromotion(this);
 	}
 	
 	private class EngineAlphaPromotion extends Canvas implements Runnable {
+		private Thread thread;
 		private BufferedImage logo;
 		private double alpha = 0;
 		private boolean loading = true;
+		private boolean alive = true;
 		private int version_stable = -1;
 		private int version_dev = -1;
 		
@@ -102,7 +108,8 @@ public class EngineAlpha extends Frame {
 			
 			parent.setVisible(true);
 			
-			new Thread(this) {{ setDaemon(true); }}.start();
+			thread = new Thread(this) {{ setDaemon(true); }};
+			thread.start();
 			
 			new Thread() {{ setDaemon(true); }
 				public void run() {
@@ -169,20 +176,14 @@ public class EngineAlpha extends Frame {
 			
 			long lastTime, currTime = System.currentTimeMillis();
 			
-			while(isVisible()) {
+			while(alive) {
 				lastTime = currTime;
 				currTime = System.currentTimeMillis();
 				
 				update(currTime - lastTime);
 				
-				try {
-					render(g);
-					bs.show();
-				} catch(Exception e) {
-					e.printStackTrace();
-					// TODO clean way
-					// just to be sure on shutdown
-				}
+				render(g);
+				bs.show();
 				
 				try {
 					Thread.sleep(50);
@@ -191,7 +192,17 @@ public class EngineAlpha extends Frame {
 				}
 			}
 		}
-		
+
+		public void shutdown() {
+			this.alive = false;
+
+			try {
+				thread.join();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		private void update(long passedTime) {
 			alpha += passedTime * .01;
 			alpha %= 360;

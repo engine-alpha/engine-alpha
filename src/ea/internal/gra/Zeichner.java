@@ -19,21 +19,12 @@
 
 package ea.internal.gra;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import ea.*;
+import ea.internal.phy.Physik;
+
+import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
-
-import ea.AnimationsManager;
-import ea.BoundingRechteck;
-import ea.Kamera;
-import ea.Knoten;
-import ea.Raum;
-import ea.SimpleGraphic;
-import ea.Vektor;
-import ea.internal.phy.Physik;
 
 /**
  * Dies ist das Panel, in dem die einzelnen Dinge gezeichnet werden
@@ -87,7 +78,9 @@ public class Zeichner extends Canvas implements Runnable {
 	 * @see ea.SimpleGraphic
 	 */
 	private final ArrayList<SimpleGraphic> simples = new ArrayList<SimpleGraphic>();
-	
+
+	private Thread thread;
+
 	/**
 	 * Konstruktor fuer Objekte der Klasse Zeichner
 	 * 
@@ -108,12 +101,15 @@ public class Zeichner extends Canvas implements Runnable {
 	}
 	
 	public void init() {
-		new Thread(this, "Zeichenthread") {{ setDaemon(true); }}.start();
+		if(thread == null) {
+			thread = new Thread(this, "Zeichenthread") {{ setDaemon(true); }};
+			thread.start();
+		}
 	}
 	
 	/**
 	 * run-Methode. Implementiert aus <code>Runnable</code>.<br />
-	 * Hierin findet in einer dauerschleife die Zeichenroutine statt.
+	 * Hierin findet in einer Dauerschleife die Zeichenroutine statt.
 	 */
 	public void run() {
 		createBufferStrategy(2);
@@ -123,17 +119,13 @@ public class Zeichner extends Canvas implements Runnable {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		while (work) {
-			try {
-				render(g);
-				bs.show();
-			} catch (Exception e) {
-				// FIXME Gab hier glaub ich noch einen Bug bei Julien
-			}
+			render(g);
+			bs.show();
 			
 			try {
 				Thread.sleep(UPDATE_INTERVALL);
 			} catch (InterruptedException e) {
-				/* don't care! */
+				e.printStackTrace();
 			}
 		}
 	}
@@ -144,6 +136,13 @@ public class Zeichner extends Canvas implements Runnable {
 	 */
 	public void kill() {
 		work = false;
+
+		try {
+			thread.join();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		Physik.neutralize();
 		AnimationsManager.neutralize();
 	}

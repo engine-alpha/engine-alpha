@@ -19,44 +19,15 @@
 
 package ea.internal.gui;
 
-import java.awt.AWTException;
-import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Robot;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-
-import ea.BoundingRechteck;
-import ea.Kamera;
-import ea.Knoten;
-import ea.Manager;
-import ea.Maus;
-import ea.Punkt;
-import ea.Raum;
-import ea.SimpleGraphic;
-import ea.TastenGedruecktReagierbar;
-import ea.TastenLosgelassenReagierbar;
-import ea.TastenReagierbar;
-import ea.Ticker;
-import ea.Vektor;
+import ea.*;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gra.Zeichner;
 import ea.internal.util.Logger;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Das Fenster als Oberfenster.<br />
@@ -195,26 +166,24 @@ public class Fenster extends Frame {
 			if (devices[0].isFullScreenSupported()) {
 				breite = screenSize.width;
 				hoehe = screenSize.height;
-				
-				windowMode = WINDOW_FULLSCREEN;
 			} else {
-				System.err.println("Achtung!");
-				System.err
-						.println("Vollbild war nicht möglich, weil dieser PC dies nicht unterstützt!");
+				Logger.error("Achtung!");
+				Logger.error("Vollbild war nicht möglich, weil dieser PC dies nicht unterstützt!");
 				
 				windowMode = WINDOW_FULLSCREEN_FRAME;
 			}
 		} else {
 			int x = screenSize.width / 8, y = screenSize.height / 8;
 			
-			if (fensterX > -1 && fensterX < screenSize.width)
+			if (fensterX > -1 && fensterX < screenSize.width) {
 				x = fensterX;
-			if (fensterY > -1 && fensterY < screenSize.height)
+			}
+
+			if (fensterY > -1 && fensterY < screenSize.height) {
 				y = fensterY;
+			}
 			
 			setLocation(x, y);
-			
-			windowMode = WINDOW_FRAME;
 		}
 		
 		// ------------------------------------- //
@@ -229,10 +198,10 @@ public class Fenster extends Frame {
 			if (devices[0].isDisplayChangeSupported()) {
 				DisplayMode[] displayMode = devices[0].getDisplayModes();
 				
-				System.out.println("DisplayModes: " + displayMode.length);
+				Logger.info("DisplayModes: " + displayMode.length);
 				
 				for (int i = 0; i < displayMode.length; i++) {
-					System.out.println((i + 1) + ": " + "Breite: "
+					Logger.info((i + 1) + ": " + "Breite: "
 							+ displayMode[i].getWidth() + ", Höhe: "
 							+ displayMode[i].getHeight());
 					
@@ -241,7 +210,7 @@ public class Fenster extends Frame {
 						devices[0].setDisplayMode(new DisplayMode(breite,
 								hoehe, displayMode[i].getBitDepth(),
 								displayMode[i].getRefreshRate()));
-						System.out.println("SET!");
+						Logger.info("SET!");
 						success = true;
 						break;
 					}

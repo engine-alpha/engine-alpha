@@ -19,10 +19,10 @@
 
 package ea;
 
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-
 import ea.internal.gra.PixelFeld;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Eine Figur ist eine aus einer Datei geladene Sammlung von Pixeln, die orientierungsmaessig rechteckig gehandelt werden.<br />
@@ -543,10 +543,11 @@ public class Figur extends Raum {
 	 */
 	@Override
 	public BoundingRechteck dimension() {
-		if (animation != null && animation[aktuelle] != null)
+		if (animation != null && animation[aktuelle] != null) {
 			return new BoundingRechteck(position.x, position.y, animation[0].breite(), animation[0].hoehe());
-		else
+		} else {
 			return new BoundingRechteck(position.x, position.y, animation[aktuelle].breite(), animation[aktuelle].hoehe());
+		}
 	}
 	
 	/**
