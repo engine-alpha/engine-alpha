@@ -19,12 +19,14 @@
 
 package ea;
 
-import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import ea.internal.util.Logger;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Der Manager ist eine Standartklasse und eine der wichtigsten der Engine Alpha, die zur Interaktion ausserhalb der engine benutzt werden kann.<br />
@@ -39,15 +41,15 @@ import ea.internal.util.Logger;
  * @author Michael Andonie
  * @see Ticker
  */
-public class Manager extends Timer {
+public class Manager {
 	/**
 	 * Der Counter aller vorhandenen Manager-Tickerthreads
 	 */
 	private static int nummerCount = 0;
 	
 	/**
-	 * Der Standartmanager. Dieser wird nur innerhalb des "ea"-Paketes-verwendet!<br />
-	 * Er ist der Manager, der verschiedene Ticker-Beduerfnisse von einzelnen internen Klassen deckt und seine Fassung ist
+	 * Der Standard-Manager. Dieser wird nur innerhalb des "ea"-Paketes-verwendet!<br />
+	 * Er ist der Manager, der verschiedene Ticker-Bedürfnisse von einzelnen internen Klassen deckt und seine Fassung ist
 	 * exakt an der Anzahl der noetigen Ticker angeglichen. Dieser ist fuer:<br />
 	 * - Die Fensterkontrollroutine<br />
 	 * - Die Kollisionskontrollroutine der Klasse <code>Physik</code><br />
@@ -55,28 +57,29 @@ public class Manager extends Timer {
 	 * - Die Leuchtanimationsroutine
 	 */
 	public static final Manager standard = new Manager("Interner Routinenmanager");
-	
+
 	/**
-	 * Die Liste aller Auftraege.
-	 */
-	private volatile ArrayList<Auftrag> liste = new ArrayList<Auftrag>();
-	
-	/**
-	 * Der Name des Threads, ueber dem dieser Manager arbeitet
-	 */
-	@SuppressWarnings("unused")
-	private final String name;
-	
-	/**
-	 * Die 'Liste' aller moeglichen Fontnamen des Systems, auf dem man sich gerade befindet.<br />
+	 * Die 'Liste' aller möglichen Fontnamen des Systems, auf dem man sich gerade befindet.<br />
 	 * Hiernach werden ueberpruefungen gemacht, ob die gewuenschte Schriftart auch auf dem hiesigen PC vorhanden ist.
 	 */
 	public static final String[] fontNamen;
-	
+
 	static {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		fontNamen = ge.getAvailableFontFamilyNames();
 	}
+
+	/**
+	 * Die Liste aller Aufträge.
+	 */
+	private volatile ArrayList<Auftrag> liste = new ArrayList<>();
+	
+	/**
+	 * Der Name des Threads, ueber dem dieser Manager arbeitet
+	 */
+	private final String name;
+
+	private final ScheduledExecutorService executor;
 	
 	/**
 	 * Konstruktor eines Managers.<br />
@@ -93,6 +96,8 @@ public class Manager extends Timer {
 	 */
 	public Manager(String name) {
 		this.name = name;
+		this.executor = Executors.newScheduledThreadPool(10);
+
 		nummerCount++;
 	}
 	
@@ -117,9 +122,11 @@ public class Manager extends Timer {
 	 */
 	public boolean hatAktiveTicker() {
 		for(Auftrag a : liste) {
-			if(a.aktiv)
+			if(a.aktiv) {
 				return true;
+			}
 		}
+
 		return false;
 	}
 	
@@ -145,8 +152,7 @@ public class Manager extends Timer {
 	 */
 	public void anmelden(Ticker t) {
 		if (istAngemeldet(t)) {
-			Logger.error("Der Ticker ist bereits an diesem Manager angemeldet");
-			
+			Logger.warning("Der Ticker ist bereits an diesem Manager angemeldet und wird nicht erneut angemeldet.");
 			return;
 		}
 		
@@ -210,17 +216,16 @@ public class Manager extends Timer {
 			return;
 		}
 		
-		TimerTask tt = new TimerTask() {
-			@Override
-			public void run() {
+		Runnable r = new Runnable() {
+			@Override public void run() {
 				t.tick();
 			}
 		};
+
+		ScheduledFuture<?> future = executor.schedule(r, intervall, TimeUnit.MILLISECONDS);
 		
 		a.aktivSetzen(true);
-		a.taskSetzen(tt);
-		
-		super.schedule(tt, 0, intervall);
+		a.taskSetzen(future);
 	}
 	
 	/**
@@ -238,10 +243,13 @@ public class Manager extends Timer {
 		}
 		
 		Auftrag a = auftragZu(t);
-		TimerTask tt = a.task;
+		ScheduledFuture<?> future = a.task;
 		
 		a.aktivSetzen(false);
-		tt.cancel();
+
+		if(!future.isCancelled()) {
+			future.cancel(false);
+		}
 	}
 	
 	/**
@@ -285,8 +293,10 @@ public class Manager extends Timer {
 		
 		Auftrag a = auftragZu(t);
 		
-		if (a.aktiv)
-			a.task.cancel();
+		if (a.aktiv) {
+			a.task.cancel(false);
+		}
+
 		liste.remove(a);
 	}
 	
@@ -296,10 +306,12 @@ public class Manager extends Timer {
 	 */
 	public void alleAbmelden() {
 		for (Auftrag a : liste) {
-			if (a.aktiv)
-				a.task.cancel();
+			if (a.aktiv) {
+				a.task.cancel(false);
+			}
 		}
-		liste = new ArrayList<Auftrag>();
+
+		liste = new ArrayList<>();
 	}
 	
 	/**
@@ -349,9 +361,9 @@ public class Manager extends Timer {
 		private boolean aktiv;
 		
 		/**
-		 * Der eigentliche TimerTask
+		 * ScheduledFuture, das aufgerufen wird.
 		 */
-		private TimerTask task;
+		private ScheduledFuture<?> task;
 		
 		/**
 		 * Konstruktor.
@@ -405,9 +417,9 @@ public class Manager extends Timer {
 		 * Setzt den Task neu.
 		 * 
 		 * @param task
-		 *            Der neue tatsächliche TimerTask, der ausgeführt wird.
+		 *            Das neue tatsächliche ScheduledFuture, das ausgeführt wird.
 		 */
-		public void taskSetzen(TimerTask task) {
+		public void taskSetzen(ScheduledFuture<?> task) {
 			this.task = task;
 		}
 	}

@@ -19,6 +19,8 @@
 
 package ea;
 
+import java.io.Serializable;
+
 /**
  * Eine Ticker zeichnet sich durch eine Ausfuehrbare Methode aus, die in einem gewissen Zeitabstand immer wieder ausgehuehrt wird, bis entsprechend dagegen vorgegangen wird.<br />
  * Ein Ticker kann in der Klasse Manager angemeldet werden und dort gestartet werden, unter eingabe des Warteintervalls.<br /><br />
@@ -28,9 +30,7 @@ package ea;
  * 
  * @author Michael Andonie
  */
-public interface Ticker
-extends java.io.Serializable
-{
+public interface Ticker extends Serializable {
     /**
      * Die bei jedem "Tick" auszufuehrende Methode.<br />
      * Diese wird wiederholt in einem bestimmten Intervall aufgerufen, hierin koennen also Dinge wie statische Bewegungen oder regelmaessige Ueberpruefungen realisiert werden.<br />

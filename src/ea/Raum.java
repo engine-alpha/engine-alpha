@@ -40,7 +40,6 @@ import ea.internal.util.Logger;
  * @author Michael Andonie, Niklas Keller
  */
 public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
-	
 	/**
 	 * Die Serialisierungs-Konstante dieser Klasse. <b>In keiner Weise fuer die Programmierung mit der Engine bedeutsam!</b>
 	 */
@@ -69,6 +68,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * obere Ecke des Objektes bezeichnen. Default
 	 */
 	protected Punkt position = Punkt.ZENTRUM;
+
+	private Punkt lastMiddle;
+	private double lastDrehung;
 	
 	/**
 	 * Ein einfacher Farbzyklus, der fuer die Leucht-Animationen genommen wird
@@ -888,8 +890,10 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see #afterRender(Graphics2D)
 	 */
 	public final void beforeRender(Graphics2D g) {
-		Punkt m = mittelPunkt();
-		g.rotate(+Math.toRadians(drehung), m.x, m.y);
+		lastMiddle = mittelPunkt();
+		lastDrehung = Math.toRadians(drehung);
+
+		g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
 	}
 	
 	/**
@@ -902,8 +906,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see #beforeRender(Graphics2D)
 	 */
 	public final void afterRender(Graphics2D g) {
-		Punkt m = mittelPunkt();
-		g.rotate(-Math.toRadians(drehung), m.x, m.y);
+		g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
 	}
 	
 	/**
