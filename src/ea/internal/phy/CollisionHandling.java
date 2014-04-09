@@ -1,12 +1,11 @@
 package ea.internal.phy;
 
+import ea.*;
+import ea.internal.util.Logger;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import ea.*;
-import ea.internal.gui.Fenster;
-import ea.internal.util.Logger;
 
 /**
  * Diese Klasse fungiert als Modul zum Behandeln von <b>Kollisionen</b> zwischen

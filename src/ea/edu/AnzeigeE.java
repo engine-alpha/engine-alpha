@@ -19,19 +19,13 @@
 
 package ea.edu;
 
+import ea.*;
+import ea.internal.util.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Random;
-
-import ea.KlickReagierbar;
-import ea.Manager;
-import ea.Maus;
-import ea.RechtsKlickReagierbar;
-import ea.TastenReagierbar;
-import ea.Text;
-import ea.Ticker;
-import ea.internal.util.Logger;
 
 /**
  * Die Anzeige ermoeglicht Punktedarstellung im EDU-Konzept.<br />
@@ -404,7 +398,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		}
 		
 		/**
-		 * Fuehrt einen Tick aus.
+		 * Führt einen Tick aus.
 		 */
 		public final void ausfuehren() {
 			try {
@@ -449,7 +443,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		 * Erstellt einen Tastenauftrag
 		 * 
 		 * @param client
-		 *            Das Objekt, an dem der Auftrag ausgefuehrt werden soll.
+		 *            Das Objekt, an dem der Job ausgefuehrt werden soll.
 		 * @param m
 		 *            Die auszufuehrende Methode.
 		 */
@@ -459,7 +453,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		}
 		
 		/**
-		 * Fuehrt die Methode einmalig aus.
+		 * Führt die Methode einmalig aus.
 		 * 
 		 * @param code
 		 *            Der Tastaturcode, der mitgegeben wird.
@@ -476,7 +470,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	}
 	
 	/**
-	 * Auftrag fuer einen Klick-Listener
+	 * Auftrag für einen Klick-Listener
 	 */
 	private final class KlickAuftrag {
 		private final Method methode;
@@ -492,7 +486,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		}
 		
 		/**
-		 * Fuehrt die Methode am Client aus.
+		 * Führt die Methode am Client aus.
 		 * 
 		 * @param x
 		 *            Die zu uebergebene X-Koordinate
