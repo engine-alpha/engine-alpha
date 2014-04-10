@@ -748,7 +748,7 @@ public abstract class Game implements TastenReagierbar {
 			try {
 				ImageIO.write(img, "jpg", new File(pfad));
 			} catch (IOException ex) {
-				System.err.println("Schreib-/Lesefehler beim Speichern des Screenshots!");
+				Logger.error("Schreib-/Lesefehler beim Speichern des Screenshots!");
 				ex.printStackTrace();
 			}
 	}

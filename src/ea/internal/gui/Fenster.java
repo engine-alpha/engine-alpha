@@ -693,8 +693,11 @@ public class Fenster extends Frame {
 	 * Als alternative Methode zum ausschliesslichen Loeschen des Fensters steht <code>softLoeschen()</code> zur Verfuegung.
 	 */
 	public void loeschen() {
+		this.zeichner.kill();
+
 		this.setVisible(false);
 		this.dispose();
+
 		if (--frameCount == 0)
 			System.exit(0);
 	}

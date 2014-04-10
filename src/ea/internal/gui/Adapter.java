@@ -22,16 +22,15 @@ package ea.internal.gui;
 import java.awt.event.*;
 
 /**
- * Der Adapter bietet die Moeglickeit, bei deaktivierung des Fenster die essentiellen Listenermethode abzuschalten, um 
- * unerwartete Ausfuehrungen dieser Methoden zu verhindern.
+ * Der Adapter bietet die Möglickeit, bei Deaktivierung des Fenster die essentiellen Listenermethode abzuschalten, um
+ * unerwartete Ausführungen dieser Methoden zu verhindern.
  * 
  * @author Michael Andonie
  */
 public class Adapter
-extends WindowAdapter
-{
+extends WindowAdapter {
     /**
-     * Das Fenster, das hiermit stillgelegt wwerden kann.
+     * Das Fenster, das hiermit stillgelegt werden kann.
      */
     private Fenster fenster;
     
