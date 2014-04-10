@@ -19,20 +19,16 @@
 
 package ea;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.TexturePaint;
+import ea.internal.util.Logger;
+import ea.internal.util.Optimizer;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import ea.internal.gui.Fenster;
-import ea.internal.util.Logger;
-import ea.internal.util.Optimizer;
 
 /**
  * Ein Bild als Grafische Repraesentation einer Bilddatei, die gezeichnet werden kann.
@@ -263,6 +259,10 @@ public class Bild extends Raum {
 	 * @return TRUE, wenn sich beide Objekte schneiden.
 	 */
 	public boolean schneidet(Raum r) {
+		if(r == null) {
+			return false;
+		}
+
 		return r.dimension().schneidetBasic(this.dimension());
 	}
 	

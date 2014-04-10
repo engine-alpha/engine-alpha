@@ -50,6 +50,10 @@ public class KreisCollider {
 	 * 				oder berührt</i>. Sonst <code>false</code>.
 	 */
 	public boolean schneidet(KreisCollider k2) {
+		if(k2 == null) {
+			return false;
+		}
+
 		return quadrieren(x - k2.x) + quadrieren(y - k2.y) <= quadrieren(radius + k2.radius);
 	}
 	

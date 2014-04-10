@@ -240,18 +240,26 @@ public final class BoundingRechteck implements Serializable {
 	 * Hierbei wird zuerst getestet, ob ein Punkt des Dreiecks im Rechteck ist, dann, falls noetig ob ein Punkt des Rechtecks im Dreieck ist.
 	 */
 	public boolean schneidet(Dreieck d) {
+		if(d == null) {
+			return false;
+		}
+
 		Punkt[] punkte = d.punkte();
+
 		for (int i = 0; i < punkte.length; i++) {
 			if (istIn(punkte[i])) {
 				return true;
 			}
 		}
+
 		punkte = this.punkte();
+
 		for (int i = 0; i < punkte.length; i++) {
 			if (d.beinhaltet(punkte[i])) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 	

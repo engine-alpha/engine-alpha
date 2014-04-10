@@ -19,11 +19,11 @@
 
 package ea;
 
-import java.awt.Graphics2D;
+import ea.internal.util.Logger;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-
-import ea.internal.util.Logger;
 
 /**
  * Eine Actionfigur ist eine besondere Figur. Diese hat verschiedene <b>Zustaende</b> und kann verschiedene
@@ -439,6 +439,10 @@ public class ActionFigur extends Raum {
 	 */
 	@Override
 	public boolean schneidet(Raum r) {
+		if(r == null) {
+			return false;
+		}
+
 		BoundingRechteck[] mini = r.flaechen();
 		BoundingRechteck[] eig = this.flaechen();
 		for (int i = 0; i < mini.length; i++) {

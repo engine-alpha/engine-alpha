@@ -81,6 +81,10 @@ public class Kreis extends RegEck {
 	 */
 	@Override
 	public boolean schneidet(Raum m) {
+		if(m == null) {
+			return false;
+		}
+
 		if (m instanceof Kreis) {
 			Punkt p1 = this.mittelPunkt();
 			Punkt p2 = m.mittelPunkt();

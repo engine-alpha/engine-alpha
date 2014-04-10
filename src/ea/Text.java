@@ -19,18 +19,14 @@
 
 package ea;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
+import ea.internal.gui.Fenster;
+
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import ea.internal.gui.Fenster;
 
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
@@ -503,6 +499,10 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	@Override
 	public boolean schneidet(Raum r) {
+		if(r == null) {
+			return false;
+		}
+
 		return r.dimension().schneidetBasic(this.dimension());
 	}
 	

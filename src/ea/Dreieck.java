@@ -19,10 +19,9 @@
 
 package ea;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 import ea.internal.gra.Listung;
+
+import java.awt.*;
 
 /**
  * Das Dreieck ist die Basiszeichenklasse.<br />
@@ -159,6 +158,10 @@ public class Dreieck extends Geometrie {
 	 */
 	@Override
 	public boolean schneidet(Raum r) {
+		if(r == null) {
+			return false;
+		}
+
 		if (r instanceof Listung) {
 			BoundingRechteck[] f = r.flaechen();
 			for (int i = 0; i < f.length; i++) {
@@ -169,6 +172,7 @@ public class Dreieck extends Geometrie {
 		} else {
 			return this.dimension().schneidetBasic(r.dimension());
 		}
+
 		return false;
 	}
 	

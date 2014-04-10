@@ -497,6 +497,10 @@ public class Figur extends Raum {
 	 */
 	@Override
 	public boolean schneidet(Raum r) {
+		if(r == null) {
+			return false;
+		}
+
 		if (roh) {
 			return this.dimension().schneidetBasic(r.dimension());
 		} else {

@@ -5,10 +5,10 @@
 
 package ea;
 
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-
 import ea.internal.util.Logger;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Eine Combifigur ist eine Figur, die aus verschiedenen "Unterfiguren" besteht.
@@ -105,11 +105,16 @@ public class CombiFigur extends Raum {
 	 */
 	@Override
 	public boolean schneidet(Raum r) {
+		if(r == null) {
+			return false;
+		}
+
 		for (int i = 0; i < figuren.length; i++) {
 			if (figuren[i].schneidet(r)) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 	

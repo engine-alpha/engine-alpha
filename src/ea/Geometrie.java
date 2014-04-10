@@ -96,6 +96,10 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	 * @return <code>true</code>, wenn sich beide Objekte schneiden, sonst <code>false</code>
 	 */
 	public boolean schneidet(Raum r) {
+		if(r == null) {
+			return false;
+		}
+
 		for (int i = 0; i < formen.length; i++) {
 			if (formen[i].schneidet(r)) {
 				return true;
