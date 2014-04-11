@@ -554,9 +554,10 @@ public class Fenster extends Frame {
 	 */
 	public void anmelden(Maus m) {
 		if (hatMaus()) {
-			System.err.println("Es ist bereits eine Maus angemeldet!");
+			Logger.error("Es ist bereits eine Maus angemeldet!");
 		} else {
 			maus = m;
+			maus.fensterSetzen(this);
 			
 			BoundingRechteck r = maus.getImage().dimension();
 			maus.getImage().positionSetzen(((getWidth() - r.breite) / 2),
@@ -798,22 +799,8 @@ public class Fenster extends Frame {
 		final boolean links = !(e.getButton() == MouseEvent.BUTTON3);
 		
 		if (hatMaus()) {
-			if (!maus.absolut()) {
-				BoundingRechteck r = mausBild.dimension();
-				Punkt p = maus.hotSpot();
-				
-				maus.klick((int) (r.x + p.realX() + getCam().getX()), (int) (r.y + p.realY()
-						+ getCam().getY()), links, losgelassen); // Mit
-																	// zurückrechnen
-																	// auf die
-																	// Bildebene!
-			} else {
-				Dimension dim = this.getSize();
-				int startX = (dim.width / 2);
-				int startY = (dim.height / 2);
-				maus.klick(startX + getCam().getX(), startY + getCam().getY(),
-						links, losgelassen);
-			}
+			Punkt p = maus.klickAufZeichenebene();
+			maus.klick(p.x(), p.y(), links, losgelassen);
 		}
 	}
 	

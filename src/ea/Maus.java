@@ -19,12 +19,16 @@
 
 package ea;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+
+import ea.internal.gui.Fenster;
+import ea.internal.util.Logger;
 
 /**
  * Die objektmÃ¤ÃŸige ReprÃ¤sentation der (Computer-)Maus.
@@ -86,6 +90,11 @@ public class Maus {
 	 * Der individuelle Hotspot
 	 */
 	private final Punkt hotspot;
+	
+	/**
+	 * Das Fenster, in dem diese Maus aktiv ist (<code>null</code>, falls es kein solches Fenster gibt).
+	 */
+	private Fenster fenster;
 	
 	/**
 	 * Unabhaengiger Konstruktor. Dieser Konstruktor ermoeglicht es, ein eigenes Mausbild einzubringen.<br />
@@ -176,7 +185,7 @@ public class Maus {
 	 */
 	public Maus(int mausArt, boolean absolut, boolean bewegend) {
 		if (mausArt > MAX_ART_INDEX || mausArt < 0) {
-			System.err.println("ACHTUNG! Die eingegene Mausart war zu hoch (" + mausArt + "). Sie existiert nicht.");
+			Logger.error("ACHTUNG! Die eingegene Mausart war nicht im erlaubten Rahmen (" + mausArt + "). Sie existiert nicht.");
 		}
 		this.mausArt = mausArt;
 		this.absolut = absolut;
@@ -187,6 +196,16 @@ public class Maus {
 	
 	public Maus(int mausArt) {
 		this(mausArt, false, false);
+	}
+	
+	/**
+	 * Setzt die Referenz auf das Fenster, in dem diese Maus sitzt, neu.
+	 * <b>ACHTUNG:</b> Sollte nicht von Außen benutzt werden, falls man sich nicht genau mit der Struktur
+	 * der Engine auskennt.
+	 * @param f Die neue Fensterreferenz.
+	 */
+	public void fensterSetzen(Fenster f) {
+		this.fenster = f;
 	}
 	
 	/**
@@ -428,6 +447,31 @@ public class Maus {
 		}
 		
 		return new Punkt(x, y);
+	}
+	
+	/**
+	 * Gibt den <i>Punkt auf der Zeichenebene</i> aus, auf den die Maus bei einem Klick zeigen
+	 * würde. Diese Methode rechnet alle Umstände der Maus (z.B. relativ bzw. absolut) mit ein und
+	 * gibt die genaue Position des Klicks zurück.
+	 * @return	Der genaue Punkt auf der Zeichenebene, auf den diese Maus bei einem Klick deuten würde.
+	 */
+	public Punkt klickAufZeichenebene() {
+		if (absolut()) {
+			BoundingRechteck r = bild.dimension();
+			Punkt p = hotSpot();
+			
+			return new Punkt((int) (r.x + p.realX() + fenster.getCam().getX()), (int) (r.y + p.realY()
+					+ fenster.getCam().getY())); // Mit
+												// zurückrechnen
+												// auf die
+												// Bildebene!
+		} else {
+			//Fenster Dimension
+			Dimension dim = fenster.getSize();
+			int startX = (dim.width / 2);
+			int startY = (dim.height / 2);
+			return new Punkt(startX + fenster.getCam().getX(), startY + fenster.getCam().getY());
+		}
 	}
 	
 	/**

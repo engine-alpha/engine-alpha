@@ -70,6 +70,14 @@ public class Bild extends Raum {
 	private final int urHoehe;
 	
 	/**
+	 * Minimaler Konstruktor. Erstellt ein neues Bild an der Position (0|0).
+	 * @param verzeichnis Der Verzeichnispfad des Bildes, das geladen werden soll.
+	 */
+	public Bild(String verzeichnis) {
+		this(0,0,verzeichnis);
+	}
+	
+	/**
 	 * Der minimale Basiskonstruktor fuer Objekte der Klasse Bild.<br />
 	 * Der absolute Standartkonstruktor, der bei allen anderen ebenfalss aufgerufen wird. Dieser gleicht die Position an und laedt das Bild
 	 * 
@@ -160,9 +168,10 @@ public class Bild extends Raum {
 	 * Dieser Konstruktor wird innerhalb der Engine verwendet fuer die Maus.
 	 */
 	public Bild(float x, float y, BufferedImage img) {
-		super.positionSetzen(new Punkt(x, y));
-		
 		this.img = img;
+		
+		
+		super.positionSetzen(new Punkt(x, y));
 		
 		urHoehe = img.getHeight();
 		urBreite = img.getWidth();

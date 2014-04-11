@@ -75,7 +75,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	private int runde = 0;
 	
 	/**
-	 * Die Maus des Fensters.
+	 * Die Maus des Fensters. Erscheint <b>automatisch</b>, sobald der erste Listener angemeldet wird.
 	 */
 	private Maus maus;
 	
@@ -120,6 +120,10 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		strich.positionSetzen((breite - lStrich) / 2, 10);
 		links.positionSetzen(((breite - lStrich) / 2) - groesser - 5, 10);
 		rechts.positionSetzen((breite + lStrich) / 2 + 5, 10);
+	}
+	
+	public Maus getMaus() {
+		return maus;
 	}
 	
 	/**
