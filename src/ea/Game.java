@@ -20,6 +20,7 @@
 package ea;
 
 import ea.internal.gui.*;
+import ea.internal.phy.Physik;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
@@ -29,7 +30,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Random;
-import ea.internal.phy.Physik;
 
 /**
  * Diese Klasse ist fuer die sofortige, einfache Verwendung der Engine verantwortlich.<br />
@@ -671,15 +671,14 @@ public abstract class Game implements TastenReagierbar {
 	}
 	
 	/**
-	 * Setzt, ob die gesamte Engine Alpha rechenintensiv, oder ressourcensparsam arbeiten soll.<br />
-	 * <br />
-	 * <br />
-	 * <b>IM REGELFALL GILT FOLGENDES:</b><br />
-	 * <br />
+	 * Setzt, ob die gesamte Engine Alpha rechenintensiv, oder ressourcensparsam arbeiten soll.
+	 *
+	 * <b>IM REGELFALL GILT FOLGENDES:</b>
+	 *
 	 * Die Engine arbeitet auf einem Niveau, das laufzeittechnisch bei normalen Computern standardmaessig funktioniert. <i>Sollte es
 	 * jedoch Probleme mit der Laufzeit geben (haengender Bildschirm; Zeitverzögerungen, die klar an der Engine und nicht am eigenen Projekt
-	 * liegen usw.), so sollte mit dieser Methode die rechenintensive Arbeit ausgeschaltet werden.<br />
-	 * <br />
+	 * liegen usw.), so sollte mit dieser Methode die rechenintensive Arbeit ausgeschaltet werden.
+	 *
 	 * <b>Standardmaessig ist die Arbeit rechenintensiv</b>.
 	 * 
 	 * @param rechenintensiv
