@@ -21,6 +21,9 @@ package ea;
 
 import java.awt.Graphics2D;
 
+import ea.internal.collision.Collider;
+import ea.internal.collision.SphereCollider;
+
 /**
  * Ein Kreis ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br />
  * Dies ist mit einem Computer nicht moeglich, daher wird fuer einen Kreis eine ausrechend grosse Anzahl
@@ -31,6 +34,7 @@ import java.awt.Graphics2D;
  */
 @SuppressWarnings("serial")
 public class Kreis extends RegEck {
+	
 	/**
 	 * Konstruktor fuer Objekte der Klasse Kreis
 	 * 
@@ -53,13 +57,13 @@ public class Kreis extends RegEck {
 	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
 	 * 
 	 * @param x
-	 *            Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des MIttelpunktes</b>
+	 *            Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des Mittelpunktes</b>
 	 * @param y
-	 *            Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des MIttelpunktes</b>
+	 *            Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des Mittelpunktes</b>
 	 * @param durchmesser
 	 *            Der Durchmesser des Kreises
 	 */
-	public Kreis(int x, int y, float durchmesser) {
+	public Kreis(float x, float y, float durchmesser) {
 		super(x, y, 6, durchmesser);
 	}
 	
@@ -114,5 +118,10 @@ public class Kreis extends RegEck {
 		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
 		
 		super.afterRender(g);
+	}
+	
+	@Override
+	public Collider erzeugeCollider() {
+		return new SphereCollider(radius*2);
 	}
 }

@@ -1,5 +1,7 @@
 package ea.internal.collision;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 import ea.BoundingRechteck;
 import ea.Punkt;
 import ea.Vektor;
@@ -14,17 +16,18 @@ extends Collider {
 	Vektor diagonale;
 	
 	/**
-	 * Generiert aus einem <code>BoundingRechteck</code> einen Box-Collider.
-	 * @param br	Das <code>BoundingRechteck</code>, das Grundlage für den Box-Collider sein soll.
+	 * Generiert aus einem <code>BoundingRechteck</code> und einem gegebenen Offset einen Box-Collider.
+	 * @param offset Der Offset, den dieser Collider haben soll.
+	 * @param br	Das <code>BoundingRechteck</code>, das Grundlage für die Masse des Box-Collider sein soll.
 	 * @return		Der Box-Collider, der diesem <code>BoundingRechteck</code> entspricht:<br />
 	 * <ls>
 	 * <li>Die Position auf der Zeichenebene entspricht ab sofort dem Offset</li>
 	 * <li>Breite und Höhe werden übernommen</li>
 	 * </ls>
 	 */
-	public static BoxCollider fromBoundingRechteck(BoundingRechteck br) {
+	public static BoxCollider fromBoundingRechteck(Vektor offset, BoundingRechteck br) {
 		BoxCollider bc = new BoxCollider();
-		bc.offsetSetzen(new Vektor(br.x, br.y));
+		bc.offsetSetzen(offset);
 		bc.diagonale = new Vektor(br.breite, br.hoehe);
 		return bc;
 	}
@@ -51,6 +54,15 @@ extends Collider {
 	@Override
 	public boolean istNullCollider() {
 		return false;
+	}
+	
+	/**
+	 * s
+	 * @param start
+	 * @return
+	 */
+	public BoundingRechteck alsBR(Punkt start) {
+		return new BoundingRechteck(start.x + offset.x, start.y + offset.y, diagonale.x, diagonale.y);
 	}
 
 }

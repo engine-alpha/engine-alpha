@@ -196,4 +196,15 @@ public final class Punkt
 		return (int)y;
 	}
 	
+	/**
+	 * Überschriebene <code>toString</code>-Methode gibt eine
+	 * sinnvolle, lesbare String-Repräsentation dieses Punktes
+	 * der Form "(x|y)" aus.
+	 * @return String-Repräsentation dieses Punktes der Form:
+	 * <code>Punkt: (x|y)</code>
+	 */
+	@Override
+	public String toString() {
+		return "Punkt: ("+x+"|"+y+")";
+	}
 }

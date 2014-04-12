@@ -41,6 +41,10 @@ extends Collider {
 		//Default:
 		return false;
 	}
+	
+	public Kreis ausDiesem(Punkt position) {
+		return new Kreis(position.x + offset.x, position.y + offset.y, modelsphere.radius()*2);
+	}
 
 	/**
 	 * {@inheritDoc}

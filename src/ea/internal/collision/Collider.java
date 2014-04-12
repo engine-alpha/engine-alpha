@@ -36,8 +36,13 @@ public abstract class Collider {
 	 * @return		<code>true</code>, wenn sich beide Kreise bei aktueller Belegung schneiden, sonst <code>false</code>.
 	 */
 	public static boolean spheresphereCollision(SphereCollider s1, SphereCollider s2, Punkt p1, Punkt p2) {
-		float dx = s1.offset.x + p1.x - s2.offset.x - p2.x, dy = s1.offset.y + p1.y - s2.offset.y - p2.y;
-		return Math.sqrt((dx*dx) + (dy*dy)) < (s1.durchmesser+s2.durchmesser)/2;
+		float r1 = s1.durchmesser/2, r2 = s2.durchmesser/2;
+		float dx = (s1.offset.x + p1.x + r1) - (s2.offset.x + p2.x + r2), dy = (s1.offset.y + p1.y + r1) - (s2.offset.y + p2.y + r2);
+		float summeRadien = (s1.durchmesser+s2.durchmesser)/2;
+		
+		//System.out.println("Sphere-Sphere Collision: dx=" + dx + "  -  dy=" + dy + "  -  sumRad=" + summeRadien);
+		
+		return (dx*dx) + (dy*dy) <= summeRadien*summeRadien;
 	}
 	
 	/**
@@ -77,9 +82,18 @@ public abstract class Collider {
 	 * relativ zur aktuellen Position des <code>Raum</code>-Objektes in der Zeichenebene hinzugerechnet, um die endgültige
 	 * Position des Colliders für die Kollisionsabfragen festzulegen.
 	 * @param os Der neue Offset für diesen Collider.
+	 * @see #offset()
 	 */
 	public final void offsetSetzen(Vektor os) {
 		this.offset = os;
+	}
+	
+	/**
+	 * Gibt den Offset dieses Vektors relativ zum zugehörigen <code>Raum</code> an.
+	 * @return	Der Offset dieses Vektors relativ zum zugehörigen <code>Raum</code> an.
+	 */
+	public final Vektor offset() {
+		return offset;
 	}
 	
 	/**

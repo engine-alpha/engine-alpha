@@ -803,8 +803,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see #dimension()
 	 */
 	public Punkt position() {
-		BoundingRechteck b = this.dimension();
-		return new Punkt(b.x, b.y);
+		return position;
 	}
 	
 	/**
@@ -959,7 +958,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * berechnete <code>BoundingRechteck</i> benutzt, um einen simplen <i>Box-Collider</i> zu erstellen.
 	 */
 	protected Collider erzeugeLazyCollider() {
-		return BoxCollider.fromBoundingRechteck(this.dimension());
+		return BoxCollider.fromBoundingRechteck(Vektor.NULLVEKTOR, this.dimension());
 	}
 	
 	/**
