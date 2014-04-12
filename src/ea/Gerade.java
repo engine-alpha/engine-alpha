@@ -26,8 +26,7 @@ package ea;
  * @author Michael Andonie
  */
 @Deprecated
-public class Gerade
-{
+public class Gerade {
 	/**
 	 * Die Steigung der Geraden
 	 */

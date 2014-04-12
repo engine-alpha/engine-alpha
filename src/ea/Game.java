@@ -19,26 +19,17 @@
 
 package ea;
 
-import java.awt.Font;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Random;
+import ea.internal.gui.*;
+import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-
-import ea.internal.gui.Eingabe;
-import ea.internal.gui.Fenster;
-import ea.internal.gui.Frage;
-import ea.internal.gui.HighScoreFenster;
-import ea.internal.gui.Nachricht;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.Random;
 import ea.internal.phy.Physik;
-import ea.internal.util.Logger;
 
 /**
  * Diese Klasse ist fuer die sofortige, einfache Verwendung der Engine verantwortlich.<br />
@@ -82,7 +73,7 @@ public abstract class Game implements TastenReagierbar {
 	 * <br /></code> <br />
 	 * Dieses Beispiel erstellt einen neuen Audio-Manager mit Kanaelen.
 	 */
-	public final AudioManager audioManager = new AudioManager(5);
+	// public final AudioManager audioManager = new AudioManager(5);
 	
 	/**
 	 * Der Animations-Manager. Er kann Animationen organisieren.
@@ -467,7 +458,7 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void schliessen() {
 		manager.kill();
-		audioManager.neutralize();
+		//audioManager.neutralize();
 		fenster.loeschen();
 	}
 	
@@ -845,10 +836,10 @@ public abstract class Game implements TastenReagierbar {
 			wr.close();
 			re.close();
 		} catch (FileNotFoundException ex) {
-			System.err.println("Das Von-File konnte nicht gefunden werden");
+			Logger.error("Das Von-File konnte nicht gefunden werden");
 			return false;
 		} catch (IOException ex) {
-			System.err.println("Fehler beim Lesen: ");
+			Logger.error("Fehler beim Lesen.");
 			ex.printStackTrace();
 			return false;
 		}
@@ -861,8 +852,8 @@ public abstract class Game implements TastenReagierbar {
 	 * Sie wird dann erst wieder aufgerufen, wenn die Taste erst losgelassen und dann wieder gedreuckt wurde.<br />
 	 * Sollte allerdings eine Methode vonnoeten sein, die immer wieder in Regelmaessigen abstaenden aufgerufen wird, solange die Taste <b>heruntergedrueckt
 	 * ist, so bietet sich dies im Interface <code>TasteGedruecktReagierbar</code> an</b>.
-	 * 
-	 * @see TasteGedruecktReagierbar
+	 *
+	 * @see ea.TastenGedruecktReagierbar
 	 */
 	public abstract void tasteReagieren(int code);
 }

@@ -38,8 +38,7 @@ import ea.internal.util.Logger;
  * @author Andonie (nach Idee von Bendikt Lindemann und Mike Ganshorn)
  * 
  */
-public class SPIEL
-{
+public class SPIEL {
 	/**
 	 * Die Anzeige des Spiels.
 	 */

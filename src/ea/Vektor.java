@@ -19,84 +19,82 @@
 
 package ea;
 
-import ea.internal.util.Logger;
-
 /**
  * Ein Vektor bezeichnet eine relative Punktangabe.<br />
  * Ansonsten unterscheidet er sich hier nicht weiter von einem Punkt.<br />
- * Vektoren werden meist fuer die BEschreibung einer bewegung benutzt.
+ * Vektoren werden meist für die Beschreibung einer Bewegung benutzt.
  * 
  * @author Michael Andonie
  */
-public final class Vektor
+public final class Vektor {
 implements Cloneable {
 	/**
-	 * Konstante fuer einen Bewegungslosen Vektor (Werte 0|0)
+	 * Konstante für einen bewegungslosen Vektor (0, 0)
 	 */
 	public static final Vektor NULLVEKTOR = new Vektor(0, 0);
 	
 	/**
-	 * Konstante fuer eine einfache Verschiebung nach rechts (Werte 1|0)
+	 * Konstante für eine einfache Verschiebung nach rechts (1, 0)
 	 */
 	public static final Vektor RECHTS = new Vektor(1, 0);
 	
 	/**
-	 * Konstante fuer eine einfache Verschiebung nach links (Werte -1|0)
+	 * Konstante für eine einfache Verschiebung nach links (-1, 0)
 	 */
 	public static final Vektor LINKS = new Vektor(-1, 0);
 	
 	/**
-	 * Konstante fuer eine einfache Verschiebung nach oben (Werte 0|-1)
+	 * Konstante für eine einfache Verschiebung nach oben (0, -1)
 	 */
 	public static final Vektor OBEN = new Vektor(0, -1);
 	
 	/**
-	 * Konstante fuer eine einfache Verschiebung nach unten (Werte 0|1)
+	 * Konstante für eine einfache Verschiebung nach unten (0, 1)
 	 */
 	public static final Vektor UNTEN = new Vektor(0, 1);
 	
 	/**
-	 * Konstante, die widerspiegelt, das keine Bewegung vollzogen wird.
+	 * Konstante, die widerspiegelt, dass keine Bewegung vollzogen wird.
 	 */
 	public static final int KEINE_BEWEGUNG = -1;
 	
 	/**
-	 * Die Konstante fuer die Richtung Westen
+	 * Die Konstante für die Richtung Westen
 	 */
 	public static final int W = 0;
 	
 	/**
-	 * Die Konstante fuer die Richtung Osten
+	 * Die Konstante für die Richtung Osten
 	 */
 	public static final int O = 1;
 	
 	/**
-	 * Die Konstante fuer die Richtung Norden
+	 * Die Konstante für die Richtung Norden
 	 */
 	public static final int N = 2;
 	
 	/**
-	 * Die Konstante fuer die Richtung Sueden
+	 * Die Konstante für die Richtung Süden
 	 */
 	public static final int S = 3;
 	
 	/**
-	 * Die Konstante fuer die Richtung Suedwesten
+	 * Die Konstante für die Richtung Nordwesten
 	 */
 	public static final int NW = 4;
 	
 	/**
-	 * Die Konstante fuer die Richtung Suedosten
+	 * Die Konstante für die Richtung Nordosten
 	 */
 	public static final int NO = 5;
 	
 	/**
-	 * Die Konstante fuer die Richtung Suedwesten
+	 * Die Konstante für die Richtung Südwesten
 	 */
 	public static final int SW = 6;
 	
 	/**
-	 * Die Konstante fuer die Richtung Suedosten
+	 * Die Konstante für die Richtung Südosten
 	 */
 	public static final int SO = 7;
 	
@@ -113,13 +111,13 @@ implements Cloneable {
 	public final float y;
 	
 	/**
-	 * Konstruktor fuer Objekte der Klasse Vektor. Werte werden hier als <code>int</code> angegeben.
+	 * Konstruktor für Objekte der Klasse Vektor. Werte werden hier als <code>int</code> angegeben.
 	 * Intern wird trotzdem mit genaueren Fließkommazahlen gerechnet.
 	 * 
 	 * @param x
-	 *            Der Bewegungsanteil in Richtung X
+	 *            Der Bewegungsanteil <code>x</code>.
 	 * @param y
-	 *            Der Bewegungsanteil in Richtung Y
+	 *            Der Bewegungsanteil <code>y</code>.
 	 */
 	public Vektor(int x, int y) {
 		this.x = (float) x;
@@ -130,9 +128,9 @@ implements Cloneable {
 	 * Konstruktor fuer Objekte der Klasse Vektor
 	 * 
 	 * @param x
-	 *            Der Bewegungsanteil in Richtung X
+	 *            Der Bewegungsanteil <code>x</code>.
 	 * @param y
-	 *            Der Bewegungsanteil in Richtung Y
+	 *            Der Bewegungsanteil <code>y</code>.
 	 */
 	public Vektor(float x, float y) {
 		this.x = x;
@@ -140,13 +138,14 @@ implements Cloneable {
 	}
 	
 	/**
-	 * Zweite Variante des Konstruktors fuer die Klasse Vektor.<br />
+	 * Zweite Variante des Konstruktors für die Klasse Vektor.
+	 *
 	 * Hierbei wird er erzeugt als die noetige Bewegung von einem Punkt, um zu einem zweiten zu kommen.
 	 * 
 	 * @param start
-	 *            Der Ausgangspunkt der Bewegung dieses Vektors, der zu dem Ziel hinfuehrt.
+	 *            Der Ausgangspunkt der Bewegung dieses Vektors, der zu dem Ziel hinführt.
 	 * @param ziel
-	 *            Der Zielpunkt der Bewegung
+	 *            Der Zielpunkt der Bewegung.
 	 */
 	public Vektor(Punkt start, Punkt ziel) {
 		this.x = ziel.x - start.x;
@@ -155,11 +154,10 @@ implements Cloneable {
 	
 	/**
      * Gibt eine <b>Normierung</b> des Vektors aus.
-     * Dies ist ein Vektor, der<br />
-     * <ul>
-     * <li>In die selbe Richtung wie der ursprüngliche Vektor zeigt.</li>
-     * <li>Eine Länge von (möglichst) exakt 1 hat.</li>
-     * </ul>
+     * Dies ist ein Vektor, der
+     * * in die selbe Richtung wie der ursprüngliche Vektor zeigt.</li>
+     * * eine Länge von (möglichst) exakt 1 hat.</li>
+	 *
      * @return der normierte Vektor zu diesem Vektor.
      */
     public Vektor normiert() {
@@ -171,8 +169,7 @@ implements Cloneable {
      * @return	Die Länge dieses Vektors.
      */
     public float laenge() {
-    	//Nimm euklidische Norm
-    	return (float)Math.sqrt(x*x + y*y);
+    	return (float) Math.sqrt(x*x + y*y);
     }
     
     /**
@@ -185,11 +182,11 @@ implements Cloneable {
 	}
 	
 	/**
-	 * Berechnet die effektive Bewegung, die dieser Vektor und ein weiterer zusammen ausueben.
+	 * Berechnet die effektive Bewegung, die dieser Vektor und ein weiterer zusammen ausüben.
 	 * 
 	 * @param v
 	 *            Der zweite bewegende Vektor
-	 * @return Ein neues Vektor-Objekt, das die Summe der beiden urspruenglichen Bewegungen darstellt.
+	 * @return Ein neues Vektor-Objekt, das die Summe der beiden ursprünglichen Bewegungen darstellt.
 	 */
 	public Vektor summe(Vektor v) {
 		return new Vektor(this.x + v.x, this.y + v.y);
@@ -197,132 +194,122 @@ implements Cloneable {
 	
 	/**
      * Berechnet die Differenz zwischen diesem und einem weiteren Vektor.
-     * @param v	ein weiterer Vektor.
-     * @return	Die Differenz "this - v" der beiden Vektoren.
+     * @param v	ein zweiter Vektor.
+     * @return	Die Differenz der beiden Vektoren (<code>"this - v"</code>)
      */
     public Vektor differenz(Vektor v) {
     	return new Vektor(this.x-v.x, this.y-v.y);
 	}
     
     /**
-	 * Teilt die effektive Laenge des Vektors durch eine ganze Zahl und kuerzt dadurch seine Effektivitaet.
+	 * Teilt die effektive Länge des Vektors durch eine ganze Zahl und kürzt dadurch seine Effektivität.
 	 * 
 	 * @param divisor
-	 *            Hierdurch wird die Laenge des Vektors auf der Zeichenebene geteilt.
+	 *            Hierdurch wird die Länge des Vektors auf der Zeichenebene geteilt.
 	 * @return Ein Vektor-Objekt, das eine Bewegung in dieselbe Richtung beschreibt, allerdings in der
-	 *         Laenge gekuerzt um den angegebenen Divisor.<br />
+	 *         Länge gekürzt um den angegebenen Divisor.<br />
 	 *         <b>Achtung!</b><br />
-	 * Ist <code>(0,0)</code>, wenn die Eingabe == 0 war!
-	 * @see #multiplizieren(int)
+     *
+	 * @see #multiplizieren(float)
 	 */
     public Vektor teilen(float divisor) {
         if(divisor == 0) {
-            //throw new ArithmeticException("Der Divisor für das Teilen war 0!");
-        	Logger.error("Der Divisor für das Teilen war 0!");
-        	return NULLVEKTOR;
+            throw new ArithmeticException("Der Divisor für das Teilen war 0!");
 		}
+
 		return new Vektor(x / divisor, y / divisor);
 	}
 	
 	/**
-	 * Multipliziert die effektiven Laengen beider Anteile des Vektors (X und Y) mit einem festen Faktor.
-	 * Dadurch entsteht ein neuer Vektor mit anderen Werten (es sei denn, der Faktor ist 1); dieser wird dann zurueck gegeben.
+	 * Multipliziert die effektiven Längen beider Anteile des
+	 * Vektors (<code>x</code> und <code>y</code>) mit einem festen Faktor.
+	 *
+	 * Dadurch entsteht ein neuer Vektor mit anderen Werten, welcher zurückgegeben wird.
 	 * 
 	 * @param faktor
-	 *            Der Faktor, mit dem die X- und Y-Werte des Vektors multipliziert werden
+	 *            Der Faktor, mit dem die <code>x</code>- und <code>y</code>-Werte
+	 *            des Vektors multipliziert werden
 	 * @return Der Vektor mit den multiplizierten Werten
-	 * @see #teilen(int)
-	 */
-	public Vektor multiplizieren(int faktor) {
-		return new Vektor(x * faktor, y * faktor);
-	}
-	
-	/**
-	 * Multipliziert die effektiven Laengen beider Anteile des Vektors (X und Y) mit einem festen Faktor.
-	 * Dadurch entsteht ein neuer Vektor mit anderen Werten (es sei denn, der Faktor ist 1); dieser wird dann zurueck gegeben.
-	 * 
-	 * @param faktor
-	 *            Der Faktor, mit dem die X- und Y-Werte des Vektors multipliziert werden
-	 * @return Der Vektor mit den multiplizierten Werten
-	 * @see #teilen(int)
+	 * @see #teilen(float)
 	 */
 	public Vektor multiplizieren(float faktor) {
 		return new Vektor(x * faktor, y * faktor);
 	}
 	
     /**
-     * Berechnet das <b>Skalarprodukt</b> von diesem Vektor mit einem weiteren. Das Skalarprodukt für zweidimensionale
-     * Vektoren ist: <br/>
-     * (a,b) o (c, d) = a*b + c*d
+     * Berechnet das <b>Skalarprodukt</b> von diesem Vektor mit einem weiteren.
+     * Das Skalarprodukt für zweidimensionale Vektoren ist:
+     * :<code>(a, b) o (c, d) = a * b + c * d</code>
+     *
      * @param v	Ein zweiter Vektor.
-     * @return	Das Skalarprodukt dieses Vektoren mit dem Vektor <code>v</code>.
+     * @return  Das Skalarprodukt dieses Vektoren mit dem Vektor <code>v</code>.
      */
     public float skalarprodukt(Vektor v) {
     	return this.x * v.x + this.y * v.y;
     }
 
     /**
-	 * Berechnet, ob dieser Vektor keine Wirkung hat, dies ist der Fall, wenn beide Komponenten, X und Y gleich 0 sind.
+	 * Berechnet, ob dieser Vektor keine Wirkung hat. Dies ist der Fall,
+     * wenn beide Komponenten (<code>x</code> und <code>y</code>) 0 sind.
 	 * 
-	 * @return <code>true</code>, wenn dieser keine Auswirkungen als Bewegender Vektor machen wuerde.
+	 * @return <code>true</code>, wenn dieser keine Auswirkungen als bewegender Vektor machen würde.
 	 */
 	public boolean unwirksam() {
-		return (this.x == 0 && this.y == 0);
+		return this.x == 0 && this.y == 0;
 	}
 	
 	/**
 	 * Berechnet die Richtung des Vektors, in die er wirkt.<br />
-	 * Der Rueckgabewert basiert auf den Konstanten der eigenen Klasse und sind entweder die Basiswerte
+	 * Der Rückgabewert basiert auf den Konstanten der eigenen Klasse und sind entweder die Basiswerte
 	 * (<code>N/S/O/W</code>) oder die Kombiwerte (<code>NO/NW/...</code>). Alle diese sind Konstanten dieser Klasse.
 	 * 
 	 * @return Der Wert der Konstanten, die diese Bewegung wiederspiegelt.
 	 */
 	public int richtung() {
-		if (x == 0) {
-			if (y == 0) {
-				return KEINE_BEWEGUNG;
-			}
-			if (y > 0) {
-				return S;
-			}
-			return N;
+		if (x == 0 && y == 0) {
+			return KEINE_BEWEGUNG;
 		}
-		if (x > 0) {
-			if (y == 0) {
-				return O;
-			}
-			if (y > 0) {
-				return SO;
-			}
+
+		if (x == 0) {
+			return y > 0 ? S : N;
+		}
+
+		if(y == 0) {
+			return x > 0 ? O : W;
+		}
+
+		if(x < 0 && y < 0) {
+			return NW;
+		}
+
+		if(x > 0 && y < 0) {
 			return NO;
 		}
-		if (y == 0) {
-			return W;
+
+		if(x > 0 && y > 0) {
+			return SO;
 		}
-		if (y > 0) {
-			return SW;
-		}
-		return NW;
+
+		return SW;
 	}
-	
+
 	/**
-	 * Berechnet einen einfachen Vektor (maximale auslenkung bei jeder Achse 1 (positiov wie negativ)), der
-	 * der entsprechenden Konstante dieser Klasse entspricht möglich sind:<br />
-	 * <br />
-	 * <code>
-	 * N<br />
-	 * S<br />
-	 * O<br />
-	 * W<br />
-	 * NO<br />
-	 * NW<br />
-	 * SO<br />
-	 * SW<br />
-	 * </code>
+	 * Berechnet einen einfachen Vektor (maximale Auslenkung bei jeder Achse 1 (positiov wie negativ)), der
+	 * der entsprechenden Konstante dieser Klasse entspricht möglich sind:
+	 *
+	 * <code>N</code>,
+	 * <code>S</code>,
+	 * <code>O</code>,
+	 * <code>W</code>,
+	 * <code>NO</code>,
+	 * <code>NW</code>,
+	 * <code>SO</code>,
+	 * <code>SW</code>
 	 * 
 	 * @param konstante
 	 *            Die Konstante, die die Bewegungsrichtung beschreibt.
-	 * @return Der Vektor, der mit einer einfachen Auslenkung (d. h. für X und Y je ein Wertebereich von {-1, 0, 1})
+	 * @return Der Vektor, der mit einer einfachen Auslenkung
+	 * (d.h. für <code>x</code> und <code>y</code> je ein Wertebereich von {-1, 0, 1})
 	 *         die entsprechende Bewegung macht.<br />
 	 *         Ist <code>null</code>, wenn die Konstante einen nicht verwendbaren Wert hat!
 	 */
@@ -345,8 +332,7 @@ implements Cloneable {
 			case SW:
 				return new Vektor(-1, 1);
 			default:
-				System.err.println("Achtung! Die eingegebene Konstante hatte keinen der moeglichen Werte!");
-				return null;
+				throw new IllegalArgumentException("Die eingegebene Konstante hatte keinen der möglichen Werte!");
 		}
 	}
 	
@@ -357,13 +343,13 @@ implements Cloneable {
 	 * @return <code>true</code>, wenn <b>beide</b> Delta-Werte dieses Punktes ganzzahlig sind, sonst <code>false</code>.
 	 */
 	public boolean istEchtGanzzahlig() {
-		return this.x == (float) Math.floor(x) && this.y == (float) Math.floor(y);
+		return x == (float) Math.floor(x) && y == (float) Math.floor(y);
 	}
 	
 	/**
-	 * Gibt die X-Verschiebung dieses Vektors wieder.
+	 * Gibt die <code>x</code>-Verschiebung dieses Vektors wieder.
 	 * 
-	 * @return Die X-Verschiebung dieses Vektors. Positive Werte verschieben nach
+	 * @return Die <code>x</code>-Verschiebung dieses Vektors. Positive Werte verschieben nach
 	 *         rechts, negative Werte verschieben nach links.
 	 * @see #realX()
 	 */
@@ -372,9 +358,9 @@ implements Cloneable {
 	}
 	
 	/**
-	 * Gibt die Y-Verschiebung dieses Vektors wieder.
+	 * Gibt die <code>y</code>-Verschiebung dieses Vektors wider.
 	 * 
-	 * @return Die Y-Verschiebung dieses Vektors. Positive Werte verschieben nach
+	 * @return Die <code>y</code>-Verschiebung dieses Vektors. Positive Werte verschieben nach
 	 *         unten, negative Werte verschieben nach oben.
 	 * @see #realY()
 	 */
@@ -383,8 +369,10 @@ implements Cloneable {
 	}
 	
 	/**
-	 * Gibt einen einfachen Vektor zurueck, dessen Richtungskomponenten nur -1, 0 oder 1 annehmen (-1 bei werten < 0; 0 bei Werten = 0; 1
-	 * bei Werten > 0).
+	 * Gibt einen einfachen Vektor zurück, dessen Richtungskomponenten
+	 * nur <code>-1</code>, <code>0</code> oder <code>1</code> annehmen.
+	 *
+	 * :-1 bei Werten < 0 - 0 bei Werten = 0 - 1 bei Werten > 0
 	 * 
 	 * @return Ein Einfacher Vektor, der die Richtung des Urspruenglichen mit einfachen Werten beschreibt beschreibt.
 	 */
@@ -393,50 +381,53 @@ implements Cloneable {
 	}
 	
 	/**
-	 * Gibt die String-Repraesentation dieses Objektes aus.
+	 * Gibt die String-Repräsentation dieses Objektes aus.
 	 * 
-	 * @return Die String-Repraesentation dieses Strings
+	 * @return Die String-Repräsentation dieses Strings
 	 */
 	@Override
 	public String toString() {
-		return "Vektor: (" + x + "|" + y + ")";
+		return "ea.Vektor [x = " + x + "; y = " + y + "]";
 	}
 	
 	/**
-	 * {@inheritDoc} Prueft, ob ein beliebiges Objekt gleich diesem Vektor ist. Ueberschrieben aus der Superklasse <code>Object</code>.<br />
-	 * 2 Vektoren gelten als gleich, wenn sie in ihrem Delta-X und ihrem Delta-Y (und zwar <b>reell exakt</b>) uebereinstimmen.
+	 * Prüft, ob ein beliebiges Objekt gleich diesem Vektor ist.Überschrieben aus der Superklasse <code>Object</code>.
+	 *
+	 * Zwei Vektoren gelten als gleich, wenn <code>x</code> und <code>y</code> der beiden Vektoren übereinstimmen.
 	 * 
 	 * @param o
-	 *            Das auf gleichheit mit diesem zu ueberpruefende Objekt.
-	 * @return <code>true</code>, wenn beide Vektoren das gleiche dX und dY haben, sonst <code>false</code>.
+	 *            Das auf Gleichheit mit diesem zu überpruefende Objekt.
+	 * @return <code>true</code>, wenn beide Vektoren gleich sind, sonst <code>false</code>.
 	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Vektor) {
 			Vektor v = (Vektor) o;
-			return (this.x == v.x && this.y == v.y);
+
+			return x == v.x && y == v.y;
 		}
+
 		return false;
 	}
 
     /**
-     * Gibt die X-Verschiebung dieses Vektors mit Ganzzahlen wieder.
-     * @return  Die X-Verschiebung dieses Vektors. Positive Werte verschieben nach
+     * Gibt die <code>x</code>-Verschiebung dieses Vektors mit Ganzzahlen wider.
+     * @return  Die <code>x</code>-Verschiebung dieses Vektors. Positive Werte verschieben nach
      * rechts, negative Werte verschieben nach links.
-     * @see dY()
+     * @see #dY()
      */
 	public int dX() {
-		return (int)x;
+		return (int) x;
 	}
 	
 	/**
-     * Gibt die Y-Verschiebung dieses Vektors mit Ganzzahlen wieder.
-     * @return  Die Y-Verschiebung dieses Vektors. Positive Werte verschieben nach
+     * Gibt die <code>y</code>-Verschiebung dieses Vektors mit Ganzzahlen wider.
+     * @return  Die <code>y</code>-Verschiebung dieses Vektors. Positive Werte verschieben nach
      * unten, negative Werte verschieben nach oben.
-     * @see dX()
+     * @see #dX()
      */
 	public int dY() {
-		return (int)y;
+		return (int) y;
 	}
 	
 	/**
