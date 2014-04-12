@@ -362,7 +362,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	
 	/**
      * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
-	 * 
+	 *
      * Wirkt einen Impuls auf das <code>Raum</code>-Objekt aus. Dieser ändert - abhängig von seiner
      * Richtung, Intensität sowie von der <i>Mass</i> des </code>Raum</code>-Objekts eine
      * Geschwindigkeitsänderung.
@@ -968,7 +968,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	
 	/**
 	 * Erzeugt einen Collider auf <i>Lazy</i> Art: Es wird das durch die <code>dimension()</code>-Methode
-	 * berechnete <code>BoundingRechteck</i> benutzt, um einen simplen <i>Box-Collider</i> zu erstellen.
+	 * berechnete <code>BoundingRechteck</code> benutzt, um einen simplen <i>Box-Collider</i> zu erstellen.
 	 */
 	protected Collider erzeugeLazyCollider() {
 		return BoxCollider.fromBoundingRechteck(Vektor.NULLVEKTOR, this.dimension());
