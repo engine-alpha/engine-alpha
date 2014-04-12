@@ -45,10 +45,9 @@ public class Kreis extends RegEck {
 	 * @param durchmesser
 	 *            Der Durchmesser des Kreises
 	 * @param genauigkeit
-	 *            Die Genauigkeitsstufe des Kreises.<br />
-	 *            <b>je hoeher sie ist, desto besser sieht der KReis aus, jedoch auch desto hoeher ist die Computerbelastung</b>
+	 *           Die Genauigkeitsstufe des Kreises.<br />
+	 *           Gibt die Anzzahl an Dreiecken an, die diesen Kreis (approximiert) für die Kollisionsberechnung mit komplexeren Objekten ausmachen.
 	 */
-	@Deprecated
 	public Kreis(int x, int y, float durchmesser, int genauigkeit) {
 		super(x, y, (int) Math.pow(genauigkeit, 2), durchmesser);
 	}
@@ -92,8 +91,22 @@ public class Kreis extends RegEck {
 		super.afterRender(g);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Collider erzeugeCollider() {
-		return new SphereCollider(radius*2);
+		return new SphereCollider(radius*2, Vektor.NULLVEKTOR, log2helper(eckenzahl));
+	}
+	
+	/**
+	 * Kleine Helper-Methode für den ganzzahligen Log2.
+	 * @param eckenzahl	Ein int-Wert. Sollte von der Form 2^n sein.
+	 * @return	Der log2(eckenzahl).
+	 */
+	private static int log2helper(int eckenzahl) {
+		if(eckenzahl <= 1)
+			return 0;
+		return 1 + log2helper(eckenzahl/2);
 	}
 }

@@ -40,11 +40,19 @@ extends Collider {
 	}
 	
 	/**
+	 * Erstellt einen Box-Collider mit <i>Offset (0|0)</i>.
+	 * @param diagonale	Die Diagonale der Box <i>von der linken, oberen Ecke hin zur rechten, unteren Ecke</i>.
+	 */
+	public BoxCollider(Vektor diagonale) {
+		this(diagonale, Vektor.NULLVEKTOR);
+	}
+	
+	/**
 	 * Vollständiger Konstruktor. Erstellt einen neuen Box-Collider mit allen relevanten Parametern.
 	 * @param offset		Der Offset für diesen Collider.
 	 * @param diagonale		Die Diagonale der Box <i>von der linken, oberen Ecke hin zur rechten, unteren Ecke</i>.
 	 */
-	public BoxCollider(Vektor offset, Vektor diagonale) {
+	public BoxCollider(Vektor diagonale,Vektor offset) {
 		this.offset = offset;
 		this.diagonale = diagonale;
 	}
