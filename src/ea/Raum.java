@@ -234,23 +234,25 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Meldet einen <code>FallReagierbar</code>-Listener an.<br />
+	 * Meldet einen <code>FallReagierbar</code>-Listener an.
+	 *
 	 * Dieser wird ab sofort immer dann informiert, wenn dieses <code>Raum</code>-Objekt unter eine bestimmte
-	 * Hoehe faellt. Diese wird als <b>kritische Tiefe</b> bezeichnet. Der Listener wird ab diesem Zeitpunkt
+	 * Höhe faellt. Diese wird als <b>kritische Tiefe</b> bezeichnet. Der Listener wird ab diesem Zeitpunkt
 	 * <i>dauerhaft aufgerufen, solange das Objekt unterhalb dieser Toleranzgrenze ist</i>. Deshalb sollte in der
-	 * implementierten Reaktionsmethode des <code>FallReagierbar</code>-Interfaces die Hoehe so neu gesetzt werden, dass
-	 * das <code>Raum</code>-Objekt nicht mehr unterhalb der <b>kritischen Tiefe</b> ist.<br />
-	 * <br />
-	 * <b>ACHTUNG!</b><br />
-	 * Jedes <code>Raum</code>-Objekt hat <b>HOECHSTENS</b> einen <code>FallReagierbar</code>-Listener. Das bedeutet, dass
-	 * es <b>nicht möglich ist, dass mehrere <code>FallReagierbar</code>-Listener ueber ein Objekt informiert werden.<br />
-	 * <br />
-	 * Die <b>kritische Tiefe</b> jedoch laesst sich problemlos immer wieder neu Setzen, ueber die Methode <code>kritischeTiefeSetzen(int tiefe)</code>.<br />
-	 * <br />
-	 * Diese Methode mach natuerlich nur Sinn, wenn sie an einem <i>Aktiv-Objekt</i> ausgefuehrt wird. Andernfalls gibt es eine Fehlermeldung!
+	 * implementierten Reaktionsmethode des <code>FallReagierbar</code>-Interfaces die Höhe so neu gesetzt werden, dass
+	 * das <code>Raum</code>-Objekt nicht mehr unterhalb der <b>kritischen Tiefe</b> ist.
+	 *
+	 * <b>ACHTUNG!</b>
+	 *
+	 * Jedes <code>Raum</code>-Objekt hat <b>HÖCHSTENS</b> einen <code>FallReagierbar</code>-Listener. Das bedeutet, dass
+	 * es <b>nicht möglich ist, dass mehrere <code>FallReagierbar</code>-Listener über ein Objekt informiert werden</b>.
+	 *
+	 * Die <b>kritische Tiefe</b> jedoch lässt sich problemlos immer wieder neu setzen, über die Methode <code>kritischeTiefeSetzen(int tiefe)</code>.
+	 *
+	 * Diese Methode mach natürlich nur Sinn, wenn sie an einem <i>Aktiv-Objekt</i> ausgeführt wird. Andernfalls gibt es eine Fehlermeldung!
 	 * 
 	 * @param f
-	 *            Das anzumeldende <code>FallReagierbar
+	 *            Das anzumeldende <code>FallReagierbar</code>
 	 * @param kritischeTiefe
 	 *            Die Tiefe ab der der Listener <i>dauerhaft</i> durch den Aufruf seiner Reaktionsmethode
 	 *            informiert wird, solange das <code>Raum</code>-Objekt hierunter ist.
@@ -610,14 +612,14 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	
 	/**
 	 * Diese Methode ordnet einem String ein Color-Objekt zu.<br />
-	 * Hierdurch ist in den Klassen ausserhalb der Engine keine awt-Klasse noetig.
+	 * Hierdurch ist in den Klassen außerhalb der Engine keine awt-Klasse nötig.
 	 * 
 	 * @param t
 	 *            Der Name der Farbe.<br />
 	 *            Ein Katalog mit allen moeglichen Namen findet sich im <b>Handbuch</b>
 	 * @return Das Farbobjekt zum String; ist Color.black bei unzuordnembaren String
 	 */
-	public static final Color zuFarbeKonvertieren(String t) {
+	public static Color zuFarbeKonvertieren(String t) {
 		Color c;
 		
 		switch (t.toLowerCase(Locale.GERMAN)) {
@@ -680,8 +682,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	
 	/**
 	 * Meldet ein Leuchtend-Objekt an dem vorgesehenen LeuchtErsteller Objekt an.<br />
-	 * Diese Methode wird dafuer vorgesehen, dass sie <b>nur im Konstruktor der dieses Interface implementierenden Instanz aufgerufen wird</b>, und zwar mit dem <code>this</code>-Pointer, sprich:<br />
-	 * <code>super.leuchterAnmelden(this);</code><br />
+	 * Diese Methode ist dafür vorgesehen, dass sie <b>nur im Konstruktor der dieses Interface implementierenden Instanz aufgerufen wird</b>, und zwar mit dem <code>this</code>-Pointer, sprich:<br />
+	 * :<code>super.leuchterAnmelden(this);</code>
+	 *
 	 * Prinzipiell sollte diese Methode nur innerhalb der Engine aufgerufen werden
 	 * 
 	 * @param l
@@ -692,7 +695,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Meldet ein Leuchtend-Objekt an dem vorgesehenen LeuchtMacher-Objekt ab.<br />
+	 * Meldet ein Leuchtend-Objekt am vorgesehenen LeuchtMacher-Objekt ab.<br />
 	 * Prinzipiell sollte diese Methode nur innerhalb der Engine aufgerufen werden
 	 * 
 	 * @param l
@@ -704,20 +707,23 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	
 	/**
 	 * Interne Testmethode, die ein mathematisch simples Konzept hat.<br />
-	 * Es gibt kein Problem, wenn die Zahlen dasselbe Vorzeichen haben, oder wenn eine der beiden Zahlen gleich 0 ist.
+	 * Es gibt kein Problem, wenn die Zahlen das selbe Vorzeichen haben
+	 * oder wenn eine der beiden Zahlen gleich 0 ist.
 	 * 
-	 * @return Ob diese Zahlenkonstellation ein Problem ist.
+	 * @return <code>true</code>, falls diese Zahlenkonstellation ein Problem ist, sonst <code>false</code>.
 	 */
-	protected static final boolean problem(int z1, int z2) {
+	protected static boolean problem(int z1, int z2) {
 		if (z1 == 0 || z2 == 0) {
 			return false;
 		}
+
 		return (z1 < 0 ^ z2 < 0);
 	}
 	
 	/**
 	 * Die Basiszeichenmethode.<br />
-	 * Sie schliesst eine Fallabfrage wegen der Sichtbarkeit ein. Diese Methode wird bei den einzelnen Gliedern eines Knotens aufgerufen.
+	 * Sie schließt eine Fallabfrage zur Sichtbarkeit ein.
+	 * Diese Methode wird bei den einzelnen Gliedern eines Knotens aufgerufen.
 	 * 
 	 * @param g
 	 *            Das zeichnende Graphics-Objekt
@@ -735,53 +741,67 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Setzt die Position des Objektes gaenzlich neu auf der Zeichenebene.<br />
+	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene.
+	 *
 	 * Hierbei wird die abstrakte Methode verschieben() und dimension() angewandt, um eine zur
-	 * vorherigen Position relative Verschiebung zu machen, die an die gewuenschte Zielposition faert.<br />
+	 * vorherigen Position relative Verschiebung zu erreichen, die an die gewünschte Zielposition fährt.
+	 *
 	 * <b>ACHTUNG !!!</b>
-	 * Bei den ALLEN Objekten ist die eingegebene Position die Links oben liegende Ecke des die Figur
-	 * optimal umschreibenden zu den Fensterbegrenzungen parallelen Rechtecks.<br />
-	 * Das heisst, dass bei Kreisen zum Beispiel <b>nicht</b> die des Mittelpunktes
-	 * ist! Hierfuer gibt es die Sondermethode <code>mittelpunktSetzen(int x, int y)</code>.
+	 *
+	 * Bei den ALLEN Objekten ist die eingegebene Position die links-oben liegende Ecke des die Figur
+	 * optimal umschreibenden zu den Fensterbegrenzungen parallelen Rechtecks.
+	 *
+	 * Das heißt, dass bei Kreisen zum Beispiel <b>nicht</b> die des Mittelpunktes
+	 * ist! Hierfür gibt es die Sondermethode <code>mittelpunktSetzen(int x, int y)</code>.
 	 * 
 	 * @param p
 	 *            Der neue Zielpunkt
-	 * @see #positionSetzen(int, int)
+	 * @see #positionSetzen(float, float)
 	 */
 	public void positionSetzen(Punkt p) {
-		BoundingRechteck r = this.dimension();
-		this.verschieben(new Vektor(p.x - r.x, p.y - r.y));
+		BoundingRechteck r = dimension();
+		verschieben(new Vektor(p.x - r.x, p.y - r.y));
 	}
-	
+
 	/**
-	 * 
+	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene.
+	 *
+	 * Hierbei wird die abstrakte Methode verschieben() und dimension() angewandt, um eine zur
+	 * vorherigen Position relative Verschiebung zu erreichen, die an die gewünschte Zielposition fährt.
+	 *
+	 * <b>ACHTUNG !!!</b>
+	 *
+	 * Bei den ALLEN Objekten ist die eingegebene Position die links-oben liegende Ecke des die Figur
+	 * optimal umschreibenden zu den Fensterbegrenzungen parallelen Rechtecks.
+	 *
+	 * Das heißt, dass bei Kreisen zum Beispiel <b>nicht</b> die des Mittelpunktes
+	 * ist! Hierfür gibt es die Sondermethode <code>mittelpunktSetzen(int x, int y)</code>.
+	 *
 	 * @param x
-	 *            Die neue X-Koordinate
+	 *            neue <code>x</code>-Koordinate
 	 * @param y
-	 *            Die neue Y-Koordinate
+	 *            neue <code>y</code>-Koordinate
 	 * @see #mittelpunktSetzen(int, int)
 	 * @see #positionSetzen(Punkt)
 	 */
-	public void positionSetzen(int x, int y) {
-		this.positionSetzen(new Punkt(x, y));
-	}
-	
 	public void positionSetzen(float x, float y) {
 		this.positionSetzen(new Punkt(x, y));
 	}
 	
 	/**
-	 * Verschiebt die Raum-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.<br />
-	 * Diese Methode Arbeitet nach dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks durch den Aufruf
-	 * der Methode <code>zentrum()</code>. Daher ist diese Methode im Anwand auf ein Knoten-Objekt nicht unbedingt sinnvoll.
+	 * Verschiebt die Raum-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
+	 *
+	 * Diese Methode arbeitet nach dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
+	 * durch den Aufruf der Methode <code>zentrum()</code>. Daher ist diese Methode in der Anwendung
+	 * auf ein Knoten-Objekt nicht unbedingt sinnvoll.
 	 * 
 	 * @param x
-	 *            Die X-Koordinate des neuen Mittelpunktes des Objektes
+	 *            Die <code>x</code>-Koordinate des neuen Mittelpunktes des Objektes
 	 * @param y
-	 *            Die Y-Koordinate des neuen Mittelpunktes des Objektes
+	 *            Die <code>y</code>-Koordinate des neuen Mittelpunktes des Objektes
 	 * @see #mittelpunktSetzen(Punkt)
 	 * @see #verschieben(Vektor)
-	 * @see #positionSetzen(int, int)
+	 * @see #positionSetzen(float, float)
 	 * @see #zentrum()
 	 */
 	public void mittelpunktSetzen(int x, int y) {
@@ -798,7 +818,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Der neue Mittelpunkt des Raum-Objekts
 	 * @see #mittelpunktSetzen(int, int)
 	 * @see #verschieben(Vektor)
-	 * @see #positionSetzen(int, int)
+	 * @see #positionSetzen(float, float)
 	 * @see #zentrum()
 	 */
 	public void mittelpunktSetzen(Punkt p) {
@@ -940,12 +960,15 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 			BoundingRechteck b = Fenster.instanz().getCam().position();
 			p = p.verschobeneInstanz(new Vektor(-b.x, -b.y));
 		}
+
 		BoundingRechteck[] dim = flaechen();
-		for (int i = 0; i < dim.length; i++) {
-			if (dim[i].istIn(p)) {
+
+		for(BoundingRechteck r : dim) {
+			if (r.istIn(p)) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 	
@@ -1041,25 +1064,24 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Berechnet das Zentrum des Raum-Objekts als Punkt auf der Zeichenebene.<br />
-	 * Das Zentrum wird ueber die Methode <code>dimension()</code> berehcnet, und zwar ueber die Methode des resultierenden BoundingRechtecks.<br />
-	 * <br />
-	 * <code>dimension().zentrum()</code><br />
-	 * <br />
-	 * So erhaelt man das Zentrum dieses Raumobjekts
+	 * Berechnet das Zentrum des Raum-Objekts als Punkt auf der Zeichenebene.
+	 *
+	 * Das Zentrum wird über die Methode <code>dimension()</code> berechnet,
+	 * und zwar über die Methode des resultierenden BoundingRechtecks:<br />
+	 * <code>dimension().zentrum()</code>
 	 * 
-	 * @return Ein Punkt-Objekt mit den Koordinaten des aktuellen Zentrums des Raum-Objekts.
+	 * @return Zentrum dieses Raumobjekts
 	 */
 	public Punkt zentrum() {
 		return this.dimension().zentrum();
 	}
 	
 	/**
-	 * Berechnet den Hoehenunterschied zwischen dem Fuss des hoeheren und dem Kopf des tieferen Raum-Objekts.
+	 * Berechnet den Höhenunterschied zwischen dem Fuß des höheren und dem Kopf des tieferen Raum-Objekts.
 	 * 
 	 * @param m
-	 *            Das Raum-Objekt, dessen Hoehenunterschied zu diesem gefunden werden soll
-	 * @return Der <b>absolute (also niemals negative)</b> Unterschied in der Hoehe zwiscchen den beiden Objekten. <b>Ueberlagern sie sich, so ist der Rueckgabewert 0</b>!
+	 *            Das Raum-Objekt, dessen Höhenunterschied zu diesem gefunden werden soll
+	 * @return Der <b>absolute (also niemals negative)</b> Unterschied in der Höhe zwiscchen den beiden Objekten. <b>Überlagern sie sich, so ist der Rückgabewert 0</b>!
 	 */
 	public int hoehenUnterschied(Raum m) {
 		return (int) this.dimension().hoehenUnterschied(m.dimension());
@@ -1077,19 +1099,20 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Prueft, ob dieses Raum-Objekt in ener bestimmten festen Flaeche ist.
+	 * Prüft, ob dieses Raum-Objekt in ener bestimmten festen Fläche ist.
 	 * 
 	 * @param r
-	 *            Die kritische Flaeche, auf deren schneiden mit diesem Raum-Objekt getestet werden soll.
-	 * @return <code>true</code>, wenn dieses Raum-Objekt sich mit dem BoundingRechteck schneidet, sonst <code>false</code>
+	 *            Die kritische Fläche, auf deren schneiden mit diesem Raum-Objekt getestet werden soll.
+	 * @return <code>true</code>, wenn dieses Raum-Objekt sich mit dem BoundingRechteck schneidet, sonst <code>false</code>.
 	 */
 	public boolean inFlaeche(BoundingRechteck r) {
 		BoundingRechteck[] fl = this.flaechen();
-		for (int i = 0; i < fl.length; i++) {
-			if (fl[i].schneidetBasic(r)) {
+		for(BoundingRechteck fr : fl) {
+			if (fr.schneidetBasic(r)) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 	
@@ -1119,7 +1142,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Grad, um die gedreht werden soll.
 	 */
 	public void drehenRelativ(double grad) {
-		this.drehung += grad;
+		this.drehung -= grad;
 	}
 	
 	/**
@@ -1131,10 +1154,14 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	@Override
 	public int compareTo(Raum r) {
-		if (zIndex < r.zIndex)
+		if (zIndex < r.zIndex) {
 			return 1;
-		if (zIndex > r.zIndex)
+		}
+
+		if (zIndex > r.zIndex) {
 			return -1;
+		}
+
 		return 0;
 	}
 }
