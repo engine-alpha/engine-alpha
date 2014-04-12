@@ -19,7 +19,7 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
+import ea.internal.collision.*;
 import ea.internal.gra.PixelFeld;
 
 import java.awt.*;
@@ -489,35 +489,6 @@ public class Figur extends Raum {
 		liste.remove(this);
 	}
 	
-	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 * 
-	 * @param r
-	 *            Das Objekt, das auf Kollision mit diesem getestet werden soll.
-	 * @return <code>true</code>, wenn sich beide Objekte schneiden. <code>false</code>, wenn nicht.
-	 */
-	@Override
-	public boolean schneidet(Raum r) {
-		if(r == null) {
-			return false;
-		}
-
-		if (roh) {
-			return this.dimension().schneidetBasic(r.dimension());
-		} else {
-			BoundingRechteck[] a = this.flaechen();
-			BoundingRechteck[] b = r.flaechen();
-			for (int i = 0; i < a.length; i++) {
-				for (int j = 0; j < b.length; j++) {
-					if (a[i].schneidetBasic(b[j])) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-	}
-	
 	@Override
 	public BoundingRechteck[] flaechen() {
 		return animation[aktuelle].flaechen(position.x, position.y);
@@ -599,11 +570,13 @@ public class Figur extends Raum {
 	
 	/**
 	 * {@inheritDoc}
-	 * Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden <code>BoundingRechteck</code>
-	 * erzeugt, dass über die <code>dimension()</code>-Methode berechnet wird.
 	 */
 	@Override
 	public Collider erzeugeCollider() {
-		return erzeugeLazyCollider();
+		ColliderGroup gc = new ColliderGroup();
+		for(BoundingRechteck r : flaechen()) {
+			gc.addCollider(BoxCollider.fromBoundingRechteck(new Vektor(r.x, r.y), r));
+		}
+		return gc;
 	}
 }

@@ -29,7 +29,7 @@ import ea.internal.util.Logger;
  * @author Michael Andonie
  */
 public final class Vektor
-{
+implements Cloneable {
 	/**
 	 * Konstante fuer einen Bewegungslosen Vektor (Werte 0|0)
 	 */
@@ -437,5 +437,14 @@ public final class Vektor
      */
 	public int dY() {
 		return (int)y;
+	}
+	
+	/**
+	 * Erstellt ein <b>neues <code>Vektor</code>-Objekt mit demselben Zustan</b>.
+	 * @return eine neue Instanz von <code>Vektor</code> mit den selben Koordinaten (x|y)
+	 */
+	@Override
+	public Vektor clone() {
+		return new Vektor(x,y);
 	}
 }

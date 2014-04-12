@@ -29,8 +29,9 @@ public class ColliderGroup extends Collider {
 	 */
 	@Override
 	public boolean verursachtCollision(Punkt positionThis, Punkt positionOther, Collider collider) {
+		Punkt positionMitOffset = positionThis.verschobenerPunkt(offset);
 		for(Collider c : colliders) {
-			if(c.verursachtCollision(positionThis, positionOther, collider))
+			if(c.verursachtCollision(positionMitOffset, positionOther, collider))
 				return true;
 		}
 		return false;
@@ -43,6 +44,18 @@ public class ColliderGroup extends Collider {
 	@Override
 	public boolean istNullCollider() {
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collider clone() {
+		ColliderGroup group = new ColliderGroup();
+		for(Collider c : colliders) {
+			group.addCollider(c.clone());
+		}
+		return group;
 	}
 	
 }

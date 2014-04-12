@@ -219,29 +219,6 @@ public class Knoten extends Raum implements Listung {
 	}
 	
 	/**
-	 * Ob dieser Knoten ein beliebiges anderes <code>Raum</code>-Objekt schneidet.
-	 * 
-	 * @param m
-	 *            Das auf Kollision mit diesem Knoten zu testende <code>Raum</code>-Objekt
-	 * @return <code>true</code>, wenn mindestens eines der an diesem Knoten anliegenden <code>Raum</code>-Objekte
-	 *         das zu testenden Objekt schneidet.
-	 */
-	@Override
-	public boolean schneidet(Raum m) {
-		if(m == null) {
-			return false;
-		}
-
-		for (int i = list.size() - 1; i >= 0; i--) {
-			if (list.get(i).schneidet(m)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	/**
 	 * Zeichnet den Knoten.<br />
 	 * Das heisst, der Zeichnen-Befehl wird an die Unterobjekte weitergetragen.<br />
 	 * Diese Methode ist nur intern von Bedeutung

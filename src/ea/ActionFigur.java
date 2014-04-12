@@ -432,31 +432,6 @@ public class ActionFigur extends Raum {
 	}
 	
 	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 * 
-	 * @param r
-	 *            Das Objekt, das auf Kollision mit diesem getestet werden soll.
-	 * @return TRUE, wenn sich beide Objekte schneiden.
-	 */
-	@Override
-	public boolean schneidet(Raum r) {
-		if(r == null) {
-			return false;
-		}
-
-		BoundingRechteck[] mini = r.flaechen();
-		BoundingRechteck[] eig = this.flaechen();
-		for (int i = 0; i < mini.length; i++) {
-			for (int j = 0; j < eig.length; j++) {
-				if (mini[i].schneidetBasic(eig[j])) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
 	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll einzuschliessen</b>.
 	 * @see Raum#dimension()
 	 */

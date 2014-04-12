@@ -42,4 +42,15 @@ extends Collider {
 	public boolean istNullCollider() {
 		return true;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * Nachdem es nur eine unterscheidbare Instanz von <code>NullCollider</code> gibt,
+	 * wird hier aus Performance-Gründen eine Referenz auf das Objekt selbst
+	 * zurückgegeben, um nicht unnötig Speicher zu allozieren.
+	 */
+	@Override
+	public Collider clone() {
+		return this;
+	}
 }

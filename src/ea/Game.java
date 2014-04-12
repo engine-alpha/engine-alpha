@@ -37,6 +37,7 @@ import ea.internal.gui.Fenster;
 import ea.internal.gui.Frage;
 import ea.internal.gui.HighScoreFenster;
 import ea.internal.gui.Nachricht;
+import ea.internal.phy.Physik;
 import ea.internal.util.Logger;
 
 /**
@@ -588,6 +589,22 @@ public abstract class Game implements TastenReagierbar {
 			maus.uebernehmeAlleListener(alteMaus);
 		}
 		fenster.anmelden(maus);
+	}
+	
+	/**
+	 * Meldet ein <code>KollisionsReagierbar</code>-Interface an. Ab sofort wird es mit dem spezifizierten
+	 * <code>code</code> aufgerufen, sollten sich die <code>Raum</code>-Objekte <code>r1</code> und <code>r2</code>
+	 * schneiden.
+	 * @param reagierbar	Das anzumeldende <code>KollisionsReagierbar</code>-Interface, das ab sofort von
+	 * Kollisionen von <code>r1</code> und <code>r2</code> informiert werden soll.
+	 * @param r1			Ein <code>Raum</code>-Objekt
+	 * @param r2			Ein zweites <code>Raum</code>-Objekt
+	 * @param code			Ein beliebiger Code. Dieser kann verwendet werden, um mit einem Interface mehrere
+	 * 						Kollisionen <i>unterscheidbar</i> zu behandeln. Er wird im Aufruf der
+	 * 						<code>kollision(int)</code> als Parameter übergeben.
+	 */
+	public void kollisionsReagierbarAnmelden(KollisionsReagierbar reagierbar, Raum r1, Raum r2, int code) {
+		Physik.getPhysik().anmelden(reagierbar, r1, r2, code);
 	}
 	
 	/**

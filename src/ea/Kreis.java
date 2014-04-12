@@ -76,34 +76,6 @@ public class Kreis extends RegEck {
 		return radius;
 	}
 	
-	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 * 
-	 * @param r
-	 *            Das Objekt, das auf Kollision mit diesem getestet werden soll.
-	 * @return TRUE, wenn sich beide Objekte schneiden.
-	 */
-	@Override
-	public boolean schneidet(Raum m) {
-		if(m == null) {
-			return false;
-		}
-
-		if (m instanceof Kreis) {
-			Punkt p1 = this.mittelPunkt();
-			Punkt p2 = m.mittelPunkt();
-			double dif = Math.sqrt(((p1.x - p2.x) * (p1.x - p2.x)) + ((p1.y - p2.y) * (p1.y - p2.y)));
-			if (dif < this.radius() + ((Kreis) m).radius()) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return super.schneidet(m);
-		}
-		
-	}
-	
 	@Override
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		// Kreis muss nicht gedreht werden,

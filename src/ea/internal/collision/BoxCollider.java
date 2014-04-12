@@ -33,6 +33,23 @@ extends Collider {
 	}
 	
 	/**
+	 * Default-Konstruktor. Erstellt einen Box-Collider mit Offset (0|0) und Länge = 0, Breite = 0.
+	 */
+	public BoxCollider() {
+		super();
+	}
+	
+	/**
+	 * Vollständiger Konstruktor. Erstellt einen neuen Box-Collider mit allen relevanten Parametern.
+	 * @param offset		Der Offset für diesen Collider.
+	 * @param diagonale		Die Diagonale der Box <i>von der linken, oberen Ecke hin zur rechten, unteren Ecke</i>.
+	 */
+	public BoxCollider(Vektor offset, Vektor diagonale) {
+		this.offset = offset;
+		this.diagonale = diagonale;
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -54,6 +71,14 @@ extends Collider {
 	@Override
 	public boolean istNullCollider() {
 		return false;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collider clone() {
+		return new BoxCollider(offset.clone(), diagonale.clone());
 	}
 	
 	/**

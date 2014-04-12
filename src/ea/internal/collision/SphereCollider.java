@@ -54,4 +54,12 @@ extends Collider {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collider clone() {
+		return new SphereCollider(durchmesser);
+	}
+
 }

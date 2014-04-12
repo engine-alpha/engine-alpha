@@ -264,21 +264,6 @@ public class Bild extends Raum {
 	}
 	
 	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 * 
-	 * @param r
-	 *            Das Objekt, das auf Kollision mit diesem getestet werden soll.
-	 * @return TRUE, wenn sich beide Objekte schneiden.
-	 */
-	public boolean schneidet(Raum r) {
-		if(r == null) {
-			return false;
-		}
-
-		return r.dimension().schneidetBasic(this.dimension());
-	}
-	
-	/**
 	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll einzuschliessen</b>.
 	 */
 	public BoundingRechteck dimension() {

@@ -873,7 +873,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 *            Das Objekt, das auf Kollision mit diesem getestet werden soll.
 	 * @return TRUE, wenn sich beide Objekte schneiden.
 	 */
-	public abstract boolean schneidet(Raum r);
+	public final boolean schneidet(Raum r) {
+		return this.aktuellerCollider().verursachtCollision(position, r.position, r.aktuellerCollider());
+	}
 	
 	/**
 	 * Zeichnet das Objekt.
@@ -962,10 +964,16 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Gibt den <b>aktuellen Collider</b> dieses </code>Raum</code>-Objektes zurück.
-	 * @return	Der aktuelle Collider dieses </code>Raum</code>-Objektes.
+	 * Gibt den <i>aktuellen Collider</i> dieses <code>Raum</code>-Objekts zurück.
+	 * @return der aktuelle Collider dieses <code>Raum</code>-Objekts, der für die Collision Detection
+	 * 			verwendet wird.
+	 * @see #colliderSetzen(Collider)
+	 * @see #schneidet(Raum)
 	 */
-	public final Collider collider() {
+	public final Collider aktuellerCollider() {
+		if (collider.istNullCollider()) {
+			return collider = erzeugeCollider();
+		}
 		return collider;
 	}
 	
@@ -990,9 +998,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see #colliderSetzen(Collider)
 	 */
 	public void boundsUebernehmen(Raum boundHilfe) {
-		Collider c = boundHilfe.collider();
+		Collider c = boundHilfe.aktuellerCollider();
 		c.offsetSetzen(boundHilfe.position().alsVektor());
-		this.collider = boundHilfe.collider();
+		this.collider = c;
 	}
 	
 	/**

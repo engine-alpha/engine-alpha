@@ -7,6 +7,7 @@ package ea;
 
 import ea.internal.collision.BoxCollider;
 import ea.internal.collision.Collider;
+import ea.internal.collision.ColliderGroup;
 import ea.internal.util.Logger;
 
 import java.awt.*;
@@ -99,28 +100,6 @@ public class CombiFigur extends Raum {
 	}
 	
 	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 * 
-	 * @param r
-	 *            Das Objekt, das auf Kollision mit diesem getestet werden soll.
-	 * @return TRUE, wenn sich beide Objekte schneiden.
-	 */
-	@Override
-	public boolean schneidet(Raum r) {
-		if(r == null) {
-			return false;
-		}
-
-		for (int i = 0; i < figuren.length; i++) {
-			if (figuren[i].schneidet(r)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-	
-	/**
 	 * Zeichnet das Objekt.
 	 * 
 	 * @param g
@@ -176,11 +155,13 @@ public class CombiFigur extends Raum {
 
 	/**
 	 * {@inheritDoc}
-	 * Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden <code>BoundingRechteck</code>
-	 * erzeugt, dass über die <code>dimension()</code>-Methode berechnet wird.
 	 */
 	@Override
 	public Collider erzeugeCollider() {
+		ColliderGroup cg = new ColliderGroup();
+		for(ActionFigur f : figuren) {
+			cg.addCollider(f.erzeugeCollider());
+		}
 		return erzeugeLazyCollider();
 	}
 }

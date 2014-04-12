@@ -154,30 +154,6 @@ public class Dreieck extends Geometrie {
 	}
 	
 	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.<br />
-	 * Die Wichtigste Schneidemethode, da diese auch ausserhalb der Engine verwendet werden soll!
-	 */
-	@Override
-	public boolean schneidet(Raum r) {
-		if(r == null) {
-			return false;
-		}
-
-		if (r instanceof Listung) {
-			BoundingRechteck[] f = r.flaechen();
-			for (int i = 0; i < f.length; i++) {
-				if (this.schneidetBasic(f[i])) {
-					return true;
-				}
-			}
-		} else {
-			return this.dimension().schneidetBasic(r.dimension());
-		}
-
-		return false;
-	}
-	
-	/**
 	 * Gibt an, ob diese Dreieck sich mit einem anderen schneidet.<br />
 	 * Dem Test zugrunde liegt folgene Mathematische Schlussfolgerung als Bedingung fuer das schneiden:<br/ >
 	 * <b> 2 Dreiecke schneiden sich,<br />
@@ -233,44 +209,6 @@ public class Dreieck extends Geometrie {
 			ret[i] = new Punkt(x[i], y[i]);
 		}
 		return ret;
-	}
-	
-	/**
-	 * @return Ein Gerade-Array der Groesse 3, das die Gerade-Objekte beinhaltet, die dieses Dreieck beschreiben.
-	 */
-	public Gerade[] geraden() {
-		Gerade[] ret = {
-			new Gerade(new Punkt(x[0], y[0]), new Punkt(x[1], y[1])),
-			new Gerade(new Punkt(x[0], y[0]), new Punkt(x[2], y[2])),
-			new Gerade(new Punkt(x[1], y[1]), new Punkt(x[2], y[2])),
-		};
-		return ret;
-	}
-	
-	/**
-	 * @return Die obere Gerade des Rechtecks.<br />
-	 *         <b>Zur Erlaeuterung der Geradennamen: Siehe Handbuch!</b>
-	 */
-	public Gerade obere() {
-		Punkt[] punkte = punkte();
-		Punkt p1 = punkte[0];
-		Punkt p2;
-		for (int i = 1; i < 3; i++) {
-			if (punkte[i].y > p1.y) {
-				p1 = punkte[i];
-			}
-		}
-		if (p1 == punkte[0]) {
-			p2 = punkte[1];
-		} else {
-			p2 = punkte[0];
-		}
-		for (int i = 0; i < 3; i++) {
-			if (punkte[i].y > p2.y && punkte[i] != p1) {
-				p2 = punkte[i];
-			}
-		}
-		return new Gerade(p1, p2);
 	}
 	
 	/**

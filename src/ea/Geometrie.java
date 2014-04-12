@@ -91,26 +91,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	}
 	
 	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 * 
-	 * @param r
-	 *            Ein beliebiges anderes grafisches Objekt
-	 * @return <code>true</code>, wenn sich beide Objekte schneiden, sonst <code>false</code>
-	 */
-	public boolean schneidet(Raum r) {
-		if(r == null) {
-			return false;
-		}
-
-		for (int i = 0; i < formen.length; i++) {
-			if (formen[i].schneidet(r)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
 	 * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br />
 	 * Dadurch faerbt sich im Endeffekt das ganze Objekt neu ein.
 	 * 

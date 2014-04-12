@@ -432,6 +432,7 @@ public class PixelFeld implements java.io.Serializable {
 		return ret;
 	}
 
+
 	/**
 	 * Errechnet aus zwei Zahlen die Summe und setzt das Ergebnis, sofern nicht
 	 * im Definitionsbereich der Farbwerte auf den naeheren Grenzwert (0 bzw.

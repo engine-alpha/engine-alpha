@@ -12,7 +12,8 @@ import ea.Vektor;
  * @author Andonie
  *
  */
-public abstract class Collider {
+public abstract class Collider 
+implements Cloneable {
 	
 	/**
 	 * Logische Abfrage für die Kollision zweier Boxen.
@@ -111,4 +112,12 @@ public abstract class Collider {
 	 * @return	<code>true</code>, falls dieser Collider ein <i>Null-Collider</i> ist, sonst <code>false</code>.
 	 */
 	public abstract boolean istNullCollider();
+	
+	/**
+	 * Überschriebene Clone-Methode für effizientes, <b>tiefgehendes</b> klonen
+	 * von Collidern. Das bedeutet, dass auch tiefer liegende Referenzen <b>frisch 
+	 * geklont</b> werden, bis in die tiefste Referenzebene.
+	 */
+	@Override
+	public abstract Collider clone();
 }

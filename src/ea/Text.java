@@ -492,22 +492,6 @@ public class Text extends Raum implements Leuchtend {
 	}
 	
 	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 * 
-	 * @param r
-	 *            Das Objekt, das auf Kollision mit diesem getestet werden soll.
-	 * @return TRUE, wenn sich beide Objekte schneiden.
-	 */
-	@Override
-	public boolean schneidet(Raum r) {
-		if(r == null) {
-			return false;
-		}
-
-		return r.dimension().schneidetBasic(this.dimension());
-	}
-	
-	/**
 	 * Zeichnet das Objekt.
 	 * 
 	 * @param g
