@@ -52,8 +52,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	private static final LeuchtMacher macher = new LeuchtMacher();
 	
 	/**
-	 * Der Animations-Manager, �ber den alle Animationen laufen.<br />
-	 * Wird zum L�schen aller Referenzen auf dieses Objekt verwendet.
+	 * Der Animations-Manager, über den alle Animationen laufen.<br />
+	 * Wird zum Löschen aller Referenzen auf dieses Objekt verwendet.
 	 */
 	private static final AnimationsManager animationsManager = AnimationsManager.getAnimationsManager();
 	
@@ -905,8 +905,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Dreht die Zeichenfläche wieder zur�ck in den Ausgangszustand.
-	 * <b><i>Diese Methode sollte nicht au�erhalb der Engine verwendet werden.</i></b>
+	 * Dreht die Zeichenfläche wieder zurück in den Ausgangszustand.
+	 * <b><i>Diese Methode sollte nicht außerhalb der Engine verwendet werden.</i></b>
 	 * 
 	 * @see #drehung
 	 * @see #gibDrehung()
