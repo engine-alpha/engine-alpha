@@ -41,7 +41,7 @@ public class Knoten extends Raum implements Listung {
 	 * Konstruktor für Objekte der Klasse Knoten
 	 */
 	public Knoten() {
-		list = new Vector<Raum>();
+		list = new Vector<>();
 	}
 	
 	/**
@@ -300,8 +300,9 @@ public class Knoten extends Raum implements Listung {
 		for (int i = list.size() - 1; i >= 0; i--) {
 			BoundingRechteck[] arr = list.get(i).flaechen();
 			
-			for (BoundingRechteck br : arr)
+			for (BoundingRechteck br : arr) {
 				data.add(br);
+			}
 		}
 		
 		return data.toArray(new BoundingRechteck[0]);

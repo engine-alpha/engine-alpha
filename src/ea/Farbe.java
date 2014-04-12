@@ -23,34 +23,32 @@ import java.awt.Color;
 import java.io.Serializable;
 
 /**
- * Die Klasse Farbe ermoeglicht ein sehr einfaches Handling mit allen Farben. Sie basiert auf der Klasse <code>java.awt.Color</code>, erweitert diese jedoch aufgrund ihrer vielen finalen Eigenschaften
- * nicht, sondern handelt
- * vielmehr eine Referenz auf ein solches Objekt.<br />
- * <br />
- * <br />
- * <b>Ein Verwendungsbeispiel:</b><br />
- * <br />
- * <code>
- * //Ein Rechteck<br />
- * Rechteck rechteck = new Rechteck(20, 20, 100, 200);<br />
- * <br />
- * //Die Farbe erstellen, die das Rechteck erhalten soll (ein helles Grau)<br />
- * Farbe farbe = new Farbe(200, 200, 200);<br />
- * <br />
- * //Die Farbe dem Rechteck uebergeben<br />
- * rechteck.farbeSetzen(farbe);<br />
- * <br />
- * //Das Rechteck an der Wurzel (hierzu siehe Klasse Knoten und Klasse Game) der Game-Klasse anmelden,<br />
- * //um ihn auch im Fenster sehen zu koennen!<br />
- * wurzel.add(rechteck);<br /><br /><br /><br /><br />
+ * Die Klasse Farbe ermöglicht ein sehr einfaches Handling mit allen Farben.
+ * Sie basiert auf der Klasse <code>java.awt.Color</code>,
+ * erweitert diese jedoch aufgrund ihrer vielen finalen Eigenschaften
+ * nicht, sondern arbeitet mit einer Referenz auf ein solches Objekt.
+ *
+ * <b>Ein Verwendungsbeispiel:</b>
+ * <pre>
+ * // Ein Rechteck
+ * Rechteck rechteck = new Rechteck(20, 20, 100, 200);
+ *
+ * // Die Farbe erstellen, die das Rechteck erhalten soll (ein helles Grau)
+ * Farbe farbe = new Farbe(200, 200, 200);
+ *
+ * // Die Farbe dem Rechteck uebergeben
+ * rechteck.farbeSetzen(farbe);
+ *
+ * // Das Rechteck an der Wurzel (hierzu siehe Klasse Knoten und Klasse Game) der Game-Klasse anmelden,
+ * // um ihn auch im Fenster sehen zu koennen!
+ * wurzel.add(rechteck);
  * 
- * //Geschachtelte Form, so empfiehlt es sich meistens eher (da platzsparender):<br />
+ * // Geschachtelte Form, so empfiehlt es sich meistens eher (da platzsparender):
  * rechteck.farbeSetzen(new Farbe(200, 200, 200));
- * </code>
+ * </pre>
  * 
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
 public final class Farbe implements Serializable {
 	/**
 	 * Der Wert dieser Farbe
@@ -141,6 +139,6 @@ public final class Farbe implements Serializable {
 	 * @return <code>true</code>, wenn der Alpha-Wert der Farbe <b>nicht 255</b> ist, sonst automatisch <code>false</code>.
 	 */
 	public boolean undurchsichtig() {
-		return (wert.getAlpha() == 255);
+		return wert.getAlpha() == 255;
 	}
 }

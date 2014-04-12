@@ -231,20 +231,20 @@ public final class Vektor
 	 * @param faktor
 	 *            Der Faktor, mit dem die X- und Y-Werte des Vektors multipliziert werden
 	 * @return Der Vektor mit den multiplizierten Werten
-	 * @see #teilen(int)
+	 * @see #teilen(float)
 	 */
 	public Vektor multiplizieren(int faktor) {
 		return new Vektor(x * faktor, y * faktor);
 	}
 	
 	/**
-	 * Multipliziert die effektiven Laengen beider Anteile des Vektors (X und Y) mit einem festen Faktor.
+	 * Multipliziert die effektiven Längen beider Anteile des Vektors (X und Y) mit einem festen Faktor.
 	 * Dadurch entsteht ein neuer Vektor mit anderen Werten (es sei denn, der Faktor ist 1); dieser wird dann zurueck gegeben.
 	 * 
 	 * @param faktor
 	 *            Der Faktor, mit dem die X- und Y-Werte des Vektors multipliziert werden
 	 * @return Der Vektor mit den multiplizierten Werten
-	 * @see #teilen(int)
+	 * @see #teilen(float)
 	 */
 	public Vektor multiplizieren(float faktor) {
 		return new Vektor(x * faktor, y * faktor);
@@ -307,18 +307,16 @@ public final class Vektor
 	
 	/**
 	 * Berechnet einen einfachen Vektor (maximale auslenkung bei jeder Achse 1 (positiov wie negativ)), der
-	 * der entsprechenden Konstante dieser Klasse entspricht möglich sind:<br />
-	 * <br />
-	 * <code>
-	 * N<br />
-	 * S<br />
-	 * O<br />
-	 * W<br />
-	 * NO<br />
-	 * NW<br />
-	 * SO<br />
-	 * SW<br />
-	 * </code>
+	 * der entsprechenden Konstante dieser Klasse entspricht möglich sind:
+	 *
+	 * <code>N</code>,
+	 * <code>S</code>,
+	 * <code>O</code>,
+	 * <code>W</code>,
+	 * <code>NO</code>,
+	 * <code>NW</code>,
+	 * <code>SO</code>,
+	 * <code>SW</code>
 	 * 
 	 * @param konstante
 	 *            Die Konstante, die die Bewegungsrichtung beschreibt.
@@ -383,7 +381,7 @@ public final class Vektor
 	}
 	
 	/**
-	 * Gibt einen einfachen Vektor zurueck, dessen Richtungskomponenten nur -1, 0 oder 1 annehmen (-1 bei werten < 0; 0 bei Werten = 0; 1
+	 * Gibt einen einfachen Vektor zurück, dessen Richtungskomponenten nur -1, 0 oder 1 annehmen (-1 bei werten < 0; 0 bei Werten = 0; 1
 	 * bei Werten > 0).
 	 * 
 	 * @return Ein Einfacher Vektor, der die Richtung des Urspruenglichen mit einfachen Werten beschreibt beschreibt.

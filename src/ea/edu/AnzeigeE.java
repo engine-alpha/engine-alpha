@@ -36,7 +36,6 @@ import java.util.Random;
  * @author Michael Andonie
  */
 public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
-	
 	private static final long serialVersionUID = 3387123025090347796L;
 	
 	/**
@@ -70,7 +69,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	private final ArrayList<KlickAuftrag> aufgabenKlick;
 	
 	/**
-	 * Die Aktuelle Runde des Tickers
+	 * Die aktuelle Runde des Tickers
 	 */
 	private int runde = 0;
 	

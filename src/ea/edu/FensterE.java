@@ -30,7 +30,6 @@ import ea.*;
  */
 public class FensterE 
 extends Game {
-
     /**
      * Referenz auf das Fenster. Nicht anfechtbar; ebenfalls nach <i>Singleton</i>.
      */

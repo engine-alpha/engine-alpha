@@ -241,18 +241,17 @@ public class Fenster extends Frame {
 			breite = getWidth() - insets.left - insets.right;
 			hoehe = getHeight() - insets.top - insets.bottom;
 		}
-		
+
 		else if (windowMode == WINDOW_FRAME) {
 			setVisible(true);
 		}
 		
-		zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe, new Zeichenebene()));
-		add(zeichner);
-		
-		zeichner.init();
+		this.zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe, new Zeichenebene()));
+		this.add(zeichner);
+		this.zeichner.init();
 		
 		if ((windowMode & (WINDOW_FULLSCREEN_FRAME | WINDOW_FRAME)) > 0) {
-			pack();
+			this.pack();
 		}
 		
 		// ------------------------------------- //
