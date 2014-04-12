@@ -677,7 +677,7 @@ public abstract class Game implements TastenReagierbar {
 	 *
 	 * Die Engine arbeitet auf einem Niveau, das laufzeittechnisch bei normalen Computern standardmaessig funktioniert. <i>Sollte es
 	 * jedoch Probleme mit der Laufzeit geben (haengender Bildschirm; Zeitverzögerungen, die klar an der Engine und nicht am eigenen Projekt
-	 * liegen usw.), so sollte mit dieser Methode die rechenintensive Arbeit ausgeschaltet werden.
+	 * liegen usw.), so sollte mit dieser Methode die rechenintensive Arbeit ausgeschaltet werden.</i>
 	 *
 	 * <b>Standardmaessig ist die Arbeit rechenintensiv</b>.
 	 * 
