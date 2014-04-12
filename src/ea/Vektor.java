@@ -26,7 +26,7 @@ package ea;
  * 
  * @author Michael Andonie
  */
-public final class Vektor {
+public final class Vektor
 implements Cloneable {
 	/**
 	 * Konstante für einen bewegungslosen Vektor (0, 0)
@@ -109,20 +109,6 @@ implements Cloneable {
 	 * nur gerundet.
 	 */
 	public final float y;
-	
-	/**
-	 * Konstruktor für Objekte der Klasse Vektor. Werte werden hier als <code>int</code> angegeben.
-	 * Intern wird trotzdem mit genaueren Fließkommazahlen gerechnet.
-	 * 
-	 * @param x
-	 *            Der Bewegungsanteil <code>x</code>.
-	 * @param y
-	 *            Der Bewegungsanteil <code>y</code>.
-	 */
-	public Vektor(int x, int y) {
-		this.x = (float) x;
-		this.y = (float) y;
-	}
 	
 	/**
 	 * Konstruktor fuer Objekte der Klasse Vektor
