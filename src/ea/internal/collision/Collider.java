@@ -1,9 +1,13 @@
 package ea.internal.collision;
 
+import ea.Dreieck;
+import ea.Punkt;
+import ea.Vektor;
+
 /**
  * Ein Collider ist die abstrakte Form einer <i>Umgebung in der Zeichenebene</i>.
- * Durch das Vergleichen von verschiedenen Collidern l�sst sich eine effektive <i>Collision Detection</i>
- * erm�glichen, also das Pr�fen auf Kollisionen zweier <code>#ea.Raum</code>-Objekte.
+ * Durch das Vergleichen von verschiedenen Collidern l�sst sich eine effektive <i>Collision Detection</i>
+ * erm�glichen, also das Pr�fen auf Kollisionen zweier <code>#ea.Raum</code>-Objekte.
  * 
  * @author Andonie
  *
@@ -11,12 +15,86 @@ package ea.internal.collision;
 public abstract class Collider {
 	
 	/**
-	 * Pr�ft, ob dieser Collider sich mit einem weiteren Collider schneidet.
-	 * @param collider	Ein zweiter Collider.
+	 * Logische Abfrage für die Kollision zweier Boxen.
+	 * @param b1	Box 1
+	 * @param b2	Box 2
+	 * @param p1	Position von Box 1 auf der Zeichenebene
+	 * @param p2	Position von Box 2 auf der Zeichenebene
+	 * @return		<code>true</code>, wenn sich beide Boxen bei aktueller Belegung schneiden, sonst <code>false</code>.
+	 */
+	public static boolean boxboxCollision(BoxCollider b1, BoxCollider b2, Punkt p1, Punkt p2) {
+		return ((b2.offset.y+p2.y) < (p1.y + b1.offset.y + b1.diagonale.y) && (p2.y + b2.offset.y + b2.diagonale.y) > p1.y + b1.offset.y) &&
+			(b2.offset.x + p2.x + b2.diagonale.x) > p1.x + b2.offset.x && b2.offset.x + p2.x < (p1.x + b1.offset.x + b1.diagonale.x);
+	}
+	
+	/**
+	 * Logische Abfrage für die Kollision zweier Kreise.
+	 * @param s1	Kreis 1
+	 * @param s2	Kreis 2
+	 * @param p1	Position von Kreis 1 auf der Zeichenebene
+	 * @param p2	Position von Kreis 2 auf der Zeichenebene
+	 * @return		<code>true</code>, wenn sich beide Kreise bei aktueller Belegung schneiden, sonst <code>false</code>.
+	 */
+	public static boolean spheresphereCollision(SphereCollider s1, SphereCollider s2, Punkt p1, Punkt p2) {
+		float dx = s1.offset.x + p1.x - s2.offset.x - p2.x, dy = s1.offset.y + p1.y - s2.offset.y - p2.y;
+		return Math.sqrt((dx*dx) + (dy*dy)) < (s1.durchmesser+s2.durchmesser)/2;
+	}
+	
+	/**
+	 * Logische Abfrage für die Kollision eines Kreises mit einer Box.
+	 * @param sphere	Der Kreis
+	 * @param box		Die Box
+	 * @param ps		Position von Sphere
+	 * @param pb		Position von Box
+	 * @return			<code>true</code>, wenn sich Kreis und Box schneiden, sonst <code>false</code>.
+	 */
+	public static boolean sphereboxCollision(SphereCollider sphere, BoxCollider box, Punkt ps, Punkt pb) {
+		sphere.modelsphere.positionSetzen(ps.verschobenerPunkt(sphere.offset));
+		for(Dreieck d : sphere.modelsphere.formen()) {
+			Punkt[] punkte = d.punkte();
+			for (int i = 0; i < punkte.length; i++) {
+				if (punkte[i].realX() >= box.offset.x + pb.x 
+						&& punkte[i].realY() >= box.offset.y + pb.y 
+						&& punkte[i].realX() <= (box.offset.x + pb.x + box.diagonale.x)
+						&& punkte[i].realY() <= (box.offset.y + pb.y + box.diagonale.y)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Der Offset dieses Colliders. Die Verwendung des Offsets hängt von den implementierenden
+	 * Subklassen ab.
+	 * @see #offsetSetzen(Punkt)
+	 */
+	protected Vektor offset = Vektor.NULLVEKTOR;
+	
+	/**
+	 * Setzt den Offset dieses Colliders neu. <br /><i>Erläuterung</i><br />
+	 * Zunächst liegen Position vom <code>Raum</code>-Objekt und dem Collider direkt aufeinander. Der Offset wird also
+	 * relativ zur aktuellen Position des <code>Raum</code>-Objektes in der Zeichenebene hinzugerechnet, um die endgültige
+	 * Position des Colliders für die Kollisionsabfragen festzulegen.
+	 * @param os Der neue Offset für diesen Collider.
+	 */
+	public final void offsetSetzen(Vektor os) {
+		this.offset = os;
+	}
+	
+	/**
+	 * Prüft, ob dieser Collider sich mit einem weiteren Collider schneidet.
+	 * @param other	Ein zweiter Collider.
 	 * @return	<code>true</code>, falls sich dieser Collider mit dem zweiten Collider schneidet.
 	 *  Schneiden sich dieser Collider und der zweite Collider nicht, so gibt diese Funktion <code>false</code>
-	 *  zur�ck.
+	 *  zurück.
 	 */
-	public abstract boolean verursachtCollision(Collider collider);
+	public abstract boolean verursachtCollision(Punkt positionThis, Punkt positionOther, Collider other);
 	
+	/**
+	 * Gibt zur�ck, ob dieser Collider ein <code>NullCollider</code> ist, also nur <code>false</code> zur�ckgeben
+	 * kann.
+	 * @return	<code>true</code>, falls dieser Collider ein <i>Null-Collider</i> ist, sonst <code>false</code>.
+	 */
+	public abstract boolean istNullCollider();
 }

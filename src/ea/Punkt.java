@@ -36,13 +36,13 @@ public final class Punkt
 	 * Der kontinuierliche(re) X-Wert des Punktes. Die anderen Koordinaten sind ggf.
 	 * nur gerundet.
 	 */
-	final float x;
+	public final float x;
 	
 	/**
 	 * Der kontinuierliche(re) Y-Wert des Punktes. Die anderen Koordinaten sind ggf.
 	 * nur gerundet.
 	 */
-	final float y;
+	public final float y;
 	
 	/**
 	 * Standard-Konstruktor fuer Objekte der Klasse Punkt.

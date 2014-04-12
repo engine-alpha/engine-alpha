@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Locale;
 
+import ea.internal.collision.*;
 import ea.internal.gui.Fenster;
 import ea.internal.phy.Gravitator;
 import ea.internal.phy.MechanikClient;
@@ -51,8 +52,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	private static final LeuchtMacher macher = new LeuchtMacher();
 	
 	/**
-	 * Der Animations-Manager, über den alle Animationen laufen.<br />
-	 * Wird zum Löschen aller Referenzen auf dieses Objekt verwendet.
+	 * Der Animations-Manager, �ber den alle Animationen laufen.<br />
+	 * Wird zum L�schen aller Referenzen auf dieses Objekt verwendet.
 	 */
 	private static final AnimationsManager animationsManager = AnimationsManager.getAnimationsManager();
 	
@@ -103,6 +104,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Der Physik-Client, der die Physik dieses Raum-Objekts regelt.
 	 */
 	private PhysikClient phClient = new NullClient(this);
+	
+	/**
+	 * Der aktuelle Collider dieses Raum-Objekts.
+	 */
+	private Collider collider = NullCollider.getInstance();
 	
 	/**
 	 * Z-Index des Raumes, je höher, desto weiter oben wird der Raum gezeichnet
@@ -835,6 +841,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	
 	/**
 	 * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene.
+	 * Dies ist die <b>zentrale</b> Methode zum 
 	 * 
 	 * @param v
 	 *            Der Vektor, der die Verschiebung des Objekts angibt.
@@ -897,8 +904,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * Dreht die Zeichenfläche wieder zurück in den Ausgangszustand.
-	 * <b><i>Diese Methode sollte nicht außerhalb der Engine verwendet werden.</i></b>
+	 * Dreht die Zeichenfläche wieder zur�ck in den Ausgangszustand.
+	 * <b><i>Diese Methode sollte nicht au�erhalb der Engine verwendet werden.</i></b>
 	 * 
 	 * @see #drehung
 	 * @see #gibDrehung()
@@ -937,6 +944,49 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll einzuschliessen</b>.
 	 */
 	public abstract BoundingRechteck dimension();
+	
+	/**
+	 * Erzeugt einen neuen Collider für dieses Objekt. Diese Methode approximiert für das Objekt der jeweils implementierenden <code>Raum</code>-Klasse einen
+	 * möglichst "guten" Collider; also einen solchen, der das tatsächliche Objekt möglichst genau umfängt, aber auch möglichst wenig
+	 * Rechenarbeit beansprucht.
+	 * @return	Ein möglichst optimaler Collider für dieses Raum-Objekt.
+	 * @see #colliderSetzen(Collider)
+	 */
+	public abstract Collider erzeugeCollider();
+	
+	/**
+	 * Gibt den <b>aktuellen Collider</b> dieses </code>Raum</code>-Objektes zurück.
+	 * @return	Der aktuelle Collider dieses </code>Raum</code>-Objektes.
+	 */
+	public final Collider collider() {
+		return collider;
+	}
+	
+	/**
+	 * Setzt einen neuen Collider für dieses <code>Raum</code>-Objekt. Nach Aufruf dieser Methode ist der <i>standardisierte</i> Collider, der
+	 * intern automatisch gesetzt wird (jedoch meist nicht optimal ist), außer Kraft und nur noch der hier übergebene Collider ist für die
+	 * <i>Collision Detection</i> relevant.
+	 * @param collider	Der neue Collider, der für die Schnitt-Überprüfung verwendet wird.
+	 * @see #schneidet(Raum)
+	 * @see #boundsUebernehmen(Raum)
+	 */
+	public void colliderSetzen(Collider collider) {
+		this.collider = collider;
+	}
+	
+	/**
+	 * Übernimmt für die Collision Detection die Bounds eines anderen <code>Raum</code>-Objektes.
+	 * @param boundHilfe	Ein weiteres Raum-Objekt, dessen prinzipiellen Bounds übernommen werden sollen.<br />
+	 * <br /><b>WICHTIG!</b>
+	 * Die Entfernung des als Parameter übergebenen <code>Raum</code>-Objektes vom <i>Ursprung</i> der Zeichenebene aus
+	 * entspricht dem <i>Offset</i> des Colliders <b>relativ zu diesem <code>Raum</code>-Objekt</b>.
+	 * @see #colliderSetzen(Collider)
+	 */
+	public void boundsUebernehmen(Raum boundHilfe) {
+		Collider c = boundHilfe.collider();
+		c.offsetSetzen(boundHilfe.position().alsVektor());
+		this.collider = boundHilfe.collider();
+	}
 	
 	/**
 	 * Berechnet exakter alle Rechteckigen Flaechen, auf denen dieses Objekt liegt.<br />

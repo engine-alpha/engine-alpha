@@ -59,7 +59,7 @@ public class Kreis extends RegEck {
 	 * @param durchmesser
 	 *            Der Durchmesser des Kreises
 	 */
-	public Kreis(int x, int y, int durchmesser) {
+	public Kreis(int x, int y, float durchmesser) {
 		super(x, y, 6, durchmesser);
 	}
 	
