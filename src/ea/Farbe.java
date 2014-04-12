@@ -29,7 +29,7 @@ import java.io.Serializable;
  * nicht, sondern arbeitet mit einer Referenz auf ein solches Objekt.
  *
  * <b>Ein Verwendungsbeispiel:</b>
- * <pre>
+ * <source>
  * // Ein Rechteck
  * Rechteck rechteck = new Rechteck(20, 20, 100, 200);
  *
@@ -45,7 +45,7 @@ import java.io.Serializable;
  * 
  * // Geschachtelte Form, so empfiehlt es sich meistens eher (da platzsparender):
  * rechteck.farbeSetzen(new Farbe(200, 200, 200));
- * </pre>
+ * </source>
  * 
  * @author Michael Andonie
  */
