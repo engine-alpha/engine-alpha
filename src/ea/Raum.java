@@ -19,19 +19,14 @@
 
 package ea;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.Locale;
-
-import ea.internal.collision.*;
+import ea.internal.collision.BoxCollider;
+import ea.internal.collision.Collider;
+import ea.internal.collision.NullCollider;
 import ea.internal.gui.Fenster;
-import ea.internal.phy.Gravitator;
-import ea.internal.phy.MechanikClient;
-import ea.internal.phy.NullClient;
-import ea.internal.phy.Passivator;
-import ea.internal.phy.Physik;
-import ea.internal.phy.PhysikClient;
-import ea.internal.util.Logger;
+import ea.internal.phy.*;
+
+import java.awt.*;
+import java.util.Locale;
 
 /**
  * Raum bezeichnet alles, was sich auf der Zeichenebene befindet.<br />
@@ -121,8 +116,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	private double drehung;
 	
 	/**
-	 * Der eine und einziege Konstruktor fuer Objekte der Klasse Raum.<br />
-	 * Hier passiert nichts fuer das Programmieren einer Raum-Klasse direkt relevantes, naemlich GAR NICHTS
+	 * Der eine und einziege Konstruktor fuer Objekte der Klasse Raum.
 	 */
 	public Raum() {
 		//
@@ -249,7 +243,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * <br />
 	 * <b>ACHTUNG!</b><br />
 	 * Jedes <code>Raum</code>-Objekt hat <b>HOECHSTENS</b> einen <code>FallReagierbar</code>-Listener. Das bedeutet, dass
-	 * es <b>nicht moeglich ist, dass mehrere <code>FallReagierbar</code>-Listener ueber ein Objekt informiert werden.<br />
+	 * es <b>nicht möglich ist, dass mehrere <code>FallReagierbar</code>-Listener ueber ein Objekt informiert werden.<br />
 	 * <br />
 	 * Die <b>kritische Tiefe</b> jedoch laesst sich problemlos immer wieder neu Setzen, ueber die Methode <code>kritischeTiefeSetzen(int tiefe)</code>.<br />
 	 * <br />
@@ -367,7 +361,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i><br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 * 
      * Wirkt einen Impuls auf das <code>Raum</code>-Objekt aus. Dieser ändert - abhängig von seiner
      * Richtung, Intensität sowie von der <i>Mass</i> des </code>Raum</code>-Objekts eine
      * Geschwindigkeitsänderung.
@@ -384,7 +379,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
      * Setzt <b>hart</b> (also ohne Rücksicht auf mögliche Umstände) die Geschwindigkeit dieses <code>Raum</code>-Objektes.
      * Es bewegt sich ab sofort mit dieser Geschwindigkeit weiter.
      * @param geschwindigkeit die Geschwindigkeit, die dieses <code>Raum</code>-Objekt ab sofort annehmen soll.
@@ -401,7 +397,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
      * Gibt den Luftwiderstandskoeffizienten dieses <code>Raum-Objektes</code> aus.
      * @see #luftwiderstandskoeffizientSetzen(float)
      * @see #newtonschMachen()
@@ -411,7 +408,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
      * Gibt aus, ob dieses <code>Raum</code>-Objekt beeinflussbar, also durch Impulse beweglich ist.
      * Was das heisst, kannst Du in der Setter-Methode nachlesen.
      * @return <code>true</code>, falls dieses <code>Raum</code>-Objekt beeinflussbar ist,
@@ -424,7 +422,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
      * Gibt aus die Masse dieses <code>Raum</code>-Objektes aus. Diese ist relevant
      * Impulsrechnungen, z.B. wenn 2 Objekte kollidieren.
      * @return die Masse dieses <code>Raum</code>-Objektes in korrekter Einheit.
@@ -438,7 +437,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
      * Gibt aus die Kraft aus, die auf dieses <code>Raum</code>-Objekt dauerhaft wirkt. So lässt sich
      * z.B. eine dynamische Schwerkraft realisieren.
      * @return die Kraft, die auf dieses <code>Raum</code>-Objektes konstant wirkt.
@@ -452,7 +452,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
      * Setzt den Luftwiderstandskoeffizienten für dieses <code>Raum</code>-Objekt.
      * Je größer dieser Wert ist, desto stärker ist der Luftwiderstand auf das <code>Raum-Objekt</code>.<br />
      * Der Luftwiderstand <b>nicht</b> über die vollständige Luftwiderstandsformel (u.a. mit Querschnittsfläche
@@ -469,7 +470,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
      * Setzt, ob dieses <code>Raum</code>-Objekt <i>beeinflussbar</i> sein soll für Impulse
      * von anderen Objekten, die mit diesem Kollidieren. Ist es <b>nicht beeinflussbar<b>, so prallen
      * (beeinflussbare) Objekte einfach an ihm ab. Typische unbeeinflussbare Objekte sind:<br />
@@ -495,7 +497,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
      * Setzt die Masse für dieses <code>Raum</code>-Objekt. Es hat ab sofort diese Masse.
      * Diese hat Auswirkungen auf Impulsrechnung und die Dynamik dieses Objekts..
      * @param masse die Mass, die  dieses <code>Raum</code>-Objekt ab sofort haben soll.
@@ -509,7 +512,8 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 	
 	/**
-	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
 	 * Setzt die Kraft, die auf dieses <code>Raum</code>-Objekt dauerhaft wirken soll. So lässt sich
 	 * z.B. eine dynamische Schwerkraft realisieren:<br />
 	 * Die Schwerkraft, wäre eine Kraft, die dauerhaft nach unten wirkt, also zum Beispiel:
@@ -530,9 +534,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
 	 * Setzt die Geschwindigkeit, die dieses <code>Raum</code>-Objekt haben soll.
-	 * @param kraft die Geschwindikeit, die auf dieses <code>Raum</code>-Objekt mit sofortiger Wirkung annehmen soll.
+	 *
+	 * @param geschwindigkeit die Geschwindikeit, die auf dieses <code>Raum</code>-Objekt mit sofortiger Wirkung annehmen soll.
 	 *         <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
 	 *         aus der klassischen Mechanik. Die Einheit für Geschwindigkeit ist [m / s]
 	 * @see #newtonschMachen()
@@ -542,11 +548,12 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
-     * Setzt alle Einfluesse auf dieses <code>Raum</code>-Objekt zurück. Dies bedeutet:
-     * <ul>
-     * <li>die auf dieses Objekt einwirkende, konstante Kraft wird zu 0.</li>
-     * <li>die Geschwindigkeit dieses Objekts wird zu 0.</li>
+     * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
+     * Setzt alle Einflüsse auf dieses <code>Raum</code>-Objekt zurück. Dies bedeutet:
+     * * die auf dieses Objekt einwirkende, konstante Kraft wird 0.
+     * * die Geschwindigkeit dieses Objekts wird 0.
+	 *
      * @see #newtonschMachen()
      */
 	public void einfluesseZuruecksetzen() {
@@ -554,18 +561,22 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten<br />
+	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
+	 *
 	 * Setzt einen neuen <i>Impuls</i> auf dieses <code>Raum</code>-Objekt, indem eine
 	 * bestimmte <i>Kraft</i> für eine bestimmte <i>Zeit</i> auf dieses Objekt wirkt.
-	 * Es gilt für <b>ausreichend kleines t</b>: <code>p = F * t</code><br />
+	 *
+	 * Es gilt für <b>ausreichend kleines <code>t</code></b>: <code>p = F * t</code>
+	 *
 	 * Dies ist die grundlegende Berechnung für den Impuls.
+	 *
 	 * @param kraft		Eine Kraft, die (modellhaft) auf dieses <code>Raum</code>-Objekt wirken soll.
-	 * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
-	 *         aus der klassischen Mechanik. Die Einheit für Kraft ist [N] = [kg * (m / s^2)]
+	 *      <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+	 *      aus der klassischen Mechanik. Die Einheit für Kraft ist <code>[N] = [kg * (m / s^2)]</code>
 	 * @param t_kraftuebertrag	Die Zeit, über die die obige Kraft auf dieses <code>Raum</code>-Objekt
-	 * 			wirken soll.
-	 * <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
-	 *         aus der klassischen Mechanik. Die Einheit für Zeit ist [s]
+	 *      wirken soll.
+	 *      <b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen denen
+	 *      aus der klassischen Mechanik. Die Einheit für Zeit ist [s]
 	 * @see #newtonschMachen()
 	 */
 	public void kraftAnwenden(Vektor kraft, float t_kraftuebertrag) {
