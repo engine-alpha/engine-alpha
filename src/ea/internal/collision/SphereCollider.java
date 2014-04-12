@@ -36,7 +36,7 @@ extends Collider {
 		} else if(collider instanceof BoxCollider) {
 			return Collider.sphereboxCollision(this, (BoxCollider)collider, positionThis, positionOther);
 		} else if(collider instanceof ColliderGroup) {
-			collider.verursachtCollision(positionOther, positionThis, this);
+			return collider.verursachtCollision(positionOther, positionThis, this);
 		}
 		//Default:
 		return false;
