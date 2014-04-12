@@ -97,7 +97,7 @@ public class Maus {
 	private Fenster fenster;
 	
 	/**
-	 * Unabhaengiger Konstruktor. Dieser Konstruktor ermoeglicht es, ein eigenes Mausbild einzubringen.<br />
+	 * UnabhÃ¤ngiger Konstruktor. Dieser Konstruktor ermÃ¶glicht es, ein eigenes Mausbild einzubringen.<br />
 	 * Hierfuer muss klar sein, was ein Hotspot ist:<br />
 	 * <br />
 	 * Ein Hotspot ist ein Punkt, relativ entfernt von der linken oberen Ecke des Mausbildes.<br />
@@ -106,7 +106,7 @@ public class Maus {
 	 * 
 	 * Angenommen das Mausbild misst 20 x 20 Pixel, und der Hotspot ist ein Punkt mit den Koordinaten (10|10), so waere der
 	 * Hotspot in der Mitte des Bildes und bei einem Klick waere diese "klick"-Koordinate genau in der Mitte.<br />
-	 * Waere der Punkt (0|0), so waere der Hotspot genau in der linken oberen Ecke des Mausbildes.
+	 * WÃ¤re der Punkt (0|0), so waere der Hotspot genau in der linken oberen Ecke des Mausbildes.
 	 * 
 	 * @param mausbild
 	 *            Das Bild-Objekt, das ab sofort das Mausbild sein wird und auch dementsprechend bewegt wird.
@@ -200,7 +200,7 @@ public class Maus {
 	
 	/**
 	 * Setzt die Referenz auf das Fenster, in dem diese Maus sitzt, neu.
-	 * <b>ACHTUNG:</b> Sollte nicht von Außen benutzt werden, falls man sich nicht genau mit der Struktur
+	 * <b>ACHTUNG:</b> Sollte nicht von AuÃŸen benutzt werden, falls man sich nicht genau mit der Struktur
 	 * der Engine auskennt.
 	 * @param f Die neue Fensterreferenz.
 	 */
@@ -451,9 +451,9 @@ public class Maus {
 	
 	/**
 	 * Gibt den <i>Punkt auf der Zeichenebene</i> aus, auf den die Maus bei einem Klick zeigen
-	 * würde. Diese Methode rechnet alle Umstände der Maus (z.B. relativ bzw. absolut) mit ein und
-	 * gibt die genaue Position des Klicks zurück.
-	 * @return	Der genaue Punkt auf der Zeichenebene, auf den diese Maus bei einem Klick deuten würde.
+	 * wÃ¼rde. Diese Methode rechnet alle UmstÃ¤nde der Maus (z.B. relativ bzw. absolut) mit ein und
+	 * gibt die genaue Position des Klicks zurÃ¼ck.
+	 * @return	Der genaue Punkt auf der Zeichenebene, auf den diese Maus bei einem Klick deuten wÃ¼rde.
 	 */
 	public Punkt klickAufZeichenebene() {
 		if (absolut()) {
@@ -462,7 +462,7 @@ public class Maus {
 			
 			return new Punkt((int) (r.x + p.realX() + fenster.getCam().getX()), (int) (r.y + p.realY()
 					+ fenster.getCam().getY())); // Mit
-												// zurückrechnen
+												// zurï¿½ckrechnen
 												// auf die
 												// Bildebene!
 		} else {
