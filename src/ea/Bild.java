@@ -19,10 +19,13 @@
 
 package ea;
 
+import ea.internal.collision.BoxCollider;
+import ea.internal.collision.Collider;
 import ea.internal.util.Logger;
 import ea.internal.util.Optimizer;
 
 import javax.imageio.ImageIO;
+
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -344,5 +347,15 @@ public class Bild extends Raum {
 	
 	public Bild clone() {
 		return new Bild(positionX(), positionY(), img);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden <code>BoundingRechteck</code>
+	 * erzeugt, dass über die <code>dimension()</code>-Methode berechnet wird.
+	 */
+	@Override
+	public Collider erzeugeCollider() {
+		return erzeugeLazyCollider();
 	}
 }

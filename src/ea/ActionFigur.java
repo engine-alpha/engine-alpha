@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.internal.collision.Collider;
 import ea.internal.util.Logger;
 
 import java.awt.*;
@@ -478,5 +479,13 @@ public class ActionFigur extends Raum {
 			return aktion[indexAction].flaechen();
 		}
 		return zustand[index].flaechen();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collider erzeugeCollider() {
+		return zustand[0].erzeugeCollider();
 	}
 }

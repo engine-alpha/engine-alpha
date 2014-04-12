@@ -955,6 +955,14 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	public abstract Collider erzeugeCollider();
 	
 	/**
+	 * Erzeugt einen Collider auf <i>Lazy</i> Art: Es wird das durch die <code>dimension()</code>-Methode
+	 * berechnete <code>BoundingRechteck</i> benutzt, um einen simplen <i>Box-Collider</i> zu erstellen.
+	 */
+	protected Collider erzeugeLazyCollider() {
+		return BoxCollider.fromBoundingRechteck(this.dimension());
+	}
+	
+	/**
 	 * Gibt den <b>aktuellen Collider</b> dieses </code>Raum</code>-Objektes zurück.
 	 * @return	Der aktuelle Collider dieses </code>Raum</code>-Objektes.
 	 */

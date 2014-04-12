@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.internal.collision.Collider;
 import ea.internal.gra.PixelFeld;
 
 import java.awt.*;
@@ -594,5 +595,15 @@ public class Figur extends Raum {
 	 */
 	public void animationsGeschwindigkeitSetzen(int intervall) {
 		this.intervall = intervall;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden <code>BoundingRechteck</code>
+	 * erzeugt, dass über die <code>dimension()</code>-Methode berechnet wird.
+	 */
+	@Override
+	public Collider erzeugeCollider() {
+		return erzeugeLazyCollider();
 	}
 }

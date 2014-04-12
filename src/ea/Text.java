@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.internal.collision.Collider;
 import ea.internal.gui.Fenster;
 
 import java.awt.*;
@@ -618,5 +619,15 @@ public class Text extends Raum implements Leuchtend {
 			}
 		}
 		System.out.println("|Ende| des Protokolls");
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden <code>BoundingRechteck</code>
+	 * erzeugt, dass über die <code>dimension()</code>-Methode berechnet wird.
+	 */
+	@Override
+	public Collider erzeugeCollider() {
+		return erzeugeLazyCollider();
 	}
 }

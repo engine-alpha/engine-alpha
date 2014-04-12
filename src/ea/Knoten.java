@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.collision.Collider;
+import ea.internal.collision.ColliderGroup;
 import ea.internal.gra.Listung;
 
 import java.awt.*;
@@ -305,5 +307,19 @@ public class Knoten extends Raum implements Listung {
 		}
 		
 		return data.toArray(new BoundingRechteck[0]);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * Collider ist eine Gruppierung der Collider aller <code>Raum</code>-Objekte, die an diesem
+	 * Knoten angehängt sind.
+	 */
+	@Override
+	public Collider erzeugeCollider() {
+		ColliderGroup group = new ColliderGroup();
+		for(Raum r : list) {
+			group.addCollider(r.erzeugeCollider());
+		}
+		return group;
 	}
 }

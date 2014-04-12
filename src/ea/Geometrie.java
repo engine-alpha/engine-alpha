@@ -22,6 +22,8 @@ package ea;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import ea.internal.collision.Collider;
+import ea.internal.collision.ColliderGroup;
 import ea.internal.gra.Listung;
 
 /**
@@ -286,4 +288,17 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	 * @return Ein Dreieck-Array mit allen, die Figur beschreibenden Dreiecken als Inhalt.
 	 */
 	public abstract Dreieck[] neuBerechnen();
+	
+	/**
+	 * {@inheritDoc}
+	 * Collider ist eine Gruppierung aus den Collidern der Dreiecke, die dieses Objekt ausmachen.
+	 */
+	@Override
+	public Collider erzeugeCollider() {
+		ColliderGroup group = new ColliderGroup();
+		for(Dreieck d : formen) {
+			group.addCollider(d.erzeugeCollider());
+		}
+		return group;
+	}
 }
