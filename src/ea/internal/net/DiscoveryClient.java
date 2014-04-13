@@ -1,6 +1,6 @@
 package ea.internal.net;
 
-import ea.ConnectListener;
+import ea.ServerGefundenReagierbar;
 
 import java.net.*;
 import java.io.*;
@@ -9,9 +9,9 @@ import java.util.*;
 // http://michieldemey.be/blog/network-discovery-using-udp-broadcast/
 public class DiscoveryClient extends Thread {
 	private DatagramSocket socket;
-	private ConnectListener listener;
+	private ServerGefundenReagierbar listener;
 
-	public DiscoveryClient(ConnectListener listener) {
+	public DiscoveryClient(ServerGefundenReagierbar listener) {
 		this.listener = listener;
 	}
 
@@ -61,7 +61,7 @@ public class DiscoveryClient extends Thread {
 			String cmd = new String(receivePacket.getData()).trim();
 
 			if (cmd.equals("EA_DISCOVERY_RESPONSE")) {
-				listener.onConnect(receivePacket.getAddress().getHostAddress());
+				listener.serverGefunden(receivePacket.getAddress().getHostAddress());
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();

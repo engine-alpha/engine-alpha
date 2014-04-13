@@ -75,7 +75,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * Listener, der ausgeführt wird, sobald ein Client sich verbindet.
 	 */
-	private ConnectListener connectListener;
+	private VerbindungHergestelltReagierbar verbindungHergestelltReagierbar;
 
 	/**
 	 * Ob der Netzwerk-Teilnehmer die empfangenen Nachrichten an alle Clients weiterleitens soll
@@ -169,8 +169,8 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 					}
 				});
 
-				if(connectListener != null) {
-					connectListener.onConnect(ip);
+				if(verbindungHergestelltReagierbar != null) {
+					verbindungHergestelltReagierbar.verbindungHergestellt(ip);
 				}
 
 				synchronized(waitingQueue) {
@@ -207,8 +207,8 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * Setze den Listener, der informiert wird, wenn ein Client sich verbindet.
 	 */
-	public void setOnConnectListener(ConnectListener listener) {
-		connectListener = listener;
+	public void setVerbindungHergestelltReagierbar(VerbindungHergestelltReagierbar listener) {
+		verbindungHergestelltReagierbar = listener;
 	}
 	
 	/**
