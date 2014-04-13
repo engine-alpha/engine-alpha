@@ -114,14 +114,14 @@ public class EngineAlpha extends Frame {
 			new Thread() {{ setDaemon(true); }
 				public void run() {
 					try {
-						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_STABLE");
+						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_STABLE").trim();
 						version_stable = Integer.parseInt(body);
 					} catch(NumberFormatException e) {
 						e.printStackTrace();
 					}
 
 					try {
-						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT");
+						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT").trim();
 						version_dev = Integer.parseInt(body);
 					} catch(NumberFormatException e) {
 						e.printStackTrace();
