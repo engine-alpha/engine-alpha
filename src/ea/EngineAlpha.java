@@ -78,8 +78,6 @@ public class EngineAlpha extends Frame {
 				System.exit(0);
 			}
 		});
-
-		promo = new EngineAlphaPromotion(this);
 	}
 	
 	private class EngineAlphaPromotion extends Canvas implements Runnable {
