@@ -73,11 +73,6 @@ public class Fenster extends Frame {
 	private final ArrayList<TastenReagierbar> listener = new ArrayList<>();
 	
 	/**
-	 * Die Liste aller TastenGedrueckt-Listener
-	 */
-	private final ArrayList<TastenGedruecktReagierbar> gedrListener = new ArrayList<>();
-	
-	/**
 	 * Die Liste aller TastenLosgelassen-Listener
 	 */
 	private final ArrayList<TastenLosgelassenReagierbar> losListener = new ArrayList<>();
@@ -302,13 +297,6 @@ public class Fenster extends Frame {
 						// TODO ???
 					}
 				}
-				for (TastenGedruecktReagierbar t : gedrListener) {
-					for (int i = 0; i < tabelle.length; i++) {
-						if (tabelle[i]) {
-							t.tasteGedrueckt(i);
-						}
-					}
-				}
 			}
 		}, 50);
 		
@@ -471,42 +459,6 @@ public class Fenster extends Frame {
 		}
 		
 		listener.add(t);
-	}
-	
-	/**
-	 * Meldet einen TastenGedruecktReagierbar-Listener an.<br />
-	 * <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
-	 * !!!!!!!!!!!!!!!</b><br />
-	 * TastenReagierbar und TastenGedruecktReagierbar sind 2 vollkommen
-	 * unterschiedliche Interfaces! Das eine wird bei jedem Druck aufs neue
-	 * aktiviert, waehrend das andere gleichmaessig aufgerufen wird, solange die
-	 * Taste heruntergedrueckt ist.
-	 * 
-	 * @param t
-	 *            Der listener, der ab sofort ueber gedrueckte Tasten informiert
-	 *            wird.
-	 */
-	public void tastenGedruecktAnmelden(TastenGedruecktReagierbar t) {
-		if (t == null) {
-			throw new IllegalArgumentException("Listener darf nicht NULL sein.");
-		}
-		
-		gedrListener.add(t);
-	}
-	
-	/**
-	 * Meldet einen TastenGedruecktReagierbar-Listener an.<br />
-	 * Diese Methode warappt lediglich <code>tastenGedruecktAnmelden(TastenGedruecktReagierbar)</code> und dient
-	 * der Praevention unnoetiger Compilermeldungen wegen nichtfindens einer
-	 * Methode.
-	 * 
-	 * @param t
-	 *            Der listener, der ab sofort ueber gedrueckte Tasten informiert
-	 *            wird.
-	 * @see #tastenGedruecktAnmelden(TastenGedruecktReagierbar)
-	 */
-	public void tastenGedruecktReagierbarAnmelden(TastenGedruecktReagierbar t) {
-		this.tastenGedruecktAnmelden(t);
 	}
 	
 	/**
@@ -827,6 +779,17 @@ public class Fenster extends Frame {
 		}
 		
 		tabelle[z] = true;
+	}
+	
+	/**
+	 * Überprüft, ob eine bestimmte Taste auf der Tastatur heruntergedrückt wurde.
+	 * @param tastencode	Der Code der Taste, für die getestet werden soll.
+	 * @return		<code>true</code>, falls die entsprechende Taste gerade heruntergedrückt wurde, sonst
+	 * 				<code>false</code>.
+	 * @throws		java.lang.ArrayIndexOutOfBoundsException	Sollte einen Zahl < 0 oder > 44 verwendet werden.
+	 */
+	public boolean istGedrueckt(int tastencode) {
+		return tabelle[tastencode];
 	}
 	
 	/**

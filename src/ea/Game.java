@@ -538,14 +538,13 @@ public abstract class Game implements TastenReagierbar {
 	}
 	
 	/**
-	 * Meldet ein "<code>TastenGedruecktReagierbar</code>"-Objekt an. Ab diesem Moment wird seine "<code>tasteGedrueckt</code>"-Methode immer
-	 * wieder in Abstaenden von <b>50 Millisekunden</b> aufgerufen, solange eine Taste heruntergedrueckt wird.
-	 * 
-	 * @param g
-	 *            Das anzumeldende <code>TastenGedruecktReagierbar</code>-Objekt.
+	 * Prüft, ob eine bestimmte Taste gerade jetzt heruntergedrückt wird.
+	 * @param	der Code der zu prüfenden Taste.
+	 * @return 	<code>true</code>, falls die gewählte Taste gerade jetzt heruntergedrückt
+	 * 			wird. Sonst <code>false</code>.
 	 */
-	public void tastenGedruecktReagierbarAnmelden(TastenGedruecktReagierbar g) {
-		fenster.tastenGedruecktReagierbarAnmelden(g);
+	public boolean tasteGedrueckt(int code) {
+		return fenster.istGedrueckt(code);
 	}
 	
 	/**
