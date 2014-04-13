@@ -97,19 +97,19 @@ public class Client
 				}
 			});
 			
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-					socket.getOutputStream()));
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			InputStream is = socket.getInputStream();
 			
 			bw.write("xe" + name);
 			bw.newLine();
 			bw.flush();
-			
-			// Set up interpreter
-			NetzwerkInterpreter interpreter = new NetzwerkInterpreter(new BufferedReader(new InputStreamReader(is)));
-			interpreter.empfaengerHinzufuegen(this);
 
 			String ip = socket.getInetAddress().getHostAddress();
+
+			// set up interpreter
+			NetzwerkInterpreter interpreter = new NetzwerkInterpreter(ip, null, new BufferedReader(new InputStreamReader(is)));
+			interpreter.empfaengerHinzufuegen(this);
+
 			NetzwerkVerbindung vb = new NetzwerkVerbindung(name, ip, bw, interpreter);
 
 			verbindung = vb;
@@ -138,7 +138,7 @@ public class Client
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					System.err.println("Achtung. Es könnte trotz warteAufVerbindung() noch "
+					Logger.warning("Achtung. Es könnte trotz warteAufVerbindung() noch "
 							+ "keine Verbindung bestehen, da der Warteprozess unterbrochen wurde.");
 				}
 			}
@@ -151,13 +151,13 @@ public class Client
 			try {
 				socket.close();
 			} catch (IOException e) {
-				System.err.println("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+				Logger.error("Konnte den Verbindungs-Socket nicht mehr schliessen.");
 			}
 		}
 	}
 	
 	/**
-	 * Setzt den Empfaenger, der ueber jede Nachricht an diesen
+	 * Setzt den Empfänger, der über jede Nachricht an diesen
 	 * Client informiert wird.
 	 * 
 	 * @param e

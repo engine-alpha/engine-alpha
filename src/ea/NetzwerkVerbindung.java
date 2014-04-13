@@ -54,7 +54,7 @@ public class NetzwerkVerbindung extends Sender {
 		this.ip = ip;
 		this.interpreter = interpreter;
 	}
-	
+
 	/**
 	 * Gibt an, ob diese Verbindung aktiv ist, also derzeit eine Kommunikation
 	 * über diese Sender / Empfaenger denkbar ist.

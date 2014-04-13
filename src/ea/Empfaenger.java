@@ -27,7 +27,6 @@ package ea;
  * @author Michael Andonie
  */
 public interface Empfaenger {
-	
 	/**
 	 * Diese Methode wird aufgerufen, wenn ein String empfangen
 	 * wird. Hierin kann die Eingabe verarbeitet werden.

@@ -32,14 +32,12 @@ import java.util.ArrayList;
  * 
  * @author Michael Andonie
  */
-public class NetzwerkInterpreter
-extends Thread {
-	
+public class NetzwerkInterpreter extends Thread {
 	/**
-	 * Diese Liste speichert alle Empfaenger, an die der Interpreter
-	 * eine gesendete Information weitergeben soll.
+	 * Diese Liste speichert alle Empfänger, an die der Interpreter
+	 * eine empfangene Information weitergeben soll.
 	 */
-	private final ArrayList<Empfaenger> outputListe = new ArrayList<Empfaenger>();
+	private final ArrayList<Empfaenger> outputListe = new ArrayList<>();
 	
 	/**
 	 * Der Reader, über den die Informationen gelesen werden.
@@ -50,17 +48,26 @@ extends Thread {
 	 * Gibt an, ob die Verbindung noch aktiv ist. Zu Beginn ist dem so.
 	 */
 	private boolean connectionActive;
-	
-	public NetzwerkInterpreter(BufferedReader br) {
-		reader = br;
+
+	private String remoteIP;
+	/**
+	 * Enthält eine Referenz auf den Server, falls diese Verbindung von einem Server ausgeht.
+	 */
+	private Server server;
+
+	public NetzwerkInterpreter(String remoteIP, Server server, BufferedReader br) {
+		this.remoteIP = remoteIP;
+		this.server = server;
+		this.reader = br;
+		this.connectionActive = true;
 		this.setDaemon(true);
-		connectionActive = true;
-		start();
+		this.start();
 	}
 	
 	/**
-	 * Gibt an, ob die Verbindung ueber diesen Interpreter
+	 * Gibt an, ob die Verbindung über diesen Interpreter
 	 * noch aktiv ist.
+	 *
 	 * @return	<code>true</code>, wenn nicht vom Kommunikationspartner
 	 * 			gesendet wurde, dass die Verbindung beendet wird.
 	 * 			Sonst <code>false</code>.
@@ -70,7 +77,7 @@ extends Thread {
 	}
 	
 	/**
-	 * Fuegt einen Empfaenger dem Interpreter hinzu.
+	 * Fügt einen Empfänger dem Interpreter hinzu.
 	 * @param e	Der hinzuzufuegende Empfaenger
 	 */
 	public void empfaengerHinzufuegen(Empfaenger e) {
@@ -78,60 +85,107 @@ extends Thread {
 	}
 	
 	/**
-	 * Diese Methode verarbeitet die unveraenderte Ausgabe des 
+	 * Diese Methode verarbeitet die unveränderte Ausgabe des
 	 * Kommunikationspartners. Diese wird analysiert und
 	 * anschließend die entsprechende Information
-	 * an alle angehaengten <code>Empfaenger</code> weitergegeben.
-	 * @param communication	Die ungeschnittene Nachricht
+	 * an alle angehängten <code>Empfaenger</code> weitergegeben.
+	 * @param raw	Die ungeschnittene Nachricht
 	 * des Partners.
 	 */
-	private void process(String communication) {
-		//Die Information
-		String rest = communication.substring(1);
-		//Fallunterscheidung gemaess Informationstyp
-		switch(communication.charAt(0)) {
-		case 's': //String
-			for(Empfaenger e : outputListe) e.empfangeString(rest);
-			break;
-		case 'i': //Int
-			int i = Integer.parseInt(rest);
-			for(Empfaenger e : outputListe) e.empfangeInt(i);
-			break;
-		case 'b': //Byte
-			byte b = Byte.parseByte(rest);
-			for(Empfaenger e : outputListe) e.empfangeByte(b);
-			break;
-		case 'd': //Double
-			double d = Double.parseDouble(rest);
-			for(Empfaenger e : outputListe) e.empfangeDouble(d);
-			break;
-		case 'c': //Char
-			char c = rest.charAt(0);
-			for(Empfaenger e : outputListe) e.empfangeChar(c);
-			break;
-		case 'k': //Boolean
-			boolean bo = Boolean.parseBoolean(rest);
-			for(Empfaenger e : outputListe) e.empfangeBoolean(bo);
-			break;
-		case 'x': //Steuerzeichen
-			switch(rest.charAt(0)) {
-			case 'q': //quit communication
-				quitCommunication();
-				break;
-			case 'e': // name entry
-				break;
+	private void process(String raw) {
+		// Die Information
+		String rest = raw.substring(1);
+
+		if(server != null && server.isBroadcasting()) {
+			switch(raw.charAt(0)) {
+				case 's':
+				case 'i':
+				case 'b':
+				case 'd':
+				case 'c':
+				case 'k':
+					for(NetzwerkVerbindung v : server.getVerbindungen()) {
+						if(v.getRemoteIP() != remoteIP) {
+							v.sende(raw);
+						}
+					}
+
+					break;
 			}
-			break;
+		}
+
+		// Fallunterscheidung gemäß Informationstyp
+		switch(raw.charAt(0)) {
+			case 's': // String
+				for(Empfaenger e : outputListe) {
+					e.empfangeString(rest);
+				}
+
+				break;
+			case 'i': // Int
+				int i = Integer.parseInt(rest);
+
+				for(Empfaenger e : outputListe) {
+					e.empfangeInt(i);
+				}
+
+				break;
+			case 'b': // Byte
+				byte b = Byte.parseByte(rest);
+
+				for(Empfaenger e : outputListe) {
+					e.empfangeByte(b);
+				}
+
+				break;
+			case 'd': // Double
+				double d = Double.parseDouble(rest);
+
+				for(Empfaenger e : outputListe) {
+					e.empfangeDouble(d);
+				}
+
+				break;
+			case 'c': // Char
+				char c = rest.charAt(0);
+
+				for(Empfaenger e : outputListe) {
+					e.empfangeChar(c);
+				}
+
+				break;
+			case 'k': // Boolean
+				boolean bo = Boolean.parseBoolean(rest);
+
+				for(Empfaenger e : outputListe) {
+					e.empfangeBoolean(bo);
+				}
+
+				break;
+			case 'x': // Steuerzeichen
+				switch(rest.charAt(0)) {
+					case 'q': //quit communication
+						quitCommunication();
+						break;
+					case 'e': // name entry
+						break;
+				}
+
+				break;
 		}
 	}
 	
 	public void quitCommunication() {
-		for(Empfaenger e : outputListe) e.verbindungBeendet();
+		for(Empfaenger e : outputListe) {
+			e.verbindungBeendet();
+		}
+
 		try {
 			reader.close();
 		} catch (IOException e1) {
 			System.err.println("Konnte den Kommunikationskanal nicht mehr schließen.");
 		}
+
 		connectionActive = false;
 	}
 	
@@ -152,12 +206,11 @@ extends Thread {
 				connectionActive = false;
 			}
 		}
+
 		try {
 			reader.close();
 		} catch (IOException e)  {
 			System.err.println("Konnte die Verbindung nicht schließen.");
 		}
 	}
-	
-	
 }

@@ -32,15 +32,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Server-Klasse für einfache Verwendung von Kommunikation.
  * 
- * @author Michael Andonie
+ * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
 public class Server extends Thread implements Empfaenger, SenderInterface {
-	
 	/**
 	 * Diese Liste speichert alle <b>aktiven></b> Netzwerkverbindungen.
 	 */
-	private final CopyOnWriteArrayList<NetzwerkVerbindung> verbindungen = 
-			new CopyOnWriteArrayList<NetzwerkVerbindung>();
+	private final CopyOnWriteArrayList<NetzwerkVerbindung> verbindungen = new CopyOnWriteArrayList<>();
 	
 	/**
 	 * Die Queue, in der Verbindungen liegen, um vom API-Nutzer zusätzlichen Empfaengern
@@ -49,7 +47,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 * dem API-Nutzer zugänglichen Thread zu simulieren.<br /><br />
 	 * Damit ist diese Referenz das Verbindungsglied fuer eine <i>Consumer/Producer - Struktur</i>.
 	 */
-	private final Queue<NetzwerkVerbindung> waitingQueue = new LinkedList<NetzwerkVerbindung>();
+	private final Queue<NetzwerkVerbindung> waitingQueue = new LinkedList<>();
 	
 	/**
 	 * Der Port des Servers.
@@ -73,15 +71,25 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 * Klasse und die Empfaenger-Methoden</b>.
 	 */
 	private Empfaenger globalerEmpfaenger;
-	
+
+	/**
+	 * Listener, der ausgeführt wird, sobald ein Client sich verbindet.
+	 */
+	private ConnectListener connectListener;
+
+	/**
+	 * Ob der Netzwerk-Teilnehmer die empfangenen Nachrichten an alle Clients weiterleitens soll
+	 */
+	private boolean broadcast;
+
 	/**
 	 * Erstellt einen neuen Server.
 	 * @param port Der Port, auf dem dieser Server auf anfragende
 	 * <code>Client</code>s antworten soll.
 	 */
 	public Server(int port) {
-		this.setDaemon(true);
 		this.port = port;
+		this.setDaemon(true);
 		this.start();
 	}
 	
@@ -101,8 +109,8 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 		while(!isInterrupted() && active) {
 			try {
 				Socket got = socket.accept();
-				
-				//Stelle sicher, dass der Socket auch wieder geschlossen wird.
+
+				// Stelle sicher, dass der Socket auch wieder geschlossen wird.
 				Runtime.getRuntime().addShutdownHook(new Thread() {
 					@Override
 					public void run() {
@@ -110,10 +118,9 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 					}
 				});
 				
-				BufferedReader br = new BufferedReader(
-						new InputStreamReader(got.getInputStream()));
+				BufferedReader br = new BufferedReader(new InputStreamReader(got.getInputStream()));
 				OutputStream os = got.getOutputStream();
-				//Check for initial message.
+				// Check for initial message.
 				String init = br.readLine();
 				if(init.length() < 1 || !init.startsWith("xe")) {
 					System.err.println("Client gefunden! Dieser hat sich aber falsch angemeldet! "
@@ -129,48 +136,79 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 				} else {
 					name = init.substring(2);
 				}
-				
-				//Set up interpreter
-				NetzwerkInterpreter interpreter = new NetzwerkInterpreter(br);
+
+				String ip = got.getInetAddress().getHostAddress();
+
+				// set up interpreter
+				NetzwerkInterpreter interpreter = new NetzwerkInterpreter(ip, this, br);
 				interpreter.empfaengerHinzufuegen(this);
 
-				String ip = socket.getInetAddress().getHostAddress();
 				final NetzwerkVerbindung verbindung = new NetzwerkVerbindung(name, ip,
 						new BufferedWriter(new OutputStreamWriter(os)), interpreter);
 				
 				waitingQueue.add(verbindung);
 				verbindungen.add(verbindung);
 				
-				verbindung.getInterpreter().empfaengerHinzufuegen(new Empfaenger(){
+				verbindung.getInterpreter().empfaengerHinzufuegen(new Empfaenger() {
 					@Override
-					public void empfangeString(String string) {}
+					public void empfangeString(String string) { }
 					@Override
-					public void empfangeInt(int i) {}
+					public void empfangeInt(int i) { }
 					@Override
-					public void empfangeByte(byte b) {}
+					public void empfangeByte(byte b) { }
 					@Override
-					public void empfangeDouble(double d) {}
+					public void empfangeDouble(double d) { }
 					@Override
-					public void empfangeChar(char c) {}
+					public void empfangeChar(char c) { }
 					@Override
-					public void empfangeBoolean(boolean b) {}
-					
+					public void empfangeBoolean(boolean b) { }
 					@Override
 					public void verbindungBeendet() {
 						verbindungen.remove(verbindung);
 						waitingQueue.remove(verbindung);
 					}
 				});
-				
+
+				if(connectListener != null) {
+					connectListener.onConnect(ip);
+				}
+
 				synchronized(waitingQueue) {
 					waitingQueue.notify();
 				}
-				
-				break;
 			} catch (IOException e) {
 				Logger.error("Beim Herstellen einer Verbindung ist ein Input/Output - Fehler aufgetreten.");
 			}
 		}
+	}
+
+	/**
+	 * Setzt, ob der Teilnehmer empfangene Nachrichten an alle anderen Clients weiterleitet.
+	 *
+	 * @param broadcast <code>true</code>, falls der Teilnehmer die Nachrichten verteilen soll, sonst <code>false</code>.
+	 */
+	public void setBroadcast(boolean broadcast) {
+		this.broadcast = broadcast;
+	}
+
+	/**
+	 * Gibt an, ob der Teilnehmer empfangene Nachrichten an alle anderen Clients weiterleitet.
+	 *
+	 * @return <code>true</code>, falls der Teilnehmer die Nachrichten verteilt, sonst <code>false</code>.
+	 */
+	public boolean isBroadcasting() {
+		return this.broadcast;
+	}
+
+	CopyOnWriteArrayList<NetzwerkVerbindung> getVerbindungen() {
+		return this.verbindungen;
+	}
+
+	/**
+	 * Setze den Listener, der informiert wird, wenn ein Client sich verbindet.
+	 */
+	public void setOnConnectListener(ConnectListener listener) {
+		connectListener = listener;
 	}
 	
 	/**
@@ -190,9 +228,10 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 					waitingQueue.wait();
 				}
 			} catch (InterruptedException e) {
-				//
+				e.printStackTrace();
 			}
 		}
+
 		return waitingQueue.poll();
 	}
 	
@@ -287,7 +326,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 			try {
 				socket.close();
 			} catch(IOException e) {
-				System.err.println("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+				Logger.error("Konnte den Verbindungs-Socket nicht mehr schliessen.");
 			}
 		}
 	}
@@ -300,8 +339,9 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void empfangeString(String string) {
-		if(globalerEmpfaenger != null)
+		if(globalerEmpfaenger != null) {
 			globalerEmpfaenger.empfangeString(string);
+		}
 	}
 
 	/**
@@ -312,8 +352,9 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void empfangeInt(int i) {
-		if(globalerEmpfaenger != null)
+		if(globalerEmpfaenger != null) {
 			globalerEmpfaenger.empfangeInt(i);
+		}
 	}
 
 	/**
@@ -324,8 +365,9 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void empfangeByte(byte b) {
-		if(globalerEmpfaenger != null)
+		if(globalerEmpfaenger != null) {
 			globalerEmpfaenger.empfangeByte(b);
+		}
 	}
 
 	/**
@@ -336,8 +378,9 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void empfangeDouble(double d) {
-		if(globalerEmpfaenger != null)
+		if(globalerEmpfaenger != null) {
 			globalerEmpfaenger.empfangeDouble(d);
+		}
 	}
 
 	/**
@@ -348,8 +391,9 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void empfangeChar(char c) {
-		if(globalerEmpfaenger != null)
+		if(globalerEmpfaenger != null) {
 			globalerEmpfaenger.empfangeChar(c);
+		}
 	}
 
 	/**
@@ -360,8 +404,9 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void empfangeBoolean(boolean b) {
-		if(globalerEmpfaenger != null)
+		if(globalerEmpfaenger != null) {
 			globalerEmpfaenger.empfangeBoolean(b);
+		}
 	}
 
 	/**
@@ -374,8 +419,9 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void verbindungBeendet() {
-		if(globalerEmpfaenger != null)
+		if(globalerEmpfaenger != null) {
 			globalerEmpfaenger.verbindungBeendet();
+		}
 	}
 
 	public void netzwerkSichtbarkeit(boolean sichtbar) {

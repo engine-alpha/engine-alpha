@@ -7,7 +7,7 @@ public class ServerDiscovery {
 
 	}
 
-	public static void startDiscovery(DiscoveryListener listener) {
+	public static void startDiscovery(ConnectListener listener) {
 		new DiscoveryClient(listener).start();
 	}
 }

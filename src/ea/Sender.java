@@ -28,8 +28,7 @@ import java.io.*;
  * 
  * @author Michael Andonie
  */
-public class Sender 
-implements SenderInterface {
+public class Sender implements SenderInterface {
 	
 	/**
 	 * Gibt an, ob noch eine Verbindung zum anderen Ende der
@@ -44,7 +43,7 @@ implements SenderInterface {
 	
 	/**
 	 * Konstruktur erstellt den Sender.
-	 * @param os Der OutputStream, ueber den ab sofort gesendet werden soll.
+	 * @param bw Der OutputStream, ueber den ab sofort gesendet werden soll.
 	 */
 	public Sender(BufferedWriter bw) {
 		writer = bw;
@@ -52,7 +51,7 @@ implements SenderInterface {
 	}
 	
 	/**
-	 * Gibt an, ob die Verbindung ueber diesen Sender
+	 * Gibt an, ob die Verbindung über diesen Sender
 	 * noch aktiv ist.
 	 * @return	<code>true</code>, wenn der Sender dem Kommunikationspartner
 	 * 			(noch) nicht gesendet hat, dass die Verbindung beendet wird.
@@ -69,11 +68,12 @@ implements SenderInterface {
 	 * @return <code>true</code>, wenn die Nachricht erfolgreich gesendet werden
 	 * 			konnte, sonst <code>false</code>.
 	 */
-	private boolean sende(String s) {
+	boolean sende(String s) { // package private, weil NetzwerkInterpreter das braucht!
 		if(!active) {
 			System.err.println("Kann nach dem Schließen nicht mehr senden.");
 			return false;
 		}
+
 		try {
 			writer.write(s);
 			writer.newLine();
@@ -82,6 +82,7 @@ implements SenderInterface {
 			System.err.println("Es gab einen internen Fehler beim Schreiben.");
 			return false;
 		}
+
 		return true;
 	}
 	
@@ -140,7 +141,9 @@ implements SenderInterface {
 	public void beendeVerbindung() {
 		if(!sende("xq"))
 			return;
+
 		active = false;
+
 		try {
 			writer.close();
 		} catch(IOException e) {

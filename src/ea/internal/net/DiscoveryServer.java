@@ -61,7 +61,7 @@ public class DiscoveryServer extends Thread {
 		}
 	}
 
-	private ArrayList<String> getLocalAddresses() {
+	private static ArrayList<String> getLocalAddresses() {
 		ArrayList<String> addrs = new ArrayList<>();
 
 		addrs.add("127.0.0.1");
@@ -84,7 +84,7 @@ public class DiscoveryServer extends Thread {
 					if (currentAddress.isLoopbackAddress()) {
 						continue;
 					}
-					
+
 					addrs.add(currentAddress.getHostAddress());
 				}
 			}
