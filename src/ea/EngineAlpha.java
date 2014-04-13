@@ -69,15 +69,17 @@ public class EngineAlpha extends Frame {
 		}
 		
 		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing (WindowEvent e) {
 				promo.shutdown();
 
 				setVisible(false);
 				dispose();
-				
+
 				System.exit(0);
 			}
 		});
+
+		promo = new EngineAlphaPromotion(this);
 	}
 	
 	private class EngineAlphaPromotion extends Canvas implements Runnable {
