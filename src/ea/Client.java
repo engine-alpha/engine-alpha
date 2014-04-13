@@ -19,19 +19,14 @@
 
 package ea;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import ea.internal.util.Logger;
+
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import ea.internal.util.Logger;
-
 /**
- * Diese Klasse ermoeglicht das Aufbauen einer Client-Verbindung zu einem
+ * Diese Klasse ermöglicht das Aufbauen einer Client-Verbindung zu einem
  * Server.
  * 
  * @author Michael Andonie
@@ -41,7 +36,7 @@ public class Client
 		implements Empfaenger, SenderInterface {
 	
 	/**
-	 * Der socket, ueber den die Verbindung aufgebaut wird.
+	 * Der Socket, über den die Verbindung aufgebaut wird.
 	 */
 	private Socket socket;
 	
@@ -66,6 +61,11 @@ public class Client
 	 * Server aufgebaut wurde.
 	 */
 	private NetzwerkVerbindung verbindung;
+
+	/**
+	 * Falls Verbindungsversuch scheitert, wird diese Variable <code>true</code>.
+	 */
+	private boolean connectFailed;
 	
 	public Client(String name, String ipAdresse, int port) {
 		this.setDaemon(true);
@@ -108,18 +108,22 @@ public class Client
 			// Set up interpreter
 			NetzwerkInterpreter interpreter = new NetzwerkInterpreter(new BufferedReader(new InputStreamReader(is)));
 			interpreter.empfaengerHinzufuegen(this);
-			
-			NetzwerkVerbindung vb = new NetzwerkVerbindung(
-					name, bw, interpreter);
+
+			String ip = socket.getInetAddress().getHostAddress();
+			NetzwerkVerbindung vb = new NetzwerkVerbindung(name, ip, bw, interpreter);
+
 			verbindung = vb;
+
 			synchronized (this) {
 				this.notifyAll();
 			}
 		} catch (UnknownHostException e) {
 			Logger.error("Konnte die IP-Adresse nicht zuordnen...");
+			connectFailed = true;
 		} catch (IOException e) {
 			Logger.error("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer"
 					+ " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
+			connectFailed = true;
 		}
 	}
 	
@@ -332,5 +336,9 @@ public class Client
 	@Override
 	public void verbindungBeendet() {
 		// To be overwritten
+	}
+
+	public boolean verbindungGescheitert() {
+		return connectFailed;
 	}
 }

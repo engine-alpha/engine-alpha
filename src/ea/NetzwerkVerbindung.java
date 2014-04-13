@@ -27,10 +27,9 @@ import java.io.BufferedWriter;
  * <code>Empfaenger</code> weitergibt sowie dem <code>Sender</code>, mit dem man
  * Informationen an die andere Seite schicken kann)und gibt dieser einen Namen.
  * 
- * @author Michael Andonie
+ * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
-public class NetzwerkVerbindung 
-extends Sender {
+public class NetzwerkVerbindung extends Sender {
 	
 	/**
 	 * Der Name der Verbindung. Dies ist der Name, den der Client dem
@@ -43,10 +42,16 @@ extends Sender {
 	 * und weitterreicht.
 	 */
 	private final NetzwerkInterpreter interpreter;
+
+	/**
+	 * IP des Remote-Geräts
+	 */
+	private final String ip;
 	
-	public NetzwerkVerbindung(String name, BufferedWriter bw, NetzwerkInterpreter interpreter) {
+	public NetzwerkVerbindung(String name, String ip, BufferedWriter bw, NetzwerkInterpreter interpreter) {
 		super(bw);
 		this.name = name;
+		this.ip = ip;
 		this.interpreter = interpreter;
 	}
 	
@@ -80,5 +85,9 @@ extends Sender {
 	public void beendeVerbindung() {
 		super.beendeVerbindung();
 		interpreter.quitCommunication();
+	}
+
+	public String getRemoteIP() {
+		return ip;
 	}
 }

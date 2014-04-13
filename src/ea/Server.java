@@ -19,12 +19,10 @@
 
 package ea;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import ea.internal.net.DiscoveryServer;
+import ea.internal.util.Logger;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -36,9 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 
  * @author Michael Andonie
  */
-public class Server
-extends Thread
-implements Empfaenger, SenderInterface {
+public class Server extends Thread implements Empfaenger, SenderInterface {
 	
 	/**
 	 * Diese Liste speichert alle <b>aktiven></b> Netzwerkverbindungen.
@@ -86,11 +82,11 @@ implements Empfaenger, SenderInterface {
 	public Server(int port) {
 		this.setDaemon(true);
 		this.port = port;
-		start();
+		this.start();
 	}
 	
 	/**
-	 * Ueberschriebene run-Methode. Hierin wird auf neue Verbindungen gewartet und
+	 * Überschriebene run-Methode. Hierin wird auf neue Verbindungen gewartet und
 	 * diese werden weiterverarbeitet.
 	 */
 	@Override
@@ -98,13 +94,12 @@ implements Empfaenger, SenderInterface {
 		try {
 			this.socket = new ServerSocket(port);
 		} catch (IOException e) {
-			System.err.println("Konnte keinen Server aufstellen. Ausreichend Rechte"
-					+ " vorhanden?\n");
-			 e.printStackTrace();
+			Logger.error("Konnte keinen Server aufstellen. Ausreichend Rechte vorhanden?\n");
+			e.printStackTrace();
 		}
+
 		while(!isInterrupted() && active) {
 			try {
-				System.out.println("accepting...");
 				Socket got = socket.accept();
 				
 				//Stelle sicher, dass der Socket auch wieder geschlossen wird.
@@ -138,9 +133,10 @@ implements Empfaenger, SenderInterface {
 				//Set up interpreter
 				NetzwerkInterpreter interpreter = new NetzwerkInterpreter(br);
 				interpreter.empfaengerHinzufuegen(this);
-				
-				final NetzwerkVerbindung verbindung = new NetzwerkVerbindung(
-						name, new BufferedWriter(new OutputStreamWriter(os)), interpreter);
+
+				String ip = socket.getInetAddress().getHostAddress();
+				final NetzwerkVerbindung verbindung = new NetzwerkVerbindung(name, ip,
+						new BufferedWriter(new OutputStreamWriter(os)), interpreter);
 				
 				waitingQueue.add(verbindung);
 				verbindungen.add(verbindung);
@@ -172,8 +168,7 @@ implements Empfaenger, SenderInterface {
 				
 				break;
 			} catch (IOException e) {
-				System.err.println("Beim Herstellen einer Verbindung ist ein Input/Output - "
-						+ "Fehler aufgetreten.");
+				Logger.error("Beim Herstellen einer Verbindung ist ein Input/Output - Fehler aufgetreten.");
 			}
 		}
 	}
@@ -325,7 +320,7 @@ implements Empfaenger, SenderInterface {
 	 * {@inheritDoc}
 	 * Gibt die Nachricht an den globalen Empfänger 
 	 * weiter, sofern einer vorhanden ist.
-	 * @param string	Die Nachricht vom Client.
+	 * @param b	Die Nachricht vom Client.
 	 */
 	@Override
 	public void empfangeByte(byte b) {
@@ -383,5 +378,11 @@ implements Empfaenger, SenderInterface {
 			globalerEmpfaenger.verbindungBeendet();
 	}
 
-	
+	public void netzwerkSichtbarkeit(boolean sichtbar) {
+		if(sichtbar) {
+			DiscoveryServer.startServer();
+		} else {
+			DiscoveryServer.stopServer();
+		}
+	}
 }
