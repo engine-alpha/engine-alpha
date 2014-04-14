@@ -19,15 +19,21 @@
 package ea;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -38,16 +44,10 @@ import java.util.TimeZone;
  * 
  * @author Niklas Keller <me@kelunik.com>
  */
-@SuppressWarnings("serial")
 public class EngineAlpha extends Frame {
-	// 10000 => 1.0
-	// 10100 => 1.1
-	// 10200 => 1.2
-	// 20000 => 2.0
-	// 30000 => 3.0
-	
-	public static final int VERSION_CODE = 30000;
-	public static final String VERSION_STRING = "v3.0";
+	// 10000 * major + 100 * minor + 1 * bugfix
+	public static final int VERSION_CODE = 30001;
+	public static final String VERSION_STRING = "v3.0.1";
 
 	public static final boolean IS_JAR;
 	public static final long BUILD_TIME;
@@ -81,8 +81,12 @@ public class EngineAlpha extends Frame {
 
 		promo = new EngineAlphaPromotion(this);
 	}
+
+	private enum State {
+		LOADING, FAILED, SUCCESS;
+	}
 	
-	private class EngineAlphaPromotion extends Canvas implements Runnable {
+	private class EngineAlphaPromotion extends Canvas implements Runnable, MouseListener {
 		private Thread thread;
 		private BufferedImage logo;
 		private double alpha = 0;
@@ -90,6 +94,10 @@ public class EngineAlpha extends Frame {
 		private boolean alive = true;
 		private int version_stable = -1;
 		private int version_dev = -1;
+
+		private boolean showUpgradeButton;
+		private Rectangle button;
+		private State upgradeState;
 		
 		public EngineAlphaPromotion(EngineAlpha parent) {
 			try {
@@ -100,6 +108,7 @@ public class EngineAlpha extends Frame {
 			
 			setSize(400, 300);
 			setPreferredSize(getSize());
+			addMouseListener(this);
 			parent.add(this);
 			parent.pack();
 			
@@ -107,6 +116,8 @@ public class EngineAlpha extends Frame {
 			parent.setLocation((screen.width-parent.getWidth())/2, (screen.height-parent.getHeight())/2);
 			
 			parent.setVisible(true);
+
+			button = new Rectangle(125, 180, 150, 26);
 			
 			thread = new Thread(this) {{ setDaemon(true); }};
 			thread.start();
@@ -116,56 +127,20 @@ public class EngineAlpha extends Frame {
 					try {
 						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_STABLE").trim();
 						version_stable = Integer.parseInt(body);
-					} catch(NumberFormatException e) {
-						e.printStackTrace();
-					}
+					} catch(Exception e) { }
 
 					try {
 						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT").trim();
 						version_dev = Integer.parseInt(body);
-					} catch(NumberFormatException e) {
-						e.printStackTrace();
-					}
+					} catch(Exception e) { }
 					
 					loading = false;
-				}
-			}.start();
-		}
 
-		private String getUrlBody(String uri) {
-			// workaround, make sure this is set to false
-			// see http://stackoverflow.com/a/14884941/2373138
-			System.setProperty("jsse.enableSNIExtension", "false");
-
-			BufferedInputStream bis = null;
-			URL url;
-
-			try {
-				url = new URL(uri);
-				bis = new BufferedInputStream(url.openStream());
-
-				StringBuilder builder = new StringBuilder();
-				byte[] data = new byte[1024];
-				int read;
-
-				while((read = bis.read(data)) != -1) {
-					builder.append(new String(data, 0, read));
-				}
-
-				return builder.toString();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if(bis != null) {
-					try {
-						bis.close();
-					} catch (IOException e) {
-						e.printStackTrace();
+					if(VERSION_CODE < version_stable && isJar()) {
+						showUpgradeButton = true;
 					}
 				}
-			}
-
-			return null;
+			}.start();
 		}
 		
 		public void run() {
@@ -215,7 +190,7 @@ public class EngineAlpha extends Frame {
 			g.setColor(new Color(250, 250, 250));
 			g.fillRect(0, 0, getWidth(), getHeight());
 			
-			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 40, null);
+			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 25, null);
 			
 			if(loading) {
 				g.setColor(new Color(0,0,0,150));
@@ -236,8 +211,8 @@ public class EngineAlpha extends Frame {
 					color = new Color(50, 200, 25);
 				}
 				
-				else if(version_stable > VERSION_CODE) {
-					message = "Es ist eine neue Version verfügbar!";
+				else if(VERSION_CODE < version_stable) {
+					message = "Es ist eine neue Stable-Version verfügbar!";
 					color = new Color(200,50,0);
 				}
 				
@@ -246,8 +221,13 @@ public class EngineAlpha extends Frame {
 					color = new Color(0,100,150);
 				}
 
+				else if(VERSION_CODE < version_dev) {
+					message = "Es ist eine neue Dev-Version verfügbar!";
+					color = new Color(200,50,0);
+				}
+
 				else {
-					message = "Du verwendest eine unbekannte Version.";
+					message = "";
 				}
 				
 				g.setColor(color);
@@ -259,8 +239,96 @@ public class EngineAlpha extends Frame {
 			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			g.setColor(new Color(100, 100, 100));
-			String str = "Build: " + sdf.format(date);
+			String str = "Build#" + VERSION_CODE + "   " + sdf.format(date);
 			g.drawString(str, (getWidth() - fm.stringWidth(str)) / 2, getHeight() - 40);
+
+			if(showUpgradeButton) {
+				String text;
+
+				if(upgradeState == State.SUCCESS) {
+					g.setColor(new Color(50, 230, 0, 30));
+					text = "ABGESCHLOSSEN";
+				} else if(upgradeState == State.FAILED) {
+					g.setColor(new Color(230, 50, 0, 30));
+					text = "FEHLER";
+				} else {
+					g.setColor(new Color(0, 0, 0, 30));
+					text = "UPGRADE";
+				}
+
+				g.fillRect(button.x, button.y, button.width, button.height);
+				g.setColor(new Color(50, 50, 50));
+				g.drawString(text, button.x + (button.width - g.getFontMetrics().stringWidth(text)) / 2,
+						button.y + 18);
+			}
+		}
+
+		public void mousePressed(MouseEvent e) {
+
+		}
+
+		public void mouseReleased(MouseEvent e) {
+
+		}
+
+		public void mouseClicked(MouseEvent e) {
+			if(showUpgradeButton && button.contains(e.getX(), e.getY())) {
+				onButtonClicked();
+			}
+		}
+
+		public void mouseExited(MouseEvent e) {
+
+		}
+
+		public void mouseEntered(MouseEvent e) {
+
+		}
+
+		public void onButtonClicked() {
+			int result = JOptionPane.showConfirmDialog(this, "Dies wird deine bisherige Kopie der Engine ersetzen.\nSicher, dass du fortfahren willst?", "Wirklich fortfahren?", JOptionPane.OK_CANCEL_OPTION);
+
+			if(result == JOptionPane.OK_OPTION) {
+				if(doUpgrade()) {
+					upgradeState = State.SUCCESS;
+				} else {
+					upgradeState = State.FAILED;
+				}
+			}
+		}
+
+		private boolean doUpgrade() {
+			upgradeState = State.LOADING;
+
+			if(!isJar()) {
+				return false;
+			}
+
+			String path = getJarName();
+			String data;
+
+			try {
+				data = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/CURRENT_RELEASE_URL").trim();
+			} catch(Exception e) {
+				return false;
+			}
+
+			if(data != null) {
+				try {
+					String[] info = data.split(" ", 2);
+
+					if(Integer.parseInt(info[0]) > VERSION_CODE) {
+						URL url = new URL(info[1]);
+						ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+						FileOutputStream fos = new FileOutputStream(path);
+						fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+					}
+				} catch(Exception e) {
+					return false;
+				}
+			}
+
+			return true;
 		}
 	}
 	
@@ -307,5 +375,41 @@ public class EngineAlpha extends Frame {
 		} catch (Exception e) {
 			return System.currentTimeMillis() / 1000;
 		}
+	}
+
+	private static String getUrlBody(String uri) {
+		// workaround, make sure this is set to false
+		// see http://stackoverflow.com/a/14884941/2373138
+		System.setProperty("jsse.enableSNIExtension", "false");
+
+		BufferedInputStream bis = null;
+		URL url;
+
+		try {
+			url = new URL(uri);
+			bis = new BufferedInputStream(url.openStream());
+
+			StringBuilder builder = new StringBuilder();
+			byte[] data = new byte[1024];
+			int read;
+
+			while((read = bis.read(data)) != -1) {
+				builder.append(new String(data, 0, read));
+			}
+
+			return builder.toString();
+		} catch (Exception e) {
+			// client may have no internet connection
+		} finally {
+			if(bis != null) {
+				try {
+					bis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return null;
 	}
 }

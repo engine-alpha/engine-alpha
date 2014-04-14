@@ -19,43 +19,50 @@
 
 package ea;
 
-import java.io.*;
-import java.awt.Color;
-import java.util.ArrayList;
-
+import ea.compat.CompatDateiManager;
 import ea.internal.gra.PixelFeld;
 import ea.internal.util.Logger;
 
+import javax.xml.bind.DatatypeConverter;
+import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
- * Der Dateimanager ist eine Klasse, die die Systemspezifischen Pfadregeln
- * beachtend die jeweils korrekten Zeichenketten fuer die entsprechenden
- * Dateiverzeichnisse kennt.<br />
- * Ausserdem kann sie die Informationen eines Pixelfeldes im EAF-Format
- * (Engine-Alpha-Figure-Format speichern) sowie die eines String- oder
- * Integer-Arrays im EAA-Format (Engine-Alpha-Array-Format) lesen und speichern.
- * 
- * 
+ * Der Dateimanager ist eine Klasse, die die systemspezifischen Pfadregeln
+ * beachtend die jeweils korrekten Zeichenketten für die entsprechenden
+ * Dateiverzeichnisse kennt.
+ *
+ * Ausserdem kann sie die Informationen eines Pixelfeldes im <code>.eaf</code>-Format
+ * (Engine-Alpha-Figur-Format) speichern sowie die eines String- oder
+ * Integer-Arrays im <code>.eaa</code>-Format (Engine-Alpha-Array-Format)
+ * lesen und speichern.
+ *
  * @author Michael Andonie, Niklas Keller
  */
 public class DateiManager {
 	/**
-	 * Das allgemein gueltige Zeichen fuer einen Zeilenumbruch.
+	 * Das allgemein gültige Zeichen für einen Zeilenumbruch.
 	 */
 	public static final String bruch = System.getProperty("line.separator");
 	
 	/**
-	 * Das allgemein gueltige Zeichen fuer ein Unterverzeichnis
+	 * Das allgemein gültige Zeichen für ein Unterverzeichnis
 	 */
 	public static final String sep = System.getProperty("file.separator");
 	
 	/**
-	 * Das grundlegende Verzeichnis. Dies ist die absolute Pfadangabe zu dieser
-	 * Klasse.
+	 * Das grundlegende Verzeichnis. Dies ist die absolute Pfadangabe
+	 * zum aktuellen Arbeitsverzeichnis. Das Arbeitsverzeichnis ist das Verzeichnis
+	 * in dem sich deine <code>.jar</code>-Datei bzw. dein Projekt befindet.
 	 */
 	public static final String verz = System.getProperty("user.dir") + sep;
 	
-	/** Eine Liste, die alle bereits verwendeten Farben einmalig listet */
-	private static final ArrayList<Color> list = new ArrayList<Color>();
+	/**
+	 * Eine Liste, die alle bereits verwendeten Farben einmalig listet
+	 */
+	private static final ArrayList<Color> list = new ArrayList<>();
 	
 	static {
 		list.add(Color.red);
@@ -69,234 +76,245 @@ public class DateiManager {
 		list.add(Color.orange);
 		list.add(Color.lightGray);
 	}
+
+	private DateiManager() { }
 	
 	/**
-	 * Konstruktor fuer Objekte der Klasse DateiManager. Ist Privat
-	 */
-	private DateiManager() {
-		//
-	}
-	
-	/**
-	 * Schreibt ein String - Array (bzw. ein String[] - Objekt) als
-	 * eigenstaendige Datei auf.<br />
-	 * Hierfuer wird das ".eaa"-Format verwendet ("Engine Alpha Array").
+	 * Schreibt ein <code>String</code>-Array (bzw. ein <code>String[]</code>-Objekt) als
+	 * eigenständige Datei auf.
+	 *
+	 * Hierfür wird das <code>.eaa</code>-Format verwendet (Engine-Alpha-Array).
 	 * 
 	 * @param array
 	 *            Das zu schreibende Array.
 	 * @param pfad
-	 *            Der absolute (oder auch relative) Dateipfad, der sowohl das
-	 *            Verzeichnis wie auch den Dateinamen angibt.<br />
-	 *            Dieser sollte mit ".eaa" enden, wenn nicht, wird dies
-	 *            automatisch angehaengt.<br />
-	 *            <b>Sollte der String allerdings sonst ein "."-Zeichen
-	 *            enthalten</b>, wird nur eine Fehlermeldung ausgespuckt!
-	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
-	 *         wurde, ansonsten <code>false</code>.
+	 *            Der Dateipfad, der sowohl das Verzeichnis wie auch den Dateinamen angibt.
+	 *
+	 *            Dieser sollte mit <code>.eaa</code> enden. Wenn nicht, wird dies
+	 *            automatisch angehängt.
+	 * @return <code>true</code>, falls die Datei erfolgreich geschrieben
+	 *         wurde, sonst <code>false</code>.
 	 */
 	public static boolean stringArraySchreiben(String[] array, String pfad) {
 		if (array == null) {
-            Logger.error("Das Eingabearray war null!");
-			return false;
+            throw new IllegalArgumentException("Das Array war null. Das ist nicht erlaubt!");
 		}
+
+		pfad = normalizePath(pfad);
 		
 		if (!pfad.endsWith(".eaa")) {
-			if (pfad.contains(".")) {
-				Logger.error("Der Verzeichnisname ist ungültig! Die Datei sollte mit '.eaa' enden und darf sonst keine '.'-Zeichen enthalten");
-				return false;
-			}
-			
 			pfad += ".eaa";
 		}
-		
+
 		try {
 			BufferedWriter w = new BufferedWriter(new FileWriter(verz + pfad));
-			w.write("typ:String");// Typdeklaration
-			w.newLine();
-			w.write("len:" + array.length);
-			
-			for (int i = 0; i < array.length; i++) {
+
+			w.write("version:2,typ:string,length:" + array.length);
+
+			String line;
+
+			for(int i = 0; i < array.length; i++) {
 				w.newLine();
-				
-				String erg = array[i];
-				
-				// TODO ~~ und %% escapen!
-				if (erg == null) {
-					erg = "%%";
-				} else if (erg.isEmpty()) {
-					erg = "~~";
-				} else if (erg.equals("~~") || erg.equals("%%")) {
-					System.err.println("ACHTUNG! Aufgrund der internen Struktur des Dateiformates fuehrt die Abspeicherung der String"
-							+ "literale \"%%\" sowie \"~~\" unter Garantie zu falschen Ergebnissen!!!!");
+
+				line = array[i];
+
+				if(line == null) {
+					line = Character.toString((char) 0);
+				} else {
+					line = DatatypeConverter.printBase64Binary(line.getBytes());
 				}
-				
-				w.write("val:" + erg);
+
+				w.write(line);
 			}
-			
+
 			w.close();
-			
+
 			return true;
-		} catch (IOException e) {
-			Logger.error("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?");
-			return false;
+		} catch(Exception e) {
+			Logger.error("Fehler beim Schreiben der Datei!");
 		}
+
+		return false;
 	}
 	
 	/**
-	 * Liest eine ".eaa"-String-Array-Datei ein.
+	 * Liest eine <code>.eaa</code>-String-Array-Datei ein.
 	 * 
 	 * @param pfad
-	 *            Das Verzeichnis der einzulesenden Datei.<br />
-	 *            Die Eingabe <b>muss</b> ein Dateiname mit dem Ende ".eaa"
-	 *            sein. Dies kann ohne Ordnerangaben gemacht werden, wenn die
-	 *            Datei im Quelltextordner ist.
-	 * @return Das Array, das eingelesen wurde.<br />
-	 *         Ist <code>null</code>, wenn ein Fehler aufgetreten ist.
+	 *            Der Dateipfad, der sowohl das Verzeichnis wie auch den Dateinamen angibt.
+	 *
+	 *            Dieser sollte mit <code>.eaa</code> enden. Wenn nicht, wird dies
+	 *            automatisch angehängt.
+	 * @return Array, das eingelesen wurde oder <code>null</code>, wenn ein Fehler aufgetreten ist.
 	 */
 	public static String[] stringArrayEinlesen(String pfad) {
+		pfad = normalizePath(pfad);
+
 		if (!pfad.endsWith(".eaa")) {
-			System.err.println("Der Dateiname bezeichnet keine .eaa - Datei! Er muss mit \".eaa\" enden!");
-			return null;
+			pfad += ".eaa";
 		}
-		
-		String[] ret = null;
+
+		LineNumberReader f = null;
+		String[] ret;
 		
 		try {
 			String line;
-			LineNumberReader f = new LineNumberReader(new FileReader(verz + pfad));
+
+			f = new LineNumberReader(new FileReader(pfad));
 			line = f.readLine();
 			
-			if (line.compareTo("typ:String") != 0) {
-				System.err.println("Die geladene \".eaa\"-Datei beschreibt kein String-Array oder ist beschaedigt!");
-				f.close();
-				
+			if (line.equals("typ:String")) {
+				return CompatDateiManager.stringArrayEinlesen(pfad);
+			}
+
+			String[] metaInfos = line.split(",");
+			HashMap<String, String> meta = new HashMap<>();
+
+			for(String metaInfo : metaInfos) {
+				String[] info = metaInfo.split(":");
+				meta.put(info[0], info[1]);
+			}
+
+			if(!meta.get("version").equals("2")) {
+				Logger.error("Unbekannte Dateiformatsversion!");
 				return null;
 			}
-			
-			line = f.readLine();
-			int length = Integer.valueOf(line.split(":")[1]);
-			ret = new String[length];
-			for (int i = 0; i < length; i++) {
-				line = f.readLine();
-				String[] split = line.split(":", 2);
-				String erg = "";
-				
-				// TODO Was ist split[0]?
-				if (split[1].equals("%%")) {
-					erg = null;
-				} else if (split[1].equals("~~")) {
-					erg = "";
-				} else {
-					erg = split[1];
-				}
-				
-				ret[i] = erg;
+
+			if(!meta.get("typ").equals("string")) {
+				Logger.error("Datei hat einen anderen Datentyp gespeichert: " + meta.get("typ"));
 			}
-			f.close();
+
+			ret = new String[Integer.parseInt(meta.get("length"))];
+
+			for (int i = 0; i < ret.length; i++) {
+				line = f.readLine();
+
+				ret[i] = line.equals(Character.toString((char) 0))
+						? null
+						: new String(DatatypeConverter.parseBase64Binary(line));
+			}
+
+			return ret;
 		} catch (IOException e) {
-			System.err.println("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?" + bruch + pfad);
-			return null;
+			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
+		} finally {
+			try {
+				if(f != null) {
+					f.close();
+				}
+			} catch(IOException e) { }
 		}
-		
-		return ret;
+
+		return null;
 	}
-	
+
 	/**
-	 * Schreibt ein int- Array (bzw. ein int[] - Objekt) als eigenstaendige
-	 * Datei auf.<br />
-	 * Hierfuer wird das ".eaa"-Format verwendet ("Engine Alpha Array").
-	 * 
+	 * Schreibt ein <code>int</code>-Array (bzw. ein <code>int[]</code>-Objekt) als
+	 * eigenständige Datei auf.
+	 *
+	 * Hierfür wird das <code>.eaa</code>-Format verwendet (Engine-Alpha-Array).
+	 *
 	 * @param array
 	 *            Das zu schreibende Array.
 	 * @param pfad
-	 *            Der absolute (oder auch relative) Dateipfad, der sowohl das
-	 *            Verzeichnis wie auch den Dateinamen angibt.<br />
-	 *            Dieser sollte mit ".eaf" enden, wenn nicht, wird dies
-	 *            automatisch angehaengt.<br />
-	 *            <b>Sollte der String allerdings sonst ein "."-Zeichen
-	 *            enthalten</b>, wird nur eine Fehlermeldung ausgespuckt!
-	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
-	 *         wurde, ansonsten <code>false</code>.
+	 *            Der Dateipfad, der sowohl das Verzeichnis wie auch den Dateinamen angibt.
+	 *
+	 *            Dieser sollte mit <code>.eaa</code> enden. Wenn nicht, wird dies
+	 *            automatisch angehängt.
+	 * @return <code>true</code>, falls die Datei erfolgreich geschrieben
+	 *         wurde, sonst <code>false</code>.
 	 */
 	public static boolean integerArraySchreiben(int[] array, String pfad) {
 		if (array == null) {
-            Logger.error("Das Eingabearray war null!");
-			return false;
+			throw new IllegalArgumentException("Das Array war null. Das ist nicht erlaubt!");
 		}
+
+		pfad = normalizePath(pfad);
+
 		if (!pfad.endsWith(".eaa")) {
-			if (pfad.contains(".")) {
-				System.err.println("Der Verzeichnisname ist ungueltig! Die Datei sollte mit '.eaf' enden und darf sonst keine '.'-Zeichen enthalten");
-				return false;
-			}
 			pfad += ".eaa";
 		}
+
 		try {
 			BufferedWriter w = new BufferedWriter(new FileWriter(verz + pfad));
-			w.write("typ:Integer");// Typdeklaration
-			w.newLine();
-			w.write("len:" + array.length);
-			for (int i = 0; i < array.length; i++) {
+
+			w.write("version:2,typ:int,length:" + array.length);
+
+			for(int i = 0; i < array.length; i++) {
 				w.newLine();
-				w.write("val:" + array[i]);
+				w.write(Integer.toString(array[i]));
 			}
+
 			w.close();
+
 			return true;
-		} catch (IOException e) {
-			System.err.println("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?" + bruch + pfad);
-			return false;
+		} catch(Exception e) {
+			Logger.error("Fehler beim Schreiben der Datei!");
 		}
+
+		return false;
 	}
-	
+
 	/**
-	 * Liesst eine ".eaa" - int - Array - Datei ein.
-	 * 
+	 * Liest eine <code>.eaa</code>-int-Array-Datei ein.
+	 *
 	 * @param pfad
-	 *            Das Verzeichnis der einzulesenden Datei.<br />
-	 *            Die Eingabe <b>muss</b> ein Dateiname mit dem ende ".eaf"
-	 *            sein. Dies kann ohne Ordnerangaben gemacht werden, wenn die
-	 *            Datei im Quelltextordner ist.
-	 * @return Das Array, das eingelesen wurde.<br />
-	 *         Ist <code>null</code>, wenn ein Fehler aufgetreten ist.
+	 *            Der Dateipfad, der sowohl das Verzeichnis wie auch den Dateinamen angibt.
+	 *
+	 *            Dieser sollte mit <code>.eaa</code> enden. Wenn nicht, wird dies
+	 *            automatisch angehängt.
+	 * @return Array, das eingelesen wurde oder <code>null</code>, wenn ein Fehler aufgetreten ist.
 	 */
 	public static int[] integerArrayEinlesen(String pfad) {
+		pfad = normalizePath(pfad);
+
 		if (!pfad.endsWith(".eaa")) {
-			System.err.println("Der Dateiname bezeichnet keine .eaa - Datei! Er muss mit \".eaa\" enden!");
-			return null;
+			pfad += ".eaa";
 		}
-		
-		LineNumberReader f = null;
-		int[] ret = null;
-		
+
+		int[] ret;
+
 		try {
 			String line;
-			f = new LineNumberReader(new FileReader(verz
-					+ pfad));
+
+			LineNumberReader f = new LineNumberReader(new FileReader(pfad));
 			line = f.readLine();
-			if (line.compareTo("typ:Integer") != 0) {
-				System.err.println("Die geladene \".eaa\"-Datei beschreibt kein int-Array oder ist beschaedigt!");
+
+			if (line.compareTo("typ:String") == 0) {
+				return CompatDateiManager.integerArrayEinlesen(pfad);
+			}
+
+			String[] metaInfos = line.split(",");
+			HashMap<String, String> meta = new HashMap<>();
+
+			for(String metaInfo : metaInfos) {
+				String[] info = metaInfo.split(":");
+				meta.put(info[0], info[1]);
+			}
+
+			if(meta.get("version") != "2") {
+				Logger.error("Unbekannte Dateiformatsversion!");
 				return null;
 			}
-			line = f.readLine();
-			int length = Integer.valueOf(line.split(":")[1]);
-			ret = new int[length];
-			for (int i = 0; i < length; i++) {
-				line = f.readLine();
-				ret[i] = Integer.valueOf(line.split(":")[1]);
+
+			if(meta.get("typ") != "int") {
+				Logger.error("Datei hat einen anderen Datentyp gespeichert: " + meta.get("typ"));
 			}
+
+			ret = new int[Integer.parseInt(meta.get("length"))];
+
+			for (int i = 0; i < ret.length; i++) {
+				ret[i] = Integer.parseInt(f.readLine());
+			}
+
+			f.close();
+
+			return ret;
 		} catch (IOException e) {
-			System.err.println("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?" + bruch + pfad);
-			return null;
-		} finally {
-			if(f != null) {
-				try {
-					f.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
 		}
-		
-		return ret;
+
+		return null;
 	}
 	
 	/**
@@ -323,12 +341,13 @@ public class DateiManager {
 	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
 	 *         wurde, ansonsten <code>false</code>.
 	 */
-	public static boolean schreiben(Figur f, String name, String verzeichnis,
-			boolean relativ) {
+	public static boolean schreiben(Figur f, String name, String verzeichnis, boolean relativ) {
 		BufferedWriter w;
 		PixelFeld[] feld = f.animation();
+
 		try {
 			String verz;
+
 			if (!name.endsWith(".eaf")) {
 				if (name.contains(".")) {
 					System.err.println("Der Verzeichnisname ist ungueltig! Die Datei sollte mit '.eaf' enden und darf sonst keine '.'-Zeichen enthalten");
@@ -336,15 +355,19 @@ public class DateiManager {
 				}
 				name += ".eaf";
 			}
+
 			if (verzeichnis.isEmpty()) {
 				verz = name;
 			} else {
 				verz = verzeichnis + sep + name;
 			}
+
 			String add = DateiManager.verz;
+
 			if (!relativ) {
 				add = "";
 			}
+
 			w = new BufferedWriter(new FileWriter(add + verz));
 			// Basics
 			w.write("_fig_"); // Basisdeklaration
@@ -361,13 +384,16 @@ public class DateiManager {
 			w.newLine();
 			w.write("q:" + (int)f.dimension().y); // Die Position Y
 			w.newLine();
+
 			// Die Felder
 			for (int i = 0; i < feld.length; i++) {
 				w.write("-");
 				w.newLine();
 				w.write(feldInfo(feld[i]));
 			}
+
 			w.close();
+
 			return true;
 		} catch (IOException e) {
 			System.err.println("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?" + bruch + verzeichnis);
@@ -393,9 +419,6 @@ public class DateiManager {
 	 *            Das Verzeichnis, in dem die Datei gespeichert werden soll. Ist
 	 *            dies ein leerer String (""), so wird die Figur nur nach ihrem
 	 *            namen gespeichert.
-	 * @param relativ
-	 *            Gibt an, ob das Verzeichnis relativ zum Spielprojekt geshen
-	 *            werden soll (standard)
 	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben
 	 *         wurde, ansonsten <code>false</code>.
 	 */
@@ -443,34 +466,33 @@ public class DateiManager {
 	public static Figur figurLaden(String verzeichnis) {
 		return figurEinlesen(verzeichnis);
 	}
-	
+
 	/**
-	 * Liesst eine Figur ein.
-	 * 
-	 * @param verzeichnis
-	 *            Das Verzeichnis der einzulesenden Datei.<br />
-	 *            Die Eingabe <b>muss</b> ein Dateiname mit dem ende ".eaf"
+	 * Liest eine Figur ein.
+	 *
+	 * @param file
+	 *            Verzeichnis der einzulesenden Datei.
+	 *
+	 *            Die Eingabe <b>muss</b> ein Dateiname mit dem Ende <code>.eaf</code>
 	 *            sein. Dies kann ohne Ordnerangaben gemacht werden, wenn die
 	 *            Datei im Quelltextordner ist.
-	 * @param relativ
-	 *            Ob die Pfadangabe relativ zum Projektplatz ist (Standard)
-	 * @return Die eingelesene Figur.<br />
-	 *         <b>Tritt ein Fehler auf</b>, weil die Datei nicht einlesbar ist
-	 *         oder nicht existiert, ist dieser wert <code>null</code>.<br />
-	 *         Trotzdem kann es sein, dass eine beschuedigte Datei nicht mehr
+	 * @return Eingelesene Figur.
+	 *
+	 *         Tritt ein Fehler auf, weil die Datei nicht einlesbar ist
+	 *         oder nicht existiert, ist dieser wert <code>null</code>.
+	 *
+	 *         Trotzdem kann es sein, dass eine beschädigte Datei nicht mehr
 	 *         korrekt einlesbar ist, dennoch ein Ergebnis liefert.
+	 *
+	 * @see #figurLaden(String)
+	 * @see #figurEinlesen(String)
 	 */
 	public static Figur figurEinlesen(File file) {
-		/*
-		 * ####################################In Erinnerung an die
-		 * String-equals-Problematik#################################### <<< ?? TODO erklären...
-		 */
 		String verzeichnis = file.getAbsolutePath();
-		
+
 		if (!verzeichnis.endsWith(".eaf")) {
-			Logger.error("Die Datei " + verzeichnis + " endet nicht mit dem korrekten Dateiformat(.eaf)");
-			
-			return null;
+			Logger.warning("Datei hatte nicht die Dateierweiterung .eaf. Diese wurde automatisch ergänzt.");
+			verzeichnis += ".eaf";
 		}
 		
 		Figur fig = new Figur();
@@ -548,46 +570,52 @@ public class DateiManager {
 		
 		return fig;
 	}
-	
+
+	@Deprecated
 	public static Figur figurEinlesen(String verzeichnis, boolean relativ) {
 		return figurEinlesen(new File(verzeichnis));
 	}
 	
 	/**
-	 * Liesst eine Figur ein.
+	 * Liest eine Figur ein.
 	 * 
 	 * @param verzeichnis
-	 *            Das Verzeichnis der einzulesenden Datei.<br />
-	 *            Die Eingabe <b>muss</b> ein Dateiname mit dem ende ".eaf"
+	 *            Verzeichnis der einzulesenden Datei.
+	 *
+	 *            Die Eingabe <b>muss</b> ein Dateiname mit dem Ende <code>.eaf</code>
 	 *            sein. Dies kann ohne Ordnerangaben gemacht werden, wenn die
 	 *            Datei im Quelltextordner ist.
-	 * @return Die eingelesene Figur.<br />
-	 *         <b>Tritt ein Fehler auf</b>, weil die Datei nicht einlesbar ist
-	 *         oder nicht existiert, ist dieser wert <code>null</code>.<br />
-	 *         Trotzdem kann es sein, dass eine beschuedigte Datei nicht mehr
+	 * @return Eingelesene Figur.
+	 *
+	 *         Tritt ein Fehler auf, weil die Datei nicht einlesbar ist
+	 *         oder nicht existiert, ist dieser wert <code>null</code>.
+	 *
+	 *         Trotzdem kann es sein, dass eine beschädigte Datei nicht mehr
 	 *         korrekt einlesbar ist, dennoch ein Ergebnis liefert.
 	 */
 	public static Figur figurEinlesen(String verzeichnis) {
-		return figurEinlesen(new File(verzeichnis));
+		return figurEinlesen(new File(normalizePath(verzeichnis)));
 	}
 	
 	/**
-	 * Berechnet aus einem PixelFeld die Informationen und schickt sie als
-	 * String zurueck.<br />
-	 * <b>ACHTUNG:</b> Umbruchzeichen werden gesetzt, jedoch endet der String
-	 * <b>NICHT</b> mit einem Zeilenumbruch, daher muss bei der
+	 * Berechnet aus einem PixelFeld die Informationen und gibt sie als
+	 * String zurück.
+	 *
+	 * <b>ACHTUNG</b>: Umbruchzeichen werden gesetzt, jedoch endet der String
+	 * <b>nicht</b> mit einem Zeilenumbruch, daher muss bei der
 	 * Informationsbindung aus mehreren Feldern eine Zeile nach dem verwenden
 	 * dieses Strings geschaltet werden.
 	 */
 	public static String feldInfo(PixelFeld f) {
 		Color[][] farbe = f.getPic();
 		String ret = "";
+
 		for (int i = 0; i < farbe.length; i++) {
 			for (int j = 0; j < farbe[0].length; j++) {
-				// Eine Zeile arbeit
 				ret += "Z" + i + "-" + j + ":" + farbeAnalysieren(farbe[i][j]) + bruch;
 			}
 		}
+
 		return ret;
 	}
 	
@@ -595,53 +623,77 @@ public class DateiManager {
 	 * Analysiert eine Farbe und weist ihr einen String zu.
 	 * 
 	 * @param c
-	 *            Die zu analysierende Farbe
-	 * @return Die Stringrepraesentation der Farbe
+	 *            Zu analysierende Farbe
+	 * @return Stringrepräsentation der Farbe
 	 */
 	public static String farbeAnalysieren(Color c) {
 		if (c == null) {
 			return "%%;";
 		}
-		String s = "";
+
 		if (c == Color.black) {
-			s = "schwarz;";
-		} else if (c == Color.gray) {
-			s = "grau;";
-		} else if (c == Color.green) {
-			s = "gruen;";
-		} else if (c == Color.yellow) {
-			s = "gelb;";
-		} else if (c == Color.blue) {
-			s = "blau;";
-		} else if (c == Color.white) {
-			s = "weiss;";
-		} else if (c == Color.orange) {
-			s = "orange;";
-		} else if (c == Color.red) {
-			s = "rot;";
-		} else if (c == Color.pink) {
-			s = "pink;";
-		} else if (c == Color.magenta) {
-			s = "magenta;";
-		} else if (c == Color.cyan) {
-			s = "cyan;";
-		} else if (c == Color.darkGray) {
-			s = "dunkelgrau;";
-		} else if (c == Color.lightGray) {
-			s = "hellgrau;";
-		} else { // Andere Farbe
-			s = "&" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ";";
+			return "schwarz;";
 		}
-		return s;
+
+		if (c == Color.gray) {
+			return "grau;";
+		}
+
+		if (c == Color.green) {
+			return "gruen;";
+		}
+
+		if (c == Color.yellow) {
+			return "gelb;";
+		}
+
+		if (c == Color.blue) {
+			return "blau;";
+		}
+
+		if (c == Color.white) {
+			return "weiss;";
+		}
+
+		if (c == Color.orange) {
+			return "orange;";
+		}
+
+		if (c == Color.red) {
+			return "rot;";
+		}
+
+		if (c == Color.pink) {
+			return "pink;";
+		}
+
+		if (c == Color.magenta) {
+			return "magenta;";
+		}
+
+		if (c == Color.cyan) {
+			return "cyan;";
+		}
+
+		if (c == Color.darkGray) {
+			return "dunkelgrau;";
+		}
+
+		if (c == Color.lightGray) {
+			return "hellgrau;";
+		}
+
+		return "&" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ";";
 	}
 	
 	/**
-	 * Liesst einen String ein und konvertiert ihn zu einer Farbe.
+	 * Liest einen String ein und konvertiert ihn zu einer Farbe.
 	 * 
 	 * @param s
-	 *            Der zu konvertierende String
-	 * @return Das Color-Objekt, das gelesen wurde.<br />
-	 *         <b>Ist null</b>, wenn der String nicht eingelesen werden konnte!
+	 *            zu konvertierender String
+	 * @return Color-Objekt, das gelesen wurde.
+	 *
+	 *         <code>null</code>, wenn der String nicht eingelesen werden konnte!
 	 */
 	public static Color farbeEinlesen(String s) {
 		if (s.compareTo("%%;") == 0) {
@@ -649,37 +701,40 @@ public class DateiManager {
 		} else if (s.charAt(0) != '&') {
 			return Raum.zuFarbeKonvertieren(s.replace(";", ""));
 		} else {
-			Color c;
 			int[] rgb = new int[3];
 			int cnt = 0;
 			int temp = 1;
+
 			for (int i = 1; i < s.length(); i++) {
 				if (s.charAt(i) == ',' || s.charAt(i) == ';') {
 					rgb[cnt++] = Integer.valueOf(s.substring(temp, i));
 					temp = i + 1;
 				}
 			}
-			c = new Color(rgb[0], rgb[1], rgb[2]);
-			return c;
+
+			return new Color(rgb[0], rgb[1], rgb[2]);
 		}
 	}
 	
 	/**
-	 * Die Listenmethode beim Figureinlesen und fuer das speicherarme
-	 * Raum-Objekt-Faerben<br />
+	 * Die Listenmethode beim Figureinlesen und für das speicherarme
+	 * Raum-Objekt-Färben.
+	 *
 	 * Diese Methode wird verwendet um den Speicher zu entlasten, da
 	 * Farbobjekte, die bereits in der Liste enthalten sind, nicht
-	 * zurueckgegeben werden, sondern durch den vorhandenen Farbewert ersetzt
-	 * werden.<br />
+	 * zurückgegeben werden, sondern durch den vorhandenen Farbewert ersetzt
+	 * werden.
+	 *
 	 * Somit hat jede Farbe beim Einlesen genau eine Instanz innerhalb der
 	 * gesamten Engine.
 	 * 
 	 * @param farbe
-	 *            Die Farbe, die auf existenz in der Liste geprueft werden soll.
-	 * @return Das zurueckgegebene Farbobjekt ist vom Zustand her genau das
-	 *         selbe wie das Eingegebene.<br />
-	 *         Jedoch bleibt dank dieser Methode fuer jede Farbe nur ein
-	 *         Farbobjekt, was Speicherplatz schafft.
+	 *            Farbe, die auf Existenz in der Liste geprüft werden soll.
+	 * @return Das zurückgegebene Farbobjekt ist vom Zustand her genau das
+	 *         selbe wie das Eingegebene.
+	 *
+	 *         Jedoch bleibt dank dieser Methode für jede Farbe nur ein
+	 *         Farbobjekt, was Speicherplatz spart.
 	 */
 	public static Color ausListe(Color farbe) {
 		for (Color c : list) {
@@ -687,7 +742,19 @@ public class DateiManager {
 				return c;
 			}
 		}
+
 		list.add(farbe);
+
 		return farbe;
+	}
+
+	/**
+	 * Normalisiert einen Pfad, sodass er für das Filesystem des jeweiligen Systems passt.
+	 *
+	 * @param path zu normalisierender Pfad
+	 * @return normalisierter Pfad
+	 */
+	private static String normalizePath(String path) {
+		return path.replaceAll("(\\\\|/)", sep);
 	}
 }

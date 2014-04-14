@@ -19,12 +19,10 @@
 
 package ea.internal.gra;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
 import ea.BoundingRechteck;
-import ea.internal.util.Logger;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Ein PixelFeld ist eine Ansammlzung vieler Pixel, es kann gezeichnet werden.<br />
@@ -165,7 +163,7 @@ public class PixelFeld implements java.io.Serializable {
 	}
 
 	/**
-	 * @return Der Groessenfaktor, der dieses Bild zeichnet.
+	 * @return Größenfaktor, der dieses Bild zeichnet.
 	 */
 	public int faktor() {
 		return faktor;
@@ -173,22 +171,20 @@ public class PixelFeld implements java.io.Serializable {
 
 	/**
 	 * Gleicht dieses PixelFeld an ein anderes an, sodass beide genau dieselben
-	 * Inhalte haben.<br />
-	 * <b>Achtung!!</b><br />
-	 * Hierfuer muessen beide PixelFelder dieselben Masse in Laenge und Breite
-	 * haben (hierbei zaehlt nicht der Groessenfaktor, sondern die Anzahl an
-	 * Unterquadraten in Richtung X und Y.
+	 * Inhalte haben.
+	 *
+	 * <b>Achtung</b>: Hierfür müssen beide PixelFelder die selben Maße in Länge und Breite
+	 * haben (hierbei zählt nicht der Größenfaktor, sondern die Anzahl an
+	 * Unterquadraten in Richtung <code>x</code> und <code>y</code>.
 	 */
 	public void angleichen(PixelFeld f) {
 		if (f.hoeheN() == this.hoeheN() && f.breiteN() == this.breiteN()) {
 			for (int i = 0; i < farbe.length; i++) {
-				for (int j = 0; j < farbe[0].length; j++) {
-					this.farbe[i][j] = f.farbe[i][j];
-				}
+				// Deutlich performanter als ein weiterer for-loop.
+				System.arraycopy(f.farbe[i], 0, this.farbe[i], 0, farbe[0].length);
 			}
 		} else {
-			Logger.error("Achtung!\nDie beiden zum Angleich angeführten PixelFelder haben unterschiedliche Masse in Höhe und/oder Breite!");
-			// TODO Exception? Welche? Erweiterte IllegalArgumentException?
+			throw new IllegalArgumentException("Achtung!\nDie beiden zum Angleich angeführten PixelFelder haben unterschiedliche Masse in Höhe und/oder Breite!");
 		}
 
 		this.cacheOutdated = true;
@@ -297,36 +293,15 @@ public class PixelFeld implements java.io.Serializable {
 	 *            Ob dieses Pixelfeld entlang der Y-Achse gespiegelt werden soll
 	 */
 	public void zeichnen(Graphics2D g, int x, int y, boolean spiegelX, boolean spiegelY) {
-		// FIXME Spiegelung cacht nicht, soll aber gecachtes Image verwenden.
-		// Lösung nicht im nächsten if, weil sonst kein neues Bild gezeichnet wird, wenn nächster Aufruf keine Spiegelung enthält.
-		if(spiegelX || spiegelY) {
-			this.cacheOutdated = true;
-		}
-		
 		if (cache == null || cacheOutdated) {
 			int width = farbe.length * faktor, height = farbe.length == 0 ? 0 : farbe[0].length * faktor;
 
-			cache = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB); // TODO create global Method
-													// for compatile Images
+			cache = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D cacheGraphics = cache.createGraphics();
 
 			for (int i = 0; i < farbe.length; i++) {
 				for (int j = 0; j < farbe[i].length; j++) {
-					int cX, cY;
-
-					if (spiegelY) {
-						cX = farbe.length - i - 1;
-					} else {
-						cX = i;
-					}
-
-					if (spiegelX) {
-						cY = farbe[0].length - j - 1;
-					} else {
-						cY = j;
-					}
-
-					Color c = farbe[cX][cY];
+					Color c = farbe[i][j];
 
 					if (c == null) {
 						continue;
@@ -343,14 +318,19 @@ public class PixelFeld implements java.io.Serializable {
 			}
 
 			cacheGraphics.dispose();
-			
-			// TODO Siehe Anfang der Methode
-			if(spiegelX || spiegelY) {
-				this.cacheOutdated = false;
-			}
 		}
-		
-		g.drawImage(cache, x, y, null);
+
+		int w = breite(), h = hoehe();
+
+		if(spiegelX && spiegelY) {
+			g.drawImage(cache, x + w, y + h, x, y, 0, 0, w, h, null);
+		} else if(spiegelX) {
+			g.drawImage(cache, x + w, y, x, y + h, 0, 0, w, h, null);
+		} else if(spiegelY) {
+			g.drawImage(cache, x, y + h, x + w, y, 0, 0, w, h, null);
+		} else {
+			g.drawImage(cache, x, y, null);
+		}
 	}
 
 	/**
