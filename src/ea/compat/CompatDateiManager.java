@@ -25,7 +25,50 @@ public class CompatDateiManager {
 	 * @return Array, das eingelesen wurde oder <code>null</code>, wenn ein Fehler aufgetreten ist.
 	 */
 	public static String[] stringArrayEinlesen(String pfad) {
-		return new String[] {"Test", "Hallo Welt!"}; // TODO get old method from git
+		String[] ret;
+
+		try {
+			String line;
+			LineNumberReader f = new LineNumberReader(new FileReader(pfad));
+			line = f.readLine();
+
+			if (line.compareTo("typ:String") != 0) {
+				System.err.println("Die geladene .eaa-Datei beschreibt kein String-Array oder ist beschädigt!");
+				f.close();
+
+				return null;
+			}
+
+			line = f.readLine();
+
+			int length = Integer.valueOf(line.split(":")[1]);
+			ret = new String[length];
+
+			for (int i = 0; i < length; i++) {
+				line = f.readLine();
+
+				String[] split = line.split(":", 2);
+				String erg;
+
+				if (split[1].equals("%%")) {
+					erg = null;
+				} else if (split[1].equals("~~")) {
+					erg = "";
+				} else {
+					erg = split[1];
+				}
+
+				ret[i] = erg;
+			}
+
+			f.close();
+
+			return ret;
+		} catch (IOException e) {
+			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
+		}
+
+		return null;
 	}
 
 	/**
