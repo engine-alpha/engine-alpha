@@ -19,21 +19,15 @@
 package ea;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -86,7 +80,7 @@ public class EngineAlpha extends Frame {
 		LOADING, FAILED, SUCCESS;
 	}
 	
-	private class EngineAlphaPromotion extends Canvas implements Runnable, MouseListener {
+	private class EngineAlphaPromotion extends Canvas implements Runnable {
 		private Thread thread;
 		private BufferedImage logo;
 		private double alpha = 0;
@@ -94,10 +88,6 @@ public class EngineAlpha extends Frame {
 		private boolean alive = true;
 		private int version_stable = -1;
 		private int version_dev = -1;
-
-		private boolean showUpgradeButton;
-		private Rectangle button;
-		private State upgradeState;
 		
 		public EngineAlphaPromotion(EngineAlpha parent) {
 			try {
@@ -108,7 +98,6 @@ public class EngineAlpha extends Frame {
 			
 			setSize(400, 300);
 			setPreferredSize(getSize());
-			addMouseListener(this);
 			parent.add(this);
 			parent.pack();
 			
@@ -117,8 +106,6 @@ public class EngineAlpha extends Frame {
 			
 			parent.setVisible(true);
 
-			button = new Rectangle(125, 180, 150, 26);
-			
 			thread = new Thread(this) {{ setDaemon(true); }};
 			thread.start();
 			
@@ -135,10 +122,6 @@ public class EngineAlpha extends Frame {
 					} catch(Exception e) { }
 					
 					loading = false;
-
-					if(VERSION_CODE < version_stable && isJar()) {
-						showUpgradeButton = true;
-					}
 				}
 			}.start();
 		}
@@ -190,7 +173,7 @@ public class EngineAlpha extends Frame {
 			g.setColor(new Color(250, 250, 250));
 			g.fillRect(0, 0, getWidth(), getHeight());
 			
-			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 25, null);
+			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 45, null);
 			
 			if(loading) {
 				g.setColor(new Color(0,0,0,150));
@@ -239,96 +222,8 @@ public class EngineAlpha extends Frame {
 			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 			g.setColor(new Color(100, 100, 100));
-			String str = "Build#" + VERSION_CODE + "   " + sdf.format(date);
+			String str = "Build #" + VERSION_CODE + "   " + sdf.format(date);
 			g.drawString(str, (getWidth() - fm.stringWidth(str)) / 2, getHeight() - 40);
-
-			if(showUpgradeButton) {
-				String text;
-
-				if(upgradeState == State.SUCCESS) {
-					g.setColor(new Color(50, 230, 0, 30));
-					text = "ABGESCHLOSSEN";
-				} else if(upgradeState == State.FAILED) {
-					g.setColor(new Color(230, 50, 0, 30));
-					text = "FEHLER";
-				} else {
-					g.setColor(new Color(0, 0, 0, 30));
-					text = "UPGRADE";
-				}
-
-				g.fillRect(button.x, button.y, button.width, button.height);
-				g.setColor(new Color(50, 50, 50));
-				g.drawString(text, button.x + (button.width - g.getFontMetrics().stringWidth(text)) / 2,
-						button.y + 18);
-			}
-		}
-
-		public void mousePressed(MouseEvent e) {
-
-		}
-
-		public void mouseReleased(MouseEvent e) {
-
-		}
-
-		public void mouseClicked(MouseEvent e) {
-			if(showUpgradeButton && button.contains(e.getX(), e.getY())) {
-				onButtonClicked();
-			}
-		}
-
-		public void mouseExited(MouseEvent e) {
-
-		}
-
-		public void mouseEntered(MouseEvent e) {
-
-		}
-
-		public void onButtonClicked() {
-			int result = JOptionPane.showConfirmDialog(this, "Dies wird deine bisherige Kopie der Engine ersetzen.\nSicher, dass du fortfahren willst?", "Wirklich fortfahren?", JOptionPane.OK_CANCEL_OPTION);
-
-			if(result == JOptionPane.OK_OPTION) {
-				if(doUpgrade()) {
-					upgradeState = State.SUCCESS;
-				} else {
-					upgradeState = State.FAILED;
-				}
-			}
-		}
-
-		private boolean doUpgrade() {
-			upgradeState = State.LOADING;
-
-			if(!isJar()) {
-				return false;
-			}
-
-			String path = getJarName();
-			String data;
-
-			try {
-				data = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/CURRENT_RELEASE_URL").trim();
-			} catch(Exception e) {
-				return false;
-			}
-
-			if(data != null) {
-				try {
-					String[] info = data.split(" ", 2);
-
-					if(Integer.parseInt(info[0]) > VERSION_CODE) {
-						URL url = new URL(info[1]);
-						ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-						FileOutputStream fos = new FileOutputStream(path);
-						fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-					}
-				} catch(Exception e) {
-					return false;
-				}
-			}
-
-			return true;
 		}
 	}
 	
