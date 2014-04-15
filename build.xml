@@ -19,16 +19,11 @@
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
 		</fileset>
-		
-		<!-- <fileset dir="./..">
-		    <include name="tools/jUnit/*.jar" />
-		</fileset> -->
 	</path>
 	
 	<path id="classpath.cobertura">
-		<fileset dir="..">
-		    <include name="tools/Cobertura/cobertura*.jar" />
-		    <include name="tools/Cobertura/lib/**/*.jar" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
 		</fileset>
 	</path>
 	
@@ -67,7 +62,9 @@
         </copy>
         
         <unjar dest="${bin.dir}">
-			<fileset dir="${lib.dir}" includes="**/*.jar" />
+			<fileset dir="${lib.dir}">
+				<include name="*.jar" />
+			</fileset>
 		</unjar>
 	</target>
 	
