@@ -1,5 +1,4 @@
-Engine Alpha
-============
+# Engine Alpha [![Travis Build](https://api.travis-ci.org/engine-alpha/engine-alpha.png?branch=master)](https://travis-ci.org/engine-alpha/engine-alpha)
 
 Eine anfängerorientierte 2D-Gaming-Engine in deutscher Sprache. Ihr Hauptzweck ist es, Begeisterung für Programmierung und Informatik durch schnelle, sichtbare und starke Erfolge zu entwickeln.
 
