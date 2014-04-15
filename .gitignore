@@ -1,11 +1,11 @@
 /bin
+/bin-test
 /build
-/classes
 /doc
 /out
+/report
 /src/ea/test
 /src/ea/example
-/src/META-INF
 
 /.idea
 /.settings
@@ -20,3 +20,5 @@
 *.orig
 
 engine-alpha.log
+
+*~

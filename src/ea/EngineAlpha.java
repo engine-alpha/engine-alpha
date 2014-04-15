@@ -75,10 +75,6 @@ public class EngineAlpha extends Frame {
 
 		promo = new EngineAlphaPromotion(this);
 	}
-
-	private enum State {
-		LOADING, FAILED, SUCCESS;
-	}
 	
 	private class EngineAlphaPromotion extends Canvas implements Runnable {
 		private Thread thread;
@@ -114,12 +110,16 @@ public class EngineAlpha extends Frame {
 					try {
 						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_STABLE").trim();
 						version_stable = Integer.parseInt(body);
-					} catch(Exception e) { }
+					} catch(Exception e) {
+						version_stable = -1;
+					}
 
 					try {
 						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT").trim();
 						version_dev = Integer.parseInt(body);
-					} catch(Exception e) { }
+					} catch(Exception e) {
+						version_dev = -1;
+					}
 					
 					loading = false;
 				}

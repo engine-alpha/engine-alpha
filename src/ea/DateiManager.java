@@ -292,12 +292,12 @@ public class DateiManager {
 				meta.put(info[0], info[1]);
 			}
 
-			if(meta.get("version") != "2") {
+			if(!meta.get("version").equals("2")) {
 				Logger.error("Unbekannte Dateiformatsversion!");
 				return null;
 			}
 
-			if(meta.get("typ") != "int") {
+			if(!meta.get("typ").equals("int")) {
 				Logger.error("Datei hat einen anderen Datentyp gespeichert: " + meta.get("typ"));
 			}
 
