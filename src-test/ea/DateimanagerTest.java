@@ -20,7 +20,7 @@ public class DateimanagerTest {
 	}
 
 	@Test
-	public void stringArrayWriteRead() {
+	public void stringArrayIO() {
 		String[] write = {"Single Line", "Line 1\nLine 2", null, "", "~~", "%%"};
 		DateiManager.stringArraySchreiben(write, "test.eaa");
 
@@ -49,7 +49,7 @@ public class DateimanagerTest {
 	}
 
 	@Test
-	public void intArrayWriteRead() {
+	public void intArrayIO() {
 		int[] write = {0, -125, 2351, 90235};
 		DateiManager.integerArraySchreiben(write, "test.eaa");
 
