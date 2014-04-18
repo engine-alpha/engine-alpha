@@ -212,9 +212,11 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	 */
 	protected void aktualisieren() {
 		formen = neuBerechnen();
+
 		for (int i = 0; i < formen.length; i++) {
 			formen[i].setColor(alte);
 		}
+
 		dimension = ausDreiecken(formen);
 	}
 	
