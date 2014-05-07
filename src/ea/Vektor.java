@@ -141,6 +141,7 @@ implements Cloneable {
 	/**
      * Gibt eine <b>Normierung</b> des Vektors aus.
      * Dies ist ein Vektor, der
+	 *
      * * in die selbe Richtung wie der ursprüngliche Vektor zeigt.</li>
      * * eine Länge von (möglichst) exakt 1 hat.</li>
 	 *

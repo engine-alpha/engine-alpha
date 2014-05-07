@@ -24,8 +24,7 @@ package ea;
  * 
  * @author Michael Andonie
  */
-public interface TastenLosgelassenReagierbar
-{
+public interface TastenLosgelassenReagierbar {
     /**
      * Wird aufgerufen bei einem angemeldeten TastenReagierbar, sobald eine Taste, die in der Kennungstabelle liegt, bei entsprechend aktiviertem Fenster losgelassen wird.<br />
      * Die Tabelle liegt der Anleitung der Engine bei. Wie die Interfaces anzumelden sind, liegt ebenfalls dem <b>Handbuch</b> bei<br />

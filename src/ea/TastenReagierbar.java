@@ -25,8 +25,7 @@ package ea;
  * @author Michael Andonie
  */
 
-public interface TastenReagierbar
-{
+public interface TastenReagierbar {
     /**
      * Wird aufgerufen bei einem angemeldeten TastenReagierbar, sobald eine Taste, die in der Kennungstabelle liegt, bei entsprechend aktiviertem Fenster gedrueckt wird.<br />
      * Die Tabelle liegt der Anleitung der Engine bei.

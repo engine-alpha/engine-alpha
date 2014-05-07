@@ -32,8 +32,8 @@ import java.io.*;
 import java.util.Random;
 
 /**
- * Diese Klasse ist fuer die sofortige, einfache Verwendung der Engine verantwortlich.<br />
- * Aus ihr sollte die Klasse abgleitet werden, die die Spielorganisation innehat.
+ * Diese Klasse ist für die sofortige, einfache Verwendung der Engine verantwortlich.<br />
+ * Aus ihr sollte die Klasse abgleitet werden, die die Spielorganisation beinhaltet.
  * 
  * @author Michael Andonie
  */
@@ -53,27 +53,14 @@ public abstract class Game implements TastenReagierbar {
 	private final Fenster fenster;
 	
 	/**
-	 * Der Font fuer die Fenstertexte
+	 * Der Font für die Fenstertexte
 	 */
 	private Font font;
 	
 	/**
-	 * Der Ticker-manager. An ihm werden die Ticker angemeldet.
+	 * Der Tickermanager. An ihm werden die Ticker angemeldet.
 	 */
 	public final Manager manager = new Manager();
-	
-	/**
-	 * Der Audio-Manager. Er kann Sound-Objekte auf verschiedenen Kanaelen abspielen.<br />
-	 * Dieser Audio-Manager hat 5 Kanaele. Sollten diese nicht ausreichen, so laesst sich einfach ein neuer erstellen:<br />
-	 * <br />
-	 * <br />
-	 * <code>
-	 * int meineAnzahlAnKanaelen = 10;<br />
-	 * AudioManager neuerAudioManager = new AudioManager(meineAnzahlAnKanaelen);<br />
-	 * <br /></code> <br />
-	 * Dieses Beispiel erstellt einen neuen Audio-Manager mit Kanaelen.
-	 */
-	// public final AudioManager audioManager = new AudioManager(5);
 	
 	/**
 	 * Der Animations-Manager. Er kann Animationen organisieren.
@@ -296,13 +283,14 @@ public abstract class Game implements TastenReagierbar {
 	 * 
 	 * @param code
 	 *            Der Code dieser Taste zu den Codes:<br />
-	 * 
-	 *            Siehe <b>Handbuch fuer vollstaendige Tabelle</b>.
+	 *            Siehe http://engine-alpha.org/wiki/Tastaturtabelle für eine vollständige Tabelle
+	 * @see ea.Taste
 	 */
 	public void reagieren(int code) {
-		if (exitOnEsc && code == 32) {
+		if (exitOnEsc && code == Taste.ESCAPE) {
 			beenden();
 		}
+
 		tasteReagieren(code);
 	}
 	
@@ -458,7 +446,6 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void schliessen() {
 		manager.kill();
-		//audioManager.neutralize();
 		fenster.loeschen();
 	}
 	
@@ -539,7 +526,9 @@ public abstract class Game implements TastenReagierbar {
 	
 	/**
 	 * Prüft, ob eine bestimmte Taste gerade jetzt heruntergedrückt wird.
-	 * @param	der Code der zu prüfenden Taste.
+	 *
+	 * @param code
+	 *          der Code der zu prüfenden Taste.
 	 * @return 	<code>true</code>, falls die gewählte Taste gerade jetzt heruntergedrückt
 	 * 			wird. Sonst <code>false</code>.
 	 */
@@ -548,7 +537,7 @@ public abstract class Game implements TastenReagierbar {
 	}
 	
 	/**
-	 * Meldet ein "<code>TastenLosgelassenReagierbar</code>"-Objekt an. Ab diesem Moment wird seine "<code>tasteGedrueckt</code>"-Methode immer
+	 * Meldet ein <code>TastenLosgelassenReagierbar</code>-Objekt an. Ab diesem Moment wird seine "<code>tasteGedrueckt</code>"-Methode immer
 	 * aufgerufen, wenn eine Taste losgelassen wird.
 	 * 
 	 * @param g
@@ -851,7 +840,7 @@ public abstract class Game implements TastenReagierbar {
 	 * Sollte allerdings eine Methode vonnoeten sein, die immer wieder in Regelmaessigen abstaenden aufgerufen wird, solange die Taste <b>heruntergedrueckt
 	 * ist, so bietet sich dies im Interface <code>TasteGedruecktReagierbar</code> an</b>.
 	 *
-	 * @see ea.TastenGedruecktReagierbar
+	 * @see ea.TastenReagierbar
 	 */
 	public abstract void tasteReagieren(int code);
 }
