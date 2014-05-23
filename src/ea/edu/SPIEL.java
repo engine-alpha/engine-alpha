@@ -35,7 +35,7 @@ import ea.internal.util.Logger;
  * Beim Konstruktor mit Parametern koennen die linken und rechten Punkte-Anzeigen sowie die
  * Interaktion mit der Maus ein- bzw. ausgeschaltet werden.
  * 
- * @author Andonie (nach Idee von Bendikt Lindemann und Mike Ganshorn)
+ * @author Michael Andonie (nach Idee von Bendikt Lindemann und Mike Ganshorn), Niklas Keller
  * 
  */
 public class SPIEL {
@@ -45,9 +45,9 @@ public class SPIEL {
 	private AnzeigeE anzeige;
 	
 	/**
-	 * Dieser Zaehler ermoeglicht den Tik-Tak-Wechsel.
+	 * Ermöglicht den Tick-Tack-Wechsel.
 	 */
-	private int zaehler;
+	private boolean tick;
 	
 	/**
 	 * Erstellt ein Spiel. Startet die Anzeige.
@@ -65,9 +65,9 @@ public class SPIEL {
 	 *            Spiel angezeigt und verwendet. Ist er <code>false</code>, gibt es keine Maus.
 	 */
 	public SPIEL(int breite, int hoehe, boolean punkteLinks, boolean punkteRechts, boolean maus) {
-		
-		// Zaehler fuer Tick, Tack, ...
-		zaehler = 0;
+		// Tick, Tack, ...
+		tick = false;
+
 		anzeige = new AnzeigeE(breite, hoehe);
 		
 		// Punkteanzeige
@@ -99,16 +99,9 @@ public class SPIEL {
 	 * Wird regelmaessig aufgerufen. So kommt Bewegung ins Spiel!
 	 */
 	public void tick() {
-		
 		// Einfache Bildschirmausgabe. Kann spaeter in Subklasse beliebig ueberschreiben werden.
-		zaehler++;
-		zaehler = zaehler % 2;
-		if (zaehler == 1) {
-			System.out.println("Tick!");
-		}
-		else {
-			System.out.println("Tack!");
-		}
+		tick = !tick; // toggle
+		System.out.println(tick ? "Tick!" : "Tack!");
 	}
 	
 	/**
@@ -121,7 +114,6 @@ public class SPIEL {
 	 *            Die Y-Koordinate des Klicks
 	 */
 	public void klickReagieren(int x, int y) {
-		
 		// Einfache Bildschirmausgabe. Kann spaeter in Subklasse beliebig ueberschrieben werden.
 		System.out.println("Klick bei (" + x + ", " + y + ").");
 	}
