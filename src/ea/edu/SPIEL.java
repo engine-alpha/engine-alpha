@@ -19,6 +19,7 @@ package ea.edu;
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import ea.API;
 import ea.Bild;
 import ea.Maus;
 import ea.Punkt;
@@ -64,7 +65,9 @@ public class SPIEL {
 	 *            ist dieser Wert <code>true</code>, wird eine Maus im
 	 *            Spiel angezeigt und verwendet. Ist er <code>false</code>, gibt es keine Maus.
 	 */
-	public SPIEL(int breite, int hoehe, boolean punkteLinks, boolean punkteRechts, boolean maus) {
+	@API
+	@SuppressWarnings("unused")
+	public SPIEL(int breite, int hoehe, boolean punkteLinks, boolean punkteRechts, boolean maus, boolean tickerAnmelden) {
 		// Tick, Tack, ...
 		tick = false;
 
@@ -84,20 +87,46 @@ public class SPIEL {
 		
 		// Ticker
 		// Alle 500 Millisekunden (=Jede halbe Sekunde) ein Tick
-		anzeige.tickerAnmelden(this, 500);
+		if(tickerAnmelden) {
+			anzeige.tickerAnmelden(this, 500);
+		}
+	}
+
+	/**
+	 * Erstellt ein Spiel. Startet die Anzeige.
+	 *
+	 * @param punkteLinks
+	 *            ist dieser Wert <code>true</code>, so sieht man
+	 *            links eine Punkteanzeige. Ist er <code>false</code> sieht man keine.
+	 *
+	 * @param punkteRechts
+	 *            ist dieser Wert <code>true</code>, so sieht man
+	 *            rechts eine Punkteanzeige. Ist er <code>false</code> sieht man keine.
+	 *
+	 * @param maus
+	 *            ist dieser Wert <code>true</code>, wird eine Maus im
+	 *            Spiel angezeigt und verwendet. Ist er <code>false</code>, gibt es keine Maus.
+	 */
+	@API
+	@SuppressWarnings("unused")
+	public SPIEL(int breite, int hoehe, boolean punkteLinks, boolean punkteRechts, boolean maus) {
+		this(breite, hoehe, punkteLinks, punkteRechts, maus, true);
 	}
 	
 	/**
 	 * Erstellt ein einfaches Spiel ohne Anzeige und Maus.<br />
 	 * Das Spiel hat somit Ticker und Tastatureingaben.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public SPIEL() {
 		this(808, 629, false, false, false);
 	}
 	
 	/**
-	 * Wird regelmaessig aufgerufen. So kommt Bewegung ins Spiel!
+	 * Wird regelmäßig aufgerufen. So kommt Bewegung ins Spiel!
 	 */
+	@SuppressWarnings("unused")
 	public void tick() {
 		// Einfache Bildschirmausgabe. Kann spaeter in Subklasse beliebig ueberschreiben werden.
 		tick = !tick; // toggle
@@ -113,6 +142,7 @@ public class SPIEL {
 	 * @param y
 	 *            Die Y-Koordinate des Klicks
 	 */
+	@SuppressWarnings("unused")
 	public void klickReagieren(int x, int y) {
 		// Einfache Bildschirmausgabe. Kann spaeter in Subklasse beliebig ueberschrieben werden.
 		System.out.println("Klick bei (" + x + ", " + y + ").");
@@ -126,6 +156,7 @@ public class SPIEL {
 	 *            Details koennen in der <i>Tabelle aller
 	 *            Tastaturkuerzel</i> abgelesen werden.
 	 */
+	@SuppressWarnings("unused")
 	public void tasteReagieren(int tastenkuerzel) {
 		Logger.info("Taste mit Kuerzel " + tastenkuerzel +
 				" wurde gedrueckt");
@@ -138,6 +169,8 @@ public class SPIEL {
 	 *            Die Zeit in Millisekunden zwischen zwei
 	 *            Aufrufen der <code>tick()</code>-Methode.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void tickerIntervallSetzen(int ms) {
 		anzeige.tickerAbmelden(this);
 		anzeige.tickerAnmelden(this, ms);
@@ -149,6 +182,8 @@ public class SPIEL {
 	 * 
 	 * @see #tickerNeuStarten(int)
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void tickerStoppen() {
 		anzeige.tickerAbmelden(this);
 	}
@@ -160,9 +195,23 @@ public class SPIEL {
 	 *            Die Zeit in Millisekunden zwischen zwei
 	 *            Aufrufen der <code>tick()</code>-Methode.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void tickerNeuStarten(int ms) {
 		anzeige.tickerAbmelden(this);
 		anzeige.tickerAnmelden(this, ms);
+	}
+
+	@API
+	@SuppressWarnings("unused")
+	public void tickerStarten() {
+		this.tickerStarten(500);
+	}
+
+	@API
+	@SuppressWarnings("unused")
+	public void tickerStarten(int ms) {
+		this.anzeige.tickerAnmelden(this, ms);
 	}
 	
 	/**
@@ -180,6 +229,8 @@ public class SPIEL {
 	 *            Die Y-Koordinate des Hotspots fuer das neue
 	 *            Maus-Icon. (relativ im Icon)
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void mausIconSetzen(String pfad, int hotspotX, int hotspotY) {
 		ea.edu.FensterE.getFenster().mausAnmelden(new Maus(new Bild(0, 0, pfad), new Punkt(hotspotX, hotspotY)), true);
 	}
@@ -187,6 +238,8 @@ public class SPIEL {
 	/**
 	 * Sorgt dafuer, dass sowohl der rechte als auch der linke Punktestand sichtbar ist.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void allePunkteSichtbar() {
 		anzeige.punkteLinksSichtbarSetzen(true);
 		anzeige.punkteRechtsSichtbarSetzen(true);
@@ -195,6 +248,8 @@ public class SPIEL {
 	/**
 	 * Sorgt dafuer, dass nur der linke Punktestand sichtbar ist.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void nurRechtePunkteSichtbar() {
 		anzeige.punkteLinksSichtbarSetzen(false);
 		anzeige.punkteRechtsSichtbarSetzen(true);
@@ -203,6 +258,8 @@ public class SPIEL {
 	/**
 	 * Sorgt dafuer, dass nur der rechte Punktestand sichtbar ist.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void nurLinkePunkteSichtbar() {
 		anzeige.punkteLinksSichtbarSetzen(true);
 		anzeige.punkteRechtsSichtbarSetzen(false);
@@ -211,6 +268,8 @@ public class SPIEL {
 	/**
 	 * Sorgt dafuer, dass weder der rechte noch der linke Punktestand sichtbar ist.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void allePunkteUnsichtbar() {
 		anzeige.punkteLinksSichtbarSetzen(false);
 		anzeige.punkteRechtsSichtbarSetzen(false);
@@ -223,6 +282,8 @@ public class SPIEL {
 	 * @param pl
 	 *            Der neue linke Punktestand.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void punkteLinksSetzen(int pl) {
 		anzeige.punkteLinksSetzen(pl);
 	}
@@ -234,6 +295,8 @@ public class SPIEL {
 	 * @param pr
 	 *            Der neue rechte Punktestand.
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void punkteRechtsSetzen(int pr) {
 		anzeige.punkteRechtsSetzen(pr);
 	}
@@ -249,6 +312,8 @@ public class SPIEL {
 	 * 
 	 * @return Eine Zufallszahl z mit: von <= z <= bis
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public int zufallszahlVonBis(int von, int bis) {
 		return anzeige.zufallszahlVonBis(von, bis);
 	}
@@ -260,6 +325,8 @@ public class SPIEL {
 	 *            Der Pfad der Bilddatei (jpg, bmp, png) des Bildes,
 	 *            das benutzt werden soll. ZB: "hintergrund.jpg"
 	 */
+	@API
+	@SuppressWarnings("unused")
 	public void hintergrundgrafikSetzen(String pfad) {
 		ea.edu.FensterE.getFenster().hintergrundSetzen(new Bild(0, 0, pfad));
 	}
