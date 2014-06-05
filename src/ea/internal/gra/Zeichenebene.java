@@ -27,8 +27,7 @@ import ea.Knoten;
  * 
  * @author Michael Andonie
  */
-public class Zeichenebene
-{
+public class Zeichenebene {
 	/**
 	 * Der absolute Basisknoten.<br />
 	 * Hieran

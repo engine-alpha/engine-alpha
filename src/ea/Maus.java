@@ -19,16 +19,15 @@
 
 package ea;
 
-import java.awt.Dimension;
+import ea.internal.gui.Fenster;
+import ea.internal.util.Logger;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
-import ea.internal.gui.Fenster;
-import ea.internal.util.Logger;
 
 /**
  * Die objektmäßige Repräsentation der (Computer-)Maus.
@@ -51,22 +50,27 @@ public class Maus {
 	/**
 	 * Die Liste aller Raum-Klick-Auftraege
 	 */
-	private final ArrayList<Auftrag> mausListe = new ArrayList<Auftrag>();
+	private final ArrayList<Auftrag> mausListe = new ArrayList<>();
 	
 	/**
 	 * Eine Liste aller angemeldeten KlickReagierbar Objekte.
 	 */
-	private final ArrayList<KlickReagierbar> klickListe = new ArrayList<KlickReagierbar>();
+	private final ArrayList<KlickReagierbar> klickListe = new ArrayList<>();
 	
 	/**
 	 * Eine Liste aller angemeldeten RechtsKlickReagierbar Objekte.
 	 */
-	private final ArrayList<RechtsKlickReagierbar> rechtsKlickListe = new ArrayList<RechtsKlickReagierbar>();
+	private final ArrayList<RechtsKlickReagierbar> rechtsKlickListe = new ArrayList<>();
 	
 	/**
 	 * Eine Liste aller angemeldeten MausLosgelassenReagierbar Objekte.
 	 */
-	private final ArrayList<MausLosgelassenReagierbar> loslassListe = new ArrayList<MausLosgelassenReagierbar>();
+	private final ArrayList<MausLosgelassenReagierbar> loslassListe = new ArrayList<>();
+
+	/**
+	 * Eine Liste aller angemeldeten MausBewegungReagierbar Objekte.
+	 */
+	private final ArrayList<MausBewegungReagierbar> bewegungReagierbarListe = new ArrayList<>();
 	
 	/**
 	 * Die Art der Maus.<br />
@@ -242,8 +246,7 @@ public class Maus {
 	 * Meldet ein KlickReagierbar bei der Maus an.<br />
 	 * Ab dann wird es bei jedem Mausklick (Linksklick) in der Engine benachrichtigt.
 	 * 
-	 * @param k
-	 *            Das anzumeldende KlickReagierbar-Interface
+	 * @param k Das anzumeldende KlickReagierbar-Interface
 	 */
 	public void klickReagierbarAnmelden(KlickReagierbar k) {
 		klickListe.add(k);
@@ -253,8 +256,7 @@ public class Maus {
 	 * Meldet ein RechtsKlickReagierbar-Objekt bei der Maus an.<br />
 	 * Ab dann wird es bei jedem Rechtsklick benachrichtigt.
 	 * 
-	 * @param k
-	 *            Das anzumeldende <code>RechtsKlickReagierbar</code>-Interface
+	 * @param k Das anzumeldende <code>RechtsKlickReagierbar</code>-Interface
 	 */
 	public void rechtsKlickReagierbarAnmelden(RechtsKlickReagierbar k) {
 		rechtsKlickListe.add(k);
@@ -265,10 +267,21 @@ public class Maus {
 	 * Ab dann wird es jedes mal durch Aufruf seiner Methode
 	 * benachrichtigt, wenn eine Maustaste losgelassen wird.
 	 * 
-	 * @param m
+	 * @param m Listener-Objekt
 	 */
 	public void mausLosgelassenReagierbarAnmelden(MausLosgelassenReagierbar m) {
 		loslassListe.add(m);
+	}
+
+	/**
+	 * Meldet ein <code>MausBewegungReagierbar</code>-Objekt bei der Maus an. <br />
+	 * Ab dann wird es jedes mal durch Aufruf seiner Methode
+	 * benachrichtigt, wenn die Maus bewegt wird.
+	 *
+	 * @param m Listener-Objekt
+	 */
+	public void mausBewegungReagierbarAnmelden(MausBewegungReagierbar m) {
+		bewegungReagierbarListe.add(m);
 	}
 	
 	/**
@@ -295,6 +308,10 @@ public class Maus {
 		for (MausLosgelassenReagierbar mlr : loslassListe) {
 			this.mausLosgelassenReagierbarAnmelden(mlr);
 		}
+
+		for (MausBewegungReagierbar mbr : bewegungReagierbarListe) {
+			this.mausBewegungReagierbarAnmelden(mbr);
+		}
 	}
 	
 	/**
@@ -308,8 +325,7 @@ public class Maus {
 	 * @param links
 	 *            War der Klick ein Linksklick, ist dieser Wert <code>true</code>. Fuer jede andere
 	 *            Klickart ist dieser Wert <code>false</code>. In diesem Fall wird mit einem Rechtsklick gerechnet.
-	 * @param ist
-	 *            dieser Wert <code>true</code>, so wird dies als losgelassene Taste behandelt.
+	 * @param losgelassen ist dieser Wert <code>true</code>, so wird dies als losgelassene Taste behandelt.
 	 */
 	public void klick(int x, int y, boolean links, boolean losgelassen) {
 		Punkt p = new Punkt(x, y);
@@ -348,6 +364,22 @@ public class Maus {
 	 */
 	public void klick(int x, int y, boolean links) {
 		this.klick(x, y, links, false);
+	}
+
+	/**
+	 * TODO Dokumentation
+	 *
+	 * @param dx Bewegte Pixel in x-Richtung
+	 * @param dy Bewegte Pixel in y-Richtung
+	 */
+	public void bewegt(int dx, int dy) {
+		if(dx == 0 && dy == 0) {
+			return;
+		}
+
+		for (MausBewegungReagierbar m : bewegungReagierbarListe) {
+			m.mausBewegt(dx, dy);
+		}
 	}
 	
 	/**

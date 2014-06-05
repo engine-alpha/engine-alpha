@@ -77,7 +77,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * 
 	 * @see ea.SimpleGraphic
 	 */
-	private final ArrayList<SimpleGraphic> simples = new ArrayList<SimpleGraphic>();
+	private final ArrayList<SimpleGraphic> simples = new ArrayList<>();
 
 	private Thread thread;
 

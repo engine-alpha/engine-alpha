@@ -100,6 +100,11 @@ public class Fenster extends Frame {
 	 * heruntergedrueckt.
 	 */
 	private volatile boolean[] tabelle;
+
+	/**
+	 * letzte Maus-Position
+	 */
+	private Point lastMousePosition;
 	
 	/**
 	 * Statische Hilfsinstanz zur Vereinfachung der Frameabhaengigen Abfragen
@@ -698,36 +703,60 @@ public class Fenster extends Frame {
 		if (hatMaus()) {
 			Insets insets = this.getInsets();
 			
-			int startX = getWidth() / 2;
-			int startY = getHeight() / 2;
-			Point loc = getLocation();
-			Point click = e.getPoint();
+			int centerX = zeichner.getWidth() / 2;
+			int centerY = zeichner.getHeight() / 2;
+
+			Point windowLocation = getLocation();
+			Point mousePosition = e.getPoint();
 			
-			if (maus.bewegend()) {
-				if (maus.absolut()) {
-					getCam().verschieben(
-							new Vektor(click.x - startX, click.y - startY));
+			if (maus.absolut()) {
+				if(maus.bewegend()) {
+					Vektor offset = new Vektor(
+							mousePosition.x - centerX,
+							mousePosition.y - centerY
+					);
+
+					getCam().verschieben(offset);
 				}
-			}
-			
-			if (!maus.absolut()) {
-				int x = click.x + insets.left - startX;
-				int y = click.y + insets.top - startY;
+
+				if(lastMousePosition != null) {
+					maus.bewegt(
+							mousePosition.x - lastMousePosition.x,
+							mousePosition.y - lastMousePosition.y
+					);
+				}
+			} else {
+				int dx = mousePosition.x - centerX;
+				int dy = mousePosition.y - centerY;
 				
 				BoundingRechteck bounds = mausBild.dimension();
-				Punkt spot = maus.hotSpot();
-				Punkt hx = new Punkt(bounds.x + spot.realX() + x, bounds.y + spot.realY());
-				Punkt hy = new Punkt(bounds.x + spot.realX(), bounds.y + spot.realY() + y);
+				Punkt hotspot = maus.hotSpot();
+
+				Punkt hotspotX = new Punkt(
+						bounds.x + hotspot.realX() + dx,
+						bounds.y + hotspot.realY()
+				);
+
+				Punkt hotspotY = new Punkt(
+						bounds.x + hotspot.realX(),
+						bounds.y + hotspot.realY() + dy
+				);
+
+				// TODO Move mouse to border, but not outside of it!
+				if (!zeichner.masse().istIn(hotspotX)) {
+					dx = 0;
+				}
+
+				if (!zeichner.masse().istIn(hotspotY)) {
+					dy = 0;
+				}
 				
-				if (!zeichner.masse().istIn(hx))
-					x = 0;
-				if (!zeichner.masse().istIn(hy))
-					y = 0;
-				
-				mausBild.verschieben(new Vektor(x, y));
+				mausBild.verschieben(new Vektor(dx, dy));
+				maus.bewegt(dx, dy);
 			}
 			
-			robot.mouseMove(startX + loc.x, startY + loc.y);
+			robot.mouseMove(windowLocation.x + insets.left + centerX, windowLocation.y + insets.top + centerY);
+			lastMousePosition = new Point(centerX, centerY);
 		}
 	}
 	
@@ -747,7 +776,7 @@ public class Fenster extends Frame {
 		}
 		
 		// Linksklick? 1: Links - 2: Mausrad? - 3: Rechts
-		final boolean links = !(e.getButton() == MouseEvent.BUTTON3);
+		final boolean links = e.getButton() != MouseEvent.BUTTON3;
 		
 		if (hatMaus()) {
 			Punkt p = maus.klickAufZeichenebene();
@@ -801,8 +830,7 @@ public class Fenster extends Frame {
 	 */
 	public int zuordnen(int keyCode) {
 		int z = -1;
-		// ANALYSIS
-		// <editor-fold defaultstate="collapsed" desc="Fallunterscheidung">
+
 		switch (keyCode) {
 			case KeyEvent.VK_A:
 				z = 0;
