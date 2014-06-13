@@ -1,27 +1,27 @@
 /*
  * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
- * 
- * Copyright (C) 2011 Michael Andonie
- * 
+ *
+ * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package ea;
 
-import java.awt.Graphics2D;
-
 import ea.internal.gra.Zeichenebene;
+
+import java.awt.*;
 
 /**
  * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene; das, was im Fenster dargestellt wird.<br />
@@ -259,10 +259,8 @@ public class Kamera {
 	/**
 	 * Setzt die Position der <i>linken oberen Ecke</i> der Kameraperspektive.
 	 * 
-	 * @param x
-	 *            Die <i>X-Koordinate der linken oberen Ecke</i> der Kameraperspektive
-	 * @param y
-	 *            Die <i>Y-Koordinate der linken oberen Ecke</i> der Kameraperspektive
+	 * @param p
+	 *            Der Punkt der linken oberen Ecke der Kameraperspektive
 	 * @see #positionSetzen(float, float)
 	 */
 	public void positionSetzen(Punkt p) {

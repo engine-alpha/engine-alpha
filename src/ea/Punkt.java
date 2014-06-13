@@ -1,18 +1,18 @@
 /*
  * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
- * 
- * Copyright (C) 2011 Michael Andonie
- * 
+ *
+ * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -110,8 +110,8 @@ public final class Punkt
 	}
 	
 	/**
-	 * Gibt diesen Punkt als Ortsvektor vom Ursprung der Zeichenebene aus.<br />
-	 * Dieser hat die exakt selben X/Y-Komponenten. Das bedeutet:<br />
+	 * Gibt diesen Punkt als Ortsvektor vom Ursprung der Zeichenebene aus.<br>
+	 * Dieser hat die exakt selben X- / Y-Komponenten. Das bedeutet:<br>
 	 * <code>
 	 * Punkt p = new Punkt(10, 20);
 	 * Vektor v = p.alsVektor();
@@ -133,6 +133,7 @@ public final class Punkt
 			Punkt p = (Punkt) o;
 			return this.x == p.x && this.y == p.y;
 		}
+
 		return false;
 	}
 	
@@ -153,47 +154,55 @@ public final class Punkt
 	 * @return <code>true</code>, wenn <b>beide</b> Koordinaten dieses Punktes ganzzahlig sind, sonst <code>false</code>.
 	 */
 	public boolean istEchtGanzzahlig() {
-		return this.x == (float)Math.floor(x) && this.y == (float)Math.floor(y);
+		return x == (int) x && y == (int) y;
 	}
 	
 	/**
-	 * Gibt die X-Koordinate dieses Punktes zurueck.
+	 * Gibt die <code>x</code>-Koordinate dieses Punktes zurück.
 	 * 
-	 * @return Die X-Koordinate dieses Punktes.
+	 * @return Die <code>x</code>-Koordinate dieses Punktes.
 	 * @see #realY()
+	 * @see #x()
+	 * @see #y()
 	 */
 	public float realX() {
 		return x;
 	}
 	
 	/**
-	 * Gibt die Y-Koordinate dieses Punktes zurueck.
+	 * Gibt die <code>y</code>-Koordinate dieses Punktes zurück.
 	 * 
-	 * @return Die Y-Koordinate dieses Punktes.
+	 * @return Die <code>y</code>-Koordinate dieses Punktes.
 	 * @see #realX()
+	 * @see #x()
+	 * @see #y()
 	 */
 	public float realY() {
 		return y;
 	}
 	
 	/**
-	 * Gibt die X-Koordinate dieses Punktes zurueck.
+	 * Gibt die <code>x</code>-Koordinate dieses Punktes als Integer zurück.
 	 * 
-	 * @return Die X-Koordinate dieses Punktes.
+	 * @return Die <code>x</code>-Koordinate dieses Punktes.
 	 * @see #y()
+	 * @see #realX()
+	 * @see #realY()
 	 */
 	public int x() {
-		return (int)x;
+		return (int) x;
 	}
 	
 	/**
-	 * Gibt die Y-Koordinate dieses Punktes zurueck.
+	 * Gibt die <code>y</code>-Koordinate dieses Punktes als Integer zurück.
 	 * 
-	 * @return Die Y-Koordinate dieses Punktes.
+	 * @return Die <code>y</code>-Koordinate dieses Punktes.
 	 * @see #x()
+	 * @see #realX()
+	 * @see #realY()
 	 */
 	public int y() {
-		return (int)y;
+		return (int) y;
 	}
 	
 	/**

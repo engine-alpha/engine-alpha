@@ -1,6 +1,23 @@
-package ea.internal.collision;
+/*
+ * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ *
+ * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-import org.omg.CORBA.PUBLIC_MEMBER;
+package ea.internal.collision;
 
 import ea.BoundingRechteck;
 import ea.Punkt;
@@ -19,11 +36,11 @@ extends Collider {
 	 * Generiert aus einem <code>BoundingRechteck</code> und einem gegebenen Offset einen Box-Collider.
 	 * @param offset Der Offset, den dieser Collider haben soll.
 	 * @param br	Das <code>BoundingRechteck</code>, das Grundlage für die Masse des Box-Collider sein soll.
-	 * @return		Der Box-Collider, der diesem <code>BoundingRechteck</code> entspricht:<br />
-	 * <ls>
+	 * @return		Der Box-Collider, der diesem <code>BoundingRechteck</code> entspricht:<br>
+	 * <ul>
 	 * <li>Die Position auf der Zeichenebene entspricht ab sofort dem Offset</li>
 	 * <li>Breite und Höhe werden übernommen</li>
-	 * </ls>
+	 * </ul>
 	 */
 	public static BoxCollider fromBoundingRechteck(Vektor offset, BoundingRechteck br) {
 		BoxCollider bc = new BoxCollider();
@@ -90,9 +107,10 @@ extends Collider {
 	}
 	
 	/**
-	 * s
-	 * @param start
-	 * @return
+	 * TODO: Dokumentation
+	 *
+	 * @param start ??
+	 * @return ??
 	 */
 	public BoundingRechteck alsBR(Punkt start) {
 		return new BoundingRechteck(start.x + offset.x, start.y + offset.y, diagonale.x, diagonale.y);

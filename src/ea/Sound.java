@@ -1,3 +1,22 @@
+/*
+ * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ *
+ * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ea;
 
 import ea.internal.sound.SampledSound;
@@ -9,82 +28,21 @@ import java.io.InputStream;
 
 public class Sound {
 	private byte[] data;
+
 	private SampledSound ss;
 
-	public Sound(String datei) {
+	public Sound (String datei) {
 		try {
 			data = loadFromStream(datei, new FileInputStream(datei));
-		} catch(FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void play() {
-		if(ss != null) {
-			ss.stopSound();
-
-			try {
-				ss.join();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-
-			ss = null;
-		}
-
-		if(data != null) {
-			ss = new SampledSound(data, false);
-			ss.start();
-		}
-	}
-
-	public void loop() {
-		if(ss != null) {
-			ss.stopSound();
-
-			try {
-				ss.join();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-
-			ss = null;
-		}
-
-		if(data != null) {
-			ss = new SampledSound(data, true);
-			ss.start();
-		}
-	}
-
-	public void pause() {
-		if(ss == null) {
-			return;
-		}
-
-		ss.pauseSound(true);
-	}
-
-	public void unpause() {
-		if(ss == null) {
-			return;
-		}
-
-		ss.pauseSound(false);
-	}
-
-	public void stop() {
-		if(ss == null) {
-			return;
-		}
-
-		ss.stopSound();
-	}
-
-	public static byte[] loadFromStream(String datei, InputStream is) {
+	public static byte[] loadFromStream (String datei, InputStream is) {
 		byte[] bytes;
 
-		if(is == null) {
+		if (is == null) {
 			return null;
 		}
 
@@ -94,7 +52,7 @@ public class Sound {
 			int off = 0;
 			int n;
 
-			while(off < bytes.length && (n = is.read(bytes, off, bytes.length - off)) >= 0) {
+			while (off < bytes.length && (n = is.read(bytes, off, bytes.length - off)) >= 0) {
 				off += n;
 			}
 
@@ -106,11 +64,73 @@ public class Sound {
 		} finally {
 			try {
 				is.close();
-			} catch(IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
 		return null;
+	}
+
+	public void play () {
+		if (ss != null) {
+			ss.stopSound();
+
+			try {
+				ss.join();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			ss = null;
+		}
+
+		if (data != null) {
+			ss = new SampledSound(data, false);
+			ss.start();
+		}
+	}
+
+	public void loop () {
+		if (ss != null) {
+			ss.stopSound();
+
+			try {
+				ss.join();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			ss = null;
+		}
+
+		if (data != null) {
+			ss = new SampledSound(data, true);
+			ss.start();
+		}
+	}
+
+	public void pause () {
+		if (ss == null) {
+			return;
+		}
+
+		ss.pauseSound(true);
+	}
+
+	public void unpause () {
+		if (ss == null) {
+			return;
+		}
+
+		ss.pauseSound(false);
+	}
+
+	public void stop () {
+		if (ss == null) {
+			return;
+		}
+
+		ss.stopSound();
 	}
 }

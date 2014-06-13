@@ -1,7 +1,7 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  * 
- * Copyright (C) 2011 Michael Andonie
+ * (c) 2011 Michael Andonie and Contributors
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

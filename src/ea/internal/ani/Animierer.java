@@ -1,18 +1,18 @@
 /*
  * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
- * 
- * Copyright (C) 2011 Michael Andonie
- * 
+ *
+ * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,14 +27,13 @@ import ea.internal.util.Logger;
 
 /**
  * Jede Klasse, die ein Raum-Objekt animieren kann, leitet sich hieraus ab.<br />
- * <b>!!!!!ACHTUNG!!!!!<b><br />
- * Es koennen auch Animationen gekoppelt werden, z.B. kann ein Raum-Objekt gleichzeitig linear animiert werden, aber
+ *
+ * <div class="achtung">Es können auch Animationen gekoppelt werden, z.B. kann ein Raum-Objekt gleichzeitig linear animiert werden, aber
  * <b>gleichzeitig auch noch von einer zweiten Animierer-Klasse</b> bewegt werden, z.B. einer Kreisanimation. Das
- * Ergebnis hieraus waere eine "eiernde" Bewegung vorwaerts.
+ * Ergebnis hieraus waere eine "eiernde" Bewegung vorwärts.</div>
  * 
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
 public abstract class Animierer implements Ticker {
 	/**
 	 * Festgelegter Normwert, der die Anzahl an Unterschritten pro "Animationsetappe" der einzelnen
@@ -71,7 +70,7 @@ public abstract class Animierer implements Ticker {
 	private AnimationsEndeReagierbar listener;
 	
 	/**
-	 * Konstruktor fuer Objekte der Klasse Animierer
+	 * Konstruktor.
 	 * 
 	 * @param ziel
 	 *            Das zu animierende Objekt
@@ -87,12 +86,13 @@ public abstract class Animierer implements Ticker {
 	public Animierer(Raum ziel, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener) {
 		this.ziel = ziel;
 		this.intervall = intervall;
-		this.manager = m;
 		this.loop = loop;
+		this.manager = m;
 		this.listener = listener;
-		count = 0;
-		manager.anmelden(this);
-		angemeldet = true;
+		this.count = 0;
+
+		this.manager.anmelden(this);
+		this.angemeldet = true;
 	}
 	
 	/**
@@ -107,29 +107,30 @@ public abstract class Animierer implements Ticker {
 	}
 	
 	/**
-	 * Haelt den Tick-Algorythmus an. Dies bedeutet, dass die Animation pausiert wird.
+	 * Hält den Tick-Algorythmus an. Dies bedeutet, dass die Animation pausiert wird.
 	 */
 	public void anhalten() {
-		if (angemeldet == true) {
-			manager.anhalten(this);
-			angemeldet = false;
-		} else {
-			Logger.error("Dieser Animierer kann nicht angehalten werden, da seine Animation bereits beendet wurde!!!!");
+		if (!angemeldet) {
+			Logger.warning("Dieser Animierer kann nicht angehalten werden, da seine Animation bereits beendet wurde.");
+			return;
 		}
+
+		manager.anhalten(this);
+		angemeldet = false;
 	}
 	
 	/**
-	 * Haelt den Tick-Algorythmus an. macht genau dasselbe wie <code>anhalten</code> und ist nur dazu da,
+	 * Hält den Tick-Algorythmus an. Macht genau dasselbe wie <code>anhalten</code> und ist nur dazu da,
 	 * eine weitere Assoziation der Verwendung dieser Methode zu repraesentieren.
 	 * 
 	 * @see #anhalten()
 	 */
-	public void pausieren() {
+	public void pausieren() { // TODO Eine der beiden Methoden auf deprecated setzen bzw. später entfernen
 		this.anhalten();
 	}
 	
 	/**
-	 * Beendet diese Animation ein fuer alle mal.
+	 * Beendet diese Animation ein für alle mal.
 	 */
 	public void beenden() {
 		manager.abmelden(this);
@@ -157,8 +158,8 @@ public abstract class Animierer implements Ticker {
 	 * In dieser Methode werden die individuellen Methoden fuer die verschiedenen Animierer festgehalten.<br />
 	 * Sie wird automatisch von der Super-Klasse <code>Animierer</code> aufgerufen, sooft, bis sie intern beendet oder
 	 * angehalten wird.<br />
-	 * In ihr sollte <b>hoechstens einmal</b> das Ziel-Objekt bewegt werden! Ansonsten wird die Interaktion mit der Klasse <code>Physik</code> und damit das moegliche Einrechnen fuer die Objekte nicht
-	 * moeglich.
+	 * In ihr sollte <b>höchstens einmal</b> das Ziel-Objekt bewegt werden! Ansonsten wird die Interaktion mit der Klasse
+	 * <code>Physik</code> und damit das mögliche Einrechnen für die Objekte nicht möglich.
 	 * 
 	 * @see #tick()
 	 * @see #beenden()
