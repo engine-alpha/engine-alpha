@@ -19,17 +19,16 @@
 
 package ea;
 
-import java.lang.annotation.Documented;
+import org.junit.Test;
 
-/**
- * Markiert Methoden, die Schüler verwenden sollen. Methoden ohne @API sollen nicht verwendet
- * werden!
- * <p/>
- * Bisher müssen diese Methoden auch mit @SuppressWarnings("unused") zusätzlich markiert werden.
- *
- * @author Niklas Keller <me@kelunik.com>
- */
-@Documented
-@SuppressWarnings ("unused")
-public @interface API {
+import static org.junit.Assert.assertEquals;
+
+public class AnimationsManagerTest {
+	@Test
+	public void intervall () {
+		assertEquals(AnimationsManager.intervall(-1), 1);
+		assertEquals(AnimationsManager.intervall(0), 1);
+		assertEquals(AnimationsManager.intervall(1), 1);
+		assertEquals(AnimationsManager.intervall(3), 3);
+	}
 }

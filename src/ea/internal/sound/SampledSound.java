@@ -165,7 +165,7 @@ public class SampledSound extends Thread {
 			}
 
 			if (loop && this.state != State.STOPPED) {
-				this.init(data, loop);
+				this.init(data, true);
 				this.playSound();
 			} else {
 				line.drain();

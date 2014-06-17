@@ -21,14 +21,14 @@ package ea.compat;
 
 import ea.internal.util.Logger;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 
 /**
- * Der Compat-Dateimanager implementiert die alten Lade-Methoden des Dateimanagers,
- * um den Dateimanager übersichtlicher zu halten - gleichzeitig aber alte Dateien
- * weiterhin korrekt zu laden.
+ * Der Compat-Dateimanager implementiert die alten Lade-Methoden des Dateimanagers, um den
+ * Dateimanager übersichtlicher zu halten - gleichzeitig aber alte Dateien weiterhin korrekt zu
+ * laden zu können.
  *
  * @author Niklas Keller, Michael Andonie
  */
@@ -37,34 +37,40 @@ public class CompatDateiManager {
 	 * Liest eine <code>.eaa</code>-String-Array-Datei ein.
 	 *
 	 * @param pfad
-	 *            Der Dateipfad, der sowohl das Verzeichnis wie auch den Dateinamen angibt.
+	 * 		Der Dateipfad, der sowohl das Verzeichnis wie auch den Dateinamen angibt.
+	 * 		<p/>
+	 * 		Dieser sollte mit <code>.eaa</code> enden. Wenn nicht, wird dies automatisch angehängt.
 	 *
-	 *            Dieser sollte mit <code>.eaa</code> enden. Wenn nicht, wird dies
-	 *            automatisch angehängt.
 	 * @return Array, das eingelesen wurde oder <code>null</code>, wenn ein Fehler aufgetreten ist.
 	 */
-	public static String[] stringArrayEinlesen(String pfad) {
+	public static String[] stringArrayEinlesen (String pfad) {
+		BufferedReader reader = null;
 		String[] ret;
 
 		try {
+			// init
 			String line;
-			LineNumberReader f = new LineNumberReader(new FileReader(pfad));
-			line = f.readLine();
+			reader = new BufferedReader(new FileReader(pfad));
+			line = reader.readLine();
 
+			// check type info
 			if (line.compareTo("typ:String") != 0) {
-				System.err.println("Die geladene .eaa-Datei beschreibt kein String-Array oder ist beschädigt!");
-				f.close();
+				Logger.error("Die geladene .eaa-Datei beschreibt kein String-Array oder ist " +
+						"beschädigt!");
+				reader.close();
 
 				return null;
 			}
 
-			line = f.readLine();
-
+			// parse array length
+			line = reader.readLine();
 			int length = Integer.valueOf(line.split(":")[1]);
+
+			// parse file data
 			ret = new String[length];
 
 			for (int i = 0; i < length; i++) {
-				line = f.readLine();
+				line = reader.readLine();
 
 				String[] split = line.split(":", 2);
 				String erg;
@@ -80,11 +86,17 @@ public class CompatDateiManager {
 				ret[i] = erg;
 			}
 
-			f.close();
-
 			return ret;
 		} catch (IOException e) {
 			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		return null;
@@ -94,33 +106,37 @@ public class CompatDateiManager {
 	 * Liest eine <code>.eaa</code>-int-Array-Datei ein.
 	 *
 	 * @param pfad
-	 *            Der Dateipfad, der sowohl das Verzeichnis wie auch den Dateinamen angibt.
+	 * 		Der Dateipfad, der sowohl das Verzeichnis wie auch den Dateinamen angibt.
+	 * 		<p/>
+	 * 		Dieser sollte mit <code>.eaa</code> enden. Wenn nicht, wird dies automatisch angehängt.
 	 *
-	 *            Dieser sollte mit <code>.eaa</code> enden. Wenn nicht, wird dies
-	 *            automatisch angehängt.
 	 * @return Array, das eingelesen wurde oder <code>null</code>, wenn ein Fehler aufgetreten ist.
 	 */
-	public static int[] integerArrayEinlesen(String pfad) {
-		LineNumberReader f = null;
-		int[] ret = null;
+	public static int[] integerArrayEinlesen (String pfad) {
+		BufferedReader reader = null;
+		int[] ret;
 
 		try {
+			// init
 			String line;
-			f = new LineNumberReader(new FileReader(pfad));
-			line = f.readLine();
+			reader = new BufferedReader(new FileReader(pfad));
+			line = reader.readLine();
 
+			// check type info
 			if (line.compareTo("typ:Integer") != 0) {
 				System.err.println("Die geladene .eaa-Datei beschreibt kein int-Array oder ist beschädigt!");
 				return null;
 			}
 
-			line = f.readLine();
+			// parse array length
+			line = reader.readLine();
 			int length = Integer.valueOf(line.split(":")[1]);
 
+			// parse file data
 			ret = new int[length];
 
 			for (int i = 0; i < length; i++) {
-				line = f.readLine();
+				line = reader.readLine();
 				ret[i] = Integer.valueOf(line.split(":")[1]);
 			}
 
@@ -128,9 +144,9 @@ public class CompatDateiManager {
 		} catch (IOException e) {
 			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
 		} finally {
-			if(f != null) {
+			if (reader != null) {
 				try {
-					f.close();
+					reader.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -22,14 +22,11 @@ package ea;
 import java.lang.annotation.Documented;
 
 /**
- * Markiert Methoden, die Schüler verwenden sollen. Methoden ohne @API sollen nicht verwendet
- * werden!
- * <p/>
- * Bisher müssen diese Methoden auch mit @SuppressWarnings("unused") zusätzlich markiert werden.
+ * Markiert Methoden, die Schüler definitiv <u><b>nicht</b></u> verwenden sollen.
  *
  * @author Niklas Keller <me@kelunik.com>
  */
 @Documented
-@SuppressWarnings ("unused")
-public @interface API {
+@SuppressWarnings ( "unused" )
+public @interface NoExternalUse {
 }

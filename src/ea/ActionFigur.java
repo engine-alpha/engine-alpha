@@ -24,443 +24,530 @@ import ea.internal.util.Logger;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 
 /**
- * Eine Actionfigur ist eine besondere Figur. Diese hat verschiedene <b>Zustaende</b> und kann verschiedene
- * <b>Aktionen</b> durchführen.
- * Das bedeutet: Jeder <b>Zustand</b> und jede <b>Aktion</b> werden von einem <code>Figur</code>-Objekt
- * dargestellt. <br />
- * Die Figur des aktuellen <b>Zustandes</b> wird normalerweise dargestellt.<br />
- * Wird ein <b>Aktion<b/> ausgefuehrt, so wird die dazugehoerige Figur einmal durchanimiert. Anschliessend
- * kehrt die Figur in ihren <b>Zustand</b> zurueck.<br />
- * <br />
- * <b>WICHTIG</b>:<br />
- * Damit eine Actionfigur <i>immer</i> ordnungsgemaess funktioniert (Spiegelungen), sollten alle Figuren die selben Masse ("Pixel"-Hoehe/-Breite) haben.<br />
- * Es muessen nicht alle Felder ausgefuellt sein, damit Kollisionstests etc. immer funktionieren. Es sei denn, die rechenintensive Arbeit
- * wurde durch die Klasse <code>Game</code> ausgeschaltet (Methode <code>rechenintensiveArbeitSetzen(...)</code> ).
- * 
+ * Eine Actionfigur ist eine besondere Figur. Diese hat verschiedene <b>Zustände</b> und kann
+ * verschiedene <b>Aktionen</b> durchführen. Das bedeutet: Jeder <b>Zustand</b> und jede
+ * <b>Aktion</b> werden von einem eigenen <code>Figur</code>-Objekt dargestellt.
+ * <p/>
+ * Die Figur des aktuellen <b>Zustandes</b> wird normalerweise dargestellt.
+ * <p/>
+ * Wird eine <b>Aktion</b> ausgeführt, so wird die dazugehoerige Figur einmal durchanimiert.
+ * Anschliessend kehrt die Figur in ihren <b>Zustand</b> zurück.
+ * <p/>
+ * <b>WICHTIG</b>:<br /> Damit eine Actionfigur <i>immer</i> ordnungsgemäß funktioniert
+ * (Spiegelungen), sollten alle Figuren die selben Masße ("Pixel"-Hoehe/-Breite) haben.
+ * <p/>
+ * Es müssen nicht alle Felder ausgefüllt sein, damit Kollisionstests etc. immer funktionieren. Es
+ * sei denn, die rechenintensive Arbeit wurde durch die Klasse <code>Game</code> ausgeschaltet
+ * ({@link ea.Game#rechenintensiveArbeitSetzen(boolean)}).
+ *
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
 public class ActionFigur extends Raum {
-	
-	/**
-	 * Die Sammlung aller Zustaende
-	 */
-	private Figur[] zustand;
-	
-	/**
-	 * Die Namen der Zustaende
-	 */
-	private String[] zustandName;
-	
-	/**
-	 * Die Sammlung aller Aktionen
-	 */
-	private Figur[] aktion;
-	
-	/**
-	 * Der Name der Aktionen
-	 */
-	private String[] aktionName;
-	
-	/**
-	 * Der Index des aktuellen ZUSTANDES
-	 */
-	private int index = 0;
-	
-	/**
-	 * Der Index der zuletzt auszufuehrenden Aktion
-	 */
-	private int indexAction = 0;
-	
-	/**
-	 * TRUE, solange eine Aktion auszufuehren ist.
-	 */
-	private boolean performsAction = false;
-	
 	/**
 	 * Eine Liste mit allen Figuren (um die Animationsschritte zu machen).
 	 */
-	private static final ArrayList<ActionFigur> liste;
-	
+	private static final ArrayList<ActionFigur> FIGUREN;
+
 	static {
-		liste = new ArrayList<ActionFigur>();
+		FIGUREN = new ArrayList<>();
+
 		Manager.standard.anmelden(new Ticker() {
 			int runde = 0;
-			
-			public void tick() {
+
+			public void tick () {
 				runde++;
+
 				try {
-					for (ActionFigur f : liste) {
+					for (ActionFigur f : FIGUREN) {
 						f.animationsSchritt(runde);
 					}
-				} catch (ConcurrentModificationException e) {
-					
-				} catch (NullPointerException e) {
-					
+				} catch (Exception e) {
+					// don't care (ConcurrentModification and NullPointer)
 				}
 			}
-		}, 1);
+		}, 1); // TODO 1 ms ist glaube ich ein zu kleines Intervall und sorgt für die
+		// Performance-Schwierigkeiten bei vielen Figuren
+		// Richtige Time nutzen? Wie schnell sind Time-Aufrufe in Java?
 	}
-	
+
 	/**
-	 * Konstruktor. Erstellt eine Actionfigur
-	 * 
-	 * @param zustand1
-	 *            Der erste Zustand der Figur. Weitere Zustaende koennen ueber die Methode <code>neuerZustand</code> angemeldet werden.
-	 * @param zustandsName1
-	 *            Der name des ersten Zustandes. Weitere Zustaende koennen ueber die Methode <code>neuerZustand</code> angemeldet werden.
+	 * Die Sammlung aller Zustände
 	 */
-	public ActionFigur(Figur zustand1, String zustandsName1) {
-		zustand = new Figur[0];
-		zustandName = new String[0];
-		aktion = new Figur[0];
-		aktionName = new String[0];
-		neuerZustand(zustand1, zustandsName1);
-		liste.add(this);
-	}
-	
+	private Figur[] states;
+
 	/**
-	 * Meldet einen neuen Zustand fuer diese Figur an.
-	 * 
-	 * @param zustandFigur
-	 *            Die Figur, die diesen Zustand beschreibt.
+	 * Die Namen der Zustände
+	 */
+	private String[] stateNames;
+
+	/**
+	 * Die Sammlung aller Aktionen
+	 */
+	private Figur[] actions;
+
+	/**
+	 * Die Namen der Aktionen
+	 */
+	private String[] actionNames;
+
+	/**
+	 * Der Index des aktuellen Zustandes
+	 */
+	private int indexState = 0;
+
+	/**
+	 * Der Index der zuletzt auszuführenden Aktion
+	 */
+	private int indexAction = 0;
+
+	/**
+	 * <code>true</code>, solange eine Aktion auszuführen ist
+	 */
+	private boolean performsAction = false;
+
+	/**
+	 * Konstruktor.
+	 *
+	 * @param zustand
+	 * 		Der erste Zustand der Figur. Weitere Zustände können über die Methode {@link
+	 * 		#neuerZustand(Figur, String)} angemeldet werden.
 	 * @param name
-	 *            Der Name, unter dem dieser Zustand aufgerufen wird.
+	 * 		Der Name des ersten Zustandes. Weitere Zustände können über die Methode {@link
+	 * 		#neuerZustand(Figur, String)} angemeldet werden.
+	 * 		<p/>
+	 * 		<b>Beim Namen wird die Groß- / Kleinschreibung ignoriert.</b>
+	 */
+	public ActionFigur (Figur zustand, String name) {
+		this.states = new Figur[0];
+		this.stateNames = new String[0];
+		this.actions = new Figur[0];
+		this.actionNames = new String[0];
+
+		neuerZustand(zustand, name);
+		FIGUREN.add(this);
+	}
+
+	/**
+	 * Meldet einen neuen Zustand für diese Figur an.
+	 *
+	 * @param zustand
+	 * 		Die Figur, die diesen Zustand beschreibt.
+	 * @param name
+	 * 		Der Name, unter dem dieser Zustand aufgerufen wird.
+	 * 		<p/>
+	 * 		<b>Beim Namen wird die Groß- / Kleinschreibung ignoriert.</b>
+	 *
 	 * @see #neueAktion(Figur, String)
 	 */
-	public void neuerZustand(Figur zustandFigur, String name) {
-		zustandFigur.entfernen();
-		if (zustand.length != 0) {
-			zustandFigur.positionSetzen(aktuelleFigur().position());
+	@API
+	public void neuerZustand (Figur zustand, String name) {
+		zustand.entfernen();
+
+		if (this.states.length > 0) {
+			zustand.positionSetzen(aktuelleFigur().position());
 		}
-		Figur[] f = zustand;
-		zustand = new Figur[f.length + 1];
-		String[] s = zustandName;
-		zustandName = new String[s.length + 1];
-		for (int i = 0; i < f.length; i++) {
-			zustand[i] = f[i];
-			zustandName[i] = s[i];
+
+		Figur[] statesBefore = this.states;
+		String[] stateNamesBefore = this.stateNames;
+
+		this.states = new Figur[statesBefore.length + 1];
+		this.stateNames = new String[stateNamesBefore.length + 1];
+
+		for (int i = 0; i < statesBefore.length; i++) {
+			this.states[i] = statesBefore[i];
+			this.stateNames[i] = stateNamesBefore[i];
 		}
-		zustand[zustand.length - 1] = zustandFigur;
-		zustandName[zustandName.length - 1] = name;
+
+		this.states[this.states.length - 1] = zustand;
+		this.stateNames[this.stateNames.length - 1] = name.toLowerCase();
 	}
-	
+
 	/**
-	 * Meldet eine neue Aktion fuer diese Figur an.
-	 * 
-	 * @param aktionsFigur
-	 *            Die Figur, die diese Aktion beschreibt.
+	 * Meldet eine neue Aktion für diese Figur an.
+	 *
+	 * @param action
+	 * 		Die Figur, die diese Aktion beschreibt.
 	 * @param name
-	 *            Der Name, unter dem diese Aktion aufgerufen wird.
+	 * 		Der Name, unter dem diese Aktion aufgerufen wird.
+	 * 		<p/>
+	 * 		<b>Beim Namen wird die Groß- / Kleinschreibung ignoriert.</b>
+	 *
 	 * @see #neuerZustand(Figur, String)
 	 */
-	public void neueAktion(Figur aktionsFigur, String name) {
-		aktionsFigur.entfernen();
-		aktionsFigur.positionSetzen(aktuelleFigur().position());
-		Figur[] f = aktion;
-		aktion = new Figur[f.length + 1];
-		String[] s = aktionName;
-		aktionName = new String[s.length + 1];
-		for (int i = 0; i < f.length; i++) {
-			aktion[i] = f[i];
-			aktionName[i] = s[i];
+	@API
+	@SuppressWarnings ( "unused" )
+	public void neueAktion (Figur action, String name) {
+		action.entfernen();
+		action.positionSetzen(aktuelleFigur().position());
+
+		Figur[] actionsBefore = actions;
+		String[] actionNamesBefore = actionNames;
+
+		actions = new Figur[actionsBefore.length + 1];
+		actionNames = new String[actionNamesBefore.length + 1];
+
+		for (int i = 0; i < actionsBefore.length; i++) {
+			actions[i] = actionsBefore[i];
+			actionNames[i] = actionNamesBefore[i];
 		}
-		aktion[aktion.length - 1] = aktionsFigur;
-		aktionName[aktionName.length - 1] = name;
+
+		actions[actions.length - 1] = action;
+		actionNames[actionNames.length - 1] = name.toLowerCase();
 	}
-	
+
 	/**
-	 * Versetzt diese <i>Actionfigur</i> in einen bestimmten Zustand.<br />
-	 * Vollfuehrt die Figur jedoch gerade eine <b>Aktion</b>, so ist der neue Zustand erst
-	 * danach sichtbar.
-	 * 
+	 * Versetzt diese Actionfigur in einen bestimmten Zustand.
+	 * <p/>
+	 * <i>Vollführt die Figur jedoch gerade eine <b>Aktion</b>, so ist der neue Zustand erst danach
+	 * sichtbar.</i>
+	 *
 	 * @param name
-	 *            Der Name des Zustandes, in den die Figur versetzt werden soll.
-	 *            Dies ist der Name, der beim Anmelden des Zustandes mitgegeben wurde.
+	 * 		Der Name des Zustandes, in den die Figur versetzt werden soll. Dies ist der Name, der beim
+	 * 		Anmelden des Zustandes mitgegeben wurde.
+	 * 		<p/>
+	 * 		<b>Beim Namen wird die Groß- / Kleinschreibung ignoriert.</b>
+	 *
 	 * @see #aktionSetzen(String)
 	 */
-	public void zustandSetzen(String name) {
-		String s = name.toLowerCase();
-		for (int i = 0; i < zustandName.length; i++) {
-			if (zustandName[i].toLowerCase().equals(s)) {
-				index = i;
+	@API
+	@SuppressWarnings ( "unused" )
+	public void zustandSetzen (String name) {
+		name = name.toLowerCase();
+
+		for (int i = 0; i < stateNames.length; i++) {
+			if (stateNames[i].equals(name)) {
+				indexState = i;
 				return;
 			}
 		}
-		
+
 		Logger.error("Achtung! Der Name des auszufuehrenden Zustandes wurde nie bei einer Anmeldung mitgegeben! " +
 				"Der Name, der nicht unter den Zustaenden gefunden wurde war: " + name);
 	}
-	
+
 	/**
-	 * Versetzt diese <i>Actionfigur</i> in eine bestimmte Aktion.
-	 * 
+	 * Versetzt diese Actionfigur in eine bestimmte Aktion.
+	 *
 	 * @param name
-	 *            Der Name der Aktion, die die Figur ausfuehren soll.
-	 *            Dies ist der Name, der beim Anmelden der Aktion mitgegeben wurde.
+	 * 		Der Name der Aktion, die die Figur ausführen soll. Dies ist der Name, der beim Anmelden der
+	 * 		Aktion mitgegeben wurde.
+	 * 		<p/>
+	 * 		<b>Beim Namen wird die Groß- / Kleinschreibung ignoriert.</b>
+	 *
 	 * @see #zustandSetzen(String)
 	 */
-	public void aktionSetzen(String name) {
-		String s = name.toLowerCase();
-		for (int i = 0; i < aktionName.length; i++) {
-			if (aktionName[i].toLowerCase().equals(s)) {
+	@API
+	@SuppressWarnings ( "unused" )
+	public void aktionSetzen (String name) {
+		name = name.toLowerCase();
+
+		for (int i = 0; i < actionNames.length; i++) {
+			if (actionNames[i].equals(name)) {
 				hatAktionSetzen(true);
 				indexAction = i;
 				return;
 			}
 		}
-		
+
 		Logger.error("Achtung! Der Name der auszufuehrenden Aktion wurde nie bei einer Anmeldung mitgegeben! " +
 				"Der Name, der nicht unter den angemeldeten Aktionen gefunden wurde war: " + name);
 	}
-	
+
 	/**
-	 * Setzt, ob diese Figur zur Zeit eine Aktion hat.<br />
-	 * Diese Methode sollte <b>nicht</b> von aussen aktiviert werden. Hierfuer gibt es:<br />
-	 * <code>zustandSetzen(String)</code> und <code>aktionSetzen(String)</code>.
-	 * 
+	 * Setzt, ob diese Figur zur Zeit eine Aktion hat.
+	 * <p/>
+	 * Diese Methode sollte <b>nicht</b> von außen aktiviert werden. Hierfuer gibt es:<br /> {@link
+	 * #zustandSetzen(String)} und {@link #aktionSetzen(String)}.
+	 *
 	 * @param action
-	 *            Ob diese Figur gerade eine Aktion ausfuehrt.
+	 * 		Ob diese Figur gerade eine Aktion ausführt.
 	 */
-	public void hatAktionSetzen(boolean action) {
+	@NoExternalUse
+	public void hatAktionSetzen (boolean action) { // TODO auf private setzen?
 		if (performsAction) {
-			aktion[indexAction].animationsBildSetzen(0);
+			actions[indexAction].animationsBildSetzen(0);
 		}
+
 		performsAction = action;
 	}
-	
+
 	/**
-	 * Gibt die aktuelle Figur zurueck.
-	 * 
+	 * Gibt die aktuelle Figur zurück.
+	 *
 	 * @return Die Figur, die gerade von dieser ActionFigur zu sehen ist.
 	 */
-	public Figur aktuelleFigur() {
-		if (performsAction) {
-			return aktion[indexAction];
-		} else {
-			return zustand[index];
-		}
+	public Figur aktuelleFigur () {
+		return performsAction ? actions[indexAction] : states[indexState];
 	}
-	
+
 	/**
-	 * Gibt den aktuellen Zustand dieser <i>Action-Figur</i> als <code>String</code> aus.
-	 * 
+	 * Gibt den aktuellen Zustand dieser Action-Figur als <code>String</code> aus.
+	 *
 	 * @return Der Name des aktuellen Zustandes. Ist die Figur zur Zeit in einem <b>Zustand</b>, so
-	 *         ist dies der Name des aktuellen Zustandes, vollfuehrt die Figur zur Zeit eine <b>Aktion</b>, so
-	 *         ist dies der Name der aktuellen Aktion.
+	 * ist dies der Name des aktuellen Zustandes, vollführt die Figur zur Zeit eine <b>Aktion</b>,
+	 * so ist dies der Name der aktuellen Aktion.
 	 */
-	public String aktuellesVerhalten() {
-		if (performsAction) {
-			return aktionName[indexAction];
-		} else {
-			return zustandName[index];
-		}
+	@API
+	@SuppressWarnings ( "unused" )
+	public String aktuellesVerhalten () {
+		return performsAction ? actionNames[indexAction] : stateNames[indexState];
 	}
-	
+
 	/**
-	 * Spiegelt <b>ALLE Figuren der <i>Zustaende</i> und <i>Aktionen</i></b> dieser Figur an der X-Achse. <br />
-	 * <br />
-	 * <b>ACHTUNG!!!!</b><br />
-	 * Damit diese Methode <b>nicht zu ungewollten Missverstaendnissen</b> fuehrt, sollte folgendes beachtet werden:<br />
-	 * <i>Saemtliche einzelnen Figuren, die an dieser Action-Figur angemeldet sind, sollten <b>dieselben Masse haben</b>. Sie
-	 * sollten also alle aus derselben Anzahl an "Unterquadraten" (gleiche hoehe * breite) bestehen!</i><br />
-	 * <br />
-	 * Ansonsten wuerde ein ungewolltes "Verschieben" der verschiedenen Action-Figur-Verhalten passieren.
-	 * 
+	 * Spiegelt <b><u>alle</u> Figuren der <i>Zustände</i> und <i>Aktionen</i></b> dieser Figur an
+	 * der X-Achse.
+	 * <p/>
+	 * <b>ACHTUNG!</b>
+	 * <p/>
+	 * Damit diese Methode <b>nicht zu ungewollten Missverständnissen</b> führt, sollte folgendes
+	 * beachtet werden:<br /> <i>Sämtliche Figuren, die an dieser Action-Figur angemeldet sind,
+	 * sollten <b>dieselben Maße haben</b>. Sie sollten also alle aus derselben Anzahl an
+	 * "Unterquadraten" (gleiche Höhe und Breite) bestehen!</i>
+	 * <p/>
+	 * Ansonsten würde ein ungewolltes "Verschieben" der verschiedenen Action-Figur-Verhalten
+	 * passieren.
+	 *
 	 * @param spiegel
-	 *            Ob alle angelegten Figuren (der <i>Zustaende</i> und <i>Aktionen</i>) an der X-Achse gespiegelt
-	 *            werden sollen.
+	 * 		Ob alle angelegten Figuren (der <i>Zustände</i> und <i>Aktionen</i>) an der X-Achse
+	 * 		gespiegelt werden sollen.
+	 *
 	 * @see Figur#spiegelXSetzen(boolean)
 	 */
-	public void spiegelXSetzen(boolean spiegel) {
-		for (int i = 0; i < aktion.length; i++) {
-			aktion[i].spiegelXSetzen(spiegel);
+	@API
+	@SuppressWarnings ( "unused" )
+	public void spiegelXSetzen (boolean spiegel) {
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].spiegelXSetzen(spiegel);
 		}
-		for (int i = 0; i < zustand.length; i++) {
-			zustand[i].spiegelXSetzen(spiegel);
+
+		for (int i = 0; i < states.length; i++) {
+			states[i].spiegelXSetzen(spiegel);
 		}
 	}
-	
+
 	/**
-	 * Spiegelt <b>ALLE Figuren der <i>Zustaende</i> und <i>Aktionen</i></b> dieser Figur an der Y-Achse. <br />
-	 * <br />
-	 * <b>ACHTUNG!!!!</b><br />
-	 * Damit diese Methode <b>nicht zu ungewollten Missverstaendnissen</b> fuehrt, sollte folgendes beachtet werden:<br />
-	 * <i>Saemtliche einzelnen Figuren, die an dieser Action-Figur angemeldet sind, sollten <b>dieselben Masse haben</b>. Sie
-	 * sollten also alle aus derselben Anzahl an "Unterquadraten" (gleiche hoehe * breite) bestehen!</i><br />
-	 * <br />
-	 * Ansonsten wuerde ein ungewolltes "Verschieben" der verschiedenen Action-Figur-Verhalten passieren.
-	 * 
+	 * Spiegelt <b><u>alle</u> Figuren der <i>Zustände</i> und <i>Aktionen</i></b> dieser Figur an
+	 * der Y-Achse.
+	 * <p/>
+	 * <b>ACHTUNG!</b>
+	 * <p/>
+	 * Damit diese Methode <b>nicht zu ungewollten Missverständnissen</b> führt, sollte folgendes
+	 * beachtet werden:<br /> <i>Sämtliche einzelnen Figuren, die an dieser Action-Figur angemeldet
+	 * sind, sollten <b>dieselben Maße haben</b>. Sie sollten also alle aus derselben Anzahl an
+	 * "Unterquadraten" (gleiche Höhe und Breite) bestehen!</i>
+	 * <p/>
+	 * Ansonsten würde ein ungewolltes "Verschieben" der verschiedenen Action-Figur-Verhalten
+	 * passieren.
+	 *
 	 * @param spiegel
-	 *            Ob alle angelegten Figuren (der <i>Zustaende</i> und <i>Aktionen</i>) an der Y-Achse gespiegelt
-	 *            werden sollen.
+	 * 		Ob alle angelegten Figuren (der <i>Zustände</i> und <i>Aktionen</i>) an der Y-Achse
+	 * 		gespiegelt werden sollen.
+	 *
 	 * @see Figur#spiegelYSetzen(boolean)
 	 */
-	public void spiegelYSetzen(boolean spiegel) {
-		for (int i = 0; i < aktion.length; i++) {
-			aktion[i].spiegelYSetzen(spiegel);
+	@API
+	@SuppressWarnings ( "unused" )
+	public void spiegelYSetzen (boolean spiegel) {
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].spiegelYSetzen(spiegel);
 		}
-		for (int i = 0; i < zustand.length; i++) {
-			zustand[i].spiegelYSetzen(spiegel);
+
+		for (int i = 0; i < states.length; i++) {
+			states[i].spiegelYSetzen(spiegel);
 		}
 	}
-	
+
 	/**
-	 * Faerbt <b>alle</b> Figuren dieser Action-Figur in eine Farbe ein.
-	 * 
-	 * @param f
-	 *            Die Farbe, die alle Felder aller Figuren annehmen werden.
+	 * Färbt <b>alle</b> Figuren dieser Action-Figur in eine Farbe ein.
+	 *
+	 * @param farbe
+	 * 		Die Farbe, die alle Felder aller Figuren annehmen werden.
+	 *
 	 * @see Figur#einfaerben(Farbe)
 	 * @see #einfaerben(String)
 	 */
-	public void einfaerben(Farbe f) {
-		for (int i = 0; i < aktion.length; i++) {
-			aktion[i].einfaerben(f);
+	@API
+	@SuppressWarnings ( "unused" )
+	public void einfaerben (Farbe farbe) {
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].einfaerben(farbe);
 		}
-		for (int i = 0; i < zustand.length; i++) {
-			zustand[i].einfaerben(f);
+
+		for (int i = 0; i < states.length; i++) {
+			states[i].einfaerben(farbe);
 		}
 	}
-	
+
 	/**
-	 * Faerbt <b>alle</b> Figuren dieser Action-Figur in eine Farbe ein.
-	 * 
+	 * Färbt <b>alle</b> Figuren dieser Action-Figur in eine Farbe ein.
+	 *
 	 * @param farbe
-	 *            Die Farbe, die alle Felder aller Figuren annehmen werden. Als Standardfarben-String.
+	 * 		Die Farbe, die alle Felder aller Figuren annehmen werden. Als Standardfarben-String.
+	 *
 	 * @see Figur#einfaerben(Farbe)
 	 * @see #einfaerben(Farbe)
 	 */
-	public void einfaerben(String farbe) {
+	@API
+	@SuppressWarnings ( "unused" )
+	public void einfaerben (String farbe) {
 		einfaerben(Farbe.vonString(farbe));
 	}
-	
+
 	/**
-	 * Setzt den Groessenfaktor <b>ALLLER</b> anliegender Einzel-Figuren dieser ActionFigur neu.<br />
-	 * Sowohl die einzelnen <i>Zustaende</i> als auch die einzelnen <i>Aktionen</i>.
-	 * 
+	 * Setzt den Größenfaktor <b>aller</b> anliegender Einzelfiguren dieser Action-Figur neu. Sowohl
+	 * die einzelnen <i>Zustände</i> als auch die einzelnen <i>Aktionen</i>.
+	 *
 	 * @param faktor
-	 *            Der neue Groessenfaktor
+	 * 		Der neue Größenfaktor
+	 *
 	 * @see Figur#faktorSetzen(int)
 	 */
-	public void faktorSetzen(int faktor) {
-		for (int i = 0; i < aktion.length; i++) {
-			aktion[i].faktorSetzen(faktor);
+	@API
+	@SuppressWarnings ( "unused" )
+	public void faktorSetzen (int faktor) {
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].faktorSetzen(faktor);
 		}
-		for (int i = 0; i < zustand.length; i++) {
-			zustand[i].faktorSetzen(faktor);
+		for (int i = 0; i < states.length; i++) {
+			states[i].faktorSetzen(faktor);
 		}
 	}
-	
+
 	/**
-	 * Vollfuehrt einen Animationsschritt, sofern dies Sinn macht.
-	 * 
+	 * Vollführt einen Animationsschritt, sofern dies Sinn macht.
+	 *
 	 * @param runde
-	 *            Die aktuelle Runde
+	 * 		Die aktuelle Runde
 	 */
-	private void animationsSchritt(int runde) {
+	private void animationsSchritt (int runde) {
 		if (performsAction) {
-			if (aktion[indexAction].aktuellesBild() == aktion[indexAction].animation().length - 1) {
-				if (runde % aktion[indexAction].intervall() == 0) {
-					hatAktionSetzen(false);
-				}
-			} else {
-				aktion[indexAction].animationsSchritt(runde);
+			animationsActionSchritt(runde);
+		} else {
+			states[indexState].animationsSchritt(runde);
+		}
+
+		BoundingRechteck r = this.dimension();
+
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].positionSetzen(r.x, r.y);
+		}
+
+		for (int i = 0; i < states.length; i++) {
+			states[i].positionSetzen(r.x, r.y);
+		}
+	}
+
+	/**
+	 * Vollführt einen Animationsschritt für die aktuelle Aktion.
+	 *
+	 * @param runde
+	 * 		Die aktuelle Runde
+	 */
+	private void animationsActionSchritt (int runde) {
+		int curr = actions[indexAction].aktuellesBild();
+		int last = actions[indexAction].animation().length - 1;
+
+		if (curr == last) {
+			if (runde % actions[indexAction].intervall() == 0) {
+				hatAktionSetzen(false);
 			}
 		} else {
-			zustand[index].animationsSchritt(runde);
-		}
-		BoundingRechteck r = this.dimension();
-		for (int i = 0; i < aktion.length; i++) {
-			aktion[i].positionSetzen(r.x, r.y);
-		}
-		for (int i = 0; i < zustand.length; i++) {
-			zustand[i].positionSetzen(r.x, r.y);
+			actions[indexAction].animationsSchritt(runde);
 		}
 	}
-	
+
 	/**
-	 * Gibt zurueck, ob diese Action-Figur gerade eine Aktion ausfuehrt.<br />
-	 * Eine Aktion ausfuehren ist ein sehr kurzlebiger Zustand, daher ist dies nie
-	 * dauerhaft gegeben, es sei denn, der Befehl hierzu wird dauerhaft durchgegeben.
-	 * 
-	 * @return <code>true</code>, wenn diese Action-Figur gerade eine Aktion ausfuehrt,
-	 *         andernfalls <code>false</code>.
+	 * Gibt zurück, ob diese Action-Figur gerade eine Aktion ausführt.
+	 * <p/>
+	 * Eine Aktion ausführen ist ein sehr kurzlebiger Zustand, daher ist dies nie dauerhaft gegeben,
+	 * es sei denn, der Befehl hierzu wird dauerhaft aufgerufen.
+	 *
+	 * @return <code>true</code>, wenn diese Action-Figur gerade eine Aktion ausführt, sonst
+	 * <code>false</code>.
 	 */
-	public boolean vollfuehrtAktion() {
+	@API
+	@SuppressWarnings ( "unused" )
+	public boolean vollfuehrtAktion () {
 		return performsAction;
 	}
-	
+
 	/**
-	 * Verschiebt die Actionfigur um eine bestimmte Verschiebung.
-	 * 
+	 * Verschiebt die Actionfigur.
+	 *
 	 * @param v
-	 *            Die Verschiebung als Objekt der Klasse <code>Vektor</code>
+	 * 		Die Verschiebung als Objekt der Klasse <code>Vektor</code>
 	 */
+	@API
 	@Override
-	public void verschieben(Vektor v) {
-		for (int i = 0; i < zustand.length; i++) {
-			zustand[i].verschieben(v);
+	@SuppressWarnings ( "unused" )
+	public void verschieben (Vektor v) {
+		for (int i = 0; i < states.length; i++) {
+			states[i].verschieben(v);
 		}
-		for (int i = 0; i < aktion.length; i++) {
-			aktion[i].verschieben(v);
+
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].verschieben(v);
 		}
 	}
-	
+
 	/**
 	 * Zeichnet das Objekt.
-	 * 
+	 *
 	 * @param g
-	 *            Das zeichnende Graphics-Objekt
+	 * 		Das zeichnende Graphics-Objekt
 	 * @param r
-	 *            Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br />
-	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
+	 * 		Das BoundingRechteck, das die Kameraperspektive repräsentiert.
+	 * 		<p/>
+	 * 		Hierbei soll zunächst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst
+	 * 		dann gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+	public void zeichnen (Graphics2D g, BoundingRechteck r) {
 		super.beforeRender(g);
-		
+
 		if (performsAction) {
-			aktion[indexAction].zeichnen(g, r);
+			actions[indexAction].zeichnen(g, r);
 		} else {
-			zustand[index].zeichnen(g, r);
+			states[indexState].zeichnen(g, r);
 		}
-		
+
 		super.afterRender(g);
 	}
-	
+
 	/**
-	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll einzuschliessen</b>.
+	 * Berechnet ein minimales BoundingRechteck, das das Objekt <b>voll einschließt</b>.
+	 *
+	 * @return Ein BoundingRechteck mit dem minimal nötigen Umfang, um das Objekt <b>voll
+	 * einzuschließen</b>.
+	 *
 	 * @see Raum#dimension()
 	 */
+	@API
 	@Override
-	public BoundingRechteck dimension() {
-		if (performsAction) {
-			return aktion[indexAction].dimension();
-		}
-		return zustand[index].dimension();
-	}
-	
-	/**
-	 * Berechnet exakt die derzeitig von dieser Figur okkupierten Flaechen auf der Zeichenebene.
-	 * 
-	 * @return Ein Array aus allen Flaechen, die von dieser Figur EXAKT ausgefuellt werden.
-	 */
-	@Override
-	public BoundingRechteck[] flaechen() {
-		if (performsAction) {
-			return aktion[indexAction].flaechen();
-		}
-		return zustand[index].flaechen();
+	public BoundingRechteck dimension () {
+		return performsAction ? actions[indexAction].dimension() : states[indexState].dimension();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collider erzeugeCollider() {
-		return zustand[0].erzeugeCollider();
+	public Collider erzeugeCollider () {
+		return states[0].erzeugeCollider();
+	}
+
+	/**
+	 * Berechnet exakt die derzeitig von dieser Figur okkupierten Flächen auf der Zeichenebene.
+	 *
+	 * @return Ein Array aus allen Flächen, die von dieser Figur <b>exakt</b> ausgefüllt werden.
+	 */
+	@Override
+	public BoundingRechteck[] flaechen () {
+		if (performsAction) {
+			return actions[indexAction].flaechen();
+		}
+		return states[indexState].flaechen();
 	}
 }

@@ -88,10 +88,10 @@ public class StreckenAnimierer extends Animierer {
 		super(ziel, (geschwindigkeit / schritte), loop, m, listener);
 		this.circuit = circuit;
 		punkte = new Punkt[zielPunkte.length + 1];
+
 		this.punkte[0] = ziel.zentrum();
-		for (int i = 1; i < punkte.length; i++) {
-			punkte[i] = zielPunkte[i - 1];
-		}
+		System.arraycopy(zielPunkte, 0, punkte, 1, punkte.length - 1);
+
 		punkteCount = 1;
 		Punkt p2 = punkte[1];
 		vektor = new Vektor((p2.realX() - punkte[0].realX()) / schritte, (p2.realY() - punkte[0].realY()) / schritte);
@@ -151,7 +151,7 @@ public class StreckenAnimierer extends Animierer {
 						punkteCount = 0;
 						p2 = punkte[punkteCount];
 					} else {
-						vorwaerts = !vorwaerts;
+						vorwaerts = true;
 					}
 				} else {
 					beenden();
@@ -160,9 +160,10 @@ public class StreckenAnimierer extends Animierer {
 			} else if (punkteCount == 0 && !vorwaerts) {
 				if (loop) {
 					if (!circuit) {
-						vorwaerts = !vorwaerts;
+						vorwaerts = false;
 					} else {
 						// Passiert nie.
+						// TODO Was soll dieses If hier, wenn der zweite Fall nie eintritt?
 					}
 				} else {
 					beenden();

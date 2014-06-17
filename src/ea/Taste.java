@@ -19,12 +19,16 @@
 
 package ea;
 
+import java.awt.event.KeyEvent;
+
 /**
  * Konstanten für die Tastatur-Codes
  *
  * @author Niklas Keller <me@kelunik.com>
  */
 public class Taste {
+	public static final int INVALID = -1;
+
 	public static final int A = 0;
 	public static final int B = 1;
 	public static final int C = 2;
@@ -71,4 +75,160 @@ public class Taste {
 	public static final int _7 = 40;
 	public static final int _8 = 41;
 	public static final int _9 = 42;
+
+	public static final int PLUS = 43;
+	public static final int MINUS = 44;
+
+	/**
+	 * Ordnet vom Java-KeyCode-System in das EA-System um.
+	 *
+	 * @param code
+	 * 		Der Java-KeyCode
+	 *
+	 * @return Entsprechender EA-KeyCode oder <code>-1</code>, falls es keinen passenden
+	 * EA-KeyCode gibt.
+	 */
+	public static final int vonJava (int code) {
+		int z = INVALID;
+
+		switch (code) {
+			case KeyEvent.VK_A:
+				z = A;
+				break;
+			case KeyEvent.VK_B:
+				z = B;
+				break;
+			case KeyEvent.VK_C:
+				z = C;
+				break;
+			case KeyEvent.VK_D:
+				z = D;
+				break;
+			case KeyEvent.VK_E:
+				z = E;
+				break;
+			case KeyEvent.VK_F:
+				z = F;
+				break;
+			case KeyEvent.VK_G:
+				z = G;
+				break;
+			case KeyEvent.VK_H:
+				z = H;
+				break;
+			case KeyEvent.VK_I:
+				z = I;
+				break;
+			case KeyEvent.VK_J:
+				z = J;
+				break;
+			case KeyEvent.VK_K:
+				z = K;
+				break;
+			case KeyEvent.VK_L:
+				z = L;
+				break;
+			case KeyEvent.VK_M:
+				z = M;
+				break;
+			case KeyEvent.VK_N:
+				z = N;
+				break;
+			case KeyEvent.VK_O:
+				z = O;
+				break;
+			case KeyEvent.VK_P:
+				z = P;
+				break;
+			case KeyEvent.VK_Q:
+				z = Q;
+				break;
+			case KeyEvent.VK_R:
+				z = R;
+				break;
+			case KeyEvent.VK_S:
+				z = S;
+				break;
+			case KeyEvent.VK_T:
+				z = T;
+				break;
+			case KeyEvent.VK_U:
+				z = U;
+				break;
+			case KeyEvent.VK_V:
+				z = V;
+				break;
+			case KeyEvent.VK_W:
+				z = W;
+				break;
+			case KeyEvent.VK_X:
+				z = X;
+				break;
+			case KeyEvent.VK_Y:
+				z = Y;
+				break;
+			case KeyEvent.VK_Z:
+				z = Z;
+				break;
+			case KeyEvent.VK_UP:
+				z = OBEN;
+				break;
+			case KeyEvent.VK_RIGHT:
+				z = RECHTS;
+				break;
+			case KeyEvent.VK_DOWN:
+				z = UNTEN;
+				break;
+			case KeyEvent.VK_LEFT:
+				z = LINKS;
+				break;
+			case KeyEvent.VK_SPACE:
+				z = LEERTASTE;
+				break;
+			case KeyEvent.VK_ENTER:
+				z = ENTER;
+				break;
+			case KeyEvent.VK_ESCAPE:
+				z = ESCAPE;
+				break;
+			case KeyEvent.VK_0:
+				z = _0;
+				break;
+			case KeyEvent.VK_1:
+				z = _1;
+				break;
+			case KeyEvent.VK_2:
+				z = _2;
+				break;
+			case KeyEvent.VK_3:
+				z = _3;
+				break;
+			case KeyEvent.VK_4:
+				z = _4;
+				break;
+			case KeyEvent.VK_5:
+				z = _5;
+				break;
+			case KeyEvent.VK_6:
+				z = _6;
+				break;
+			case KeyEvent.VK_7:
+				z = _7;
+				break;
+			case KeyEvent.VK_8:
+				z = _8;
+				break;
+			case KeyEvent.VK_9:
+				z = _9;
+				break;
+			case KeyEvent.VK_PLUS:
+				z = PLUS;
+				break;
+			case KeyEvent.VK_MINUS:
+				z = MINUS;
+				break;
+		}
+
+		return z;
+	}
 }

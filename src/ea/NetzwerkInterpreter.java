@@ -106,7 +106,7 @@ public class NetzwerkInterpreter extends Thread {
 				case 'c':
 				case 'k':
 					for(NetzwerkVerbindung v : server.getVerbindungen()) {
-						if(v.getRemoteIP() != remoteIP) {
+						if(!v.getRemoteIP().equals(remoteIP)) {
 							v.sende(raw);
 						}
 					}

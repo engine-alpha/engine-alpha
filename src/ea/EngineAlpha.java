@@ -34,17 +34,19 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box
- * beim Ausführen der .jar-Datei.
- * 
+ * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box beim Ausführen der
+ * .jar-Datei.
+ *
  * @author Niklas Keller <me@kelunik.com>
  */
 public class EngineAlpha extends Frame {
 	// 10000 * major + 100 * minor + 1 * bugfix
-	public static final int VERSION_CODE = 30001;
-	public static final String VERSION_STRING = "v3.0.1";
+	public static final int VERSION_CODE = 30002;
+
+	public static final String VERSION_STRING = "v3.0.2";
 
 	public static final boolean IS_JAR;
+
 	public static final long BUILD_TIME;
 
 	static {
@@ -53,16 +55,16 @@ public class EngineAlpha extends Frame {
 	}
 
 	private EngineAlphaPromotion promo;
-	
-	public EngineAlpha() {
+
+	public EngineAlpha () {
 		super("Engine Alpha " + VERSION_STRING);
-		
+
 		try {
 			setIconImage(ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png")));
-		} catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing (WindowEvent e) {
 				promo.shutdown();
@@ -76,182 +78,31 @@ public class EngineAlpha extends Frame {
 
 		promo = new EngineAlphaPromotion(this);
 	}
-	
-	private class EngineAlphaPromotion extends Canvas implements Runnable {
-		private Thread thread;
-		private BufferedImage logo;
-		private double alpha = 0;
-		private boolean loading = true;
-		private boolean alive = true;
-		private int version_stable = -1;
-		private int version_dev = -1;
-		
-		public EngineAlphaPromotion(EngineAlpha parent) {
-			try {
-				logo = ImageIO.read(getClass().getResource("/ea/assets/logo.png"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			setSize(400, 300);
-			setPreferredSize(getSize());
-			parent.add(this);
-			parent.pack();
-			
-			Dimension screen = getToolkit().getScreenSize();
-			parent.setLocation((screen.width-parent.getWidth())/2, (screen.height-parent.getHeight())/2);
-			
-			parent.setVisible(true);
 
-			thread = new Thread(this) {{ setDaemon(true); }};
-			thread.start();
-			
-			new Thread() {{ setDaemon(true); }
-				public void run() {
-					try {
-						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_STABLE").trim();
-						version_stable = Integer.parseInt(body);
-					} catch(Exception e) {
-						version_stable = -1;
-					}
-
-					try {
-						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT").trim();
-						version_dev = Integer.parseInt(body);
-					} catch(Exception e) {
-						version_dev = -1;
-					}
-					
-					loading = false;
-				}
-			}.start();
-		}
-		
-		public void run() {
-			createBufferStrategy(2);
-			BufferStrategy bs = getBufferStrategy();
-			Graphics2D g = (Graphics2D) bs.getDrawGraphics();
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			
-			long lastTime, currTime = System.currentTimeMillis();
-			
-			while(alive) {
-				lastTime = currTime;
-				currTime = System.currentTimeMillis();
-				
-				update(currTime - lastTime);
-				
-				render(g);
-				bs.show();
-				
-				try {
-					Thread.sleep(50);
-				} catch(InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		public void shutdown() {
-			this.alive = false;
-
-			try {
-				thread.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		private void update(long passedTime) {
-			alpha += passedTime * .01;
-			alpha %= 360;
-		}
-
-		public void render(Graphics2D g) {
-			g.setFont(new Font("SansSerif", Font.ITALIC, 14));
-			FontMetrics fm = g.getFontMetrics();
-
-			g.setColor(new Color(250, 250, 250));
-			g.fillRect(0, 0, getWidth(), getHeight());
-			
-			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 45, null);
-			
-			if(loading) {
-				g.setColor(new Color(0,0,0,150));
-				g.fillOval((int) (getWidth()/2+8*Math.cos(alpha))-2, (int) (getHeight()-80+8*Math.sin(alpha))-2, 4, 4);
-				g.fillOval((int) (getWidth()/2+8*Math.cos(180+alpha))-2, (int) (getHeight()-80+8*Math.sin(180+alpha))-2, 4, 4);
-				g.drawLine((int) (getWidth()/2+8*Math.cos(alpha)), (int) (getHeight()-80+8*Math.sin(alpha)),
-						(int) (getWidth()/2+8*Math.cos(180+alpha)), (int) (getHeight()-80+8*Math.sin(180+alpha)));
-			} else {
-				String message;
-				Color color = new Color(30,30,30);
-				
-				if(version_stable == -1) {
-					message = "Server für Versionsabgleich nicht erreichbar.";
-				}
-				
-				else if(version_stable == VERSION_CODE) {
-					message = "Dies ist die aktuelle Stable-Version.";
-					color = new Color(50, 200, 25);
-				}
-				
-				else if(VERSION_CODE < version_stable) {
-					message = "Es ist eine neue Stable-Version verfügbar!";
-					color = new Color(200,50,0);
-				}
-				
-				else if(version_dev == VERSION_CODE) {
-					message = "Dies ist die aktuelle Dev-Version.";
-					color = new Color(0,100,150);
-				}
-
-				else if(VERSION_CODE < version_dev) {
-					message = "Es ist eine neue Dev-Version verfügbar!";
-					color = new Color(200,50,0);
-				}
-
-				else {
-					message = "";
-				}
-				
-				g.setColor(color);
-				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 70);
-			}
-
-			Date date = new Date(BUILD_TIME * 1000);
-			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
-			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-			g.setColor(new Color(100, 100, 100));
-			String str = "Build #" + VERSION_CODE + "   " + sdf.format(date);
-			g.drawString(str, (getWidth() - fm.stringWidth(str)) / 2, getHeight() - 40);
-		}
-	}
-	
-	public static void main(String[] args) {
+	public static void main (String[] args) {
 		new EngineAlpha();
 	}
 
-	public static boolean isJar() {
+	public static boolean isJar () {
 		String className = EngineAlpha.class.getName().replace('.', '/');
 		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
 
 		return classJar.startsWith("jar:");
 	}
 
-	@SuppressWarnings("unused")
-	public static String getJarName() {
+	@SuppressWarnings ( "unused" )
+	public static String getJarName () {
 		String className = EngineAlpha.class.getName().replace('.', '/');
 		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
 
-		if(classJar.startsWith("jar:")) {
+		if (classJar.startsWith("jar:")) {
 			String vals[] = classJar.split("/");
 
-			for(String val: vals) {
+			for (String val : vals) {
 				if (val.contains("!")) {
 					try {
 						return java.net.URLDecoder.decode(val.substring(0, val.length() - 1), "UTF-8");
-					} catch(Exception e) {
+					} catch (Exception e) {
 						return null;
 					}
 				}
@@ -261,7 +112,7 @@ public class EngineAlpha extends Frame {
 		return null;
 	}
 
-	public static long getBuildTime() {
+	public static long getBuildTime () {
 		try {
 			String uri = EngineAlpha.class.getName().replace('.', '/') + ".class";
 			JarURLConnection j = (JarURLConnection) ClassLoader.getSystemResource(uri).openConnection();
@@ -273,7 +124,7 @@ public class EngineAlpha extends Frame {
 		}
 	}
 
-	private static String getUrlBody(String uri) {
+	private static String getUrlBody (String uri) {
 		// workaround, make sure this is set to false
 		// see http://stackoverflow.com/a/14884941/2373138
 		System.setProperty("jsse.enableSNIExtension", "false");
@@ -289,7 +140,7 @@ public class EngineAlpha extends Frame {
 			byte[] data = new byte[1024];
 			int read;
 
-			while((read = bis.read(data)) != -1) {
+			while ((read = bis.read(data)) != -1) {
 				builder.append(new String(data, 0, read));
 			}
 
@@ -297,7 +148,7 @@ public class EngineAlpha extends Frame {
 		} catch (Exception e) {
 			// client may have no internet connection
 		} finally {
-			if(bis != null) {
+			if (bis != null) {
 				try {
 					bis.close();
 				} catch (IOException e) {
@@ -307,5 +158,155 @@ public class EngineAlpha extends Frame {
 		}
 
 		return null;
+	}
+
+	private class EngineAlphaPromotion extends Canvas implements Runnable {
+		private Thread thread;
+		private BufferedImage logo;
+
+		private double alpha = 0;
+
+		private boolean loading = true;
+		private boolean alive = true;
+
+		private int version_stable = -1;
+		private int version_dev = -1;
+
+		public EngineAlphaPromotion (EngineAlpha parent) {
+			try {
+				logo = ImageIO.read(getClass().getResource("/ea/assets/logo.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			setSize(400, 300);
+			setPreferredSize(getSize());
+			parent.add(this);
+			parent.pack();
+
+			Dimension screen = getToolkit().getScreenSize();
+			parent.setLocation((screen.width - parent.getWidth()) / 2, (screen.height - parent.getHeight()) / 2);
+
+			parent.setVisible(true);
+
+			thread = new Thread(this) {{
+				setDaemon(true);
+			}};
+			thread.start();
+
+			new Thread() {
+				{
+					setDaemon(true);
+				}
+
+				public void run () {
+					try {
+						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_STABLE").trim();
+						version_stable = Integer.parseInt(body);
+					} catch (Exception e) {
+						version_stable = -1;
+					}
+
+					try {
+						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT").trim();
+						version_dev = Integer.parseInt(body);
+					} catch (Exception e) {
+						version_dev = -1;
+					}
+
+					loading = false;
+				}
+			}.start();
+		}
+
+		public void run () {
+			createBufferStrategy(2);
+			BufferStrategy bs = getBufferStrategy();
+			Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			long lastTime, currTime = System.currentTimeMillis();
+
+			while (alive) {
+				lastTime = currTime;
+				currTime = System.currentTimeMillis();
+
+				update(currTime - lastTime);
+
+				render(g);
+				bs.show();
+
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		public void shutdown () {
+			this.alive = false;
+
+			try {
+				thread.join();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		private void update (long passedTime) {
+			alpha += passedTime * .01;
+			alpha %= 360;
+		}
+
+		public void render (Graphics2D g) {
+			g.setFont(new Font("SansSerif", Font.ITALIC, 14));
+			FontMetrics fm = g.getFontMetrics();
+
+			g.setColor(new Color(250, 250, 250));
+			g.fillRect(0, 0, getWidth(), getHeight());
+
+			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 45, null);
+
+			if (loading) {
+				g.setColor(new Color(0, 0, 0, 150));
+				g.fillOval((int) (getWidth() / 2 + 8 * Math.cos(alpha)) - 2, (int) (getHeight() - 80 + 8 * Math.sin(alpha)) - 2, 4, 4);
+				g.fillOval((int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)) - 2, (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)) - 2, 4, 4);
+				g.drawLine((int) (getWidth() / 2 + 8 * Math.cos(alpha)), (int) (getHeight() - 80 + 8 * Math.sin(alpha)),
+						(int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)), (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)));
+			} else {
+				String message;
+				Color color = new Color(30, 30, 30);
+
+				if (version_stable == -1) {
+					message = "Server für Versionsabgleich nicht erreichbar.";
+				} else if (version_stable == VERSION_CODE) {
+					message = "Dies ist die aktuelle Stable-Version.";
+					color = new Color(50, 200, 25);
+				} else if (VERSION_CODE < version_stable) {
+					message = "Es ist eine neue Stable-Version verfügbar!";
+					color = new Color(200, 50, 0);
+				} else if (version_dev == VERSION_CODE) {
+					message = "Dies ist die aktuelle Dev-Version.";
+					color = new Color(0, 100, 150);
+				} else if (VERSION_CODE < version_dev) {
+					message = "Es ist eine neue Dev-Version verfügbar!";
+					color = new Color(200, 50, 0);
+				} else {
+					message = "";
+				}
+
+				g.setColor(color);
+				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 70);
+			}
+
+			Date date = new Date(BUILD_TIME * 1000);
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
+			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+			g.setColor(new Color(100, 100, 100));
+			String str = "Build #" + VERSION_CODE + "   " + sdf.format(date);
+			g.drawString(str, (getWidth() - fm.stringWidth(str)) / 2, getHeight() - 40);
+		}
 	}
 }

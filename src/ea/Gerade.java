@@ -20,9 +20,9 @@
 package ea;
 
 /**
- * Eine Gerade ist die Verbindungslinie zwischen 2 Punkten.<br />
- * Sie ist definiert ueber ihre Steigung und einen Y-Achsenabschnitt.
- * 
+ * Eine Gerade ist die Verbindungslinie zwischen 2 Punkten.<br /> Sie ist definiert ueber ihre
+ * Steigung und einen Y-Achsenabschnitt.
+ *
  * @author Michael Andonie
  */
 @Deprecated
@@ -31,35 +31,35 @@ public class Gerade {
 	 * Die Steigung der Geraden
 	 */
 	public double steigung;
-	
+
 	/**
-	 * Die Absolute. Auch als Y-Achsenabschnitt bekannt.<br />
-	 * Diese Variable uebernimmt eine zweite Aufgabe, sollte die Gerade ein sonderfallSenkrecht sein. In diesem Fall beschreibt sie den X-Achsenabschnitt.
+	 * Die Absolute. Auch als Y-Achsenabschnitt bekannt.<br /> Diese Variable uebernimmt eine zweite
+	 * Aufgabe, sollte die Gerade ein sonderfallSenkrecht sein. In diesem Fall beschreibt sie den
+	 * X-Achsenabschnitt.
 	 */
 	public float absolute;
-	
+
 	/**
-	 * Gibt an, ob die Gerade exakt senkrecht steht.<br />
-	 * In diesem Fall waere sie nicht ueber eine Geradengleichung beschreibbar, und auch Tests mit Hoeher/Tiefer ergaeben keinen Sinn.
+	 * Gibt an, ob die Gerade exakt senkrecht steht.<br /> In diesem Fall waere sie nicht ueber eine
+	 * Geradengleichung beschreibbar, und auch Tests mit Hoeher/Tiefer ergaeben keinen Sinn.
 	 */
 	public boolean sonderfallSenkrecht = false;
-	
+
 	/**
-	 * Gibt an, ob die Gerade exakt waagrecht steht.<br />
-	 * In diesem Fall wuerde ein Links/Rechts-Test, keinen Sinn ergeben.
+	 * Gibt an, ob die Gerade exakt waagrecht steht.<br /> In diesem Fall wuerde ein
+	 * Links/Rechts-Test, keinen Sinn ergeben.
 	 */
 	public boolean sonderfallWaagrecht = false;
-	
+
 	/**
 	 * Konstruktor fuer Objekte der Klasse Gerade
-	 * 
+	 *
 	 * @param p1
-	 *            Der erste bestimmende Punkt
+	 * 		Der erste bestimmende Punkt
 	 * @param p2
-	 *            Der zweite bestimmende Punkt
+	 * 		Der zweite bestimmende Punkt
 	 */
-	public Gerade(Punkt p1, Punkt p2)
-	{
+	public Gerade (Punkt p1, Punkt p2) {
 		if (p1.y - p2.y == 0) {
 			sonderfallWaagrecht = true;
 		}
@@ -78,39 +78,40 @@ public class Gerade {
 			absolute = (int) (p1.y - (steigung * p1.x));
 		}
 	}
-	
+
 	/**
 	 * Berechnet den Winkel, den die Gerade mit der Vertikalen einschliesst.
-	 * 
+	 *
 	 * @return Der einschliessende Winkel, im <b>Bogenmass</b>!
 	 */
-	public double winkel() {
+	public double winkel () {
 		if (sonderfallSenkrecht) {
 			return 0;
-		}
-		else {
+		} else {
 			return ((Math.PI / 2) + Math.atan(steigung));
 		}
 	}
-	
+
 	/**
 	 * Funktion unter einberechnung der Sonderfaelle.
 	 */
-	public boolean punktLiegtUeber(Punkt p) {
+	public boolean punktLiegtUeber (Punkt p) {
 		return false;
 	}
-	
+
 	/**
-	 * Prueft, ob die Gerade ueber oder unter einem bestimmten Punkt liegt.<br />
-	 * <b>ACHTUNG!</b><br />
-	 * Diese Methode testet nach den Hoehenwerten, die ja, bekanntlich, bei der Fensterprogrammierung umgekehrt sind.<br />
-	 * Liegt der Punkt also - im Bild sichtbar - tiefer als die Gerade, ist das Ergebnis TRUE!
-	 * 
+	 * Prueft, ob die Gerade ueber oder unter einem bestimmten Punkt liegt.<br /> <b>ACHTUNG!</b><br
+	 * /> Diese Methode testet nach den Hoehenwerten, die ja, bekanntlich, bei der
+	 * Fensterprogrammierung umgekehrt sind.<br /> Liegt der Punkt also - im Bild sichtbar - tiefer
+	 * als die Gerade, ist das Ergebnis TRUE!
+	 *
 	 * @param p
-	 *            Der zu testende Punkt
-	 * @return true, wenn die Gerade Ueber dem Punkt liegt. Ist die Gerade senkrecht, so ist das Ergebnis automatisch FALSE
+	 * 		Der zu testende Punkt
+	 *
+	 * @return true, wenn die Gerade Ueber dem Punkt liegt. Ist die Gerade senkrecht, so ist das
+	 * Ergebnis automatisch FALSE
 	 */
-	public boolean istHoeherAls(Punkt p) {
+	public boolean istHoeherAls (Punkt p) {
 		if (sonderfallSenkrecht) {
 			return false;
 		}
@@ -118,8 +119,8 @@ public class Gerade {
 		float y = (float) ((steigung * p.x) + absolute);
 		return (y > p.y);
 	}
-	
-	public boolean istRechtsVon(Punkt p) {
+
+	public boolean istRechtsVon (Punkt p) {
 		if (sonderfallWaagrecht) {
 			return false;
 		}

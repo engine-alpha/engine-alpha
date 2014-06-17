@@ -292,7 +292,6 @@ implements Ticker {
 	 */
 	@Override
 	public boolean bewegen(Vektor v) {
-		// TODO Auto-generated method stub
 		ziel.verschieben(v);
 		collider.verschieben(v);
 		return false;

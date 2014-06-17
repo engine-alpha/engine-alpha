@@ -197,8 +197,12 @@ public class PixelFeld implements java.io.Serializable {
 		for (int i = 0; i < farbe.length; i++) {
 			for (int j = 0; j < farbe[0].length; j++) {
 				if (this.farbe[i][j] != null) {
-					this.farbe[i][j] = new Color(255 - farbe[i][j].getRed(),
-							255 - farbe[i][j].getGreen(), 255 - farbe[i][j].getBlue(), farbe[i][j].getAlpha());
+					this.farbe[i][j] = new Color(
+							255 - farbe[i][j].getRed(),
+							255 - farbe[i][j].getGreen(),
+							255 - farbe[i][j].getBlue(),
+							farbe[i][j].getAlpha()
+					);
 				}
 			}
 		}

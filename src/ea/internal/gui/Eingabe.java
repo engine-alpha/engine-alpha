@@ -19,17 +19,16 @@
 
 package ea.internal.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
- * TODO Doc fehlt!
+ * TODO Dokumentation
  * 
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
 public class Eingabe extends JDialog {
 	
 	/**

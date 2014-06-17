@@ -21,6 +21,7 @@ package ea;
 
 import ea.internal.collision.Collider;
 import ea.internal.gui.Fenster;
+import ea.internal.util.Logger;
 
 import java.awt.*;
 import java.io.File;
@@ -31,64 +32,19 @@ import java.util.ArrayList;
 
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
- * 
+ *
  * @author Michael Andonie
  */
 public class Text extends Raum implements Leuchtend {
 	private static final long serialVersionUID = -2145724725115670955L;
-	
+
 	/**
-	 * Die Schriftgroesse des Textes
-	 */
-	protected int groesse;
-	
-	/**
-	 * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br />
-	 * Dies wird dargestellt als int.Wert:<br />
-	 * 0: Normaler Text<br />
-	 * 1: Fett<br />
-	 * 2: Kursiv<br />
-	 * 3: Fett & Kursiv
-	 */
-	protected int schriftart;
-	
-	/**
-	 * Der Wert des Textes.
-	 */
-	protected String inhalt;
-	
-	/**
-	 * Der Font der Darstellung
-	 */
-	protected Font font;
-	
-	/**
-	 * Die Farbe, in der der Text dargestellt wird.
-	 */
-	protected Color farbe;
-	
-	/**
-	 * Referenz auf die Farbe, die vor dem leuchten da war (zum wiederherstellen)
-	 */
-	private Color alte;
-	
-	/**
-	 * Gibt an, ob dieser Text gerade leuchtet
-	 */
-	private boolean leuchtet = false;
-	
-	/**
-	 * Der Zaehler fuer die Leuchtanimation
-	 */
-	private int leuchtzaehler;
-	
-	/**
-	 * Ein Feld aller existenten Fonts, die im Hauptprojektordner gespeichert sind.<br />
-	 * Macht das interne verwenden dieser Fonts moeglich, ohne das Vorhandensein der Fonts in den
+	 * Ein Feld aller existenten Fonts, die im Hauptprojektordner gespeichert sind.<br /> Macht das
+	 * interne verwenden dieser Fonts moeglich, ohne das Vorhandensein der Fonts in den
 	 * Computerressourcen selber zur Voraussetzung zu haben.
 	 */
 	private static Font[] eigene;
-	
+
 	/**
 	 * static-Konstruktor.<br />
 	 * hier werden die externen Fonts geladen.
@@ -96,26 +52,216 @@ public class Text extends Raum implements Leuchtend {
 	static {
 		ArrayList<File> alleFonts = new ArrayList<File>();
 		fontsEinbauen(alleFonts, new File(System.getProperty("user.dir")));
-		File[] unter = alleFonts.toArray(new File[] {});
+		File[] unter = alleFonts.toArray(new File[alleFonts.size()]);
 		eigene = new Font[unter.length];
+
 		for (int i = 0; i < unter.length; i++) {
 			try {
 				FileInputStream s = new FileInputStream(unter[i]);
 				eigene[i] = Font.createFont(Font.TRUETYPE_FONT, s);
 				s.close();
 			} catch (FileNotFoundException e) {
-				System.err.println("Interner Lesefehler. Dies haette unter keinen Umstaenden passieren duerfen.");
+				Logger.error("Interner Lesefehler. Dies hätte unter keinen Umständen passieren " +
+						"dürfen.");
 			} catch (FontFormatException e) {
-				System.err.println("Das TrueType-Font-Format einer Datei (" + unter[i].getPath() + ") war nicht einlesbar!!");
+				Logger.error("Das TrueType-Font-Format einer Datei (" + unter[i].getPath() + ") war nicht einlesbar!");
 			} catch (IOException e) {
-				System.err.println("Lesefehler beim Laden der eigenen Fonts! Zugriffsrechte ueberpruefen.");
+				Logger.error("Lesefehler beim Laden der eigenen Fonts! Zugriffsrechte überprüfen.");
 			}
 		}
 	}
-	
-	private static void fontsEinbauen(final ArrayList<File> liste, File akt) {
+
+	/**
+	 * Die Schriftgroesse des Textes
+	 */
+	protected int groesse;
+
+	/**
+	 * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br /> Dies wird dargestellt als
+	 * int.Wert:<br /> 0: Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv
+	 */
+	protected int schriftart;
+
+	/**
+	 * Der Wert des Textes.
+	 */
+	protected String inhalt;
+
+	/**
+	 * Der Font der Darstellung
+	 */
+	protected Font font;
+
+	/**
+	 * Die Farbe, in der der Text dargestellt wird.
+	 */
+	protected Color farbe;
+
+	/**
+	 * Referenz auf die Farbe, die vor dem leuchten da war (zum wiederherstellen)
+	 */
+	private Color alte;
+
+	/**
+	 * Gibt an, ob dieser Text gerade leuchtet
+	 */
+	private boolean leuchtet = false;
+
+	/**
+	 * Der Zaehler fuer die Leuchtanimation
+	 */
+	private int leuchtzaehler;
+
+	/**
+	 * Konstruktor fuer Objekte der Klasse Text<br /> Moeglich ist es auch, Fonts zu laden, die im
+	 * Projektordner sind. Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur
+	 * Verfuegung.
+	 *
+	 * @param inhalt
+	 * 		Die Zeichenkette, die dargestellt werden soll
+	 * @param x
+	 * 		Die X-Koordinate des Anfangs
+	 * @param y
+	 * 		Die Y-Koordinate des Anfangs
+	 * @param fontName
+	 * 		Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
+	 * 		Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu
+	 * 		empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden,
+	 * 		<b>nicht der Name der schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
+	 * @param schriftGroesse
+	 * 		Die Groesse, in der die Schrift dargestellt werden soll
+	 * @param schriftart
+	 * 		Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br /> 0: Normaler
+	 * 		Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv <br /> <br /> Alles andere sorgt
+	 * 		nur fuer einen normalen Text.
+	 * @param farbe
+	 * 		Die Farbe, die fuer den Text benutzt werden soll.
+	 */
+	public Text (String inhalt, float x, float y, String fontName, int schriftGroesse, int schriftart, String farbe) {
+		this.inhalt = inhalt;
+		this.position = new Punkt(x, y);
+		this.groesse = schriftGroesse;
+		this.farbe = zuFarbeKonvertieren(farbe);
+		if (schriftart >= 0 && schriftart <= 3) {
+			this.schriftart = schriftart;
+		} else {
+			this.schriftart = 0;
+		}
+		setzeFont(fontName);
+		super.leuchterAnmelden(this);
+	}
+
+	/**
+	 * Konstruktor ohne Farb- und sonderartseingabezwang. In diesem Fall ist die Farbe "Weiss" und
+	 * der Text weder kursiv noch fett.
+	 *
+	 * @param inhalt
+	 * 		Die Zeichenkette, die dargestellt werden soll
+	 * @param x
+	 * 		Die X-Koordinate des Anfangs
+	 * @param y
+	 * 		Die Y-Koordinate des Anfangs
+	 * @param fontName
+	 * 		Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
+	 * 		Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu
+	 * 		empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden.
+	 * @param schriftGroesse
+	 * 		Die Groesse, in der die Schrift dargestellt werden soll
+	 */
+	public Text (String inhalt, float x, float y, String fontName, int schriftGroesse) {
+		this(inhalt, x, y, fontName, schriftGroesse, 0, "Weiss");
+	}
+
+	/**
+	 * Ebenefalls ein vereinfachter Konstruktor. Hierbei ist die Farbe "Weiss" und der Text weder
+	 * kursiv noch fett; weiterhin ist die Schriftgroesse automatisch 24.
+	 *
+	 * @param inhalt
+	 * 		Die Zeichenkette, die dargestellt werden soll
+	 * @param x
+	 * 		Die X-Koordinate des Anfangs
+	 * @param y
+	 * 		Die Y-Koordinate des Anfangs
+	 * @param fontName
+	 * 		Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
+	 * 		Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu
+	 * 		empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden,
+	 * 		<b>nicht der Name der schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
+	 */
+	public Text (String inhalt, float x, float y, String fontName) {
+		this(inhalt, x, y, fontName, 24);
+	}
+
+	/**
+	 * Einfacherer Konstruktor.<br /> Hierbei wird automatisch die Schriftart auf eine
+	 * Standartmaessige gesetzt
+	 *
+	 * @param inhalt
+	 * 		Die Zeichenkette, die dargestellt werden soll
+	 * @param x
+	 * 		Die X-Koordinate des Anfangs
+	 * @param y
+	 * 		Die Y-Koordinate des Anfangs
+	 * @param schriftGroesse
+	 * 		Die Groesse, in der die Schrift dargestellt werden soll
+	 */
+	public Text (String inhalt, float x, float y, int schriftGroesse) {
+		this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
+	}
+
+	/**
+	 * Ein vereinfachter Konstruktor.<br /> Hierbei wird eine Standartschriftart, die Farbe weiss
+	 * und eine Groesse von 24 gewaehlt.
+	 *
+	 * @param inhalt
+	 * 		Der Inhalt des Textes
+	 * @param x
+	 * 		X-Koordinate
+	 * @param y
+	 * 		Y-Koordinate
+	 */
+	public Text (String inhalt, float x, float y) {
+		this(inhalt, x, y, "SansSerif", 24, 0, "Weiss");
+	}
+
+	/**
+	 * Ein vereinfachter parallerer Konstruktor.<br /> Diesen gibt es inhaltlich genauso bereits,
+	 * jedoch sind hier die Argumente vertauscht; dies dient der Praevention undgewollter falscher
+	 * Konstruktorenaufrufe. Hierbei wird eine Standartschriftart, die Farbe weiss und eine Groesse
+	 * von 24 gewaehlt.
+	 *
+	 * @param inhalt
+	 * 		Der Inhalt des Textes
+	 * @param x
+	 * 		X-Koordinate
+	 * @param y
+	 * 		Y-Koordinate
+	 */
+	public Text (float x, float y, String inhalt) {
+		this(inhalt, x, y, "SansSerif", 24, 0, "Weiss");
+	}
+
+	/**
+	 * Ein vereinfachter parallerer Konstruktor.<br /> Diesen gibt es inhaltlich genauso bereits,
+	 * jedoch sind hier die Argumente vertauscht; dies dient der Praevention undgewollter falscher
+	 * Konstruktorenaufrufe. Hierbei wird eine Standartschriftart und die Farbe weiss gewaehlt.
+	 *
+	 * @param inhalt
+	 * 		Der Inhalt des Textes
+	 * @param x
+	 * 		X-Koordinate
+	 * @param y
+	 * 		Y-Koordinate
+	 * @param schriftGroesse
+	 * 		Die Schriftgroesse, die der Text haben soll
+	 */
+	public Text (int x, int y, int schriftGroesse, String inhalt) {
+		this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
+	}
+
+	private static void fontsEinbauen (final ArrayList<File> liste, File akt) {
 		File[] files = akt.listFiles();
-		
+
 		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].equals(akt)) {
@@ -131,328 +277,13 @@ public class Text extends Raum implements Leuchtend {
 			}
 		}
 	}
-	
+
 	/**
-	 * Konstruktor fuer Objekte der Klasse Text<br />
-	 * Moeglich ist es auch, Fonts zu laden, die im Projektordner sind.
-	 * Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur Verfuegung.
-	 * 
-	 * @param inhalt
-	 *            Die Zeichenkette, die dargestellt werden soll
-	 * @param x
-	 *            Die X-Koordinate des Anfangs
-	 * @param y
-	 *            Die Y-Koordinate des Anfangs
-	 * @param fontName
-	 *            Der Name des zu verwendenden Fonts.<br />
-	 *            Wird hierfuer ein Font verwendet, der in dem Projektordner vorhanden sein soll, <b>und dies ist immer
-	 *            und in jedem Fall zu empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden, <b>nicht der Name der
-	 *            schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
-	 * @param schriftGroesse
-	 *            Die Groesse, in der die Schrift dargestellt werden soll
-	 * @param schriftart
-	 *            Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br />
-	 *            0: Normaler Text<br />
-	 *            1: Fett<br />
-	 *            2: Kursiv<br />
-	 *            3: Fett & Kursiv <br />
-	 * <br />
-	 *            Alles andere sorgt nur fuer einen normalen Text.
-	 * @param farbe
-	 *            Die Farbe, die fuer den Text benutzt werden soll.
-	 */
-	public Text(String inhalt, float x, float y, String fontName, int schriftGroesse, int schriftart, String farbe)
-	{
-		this.inhalt = inhalt;
-		this.position = new Punkt(x, y);
-		this.groesse = schriftGroesse;
-		this.farbe = zuFarbeKonvertieren(farbe);
-		if (schriftart >= 0 && schriftart <= 3) {
-			this.schriftart = schriftart;
-		} else {
-			this.schriftart = 0;
-		}
-		setzeFont(fontName);
-		super.leuchterAnmelden(this);
-	}
-	
-	/**
-	 * Konstruktor ohne Farb- und sonderartseingabezwang. In diesem Fall ist die Farbe "Weiss" und der Text weder kursiv noch fett.
-	 * 
-	 * @param inhalt
-	 *            Die Zeichenkette, die dargestellt werden soll
-	 * @param x
-	 *            Die X-Koordinate des Anfangs
-	 * @param y
-	 *            Die Y-Koordinate des Anfangs
-	 * @param fontName
-	 *            Der Name des zu verwendenden Fonts.<br />
-	 *            Wird hierfuer ein Font verwendet, der in dem Projektordner vorhanden sein soll, <b>und dies ist immer
-	 *            und in jedem Fall zu empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden.
-	 * @param schriftGroesse
-	 *            Die Groesse, in der die Schrift dargestellt werden soll
-	 */
-	public Text(String inhalt, float x, float y, String fontName, int schriftGroesse) {
-		this(inhalt, x, y, fontName, schriftGroesse, 0, "Weiss");
-	}
-	
-	/**
-	 * Ebenefalls ein vereinfachter Konstruktor. Hierbei ist die Farbe "Weiss" und der Text weder kursiv noch fett; weiterhin ist
-	 * die Schriftgroesse automatisch 24.
-	 * 
-	 * @param inhalt
-	 *            Die Zeichenkette, die dargestellt werden soll
-	 * @param x
-	 *            Die X-Koordinate des Anfangs
-	 * @param y
-	 *            Die Y-Koordinate des Anfangs
-	 * @param fontName
-	 *            Der Name des zu verwendenden Fonts.<br />
-	 *            Wird hierfuer ein Font verwendet, der in dem Projektordner vorhanden sein soll, <b>und dies ist immer
-	 *            und in jedem Fall zu empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden, <b>nicht der Name der
-	 *            schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
-	 */
-	public Text(String inhalt, float x, float y, String fontName) {
-		this(inhalt, x, y, fontName, 24);
-	}
-	
-	/**
-	 * Einfacherer Konstruktor.<br />
-	 * Hierbei wird automatisch die Schriftart auf eine Standartmaessige gesetzt
-	 * 
-	 * @param inhalt
-	 *            Die Zeichenkette, die dargestellt werden soll
-	 * @param x
-	 *            Die X-Koordinate des Anfangs
-	 * @param y
-	 *            Die Y-Koordinate des Anfangs
-	 * @param schriftGroesse
-	 *            Die Groesse, in der die Schrift dargestellt werden soll
-	 */
-	public Text(String inhalt, float x, float y, int schriftGroesse) {
-		this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
-	}
-	
-	/**
-	 * Ein vereinfachter Konstruktor.<br />
-	 * Hierbei wird eine Standartschriftart, die Farbe weiss und eine Groesse von 24 gewaehlt.
-	 * 
-	 * @param inhalt
-	 *            Der Inhalt des Textes
-	 * @param x
-	 *            X-Koordinate
-	 * @param y
-	 *            Y-Koordinate
-	 */
-	public Text(String inhalt, float x, float y) {
-		this(inhalt, x, y, "SansSerif", 24, 0, "Weiss");
-	}
-	
-	/**
-	 * Ein vereinfachter parallerer Konstruktor.<br />
-	 * Diesen gibt es inhaltlich genauso bereits, jedoch sind hier die Argumente vertauscht; dies dient der Praevention undgewollter falscher
-	 * Konstruktorenaufrufe.
-	 * Hierbei wird eine Standartschriftart, die Farbe weiss und eine Groesse von 24 gewaehlt.
-	 * 
-	 * @param inhalt
-	 *            Der Inhalt des Textes
-	 * @param x
-	 *            X-Koordinate
-	 * @param y
-	 *            Y-Koordinate
-	 */
-	public Text(float x, float y, String inhalt) {
-		this(inhalt, x, y, "SansSerif", 24, 0, "Weiss");
-	}
-	
-	/**
-	 * Ein vereinfachter parallerer Konstruktor.<br />
-	 * Diesen gibt es inhaltlich genauso bereits, jedoch sind hier die Argumente vertauscht; dies dient der Praevention undgewollter falscher
-	 * Konstruktorenaufrufe.
-	 * Hierbei wird eine Standartschriftart und die Farbe weiss gewaehlt.
-	 * 
-	 * @param inhalt
-	 *            Der Inhalt des Textes
-	 * @param x
-	 *            X-Koordinate
-	 * @param y
-	 *            Y-Koordinate
-	 * @param schriftGroesse
-	 *            Die Schriftgroesse, die der Text haben soll
-	 */
-	public Text(int x, int y, int schriftGroesse, String inhalt) {
-		this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
-	}
-	
-	/**
-	 * Setzt den Inhalt des Textes.
-	 * 
-	 * @param inhalt
-	 *            Der neue Inhalt des Textes
-	 */
-	public void setzeInhalt(String inhalt) {
-		this.inhalt = inhalt;
-	}
-	
-	/**
-	 * Setzt den Inhalt des Textes.<br />
-	 * Parallele Methode zu <code>setzeInhalt()</code>
-	 * 
-	 * @param inhalt
-	 *            Der neue Inhalt des Textes
-	 * @see #setzeInhalt(String)
-	 */
-	public void inhaltSetzen(String inhalt) {
-		setzeInhalt(inhalt);
-	}
-	
-	/**
-	 * Setzt die Schriftart.
-	 * 
-	 * @param art
-	 *            Die Repraesentation der Schriftart als Zahl:<br/>
-	 *            0: Normaler Text<br />
-	 *            1: Fett<br />
-	 *            2: Kursiv<br />
-	 *            3: Fett & Kursiv<br />
-	 * <br />
-	 *            Ist die Eingabe nicht eine dieser 4 Zahlen, so wird nichts geaendert.
-	 */
-	public void setzeSchriftart(int art) {
-		if (art >= 0 && art <= 3) {
-			schriftart = art;
-			aktualisieren();
-		}
-	}
-	
-	/**
-	 * Setzt die Schriftart.
-	 * 
-	 * @param art
-	 *            Die Repraesentation der Schriftart als Zahl:<br/>
-	 *            0: Normaler Text<br />
-	 *            1: Fett<br />
-	 *            2: Kursiv<br />
-	 *            3: Fett & Kursiv<br />
-	 * <br />
-	 *            Ist die Eingabe nicht eine dieser 4 Zahlen, so wird nichts geaendert.<br />
-	 *            Parallele Methode zu <code>setzeSchriftart()</code>
-	 * @see #setzeSchriftart(int)
-	 */
-	public void schriftartSetzen(int art) {
-		setzeSchriftart(art);
-	}
-	
-	/**
-	 * Setzt die Fuellfarbe
-	 * 
-	 * @param c
-	 *            Die neue Fuellfarbe
-	 */
-	public void setzeFarbe(Color c) {
-		farbe = c;
-		aktualisieren();
-	}
-	
-	/**
-	 * Setzt die Fuellfarbe
-	 * 
-	 * @param farbe
-	 *            Der Name der neuen Fuellfarbe
-	 */
-	public void setzeFarbe(String farbe) {
-		this.setzeFarbe(zuFarbeKonvertieren(farbe));
-	}
-	
-	/**
-	 * Setzt die Fuellfarbe<br />
-	 * Parallele Methode zu <code>setzeFarbe()</code>
-	 * 
-	 * @param farbe
-	 *            Der Name der neuen Fuellfarbe
-	 * @see #setzeFarbe(String)
-	 * @see #farbeSetzen(Farbe)
-	 */
-	public void farbeSetzen(String farbe) {
-		setzeFarbe(farbe);
-	}
-	
-	/**
-	 * Setzt die Fuellfarbe
-	 * 
-	 * @param f
-	 *            Das Farbe-Objekt, das die neue Fuellfarbe beschreibt
-	 * @see #farbeSetzen(String)
-	 */
-	public void farbeSetzen(Farbe f) {
-		setzeFarbe(f.wert());
-	}
-	
-	/**
-	 * Setzt die Schriftgroesse
-	 * 
-	 * @param groesse
-	 *            Die neue Schriftgroesse
-	 */
-	public void setzeGroesse(int groesse) {
-		this.groesse = groesse;
-		aktualisieren();
-	}
-	
-	/**
-	 * Setzt die Schriftgroesse.<br />
-	 * Wrappt hierbei die Methode <code>setzeGroesse</code>.
-	 * 
-	 * @param groesse
-	 *            Die neue Schriftgroesse
-	 * @see #setzeGroesse(int)
-	 */
-	public void groesseSetzen(int groesse) {
-		setzeGroesse(groesse);
-	}
-	
-	/**
-	 * Diese Methode gibt die aktuelle Groesse des Textes aus
-	 * 
-	 * @return Die aktuelle Schriftgroesse des Textes
-	 * @see #groesseSetzen(int)
-	 */
-	public int groesse() {
-		return groesse;
-	}
-	
-	/**
-	 * Setzt einen neuen Font fuer den Text
-	 * 
-	 * @param fontName
-	 *            Der Name des neuen Fonts fuer den Text
-	 */
-	public void setzeFont(String fontName) {
-		Font base = null;
-		for (int i = 0; i < eigene.length; i++) {
-			if (eigene[i].getName().equals(fontName)) {
-				base = eigene[i];
-				break;
-			}
-		}
-		if (base != null) {
-			this.font = base.deriveFont(schriftart, groesse);
-		} else {
-			if (!Manager.fontExistiert(fontName)) {
-				fontName = "SansSerif";
-				System.err.println("Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " +
-						"Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
-			}
-			this.font = new Font(fontName, schriftart, groesse);
-		}
-	}
-	
-	/**
-	 * 
+	 *
 	 * @param fontName
 	 * @return
 	 */
-	public static Font holeFont(String fontName) {
+	public static Font holeFont (String fontName) {
 		Font base = null;
 		for (int i = 0; i < eigene.length; i++) {
 			if (eigene[i].getName().equals(fontName)) {
@@ -471,126 +302,17 @@ public class Text extends Raum implements Leuchtend {
 			return new Font(fontName, 0, 12);
 		}
 	}
-	
+
 	/**
-	 * Setzt einen neuen Font fuer den Text.<br />
-	 * Parallele Methode zu <code>setzeFont()</code>
-	 * 
-	 * @param name
-	 *            Der Name des neuen Fonts fuer den Text
-	 * @see #setzeFont(String)
+	 * Sehr wichtige Methode!<br /> Diese Methode liefert als Protokoll an die Konsole alle Namen,
+	 * mit denen die aus dem Projektordner geladenen ".ttf"-Fontdateien gewaehlt werden koennen.<br
+	 * /> Diese Namen werden als <code>String</code>-Argument erwartet, wenn die eigens eingebauten
+	 * Fontarten verwendet werden sollen.<br /> Der Aufruf dieser Methode wird <b>UMGEHEND</b>
+	 * empfohlen, nach dem alle zu verwendenden Arten im Projektordner liegen, denn nur unter dem an
+	 * die Konsole projezierten Namen <b>koennen diese ueberhaupt verwendet werden</b>!!<br /> Daher
+	 * dient diese Methode der Praevention von Verwirrung, wegen "nicht darstellbarer" Fonts.
 	 */
-	public void fontSetzen(String name) {
-		setzeFont(name);
-	}
-	
-	/**
-	 * Klasseninterne Methode zum aktualisieren des Font-Objektes
-	 */
-	private void aktualisieren() {
-		this.font = this.font.deriveFont(schriftart, groesse);
-	}
-	
-	/**
-	 * Zeichnet das Objekt.
-	 * 
-	 * @param g
-	 *            Das zeichnende Graphics-Objekt
-	 * @param r
-	 *            Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br />
-	 *            Hierbei soll zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
-	 */
-	@Override
-	public void zeichnen(Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g);
-		
-		if (!r.schneidetBasic(this.dimension())) {
-			return;
-		}
-		
-		g.setColor(farbe);
-		g.setFont(font);
-		g.drawString(inhalt, (int) (position.x - r.x), (int) (position.y - r.y + groesse));
-		
-		super.afterRender(g);
-	}
-	
-	/**
-	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll einzuschliessen</b>.
-	 */
-	@Override
-	public BoundingRechteck dimension() {
-		FontMetrics f = Fenster.metrik(font);
-		return new BoundingRechteck(position.x, position.y, f.stringWidth(inhalt), f.getHeight());
-	}
-	
-	/**
-	 * Setzt, ob dieses Leuchtend-Objekt leuchten soll.<br />
-	 * Ist dies der Fall, so werden immer wieder schnell dessen Farben geaendert; so entsteht ein Leuchteffekt.
-	 * 
-	 * @param leuchtet
-	 *            Ob dieses Objekt nun leuchten soll oder nicht (mehr).<br />
-	 *            <b>Achtung:</b> Die Leuchtfunktion kann bei bestimmten Klassen sehr psychadelisch und aufreizend wirken! Daher
-	 *            sollte sie immer mit Bedacht und in Nuancen verwendet werden!
-	 */
-	@Override
-	public void leuchtetSetzen(boolean leuchtet) {
-		if (this.leuchtet == leuchtet) {
-			return;
-		}
-		this.leuchtet = leuchtet;
-		if (leuchtet) {
-			alte = farbe;
-		} else {
-			this.setzeFarbe(alte);
-		}
-	}
-	
-	/**
-	 * Fuehrt einen Leuchtschritt aus.<br />
-	 * Dies heisst, dass in dieser Methode die Farbe einfach gewechselt wird. Da diese Methode schnell und oft hintereinander
-	 * ausgefuehrt wird, soll so der Leuchteffekt entstehen.<br />
-	 * <b>Diese Methode sollte nur innerhalb der Engine ausgefuehrt werden! Also nicht fuer den Entwickler gedacht.</b>
-	 */
-	@Override
-	public void leuchtSchritt() {
-		this.setzeFarbe(farbzyklus[leuchtzaehler = ((++leuchtzaehler) % farbzyklus.length)]);
-	}
-	
-	/**
-	 * Gibt wieder, ob das Leuchtet-Objekt gerade leuchtet oder nicht.
-	 * 
-	 * @return <code>true</code>, wenn das Objekt gerade leuchtet, wenn nicht, dann ist die Rueckgabe <code>false</code>
-	 */
-	@Override
-	public boolean leuchtet() {
-		return this.leuchtet;
-	}
-	
-	/**
-	 * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses Objekt, damit es problemlos geloescht werden kann.<br />
-	 * <b>Achtung:</b> zwar werden hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies betrifft vor allem Animationen etc), jedoch nicht die
-	 * innerhalb eines <code>Knoten</code>-Objektes!!!!!!!!!<br />
-	 * Das heisst, wenn das Objekt an einem Knoten liegt (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des Fensters)</b>), muss es trotzdem
-	 * selbst geloescht werden, <b>dies erledigt diese Methode nicht!!</b>.<br />
-	 * Diese Klasse ueberschreibt die Methode wegen des Leuchtens.
-	 */
-	@Override
-	public void loeschen() {
-		super.leuchterAbmelden(this);
-		super.loeschen();
-	}
-	
-	/**
-	 * Sehr wichtige Methode!<br />
-	 * Diese Methode liefert als Protokoll an die Konsole alle Namen, mit denen die aus dem Projektordner geladenen ".ttf"-Fontdateien
-	 * gewaehlt werden koennen.<br />
-	 * Diese Namen werden als <code>String</code>-Argument erwartet, wenn die eigens eingebauten Fontarten verwendet werden sollen.<br />
-	 * Der Aufruf dieser Methode wird <b>UMGEHEND</b> empfohlen, nach dem alle zu verwendenden Arten im Projektordner liegen, denn nur unter dem
-	 * an die Konsole projezierten Namen <b>koennen diese ueberhaupt verwendet werden</b>!!<br />
-	 * Daher dient diese Methode der Praevention von Verwirrung, wegen "nicht darstellbarer" Fonts.
-	 */
-	public static void geladeneSchriftartenAusgeben() {
+	public static void geladeneSchriftartenAusgeben () {
 		System.out.println("Protokoll aller aus dem Projektordner geladener Fontdateien");
 		System.out.println();
 		if (eigene.length == 0) {
@@ -604,14 +326,285 @@ public class Text extends Raum implements Leuchtend {
 		}
 		System.out.println("|Ende| des Protokolls");
 	}
-	
+
 	/**
-	 * {@inheritDoc}
-	 * Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden <code>BoundingRechteck</code>
-	 * erzeugt, dass über die <code>dimension()</code>-Methode berechnet wird.
+	 * Setzt den Inhalt des Textes.
+	 *
+	 * @param inhalt
+	 * 		Der neue Inhalt des Textes
+	 */
+	public void setzeInhalt (String inhalt) {
+		this.inhalt = inhalt;
+	}
+
+	/**
+	 * Setzt den Inhalt des Textes.<br /> Parallele Methode zu <code>setzeInhalt()</code>
+	 *
+	 * @param inhalt
+	 * 		Der neue Inhalt des Textes
+	 *
+	 * @see #setzeInhalt(String)
+	 */
+	public void inhaltSetzen (String inhalt) {
+		setzeInhalt(inhalt);
+	}
+
+	/**
+	 * Setzt die Schriftart.
+	 *
+	 * @param art
+	 * 		Die Repraesentation der Schriftart als Zahl:<br/> 0: Normaler Text<br /> 1: Fett<br /> 2:
+	 * 		Kursiv<br /> 3: Fett & Kursiv<br /> <br /> Ist die Eingabe nicht eine dieser 4 Zahlen, so
+	 * 		wird nichts geaendert.
+	 */
+	public void setzeSchriftart (int art) {
+		if (art >= 0 && art <= 3) {
+			schriftart = art;
+			aktualisieren();
+		}
+	}
+
+	/**
+	 * Setzt die Schriftart.
+	 *
+	 * @param art
+	 * 		Die Repraesentation der Schriftart als Zahl:<br/> 0: Normaler Text<br /> 1: Fett<br /> 2:
+	 * 		Kursiv<br /> 3: Fett & Kursiv<br /> <br /> Ist die Eingabe nicht eine dieser 4 Zahlen, so
+	 * 		wird nichts geaendert.<br /> Parallele Methode zu <code>setzeSchriftart()</code>
+	 *
+	 * @see #setzeSchriftart(int)
+	 */
+	public void schriftartSetzen (int art) {
+		setzeSchriftart(art);
+	}
+
+	/**
+	 * Setzt die Fuellfarbe
+	 *
+	 * @param c
+	 * 		Die neue Fuellfarbe
+	 */
+	public void setzeFarbe (Color c) {
+		farbe = c;
+		aktualisieren();
+	}
+
+	/**
+	 * Setzt die Fuellfarbe
+	 *
+	 * @param farbe
+	 * 		Der Name der neuen Fuellfarbe
+	 */
+	public void setzeFarbe (String farbe) {
+		this.setzeFarbe(zuFarbeKonvertieren(farbe));
+	}
+
+	/**
+	 * Setzt die Fuellfarbe<br /> Parallele Methode zu <code>setzeFarbe()</code>
+	 *
+	 * @param farbe
+	 * 		Der Name der neuen Fuellfarbe
+	 *
+	 * @see #setzeFarbe(String)
+	 * @see #farbeSetzen(Farbe)
+	 */
+	public void farbeSetzen (String farbe) {
+		setzeFarbe(farbe);
+	}
+
+	/**
+	 * Setzt die Fuellfarbe
+	 *
+	 * @param f
+	 * 		Das Farbe-Objekt, das die neue Fuellfarbe beschreibt
+	 *
+	 * @see #farbeSetzen(String)
+	 */
+	public void farbeSetzen (Farbe f) {
+		setzeFarbe(f.wert());
+	}
+
+	/**
+	 * Setzt die Schriftgroesse
+	 *
+	 * @param groesse
+	 * 		Die neue Schriftgroesse
+	 */
+	public void setzeGroesse (int groesse) {
+		this.groesse = groesse;
+		aktualisieren();
+	}
+
+	/**
+	 * Setzt die Schriftgroesse.<br /> Wrappt hierbei die Methode <code>setzeGroesse</code>.
+	 *
+	 * @param groesse
+	 * 		Die neue Schriftgroesse
+	 *
+	 * @see #setzeGroesse(int)
+	 */
+	public void groesseSetzen (int groesse) {
+		setzeGroesse(groesse);
+	}
+
+	/**
+	 * Diese Methode gibt die aktuelle Groesse des Textes aus
+	 *
+	 * @return Die aktuelle Schriftgroesse des Textes
+	 *
+	 * @see #groesseSetzen(int)
+	 */
+	public int groesse () {
+		return groesse;
+	}
+
+	/**
+	 * Setzt einen neuen Font fuer den Text
+	 *
+	 * @param fontName
+	 * 		Der Name des neuen Fonts fuer den Text
+	 */
+	public void setzeFont (String fontName) {
+		Font base = null;
+		for (int i = 0; i < eigene.length; i++) {
+			if (eigene[i].getName().equals(fontName)) {
+				base = eigene[i];
+				break;
+			}
+		}
+		if (base != null) {
+			this.font = base.deriveFont(schriftart, groesse);
+		} else {
+			if (!Manager.fontExistiert(fontName)) {
+				fontName = "SansSerif";
+				System.err.println("Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " +
+						"Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
+			}
+			this.font = new Font(fontName, schriftart, groesse);
+		}
+	}
+
+	/**
+	 * Setzt einen neuen Font fuer den Text.<br /> Parallele Methode zu <code>setzeFont()</code>
+	 *
+	 * @param name
+	 * 		Der Name des neuen Fonts fuer den Text
+	 *
+	 * @see #setzeFont(String)
+	 */
+	public void fontSetzen (String name) {
+		setzeFont(name);
+	}
+
+	/**
+	 * Klasseninterne Methode zum aktualisieren des Font-Objektes
+	 */
+	private void aktualisieren () {
+		this.font = this.font.deriveFont(schriftart, groesse);
+	}
+
+	/**
+	 * Zeichnet das Objekt.
+	 *
+	 * @param g
+	 * 		Das zeichnende Graphics-Objekt
+	 * @param r
+	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
+	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
+	 * 		gezeichnet werden.
 	 */
 	@Override
-	public Collider erzeugeCollider() {
+	public void zeichnen (Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g);
+
+		if (!r.schneidetBasic(this.dimension())) {
+			return;
+		}
+
+		g.setColor(farbe);
+		g.setFont(font);
+		g.drawString(inhalt, (int) (position.x - r.x), (int) (position.y - r.y + groesse));
+
+		super.afterRender(g);
+	}
+
+	/**
+	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll
+	 * einzuschliessen</b>.
+	 */
+	@Override
+	public BoundingRechteck dimension () {
+		FontMetrics f = Fenster.metrik(font);
+		return new BoundingRechteck(position.x, position.y, f.stringWidth(inhalt), f.getHeight());
+	}
+
+	/**
+	 * {@inheritDoc} Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden
+	 * <code>BoundingRechteck</code> erzeugt, dass über die <code>dimension()</code>-Methode
+	 * berechnet wird.
+	 */
+	@Override
+	public Collider erzeugeCollider () {
 		return erzeugeLazyCollider();
+	}
+
+	/**
+	 * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
+	 * Objekt, damit es problemlos geloescht werden kann.<br /> <b>Achtung:</b> zwar werden
+	 * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
+	 * betrifft vor allem Animationen etc), jedoch nicht die innerhalb eines
+	 * <code>Knoten</code>-Objektes!!!!!!!!!<br /> Das heisst, wenn das Objekt an einem Knoten liegt
+	 * (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des
+	 * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
+	 * nicht!!</b>.<br /> Diese Klasse ueberschreibt die Methode wegen des Leuchtens.
+	 */
+	@Override
+	public void loeschen () {
+		super.leuchterAbmelden(this);
+		super.loeschen();
+	}
+
+	/**
+	 * Setzt, ob dieses Leuchtend-Objekt leuchten soll.<br /> Ist dies der Fall, so werden immer
+	 * wieder schnell dessen Farben geaendert; so entsteht ein Leuchteffekt.
+	 *
+	 * @param leuchtet
+	 * 		Ob dieses Objekt nun leuchten soll oder nicht (mehr).<br /> <b>Achtung:</b> Die
+	 * 		Leuchtfunktion kann bei bestimmten Klassen sehr psychadelisch und aufreizend wirken! Daher
+	 * 		sollte sie immer mit Bedacht und in Nuancen verwendet werden!
+	 */
+	@Override
+	public void leuchtetSetzen (boolean leuchtet) {
+		if (this.leuchtet == leuchtet) {
+			return;
+		}
+		this.leuchtet = leuchtet;
+		if (leuchtet) {
+			alte = farbe;
+		} else {
+			this.setzeFarbe(alte);
+		}
+	}
+
+	/**
+	 * Fuehrt einen Leuchtschritt aus.<br /> Dies heisst, dass in dieser Methode die Farbe einfach
+	 * gewechselt wird. Da diese Methode schnell und oft hintereinander ausgefuehrt wird, soll so
+	 * der Leuchteffekt entstehen.<br /> <b>Diese Methode sollte nur innerhalb der Engine
+	 * ausgefuehrt werden! Also nicht fuer den Entwickler gedacht.</b>
+	 */
+	@Override
+	public void leuchtSchritt () {
+		this.setzeFarbe(farbzyklus[leuchtzaehler = ((++leuchtzaehler) % farbzyklus.length)]);
+	}
+
+	/**
+	 * Gibt wieder, ob das Leuchtet-Objekt gerade leuchtet oder nicht.
+	 *
+	 * @return <code>true</code>, wenn das Objekt gerade leuchtet, wenn nicht, dann ist die
+	 * Rueckgabe <code>false</code>
+	 */
+	@Override
+	public boolean leuchtet () {
+		return this.leuchtet;
 	}
 }

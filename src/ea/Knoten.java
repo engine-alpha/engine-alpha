@@ -93,6 +93,7 @@ public class Knoten extends Raum implements Listung {
 			m.loeschen();
 		}
 
+		// noinspection StatementWithEmptyBody
 		while (list.remove(m));
 	}
 	
@@ -179,7 +180,7 @@ public class Knoten extends Raum implements Listung {
 	 * @return Alle Elemente als vollstaendig gefuelltes <code>Raum</code>-Objekt-Aray.
 	 */
 	public Raum[] alleElemente() {
-		return list.toArray(new Raum[0]);
+		return list.toArray(new Raum[list.size()]);
 	}
 	
 	/**
@@ -284,7 +285,7 @@ public class Knoten extends Raum implements Listung {
 			}
 		}
 		
-		return data.toArray(new BoundingRechteck[0]);
+		return data.toArray(new BoundingRechteck[data.size()]);
 	}
 	
 	/**

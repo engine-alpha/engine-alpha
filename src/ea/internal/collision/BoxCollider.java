@@ -107,7 +107,7 @@ extends Collider {
 	}
 	
 	/**
-	 * TODO: Dokumentation
+	 * TODO Dokumentation
 	 *
 	 * @param start ??
 	 * @return ??

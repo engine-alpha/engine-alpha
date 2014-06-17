@@ -110,7 +110,7 @@ public abstract class Animierer implements Ticker {
 	 * Hält den Tick-Algorythmus an. Dies bedeutet, dass die Animation pausiert wird.
 	 */
 	public void anhalten() {
-		if (!angemeldet) {
+		if (!angemeldet) { // TODO Exception?
 			Logger.warning("Dieser Animierer kann nicht angehalten werden, da seine Animation bereits beendet wurde.");
 			return;
 		}
