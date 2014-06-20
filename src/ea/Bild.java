@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -20,16 +20,11 @@
 package ea;
 
 import ea.internal.collision.Collider;
-import ea.internal.util.Logger;
-import ea.internal.util.Optimizer;
+import ea.internal.io.ImageLoader;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
  * Ein Bild als Grafische Repraesentation einer Bilddatei, die gezeichnet werden kann.
@@ -91,9 +86,11 @@ public class Bild extends Raum {
 	 * 		Der Verzeichnispfad des Bildes, das geladen werden soll.
 	 */
 	public Bild (float x, float y, String verzeichnis) {
-		super.position = new Punkt(x, y);
+		this.position = new Punkt(x, y);
 		this.wiederholen = false;
-		img = imageModernLaden(verzeichnis);
+
+		img = ImageLoader.loadExternalImage(verzeichnis);
+
 		urHoehe = img.getHeight();
 		urBreite = img.getWidth();
 	}
@@ -124,8 +121,9 @@ public class Bild extends Raum {
 		this.hoehe = hoehe;
 		this.wiederholen = wiederholen;
 
-		if (!wiederholen)
+		if (!wiederholen) {
 			img = resize(img, breite, hoehe);
+		}
 	}
 
 	/**
@@ -174,7 +172,7 @@ public class Bild extends Raum {
 	public Bild (float x, float y, BufferedImage img) {
 		this.img = img;
 
-		super.positionSetzen(new Punkt(x, y));
+		this.positionSetzen(new Punkt(x, y));
 
 		urHoehe = img.getHeight();
 		urBreite = img.getWidth();
@@ -240,28 +238,6 @@ public class Bild extends Raum {
 	}
 
 	/**
-	 * Lädt ein Bild auf die 2.0-Art. Alles auf Basis der ausführbaren Datei.
-	 *
-	 * @param verzeichnis
-	 * 		Das Verzeichnis des Bildes. Nach dem Materialordner-Prinzip
-	 *
-	 * @return Das geladene Bild
-	 */
-	private BufferedImage imageModernLaden (String verzeichnis) {
-		BufferedImage img = null;
-
-		try {
-			img = ImageIO.read(new FileInputStream(new File(verzeichnis)));
-			img = Optimizer.toCompatibleImage(img);
-		} catch (IOException e) {
-			Logger.error("Das Bild konnte nicht geladen werden: " + verzeichnis + "   Existiert dieses Verzeichnis tatsaechlich?");
-			e.printStackTrace();
-		}
-
-		return img;
-	}
-
-	/**
 	 * Rotiert das Objekt um eine bereits definierte Rotation.
 	 *
 	 * @param rot
@@ -269,6 +245,7 @@ public class Bild extends Raum {
 	 *
 	 * @see Rotation
 	 */
+	// TODO Unterschied zu #drehen erklären
 	public void rotieren (Rotation rot) {
 		img = rotieren(img, rot.winkelBogen());
 	}
@@ -284,7 +261,7 @@ public class Bild extends Raum {
 	 * 		gezeichnet werden.
 	 */
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g);
+		super.beforeRender(g, r);
 
 		if (r.schneidetBasic(this.dimension())) {
 			if (!wiederholen) {
@@ -299,7 +276,7 @@ public class Bild extends Raum {
 			}
 		}
 
-		super.afterRender(g);
+		super.afterRender(g, r);
 	}
 
 	/**

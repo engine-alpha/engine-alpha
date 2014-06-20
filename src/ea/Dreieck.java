@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -163,7 +163,7 @@ public class Dreieck extends Geometrie {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g);
+		super.beforeRender(g, r);
 
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
@@ -189,7 +189,7 @@ public class Dreieck extends Geometrie {
 		g.setColor(farbe);
 		g.fillPolygon(x, y, 3);
 
-		super.afterRender(g);
+		super.afterRender(g, r);
 	}
 
 	/**

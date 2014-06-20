@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -538,13 +538,13 @@ public class Figur extends Raum {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g);
+		super.beforeRender(g, r);
 
 		if (r.schneidetBasic(this.dimension())) {
 			animation[aktuelle].zeichnen(g, (int) (position.x - r.x), (int) (position.y - r.y), spiegelX, spiegelY);
 		}
 
-		super.afterRender(g);
+		super.afterRender(g, r);
 	}
 
 	/**

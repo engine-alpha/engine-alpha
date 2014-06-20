@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -19,10 +19,10 @@
 
 package ea;
 
-import java.awt.Graphics2D;
-
 import ea.internal.collision.Collider;
 import ea.internal.collision.SphereCollider;
+
+import java.awt.*;
 
 /**
  * Ein Kreis ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br />
@@ -79,7 +79,7 @@ public class Kreis extends RegEck {
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		// Kreis muss nicht gedreht werden,
 		// aber es könnten hier in Zukunft noch andere wichtige Funktionen aufgerunfen werden
-		super.beforeRender(g);
+		super.beforeRender(g, r);
 		
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
@@ -88,7 +88,7 @@ public class Kreis extends RegEck {
 		g.setColor(this.formen()[0].getColor());
 		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
 		
-		super.afterRender(g);
+		super.afterRender(g, r);
 	}
 	
 	/**

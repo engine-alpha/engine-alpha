@@ -11,7 +11,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class OptimizerTest {
 	@Test
-	public void optimzeImage() {
+	public void optimizeImage() {
 		BufferedImage img = null;
 
 		try {
@@ -25,5 +25,8 @@ public class OptimizerTest {
 
 		assertEquals(img.getWidth(), opt.getWidth());
 		assertEquals(img.getHeight(), opt.getHeight());
+
+		BufferedImage opt2 = Optimizer.toCompatibleImage(opt);
+		assertEquals(opt.getColorModel(), opt2.getColorModel());
 	}
 }

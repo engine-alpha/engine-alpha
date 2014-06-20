@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -35,6 +35,7 @@ import java.util.ArrayList;
  *
  * @author Michael Andonie
  */
+// TODO Review der ganzen Klasse (v.a. der Dokumentation)
 public class Text extends Raum implements Leuchtend {
 	private static final long serialVersionUID = -2145724725115670955L;
 
@@ -50,7 +51,7 @@ public class Text extends Raum implements Leuchtend {
 	 * hier werden die externen Fonts geladen.
 	 */
 	static {
-		ArrayList<File> alleFonts = new ArrayList<File>();
+		ArrayList<File> alleFonts = new ArrayList<>();
 		fontsEinbauen(alleFonts, new File(System.getProperty("user.dir")));
 		File[] unter = alleFonts.toArray(new File[alleFonts.size()]);
 		eigene = new Font[unter.length];
@@ -113,9 +114,9 @@ public class Text extends Raum implements Leuchtend {
 	private int leuchtzaehler;
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Text<br /> Moeglich ist es auch, Fonts zu laden, die im
+	 * Konstruktor fuer Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im
 	 * Projektordner sind. Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur
-	 * Verfuegung.
+	 * Verfügung.
 	 *
 	 * @param inhalt
 	 * 		Die Zeichenkette, die dargestellt werden soll
@@ -142,11 +143,13 @@ public class Text extends Raum implements Leuchtend {
 		this.position = new Punkt(x, y);
 		this.groesse = schriftGroesse;
 		this.farbe = zuFarbeKonvertieren(farbe);
+
 		if (schriftart >= 0 && schriftart <= 3) {
 			this.schriftart = schriftart;
 		} else {
 			this.schriftart = 0;
 		}
+
 		setzeFont(fontName);
 		super.leuchterAnmelden(this);
 	}
@@ -257,7 +260,7 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	public Text (int x, int y, int schriftGroesse, String inhalt) {
 		this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
-	}
+	} // TODO Mehr Verwirrung als Hilfe?
 
 	private static void fontsEinbauen (final ArrayList<File> liste, File akt) {
 		File[] files = akt.listFiles();
@@ -279,9 +282,7 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
-	 *
-	 * @param fontName
-	 * @return
+	 * TODO Dokumentation
 	 */
 	public static Font holeFont (String fontName) {
 		Font base = null;
@@ -515,7 +516,7 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g);
+		super.beforeRender(g, r);
 
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
@@ -525,7 +526,7 @@ public class Text extends Raum implements Leuchtend {
 		g.setFont(font);
 		g.drawString(inhalt, (int) (position.x - r.x), (int) (position.y - r.y + groesse));
 
-		super.afterRender(g);
+		super.afterRender(g, r);
 	}
 
 	/**
@@ -578,7 +579,9 @@ public class Text extends Raum implements Leuchtend {
 		if (this.leuchtet == leuchtet) {
 			return;
 		}
+
 		this.leuchtet = leuchtet;
+
 		if (leuchtet) {
 			alte = farbe;
 		} else {

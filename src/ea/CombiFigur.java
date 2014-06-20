@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -111,7 +111,7 @@ public class CombiFigur extends Raum {
 	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
 	 *
 	 * @see Vektor
-	 * @see #verschieben(int, int)
+	 * @see #verschieben(float, float)
 	 */
 	@Override
 	public void verschieben (Vektor v) {
@@ -132,13 +132,13 @@ public class CombiFigur extends Raum {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g);
+		super.beforeRender(g, r);
 
 		for (int i = 0; i < figuren.length; i++) {
 			figuren[i].zeichnen(g, r);
 		}
 
-		super.afterRender(g);
+		super.afterRender(g, r);
 	}
 
 	/**

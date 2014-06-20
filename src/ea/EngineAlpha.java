@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -41,9 +41,9 @@ import java.util.TimeZone;
  */
 public class EngineAlpha extends Frame {
 	// 10000 * major + 100 * minor + 1 * bugfix
-	public static final int VERSION_CODE = 30002;
+	public static final int VERSION_CODE = 30003;
 
-	public static final String VERSION_STRING = "v3.0.2";
+	public static final String VERSION_STRING = "v3.0.3";
 
 	public static final boolean IS_JAR;
 
@@ -62,7 +62,6 @@ public class EngineAlpha extends Frame {
 		try {
 			setIconImage(ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png")));
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		this.addWindowListener(new WindowAdapter() {
@@ -76,7 +75,7 @@ public class EngineAlpha extends Frame {
 			}
 		});
 
-		promo = new EngineAlphaPromotion(this);
+		promo = new EngineAlphaPromotion();
 	}
 
 	public static void main (String[] args) {
@@ -90,7 +89,7 @@ public class EngineAlpha extends Frame {
 		return classJar.startsWith("jar:");
 	}
 
-	@SuppressWarnings ( "unused" )
+	@SuppressWarnings ("unused")
 	public static String getJarName () {
 		String className = EngineAlpha.class.getName().replace('.', '/');
 		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
@@ -162,17 +161,22 @@ public class EngineAlpha extends Frame {
 
 	private class EngineAlphaPromotion extends Canvas implements Runnable {
 		private Thread thread;
+
 		private BufferedImage logo;
 
 		private double alpha = 0;
 
 		private boolean loading = true;
+
 		private boolean alive = true;
 
 		private int version_stable = -1;
+
 		private int version_dev = -1;
 
-		public EngineAlphaPromotion (EngineAlpha parent) {
+		public EngineAlphaPromotion () {
+			EngineAlpha parent = EngineAlpha.this;
+
 			try {
 				logo = ImageIO.read(getClass().getResource("/ea/assets/logo.png"));
 			} catch (IOException e) {

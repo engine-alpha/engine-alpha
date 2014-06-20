@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -31,7 +31,6 @@ import ea.internal.gra.Listung;
  * 
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
 public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	/**
 	 * Die einzelnen, grafisch darstellbaren Formen, aus denen dieses Geometrie-Objekt besteht.
@@ -177,13 +176,13 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	 * heisst in diesem Fall das saemtliche Unterdreiecke gezeichnet werden.
 	 */
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g);
+		super.beforeRender(g, r);
 		
 		for (int i = 0; i < formen.length; i++) {
 			formen[i].zeichnen(g, r);
 		}
 		
-		super.afterRender(g);
+		super.afterRender(g, r);
 	}
 	
 	public BoundingRechteck dimension() {

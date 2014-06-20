@@ -1,5 +1,5 @@
 /*
- * Engine Alpha ist eine anfaengerorientierte 2D-Gaming Engine.
+ * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
  * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
  *
@@ -111,19 +111,25 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	private int zIndex = 1;
 
 	/**
-	 * Speichert die aktuelle Drehung des Raumes.
+	 * Drehung des Objekts in Grad
 	 */
 	private double drehung;
 
 	/**
-	 * Der eine und einziege Konstruktor fuer Objekte der Klasse Raum.
+	 * Opacity = Durchsichtigkeit des Raumes
+	 * <p/>
+	 * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Bild.</li>
+	 * <li><code>1.0f</code> entspricht einem undurchsichtigem Bild.</li></ul>
 	 */
-	public Raum () {
-		//
-	}
+	private float opacity = 1;
 
 	/**
-	 * Setzt, ob saemtliche Kollisionstests in der Engine Alpha grob oder fein sein sollen.
+	 * Composite des Grafik-Objekts. Zwischenspeicherung des letzten Zustands
+	 */
+	private Composite composite;
+
+	/**
+	 * Setzt, ob sämtliche Kollisionstests in der Engine Alpha grob oder fein sein sollen.
 	 *
 	 * @param heavy
 	 * 		Ist dieser Wert <code>true</code>, werden intern Kollisionstests genauer, aber
@@ -424,7 +430,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Rueckgabe ist bei Passiv-Objekten und neutralen Objekten immer <code>true</code>, da diese
 	 * Problemlos verschoben werden können.
 	 *
-	 * @see #bewegen(int, int)
+	 * @see #bewegen(float, float)
+	 * @see #verschieben(Vektor)
+	 * @see #verschieben(float, float)
 	 */
 	public boolean bewegen (Vektor v) {
 		synchronized (this) {
@@ -444,8 +452,10 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 		Der Y-Anteil der Verschiebung (Delta-Y)
 	 *
 	 * @see #bewegen(Vektor)
+	 * @see #verschieben(Vektor)
+	 * @see #verschieben(float, float)
 	 */
-	public void bewegen (int dX, int dY) {
+	public void bewegen (float dX, float dY) {
 		phClient.bewegen(new Vektor(dX, dY));
 	}
 
@@ -935,7 +945,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
 	 *
 	 * @see Vektor
-	 * @see #verschieben(int, int)
+	 * @see #verschieben(float, float)
+	 * @see #bewegen(Vektor)
+	 * @see #bewegen(float, float)
 	 */
 	public void verschieben (Vektor v) {
 		position = position.verschobeneInstanz(v);
@@ -952,8 +964,10 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * 		Die Verschiebung in Richtung Y
 	 *
 	 * @see #verschieben(Vektor)
+	 * @see #bewegen(Vektor)
+	 * @see #bewegen(float, float)
 	 */
-	public void verschieben (int dX, int dY) {
+	public void verschieben (float dX, float dY) {
 		this.verschieben(new Vektor(dX, dY));
 	}
 
@@ -989,13 +1003,17 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see #drehung
 	 * @see #gibDrehung()
 	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 * @see #afterRender(Graphics2D)
+	 * @see #afterRender(Graphics2D, BoundingRechteck)
 	 */
-	public final void beforeRender (Graphics2D g) {
-		lastMiddle = mittelPunkt();
+	@NoExternalUse
+	public final void beforeRender (Graphics2D g, BoundingRechteck r) {
+		lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(- r.x, -r.y));
 		lastDrehung = Math.toRadians(drehung);
 
 		g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
+
+		composite = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
 	}
 
 	/**
@@ -1005,9 +1023,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see #drehung
 	 * @see #gibDrehung()
 	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 * @see #beforeRender(Graphics2D)
+	 * @see #beforeRender(Graphics2D, BoundingRechteck)
 	 */
-	public final void afterRender (Graphics2D g) {
+	@NoExternalUse
+	public final void afterRender (Graphics2D g, BoundingRechteck r) {
+		g.setComposite(composite);
 		g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
 	}
 
@@ -1053,6 +1073,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Rechenarbeit beansprucht.
 	 *
 	 * @return Ein möglichst optimaler Collider für dieses Raum-Objekt.
+	 *
 	 * @see #colliderSetzen(Collider)
 	 */
 	public abstract Collider erzeugeCollider ();
@@ -1205,6 +1226,15 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
+	 * Gibt die aktuelle Drehung des Raumes in Grad zurück.
+	 *
+	 * @return Gibt die aktuelle Drehung des Raumes in Grad zurück.
+	 */
+	public double gibDrehung () {
+		return drehung;
+	}
+
+	/**
 	 * Dreht ein Objekt auf die angegebene Gradzahl um den Mittelpunkt des Raumes.
 	 *
 	 * @param grad
@@ -1215,15 +1245,6 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Gibt die aktuelle Drehung des Raumes in Grad zurück.
-	 *
-	 * @return Gibt die aktuelle Drehung des Raumes in Grad zurück.
-	 */
-	public double gibDrehung () {
-		return drehung;
-	}
-
-	/**
 	 * Dreht ein Objekt um die angegebene Gradzahl um den Mittelpunkt des Raumes.
 	 *
 	 * @param grad
@@ -1231,6 +1252,29 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public void drehenRelativ (double grad) {
 		this.drehung -= grad;
+	}
+
+	/**
+	 * Gibt die aktuelle Opacity des Raumes zurück.
+	 *
+	 * @return Gibt die aktuelle Opacity des Raumes zurück.
+	 */
+	@API
+	@SuppressWarnings("unused")
+	public float getOpacity () {
+		return opacity;
+	}
+
+	/**
+	 * Setzt die Opacity des Raumes.
+	 *
+	 * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Raum.</li>
+	 * <li><code>1.0f</code> entspricht einem undurchsichtigem Raum.</li></ul>
+	 */
+	@API
+	@SuppressWarnings("unused")
+	public void setOpacity(float opacity) {
+		this.opacity = opacity;
 	}
 
 	/**
