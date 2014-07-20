@@ -109,7 +109,7 @@ public final class Vektor implements Cloneable {
 	public final float y;
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Vektor
+	 * Konstruktor für Objekte der Klasse Vektor
 	 *
 	 * @param x
 	 * 		Der Bewegungsanteil <code>x</code>.
@@ -366,8 +366,8 @@ public final class Vektor implements Cloneable {
 	 * <p/>
 	 * :-1 bei Werten < 0 - 0 bei Werten = 0 - 1 bei Werten > 0
 	 *
-	 * @return Ein Einfacher Vektor, der die Richtung des Urspruenglichen mit einfachen Werten
-	 * beschreibt beschreibt.
+	 * @return Ein Einfacher Vektor, der die Richtung des Ursprünglichen mit einfachen Werten
+	 * beschreibt.
 	 */
 	public Vektor einfacher () {
 		return vonKonstante(richtung());
@@ -409,7 +409,7 @@ public final class Vektor implements Cloneable {
 	/**
 	 * Gibt die String-Repräsentation dieses Objektes aus.
 	 *
-	 * @return Die String-Repräsentation dieses Strings
+	 * @return Die String-Repräsentation dieses Vektors
 	 */
 	@Override
 	public String toString () {
