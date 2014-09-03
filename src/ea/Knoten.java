@@ -233,8 +233,12 @@ public class Knoten extends Raum implements Listung {
 	public void zeichnen(Graphics2D g, BoundingRechteck r) {
 		super.beforeRender(g, r);
 
-		for (int i = list.size() - 1; i >= 0; i--) {
-			list.get(i).zeichnenBasic(g, r);
+		try {
+			for (int i = list.size() - 1; i >= 0; i--) {
+				list.get(i).zeichnenBasic(g, r);
+			}
+		} catch(ArrayIndexOutOfBoundsException e) {
+			// Wahrscheinlich wurde die Liste geleert.
 		}
 
 		super.afterRender(g, r);
@@ -251,12 +255,16 @@ public class Knoten extends Raum implements Listung {
 	public BoundingRechteck dimension() {
 		BoundingRechteck ret = null;
 
-		for (int i = list.size() - 1; i >= 0; i--) {
-			if (ret == null) {
-				ret = list.get(i).dimension();
-			} else {
-				ret = ret.summe(list.get(i).dimension());
+		try {
+			for (int i = list.size() - 1; i >= 0; i--) {
+				if (ret == null) {
+					ret = list.get(i).dimension();
+				} else {
+					ret = ret.summe(list.get(i).dimension());
+				}
 			}
+		} catch(ArrayIndexOutOfBoundsException e) {
+			// Wahrscheinlich wurde die Liste geleert.
 		}
 		
 		if (ret == null) {

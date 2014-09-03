@@ -622,7 +622,7 @@ public class Fenster extends Frame {
 	}
 
 	/**
-	 * Loescht das Fenster und terminiert damit das Spiel.<br /> <b>Daher nur dann einsetzen, wenn
+	 * Löscht das Fenster und terminiert damit das Spiel.<br /> <b>Daher nur dann einsetzen, wenn
 	 * die Anwendung beendet werden soll!! Der vorherige Zustand ist nicht
 	 * wiederherstellbar!!</b><br /> Als alternative Methode zum ausschliesslichen Loeschen des
 	 * Fensters steht <code>softLoeschen()</code> zur Verfuegung.
@@ -757,8 +757,15 @@ public class Fenster extends Frame {
 		final boolean links = e.getButton() != MouseEvent.BUTTON3;
 
 		if (hatMaus()) {
-			Punkt p = maus.klickAufZeichenebene();
-			maus.klick(p.x(), p.y(), links, losgelassen);
+			if(maus.absolut() || maus.bewegend()) {
+				Punkt p = maus.klickAufZeichenebene();
+				maus.klick(p.x(), p.y(), links, losgelassen);
+			} else { // FIXME REVIEW BUG
+				maus.klick(maus.getImage().positionX() + getCam().getX(),
+						maus.getImage().positionY() + getCam().getY(),
+						links,
+						losgelassen);
+			}
 		}
 	}
 

@@ -390,17 +390,19 @@ public class Maus {
 	 * 		ist dieser Wert <code>true</code>, so wird dies als losgelassene Taste behandelt.
 	 */
 	public void klick (int x, int y, boolean links, boolean losgelassen) {
-		Punkt p = new Punkt(x, y);
 		if (losgelassen) {
 			for (MausLosgelassenReagierbar m : mausLosgelassenListeners) {
 				m.mausLosgelassen(x, y, links);
 			}
+
 			return;
 		}
+
 		if (links) {
 			for (Auftrag a : mausListe) {
-				a.klick(p);
+				a.klick(new Punkt(x, y));
 			}
+
 			for (KlickReagierbar k : klickListeners) {
 				k.klickReagieren(x, y);
 			}
