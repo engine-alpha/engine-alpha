@@ -19,6 +19,7 @@
 
 package ea.compat;
 
+import ea.NoExternalUse;
 import ea.internal.util.Logger;
 
 import java.io.BufferedReader;
@@ -26,12 +27,13 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * Der Compat-Dateimanager implementiert die alten Lade-Methoden des Dateimanagers, um den
+ * Der Compat-Dateimanager implementiert die alten Methoden zum Laden von Dateien, um den
  * Dateimanager übersichtlicher zu halten - gleichzeitig aber alte Dateien weiterhin korrekt zu
  * laden zu können.
  *
  * @author Niklas Keller, Michael Andonie
  */
+@NoExternalUse
 public class CompatDateiManager {
 	/**
 	 * Liest eine <code>.eaa</code>-String-Array-Datei ein.
@@ -43,6 +45,7 @@ public class CompatDateiManager {
 	 *
 	 * @return Array, das eingelesen wurde oder <code>null</code>, wenn ein Fehler aufgetreten ist.
 	 */
+	@NoExternalUse
 	public static String[] stringArrayEinlesen (String pfad) {
 		BufferedReader reader = null;
 		String[] ret;
@@ -55,8 +58,7 @@ public class CompatDateiManager {
 
 			// check type info
 			if (line.compareTo("typ:String") != 0) {
-				Logger.error("Die geladene .eaa-Datei beschreibt kein String-Array oder ist " +
-						"beschädigt!");
+				Logger.error("Die geladene .eaa-Datei beschreibt kein String-Array oder ist beschädigt!");
 				reader.close();
 
 				return null;
@@ -112,6 +114,7 @@ public class CompatDateiManager {
 	 *
 	 * @return Array, das eingelesen wurde oder <code>null</code>, wenn ein Fehler aufgetreten ist.
 	 */
+	@NoExternalUse
 	public static int[] integerArrayEinlesen (String pfad) {
 		BufferedReader reader = null;
 		int[] ret;

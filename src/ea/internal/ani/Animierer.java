@@ -27,63 +27,71 @@ import ea.internal.util.Logger;
 
 /**
  * Jede Klasse, die ein Raum-Objekt animieren kann, leitet sich hieraus ab.<br />
+ * <p/>
+ * <div class="achtung">Es können auch Animationen gekoppelt werden, z.B. kann ein Raum-Objekt
+ * gleichzeitig linear animiert werden, aber <b>gleichzeitig auch noch von einer zweiten
+ * Animierer-Klasse</b> bewegt werden, z.B. einer Kreisanimation. Das Ergebnis hieraus wäre eine
+ * "eiernde" Bewegung vorwärts.</div>
  *
- * <div class="achtung">Es können auch Animationen gekoppelt werden, z.B. kann ein Raum-Objekt gleichzeitig linear animiert werden, aber
- * <b>gleichzeitig auch noch von einer zweiten Animierer-Klasse</b> bewegt werden, z.B. einer Kreisanimation. Das
- * Ergebnis hieraus waere eine "eiernde" Bewegung vorwärts.</div>
- * 
  * @author Michael Andonie
  */
 public abstract class Animierer implements Ticker {
 	/**
-	 * Festgelegter Normwert, der die Anzahl an Unterschritten pro "Animationsetappe" der einzelnen
-	 * Animierer wiedergibt. Je kleiner er ist, desto durchschaubarer ist die Animation
+	 * Festgelegter Normwert, der die Anzahl der Unterschritten pro Animations-Etappe der einzelnen
+	 * Animierer wiedergibt. Je kleiner er ist, desto durchschaubarer / flüssiger ist die Animation
 	 */
 	protected static final int schritte = 100;
-	
+
 	/**
-	 * Das Raum-Objekt, das animiert wird.
+	 * Objekt, welches animiert wird
 	 */
 	protected Raum ziel;
-	
+
 	/**
-	 * Das Intervall, in dem ein <code>animationsSchritt()</code> ausgefuehrt wird.
+	 * Intervall, in dem ein <code>animationsSchritt()</code> ausgeführt wird.
 	 */
 	protected int intervall;
-	
+
 	/**
-	 * Der count an bisher getanen Bewegungsschritten.
+	 * Zähler für bereits ausgeführte Bewegungsschritte
 	 */
 	protected int count;
-	
+
 	/**
-	 * Gibt an, ob die Animation in einer Dauerschleife ausgefuehrt werden soll.
+	 * Gibt an, ob die Animation in einer Dauerschleife ausgeführt werden soll.
 	 */
 	protected boolean loop;
-	
-	/** Referenz auf den ausfuehrenden Tick-Manager */
+
+	/**
+	 * Referenz auf den ausführenden Manager
+	 */
 	private Manager manager;
-	
-	/** Gibt an, ob dieser Animierer bereits beim Manager angemeldet ist */
+
+	/**
+	 * Gibt an, ob dieser Animierer bereits beim Manager angemeldet ist.
+	 */
 	private boolean angemeldet;
-	
+
+	/**
+	 * TODO: Dokumentation
+	 */
 	private AnimationsEndeReagierbar listener;
-	
+
 	/**
 	 * Konstruktor.
-	 * 
+	 *
 	 * @param ziel
-	 *            Das zu animierende Objekt
+	 * 		zu animierendes Objekt
 	 * @param intervall
-	 *            Der TickerIntervall; fuer die tick()-Geschwindikeit.
+	 * 		Ticker-Intervall für die <code>tick()</code>-Geschwindikeit
 	 * @param loop
-	 *            Ob die Animation dauerhaft wiederholt (geloopt) werden soll.
+	 * 		Ob die Animation dauerhaft wiederholt (geloopt) werden soll
 	 * @param m
-	 *            Der Manager, an dem spaeter animiert werden soll.
+	 * 		Manager, über den später animiert werden soll
 	 * @param listener
-	 *            Der AnimationsEndeReagierbar-Listener, der am Ende der Animation aufgerufen wird.
+	 * 		Listener, der am Ende der Animation aufgerufen wird
 	 */
-	public Animierer(Raum ziel, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener) {
+	public Animierer (Raum ziel, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener) {
 		this.ziel = ziel;
 		this.intervall = intervall;
 		this.loop = loop;
@@ -94,22 +102,22 @@ public abstract class Animierer implements Ticker {
 		this.manager.anmelden(this);
 		this.angemeldet = true;
 	}
-	
+
 	/**
-	 * Starten den Tick-Algorythmus.
+	 * Startet den Tick-Algorythmus
 	 */
-	public void starten() {
+	public void starten () {
 		if (angemeldet) {
 			manager.starten(this, intervall);
 		} else {
 			Logger.error("Dieser Animierer ist bereits abgemeldet!");
 		}
 	}
-	
+
 	/**
 	 * Hält den Tick-Algorythmus an. Dies bedeutet, dass die Animation pausiert wird.
 	 */
-	public void anhalten() {
+	public void anhalten () {
 		if (!angemeldet) { // TODO Exception?
 			Logger.warning("Dieser Animierer kann nicht angehalten werden, da seine Animation bereits beendet wurde.");
 			return;
@@ -118,52 +126,57 @@ public abstract class Animierer implements Ticker {
 		manager.anhalten(this);
 		angemeldet = false;
 	}
-	
+
 	/**
-	 * Hält den Tick-Algorythmus an. Macht genau dasselbe wie <code>anhalten</code> und ist nur dazu da,
-	 * eine weitere Assoziation der Verwendung dieser Methode zu repraesentieren.
-	 * 
+	 * Hält den Tick-Algorythmus an. Macht genau dasselbe wie {@link #anhalten()},
+	 * weswegen diese Methode nun als veraltet gilt.
+	 * <br>
+	 * Bitte nutze <code>anhalten()</code> statt dieser Methode, die alte Methode wird in Zukunft
+	 * entfernt werden.
+	 *
 	 * @see #anhalten()
+	 * @deprecated v3.0.3
 	 */
-	public void pausieren() { // TODO Eine der beiden Methoden auf deprecated setzen bzw. später entfernen
+	@Deprecated
+	public void pausieren () {
 		this.anhalten();
 	}
-	
+
 	/**
-	 * Beendet diese Animation ein für alle mal.
+	 * Beendet diese Animation
 	 */
-	public void beenden() {
+	public void beenden () {
 		manager.abmelden(this);
 		listener.endeReagieren(this);
 	}
-	
+
 	/**
-	 * Die Tick-Methode.
+	 * Führt einen Animationsschritt aus
 	 */
-	public void tick() {
+	public void tick () {
 		animationsSchritt();
 		count++;
 	}
-	
+
 	/**
 	 * Gibt das Ziel dieser Animation aus.
-	 * 
-	 * @return Das gemerkte Ziel-Objekt, das von diesem Animierer animiert wird
+	 *
+	 * @return gemerktes Ziel-Objekt, das von diesem Animierer animiert wird
 	 */
-	public Raum ziel() {
+	public Raum ziel () {
 		return ziel;
 	}
-	
+
 	/**
-	 * In dieser Methode werden die individuellen Methoden fuer die verschiedenen Animierer festgehalten.<br />
-	 * Sie wird automatisch von der Super-Klasse <code>Animierer</code> aufgerufen, sooft, bis sie intern beendet oder
-	 * angehalten wird.<br />
-	 * In ihr sollte <b>höchstens einmal</b> das Ziel-Objekt bewegt werden! Ansonsten wird die Interaktion mit der Klasse
-	 * <code>Physik</code> und damit das mögliche Einrechnen für die Objekte nicht möglich.
-	 * 
+	 * In dieser Methode werden die individuellen Methoden für die verschiedenen Animierer
+	 * festgehalten.<br /> Sie wird automatisch von der Super-Klasse <code>Animierer</code>
+	 * aufgerufen, sooft, bis sie intern beendet oder angehalten wird.<br /> In ihr sollte
+	 * <b>höchstens einmal</b> das Ziel-Objekt bewegt werden! Ansonsten wird die Interaktion mit der
+	 * Klasse <code>Physik</code> und damit das mögliche Einrechnen für die Objekte unmöglich.
+	 *
 	 * @see #tick()
 	 * @see #beenden()
 	 * @see #anhalten()
 	 */
-	public abstract void animationsSchritt();
+	public abstract void animationsSchritt ();
 }
