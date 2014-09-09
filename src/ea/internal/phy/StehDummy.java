@@ -22,34 +22,34 @@ package ea.internal.phy;
 import ea.StehReagierbar;
 
 /**
- * Die Nichtstuende Dummy-Standartklasse, die fuer einen Gravitator der nichtstuende Initial-StehReagierbar-Listener ist.
- * 
+ * Die Nichtstuende Dummy-Standartklasse, die fuer einen Gravitator der nichtstuende
+ * Initial-StehReagierbar-Listener ist.
+ *
  * @author Michael Andonie
  * @see ea.StehReagierbar
  */
 public class StehDummy
 		implements StehReagierbar {
-	
+
 	/**
 	 * <i>Singleton</i>-Referenz auf die eine Instanz.
 	 */
 	private static StehDummy instance = null;
-	
+
+	/**
+	 * <i>Singleton</i>-Getter-Methode für den Dummy.
+	 *
+	 * @return Die eine existente Instanz des <code>StehDummy</code>-Objekts.
+	 */
+	public static StehReagierbar getDummy () {
+		return instance == null ? instance = new StehDummy() : instance;
+	}
+
 	/**
 	 * In der Verarbeitung des stehens passiert <b>nichts</b>.
 	 */
 	@Override
-	public void stehReagieren() {
+	public void stehReagieren () {
 		//
 	}
-	
-	/**
-	 * <i>Singleton</i>-Getter-Methode für den Dummy.
-	 * 
-	 * @return Die eine existente Instanz des <code>StehDummy</code>-Objekts.
-	 */
-	public static StehReagierbar getDummy() {
-		return instance == null ? instance = new StehDummy() : instance;
-	}
-	
 }

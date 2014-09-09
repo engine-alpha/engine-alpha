@@ -27,6 +27,6 @@ import java.lang.annotation.Documented;
  * @author Niklas Keller <me@kelunik.com>
  */
 @Documented
-@SuppressWarnings ( "unused" )
 public @interface NoExternalUse {
+
 }

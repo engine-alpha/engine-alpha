@@ -2,13 +2,11 @@ package ea;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class KnotenTest {
 	@Test
-	public void basic() {
+	public void basic () {
 		Rechteck r = new Rechteck(100, 100, 100, 100);
 		Knoten k = new Knoten();
 

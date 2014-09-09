@@ -19,19 +19,19 @@
 
 package ea;
 
-
 /**
- * FallReagierbar kann darauf reagieren, das das mit ihr angemeldete Raum-Objekt ueber <code>Physik</code> faellt und einen
- * gewissen Maximalwert erreicht. Dann wird ihre Methode <code>fallReagieren()</code> aufgerufen.<br />
- * 
+ * FallReagierbar kann darauf reagieren, das das mit ihr angemeldete Raum-Objekt ueber
+ * <code>Physik</code> faellt und einen gewissen Maximalwert erreicht. Dann wird ihre Methode
+ * <code>fallReagieren()</code> aufgerufen.<br />
+ *
  * @author Michael Andonie
  */
 public interface FallReagierbar {
-    /**
-     * Diese Methode wird aufgerufen, <b>solange</b> das fallende Raum-Objekt unter der mit diesem Listener 
-     * angemeldeten mindesthoehe faellt.<br />
-     * Das heisst, wird das Fallen im problematischen bereich hierin <b>nicht behoben</b>, so wird diese Methode wieder und 
-     * wieder aufgerufen, bis das Objekt nicht mehr im gefaehrlichen Bereich ist.
-     */
-    public abstract void fallReagieren();
+	/**
+	 * Diese Methode wird aufgerufen, <b>solange</b> das fallende Raum-Objekt unter der mit diesem
+	 * Listener angemeldeten mindesthoehe faellt.<br /> Das heisst, wird das Fallen im
+	 * problematischen bereich hierin <b>nicht behoben</b>, so wird diese Methode wieder und wieder
+	 * aufgerufen, bis das Objekt nicht mehr im gefaehrlichen Bereich ist.
+	 */
+	public abstract void fallReagieren ();
 }

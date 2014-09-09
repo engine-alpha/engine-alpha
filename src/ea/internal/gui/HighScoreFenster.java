@@ -19,46 +19,46 @@
 
 package ea.internal.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Dieses Fenster ist ein Dialog, der ein Array von Namen neben ein Array von Punkten Setzt.
- * 
+ *
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
+@SuppressWarnings ("serial")
 public class HighScoreFenster extends JDialog {
-	
+
 	/**
 	 * Erstellt ein Fenster zur Darstellung von Highscores.
-	 * 
+	 *
 	 * @param parent
-	 *            Das Parent-Fenster
+	 * 		Das Parent-Fenster
 	 * @param titel
-	 *            Der Titel des Dialogs
+	 * 		Der Titel des Dialogs
 	 * @param namen
-	 *            Die Namen zur Darstellung
+	 * 		Die Namen zur Darstellung
 	 * @param punkte
-	 *            Die dazugehoerigen Punkte
+	 * 		Die dazugehoerigen Punkte
 	 * @param font
-	 *            Der Darstellungsfont
+	 * 		Der Darstellungsfont
 	 */
-	public HighScoreFenster(Frame parent, String titel, String[] namen, int[] punkte, Font font) {
+	public HighScoreFenster (Frame parent, String titel, String[] namen, int[] punkte, Font font) {
 		super(parent, titel, true);
-		
+
 		if (namen.length != punkte.length) {
 			System.err.println("Achtung!! Die eingegebenen String- und int-Arrays haben nicht die selbe Laenge!!!");
 			return;
 		}
-		
+
 		Dimension screenSize = getToolkit().getScreenSize();
 		this.setLocation(screenSize.width / 4, screenSize.height / 4);
-		
+
 		this.setLayout(new BorderLayout());
-		
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(namen.length, 3, 5, 5));
 		for (int i = 0; i < namen.length; i++) {
@@ -73,18 +73,17 @@ public class HighScoreFenster extends JDialog {
 			panel.add(l3);
 		}
 		getContentPane().add(new JScrollPane(panel), BorderLayout.CENTER);
-		
+
 		JButton b = new JButton("OK");
 		b.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed (ActionEvent e) {
 				dispose();
 			}
 		});
 		getContentPane().add(b, BorderLayout.SOUTH);
-		
+
 		validate();
 		this.setSize(200, 300);
 		this.setVisible(true);
 	}
-	
 }

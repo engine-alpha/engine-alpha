@@ -25,35 +25,35 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * plays a sound<br />
- * <big>This is a internal class, do not use it in your projects!</big>
+ * plays a sound<br /> <big>This is a internal class, do not use it in your projects!</big>
  *
  * @author Niklas Keller
  * @version v3.0
  * @since v3.0
  */
 public class SampledSound extends Thread {
-	private enum State {
-		PLAYING, PAUSED, STOPPED
-	}
-
 	private State state;
+
 	private byte[] data;
+
 	private boolean loop;
 
 	private AudioInputStream ais;
+
 	private SourceDataLine line;
 
 	/**
-	 * @param data data from soundfile
-	 * @param loop if true, the sound is looped, otherwise only played once
+	 * @param data
+	 * 		data from soundfile
+	 * @param loop
+	 * 		if true, the sound is looped, otherwise only played once
 	 */
-	public SampledSound(byte[] data, boolean loop) {
+	public SampledSound (byte[] data, boolean loop) {
 		this.setDaemon(true);
 		this.init(data, loop);
 	}
 
-	private void init(byte[] data, boolean loop) {
+	private void init (byte[] data, boolean loop) {
 		this.data = data;
 		this.loop = loop;
 
@@ -93,8 +93,8 @@ public class SampledSound extends Thread {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start() {
-		if(startLine()) {
+	public void start () {
+		if (startLine()) {
 			super.start();
 		}
 	}
@@ -103,13 +103,13 @@ public class SampledSound extends Thread {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void run() {
+	public void run () {
 		playSound();
 
 		this.state = State.STOPPED;
 	}
 
-	private boolean startLine() {
+	private boolean startLine () {
 		DataLine.Info info = new DataLine.Info(SourceDataLine.class, ais.getFormat());
 
 		try {
@@ -126,7 +126,7 @@ public class SampledSound extends Thread {
 		return true;
 	}
 
-	private synchronized void playSound() {
+	private synchronized void playSound () {
 		int num = 0;
 		byte[] buffer = new byte[1024];
 
@@ -177,9 +177,10 @@ public class SampledSound extends Thread {
 	/**
 	 * pauses / unpauses this sound
 	 *
-	 * @param pause true to pause, false to unpause
+	 * @param pause
+	 * 		true to pause, false to unpause
 	 */
-	public void pauseSound(boolean pause) {
+	public void pauseSound (boolean pause) {
 		this.state = pause ? State.PAUSED : State.PLAYING;
 
 		synchronized (this) {
@@ -192,7 +193,11 @@ public class SampledSound extends Thread {
 	/**
 	 * stops this sound
 	 */
-	public void stopSound() {
+	public void stopSound () {
 		this.state = State.STOPPED;
+	}
+
+	private enum State {
+		PLAYING, PAUSED, STOPPED
 	}
 }

@@ -20,28 +20,25 @@
 package ea;
 
 /**
- * Ein KollisionsReagierbar-Objekt kann auf das aufeinandertreffen zweier Raum-Objekte reagieren.<br />
- * Bei einer komplizierteren Aufgabe sieht das Anmelden bei einem <code>Physik</code>-Objekt
- * des Listeners ungefaehr so aus:<br />
- * <br /><br /><br /><br />
- * <code>
- * //Bereits Instanziiertes Physik-Objekt.
- * Physik physik;
- * 
- * 
+ * Ein KollisionsReagierbar-Objekt kann auf das aufeinandertreffen zweier Raum-Objekte reagieren.<br
+ * /> Bei einer komplizierteren Aufgabe sieht das Anmelden bei einem <code>Physik</code>-Objekt des
+ * Listeners ungefaehr so aus:<br /> <br /><br /><br /><br /> <code> //Bereits Instanziiertes
+ * Physik-Objekt. Physik physik;
+ * <p/>
+ * <p/>
  * </code><br />
- * 
- * 
+ *
  * @author Michael Andonie
  */
 
-public interface KollisionsReagierbar
-{
-    /**
-     * Diese Methode wird dann aufgerufen, wenn die mit diesem Interface zusammen angemeldeten Raum-Objekte 
-     * kollidieren.
-     * @param   code    Der bei der Anmeldung mitgegebene Code zur eventuellen Weiterverarbeitung bei Mehrfachanmeldung 
-     * Dieses Interfaces
-     */
-    public abstract void kollision(int code);
+public interface KollisionsReagierbar {
+	/**
+	 * Diese Methode wird dann aufgerufen, wenn die mit diesem Interface zusammen angemeldeten
+	 * Raum-Objekte kollidieren.
+	 *
+	 * @param code
+	 * 		Der bei der Anmeldung mitgegebene Code zur eventuellen Weiterverarbeitung bei
+	 * 		Mehrfachanmeldung Dieses Interfaces
+	 */
+	public abstract void kollision (int code);
 }

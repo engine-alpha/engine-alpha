@@ -24,39 +24,39 @@ import ea.Punkt;
 
 /**
  * Das einfache Dummie-Dreieck. Kann nur in seiner Position veraendert werden.
- * 
+ *
  * @author Michael Andonie
  */
 public class DreieckE extends Dreieck {
 	private static final long serialVersionUID = -4344073097243828398L;
-	
+
 	/**
-	 * Konstruktor eines "edu"-Dreiecks.<br />
-	 * Erstellt ein solches und macht es im "edu"-Standartfenster sichtbar.
+	 * Konstruktor eines "edu"-Dreiecks.<br /> Erstellt ein solches und macht es im
+	 * "edu"-Standartfenster sichtbar.
 	 */
-	public DreieckE() {
+	public DreieckE () {
 		super(new Punkt(100, 100), new Punkt(200, 100), new Punkt(150, 50));
 		farbeSetzen("Gruen");
 		FensterE.getFenster().wurzel.add(this);
 	}
-	
+
 	/**
 	 * Setzt die Punkte dieses "edu"-Dreiecks neu.
-	 * 
+	 *
 	 * @param x1
-	 *            Die X-Koordinate des 1. Punktes
+	 * 		Die X-Koordinate des 1. Punktes
 	 * @param y1
-	 *            Die Y-Koordinate des 1. Punktes
+	 * 		Die Y-Koordinate des 1. Punktes
 	 * @param x2
-	 *            Die X-Koordinate des 2. Punktes
+	 * 		Die X-Koordinate des 2. Punktes
 	 * @param y2
-	 *            Die Y-Koordinate des 2. Punktes
+	 * 		Die Y-Koordinate des 2. Punktes
 	 * @param x3
-	 *            Die X-Koordinate des 3. Punktes
+	 * 		Die X-Koordinate des 3. Punktes
 	 * @param y3
-	 *            Die Y-Koordinate des 3. Punktes
+	 * 		Die Y-Koordinate des 3. Punktes
 	 */
-	public void punkteSetzen(int x1, int y1, int x2, int y2, int x3, int y3) {
-        super.punkteSetzen(new float[] {x1, x2, x3}, new float[] {y1, y2, y3});
+	public void punkteSetzen (int x1, int y1, int x2, int y2, int x3, int y3) {
+		super.punkteSetzen(new float[]{x1, x2, x3}, new float[]{y1, y2, y3});
 	}
 }

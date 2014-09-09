@@ -128,11 +128,9 @@ public abstract class Animierer implements Ticker {
 	}
 
 	/**
-	 * Hält den Tick-Algorythmus an. Macht genau dasselbe wie {@link #anhalten()},
-	 * weswegen diese Methode nun als veraltet gilt.
-	 * <br>
-	 * Bitte nutze <code>anhalten()</code> statt dieser Methode, die alte Methode wird in Zukunft
-	 * entfernt werden.
+	 * Hält den Tick-Algorythmus an. Macht genau dasselbe wie {@link #anhalten()}, weswegen diese
+	 * Methode nun als veraltet gilt. <br> Bitte nutze <code>anhalten()</code> statt dieser Methode,
+	 * die alte Methode wird in Zukunft entfernt werden.
 	 *
 	 * @see #anhalten()
 	 * @deprecated v3.0.3

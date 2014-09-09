@@ -19,26 +19,23 @@
 
 package ea.edu.net;
 
-import ea.*;
+import ea.Client;
 
-public class SimplerClient 
-extends SimplerNetzwerkAdapter {
+public class SimplerClient
+		extends SimplerNetzwerkAdapter {
 
 	/**
 	 * Der Client, uber den der Client kommuniziert.
 	 */
 	private Client client;
-	
-	public SimplerClient(String name, String ipAdresse, int port) {
+
+	public SimplerClient (String name, String ipAdresse, int port) {
 		client = new Client(name, ipAdresse, port);
 		client.empfaengerHinzufuegen(messageUpdater);
 	}
 
 	@Override
-	public void senden(String string) {
+	public void senden (String string) {
 		client.sendeString(string);
 	}
-	
-	
-
 }

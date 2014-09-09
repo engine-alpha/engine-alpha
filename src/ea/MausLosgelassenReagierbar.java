@@ -20,23 +20,24 @@
 package ea;
 
 /**
- * Das Listener-Interface fuer losgelassene Tasten auf der Maus. Einfach an 
- * dem aktiven <code>Maus</code>-Objekt anzumelden:<br /><br />
- * <code>
- * MausLosgelassenReagierbar listener; //<- Mein Listener
- * maus.mausLosgelassenReagierbarAnmelden(listener);
- * </code>
- * 
+ * Das Listener-Interface fuer losgelassene Tasten auf der Maus. Einfach an dem aktiven
+ * <code>Maus</code>-Objekt anzumelden:<br /><br /> <code> MausLosgelassenReagierbar listener; //<-
+ * Mein Listener maus.mausLosgelassenReagierbarAnmelden(listener); </code>
+ *
  * @author Michael Andonie
  */
 public interface MausLosgelassenReagierbar {
-    /**
-     * Diese Methode wird bei jedem an der aktiven Maus angemeldeten Listener 
-     * ausgefuehrt, sobald eine Maustaste losgelassen wird.
-     * @param x Die X-Koordinate der Maus zum Zeitpunkt des Loslassens
-     * @param y Die Y-Koordinate der Maus zum Zeitpunkt des Loslassens
-     * @param linksklick Ist dieser Wert <code>true</code>, war die Losgelassene
-     * Maustaste die Linke. Ansonsten ist dieser Wert <code>false</code>.
-     */
-    public abstract void mausLosgelassen(int x, int y, boolean linksklick);
+	/**
+	 * Diese Methode wird bei jedem an der aktiven Maus angemeldeten Listener ausgefuehrt, sobald
+	 * eine Maustaste losgelassen wird.
+	 *
+	 * @param x
+	 * 		Die X-Koordinate der Maus zum Zeitpunkt des Loslassens
+	 * @param y
+	 * 		Die Y-Koordinate der Maus zum Zeitpunkt des Loslassens
+	 * @param linksklick
+	 * 		Ist dieser Wert <code>true</code>, war die Losgelassene Maustaste die Linke. Ansonsten ist
+	 * 		dieser Wert <code>false</code>.
+	 */
+	public abstract void mausLosgelassen (int x, int y, boolean linksklick);
 }

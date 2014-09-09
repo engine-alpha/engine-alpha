@@ -222,11 +222,6 @@ public class Dreieck extends Geometrie {
 		return new BoundingRechteck(kleinstesX, kleinstesY, (groesstesX - kleinstesX), (groesstesY - kleinstesY));
 	}
 
-	public Dreieck[] neuBerechnen () {
-		Dreieck[] e = {this};
-		return e;
-	}
-
 	/**
 	 * {@inheritDoc} Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden
 	 * <code>BoundingRechteck</code> erzeugt, dass über die <code>dimension()</code>-Methode
@@ -235,6 +230,11 @@ public class Dreieck extends Geometrie {
 	@Override
 	public Collider erzeugeCollider () {
 		return erzeugeLazyCollider();
+	}
+
+	public Dreieck[] neuBerechnen () {
+		Dreieck[] e = {this};
+		return e;
 	}
 
 	/**

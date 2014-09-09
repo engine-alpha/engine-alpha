@@ -25,88 +25,95 @@ import ea.internal.collision.SphereCollider;
 import java.awt.*;
 
 /**
- * Ein Kreis ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br />
- * Dies ist mit einem Computer nicht moeglich, daher wird fuer einen Kreis eine ausrechend grosse Anzahl
- * an Ecken gewaehlt. Diese ist ueber die Genauigkeit im Konstruktor mitzugeben oder im vereinfachten konstruktor
- * bereits voreingestellt.
- * 
+ * Ein Kreis ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br /> Dies ist mit
+ * einem Computer nicht moeglich, daher wird fuer einen Kreis eine ausrechend grosse Anzahl an Ecken
+ * gewaehlt. Diese ist ueber die Genauigkeit im Konstruktor mitzugeben oder im vereinfachten
+ * konstruktor bereits voreingestellt.
+ *
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
+@SuppressWarnings ("serial")
 public class Kreis extends RegEck {
-	
+
 	/**
 	 * Konstruktor fuer Objekte der Klasse Kreis
-	 * 
+	 *
 	 * @param x
-	 *            Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des MIttelpunktes</b>
+	 * 		Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
+	 * 		die des MIttelpunktes</b>
 	 * @param y
-	 *            Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des MIttelpunktes</b>
+	 * 		Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
+	 * 		die des MIttelpunktes</b>
 	 * @param durchmesser
-	 *            Der Durchmesser des Kreises
+	 * 		Der Durchmesser des Kreises
 	 * @param genauigkeit
-	 *           Die Genauigkeitsstufe des Kreises.<br />
-	 *           Gibt die Anzzahl an Dreiecken an, die diesen Kreis (approximiert) für die Kollisionsberechnung mit komplexeren Objekten ausmachen.
+	 * 		Die Genauigkeitsstufe des Kreises.<br /> Gibt die Anzzahl an Dreiecken an, die diesen Kreis
+	 * 		(approximiert) für die Kollisionsberechnung mit komplexeren Objekten ausmachen.
 	 */
-	public Kreis(int x, int y, float durchmesser, int genauigkeit) {
+	public Kreis (int x, int y, float durchmesser, int genauigkeit) {
 		super(x, y, (int) Math.pow(genauigkeit, 2), durchmesser);
 	}
-	
+
 	/**
 	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
-	 * 
+	 *
 	 * @param x
-	 *            Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des Mittelpunktes</b>
+	 * 		Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
+	 * 		die des Mittelpunktes</b>
 	 * @param y
-	 *            Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht die des Mittelpunktes</b>
+	 * 		Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
+	 * 		die des Mittelpunktes</b>
 	 * @param durchmesser
-	 *            Der Durchmesser des Kreises
+	 * 		Der Durchmesser des Kreises
 	 */
-	public Kreis(float x, float y, float durchmesser) {
+	public Kreis (float x, float y, float durchmesser) {
 		super(x, y, 6, durchmesser);
 	}
-	
+
+	/**
+	 * Kleine Helper-Methode für den ganzzahligen Log2.
+	 *
+	 * @param eckenzahl
+	 * 		Ein int-Wert. Sollte von der Form 2^n sein.
+	 *
+	 * @return Der log2(eckenzahl).
+	 */
+	private static int log2helper (int eckenzahl) {
+		if (eckenzahl <= 1)
+			return 0;
+		return 1 + log2helper(eckenzahl / 2);
+	}
+
 	/**
 	 * Gibt den Radius des Kreises aus
-	 * 
+	 *
 	 * @return Der Radius des Kreises
 	 */
-	public float radius() {
+	public float radius () {
 		return radius;
 	}
-	
+
 	@Override
-	public void zeichnen(Graphics2D g, BoundingRechteck r) {
+	public void zeichnen (Graphics2D g, BoundingRechteck r) {
 		// Kreis muss nicht gedreht werden,
 		// aber es könnten hier in Zukunft noch andere wichtige Funktionen aufgerunfen werden
 		super.beforeRender(g, r);
-		
+
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
-		
+
 		g.setColor(this.formen()[0].getColor());
 		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
-		
+
 		super.afterRender(g, r);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collider erzeugeCollider() {
-		return new SphereCollider(radius*2, Vektor.NULLVEKTOR, log2helper(eckenzahl));
-	}
-	
-	/**
-	 * Kleine Helper-Methode für den ganzzahligen Log2.
-	 * @param eckenzahl	Ein int-Wert. Sollte von der Form 2^n sein.
-	 * @return	Der log2(eckenzahl).
-	 */
-	private static int log2helper(int eckenzahl) {
-		if(eckenzahl <= 1)
-			return 0;
-		return 1 + log2helper(eckenzahl/2);
+	public Collider erzeugeCollider () {
+		return new SphereCollider(radius * 2, Vektor.NULLVEKTOR, log2helper(eckenzahl));
 	}
 }

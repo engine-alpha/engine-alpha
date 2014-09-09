@@ -20,13 +20,16 @@
 package ea;
 
 /**
- * Dieses Interface benachrichtigt ein Listener-Objekt, wenn eine Netzwerkverbindung
- * zum Server erfolgreich hergestellt werden konnte.
+ * Dieses Interface benachrichtigt ein Listener-Objekt, wenn eine Netzwerkverbindung zu diesem
+ * Server erfolgreich hergestellt werden konnte.
  */
 public interface VerbindungHergestelltReagierbar {
 	/**
-	 * Wird aufgerufen, wenn eine Verbindung zu diesem Server erfolgreich hergestellt werden konnte.
-	 * @param ip IP des Clients
+	 * Wird aufgerufen, wenn eine Verbindung zu diesem Server erfolgreich hergestellt werden
+	 * konnte.
+	 *
+	 * @param ip
+	 * 		IP des Clients
 	 */
-	public void verbindungHergestellt(String ip);
+	public void verbindungHergestellt (String ip);
 }

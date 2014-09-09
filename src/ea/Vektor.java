@@ -20,14 +20,14 @@
 package ea;
 
 /**
- * Ein Vektor bezeichnet eine relative Punktangabe.<br /> Ansonsten unterscheidet er sich hier nicht
- * weiter von einem Punkt.<br /> Vektoren werden meist für die Beschreibung einer Bewegung benutzt.
+ * Ein Vektor bezeichnet eine relative Punktangabe, ansonsten unterscheidet er sich nicht weiter von
+ * einem Punkt.<br /> Vektoren werden meist für die Beschreibung einer Bewegung benutzt.
  *
  * @author Michael Andonie
  */
 public final class Vektor implements Cloneable {
 	/**
-	 * Konstante für einen bewegungslosen Vektor (0, 0)
+	 * Konstante für einen "bewegungslosen" Vektor (0, 0)
 	 */
 	public static final Vektor NULLVEKTOR = new Vektor(0, 0);
 
@@ -97,24 +97,22 @@ public final class Vektor implements Cloneable {
 	public static final int SO = 7;
 
 	/**
-	 * Der kontinuierliche(re) DeltaX-Wert des Punktes. Die anderen Koordinaten sind ggf. nur
-	 * gerundet.
+	 * Der kontinuierliche DeltaX-Wert des Punktes. Die anderen Koordinaten sind ggf. nur gerundet.
 	 */
 	public final float x;
 
 	/**
-	 * Der kontinuierliche(re) DeltaY-Wert des Punktes. Die anderen Koordinaten sind ggf. nur
-	 * gerundet.
+	 * Der kontinuierliche DeltaY-Wert des Punktes. Die anderen Koordinaten sind ggf. nur gerundet.
 	 */
 	public final float y;
 
 	/**
-	 * Konstruktor für Objekte der Klasse Vektor
+	 * Konstruktor.
 	 *
 	 * @param x
-	 * 		Der Bewegungsanteil <code>x</code>.
+	 * 		Bewegungsanteil <code>x</code>.
 	 * @param y
-	 * 		Der Bewegungsanteil <code>y</code>.
+	 * 		Bewegungsanteil <code>y</code>.
 	 */
 	public Vektor (float x, float y) {
 		this.x = x;
@@ -122,15 +120,13 @@ public final class Vektor implements Cloneable {
 	}
 
 	/**
-	 * Zweite Variante des Konstruktors für die Klasse Vektor.
-	 * <p/>
-	 * Hierbei wird er erzeugt als die noetige Bewegung von einem Punkt, um zu einem zweiten zu
-	 * kommen.
+	 * Konstruktor. <br /><br /> Vektor wird erzeugt als die nötige Bewegung von einem Punkt zu
+	 * einem zweiten.
 	 *
 	 * @param start
-	 * 		Der Ausgangspunkt der Bewegung dieses Vektors, der zu dem Ziel hinführt.
+	 * 		Ausgangspunkt
 	 * @param ziel
-	 * 		Der Zielpunkt der Bewegung.
+	 * 		Zielpunkt
 	 */
 	public Vektor (Punkt start, Punkt ziel) {
 		this.x = ziel.x - start.x;
@@ -138,18 +134,19 @@ public final class Vektor implements Cloneable {
 	}
 
 	/**
-	 * Berechnet einen einfachen Vektor (maximale Auslenkung bei jeder Achse 1 (positiov wie
-	 * negativ)), der der entsprechenden Konstante dieser Klasse entspricht möglich sind:
-	 * <p/>
+	 * Berechnet einen einfachen Vektor (maximale Auslenkung bei jeder Achse 1 (positiv wie
+	 * negativ)), der der entsprechenden Konstante dieser Klasse entspricht möglich sind: <br />
 	 * <code>N</code>, <code>S</code>, <code>O</code>, <code>W</code>, <code>NO</code>,
 	 * <code>NW</code>, <code>SO</code>, <code>SW</code>
 	 *
 	 * @param konstante
-	 * 		Die Konstante, die die Bewegungsrichtung beschreibt.
+	 * 		Konstante, die die Bewegungsrichtung beschreibt
 	 *
-	 * @return Der Vektor, der mit einer einfachen Auslenkung (d.h. für <code>x</code> und
+	 * @return Vektor, der mit einer einfachen Auslenkung (d.h. für <code>x</code> und
 	 * <code>y</code> je ein Wertebereich von {-1, 0, 1}) die entsprechende Bewegung macht.<br />
-	 * Ist <code>null</code>, wenn die Konstante einen nicht verwendbaren Wert hat!
+	 *
+	 * @throws java.lang.IllegalArgumentException
+	 * 		Falls die Konstante einen nicht verwendbaren Wert hat
 	 */
 	public static Vektor vonKonstante (int konstante) {
 		switch (konstante) {
@@ -162,34 +159,33 @@ public final class Vektor implements Cloneable {
 			case W:
 				return LINKS;
 			case NO:
-				return new Vektor(1, -1);
+				return new Vektor(+1, -1);
 			case NW:
 				return new Vektor(-1, -1);
 			case SO:
-				return new Vektor(1, 1);
+				return new Vektor(+1, +1);
 			case SW:
-				return new Vektor(-1, 1);
+				return new Vektor(-1, +1);
 			default:
 				throw new IllegalArgumentException("Die eingegebene Konstante hatte keinen der möglichen Werte!");
 		}
 	}
 
 	/**
-	 * Gibt eine <b>Normierung</b> des Vektors aus. Dies ist ein Vektor, der
-	 * <p/>
-	 * * in die selbe Richtung wie der ursprüngliche Vektor zeigt.</li> * eine Länge von (möglichst)
-	 * exakt 1 hat.</li>
+	 * Gibt eine <b>Normierung</b> des Vektors aus. Dies ist ein Vektor, der <li>in die selbe
+	 * Richtung wie der ursprüngliche Vektor zeigt.</li> <li>eine Länge von (möglichst) exakt 1
+	 * hat.</li>
 	 *
-	 * @return der normierte Vektor zu diesem Vektor.
+	 * @return Normierter Vektor zu diesem Vektor
 	 */
 	public Vektor normiert () {
 		return this.teilen(this.laenge());
 	}
 
 	/**
-	 * Gibt die Länge dieses Vektors aus.
+	 * Gibt die Länge des Vektors aus.
 	 *
-	 * @return Die Länge dieses Vektors.
+	 * @return Länge des Vektors.
 	 */
 	public float laenge () {
 		return (float) Math.sqrt(x * x + y * y);
@@ -198,7 +194,7 @@ public final class Vektor implements Cloneable {
 	/**
 	 * Berechnet die Gegenrichtung des Vektors.
 	 *
-	 * @return Ein neues Vektor-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
+	 * @return Neues Vektor-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
 	 */
 	public Vektor gegenrichtung () {
 		return new Vektor(-this.x, -this.y);
@@ -208,10 +204,9 @@ public final class Vektor implements Cloneable {
 	 * Berechnet die effektive Bewegung, die dieser Vektor und ein weiterer zusammen ausüben.
 	 *
 	 * @param v
-	 * 		Der zweite bewegende Vektor
+	 * 		zweiter Vektor
 	 *
-	 * @return Ein neues Vektor-Objekt, das die Summe der beiden ursprünglichen Bewegungen
-	 * darstellt.
+	 * @return Neues Vektor-Objekt, das die Summe der beiden ursprünglichen Bewegungen darstellt.
 	 */
 	public Vektor summe (Vektor v) {
 		return new Vektor(this.x + v.x, this.y + v.y);
@@ -221,7 +216,7 @@ public final class Vektor implements Cloneable {
 	 * Berechnet die Differenz zwischen diesem und einem weiteren Vektor.
 	 *
 	 * @param v
-	 * 		ein zweiter Vektor.
+	 * 		zweiter Vektor
 	 *
 	 * @return Die Differenz der beiden Vektoren (<code>"this - v"</code>)
 	 */
@@ -230,15 +225,16 @@ public final class Vektor implements Cloneable {
 	}
 
 	/**
-	 * Teilt die effektive Länge des Vektors durch eine ganze Zahl und kürzt dadurch seine
-	 * Effektivität.
+	 * Teilt die effektive Länge des Vektors durch eine Zahl und kürzt dadurch seine Effektivität.
 	 *
 	 * @param divisor
 	 * 		Hierdurch wird die Länge des Vektors auf der Zeichenebene geteilt.
 	 *
-	 * @return Ein Vektor-Objekt, das eine Bewegung in dieselbe Richtung beschreibt, allerdings in
-	 * der Länge gekürzt um den angegebenen Divisor.<br /> <b>Achtung!</b><br />
+	 * @return Vektor-Objekt, das eine Bewegung in dieselbe Richtung beschreibt, allerdings in der
+	 * Länge gekürzt um den angegebenen Divisor.
 	 *
+	 * @throws java.lang.ArithmeticException
+	 * 		Falls <code>divisor</code> <code>0</code> ist.
 	 * @see #multiplizieren(float)
 	 */
 	public Vektor teilen (float divisor) {
@@ -251,9 +247,8 @@ public final class Vektor implements Cloneable {
 
 	/**
 	 * Multipliziert die effektiven Längen beider Anteile des Vektors (<code>x</code> und
-	 * <code>y</code>) mit einem festen Faktor.
-	 * <p/>
-	 * Dadurch entsteht ein neuer Vektor mit anderen Werten, welcher zurückgegeben wird.
+	 * <code>y</code>) mit einem festen Faktor. <br /> Dadurch entsteht ein neuer Vektor mit anderen
+	 * Werten, welcher zurückgegeben wird.
 	 *
 	 * @param faktor
 	 * 		Der Faktor, mit dem die <code>x</code>- und <code>y</code>-Werte des Vektors multipliziert
@@ -269,12 +264,12 @@ public final class Vektor implements Cloneable {
 
 	/**
 	 * Berechnet das <b>Skalarprodukt</b> von diesem Vektor mit einem weiteren. Das Skalarprodukt
-	 * für zweidimensionale Vektoren ist: :<code>(a, b) o (c, d) = a * b + c * d</code>
+	 * für zweidimensionale Vektoren ist: <code>(a, b) o (c, d) = a * b + c * d</code>
 	 *
 	 * @param v
-	 * 		Ein zweiter Vektor.
+	 * 		zweiter Vektor
 	 *
-	 * @return Das Skalarprodukt dieses Vektoren mit dem Vektor <code>v</code>.
+	 * @return Skalarprodukt dieses Vektoren mit dem Vektor <code>v</code>.
 	 */
 	public float skalarprodukt (Vektor v) {
 		return this.x * v.x + this.y * v.y;
@@ -284,7 +279,7 @@ public final class Vektor implements Cloneable {
 	 * Berechnet, ob dieser Vektor keine Wirkung hat. Dies ist der Fall, wenn beide Komponenten
 	 * (<code>x</code> und <code>y</code>) 0 sind.
 	 *
-	 * @return <code>true</code>, wenn dieser keine Auswirkungen als bewegender Vektor machen würde.
+	 * @return <code>true</code>, wenn dieser keine Auswirkungen macht, sonst <code>false</code>.
 	 */
 	public boolean unwirksam () {
 		return this.x == 0 && this.y == 0;
@@ -292,8 +287,9 @@ public final class Vektor implements Cloneable {
 
 	/**
 	 * Berechnet die Richtung des Vektors, in die er wirkt.<br /> Der Rückgabewert basiert auf den
-	 * Konstanten der eigenen Klasse und sind entweder die Basiswerte (<code>N/S/O/W</code>) oder
-	 * die Kombiwerte (<code>NO/NW/...</code>). Alle diese sind Konstanten dieser Klasse.
+	 * Konstanten der eigenen Klasse und sind entweder die Basiswerte (<code>N / S / O / W</code>)
+	 * oder die Kombiwerte (<code>NO / NW / SO / SW</code>). Alle diese sind Konstanten dieser
+	 * Klasse.
 	 *
 	 * @return Der Wert der Konstanten, die diese Bewegung wiederspiegelt.
 	 */
@@ -333,16 +329,16 @@ public final class Vektor implements Cloneable {
 	 * sonst <code>false</code>.
 	 */
 	public boolean istEchtGanzzahlig () {
-		return x == (float) Math.floor(x) && y == (float) Math.floor(y);
+		return x == (int) x && y == (int) y;
 	}
 
 	/**
-	 * Gibt die <code>x</code>-Verschiebung dieses Vektors wieder.
+	 * Gibt die <code>x</code>-Verschiebung dieses Vektors wider.
 	 *
-	 * @return Die <code>x</code>-Verschiebung dieses Vektors. Positive Werte verschieben nach
-	 * rechts, negative Werte verschieben nach links.
+	 * @return <code>x</code>-Verschiebung dieses Vektors. Positive Werte verschieben nach rechts,
+	 * negative Werte verschieben nach links.
 	 *
-	 * @see #realX()
+	 * @see #realY()
 	 */
 	public float realX () {
 		return x;
@@ -351,10 +347,10 @@ public final class Vektor implements Cloneable {
 	/**
 	 * Gibt die <code>y</code>-Verschiebung dieses Vektors wider.
 	 *
-	 * @return Die <code>y</code>-Verschiebung dieses Vektors. Positive Werte verschieben nach
-	 * unten, negative Werte verschieben nach oben.
+	 * @return <code>y</code>-Verschiebung dieses Vektors. Positive Werte verschieben nach unten,
+	 * negative Werte verschieben nach oben.
 	 *
-	 * @see #realY()
+	 * @see #realX()
 	 */
 	public float realY () {
 		return y;
@@ -362,11 +358,10 @@ public final class Vektor implements Cloneable {
 
 	/**
 	 * Gibt einen einfachen Vektor zurück, dessen Richtungskomponenten nur <code>-1</code>,
-	 * <code>0</code> oder <code>1</code> annehmen.
-	 * <p/>
-	 * :-1 bei Werten < 0 - 0 bei Werten = 0 - 1 bei Werten > 0
+	 * <code>0</code> oder <code>1</code> annehmen. <br /><br /> <li>-1 bei Werten < 0</li> <li>0
+	 * bei Werten = 0</li> <li>1 bei Werten > 0</li>
 	 *
-	 * @return Ein Einfacher Vektor, der die Richtung des Ursprünglichen mit einfachen Werten
+	 * @return einfacher Vektor, der die Richtung des ursprünglichen mit einfachen Werten
 	 * beschreibt.
 	 */
 	public Vektor einfacher () {
@@ -374,14 +369,11 @@ public final class Vektor implements Cloneable {
 	}
 
 	/**
-	 * Prüft, ob ein beliebiges Objekt gleich diesem Vektor ist.Überschrieben aus der Superklasse
-	 * <code>Object</code>.
-	 * <p/>
-	 * Zwei Vektoren gelten als gleich, wenn <code>x</code> und <code>y</code> der beiden Vektoren
-	 * übereinstimmen.
+	 * Prüft, ob ein beliebiges Objekt gleich diesem Vektor ist. <br /><br /> Zwei Vektoren gelten
+	 * als gleich, wenn <code>x</code> und <code>y</code> der beiden Vektoren übereinstimmen.
 	 *
 	 * @param o
-	 * 		Das auf Gleichheit mit diesem zu überpruefende Objekt.
+	 * 		Das auf Gleichheit mit diesem zu überprüfende Objekt.
 	 *
 	 * @return <code>true</code>, wenn beide Vektoren gleich sind, sonst <code>false</code>.
 	 */
@@ -399,7 +391,7 @@ public final class Vektor implements Cloneable {
 	/**
 	 * Erstellt ein <b>neues <code>Vektor</code>-Objekt mit demselben Zustan</b>.
 	 *
-	 * @return eine neue Instanz von <code>Vektor</code> mit den selben Koordinaten (x|y)
+	 * @return Neue Instanz von <code>Vektor</code> mit den selben Koordinaten (x, y)
 	 */
 	@Override
 	public Vektor clone () {
@@ -409,7 +401,7 @@ public final class Vektor implements Cloneable {
 	/**
 	 * Gibt die String-Repräsentation dieses Objektes aus.
 	 *
-	 * @return Die String-Repräsentation dieses Vektors
+	 * @return String-Repräsentation dieses Vektors
 	 */
 	@Override
 	public String toString () {
@@ -442,8 +434,8 @@ public final class Vektor implements Cloneable {
 
 	/**
 	 * Gibt diesen Ortsvektor vom Ursprung der Zeichenebene als Punkt aus.<br> Dieser hat die exakt
-	 * selben X- / Y-Komponenten. Das bedeutet:<br> <code> Vektor v = new Vektor(10, 20); Punkt p =
-	 * v.alsPunkt(); -> p == new Punkt(10, 20); </code>
+	 * selben <code>x</code>- / <code>y</code>-Komponenten. Das bedeutet:<br> <code> Vektor v = new
+	 * Vektor (10, 20);<br />Punkt p = v.alsPunkt(); -> p == new Punkt(10, 20); </code>
 	 *
 	 * @return Ortsvektor dieses Punktes
 	 *

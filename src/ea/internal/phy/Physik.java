@@ -19,66 +19,77 @@
 
 package ea.internal.phy;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.ArrayList;
+import ea.*;
 
-import ea.BoundingRechteck;
-import ea.Knoten;
-import ea.KollisionsReagierbar;
-import ea.Manager;
-import ea.Raum;
-import ea.Ticker;
-import ea.Vektor;
+import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Ein Objekt der Klasse Physik behandelt eigenstaendig verschiedene Raum-Objekte als Physik-Engine.<br />
- * Grundlegend behandelt sie Trefferkollisionen eigenstaendig, also bietet es sich an, diese Eigenschaft zu nutzen,
- * und zwar in dem Interface <code>KollisionsReagierbar</code>.<br />
- * <br />
- * 
- * Weiterhin - und dies ist eine <b>essentielle Aufgabe fuer viele 2D-Spiele</b> - kann diese Maschine<br />
- * - An gewuenschtren Raum-Objekten Schwerkraft erzeugen<br />
- * - Aktive Raum-Objekte (<b>Aktivobjekte</b>, zum Beispiel Spielfiguren) so beeinlfussen, dass es fuer sie nicht moeglich ist,
- * passive Raum-Objekte (<b>PassivObjekte</b>, zum Beispiel Mauer, Waende, Boeden) zu schneiden.<br />
- * <br />
- * Diese beiden Eigenschaften in Kombination erzeugen die Moeglichkeit, sehr einfach eine funktionierende Spielewelt zu programmieren,
- * in der bereits ein funktionierendes System zum Fallen und Grenzen abstecken existiert.<br />
- * <br />
- * 
+ * Ein Objekt der Klasse Physik behandelt eigenstaendig verschiedene Raum-Objekte als
+ * Physik-Engine.<br /> Grundlegend behandelt sie Trefferkollisionen eigenstaendig, also bietet es
+ * sich an, diese Eigenschaft zu nutzen, und zwar in dem Interface <code>KollisionsReagierbar</code>.<br
+ * /> <br />
+ * <p/>
+ * Weiterhin - und dies ist eine <b>essentielle Aufgabe fuer viele 2D-Spiele</b> - kann diese
+ * Maschine<br /> - An gewuenschtren Raum-Objekten Schwerkraft erzeugen<br /> - Aktive Raum-Objekte
+ * (<b>Aktivobjekte</b>, zum Beispiel Spielfiguren) so beeinlfussen, dass es fuer sie nicht moeglich
+ * ist, passive Raum-Objekte (<b>PassivObjekte</b>, zum Beispiel Mauer, Waende, Boeden) zu
+ * schneiden.<br /> <br /> Diese beiden Eigenschaften in Kombination erzeugen die Moeglichkeit, sehr
+ * einfach eine funktionierende Spielewelt zu programmieren, in der bereits ein funktionierendes
+ * System zum Fallen und Grenzen abstecken existiert.<br /> <br />
+ *
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
+@SuppressWarnings ( "serial" )
 public class Physik extends Manager implements Ticker {
-	
-	/**
-	 * Die Liste aller Kollisionstestauftraege
-	 */
-	private ArrayList<Auftrag> kollisionsListe = new ArrayList<Auftrag>();
-	
-	/**
-	 * Eine Liste aller Passiven Objekte.
-	 */
-	private CopyOnWriteArrayList<Passivator> passive = new CopyOnWriteArrayList<Passivator>();
-	
-	/**
-	 * Eine Liste aller Gravitatoren (indirekt Aktivobjekte)
-	 */
-	private CopyOnWriteArrayList<Gravitator> gravitatoren = new CopyOnWriteArrayList<Gravitator>();
-	
-	/**
-	 * Der Rundenzaehler der Physik
-	 */
-	private int runde = 1;
-	
+
 	/**
 	 * Die EINE Physik
 	 */
 	private static Physik physik;
-	
+
+	/**
+	 * Die Liste aller Kollisionstestauftraege
+	 */
+	private ArrayList<Auftrag> kollisionsListe = new ArrayList<Auftrag>();
+
+	/**
+	 * Eine Liste aller Passiven Objekte.
+	 */
+	private CopyOnWriteArrayList<Passivator> passive = new CopyOnWriteArrayList<Passivator>();
+
+	/**
+	 * Eine Liste aller Gravitatoren (indirekt Aktivobjekte)
+	 */
+	private CopyOnWriteArrayList<Gravitator> gravitatoren = new CopyOnWriteArrayList<Gravitator>();
+
+	/**
+	 * Der Rundenzaehler der Physik
+	 */
+	private int runde = 1;
+
+	/**
+	 * Konstruktor fuer Objekte der Klasse Physik
+	 *
+	 * @param kapazitaet
+	 * 		Gibt an, wie viele Kollisionspartner maximal merkbar sind
+	 */
+	private Physik () {
+		super("Physik-Management");
+		Manager.standard.anmelden(new Ticker() {
+			public void tick () {
+				for (Auftrag a : kollisionsListe) {
+					a.test();
+				}
+			}
+		}, 35);
+		this.anmelden(this, 1);
+	}
+
 	/**
 	 * Neutralisiert die aktuelle Physik und macht Platz fuer eine neue.
 	 */
-	public static void neutralize() {
+	public static void neutralize () {
 		if (physik == null)
 			return;
 		// Beendet Berechnungen
@@ -91,146 +102,129 @@ public class Physik extends Manager implements Ticker {
 		}
 		physik = null;
 	}
-	
+
 	/**
-	 * Konstruktor fuer Objekte der Klasse Physik
-	 * 
-	 * @param kapazitaet
-	 *            Gibt an, wie viele Kollisionspartner maximal merkbar sind
-	 */
-	private Physik() {
-		super("Physik-Management");
-		Manager.standard.anmelden(new Ticker() {
-			public void tick() {
-				for (Auftrag a : kollisionsListe) {
-					a.test();
-				}
-			}
-		}, 35);
-		this.anmelden(this, 1);
-	}
-	
-	/**
-	 * Realisierung eines <i>Singleton</i>. Da es nur eine Physik pro Anwendung gibt,
-	 * garantiert diese statische Methode, dass es nur ein Physik Objekt gibt, da keine
-	 * Physik-Objekte erstellt werden koennen.
-	 * 
+	 * Realisierung eines <i>Singleton</i>. Da es nur eine Physik pro Anwendung gibt, garantiert
+	 * diese statische Methode, dass es nur ein Physik Objekt gibt, da keine Physik-Objekte erstellt
+	 * werden koennen.
+	 *
 	 * @return Das aktive Physik-Objekt.
 	 */
-	public static final Physik getPhysik() {
+	public static final Physik getPhysik () {
 		if (physik == null) {
 			physik = new Physik();
 		}
 		return physik;
 	}
-	
+
 	/**
 	 * Meldet einen Passivator an.
-	 * 
+	 *
 	 * @param p
-	 *            Der Passivator, der anzumelden ist.
+	 * 		Der Passivator, der anzumelden ist.
 	 */
-	public void passivAnmelden(Passivator p) {
+	public void passivAnmelden (Passivator p) {
 		passive.add(p);
 	}
-	
+
 	/**
 	 * Meldet einen Passivator wieder ab - Vorausgesetzt er war auch angemeldet.
-	 * 
+	 *
 	 * @param p
-	 *            Der abzumeldende Passivator
+	 * 		Der abzumeldende Passivator
 	 */
-	public void passivAbmelden(Passivator p) {
+	public void passivAbmelden (Passivator p) {
 		passive.remove(p);
 	}
-	
+
 	/**
 	 * Meldet einen Gravitator fuer Aktiv-Objekte an.
-	 * 
+	 *
 	 * @param g
-	 *            Der anzumeldende Gravitator
+	 * 		Der anzumeldende Gravitator
 	 */
-	public void aktivAnmelden(Gravitator g) {
+	public void aktivAnmelden (Gravitator g) {
 		gravitatoren.add(g);
 	}
-	
+
 	/**
 	 * Meldet einen Gravitator wieder ab - Vorausgesetzt er war auch angemeldet.
-	 * 
+	 *
 	 * @param p
-	 *            Der abzumeldende Gravitator
+	 * 		Der abzumeldende Gravitator
 	 */
-	public void aktivAbmelden(Gravitator g) {
+	public void aktivAbmelden (Gravitator g) {
 		gravitatoren.remove(g);
 	}
-	
+
 	/**
 	 * Setzt alle Aktiv-Objekte, die eine bestimmte Flaeche uebertreten, in einen Knoten.
-	 * 
+	 *
 	 * @param k
-	 *            In diesen Knoten werden alle Aktiv-Objekte, die die Flaeche betreten eingefuegt.
+	 * 		In diesen Knoten werden alle Aktiv-Objekte, die die Flaeche betreten eingefuegt.
 	 * @param b
-	 *            Dieses BoundingRechteck beschreibt die kritische Flaeche.
+	 * 		Dieses BoundingRechteck beschreibt die kritische Flaeche.
 	 */
-	public synchronized void alleAktivenEinsetzen(Knoten k, BoundingRechteck b) {
+	public synchronized void alleAktivenEinsetzen (Knoten k, BoundingRechteck b) {
 		for (Gravitator g : gravitatoren) {
 			if (g.ziel().inFlaeche(b)) {
 				k.add(g.ziel());
 			}
 		}
 	}
-	
+
 	/**
-	 * Setzt alle Aktiv-Objekte, die eine bestimmte Flaeche uebertreten, nicht jedoch nach der Verschiebung ein Passiv-Objekt
-	 * schneiden, in einen Knoten.
-	 * 
+	 * Setzt alle Aktiv-Objekte, die eine bestimmte Flaeche uebertreten, nicht jedoch nach der
+	 * Verschiebung ein Passiv-Objekt schneiden, in einen Knoten.
+	 *
 	 * @param k
-	 *            In diesen Knoten werden alle Aktiv-Objekte, die die Flaeche betreten, nicht jedoch nach der Verschiebung
-	 *            problematisch waeren eingefuegt.
+	 * 		In diesen Knoten werden alle Aktiv-Objekte, die die Flaeche betreten, nicht jedoch nach der
+	 * 		Verschiebung problematisch waeren eingefuegt.
 	 * @param b
-	 *            Dieses BoundingRechteck beschreibt die kritische Flaeche.
+	 * 		Dieses BoundingRechteck beschreibt die kritische Flaeche.
 	 * @param v
-	 *            Die kritische Verschiebung.
+	 * 		Die kritische Verschiebung.
 	 */
-	public synchronized void alleAktivenTestenUndEinsetzen(Knoten k, BoundingRechteck b, Vektor v) {
+	public synchronized void alleAktivenTestenUndEinsetzen (Knoten k, BoundingRechteck b, Vektor v) {
 		for (Gravitator g : gravitatoren) {
 			if (g.ziel().inFlaeche(b) && !inPassivem(g.ziel().dimension().verschobeneInstanz(v))) {
 				k.add(g.ziel());
 			}
 		}
 	}
-	
+
 	/**
-	 * Setzt alle Aktiv-Objekte, die eine bestimmte Flaeche uebertreten, nicht jedoch nach der Verschiebung ein Passiv-Objekt
-	 * schneiden - mit einer bestimmten Ausnahme - in einen Knoten.
-	 * 
+	 * Setzt alle Aktiv-Objekte, die eine bestimmte Flaeche uebertreten, nicht jedoch nach der
+	 * Verschiebung ein Passiv-Objekt schneiden - mit einer bestimmten Ausnahme - in einen Knoten.
+	 *
 	 * @param k
-	 *            In diesen Knoten werden alle Aktiv-Objekte, die die Flaeche betreten, nicht jedoch nach der Verschiebung
-	 *            problematisch waeren eingefuegt.
+	 * 		In diesen Knoten werden alle Aktiv-Objekte, die die Flaeche betreten, nicht jedoch nach der
+	 * 		Verschiebung problematisch waeren eingefuegt.
 	 * @param b
-	 *            Dieses BoundingRechteck beschreibt die kritische Flaeche.
+	 * 		Dieses BoundingRechteck beschreibt die kritische Flaeche.
 	 * @param v
-	 *            Die kritische Verschiebung.
+	 * 		Die kritische Verschiebung.
 	 * @param p
-	 *            Die eine Ausnahme als Passivator
+	 * 		Die eine Ausnahme als Passivator
 	 */
-	public synchronized void alleAktivenTestenUndEinsetzenOhne(Knoten k, BoundingRechteck b, Vektor v, Passivator p) {
+	public synchronized void alleAktivenTestenUndEinsetzenOhne (Knoten k, BoundingRechteck b, Vektor v, Passivator p) {
 		for (Gravitator g : gravitatoren) {
 			if (g.ziel().inFlaeche(b) && !inPassivemAusser(g.ziel().dimension().verschobeneInstanz(v), p)) {
 				k.add(g.ziel());
 			}
 		}
 	}
-	
+
 	/**
 	 * Prueft, ob eine Flaeche ein Passiv-Objekt schneidet.
-	 * 
+	 *
 	 * @param r
-	 *            Die Flaeche der Ueberprueftung, als BoundingRechteck
-	 * @return <code>true</code>, wenn diese Flaeche ein Passivobjekt schneidet,
-	 *         sonst <code>false</code>.
+	 * 		Die Flaeche der Ueberprueftung, als BoundingRechteck
+	 *
+	 * @return <code>true</code>, wenn diese Flaeche ein Passivobjekt schneidet, sonst
+	 * <code>false</code>.
 	 */
-	public synchronized boolean inPassivem(BoundingRechteck r) {
+	public synchronized boolean inPassivem (BoundingRechteck r) {
 		for (Passivator p : passive) {
 			if (p.in(r)) {
 				return true;
@@ -238,17 +232,19 @@ public class Physik extends Manager implements Ticker {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Gibt die Verschiebung zurueck, die noetig waere um das geblockte Bounding-Rechteck aus
-	 * seinem Zustand des Passiv-Blockiertseins zu loesen.
-	 * 
+	 * Gibt die Verschiebung zurueck, die noetig waere um das geblockte Bounding-Rechteck aus seinem
+	 * Zustand des Passiv-Blockiertseins zu loesen.
+	 *
 	 * @param r
-	 *            Das zu entblockende BoundingRechteck
-	 * @return Die Verschiebung, die noetig waere, um das BoundingRechteck aus dem Passiv-Geblocktsein
-	 *         zu Loesen. Hat die Werte (0|0) fuer den Fall, dass das Bounding-Rechteck gar nicht passiv blockiert ist.
+	 * 		Das zu entblockende BoundingRechteck
+	 *
+	 * @return Die Verschiebung, die noetig waere, um das BoundingRechteck aus dem
+	 * Passiv-Geblocktsein zu Loesen. Hat die Werte (0|0) fuer den Fall, dass das Bounding-Rechteck
+	 * gar nicht passiv blockiert ist.
 	 */
-	public synchronized Vektor entblocken(BoundingRechteck r) {
+	public synchronized Vektor entblocken (BoundingRechteck r) {
 		for (Passivator p : passive) {
 			if (p.in(r)) {
 				float x = 0, y = 0;
@@ -274,19 +270,21 @@ public class Physik extends Manager implements Ticker {
 		}
 		return Vektor.NULLVEKTOR;
 	}
-	
+
 	/**
 	 * Die Interne Block methode zum garantierten entblocken eines BoundingRechtecks OHNE
 	 * StackOverflow.
-	 * 
+	 *
 	 * @param r
-	 *            Das zu entblockende BR
+	 * 		Das zu entblockende BR
 	 * @param letzte
-	 *            Die letzte Verschiebung (aus der Methode <code>entblocken(Vektor)</code>)
+	 * 		Die letzte Verschiebung (aus der Methode <code>entblocken(Vektor)</code>)
+	 *
 	 * @return Die noch noetige Verschiebung, um das Bounding-Rechteck sicher zu entblocken.
+	 *
 	 * @see entblocken(BoundingRechteck)
 	 */
-	private synchronized Vektor entblocken(BoundingRechteck r, Vektor letzte) {
+	private synchronized Vektor entblocken (BoundingRechteck r, Vektor letzte) {
 		for (Passivator p : passive) {
 			if (p.in(r)) {
 				float x = 0, y = 0;
@@ -312,18 +310,19 @@ public class Physik extends Manager implements Ticker {
 		}
 		return Vektor.NULLVEKTOR;
 	}
-	
+
 	/**
 	 * Prueft, ob eine Flaeche ein Passiv-Objekt - bis auf eine Ausnahme schneidet.
-	 * 
+	 *
 	 * @param r
-	 *            Die Flaeche der Ueberprueftung, als BoundingRechteck
+	 * 		Die Flaeche der Ueberprueftung, als BoundingRechteck
 	 * @param aus
-	 *            Die eine Ausnahme, die bei den Kollisionstests nicht beruecksichtigt wird.
-	 * @return <code>true</code>, wenn diese Flaeche ein Passivobjekt - ausser der einen Ausnahme - schneidet,
-	 *         sonst <code>false</code>.
+	 * 		Die eine Ausnahme, die bei den Kollisionstests nicht beruecksichtigt wird.
+	 *
+	 * @return <code>true</code>, wenn diese Flaeche ein Passivobjekt - ausser der einen Ausnahme -
+	 * schneidet, sonst <code>false</code>.
 	 */
-	public synchronized boolean inPassivemAusser(BoundingRechteck r, Passivator aus) {
+	public synchronized boolean inPassivemAusser (BoundingRechteck r, Passivator aus) {
 		for (Passivator p : passive) {
 			if (p.equals(aus)) {
 				continue;
@@ -334,12 +333,49 @@ public class Physik extends Manager implements Ticker {
 		}
 		return false;
 	}
-	
+
 	/**
+	 * Meldet ein KollisionsReagierbar-Interface bei der Physik an. Zusammen mit den 2 auf Kollision
+	 * zu ueberwachenden Raum-Objekten sowie dem Code, der bei dem Aufruf beim Treffer zwischen den
+	 * beiden mitgegeben werden soll.<br /> <br /> <br /> <br />
+	 * <p/>
+	 * Die <code>kollision(int code)</code>-Methode des anzumeldenden <code>KollisionsReagierbar</code>-Interfaces
+	 * wird ab sofort immer dann aufgerufen wenn:<br /> 1. beide Raum-Objekte schneiden<br /> und 2.
+	 * beide Raum-Objekte sichtbar sind<br /> <br /> <br /> <br /> <br /> <br />
+	 * <p/>
+	 * Diese Methode wird solange immer wieder aufgerufen, wie die Kollision besteht! Wird also in
+	 * der <code>kollision(int code)</code>-Methode nicht dafuer gesorgt, dass sich die Objekte
+	 * nicht mehr schneiden, <b>so wird diese Methode wieder und wieder aufgerufen!</b> <br /> <br
+	 * /> <br /> <br /> <br /> <br />
+	 * <p/>
+	 * <b>ACHTUNG</b><br /> Es sollten niemals 2 Knoten oder Geometrie (oder ein Knoten und ein
+	 * Geometrie) - Objekte gleichzeitig angemeldet werden. Ist dies der Fall, ist der
+	 * Kollisionstest nicht so genau, wie er seien koennte.
+	 *
+	 * @param k
+	 * 		Das KollisionsReagierbar-Objekt, das benachrichtigt wird, wenn beide Objekte kollidieren
+	 * @param r1
+	 * 		Der erste Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt
+	 * 		benachrichtigt
+	 * @param r2
+	 * 		Der zweite Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt
+	 * 		benachrichtigt
+	 * @param code
+	 * 		Der Code, der <b>dem <code>KollisionsReagierbar</code>-Objekt als Parameter in seiner
+	 * 		reagieren()-Methode mitgegeben werden soll</b>.
+	 */
+	public void anmelden (KollisionsReagierbar k, Raum r1, Raum r2, int code) {
+		if (r2 instanceof Knoten) {
+			Raum r = r1;
+			r1 = r2;
+			r2 = r;
+		}
+		kollisionsListe.add(new Auftrag(r1, r2, k, code));
+	}	/**
 	 * In diesem Tick findet ein DELTA-t der Physik statt (= 1ms).
 	 */
 	@Override
-	public void tick() {
+	public void tick () {
 		for (Gravitator g : gravitatoren) {
 			g.tick(runde);
 		}
@@ -349,81 +385,38 @@ public class Physik extends Manager implements Ticker {
 			runde++;
 		}
 	}
-	
+
 	// <editor-fold defaultstate="collapsed" desc="KollisionReagierbar">
+
 	/**
-	 * Meldet ein KollisionsReagierbar-Interface bei der Physik an. Zusammen mit den 2 auf Kollision zu ueberwachenden
-	 * Raum-Objekten sowie dem Code, der bei dem Aufruf beim Treffer zwischen den beiden mitgegeben werden soll.<br />
-	 * <br />
-	 * <br />
-	 * <br />
-	 * 
-	 * Die <code>kollision(int code)</code>-Methode des anzumeldenden <code>KollisionsReagierbar</code>-Interfaces wird ab sofort immer
-	 * dann aufgerufen wenn:<br />
-	 * 1. beide Raum-Objekte schneiden<br />
-	 * und 2. beide Raum-Objekte sichtbar sind<br />
-	 * <br />
-	 * <br />
-	 * <br />
-	 * <br />
-	 * <br />
-	 * 
-	 * Diese Methode wird solange immer wieder aufgerufen, wie die Kollision besteht! Wird also in der <code>kollision(int code)</code>-Methode
-	 * nicht dafuer gesorgt, dass sich die Objekte nicht mehr schneiden, <b>so wird diese Methode wieder und wieder aufgerufen!</b> <br />
-	 * <br />
-	 * <br />
-	 * <br />
-	 * <br />
-	 * <br />
-	 * 
-	 * <b>ACHTUNG</b><br />
-	 * Es sollten niemals 2 Knoten oder Geometrie (oder ein Knoten und ein Geometrie) - Objekte gleichzeitig angemeldet werden. Ist dies der
-	 * Fall, ist der Kollisionstest nicht so genau, wie er seien koennte.
-	 * 
+	 * Vereinfachte Form der anmelden()-Methode fuer Kollisionstests.<br /> Hierbei wird immer der
+	 * Code </code>code = 0</code> bei der <code>reagieren()</code>-Methode mitgegeben, somit ist
+	 * beim Aufruf dieser Methode <b>keine Fallunterscheidung innerhalb eines
+	 * <code>FallReagierbar</code>-Objektes moeglich!</b>
+	 *
 	 * @param k
-	 *            Das KollisionsReagierbar-Objekt, das benachrichtigt wird, wenn beide Objekte kollidieren
+	 * 		Das KollisionsReagierbar-Objekt, das benachrichtigt wird, wenn beide Objekte kollidieren
 	 * @param r1
-	 *            Der erste Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt benachrichtigt
+	 * 		Der erste Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt
+	 * 		benachrichtigt
 	 * @param r2
-	 *            Der zweite Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt benachrichtigt
-	 * @param code
-	 *            Der Code, der <b>dem <code>KollisionsReagierbar</code>-Objekt als Parameter in seiner reagieren()-Methode
-	 *            mitgegeben werden soll</b>.
-	 */
-	public void anmelden(KollisionsReagierbar k, Raum r1, Raum r2, int code) {
-		if (r2 instanceof Knoten) {
-			Raum r = r1;
-			r1 = r2;
-			r2 = r;
-		}
-		kollisionsListe.add(new Auftrag(r1, r2, k, code));
-	}
-	
-	/**
-	 * Vereinfachte Form der anmelden()-Methode fuer Kollisionstests.<br />
-	 * Hierbei wird immer der Code </code>code = 0</code> bei der <code>reagieren()</code>-Methode mitgegeben, somit
-	 * ist beim Aufruf dieser Methode <b>keine Fallunterscheidung innerhalb eines <code>FallReagierbar</code>-Objektes moeglich!</b>
-	 * 
-	 * @param k
-	 *            Das KollisionsReagierbar-Objekt, das benachrichtigt wird, wenn beide Objekte kollidieren
-	 * @param r1
-	 *            Der erste Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt benachrichtigt
-	 * @param r2
-	 *            Der zweite Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt benachrichtigt
+	 * 		Der zweite Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt
+	 * 		benachrichtigt
+	 *
 	 * @see #anmelden(KollisionsReagierbar, Raum, Raum, int)
 	 */
-	public void anmelden(KollisionsReagierbar k, Raum r1, Raum r2) {
+	public void anmelden (KollisionsReagierbar k, Raum r1, Raum r2) {
 		anmelden(k, r1, r2, 0);
 	}
-	
+
 	/**
-	 * Sorgt dafuer, das saemtliche Kollsiionsueberwachungsauftraege eines <code>KollisionsReagierbar</code>-Interfaces nicht mehr
-	 * ausgefuehrt werden.
-	 * 
+	 * Sorgt dafuer, das saemtliche Kollsiionsueberwachungsauftraege eines
+	 * <code>KollisionsReagierbar</code>-Interfaces nicht mehr ausgefuehrt werden.
+	 *
 	 * @param k
-	 *            Das Interface, an dem jede Ueberwachung von Raum-Objekten abgebrochen werden soll.
+	 * 		Das Interface, an dem jede Ueberwachung von Raum-Objekten abgebrochen werden soll.
 	 */
-	public void entfernen(KollisionsReagierbar k) {
+	public void entfernen (KollisionsReagierbar k) {
 		ArrayList<Auftrag> out = new ArrayList<Auftrag>();
 		for (Auftrag a : kollisionsListe) {
 			if (a.benachrichtigt(k)) {
@@ -434,65 +427,68 @@ public class Physik extends Manager implements Ticker {
 			kollisionsListe.remove(a);
 		}
 	}
-	
+
 	/**
 	 * Die Auftraege, der Kollisionstests
 	 */
 	private final class Auftrag {
 		//
-		
+
 		/**
 		 * Kollisionspartner eins/Ausgangspunkt der Kollisionstests
 		 */
 		private final Raum r1;
+
 		/**
 		 * Kollisionspartner 2
 		 */
 		private final Raum r2;
+
 		/**
 		 * Der Listener
 		 */
 		private final KollisionsReagierbar listener;
+
 		/**
 		 * Der Code dieses Auftrags
 		 */
 		private final int code;
-		
+
 		/**
 		 * Konstruktor
-		 * 
+		 *
 		 * @param r1
-		 *            Koll-Data 1
+		 * 		Koll-Data 1
 		 * @param r2
-		 *            Koll-Data 2
+		 * 		Koll-Data 2
 		 * @param k
-		 *            Listener
+		 * 		Listener
 		 * @param code
-		 *            Code
+		 * 		Code
 		 */
-		public Auftrag(Raum r1, Raum r2, KollisionsReagierbar k, int code) {
+		public Auftrag (Raum r1, Raum r2, KollisionsReagierbar k, int code) {
 			this.r1 = r1;
 			this.r2 = r2;
 			listener = k;
 			this.code = code;
 		}
-		
+
 		/**
 		 * Fuert einen Kollisionstest durch
 		 */
-		public void test() {
+		public void test () {
 			if (r1.schneidet(r2) && r1.sichtbar() && r2.sichtbar()) {
 				listener.kollision(code);
 			}
 		}
-		
+
 		/**
-		 * 
-		 * @param k
 		 * @return TRUE, wenn dieser Listener benachrichtigt wird
 		 */
-		public boolean benachrichtigt(KollisionsReagierbar k) {
+		public boolean benachrichtigt (KollisionsReagierbar k) {
 			return listener == k;
 		}
 	}// </editor-fold>
+
+
 }

@@ -11,12 +11,13 @@ import static org.junit.Assert.assertNotNull;
 
 public class OptimizerTest {
 	@Test
-	public void optimizeImage() {
+	public void optimizeImage () {
 		BufferedImage img = null;
 
 		try {
 			img = ImageIO.read(EngineAlpha.class.getResource("/ea/assets/logo.png"));
-		} catch(Exception e) { }
+		} catch (Exception e) {
+		}
 
 		assertNotNull(img);
 

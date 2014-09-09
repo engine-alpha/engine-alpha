@@ -23,17 +23,17 @@ import ea.Rechteck;
 
 /**
  * Ein einfaches "edu"-Dummmie-Rechteck.
- * 
+ *
  * @author Michael Andonie
  */
 public class RechteckE extends Rechteck {
 	private static final long serialVersionUID = -3793677493595048830L;
 
 	/**
-	 * Konstruktor eines "edu"-Rechtecks. Erstellt selbiges und macht es im
-	 * "edu"-Standartfenster sichtbar.
+	 * Konstruktor eines "edu"-Rechtecks. Erstellt selbiges und macht es im "edu"-Standartfenster
+	 * sichtbar.
 	 */
-	public RechteckE() {
+	public RechteckE () {
 		super(50, 200, 200, 130);
 		farbeSetzen("Rot");
 		FensterE.getFenster().wurzel.add(this);

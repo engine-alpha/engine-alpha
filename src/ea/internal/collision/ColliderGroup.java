@@ -19,14 +19,14 @@
 
 package ea.internal.collision;
 
-import java.util.ArrayList;
-
 import ea.Punkt;
+
+import java.util.ArrayList;
 
 /**
  * Eine Aggregation von Collidern.
- * @author andonie
  *
+ * @author andonie
  */
 public class ColliderGroup extends Collider {
 
@@ -34,34 +34,35 @@ public class ColliderGroup extends Collider {
 	 * Die Liste der Collider, die zu dieser Collider-Group geh�ren.
 	 */
 	private ArrayList<Collider> colliders = new ArrayList<Collider>();
-	
+
 	/**
 	 * Fügt einen neuen Collider zu dieser Group hinzu.
-	 * @param c	Der hinzuzuf�gende Collider.
+	 *
+	 * @param c
+	 * 		Der hinzuzuf�gende Collider.
 	 */
-	public void addCollider(Collider c) {
+	public void addCollider (Collider c) {
 		colliders.add(c);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean verursachtCollision(Punkt positionThis, Punkt positionOther, Collider collider) {
+	public boolean verursachtCollision (Punkt positionThis, Punkt positionOther, Collider collider) {
 		Punkt positionMitOffset = positionThis.verschobenerPunkt(offset);
-		for(Collider c : colliders) {
-			if(c.verursachtCollision(positionMitOffset, positionOther, collider))
+		for (Collider c : colliders) {
+			if (c.verursachtCollision(positionMitOffset, positionOther, collider))
 				return true;
 		}
 		return false;
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * Gibt <code>true</code> zur�ck.
+	 * {@inheritDoc} Gibt <code>true</code> zur�ck.
 	 */
 	@Override
-	public boolean istNullCollider() {
+	public boolean istNullCollider () {
 		return false;
 	}
 
@@ -69,12 +70,11 @@ public class ColliderGroup extends Collider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collider clone() {
+	public Collider clone () {
 		ColliderGroup group = new ColliderGroup();
-		for(Collider c : colliders) {
+		for (Collider c : colliders) {
 			group.addCollider(c.clone());
 		}
 		return group;
 	}
-	
 }

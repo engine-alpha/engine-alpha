@@ -23,51 +23,50 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Der Leuchtmacher sorgt fuer das Leuchten seiner angemeldeten Leuchtend-Objekte.
- * 
+ *
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
+@SuppressWarnings ("serial")
 public class LeuchtMacher implements Ticker {
 	/**
 	 * Die Liste aller Leuchter.
 	 */
 	private CopyOnWriteArrayList<Leuchtend> leuchter = new CopyOnWriteArrayList<Leuchtend>();
-	
+
 	/**
-	 * Konstruktor fuer Objekte der Klasse LeuchtMacher.<br />
-	 * <b>Dieser sollte niemals vom Entwickler aufgerufen werden!</b><br />
-	 * Dies passiert einmalig intern!!
+	 * Konstruktor fuer Objekte der Klasse LeuchtMacher.<br /> <b>Dieser sollte niemals vom
+	 * Entwickler aufgerufen werden!</b><br /> Dies passiert einmalig intern!!
 	 */
-	public LeuchtMacher() {
+	public LeuchtMacher () {
 		Manager.standard.anmelden(this, 20);
 	}
-	
+
 	/**
 	 * Fuegt ein neues Objekt zum evtl leuchten lassen Hinzu.
-	 * 
+	 *
 	 * @param l
-	 *            Das hinzuzufuegende Leuchtend-Objekt
+	 * 		Das hinzuzufuegende Leuchtend-Objekt
 	 */
-	public void add(Leuchtend l) {
+	public void add (Leuchtend l) {
 		leuchter.add(l);
 	}
-	
+
 	/**
 	 * Entfernt ein bestimmtes Leuchtend-Objekt, wenn vorhanden
-	 * 
+	 *
 	 * @param l
-	 *            Das zu entfernende Leuchtend-Objekt, ist dies nicht vorhanden, passiert gar nichts.
+	 * 		Das zu entfernende Leuchtend-Objekt, ist dies nicht vorhanden, passiert gar nichts.
 	 */
-	public void entfernen(Leuchtend l) {
+	public void entfernen (Leuchtend l) {
 		leuchter.remove(l);
 	}
-	
+
 	/**
-	 * Die tick()-Methode.<br />
-	 * In ihr wird fuer das eventuelle leuchten der einzelnen Leuchtend-Objekte gesorgt.
+	 * Die tick()-Methode.<br /> In ihr wird fuer das eventuelle leuchten der einzelnen
+	 * Leuchtend-Objekte gesorgt.
 	 */
 	@Override
-	public void tick() {
+	public void tick () {
 		for (Leuchtend l : leuchter) {
 			if (l.leuchtet()) {
 				l.leuchtSchritt();

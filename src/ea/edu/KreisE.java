@@ -23,17 +23,17 @@ import ea.Kreis;
 
 /**
  * Ein einfacher "edu"-Dummie-Kreis.
- * 
+ *
  * @author Michael Andonie
  */
 public class KreisE extends Kreis {
 	private static final long serialVersionUID = 4781036275816114585L;
 
 	/**
-	 * Konstruktor eines "edu"-Kreises.<br />
-	 * Erstellt standartmaessig einen solchen und macht ihn im "edu"-Standartfenster sichtbar.
+	 * Konstruktor eines "edu"-Kreises.<br /> Erstellt standartmaessig einen solchen und macht ihn
+	 * im "edu"-Standartfenster sichtbar.
 	 */
-	public KreisE() {
+	public KreisE () {
 		super(300, 200, 100);
 		farbeSetzen("Blau");
 		FensterE.getFenster().wurzel.add(this);

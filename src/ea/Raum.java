@@ -1007,7 +1007,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	@NoExternalUse
 	public final void beforeRender (Graphics2D g, BoundingRechteck r) {
-		lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(- r.x, -r.y));
+		lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
 		lastDrehung = Math.toRadians(drehung);
 
 		g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
@@ -1260,20 +1260,20 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @return Gibt die aktuelle Opacity des Raumes zurück.
 	 */
 	@API
-	@SuppressWarnings("unused")
+	@SuppressWarnings ( "unused" )
 	public float getOpacity () {
 		return opacity;
 	}
 
 	/**
 	 * Setzt die Opacity des Raumes.
-	 *
+	 * <p/>
 	 * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Raum.</li>
 	 * <li><code>1.0f</code> entspricht einem undurchsichtigem Raum.</li></ul>
 	 */
 	@API
-	@SuppressWarnings("unused")
-	public void setOpacity(float opacity) {
+	@SuppressWarnings ( "unused" )
+	public void setOpacity (float opacity) {
 		this.opacity = opacity;
 	}
 

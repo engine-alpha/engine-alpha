@@ -26,7 +26,7 @@ package ea;
  *
  * @author Michael Andonie
  */
-@SuppressWarnings ( "serial" )
+@SuppressWarnings ("serial")
 public class RegEck extends Geometrie {
 	/**
 	 * Die Anzahl an Ecken.<br /> Es kann keine Form mit weniger als 3 Ecken geben!

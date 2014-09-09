@@ -757,7 +757,7 @@ public class Fenster extends Frame {
 		final boolean links = e.getButton() != MouseEvent.BUTTON3;
 
 		if (hatMaus()) {
-			if(maus.absolut() || maus.bewegend()) {
+			if (maus.absolut() || maus.bewegend()) {
 				Punkt p = maus.klickAufZeichenebene();
 				maus.klick(p.x(), p.y(), links, losgelassen);
 			} else { // FIXME REVIEW BUG
@@ -810,14 +810,14 @@ public class Fenster extends Frame {
 
 	/**
 	 * Ordnet vom Java-KeyCode-System in das EA-System um.
-	 *
+	 * <p/>
 	 * Seit Version 3.0.3 ersetzt durch {@link ea.Taste#vonJava(int)}.
 	 *
 	 * @param keyCode
 	 * 		Der Java-KeyCode
 	 *
-	 * @return Entsprechender EA-KeyCode oder <code>-1</code>, falls es keinen passenden
-	 * EA-KeyCode gibt.
+	 * @return Entsprechender EA-KeyCode oder <code>-1</code>, falls es keinen passenden EA-KeyCode
+	 * gibt.
 	 *
 	 * @deprecated Seit v3.0.3. Durch {@link ea.Taste#vonJava(int)} ersetzt.
 	 */

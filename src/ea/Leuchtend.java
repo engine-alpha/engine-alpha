@@ -20,32 +20,36 @@
 package ea;
 
 /**
- * Leuchtend implementieren intern alle Klassen, die leuchten koennen.<br />
- * Bei den erbenden Klassen muss nur die Methode <code>leuchtetSetzen()</code> ausgefuehrt werden.
- * 
+ * Leuchtend implementieren intern alle Klassen, die leuchten koennen.<br /> Bei den erbenden
+ * Klassen muss nur die Methode <code>leuchtetSetzen()</code> ausgefuehrt werden.
+ *
  * @author Michael Andonie
  */
 public interface Leuchtend {
-    /**
-     * Setzt, ob dieses Leuchtend-Objekt leuchten soll.<br />
-     * Ist dies der Fall, so werden immer wieder schnell dessen Farben geaendert; so entsteht ein Leuchteffekt.
-     * @param   leuchtet    Ob dieses Objekt nun leuchten soll oder nicht (mehr).<br />
-     * <b>Achtung:</b> Die Leuchtfunktion kann bei bestimmten Klassen sehr psychadelisch und aufreizend wirken! Daher 
-     * sollte sie immer mit Bedacht und in Nuancen verwendet werden!
-     */
-    public abstract void leuchtetSetzen(boolean leuchtet);
-    
-    /**
-     * Fuehrt einen Leuchtschritt aus.<br />
-     * Dies heisst, dass in dieser Methode die Farbe einfach gewechselt wird. Da diese Methode schnell und oft hintereinander 
-     * ausgefuehrt wird, soll so der Leuchteffekt entstehen.<br />
-     * <b>Diese Methode sollte nur innerhalb der Engine ausgefuehrt werden! Also nicht fuer den Entwickler gedacht.</b>
-     */
-    public abstract void leuchtSchritt();
-    
-    /**
-     * Gibt wieder, ob das Leuchtet-Objekt gerade leuchtet oder nicht.
-     * @return  <code>true</code>, wenn das Objekt gerade leuchtet, wenn nicht, dann ist die Rueckgabe <code>false</code>
-     */
-    public abstract boolean leuchtet();
+	/**
+	 * Setzt, ob dieses Leuchtend-Objekt leuchten soll.<br /> Ist dies der Fall, so werden immer
+	 * wieder schnell dessen Farben geaendert; so entsteht ein Leuchteffekt.
+	 *
+	 * @param leuchtet
+	 * 		Ob dieses Objekt nun leuchten soll oder nicht (mehr).<br /> <b>Achtung:</b> Die
+	 * 		Leuchtfunktion kann bei bestimmten Klassen sehr psychadelisch und aufreizend wirken! Daher
+	 * 		sollte sie immer mit Bedacht und in Nuancen verwendet werden!
+	 */
+	public abstract void leuchtetSetzen (boolean leuchtet);
+
+	/**
+	 * Fuehrt einen Leuchtschritt aus.<br /> Dies heisst, dass in dieser Methode die Farbe einfach
+	 * gewechselt wird. Da diese Methode schnell und oft hintereinander ausgefuehrt wird, soll so
+	 * der Leuchteffekt entstehen.<br /> <b>Diese Methode sollte nur innerhalb der Engine
+	 * ausgefuehrt werden! Also nicht fuer den Entwickler gedacht.</b>
+	 */
+	public abstract void leuchtSchritt ();
+
+	/**
+	 * Gibt wieder, ob das Leuchtet-Objekt gerade leuchtet oder nicht.
+	 *
+	 * @return <code>true</code>, wenn das Objekt gerade leuchtet, wenn nicht, dann ist die
+	 * Rueckgabe <code>false</code>
+	 */
+	public abstract boolean leuchtet ();
 }

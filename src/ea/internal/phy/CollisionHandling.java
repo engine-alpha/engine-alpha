@@ -110,7 +110,7 @@ public class CollisionHandling {
 		}
 	}
 
-	@SuppressWarnings ( "serial" )
+	@SuppressWarnings ("serial")
 	private static class CollisionRoutine implements Ticker {
 		@Override
 		public void tick () {

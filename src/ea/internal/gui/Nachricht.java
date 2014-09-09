@@ -19,44 +19,38 @@
 
 package ea.internal.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
- * Nachricht ist ein modaler Dialog, der einfach eine Nachricht an den Benutzer ausgibt.<br />
- * Diese KLasse wird innerhalb des Fensters gehandelt. Hierzu muss nur folgendes passieren:
- * <b>Beispiel:</b><br />
- * <br />
- * <code>
- * //Das instanziierte Fenster<br />
- * Fenster fenster;<br />
- * <br />
- * //Senden einer Fensternachricht<br />
- * fenster.nachrichtAusgeben("Hallo Benutzer", true);<br />
- * </code><br />
- * Das <code>true</code> bei der Methode sorgt dafuer, das die Nachricht erst beendet werden muss, bevor
- * die Methode beendet ist. Fuer naeheres siehe die Dokumentation der Methode in der Klasse Fenster.
- * 
+ * Nachricht ist ein modaler Dialog, der einfach eine Nachricht an den Benutzer ausgibt.<br /> Diese
+ * KLasse wird innerhalb des Fensters gehandelt. Hierzu muss nur folgendes passieren:
+ * <b>Beispiel:</b><br /> <br /> <code> //Das instanziierte Fenster<br /> Fenster fenster;<br /> <br
+ * /> //Senden einer Fensternachricht<br /> fenster.nachrichtAusgeben("Hallo Benutzer", true);<br />
+ * </code><br /> Das <code>true</code> bei der Methode sorgt dafuer, das die Nachricht erst beendet
+ * werden muss, bevor die Methode beendet ist. Fuer naeheres siehe die Dokumentation der Methode in
+ * der Klasse Fenster.
+ *
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
+@SuppressWarnings ("serial")
 public class Nachricht extends JDialog {
-	
+
 	/**
 	 * Der Konstruktor der Klasse Nachricht.
-	 * 
+	 *
 	 * @param parent
-	 *            Das noetige Parent-Fenster
+	 * 		Das noetige Parent-Fenster
 	 * @param modal
-	 *            Ob die Nachricht modal ist oder nicht.
+	 * 		Ob die Nachricht modal ist oder nicht.
 	 * @param nachricht
-	 *            Die Nachricht, die angezeigt werden soll.
+	 * 		Die Nachricht, die angezeigt werden soll.
 	 * @param font
-	 *            Der Darstellungsfont
+	 * 		Der Darstellungsfont
 	 */
-	public Nachricht(Frame parent, boolean modal, String nachricht, Font font) {
+	public Nachricht (Frame parent, boolean modal, String nachricht, Font font) {
 		super(parent, "Nachricht", modal);
 		setLayout(new BorderLayout());
 		Dimension screenSize = getToolkit().getScreenSize();
@@ -69,7 +63,7 @@ public class Nachricht extends JDialog {
 		JButton b = new JButton("OK");
 		b.setFont(font);
 		b.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed (ActionEvent e) {
 				dispose();
 			}
 		});

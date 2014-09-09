@@ -29,7 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class ImageLoader {
-	private ImageLoader() {
+	private ImageLoader () {
 		// keine Objekte erlaubt!
 	}
 
@@ -41,7 +41,7 @@ public class ImageLoader {
 	 *
 	 * @return geladenes Bild oder <code>null</code> im Fehlerfall.
 	 */
-	public static BufferedImage loadExternalImage(String path) {
+	public static BufferedImage loadExternalImage (String path) {
 		BufferedImage img = null;
 
 		try {
@@ -62,7 +62,7 @@ public class ImageLoader {
 	 *
 	 * @return geladenes Bild oder <code>null</code> im Fehlerfall.
 	 */
-	public static BufferedImage loadInternalImage(String path) {
+	public static BufferedImage loadInternalImage (String path) {
 		BufferedImage img = null;
 
 		try {

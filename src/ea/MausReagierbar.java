@@ -20,17 +20,21 @@
 package ea;
 
 /**
- * MausReagierbar ist ein Interface, das die Reaktionsmoeglichkeit auf einen Mausklick auf ein bestimmtes Objekt darstellt.
- * 
+ * MausReagierbar ist ein Interface, das die Reaktionsmoeglichkeit auf einen Mausklick auf ein
+ * bestimmtes Objekt darstellt.
+ *
  * @author Michael Andonie
  */
 
 public interface MausReagierbar {
-    /**
-     * Die Reaktion auf ein bestimmtes angeklicktes Element.
-     * @param   code    Der der Maus bei der Anmeldung vorgegebene Code, der fuer ein bestimmtes angeklicktes Objekt steht.<br />
-     * Demnach muss also bei der Maus ein Reagierbar mitsamt dem zu Ueberwachenden Raum-Objekt und dem Code, der dann in dieser Methode als Argument mitgegeben wird
-     * angemeldet werden.
-     */
-    public abstract void mausReagieren(int code);
+	/**
+	 * Die Reaktion auf ein bestimmtes angeklicktes Element.
+	 *
+	 * @param code
+	 * 		Der der Maus bei der Anmeldung vorgegebene Code, der fuer ein bestimmtes angeklicktes
+	 * 		Objekt steht.<br /> Demnach muss also bei der Maus ein Reagierbar mitsamt dem zu
+	 * 		Ueberwachenden Raum-Objekt und dem Code, der dann in dieser Methode als Argument mitgegeben
+	 * 		wird angemeldet werden.
+	 */
+	public abstract void mausReagieren (int code);
 }

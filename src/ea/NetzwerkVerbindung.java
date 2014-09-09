@@ -17,30 +17,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package ea;
 
 import java.io.BufferedWriter;
 
 /**
  * Diese Klasse sammelt die beiden wesentlichen Objekte einer Netzverbindung
- * (<code>NetwerkInterpreter</code>, der die Informationen an alle angemeldeten 
- * <code>Empfaenger</code> weitergibt sowie dem <code>Sender</code>, mit dem man
- * Informationen an die andere Seite schicken kann)und gibt dieser einen Namen.
- * 
+ * (<code>NetwerkInterpreter</code>, der die Informationen an alle angemeldeten
+ * <code>Empfaenger</code> weitergibt sowie dem <code>Sender</code>, mit dem man Informationen an
+ * die andere Seite schicken kann)und gibt dieser einen Namen.
+ *
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
 public class NetzwerkVerbindung extends Sender {
-	
+
 	/**
-	 * Der Name der Verbindung. Dies ist der Name, den der Client dem
-	 * Server mitgegeben hat.
+	 * Der Name der Verbindung. Dies ist der Name, den der Client dem Server mitgegeben hat.
 	 */
 	private final String name;
 
 	/**
-	 * Der interpreter, der die Sendungen des Partners grob verarbeitet
-	 * und weitterreicht.
+	 * Der interpreter, der die Sendungen des Partners grob verarbeitet und weitterreicht.
 	 */
 	private final NetzwerkInterpreter interpreter;
 
@@ -48,8 +45,8 @@ public class NetzwerkVerbindung extends Sender {
 	 * IP des Remote-Geräts
 	 */
 	private final String ip;
-	
-	public NetzwerkVerbindung(String name, String ip, BufferedWriter bw, NetzwerkInterpreter interpreter) {
+
+	public NetzwerkVerbindung (String name, String ip, BufferedWriter bw, NetzwerkInterpreter interpreter) {
 		super(bw);
 		this.name = name;
 		this.ip = ip;
@@ -57,38 +54,41 @@ public class NetzwerkVerbindung extends Sender {
 	}
 
 	/**
-	 * Gibt an, ob diese Verbindung aktiv ist, also derzeit eine Kommunikation
-	 * über diese Sender / Empfaenger denkbar ist.
-	 * @return	<code>true</code>, wenn man ueber diese Verbindung senden und
-	 * 			empfangen kann. Sonst <code>false</code>.
+	 * Gibt an, ob diese Verbindung aktiv ist, also derzeit eine Kommunikation über diese Sender /
+	 * Empfaenger denkbar ist.
+	 *
+	 * @return    <code>true</code>, wenn man ueber diese Verbindung senden und empfangen kann. Sonst
+	 * <code>false</code>.
 	 */
-	public boolean istAktiv() {
+	public boolean istAktiv () {
 		return super.verbindungAktiv() && interpreter.verbindungAktiv();
 	}
-	
+
 	/**
 	 * Gibt den Namen der Verbindung aus.
+	 *
 	 * @return Der Name der Verbindung.
 	 */
-	public String getName() {
+	public String getName () {
 		return name;
 	}
 
 	/**
 	 * Gibt den Interpreter der Verbindung aus.
-	 * @return	Der Interpreter der Verbindung.
+	 *
+	 * @return Der Interpreter der Verbindung.
 	 */
-	public NetzwerkInterpreter getInterpreter() {
+	public NetzwerkInterpreter getInterpreter () {
 		return interpreter;
 	}
-	
+
 	@Override
-	public void beendeVerbindung() {
+	public void beendeVerbindung () {
 		super.beendeVerbindung();
 		interpreter.quitCommunication();
 	}
 
-	public String getRemoteIP() {
+	public String getRemoteIP () {
 		return ip;
 	}
 }

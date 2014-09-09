@@ -19,19 +19,21 @@
 
 package ea.edu;
 
-import ea.*;
+import ea.Text;
 
-public class TextE 
-extends Text {
-	
+public class TextE
+		extends Text {
+
 	/**
-	 * Konstruktor erstellt einen fertig sichtbaren Text.
-	 * Seine Position lässt sich leicht über die geerbten Methoden ändern.
-	 * @param content	Der Inhalt des Texts.
+	 * Konstruktor erstellt einen fertig sichtbaren Text. Seine Position lässt sich leicht über die
+	 * geerbten Methoden ändern.
+	 *
+	 * @param content
+	 * 		Der Inhalt des Texts.
 	 */
-	public TextE(String content) {
+	public TextE (String content) {
 		super(content, 100, 140);
 		farbeSetzen("Gruen");
-        FensterE.getFenster().wurzel.add(this);
+		FensterE.getFenster().wurzel.add(this);
 	}
 }

@@ -56,7 +56,7 @@ public class Sender implements SenderInterface {
 	/**
 	 * Gibt an, ob die Verbindung über diesen Sender noch aktiv ist.
 	 *
-	 * @return    <code>true</code>, wenn der Sender dem Kommunikationspartner (noch) nicht gesendet
+	 * @return <code>true</code>, wenn der Sender dem Kommunikationspartner (noch) nicht gesendet
 	 * hat, dass die Verbindung beendet wird. Sonst <code>false</code>.
 	 */
 	public boolean verbindungAktiv () {

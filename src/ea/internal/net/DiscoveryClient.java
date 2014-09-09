@@ -21,20 +21,21 @@ package ea.internal.net;
 
 import ea.ServerGefundenReagierbar;
 
+import java.io.IOException;
 import java.net.*;
-import java.io.*;
-import java.util.*;
+import java.util.Enumeration;
 
 // http://michieldemey.be/blog/network-discovery-using-udp-broadcast/
 public class DiscoveryClient extends Thread {
 	private DatagramSocket socket;
+
 	private ServerGefundenReagierbar listener;
 
-	public DiscoveryClient(ServerGefundenReagierbar listener) {
+	public DiscoveryClient (ServerGefundenReagierbar listener) {
 		this.listener = listener;
 	}
 
-	public void run() {
+	public void run () {
 		try {
 			socket = new DatagramSocket();
 			socket.setBroadcast(true);
@@ -85,7 +86,7 @@ public class DiscoveryClient extends Thread {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
-			if(socket != null) {
+			if (socket != null) {
 				socket.close();
 			}
 		}

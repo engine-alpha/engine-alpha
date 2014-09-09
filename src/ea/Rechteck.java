@@ -124,6 +124,16 @@ public class Rechteck extends Geometrie {
 	}
 
 	/**
+	 * {@inheritDoc} Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden
+	 * <code>BoundingRechteck</code> erzeugt, dass über die <code>dimension()</code>-Methode
+	 * berechnet wird.
+	 */
+	@Override
+	public Collider erzeugeCollider () {
+		return erzeugeLazyCollider();
+	}
+
+	/**
 	 * In dieser Methode werden saemtliche Dreiecke neu berechnet und die Referenz bei Aufruf in der
 	 * Superklasse hierauf gesetzt
 	 *
@@ -136,15 +146,5 @@ public class Rechteck extends Geometrie {
 				new Dreieck(new Punkt(position.x, position.y + laenge), new Punkt(position.x + breite, position.y + laenge), new Punkt(position.x + breite, position.y))
 		};
 		return i;
-	}
-
-	/**
-	 * {@inheritDoc} Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden
-	 * <code>BoundingRechteck</code> erzeugt, dass über die <code>dimension()</code>-Methode
-	 * berechnet wird.
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		return erzeugeLazyCollider();
 	}
 }

@@ -20,16 +20,18 @@
 package ea;
 
 /**
- * Dieses Interface beschreibt einen Listener der Physik, der immer dann informiert wird, wenn das <code>Raum</code>-Objekt,
- * an dem er angemeldet wurde, nach dem Fall wieder sicher auf einem Passiv-Objekt steht.
- * 
+ * Dieses Interface beschreibt einen Listener der Physik, der immer dann informiert wird, wenn das
+ * <code>Raum</code>-Objekt, an dem er angemeldet wurde, nach dem Fall wieder sicher auf einem
+ * Passiv-Objekt steht.
+ *
  * @author Michael Andonie
  */
 public interface StehReagierbar {
 
-    /**
-     * Diese Methode wird immer dann aufgerufen, wenn das <code>Raum</code>-Objekt, an dem dieser Listener angemeldet wurde,
-     * nach einem Fall/Sprung wieder auf einem Passiv-Objekt zum Stehen kommt.
-     */
-    public abstract void stehReagieren();
+	/**
+	 * Diese Methode wird immer dann aufgerufen, wenn das <code>Raum</code>-Objekt, an dem dieser
+	 * Listener angemeldet wurde, nach einem Fall/Sprung wieder auf einem Passiv-Objekt zum Stehen
+	 * kommt.
+	 */
+	public abstract void stehReagieren ();
 }

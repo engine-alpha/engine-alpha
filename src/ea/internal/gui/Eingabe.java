@@ -26,28 +26,27 @@ import java.awt.event.ActionListener;
 
 /**
  * TODO Dokumentation
- * 
+ *
  * @author Michael Andonie
  */
 public class Eingabe extends JDialog {
-	
+
 	/**
-	 * Das Ergebnis der juengsten Eingabe.<br />
-	 * Oeffentlich abrufbar.
+	 * Das Ergebnis der juengsten Eingabe.<br /> Oeffentlich abrufbar.
 	 */
 	public static String ergebnis;
-	
+
 	/**
 	 * Konstruktor fuer das Eingabefeld
-	 * 
+	 *
 	 * @param parent
-	 *            Das Parent-Fenster
+	 * 		Das Parent-Fenster
 	 * @param nachricht
-	 *            Die Nachricht zur Eingabeaufforderung
+	 * 		Die Nachricht zur Eingabeaufforderung
 	 * @param font
-	 *            Der Darstellungsfont
+	 * 		Der Darstellungsfont
 	 */
-	public Eingabe(Frame parent, String nachricht, Font font) {
+	public Eingabe (Frame parent, String nachricht, Font font) {
 		super(parent, true);
 		ergebnis = null;
 		setLayout(new BorderLayout());
@@ -56,27 +55,27 @@ public class Eingabe extends JDialog {
 		JLabel l = new JLabel(nachricht);
 		l.setFont(font);
 		getContentPane().add(l, BorderLayout.NORTH);
-		
+
 		final JTextField feld = new JTextField(40);
 		getContentPane().add(feld, BorderLayout.CENTER);
 		feld.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed (ActionEvent e) {
 				ergebnis = feld.getText();
 				dispose();
 			}
 		});
 		feld.setFont(font);
-		
+
 		JButton fine = new JButton("OK");
 		getContentPane().add(fine, BorderLayout.SOUTH);
 		fine.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed (ActionEvent e) {
 				ergebnis = feld.getText();
 				dispose();
 			}
 		});
 		fine.setFont(font);
-		
+
 		pack();
 		setVisible(true);
 	}

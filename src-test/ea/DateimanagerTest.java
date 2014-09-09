@@ -11,16 +11,16 @@ import static org.junit.Assert.*;
 
 public class DateimanagerTest {
 	@After
-	public void cleanUp() {
+	public void cleanUp () {
 		try {
 			Files.deleteIfExists(Paths.get("test.eaa"));
-		} catch(IOException e) {
+		} catch (IOException e) {
 			fail("Konnte Datei nicht löschen, obwohl sie existiert.");
 		}
 	}
 
 	@Test
-	public void stringArrayIO() {
+	public void stringArrayIO () {
 		String[] write = {"Single Line", "Line 1\nLine 2", null, "", "~~", "%%"};
 		DateiManager.stringArraySchreiben(write, "test.eaa");
 
@@ -30,26 +30,26 @@ public class DateimanagerTest {
 	}
 
 	@Test
-	public void stringArrayWriteWrongFileExtension() {
+	public void stringArrayWriteWrongFileExtension () {
 		String[] write = {"Hallo Welt"};
 		DateiManager.stringArraySchreiben(write, "test");
 		assertTrue(Files.exists(Paths.get("test.eaa")));
 	}
 
 	@Test
-	public void stringArrayReadWrongFileExtension() {
+	public void stringArrayReadWrongFileExtension () {
 		String[] write = {"Hallo Welt"};
 		DateiManager.stringArraySchreiben(write, "test.eaa");
 		assertNotNull(DateiManager.stringArrayEinlesen("test"));
 	}
 
 	@Test (expected = IllegalArgumentException.class)
-	public void stringArrayWriteNull() {
+	public void stringArrayWriteNull () {
 		DateiManager.stringArraySchreiben(null, "test.eaa");
 	}
 
 	@Test
-	public void intArrayIO() {
+	public void intArrayIO () {
 		int[] write = {0, -125, 2351, 90235};
 		DateiManager.integerArraySchreiben(write, "test.eaa");
 
@@ -59,19 +59,19 @@ public class DateimanagerTest {
 	}
 
 	@Test (expected = IllegalArgumentException.class)
-	public void intArrayWriteNull() {
+	public void intArrayWriteNull () {
 		DateiManager.integerArraySchreiben(null, "test.eaa");
 	}
 
 	@Test
-	public void intArrayWriteWrongFileExtension() {
+	public void intArrayWriteWrongFileExtension () {
 		int[] write = {0};
 		DateiManager.integerArraySchreiben(write, "test");
 		assertTrue(Files.exists(Paths.get("test.eaa")));
 	}
 
 	@Test
-	public void intArrayReadWrongFileExtension() {
+	public void intArrayReadWrongFileExtension () {
 		int[] write = {0};
 		DateiManager.integerArraySchreiben(write, "test.eaa");
 		assertNotNull(DateiManager.integerArrayEinlesen("test"));

@@ -160,6 +160,18 @@ public class CombiFigur extends Raum {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collider erzeugeCollider () {
+		ColliderGroup cg = new ColliderGroup();
+		for (ActionFigur f : figuren) {
+			cg.addCollider(f.erzeugeCollider());
+		}
+		return erzeugeLazyCollider();
+	}
+
+	/**
 	 * Berechnet exakter alle Rechteckigen Flaechen, auf denen dieses Objekt liegt.<br /> Diese
 	 * Methode wird von komplexeren Gebilden, wie geometrischen oder Listen ueberschrieben.
 	 *
@@ -176,17 +188,5 @@ public class CombiFigur extends Raum {
 			list.add(f.dimension());
 
 		return list.toArray(new BoundingRechteck[list.size()]);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		ColliderGroup cg = new ColliderGroup();
-		for (ActionFigur f : figuren) {
-			cg.addCollider(f.erzeugeCollider());
-		}
-		return erzeugeLazyCollider();
 	}
 }

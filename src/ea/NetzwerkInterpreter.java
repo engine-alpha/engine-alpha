@@ -24,39 +24,38 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Diese Klasse ist dafuer konzipiert, reine empfangene Nachrichten
- * <b>
- * zu verarbeiten und die enthaltene Information an einen oder
- * auch mehrere <code>Empfaenger</code> weiterzugeben.<br />
- * Die Weitergabe der Signale erfolg <b>sequentiell über einen eigenen
- * Thread</b>. Die Signale werden ebenso <b>sequentiell verarbeitet</b>.
- * 
+ * Diese Klasse ist dafuer konzipiert, reine empfangene Nachrichten <b> zu verarbeiten und die
+ * enthaltene Information an einen oder auch mehrere <code>Empfaenger</code> weiterzugeben.<br />
+ * Die Weitergabe der Signale erfolg <b>sequentiell über einen eigenen Thread</b>. Die Signale
+ * werden ebenso <b>sequentiell verarbeitet</b>.
+ *
  * @author Michael Andonie
  */
 public class NetzwerkInterpreter extends Thread {
 	/**
-	 * Diese Liste speichert alle Empfänger, an die der Interpreter
-	 * eine empfangene Information weitergeben soll.
+	 * Diese Liste speichert alle Empfänger, an die der Interpreter eine empfangene Information
+	 * weitergeben soll.
 	 */
 	private final ArrayList<Empfaenger> outputListe = new ArrayList<>();
-	
+
 	/**
 	 * Der Reader, über den die Informationen gelesen werden.
 	 */
 	private BufferedReader reader;
-	
+
 	/**
 	 * Gibt an, ob die Verbindung noch aktiv ist. Zu Beginn ist dem so.
 	 */
 	private boolean connectionActive;
 
 	private String remoteIP;
+
 	/**
 	 * Enthält eine Referenz auf den Server, falls diese Verbindung von einem Server ausgeht.
 	 */
 	private Server server;
 
-	public NetzwerkInterpreter(String remoteIP, Server server, BufferedReader br) {
+	public NetzwerkInterpreter (String remoteIP, Server server, BufferedReader br) {
 		this.remoteIP = remoteIP;
 		this.server = server;
 		this.reader = br;
@@ -64,49 +63,49 @@ public class NetzwerkInterpreter extends Thread {
 		this.setDaemon(true);
 		this.start();
 	}
-	
+
 	/**
-	 * Gibt an, ob die Verbindung über diesen Interpreter
-	 * noch aktiv ist.
+	 * Gibt an, ob die Verbindung über diesen Interpreter noch aktiv ist.
 	 *
-	 * @return	<code>true</code>, wenn nicht vom Kommunikationspartner
-	 * 			gesendet wurde, dass die Verbindung beendet wird.
-	 * 			Sonst <code>false</code>.
+	 * @return    <code>true</code>, wenn nicht vom Kommunikationspartner gesendet wurde, dass die
+	 * Verbindung beendet wird. Sonst <code>false</code>.
 	 */
-	public boolean verbindungAktiv() {
+	public boolean verbindungAktiv () {
 		return connectionActive;
 	}
-	
+
 	/**
 	 * Fügt einen Empfänger dem Interpreter hinzu.
-	 * @param e	Der hinzuzufuegende Empfaenger
+	 *
+	 * @param e
+	 * 		Der hinzuzufuegende Empfaenger
 	 */
-	public void empfaengerHinzufuegen(Empfaenger e) {
+	public void empfaengerHinzufuegen (Empfaenger e) {
 		outputListe.add(e);
 	}
-	
+
 	/**
-	 * Diese Methode verarbeitet die unveränderte Ausgabe des
-	 * Kommunikationspartners. Diese wird analysiert und
-	 * anschließend die entsprechende Information
-	 * an alle angehängten <code>Empfaenger</code> weitergegeben.
-	 * @param raw	Die ungeschnittene Nachricht
-	 * des Partners.
+	 * Diese Methode verarbeitet die unveränderte Ausgabe des Kommunikationspartners. Diese wird
+	 * analysiert und anschließend die entsprechende Information an alle angehängten
+	 * <code>Empfaenger</code> weitergegeben.
+	 *
+	 * @param raw
+	 * 		Die ungeschnittene Nachricht des Partners.
 	 */
-	private void process(String raw) {
+	private void process (String raw) {
 		// Die Information
 		String rest = raw.substring(1);
 
-		if(server != null && server.isBroadcasting()) {
-			switch(raw.charAt(0)) {
+		if (server != null && server.isBroadcasting()) {
+			switch (raw.charAt(0)) {
 				case 's':
 				case 'i':
 				case 'b':
 				case 'd':
 				case 'c':
 				case 'k':
-					for(NetzwerkVerbindung v : server.getVerbindungen()) {
-						if(!v.getRemoteIP().equals(remoteIP)) {
+					for (NetzwerkVerbindung v : server.getVerbindungen()) {
+						if (!v.getRemoteIP().equals(remoteIP)) {
 							v.sende(raw);
 						}
 					}
@@ -116,9 +115,9 @@ public class NetzwerkInterpreter extends Thread {
 		}
 
 		// Fallunterscheidung gemäß Informationstyp
-		switch(raw.charAt(0)) {
+		switch (raw.charAt(0)) {
 			case 's': // String
-				for(Empfaenger e : outputListe) {
+				for (Empfaenger e : outputListe) {
 					e.empfangeString(rest);
 				}
 
@@ -126,7 +125,7 @@ public class NetzwerkInterpreter extends Thread {
 			case 'i': // Int
 				int i = Integer.parseInt(rest);
 
-				for(Empfaenger e : outputListe) {
+				for (Empfaenger e : outputListe) {
 					e.empfangeInt(i);
 				}
 
@@ -134,7 +133,7 @@ public class NetzwerkInterpreter extends Thread {
 			case 'b': // Byte
 				byte b = Byte.parseByte(rest);
 
-				for(Empfaenger e : outputListe) {
+				for (Empfaenger e : outputListe) {
 					e.empfangeByte(b);
 				}
 
@@ -142,7 +141,7 @@ public class NetzwerkInterpreter extends Thread {
 			case 'd': // Double
 				double d = Double.parseDouble(rest);
 
-				for(Empfaenger e : outputListe) {
+				for (Empfaenger e : outputListe) {
 					e.empfangeDouble(d);
 				}
 
@@ -150,7 +149,7 @@ public class NetzwerkInterpreter extends Thread {
 			case 'c': // Char
 				char c = rest.charAt(0);
 
-				for(Empfaenger e : outputListe) {
+				for (Empfaenger e : outputListe) {
 					e.empfangeChar(c);
 				}
 
@@ -158,13 +157,13 @@ public class NetzwerkInterpreter extends Thread {
 			case 'k': // Boolean
 				boolean bo = Boolean.parseBoolean(rest);
 
-				for(Empfaenger e : outputListe) {
+				for (Empfaenger e : outputListe) {
 					e.empfangeBoolean(bo);
 				}
 
 				break;
 			case 'x': // Steuerzeichen
-				switch(rest.charAt(0)) {
+				switch (rest.charAt(0)) {
 					case 'q': //quit communication
 						quitCommunication();
 						break;
@@ -175,9 +174,9 @@ public class NetzwerkInterpreter extends Thread {
 				break;
 		}
 	}
-	
-	public void quitCommunication() {
-		for(Empfaenger e : outputListe) {
+
+	public void quitCommunication () {
+		for (Empfaenger e : outputListe) {
 			e.verbindungBeendet();
 		}
 
@@ -189,18 +188,18 @@ public class NetzwerkInterpreter extends Thread {
 
 		connectionActive = false;
 	}
-	
+
 	@Override
-	public void run() {
-		while(!isInterrupted() && connectionActive) {
+	public void run () {
+		while (!isInterrupted() && connectionActive) {
 			try {
 				String got = reader.readLine();
-				
-				if(got == null) {
+
+				if (got == null) {
 					connectionActive = false;
 					break;
 				}
-				
+
 				process(got);
 			} catch (IOException e) {
 				System.err.println("Konnte nicht vom Kommunikationspartner einlesen.");
@@ -210,7 +209,7 @@ public class NetzwerkInterpreter extends Thread {
 
 		try {
 			reader.close();
-		} catch (IOException e)  {
+		} catch (IOException e) {
 			System.err.println("Konnte die Verbindung nicht schließen.");
 		}
 	}

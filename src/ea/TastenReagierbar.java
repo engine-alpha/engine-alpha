@@ -20,17 +20,24 @@
 package ea;
 
 /**
- * Dieses Interface wird implementiert, um auf Die verschiedenen Tastaturbefehle ans Fenster Reagieren zu koennen.
- * 
+ * Dieses Interface wird implementiert, um auf die verschiedenen Tastaturbefehle reagieren zu
+ * können.
+ *
  * @author Michael Andonie
  */
-
+@API
 public interface TastenReagierbar {
-    /**
-     * Wird aufgerufen bei einem angemeldeten TastenReagierbar, sobald eine Taste, die in der Kennungstabelle liegt, bei entsprechend aktiviertem Fenster gedrueckt wird.<br />
-     * Die Tabelle liegt der Anleitung der Engine bei.
-     * @param   tastenkuerzel   Die Repraesentation der Taste als Zahl. Hierdurch wird ein sehr einfaches Handeln in benoetigter Groesse ueber eine <b>switch()-Anweisung</b>moeglich.<br />
-     * Welche Zahl welchem Tastenkuerzel entspricht, ist dem <b>Handbuch</b> zu entnehmen!!
-     */
-    public abstract void reagieren(int tastenkuerzel);
+	/**
+	 * Wird bei einem angemeldeten TastenReagierbar aufgerufen, sobald eine Taste, die in der
+	 * Kennungstabelle liegt, bei entsprechend aktiviertem Fenster gedrückt wird.<br /> Die Tabelle
+	 * liegt der Anleitung der Engine bei.
+	 *
+	 * @param tastenkuerzel
+	 * 		Die Repräsentation der Taste als Zahl. Hierdurch wird ein sehr einfaches Handeln in
+	 * 		benötigter Größe über eine <b>switch()-Anweisung</b> möglich.<br /> Welche Zahl welchem
+	 * 		Tastenkuerzel entspricht, ist dem <b>Handbuch</b> zu entnehmen. Außerdem gibt es die Klasse
+	 * 		{@link ea.Taste}, die für jede Taste eine Konstante enthält.
+	 */
+	@API
+	public abstract void reagieren (int tastenkuerzel);
 }

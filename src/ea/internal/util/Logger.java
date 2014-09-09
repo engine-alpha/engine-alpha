@@ -26,27 +26,28 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * Logger für die Engine Alpha, damit Probleme bei Anwendern auch von Entwicklern nachvollzogen werden können.
- * 
+ * Logger für die Engine Alpha, damit Probleme bei Anwendern auch von Entwicklern nachvollzogen
+ * werden können.
+ *
  * @author Julien Gelmar <master@nownewstart.net>, Niklas Keller <me@kelunik.com>
  */
 public class Logger {
 	private static BufferedWriter writer;
-	
-	private Logger() {
-		
+
+	private Logger () {
+
 	}
-	
+
 	static {
 		try {
 			writer = new BufferedWriter(new FileWriter("engine-alpha.log", false));
 		} catch (IOException e) {
 			File ea = new File("engine-alpha.log");
-			
-			if(ea.isDirectory()) {
+
+			if (ea.isDirectory()) {
 				System.err.println("Logger konnte nicht initialisiert werden, da 'engine-alpha.log' ein Verzeichnis ist!");
 				System.exit(1);
-			} else if(!ea.canWrite()) {
+			} else if (!ea.canWrite()) {
 				System.err.println("Logger konnte nicht initialisiert werden, da 'engine-alpha.log' nicht beschreibbar ist!");
 				System.exit(1);
 			} else {
@@ -54,9 +55,9 @@ public class Logger {
 				System.exit(1);
 			}
 		}
-		
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
-			public void run() {
+			public void run () {
 				try {
 					writer.close();
 				} catch (IOException e) {
@@ -65,77 +66,82 @@ public class Logger {
 			}
 		});
 	}
-	
+
 	/**
 	 * Zeit im Log-Format
+	 *
 	 * @return gibt die Zeit für die Logs zurück
 	 */
-	private static String getTime() {
+	private static String getTime () {
 		return new Date().toString();
 	}
-	
+
 	/**
 	 * Logger-Funktion für Warnungen
-	 * 
-	 * @param s Text der Warnung
+	 *
+	 * @param s
+	 * 		Text der Warnung
 	 */
-	public static void warning(String s) {
+	public static void warning (String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
 		write("WARNUNG", e.getFileName(), e.getLineNumber(), s);
 	}
-	
+
 	/**
 	 * Logger-Funktion für Fehler
-	 * 
-	 * @param s Text des Fehlers
+	 *
+	 * @param s
+	 * 		Text des Fehlers
 	 */
-	public static void error(String s) {
+	public static void error (String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
 		write("ERROR", e.getFileName(), e.getLineNumber(), s, true);
 	}
-	
+
 	/**
 	 * Logger-Funktion für Informationen
-	 * 
-	 * @param s Text der Information
+	 *
+	 * @param s
+	 * 		Text der Information
 	 */
-	public static void info(String s) {
+	public static void info (String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
 		write("INFO", e.getFileName(), e.getLineNumber(), s);
 	}
-	
-	private static String write(String type, String filename, int line, String message) {
+
+	private static String write (String type, String filename, int line, String message) {
 		return write(type, filename, line, message, false);
 	}
-	
-	private static String write(String type, String filename, int line, String message, boolean error) {
+
+	private static String write (String type, String filename, int line, String message, boolean error) {
 		String str = String.format("[%s][%s] %s (%s:%s)", getTime(), type, message, filename, Integer.toString(line));
-		
-		if(error) {
+
+		if (error) {
 			System.err.println(str);
 		} else {
 			System.out.println(str);
 		}
-		
+
 		return write(str);
 	}
-	
+
 	/**
 	 * Funktion in die Log-Datei zu schreiben
-	 * 
+	 *
 	 * @param text
-	 *            Meldungs-Text der zur Log übergeben wird
+	 * 		Meldungs-Text der zur Log übergeben wird
+	 *
 	 * @return Gibt den geschrieben Text zurück, im Fehlerfall <code>null</code>
 	 */
-	private static String write(String text) {
+	private static String write (String text) {
 		try {
 			writer.write(text);
 			writer.newLine();
-			
+
 			return text;
-		} catch(IOException e) {
-			System.err.println("Logger konnte folgende Zeile nicht schreiben:\n"+text);
-			
+		} catch (IOException e) {
+			System.err.println("Logger konnte folgende Zeile nicht schreiben:\n" + text);
+
 			return null;
 		}
 	}

@@ -22,29 +22,28 @@ package ea.internal.gra;
 import ea.Knoten;
 
 /**
- * Die Zeichenebene ist die Sammlung aller zu malenden Objekte.<br />
- * Aufgrund ihrer Einfachheit hat sie mehr symbolische Bedeutung.
- * 
+ * Die Zeichenebene ist die Sammlung aller zu malenden Objekte.<br /> Aufgrund ihrer Einfachheit hat
+ * sie mehr symbolische Bedeutung.
+ *
  * @author Michael Andonie
  */
 public class Zeichenebene {
 	/**
-	 * Der absolute Basisknoten.<br />
-	 * Hieran
+	 * Der absolute Basisknoten.<br /> Hieran
 	 */
 	private Knoten basis = new Knoten();
-	
+
 	/**
 	 * Konstruktor für Objekte der Klasse Zeichenebene
 	 */
-	public Zeichenebene() {
+	public Zeichenebene () {
 		//
 	}
-	
+
 	/**
 	 * @return Der Basisknoten
 	 */
-	public Knoten basis() {
+	public Knoten basis () {
 		return basis;
 	}
 }

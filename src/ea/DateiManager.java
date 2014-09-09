@@ -586,9 +586,9 @@ public class DateiManager {
 	}
 
 	/**
-	 * Diese Methode ist veraltet, da ein Pfad automatisch relativ ist,
-	 * wenn er nicht mit <code>/</code> (Linux) bzw. <code>C:</code> (Windows,
-	 * andere Buchstaben ebenso möglich) beginnt.
+	 * Diese Methode ist veraltet, da ein Pfad automatisch relativ ist, wenn er nicht mit
+	 * <code>/</code> (Linux) bzw. <code>C:</code> (Windows, andere Buchstaben ebenso möglich)
+	 * beginnt.
 	 */
 	@Deprecated
 	public static Figur figurEinlesen (String verzeichnis, boolean relativ) {

@@ -26,51 +26,64 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class SimplerNetzwerkAdapter {
 
 	private final ConcurrentLinkedQueue<String> messages
-		= new ConcurrentLinkedQueue<String>();
-	
-	protected final Empfaenger messageUpdater = new Empfaenger(){
+			= new ConcurrentLinkedQueue<String>();
+
+	protected final Empfaenger messageUpdater = new Empfaenger() {
 		@Override
-		public void empfangeString(String string) {
+		public void empfangeString (String string) {
 			messages.add(string);
-			synchronized(messages) {
+			synchronized (messages) {
 				messages.notify();
 			}
 		}
+
 		@Override
-		public void empfangeInt(int i) {}
+		public void empfangeInt (int i) {
+		}
+
 		@Override
-		public void empfangeByte(byte b) {}
+		public void empfangeByte (byte b) {
+		}
+
 		@Override
-		public void empfangeDouble(double d) {}
+		public void empfangeDouble (double d) {
+		}
+
 		@Override
-		public void empfangeChar(char c) {}
+		public void empfangeChar (char c) {
+		}
+
 		@Override
-		public void empfangeBoolean(boolean b) {}
+		public void empfangeBoolean (boolean b) {
+		}
+
 		@Override
-		public void verbindungBeendet() {}
+		public void verbindungBeendet () {
+		}
 	};
-	
-	public synchronized String lauschen() {
-		if(messages.isEmpty()) {
+
+	public synchronized String lauschen () {
+		if (messages.isEmpty()) {
 			try {
-				synchronized(messages) {
+				synchronized (messages) {
 					messages.wait();
 				}
 			} catch (InterruptedException e) {
 				//
 			}
-			if(!messages.isEmpty())
+			if (!messages.isEmpty())
 				return messages.poll();
 			else
 				return null;
 		}
 		return messages.poll();
 	}
-	
+
 	/**
 	 * Versendet eine Nachricht.
-	 * @param string	Die zu sendende Nachricht
-	 * 					als String.
+	 *
+	 * @param string
+	 * 		Die zu sendende Nachricht als String.
 	 */
-	public abstract void senden(String string);
+	public abstract void senden (String string);
 }

@@ -19,41 +19,44 @@
 
 package ea.internal.gui;
 
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
- * Der Adapter bietet die Möglickeit, bei Deaktivierung des Fenster die essentiellen Listenermethode abzuschalten, um
- * unerwartete Ausführungen dieser Methoden zu verhindern.
- * 
+ * Der Adapter bietet die Möglickeit, bei Deaktivierung des Fenster die essentiellen Listenermethode
+ * abzuschalten, um unerwartete Ausführungen dieser Methoden zu verhindern.
+ *
  * @author Michael Andonie
  */
 public class Adapter
-extends WindowAdapter {
-    /**
-     * Das Fenster, das hiermit stillgelegt werden kann.
-     */
-    private Fenster fenster;
-    
-    /**
-     * Erstellt einen Adapter.
-     * @param   fenster Das Fenster, das deaktiviert werden soll.
-     */
-    public Adapter(Fenster fenster) {
-        this.fenster = fenster;
-    }
-    
-    /**
-     * Die deactivated-Methode.<br />
-     * Hierbei wird im Fenster der Tastendruck etc. aufgeloest.
-     */
-    public void windowDeactivated(WindowEvent e) {
-        fensterStillLegen();
-    }
-    
-    /**
-     * Deaktiviert alle Funktionen des Fensters, die bei nichtaufmerksamkeit des Spielers unerwuenscht sind.
-     */
-    private void fensterStillLegen() {
-        fenster.druckAufheben();
-    }
+		extends WindowAdapter {
+	/**
+	 * Das Fenster, das hiermit stillgelegt werden kann.
+	 */
+	private Fenster fenster;
+
+	/**
+	 * Erstellt einen Adapter.
+	 *
+	 * @param fenster
+	 * 		Das Fenster, das deaktiviert werden soll.
+	 */
+	public Adapter (Fenster fenster) {
+		this.fenster = fenster;
+	}
+
+	/**
+	 * Die deactivated-Methode.<br /> Hierbei wird im Fenster der Tastendruck etc. aufgeloest.
+	 */
+	public void windowDeactivated (WindowEvent e) {
+		fensterStillLegen();
+	}
+
+	/**
+	 * Deaktiviert alle Funktionen des Fensters, die bei nichtaufmerksamkeit des Spielers
+	 * unerwuenscht sind.
+	 */
+	private void fensterStillLegen () {
+		fenster.druckAufheben();
+	}
 }

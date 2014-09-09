@@ -20,16 +20,21 @@
 package ea;
 
 /**
- * Beschreiben Sie hier die Klasse TasteLosgelassenReagierbar.
- * 
+ * TODO: Dokumentation
+ *
  * @author Michael Andonie
  */
 public interface TastenLosgelassenReagierbar {
-    /**
-     * Wird aufgerufen bei einem angemeldeten TastenReagierbar, sobald eine Taste, die in der Kennungstabelle liegt, bei entsprechend aktiviertem Fenster losgelassen wird.<br />
-     * Die Tabelle liegt der Anleitung der Engine bei. Wie die Interfaces anzumelden sind, liegt ebenfalls dem <b>Handbuch</b> bei<br />
-     * @param   code   Die Repraesentation der Taste als Zahl. Hierdurch wird ein sehr einfaches Handeln in benoetigter Groesse ueber eine <b>switch()-Anweisung</b>moeglich.<br />
-     * Welche Zahl welchem Tastenkuerzel entspricht, ist dem <b>Handbuch</b> zu entnehmen!!
-     */
-    public abstract void tasteLosgelassen(int code);
+	/**
+	 * Wird aufgerufen bei einem angemeldeten TastenReagierbar, sobald eine Taste, die in der
+	 * Kennungstabelle liegt, bei entsprechend aktiviertem Fenster losgelassen wird.<br /> Die
+	 * Tabelle liegt der Anleitung der Engine bei. Wie die Interfaces anzumelden sind, liegt
+	 * ebenfalls dem <b>Handbuch</b> bei<br />
+	 *
+	 * @param code
+	 * 		Die Repraesentation der Taste als Zahl. Hierdurch wird ein sehr einfaches Handeln in
+	 * 		benoetigter Groesse ueber eine <b>switch()-Anweisung</b>moeglich.<br /> Welche Zahl welchem
+	 * 		Tastenkuerzel entspricht, ist dem <b>Handbuch</b> zu entnehmen!!
+	 */
+	public abstract void tasteLosgelassen (int code);
 }

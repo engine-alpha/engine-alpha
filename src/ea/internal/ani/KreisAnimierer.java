@@ -19,62 +19,55 @@
 
 package ea.internal.ani;
 
-import ea.AnimationsEndeReagierbar;
-import ea.Gerade;
-import ea.Manager;
-import ea.Punkt;
-import ea.Raum;
-import ea.Vektor;
+import ea.*;
 
 /**
- * Beschreiben Sie hier die Klasse KreisAnimierer.
- * Er animiert vorlaeufig nur im Urzeigersinn.
- * 
+ * Beschreiben Sie hier die Klasse KreisAnimierer. Er animiert vorlaeufig nur im Urzeigersinn.
+ *
  * @author Michael Andonie
  */
-@SuppressWarnings("serial")
+@SuppressWarnings ("serial")
 public class KreisAnimierer extends Animierer {
-	/**
-	 * Der aktuelle Winkel im Gradmass zur Vertikalen.<br />
-	 * Im <b>Bogenmass</b>
-	 */
-	private double winkel;
-	
-	/**
-	 * Der Radius des Kreises, der die Bewegung beschreibt.
-	 */
-	private final double radius;
-	
 	/**
 	 * Der Schritt, der bei einem Aufruf gemacht wird
 	 */
 	private static final double schritt = Math.PI / 100;
-	
+
+	/**
+	 * Der Radius des Kreises, der die Bewegung beschreibt.
+	 */
+	private final double radius;
+
 	/**
 	 * Das Zentrum des die Drehbewegung beschreibenden Kreises.
 	 */
 	private final Punkt zentrum;
-	
+
+	/**
+	 * Der aktuelle Winkel im Gradmass zur Vertikalen.<br /> Im <b>Bogenmass</b>
+	 */
+	private double winkel;
+
 	/**
 	 * Der Endpunkt des letzten Animationsschrittes
 	 */
 	private Punkt letzter;
-	
+
 	/**
 	 * Konstruktor fuer Objekte der Klasse KreisAnimierer
-	 * 
+	 *
 	 * @param ziel
-	 *            Das zu animierende Objekt
+	 * 		Das zu animierende Objekt
 	 * @param intervall
-	 *            Der TickerIntervall; fuer die tick()-Geschwindikeit.
+	 * 		Der TickerIntervall; fuer die tick()-Geschwindikeit.
 	 * @param loop
-	 *            Ob die Animation dauerhaft wiederholt (geloopt) werden soll.
+	 * 		Ob die Animation dauerhaft wiederholt (geloopt) werden soll.
 	 * @param m
-	 *            Der Manager, an dem spaeter animiert werden soll.
+	 * 		Der Manager, an dem spaeter animiert werden soll.
 	 * @param listener
-	 *            Der AnimationsEndeReagierbar-Listener, der am Ende der Animation aufgerufen wird.
+	 * 		Der AnimationsEndeReagierbar-Listener, der am Ende der Animation aufgerufen wird.
 	 */
-	public KreisAnimierer(Raum ziel, Punkt zentrum, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener) {
+	public KreisAnimierer (Raum ziel, Punkt zentrum, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener) {
 		super(ziel, intervall, loop, m, listener);
 		this.zentrum = zentrum;
 		this.letzter = ziel.zentrum();
@@ -85,12 +78,12 @@ public class KreisAnimierer extends Animierer {
 			winkel = Math.PI - winkel;
 		}
 	}
-	
-	public void animationsSchritt() {
+
+	public void animationsSchritt () {
 		winkel += schritt;
 		float x, y;
-		x = (float)((-Math.sin(winkel)) * radius) + zentrum.realX();
-		y = (float)((Math.cos(winkel)) * radius) + zentrum.realY();
+		x = (float) ((-Math.sin(winkel)) * radius) + zentrum.realX();
+		y = (float) ((Math.cos(winkel)) * radius) + zentrum.realY();
 		Vektor v = new Vektor(x - letzter.realX(), y - letzter.realY());
 		ziel.bewegen(v);
 		letzter = letzter.verschobenerPunkt(v);

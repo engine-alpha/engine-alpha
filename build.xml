@@ -1,157 +1,161 @@
 <?xml version="1.0"?>
 <project name="ea" default="test" basedir=".">
-	<property name="bin.dir" location="bin" />
-	<property name="build.dir" location="build" />
-	<property name="docs.dir" location="doc" />
-	<property name="lib.dir" location="lib" />
-	<property name="src.dir" location="src" />
-	<property name="test.bin.dir" location="bin-test" />
-	<property name="test.src.dir" location="src-test" />
-	<property name="test.report.dir" location="report" />
+    <property name="bin.dir" location="bin"/>
+    <property name="build.dir" location="build"/>
+    <property name="docs.dir" location="doc"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="src.dir" location="src"/>
+    <property name="test.bin.dir" location="bin-test"/>
+    <property name="test.src.dir" location="src-test"/>
+    <property name="test.report.dir" location="report"/>
 
-	<path id="classpath">
-		<fileset dir="${lib.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-	
-	<path id="classpath.junit">
-		<fileset dir="${lib.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-	
-	<path id="classpath.cobertura">
-		<fileset dir="${lib.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-	
-	<taskdef classpathref="classpath.cobertura" resource="tasks.properties" />
-	
-	<path id="application" location="${build.dir}/Engine.Alpha.jar"/>
-	
-	<target name="clean">
-		<delete dir="${bin.dir}" />
-		<delete dir="${build.dir}" />
-		<delete dir="${docs.dir}" />
-		<delete dir="${test.bin.dir}" />
-		<delete dir="${test.report.dir}" />
-	</target>
-	
-	<target name="makedir">
-		<mkdir dir="${bin.dir}" />
-		<mkdir dir="${build.dir}" />
-		<mkdir dir="${docs.dir}" />
-		<mkdir dir="${test.bin.dir}" />
-		<mkdir dir="${test.report.dir}" />
-	</target>
-	
-	<target name="compile" depends="clean, makedir">
-		<javac includeantruntime="false" srcdir="${src.dir}" destdir="${bin.dir}" debug="true">
-			<classpath refid="classpath" />
-		</javac>
-		
-		<javac includeantruntime="false" srcdir="${test.src.dir}" destdir="${test.bin.dir}" debug="true">
-			<classpath location="${bin.dir}" />
-			<classpath refid="classpath.junit" />
-		</javac>
-		
-		<copy todir="${bin.dir}">
-            <fileset dir="${src.dir}" excludes="**/*.java" />
+    <path id="classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="classpath.junit">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="classpath.cobertura">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef classpathref="classpath.cobertura" resource="tasks.properties"/>
+
+    <path id="application" location="${build.dir}/Engine.Alpha.jar"/>
+
+    <target name="clean">
+        <delete dir="${bin.dir}"/>
+        <delete dir="${build.dir}"/>
+        <delete dir="${docs.dir}"/>
+        <delete dir="${test.bin.dir}"/>
+        <delete dir="${test.report.dir}"/>
+    </target>
+
+    <target name="makedir">
+        <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${docs.dir}"/>
+        <mkdir dir="${test.bin.dir}"/>
+        <mkdir dir="${test.report.dir}"/>
+    </target>
+
+    <target name="compile" depends="clean, makedir">
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${bin.dir}" debug="true">
+            <classpath refid="classpath"/>
+        </javac>
+
+        <javac includeantruntime="false" srcdir="${test.src.dir}" destdir="${test.bin.dir}"
+               debug="true">
+            <classpath location="${bin.dir}"/>
+            <classpath refid="classpath.junit"/>
+        </javac>
+
+        <copy todir="${bin.dir}">
+            <fileset dir="${src.dir}" excludes="**/*.java"/>
         </copy>
-        
+
         <unjar dest="${bin.dir}">
-			<fileset dir="${lib.dir}">
-				<include name="*.jar" />
-			</fileset>
-		</unjar>
-	</target>
-	
-	<target name="docs" depends="compile">
-		<javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}">
-			<fileset dir="${src.dir}">
-				<include name="**" />
-			</fileset>
-		</javadoc>
-	</target>
-	
-	<target name="jar" depends="compile">
-		<jar destfile="${build.dir}/Engine.Alpha.jar" basedir="${bin.dir}">
-			<manifest>
-				<attribute name="Main-Class" value="ea.EngineAlpha" />
-			</manifest>
-		</jar>
-	</target>
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </unjar>
+    </target>
 
-	<target name="instrument">
-		<delete file="cobertura.ser"/>
-		<delete dir="${build.dir}/instrumented-classes" />
-		
-		<cobertura-instrument todir="${build.dir}/instrumented-classes">
-			<fileset dir="${bin.dir}/ea">
-				<include name="**/*.class"/>
-			</fileset>
-		</cobertura-instrument>
-	</target>
-	
-	<target name="test" depends="compile, instrument">
-		<delete dir="${test.report.dir}" />
-		<mkdir dir="${test.report.dir}" />
-		
-		<!-- otherwise it will crash -->
-		<mkdir dir="${test.report.dir}/junit/xml" />
-		
-		<junit fork="yes" dir="." failureProperty="test.failed">
-			<classpath location="${build.dir}/instrumented-classes" />
-			<classpath location="${bin.dir}" />
-			<classpath location="${test.bin.dir}" />
-			<classpath refid="classpath.junit" />
-			<classpath refid="classpath.cobertura" />
-			<formatter type="xml" />
-			<batchtest todir="${test.report.dir}/junit/xml">
-				<fileset dir="${test.src.dir}">
-					<include name="**/*Test.java" />
-				</fileset>
-			</batchtest>
-		</junit>
+    <target name="docs" depends="compile">
+        <javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**"/>
+            </fileset>
+        </javadoc>
+    </target>
 
-		<junitreport todir="${test.report.dir}/junit/xml">
-			<fileset dir="${test.report.dir}/junit/xml">
-				<include name="TEST-*.xml" />
-			</fileset>
-			
-			<report format="frames" todir="${test.report.dir}/junit/html" />
-		</junitreport>
-	</target>
-	
-	<target name="run" depends="jar">    
-		<java classname="ea.EngineAlpha" failonerror="true" fork="true">
-			<classpath refid="application"/>
-		</java>    
-	</target>
-	
-	<target name="coverage-check">
-		<cobertura-check branchrate="34" totallinerate="100" />
-	</target>
+    <target name="jar" depends="compile">
+        <jar destfile="${build.dir}/Engine.Alpha.jar" basedir="${bin.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="ea.EngineAlpha"/>
+            </manifest>
+        </jar>
+    </target>
 
-	<target name="coverage-report">
-		<cobertura-report srcdir="${src.dir}" destdir="${test.report.dir}/coverage/xml" format="xml" />
-	</target>
+    <target name="instrument">
+        <delete file="cobertura.ser"/>
+        <delete dir="${build.dir}/instrumented-classes"/>
 
-	<target name="summary-coverage-report">
-		<cobertura-report srcdir="${src.dir}" destdir="${test.report.dir}/coverage/xml-summary" format="summaryXml" />
-	</target>
+        <cobertura-instrument todir="${build.dir}/instrumented-classes">
+            <fileset dir="${bin.dir}/ea">
+                <include name="**/*.class"/>
+            </fileset>
+        </cobertura-instrument>
+    </target>
 
-	<target name="alternate-coverage-report">
-		<cobertura-report destdir="${test.report.dir}/coverage/html">
-			<fileset dir="${src.dir}">
-				<include name="**/*.java"/>
-			</fileset>
-		</cobertura-report>
-	</target>
-	
-	<target name="coverage" depends="compile,instrument,test,coverage-report,summary-coverage-report,alternate-coverage-report">
-		<delete file="cobertura.ser" />
-	</target>
+    <target name="test" depends="compile, instrument">
+        <delete dir="${test.report.dir}"/>
+        <mkdir dir="${test.report.dir}"/>
+
+        <!-- otherwise it will crash -->
+        <mkdir dir="${test.report.dir}/junit/xml"/>
+
+        <junit fork="yes" dir="." failureProperty="test.failed">
+            <classpath location="${build.dir}/instrumented-classes"/>
+            <classpath location="${bin.dir}"/>
+            <classpath location="${test.bin.dir}"/>
+            <classpath refid="classpath.junit"/>
+            <classpath refid="classpath.cobertura"/>
+            <formatter type="xml"/>
+            <batchtest todir="${test.report.dir}/junit/xml">
+                <fileset dir="${test.src.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="${test.report.dir}/junit/xml">
+            <fileset dir="${test.report.dir}/junit/xml">
+                <include name="TEST-*.xml"/>
+            </fileset>
+
+            <report format="frames" todir="${test.report.dir}/junit/html"/>
+        </junitreport>
+    </target>
+
+    <target name="run" depends="jar">
+        <java classname="ea.EngineAlpha" failonerror="true" fork="true">
+            <classpath refid="application"/>
+        </java>
+    </target>
+
+    <target name="coverage-check">
+        <cobertura-check branchrate="34" totallinerate="100"/>
+    </target>
+
+    <target name="coverage-report">
+        <cobertura-report srcdir="${src.dir}" destdir="${test.report.dir}/coverage/xml"
+                          format="xml"/>
+    </target>
+
+    <target name="summary-coverage-report">
+        <cobertura-report srcdir="${src.dir}" destdir="${test.report.dir}/coverage/xml-summary"
+                          format="summaryXml"/>
+    </target>
+
+    <target name="alternate-coverage-report">
+        <cobertura-report destdir="${test.report.dir}/coverage/html">
+            <fileset dir="${src.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </cobertura-report>
+    </target>
+
+    <target name="coverage"
+            depends="compile,instrument,test,coverage-report,summary-coverage-report,alternate-coverage-report">
+        <delete file="cobertura.ser"/>
+    </target>
 </project>
