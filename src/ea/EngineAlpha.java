@@ -60,7 +60,7 @@ public class EngineAlpha extends Frame {
 		super("Engine Alpha " + VERSION_STRING);
 
 		try {
-			setIconImage(ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png")));
+			setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
 		} catch (IOException e) {
 		}
 
@@ -178,7 +178,7 @@ public class EngineAlpha extends Frame {
 			EngineAlpha parent = EngineAlpha.this;
 
 			try {
-				logo = ImageIO.read(getClass().getResource("/ea/assets/logo.png"));
+				logo = ImageIO.read(getClass().getResource("/assets/logo.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

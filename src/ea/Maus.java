@@ -496,7 +496,7 @@ public class Maus {
 		}
 
 		BufferedImage ret = null;
-		String verzeichnis = "/ea/assets/mouse/"; // Das Verzeichnis der Mauskomponenten
+		String verzeichnis = "/assets/mouse/"; // Das Verzeichnis der Mauskomponenten
 
 		switch (type) {
 			case TYPE_STANDARD:

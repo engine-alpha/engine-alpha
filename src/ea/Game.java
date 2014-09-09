@@ -163,7 +163,7 @@ public abstract class Game implements TastenReagierbar {
 		fenster.anmelden(this);
 
 		try {
-			fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/ea/assets/favicon.png")));
+			fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
 		} catch (Exception e) {
 			Logger.warning("Standard-Icon konnte nicht geladen werden.");
 		}

@@ -4,6 +4,7 @@
     <property name="build.dir" location="build"/>
     <property name="docs.dir" location="doc"/>
     <property name="lib.dir" location="lib"/>
+    <property name="res.dir" location="res"/>
     <property name="src.dir" location="src"/>
     <property name="test.bin.dir" location="bin-test"/>
     <property name="test.src.dir" location="src-test"/>
@@ -59,7 +60,7 @@
         </javac>
 
         <copy todir="${bin.dir}">
-            <fileset dir="${src.dir}" excludes="**/*.java"/>
+            <fileset dir="${res.dir}"/>
         </copy>
 
         <unjar dest="${bin.dir}">
