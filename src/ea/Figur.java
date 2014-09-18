@@ -130,7 +130,7 @@ public class Figur extends Raum {
 	}
 
 	/**
-	 * Standart-Konstruktor fuer Objekte der Klasse <code>Figur</code>.
+	 * Standart-Konstruktor für Objekte der Klasse <code>Figur</code>.
 	 *
 	 * @param x
 	 * 		X-Position; die links obere Ecke
@@ -187,6 +187,7 @@ public class Figur extends Raum {
 		}
 
 		PixelFeld[] neu = new PixelFeld[animation.length - 1];
+
 		System.arraycopy(animation, 0, neu, 0, index);
 		System.arraycopy(animation, index + 1, neu, index, neu.length - index);
 
@@ -548,13 +549,13 @@ public class Figur extends Raum {
 	}
 
 	/**
-	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll
-	 * einzuschliessen</b>.
+	 * @return Ein BoundingRechteck mit minimal nötigem Umfang, um das Objekt <b>voll
+	 * einzuschließen</b>.
 	 */
 	@Override
 	public BoundingRechteck dimension () {
-		if (animation != null && animation[aktuelle] != null) { // Probable bug:
-			// animation[aktuelle] == null => else
+		if (animation != null && animation[aktuelle] != null) {
+			// FIXME: animation[aktuelle] == null => else => Nullpointer
 			return new BoundingRechteck(position.x, position.y, animation[0].breite(), animation[0].hoehe());
 		} else {
 			return new BoundingRechteck(position.x, position.y, animation[aktuelle].breite(), animation[aktuelle].hoehe());

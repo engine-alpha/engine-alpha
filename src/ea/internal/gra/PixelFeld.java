@@ -405,7 +405,7 @@ public class PixelFeld implements java.io.Serializable {
 	 * @param y
 	 * 		Die Y-Startkoordinate der linken oberen Ecke
 	 *
-	 * @return Alle Flaechen dieses Pixel-Feldes als Array aus Bounding-Rechtecken.
+	 * @return alle Flächen dieses Pixel-Feldes als Array aus Bounding-Rechtecken
 	 */
 	public BoundingRechteck[] flaechen (float x, float y) {
 		BoundingRechteck[] ret = new BoundingRechteck[anzahlPixel()];
