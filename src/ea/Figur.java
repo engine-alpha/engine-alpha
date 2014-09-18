@@ -567,11 +567,16 @@ public class Figur extends Raum {
 	 */
 	@Override
 	public Collider erzeugeCollider () {
-		ColliderGroup gc = new ColliderGroup();
+		ColliderGroup cg = new ColliderGroup();
+
 		for (BoundingRechteck r : flaechen()) {
-			gc.addCollider(BoxCollider.fromBoundingRechteck(new Vektor(r.x, r.y), r));
+			cg.addCollider(BoxCollider.fromBoundingRechteck(new Vektor(
+					r.x - position.x,
+					r.y - position.y
+			), r));
 		}
-		return gc;
+
+		return cg;
 	}
 
 	@Override

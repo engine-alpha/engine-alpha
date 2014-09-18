@@ -80,6 +80,7 @@ public class BoxCollider
 		BoxCollider bc = new BoxCollider();
 		bc.offsetSetzen(offset);
 		bc.diagonale = new Vektor(br.breite, br.hoehe);
+
 		return bc;
 	}
 

@@ -409,12 +409,14 @@ public class PixelFeld implements java.io.Serializable {
 	 */
 	public BoundingRechteck[] flaechen (float x, float y) {
 		BoundingRechteck[] ret = new BoundingRechteck[anzahlPixel()];
+
 		int cnt = 0;
+
 		for (int i = 0; i < farbe.length; i++) {
 			for (int j = 0; j < farbe[0].length; j++) {
 				if (farbe[i][j] != null) {
-					ret[cnt++] = new BoundingRechteck(x + i * faktor, y + j
-							* faktor, faktor, faktor);
+					ret[cnt++] = new BoundingRechteck(x + i * faktor, y + j * faktor,
+							faktor, faktor);
 				}
 			}
 		}

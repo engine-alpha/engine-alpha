@@ -26,12 +26,12 @@ import java.util.ArrayList;
 /**
  * Eine Aggregation von Collidern.
  *
- * @author andonie
+ * @author Michael Andonie
  */
 public class ColliderGroup extends Collider {
 
 	/**
-	 * Die Liste der Collider, die zu dieser Collider-Group geh�ren.
+	 * Die Liste der Collider, die zu dieser Collider-Group gehören.
 	 */
 	private ArrayList<Collider> colliders = new ArrayList<Collider>();
 
@@ -39,7 +39,7 @@ public class ColliderGroup extends Collider {
 	 * Fügt einen neuen Collider zu dieser Group hinzu.
 	 *
 	 * @param c
-	 * 		Der hinzuzuf�gende Collider.
+	 * 		Der hinzuzufügende Collider.
 	 */
 	public void addCollider (Collider c) {
 		colliders.add(c);
@@ -52,14 +52,16 @@ public class ColliderGroup extends Collider {
 	public boolean verursachtCollision (Punkt positionThis, Punkt positionOther, Collider collider) {
 		Punkt positionMitOffset = positionThis.verschobenerPunkt(offset);
 		for (Collider c : colliders) {
-			if (c.verursachtCollision(positionMitOffset, positionOther, collider))
+			if (c.verursachtCollision(positionMitOffset, positionOther, collider)) {
 				return true;
+			}
 		}
+
 		return false;
 	}
 
 	/**
-	 * {@inheritDoc} Gibt <code>true</code> zur�ck.
+	 * {@inheritDoc} Gibt <code>true</code> zurück.
 	 */
 	@Override
 	public boolean istNullCollider () {
