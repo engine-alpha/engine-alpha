@@ -231,7 +231,7 @@ public class Manager {
 			return;
 		}
 
-		Job job = getJob(t);
+		final Job job = getJob(t);
 
 		if (job.active) {
 			Logger.error("Ticker ist bereits am Laufen!");
@@ -245,7 +245,11 @@ public class Manager {
 				try {
 					t.tick();
 				} catch (RuntimeException e) {
+					Logger.error("Kritischer Fehler im Ticker: Eine Ausnahme wurde nicht abgefangen. Der Ticker wurde angehalten. Die folgende StackTrace sollte dir weitere Informationen liefern.");
 					e.printStackTrace();
+
+					job.setActive(false);
+					job.scheduledFuture.cancel(true);
 				}
 			}
 		};
