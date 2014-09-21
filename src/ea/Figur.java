@@ -312,7 +312,7 @@ public class Figur extends Raum {
 	/**
 	 * Setzt das aktuelle Animationsbild.<br /> Die Figur, die im Pixelfeldeditor erstellt wurde
 	 * besteht den Bildern (1, 2, ..., n), aber <b>ACHTUNG</b>, die Indizes fangen bei <b>0</b> an
-	 * und hören dann eins frueher auf (0, 1, ..., (n-1)). Das heisst, dass wenn als Index
+	 * und hören dann eins frueher auf (0, 1, ..., (n-1)). Das heißt, dass wenn als Index
 	 * <code>5</code> eingegeben wird, ist das Bild gemeint, das im Figureneditor als <code>Bild
 	 * 6</code> bezeichnet wurde.
 	 *
@@ -320,11 +320,12 @@ public class Figur extends Raum {
 	 * 		Der Index des anzuzeigenden Bildes
 	 */
 	public void animationsBildSetzen (int bildIndex) {
-		if (bildIndex >= animation.length) {
+		if (bildIndex < 0 || bildIndex >= animation.length) {
 			Logger.error("Achtung! Der zu setzende Bildindex war größer als der größte " +
-					"vorhandene Index! Daher wird nichts gesetzt.");
+					"vorhandene Index oder kleiner 0! Daher wird nichts gesetzt.");
 			return;
 		}
+
 		aktuelle = bildIndex;
 	}
 
@@ -577,6 +578,9 @@ public class Figur extends Raum {
 		}
 
 		return cg;
+
+		// TODO: Test-Fall
+		// return new BoxCollider(new Vektor(dimension().breite, dimension().hoehe));
 	}
 
 	@Override

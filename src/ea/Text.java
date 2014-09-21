@@ -62,8 +62,7 @@ public class Text extends Raum implements Leuchtend {
 				eigene[i] = Font.createFont(Font.TRUETYPE_FONT, s);
 				s.close();
 			} catch (FileNotFoundException e) {
-				Logger.error("Interner Lesefehler. Dies hätte unter keinen Umständen passieren " +
-						"dürfen.");
+				Logger.error("Interner Lesefehler. Dies hätte unter keinen Umständen passieren dürfen.");
 			} catch (FontFormatException e) {
 				Logger.error("Das TrueType-Font-Format einer Datei (" + unter[i].getPath() + ") war nicht einlesbar!");
 			} catch (IOException e) {
@@ -73,7 +72,7 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
-	 * Die Schriftgroesse des Textes
+	 * Die Schriftgröße des Textes
 	 */
 	protected int groesse;
 
@@ -114,7 +113,12 @@ public class Text extends Raum implements Leuchtend {
 	private int leuchtzaehler;
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im
+	 * Textanker: links, mittig oder rechts
+	 */
+	private Anker anker = Anker.LINKS;
+
+	/**
+	 * Konstruktor für Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im
 	 * Projektordner sind. Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur
 	 * Verfügung.
 	 *
@@ -128,7 +132,7 @@ public class Text extends Raum implements Leuchtend {
 	 * 		Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
 	 * 		Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu
 	 * 		empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden,
-	 * 		<b>nicht der Name der schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
+	 * 		<b>nicht der Name der schriftart-Datei!</b>
 	 * @param schriftGroesse
 	 * 		Die Groesse, in der die Schrift dargestellt werden soll
 	 * @param schriftart
@@ -136,7 +140,7 @@ public class Text extends Raum implements Leuchtend {
 	 * 		Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv <br /> <br /> Alles andere sorgt
 	 * 		nur fuer einen normalen Text.
 	 * @param farbe
-	 * 		Die Farbe, die fuer den Text benutzt werden soll.
+	 * 		Die Farbe, die für den Text benutzt werden soll.
 	 */
 	public Text (String inhalt, float x, float y, String fontName, int schriftGroesse, int schriftart, String farbe) {
 		this.inhalt = inhalt;
@@ -274,7 +278,7 @@ public class Text extends Raum implements Leuchtend {
 				if (files[i].isDirectory()) {
 					fontsEinbauen(liste, files[i]);
 				}
-				if (files[i].getName().endsWith(".ttf")) {
+				if (files[i].getName().toLowerCase().endsWith(".ttf")) {
 					liste.add(files[i]);
 				}
 			}
@@ -316,6 +320,7 @@ public class Text extends Raum implements Leuchtend {
 	public static void geladeneSchriftartenAusgeben () {
 		System.out.println("Protokoll aller aus dem Projektordner geladener Fontdateien");
 		System.out.println();
+
 		if (eigene.length == 0) {
 			System.out.println("Es wurden keine \".ttf\"-Dateien im Projektordner gefunden");
 		} else {
@@ -325,7 +330,8 @@ public class Text extends Raum implements Leuchtend {
 				System.out.println(eigene[i].getName());
 			}
 		}
-		System.out.println("|Ende| des Protokolls");
+
+		System.out.println("Ende des Protokolls");
 	}
 
 	/**
@@ -522,9 +528,18 @@ public class Text extends Raum implements Leuchtend {
 			return;
 		}
 
+		FontMetrics f = Fenster.metrik(font);
+		float x = position.x, y = position.y;
+
+		if(anker == Anker.MITTE) {
+			x = position.x - f.stringWidth(inhalt) / 2;
+		} else if(anker == Anker.RECHTS) {
+			x = position.x - f.stringWidth(inhalt);
+		}
+
 		g.setColor(farbe);
 		g.setFont(font);
-		g.drawString(inhalt, (int) (position.x - r.x), (int) (position.y - r.y + groesse));
+		g.drawString(inhalt, (int) (x - r.x), (int) (y - r.y + groesse));
 
 		super.afterRender(g, r);
 	}
@@ -536,7 +551,15 @@ public class Text extends Raum implements Leuchtend {
 	@Override
 	public BoundingRechteck dimension () {
 		FontMetrics f = Fenster.metrik(font);
-		return new BoundingRechteck(position.x, position.y, f.stringWidth(inhalt), f.getHeight());
+		float x = position.x, y = position.y;
+
+		if(anker == Anker.MITTE) {
+			x = position.x - f.stringWidth(inhalt) / 2;
+		} else if(anker == Anker.RECHTS) {
+			x = position.x - f.stringWidth(inhalt);
+		}
+
+		return new BoundingRechteck(x, y, f.stringWidth(inhalt), f.getHeight());
 	}
 
 	/**
@@ -609,5 +632,47 @@ public class Text extends Raum implements Leuchtend {
 	@Override
 	public boolean leuchtet () {
 		return this.leuchtet;
+	}
+
+	/**
+	 * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur x-Koordinate befindet.
+	 * Möglich sind:
+	 * <li>{@code Text.Anker.LINKS},</li>
+	 * <li>{@code Text.Anker.MITTE},</li>
+	 * <li>{@code Text.Anker.RECHTS}.</li>
+	 * <br>
+	 * <b>Hinweis</b>: {@code null} wird wie {@code Anker.LINKS} behandelt!
+	 *
+	 * @see ea.Text.Anker
+	 * @see #getAnker()
+	 * @param anker neuer Anker
+	 */
+	public void setAnker(Anker anker) {
+		this.anker = anker;
+	}
+
+	/**
+	 * Gibt den aktuellen Anker zurück.
+	 *
+	 * @see ea.Text.Anker
+	 * @see #setAnker(ea.Text.Anker)
+	 * @return aktueller Anker
+	 */
+	public Anker getAnker() {
+		return anker;
+	}
+
+	/**
+	 * Ein Textanker beschreibt, wo sich der Text relativ zu seiner x-Koordinate befindet.
+	 * Möglich sind:
+	 * <li>{@code Anker.LINKS},</li>
+	 * <li>{@code Anker.MITTE},</li>
+	 * <li>{@code Anker.RECHTS}.</li>
+	 *
+	 * @see #setAnker(ea.Text.Anker)
+	 * @see #getAnker()
+	 */
+	public enum Anker {
+		LINKS, MITTE, RECHTS;
 	}
 }

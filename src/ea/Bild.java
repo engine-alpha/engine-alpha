@@ -267,11 +267,11 @@ public class Bild extends Raum {
 			if (!wiederholen) {
 				g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), null);
 			} else {
-				// Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmasse
+				// Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmaße
 				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX(), -r.y + position.realY(), img.getWidth(), img.getHeight()));
 				// Texturfarbe setzen
 				g.setPaint(tp);
-				// Rechteck fuellen
+				// Rechteck füllen
 				g.fill(new Rectangle2D.Double(position.realX() - r.x, position.realY() - r.y, breite, hoehe));
 			}
 		}
@@ -280,8 +280,8 @@ public class Bild extends Raum {
 	}
 
 	/**
-	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll
-	 * einzuschliessen</b>.
+	 * @return Ein BoundingRechteck mit minimal nötigem Umfang, um das Objekt <b>voll
+	 * einzuschließen</b>.
 	 */
 	public BoundingRechteck dimension () {
 		if (!wiederholen) {

@@ -1010,10 +1010,16 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
 		lastDrehung = Math.toRadians(drehung);
 
-		g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
+		if(lastDrehung != 0) {
+			g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
+		}
 
-		composite = g.getComposite();
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
+		if(opacity != 1) {
+			composite = g.getComposite();
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
+		} else {
+			composite = null;
+		}
 	}
 
 	/**
@@ -1027,8 +1033,13 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	@NoExternalUse
 	public final void afterRender (Graphics2D g, BoundingRechteck r) {
-		g.setComposite(composite);
-		g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
+		if(composite != null) {
+			g.setComposite(composite);
+		}
+
+		if(lastDrehung != 0) {
+			g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
+		}
 	}
 
 	/**

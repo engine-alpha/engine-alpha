@@ -691,7 +691,7 @@ public abstract class Game implements TastenReagierbar {
 	 * <b>IM REGELFALL GILT FOLGENDES:</b>
 	 * <p/>
 	 * Die Engine arbeitet auf einem Niveau, das laufzeittechnisch bei normalen Computern
-	 * standardmaessig funktioniert. <i>Sollte es jedoch Probleme mit der Laufzeit geben (haengender
+	 * standardmäßig funktioniert. <i>Sollte es jedoch Probleme mit der Laufzeit geben (haengender
 	 * Bildschirm; Zeitverzögerungen, die klar an der Engine und nicht am eigenen Projekt liegen
 	 * usw.), so sollte mit dieser Methode die rechenintensive Arbeit ausgeschaltet werden.</i>
 	 * <p/>
@@ -711,10 +711,10 @@ public abstract class Game implements TastenReagierbar {
 	 * einen Screenshot.
 	 *
 	 * @param pfad
-	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie "screenshot.jpg" speichert
-	 * 		den Screenshot im Projektordner. Fuer eingabeabhaengige Pfade kann
-	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br
-	 * 		/>
+	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie {@code screenshot.jpg}
+	 * 		speichert den Screenshot im Projektordner. Für eingabeabhängige Pfade kann
+	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br />
+	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
 	 */
 	public void screenshot (String pfad) {
 		screenshot(pfad, cam.position());
@@ -724,10 +724,10 @@ public abstract class Game implements TastenReagierbar {
 	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab,
 	 *
 	 * @param pfad
-	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie "screenshot.jpg" speichert
-	 * 		den Screenshot im Projektordner. Fuer eingabeabhaengige Pfade kann
+	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie {@code screenshot.jpg}
+	 * 		speichert den Screenshot im Projektordner. Für eingabeabhängige Pfade kann
 	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br />
-	 * 		Als Endung wird bisher nur ".jpg" unterstuetzt!
+	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
 	 * @param x
 	 * 		Die X-Koordinate der oberen linken Ecke des Bildausschnitts.
 	 * @param y
@@ -745,13 +745,13 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
-	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab,
+	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab.
 	 *
 	 * @param pfad
-	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie "screenshot.jpg" speichert
-	 * 		den Screenshot im Projektordner. Fuer eingabeabhaengige Pfade kann
+	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie {@code screenshot.jpg}
+	 * 		speichert den Screenshot im Projektordner. Für eingabeabhängige Pfade kann
 	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br />
-	 * 		Als Endung wird bisher nur ".jpg" unterstuetzt!
+	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
 	 * @param ausschnitt
 	 * 		Der Ausschnitt aus der Zeichenebene, der als Bild gespeichert werden soll als
 	 * 		<code>BoundingRechteck</code>.
@@ -759,20 +759,38 @@ public abstract class Game implements TastenReagierbar {
 	 * @see #pfadAuswaehlen(java.lang.String[])
 	 * @see #screenshot(java.lang.String, int, int, int, int)
 	 */
-	public void screenshot (String pfad, BoundingRechteck ausschnitt) {
-		BufferedImage img = new BufferedImage((int) ausschnitt.breite, (int) ausschnitt.hoehe, BufferedImage.TYPE_INT_RGB);
-		cam.wurzel().zeichnen(img.createGraphics(), ausschnitt);
-		if (pfad.toLowerCase().endsWith(".jpg"))
-			try {
-				ImageIO.write(img, "jpg", new File(pfad));
-			} catch (IOException ex) {
-				Logger.error("Schreib-/Lesefehler beim Speichern des Screenshots!");
-				ex.printStackTrace();
+	public void screenshot (final String pfad, final BoundingRechteck ausschnitt) {
+		final String ext = pfad.toLowerCase().substring(pfad.length() - 3);
+
+		if (ext.equals("png") || ext.equals("jpg")) {
+			// ok, just pass
+		} else {
+			throw new IllegalArgumentException("Pfad muss auf .jpg oder .png enden!");
+		}
+
+		new Thread() {
+			public void run () {
+				BufferedImage img = new BufferedImage((int) ausschnitt.breite, (int) ausschnitt.hoehe, BufferedImage.TYPE_INT_RGB);
+				Graphics2D g = img.createGraphics();
+
+				g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+				g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
+				cam.wurzel().zeichnen(g, ausschnitt);
+
+				try {
+					ImageIO.write(img, ext, new File(pfad));
+				} catch (IOException e) {
+					Logger.error("Schreibfehler beim Speichern des Screenshots!");
+					e.printStackTrace();
+				}
 			}
+		}.start();
 	}
 
 	/**
-	 * Oeffnet einen Such-Dialog, der die Auswahl eines Pfades ermoeglicht.
+	 * Öffnet einen Such-Dialog, der die Auswahl eines Pfades ermöglicht.
 	 *
 	 * @param akzeptierteEndungen
 	 * 		Eine Reihe beliebig vieler akzeptierter Endungen (Gross/Kleinschreibung vollkommen egal)<br

@@ -252,7 +252,7 @@ public class Manager {
 	}
 
 	/**
-	 * Haelt einen Ticker an, der <b>bereits an diesem Manager angemeldet ist</b>.<br /> Ist der
+	 * Hält einen Ticker an, der <b>bereits an diesem Manager angemeldet ist</b>.<br /> Ist der
 	 * Ticker bereits angehalten, passiert gar nichts. War der Ticker nicht angemeldet, kommt eine
 	 * Fehlermeldung.
 	 *

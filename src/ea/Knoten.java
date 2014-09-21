@@ -212,8 +212,6 @@ public class Knoten extends Raum implements Listung {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
 		try {
 			for (int i = list.size() - 1; i >= 0; i--) {
 				list.get(i).zeichnenBasic(g, r);
@@ -221,8 +219,6 @@ public class Knoten extends Raum implements Listung {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// Wahrscheinlich wurde die Liste geleert.
 		}
-
-		super.afterRender(g, r);
 	}
 
 	/**

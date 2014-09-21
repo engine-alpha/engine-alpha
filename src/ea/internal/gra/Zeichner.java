@@ -35,7 +35,7 @@ public class Zeichner extends Canvas implements Runnable {
 	/**
 	 * Das Intervall, in dem das Fenster upgedated wird.
 	 */
-	public static final int UPDATE_INTERVALL = 20;
+	public static final int UPDATE_INTERVALL = 40;
 
 	private static final long serialVersionUID = 188647530006553893L;
 
@@ -107,19 +107,32 @@ public class Zeichner extends Canvas implements Runnable {
 	}
 
 	/**
-	 * run-Methode. Implementiert aus <code>Runnable</code>.<br /> Hierin findet in einer
-	 * Dauerschleife die Zeichenroutine statt.
+	 * Hierin findet in einer Dauerschleife die Zeichenroutine statt.
 	 */
+	@Override
 	public void run () {
 		createBufferStrategy(2);
 		BufferStrategy bs = getBufferStrategy();
 		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
 
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		// have to be the same @ Game.screenshot!
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
+		long sec = 0;
 
 		while (work) {
+			long time = System.currentTimeMillis();
+
 			render(g);
 			bs.show();
+
+			if(System.currentTimeMillis() / 1000 != sec) {
+				// System.out.println("RenderCycle-Duration: " + (System.currentTimeMillis() - time));
+			}
+
+			sec = time / 1000;
 
 			try {
 				Thread.sleep(UPDATE_INTERVALL);

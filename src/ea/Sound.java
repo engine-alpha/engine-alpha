@@ -33,13 +33,13 @@ public class Sound {
 
 	public Sound (String datei) {
 		try {
-			data = loadFromStream(datei, new FileInputStream(datei));
+			data = loadFromStream(new FileInputStream(datei));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static byte[] loadFromStream (String datei, InputStream is) {
+	public static byte[] loadFromStream (InputStream is) {
 		byte[] bytes;
 
 		if (is == null) {
