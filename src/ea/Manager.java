@@ -241,7 +241,12 @@ public class Manager {
 		Runnable r = new Runnable() {
 			@Override
 			public void run () {
-				t.tick();
+				// Otherwise these exceptions don't show up anywhere!
+				try {
+					t.tick();
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+				}
 			}
 		};
 
@@ -325,8 +330,6 @@ public class Manager {
 		jobs.remove(job);
 	}
 
-	// TODO Irgendwann in eine andere Klasse auslagern.
-
 	/**
 	 * Macht diesen Manager frei von allen aktiven Tickern, jedoch ohne ihn selbst zu beenden. Neue
 	 * Ticker können jederzeit wieder angemeldet werden.
@@ -378,9 +381,9 @@ public class Manager {
 		 * Konstruktor.
 		 *
 		 * @param ticker
-		 * 		Der Ticker dieses Auftrages.
+		 *      Ticker dieses Auftrages
 		 * @param intervall
-		 * 		Das Aufrufintervall des Tickers in ms<sup>-1</sup>.
+		 * 		Aufrufintervall des Tickers in ms<sup>-1</sup>
 		 * @param aktiv
 		 * 		Ob dieser Ticker aktiv ist
 		 */
@@ -394,7 +397,7 @@ public class Manager {
 		 * Prüft, ob dieser Job einen bestimmten Ticker steuert.
 		 *
 		 * @param t
-		 * 		Der Ticker, der auf Gleichheit mit dem angelegten zu prüfen ist.
+		 * 		Ticker, der auf Gleichheit mit dem angelegten zu prüfen ist
 		 *
 		 * @return <code>true</code>, wenn beide Ticker identisch sind (Prüfung mit
 		 * <code>equals</code>), sonst <code>false</code>.
@@ -407,7 +410,7 @@ public class Manager {
 		 * Setzt das Aufrufintervall neu.
 		 *
 		 * @param interval
-		 * 		Das neue Aufrufintervall
+		 * 		Neues Aufrufintervall
 		 */
 		public void setInterval (int interval) {
 			this.interval = interval;
@@ -417,7 +420,7 @@ public class Manager {
 		 * Setzt, ob der anliegende Ticker momentan aktiv ist.
 		 *
 		 * @param active
-		 * 		Ob der anliegende Ticker aufgerufen werden soll, oder nicht.
+		 * 		Ob der anliegende Ticker aufgerufen werden soll, oder nicht
 		 */
 		public void setActive (boolean active) {
 			this.active = active;
@@ -427,7 +430,7 @@ public class Manager {
 		 * Setzt den Task neu.
 		 *
 		 * @param future
-		 * 		Das neue tatsächliche ScheduledFuture, das ausgeführt wird.
+		 * 		Neues tatsächliche ScheduledFuture, das ausgeführt wird
 		 */
 		public void setFuture (ScheduledFuture<?> future) {
 			this.scheduledFuture = future;
