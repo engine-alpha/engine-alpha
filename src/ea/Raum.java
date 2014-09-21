@@ -40,14 +40,14 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * Ein einfacher Farbzyklus, der fuer die Leucht-Animationen genommen wird
 	 */
 	public static final Color[] farbzyklus = {
-			Color.white,
-			Color.blue,
-			Color.red,
-			Color.yellow,
-			Color.magenta,
-			Color.cyan,
-			Color.green,
-			Color.orange,
+			                                         Color.white,
+			                                         Color.blue,
+			                                         Color.red,
+			                                         Color.yellow,
+			                                         Color.magenta,
+			                                         Color.cyan,
+			                                         Color.green,
+			                                         Color.orange,
 	};
 
 	/**
@@ -796,24 +796,20 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene.
-	 * <p/>
-	 * Hierbei wird die abstrakte Methode verschieben() und dimension() angewandt, um eine zur
-	 * vorherigen Position relative Verschiebung zu erreichen, die an die gewünschte Zielposition
-	 * fährt.
-	 * <p/>
-	 * <b>ACHTUNG !!!</b>
-	 * <p/>
-	 * Bei den ALLEN Objekten ist die eingegebene Position die links-oben liegende Ecke des die
-	 * Figur optimal umschreibenden zu den Fensterbegrenzungen parallelen Rechtecks.
-	 * <p/>
-	 * Das heißt, dass bei Kreisen zum Beispiel <b>nicht</b> die des Mittelpunktes ist! Hierfür gibt
-	 * es die Sondermethode <code>mittelpunktSetzen(int x, int y)</code>.
+	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
+	 * gesehen eine Verschiebung von der aktuellen Position an die neue. <br /><br />
+	 * <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die linke, obere
+	 * Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei Kreisen z.B.
+	 * <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
+	 * <code>mittelpunktSetzen(int x, int y)</code>.
 	 *
 	 * @param p
 	 * 		Der neue Zielpunkt
 	 *
 	 * @see #positionSetzen(float, float)
+	 * @see #mittelpunktSetzen(int, int)
+	 * @see #setX(float)
+	 * @see #setY(float)
 	 */
 	public void positionSetzen (Punkt p) {
 		BoundingRechteck r = dimension();
@@ -821,27 +817,22 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene.
-	 * <p/>
-	 * Hierbei wird die abstrakte Methode verschieben() und dimension() angewandt, um eine zur
-	 * vorherigen Position relative Verschiebung zu erreichen, die an die gewünschte Zielposition
-	 * fährt.
-	 * <p/>
-	 * <b>ACHTUNG !!!</b>
-	 * <p/>
-	 * Bei den ALLEN Objekten ist die eingegebene Position die links-oben liegende Ecke des die
-	 * Figur optimal umschreibenden zu den Fensterbegrenzungen parallelen Rechtecks.
-	 * <p/>
-	 * Das heißt, dass bei Kreisen zum Beispiel <b>nicht</b> die des Mittelpunktes ist! Hierfür gibt
-	 * es die Sondermethode <code>mittelpunktSetzen(int x, int y)</code>.
+	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
+	 * gesehen eine Verschiebung von der aktuellen Position an die neue. <br /><br />
+	 * <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die linke, obere
+	 * Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei Kreisen z.B.
+	 * <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
+	 * <code>mittelpunktSetzen(int x, int y)</code>.
 	 *
 	 * @param x
 	 * 		neue <code>x</code>-Koordinate
 	 * @param y
 	 * 		neue <code>y</code>-Koordinate
 	 *
-	 * @see #mittelpunktSetzen(int, int)
 	 * @see #positionSetzen(Punkt)
+	 * @see #mittelpunktSetzen(int, int)
+	 * @see #setX(float)
+	 * @see #setY(float)
 	 */
 	public void positionSetzen (float x, float y) {
 		this.positionSetzen(new Punkt(x, y));
@@ -888,10 +879,9 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Methode zum schnellen Herausfinden der Position des Raum-Objektes.<br /> <b>Achtung:</b>
-	 * Diese Methode gibt nur die Position der <b>linken, oberen Ecke</b> aus fuer mehr
-	 * Informationen ist die Methode <code>dimension()</code> zu empfehlen, die mehr Information
-	 * bietet.
+	 * Gibt die Position der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig sein,
+	 * so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen. <br /><br
+	 * />Mehr Informationen liefert die Methode {@link #dimension()}.
 	 *
 	 * @return Die Koordinaten des Punktes der linken, oberen Ecke in Form eines
 	 * <code>Punkt</code>-Objektes
@@ -900,6 +890,94 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public Punkt position () {
 		return position;
+	}
+
+	/**
+	 * Gibt die x-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+	 * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
+	 *
+	 * @return <code>x</code>-Koordinate
+	 *
+	 * @see #getY()
+	 * @see #position()
+	 */
+	public float getX () {
+		return position.x;
+	}
+
+	/**
+	 * Setzt die x-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
+	 * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
+	 * /><br /> <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die
+	 * linke, obere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
+	 * Kreisen z.B. <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
+	 * <code>mittelpunktSetzen(int x, int y)</code>.
+	 *
+	 * @param x
+	 * 		neue <code>x</code>-Koordinate
+	 *
+	 * @see #positionSetzen(float, float)
+	 * @see #mittelpunktSetzen(int, int)
+	 * @see #setY(float)
+	 */
+	public void setX (float x) {
+		this.verschieben(x - getX(), 0);
+	}
+
+	/**
+	 * Gibt die y-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+	 * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
+	 *
+	 * @return <code>y</code>-Koordinate
+	 *
+	 * @see #getX()
+	 * @see #position()
+	 */
+	public float getY () {
+		return position.y;
+	}
+
+	/**
+	 * Setzt die y-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
+	 * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
+	 * /><br /> <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die
+	 * linke, obere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
+	 * Kreisen z.B. <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
+	 * <code>mittelpunktSetzen(int x, int y)</code>.
+	 *
+	 * @param y
+	 * 		neue <code>y</code>-Koordinate
+	 *
+	 * @see #positionSetzen(float, float)
+	 * @see #mittelpunktSetzen(int, int)
+	 * @see #setX(float)
+	 */
+	public void setY (float y) {
+		this.verschieben(0, y - getY());
+	}
+
+	/**
+	 * Gibt die Breite des Objekts zurück. Entspricht einem Aufruf von {@code
+	 * raum.dimension().breite}.
+	 *
+	 * @return Breite des Objekts
+	 *
+	 * @see #dimension()
+	 */
+	public float getBreite () {
+		return dimension().breite;
+	}
+
+	/**
+	 * Gibt die Höhe des Objekts zurück. Entspricht einem Aufruf von {@code
+	 * raum.dimension().hoehe}.
+	 *
+	 * @return Höhe des Objekts
+	 *
+	 * @see #dimension()
+	 */
+	public float getHoehe () {
+		return dimension().hoehe;
 	}
 
 	/**
@@ -1010,11 +1088,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
 		lastDrehung = Math.toRadians(drehung);
 
-		if(lastDrehung != 0) {
+		if (lastDrehung != 0) {
 			g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
 		}
 
-		if(opacity != 1) {
+		if (opacity != 1) {
 			composite = g.getComposite();
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
 		} else {
@@ -1033,11 +1111,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	@NoExternalUse
 	public final void afterRender (Graphics2D g, BoundingRechteck r) {
-		if(composite != null) {
+		if (composite != null) {
 			g.setComposite(composite);
 		}
 
-		if(lastDrehung != 0) {
+		if (lastDrehung != 0) {
 			g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
 		}
 	}
@@ -1068,11 +1146,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Methode zum Beschreiben der rechteckigen Flaeche, die dieses Objekt einnimmt.<br /> Diese
-	 * Methode wird zentral fuer die Trefferkollisionen innerhalb der Engine benutzt und gehoert zu
+	 * Methode zum Beschreiben der rechteckigen Fläche, die dieses Objekt einnimmt.<br /> Diese
+	 * Methode wird zentral für die Trefferkollisionen innerhalb der Engine benutzt und gehört zu
 	 * den wichtigsten Methoden der Klasse und der Engine.
 	 *
-	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll
+	 * @return Ein BoundingRechteck mit minimal nötigen Umfang, um das Objekt <b>voll
 	 * einzuschliessen</b>.
 	 */
 	public abstract BoundingRechteck dimension ();
@@ -1158,7 +1236,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public BoundingRechteck[] flaechen () {
 		return new BoundingRechteck[]{
-				this.dimension()
+				                             this.dimension()
 		};
 	}
 
