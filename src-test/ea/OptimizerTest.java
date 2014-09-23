@@ -15,7 +15,7 @@ public class OptimizerTest {
 		BufferedImage img = null;
 
 		try {
-			img = ImageIO.read(EngineAlpha.class.getResource("/res/assets/logo.png"));
+			img = ImageIO.read(EngineAlpha.class.getResource("/assets/logo.png"));
 		} catch (Exception e) {
 		}
 

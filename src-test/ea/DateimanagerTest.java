@@ -43,7 +43,7 @@ public class DateimanagerTest {
 		assertNotNull(DateiManager.stringArrayEinlesen("test"));
 	}
 
-	@Test (expected = IllegalArgumentException.class)
+	@Test ( expected = IllegalArgumentException.class )
 	public void stringArrayWriteNull () {
 		DateiManager.stringArraySchreiben(null, "test.eaa");
 	}
@@ -58,7 +58,7 @@ public class DateimanagerTest {
 		assertArrayEquals("Gelesenes Array ist nicht gleich mit geschriebenem Array", write, read);
 	}
 
-	@Test (expected = IllegalArgumentException.class)
+	@Test ( expected = IllegalArgumentException.class )
 	public void intArrayWriteNull () {
 		DateiManager.integerArraySchreiben(null, "test.eaa");
 	}
