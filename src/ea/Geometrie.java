@@ -74,14 +74,21 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	}
 
 	/**
-	 * Berechnet ein neues BoundingRechteck fuer ein Array aus Dreiecken
+	 * Zeichnet das Objekt.<br /> heisst in diesem Fall das saemtliche Unterdreiecke gezeichnet
+	 * werden.
 	 */
-	public static BoundingRechteck ausDreiecken (Dreieck[] ecke) {
-		BoundingRechteck r = ecke[0].dimension();
-		for (int i = 1; i < ecke.length; i++) {
-			r = r.summe(ecke[i].dimension());
+	public void zeichnen (Graphics2D g, BoundingRechteck r) {
+		super.beforeRender(g, r);
+
+		for (int i = 0; i < formen.length; i++) {
+			formen[i].zeichnen(g, r);
 		}
-		return r;
+
+		super.afterRender(g, r);
+	}
+
+	public BoundingRechteck dimension () {
+		return dimension.klon();
 	}
 
 	/**
@@ -99,24 +106,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 			formen[i].verschieben(v);
 		}
 		dimension = dimension.verschobeneInstanz(v);
-	}
-
-	/**
-	 * Zeichnet das Objekt.<br /> heisst in diesem Fall das saemtliche Unterdreiecke gezeichnet
-	 * werden.
-	 */
-	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
-		for (int i = 0; i < formen.length; i++) {
-			formen[i].zeichnen(g, r);
-		}
-
-		super.afterRender(g, r);
-	}
-
-	public BoundingRechteck dimension () {
-		return dimension.klon();
 	}
 
 	/**
@@ -165,6 +154,18 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	}
 
 	/**
+	 * Setzt ganzheitlich die Farbe der gesamten geometrischen Figur auf eine Farbe.
+	 *
+	 * @param f
+	 * 		Die Farbe, die das Objekt haben soll.
+	 *
+	 * @see Farbe
+	 */
+	public void farbeSetzen (Farbe f) {
+		farbeSetzen(f.wert());
+	}
+
+	/**
 	 * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br /> Dadurch faerbt sich
 	 * im Endeffekt das ganze Objekt neu ein.
 	 *
@@ -182,27 +183,12 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	}
 
 	/**
-	 * Setzt ganzheitlich die Farbe der gesamten geometrischen Figur auf eine Farbe.
+	 * In dieser Methode werden saemtliche Dreiecke neu berechnet und die Referenz bei Aufruf in der
+	 * Superklasse hierauf gesetzt
 	 *
-	 * @param f
-	 * 		Die Farbe, die das Objekt haben soll.
-	 *
-	 * @see Farbe
+	 * @return Ein Dreieck-Array mit allen, die Figur beschreibenden Dreiecken als Inhalt.
 	 */
-	public void farbeSetzen (Farbe f) {
-		farbeSetzen(f.wert());
-	}
-
-	/**
-	 * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br /> Dadurch faerbt sich
-	 * im Endeffekt das ganze Objekt neu ein.
-	 *
-	 * @param farbe
-	 * 		Der String-Wert der Farbe. Zu der Zuordnung siehe <b>Handbuch</b>
-	 */
-	public void farbeSetzen (String farbe) {
-		farbeSetzen(zuFarbeKonvertieren(farbe));
-	}
+	public abstract Dreieck[] neuBerechnen ();
 
 	/**
 	 * Setzt, ob dieses Geometrie-Objekt leuchten soll.<br /> Ist dies der Fall, so werden immer
@@ -249,6 +235,17 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	}
 
 	/**
+	 * aktualisisert die Dreiecke, aus denen die Figur besteht UND weisst sie ein. Diese Methode
+	 * MUSS am Ende eines jeden Konstruktors einer Klasse stehen, die sich hieraus ableitet<br />
+	 * Zugrunde liegt eine neue Wertzuweisung des Arrays, es wird <code>neuBerechnen()</code>
+	 * aufgerufen.
+	 */
+	protected void aktualisierenFirst () {
+		aktualisieren();
+		farbeSetzen("Weiss");
+	}
+
+	/**
 	 * aktualisisert die Dreiecke, aus denen die Figur besteht.<br /> Zugrunde liegt eine neue
 	 * Wertzuweisung des Arrays, es wird <code>neuBerechnen()</code> aufgerufen.
 	 */
@@ -263,14 +260,25 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	}
 
 	/**
-	 * aktualisisert die Dreiecke, aus denen die Figur besteht UND weisst sie ein. Diese Methode
-	 * MUSS am Ende eines jeden Konstruktors einer Klasse stehen, die sich hieraus ableitet<br />
-	 * Zugrunde liegt eine neue Wertzuweisung des Arrays, es wird <code>neuBerechnen()</code>
-	 * aufgerufen.
+	 * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br /> Dadurch faerbt sich
+	 * im Endeffekt das ganze Objekt neu ein.
+	 *
+	 * @param farbe
+	 * 		Der String-Wert der Farbe. Zu der Zuordnung siehe <b>Handbuch</b>
 	 */
-	protected void aktualisierenFirst () {
-		aktualisieren();
-		farbeSetzen("Weiss");
+	public void farbeSetzen (String farbe) {
+		farbeSetzen(zuFarbeKonvertieren(farbe));
+	}
+
+	/**
+	 * Berechnet ein neues BoundingRechteck fuer ein Array aus Dreiecken
+	 */
+	public static BoundingRechteck ausDreiecken (Dreieck[] ecke) {
+		BoundingRechteck r = ecke[0].dimension();
+		for (int i = 1; i < ecke.length; i++) {
+			r = r.summe(ecke[i].dimension());
+		}
+		return r;
 	}
 
 	/**
@@ -281,12 +289,4 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	public Dreieck[] formen () {
 		return this.formen;
 	}
-
-	/**
-	 * In dieser Methode werden saemtliche Dreiecke neu berechnet und die Referenz bei Aufruf in der
-	 * Superklasse hierauf gesetzt
-	 *
-	 * @return Ein Dreieck-Array mit allen, die Figur beschreibenden Dreiecken als Inhalt.
-	 */
-	public abstract Dreieck[] neuBerechnen ();
 }

@@ -50,6 +50,24 @@ public final class Farbe implements Serializable {
 	private final Color wert;
 
 	/**
+	 * Vereinfachter Konstruktor.<br /> Erstellt eine Farbe mit dem uebergebenen RGB-Wert, die
+	 * vollkommen <b>undurchsichtig</b> ist.<br /> Fuer eine Erklaerung der RGB/Alpha-Werte, siehe
+	 * den Komplizierteren Konstruktor.
+	 *
+	 * @param r
+	 * 		Der Rot-Anteil dieser Farbe (zwischen 0 und 255)
+	 * @param g
+	 * 		Der Gruen-Anteil dieser Farben(zwischen 0 und 255)
+	 * @param b
+	 * 		Der Blau-Anteil dieser Farbe (zwischen 0 und 255)
+	 *
+	 * @see #Farbe(int, int, int, int)
+	 */
+	public Farbe (int r, int g, int b) {
+		this(r, g, b, 255);
+	}
+
+	/**
 	 * Konstruktor fuer die Klasse Farbe, hier wird der Farbe der RGB-Wert zugeordnet, dies sind die
 	 * 3 Zahlen <b>zwischen 0 und 255</b>, die jeweils die Menge der Komplementaerfarbe in der
 	 * ganzen Farbe angeben. Ist der Wert 255 ist der Anteil der Farbe sehr stark, ist er 0, ist der
@@ -70,24 +88,6 @@ public final class Farbe implements Serializable {
 	 */
 	public Farbe (int r, int g, int b, int alpha) {
 		wert = DateiManager.ausListe(new Color(r, g, b, alpha));
-	}
-
-	/**
-	 * Vereinfachter Konstruktor.<br /> Erstellt eine Farbe mit dem uebergebenen RGB-Wert, die
-	 * vollkommen <b>undurchsichtig</b> ist.<br /> Fuer eine Erklaerung der RGB/Alpha-Werte, siehe
-	 * den Komplizierteren Konstruktor.
-	 *
-	 * @param r
-	 * 		Der Rot-Anteil dieser Farbe (zwischen 0 und 255)
-	 * @param g
-	 * 		Der Gruen-Anteil dieser Farben(zwischen 0 und 255)
-	 * @param b
-	 * 		Der Blau-Anteil dieser Farbe (zwischen 0 und 255)
-	 *
-	 * @see #Farbe(int, int, int, int)
-	 */
-	public Farbe (int r, int g, int b) {
-		this(r, g, b, 255);
 	}
 
 	/**

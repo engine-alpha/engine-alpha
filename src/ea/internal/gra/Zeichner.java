@@ -128,7 +128,7 @@ public class Zeichner extends Canvas implements Runnable {
 			render(g);
 			bs.show();
 
-			if(System.currentTimeMillis() / 1000 != sec) {
+			if (System.currentTimeMillis() / 1000 != sec) {
 				// System.out.println("RenderCycle-Duration: " + (System.currentTimeMillis() - time));
 			}
 
@@ -139,6 +139,40 @@ public class Zeichner extends Canvas implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	/**
+	 * Die render()-Methode, sie fuehrt die gesamte Zeichenroutine aus.
+	 *
+	 * @param g
+	 * 		Das zum Zeichnen uebergebene Graphics-Objekt
+	 */
+	public void render (Graphics2D g) {
+		// Absoluter Hintergrund
+		g.setColor(Color.black);
+		g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
+
+		// Relativer Hintergrund
+		if (hintergrund != null) {
+			hintergrund.zeichnenBasic(g, groesse.verschobeneInstanz(new Vektor(cam.getX() / 5, cam.getY() / 10)));
+		}
+
+		// Die Objekte
+		cam.zeichne(g);
+
+		// Die simplen Grafikobjekte (nicht in Raum)
+		BoundingRechteck camBounds = cam.position();
+		for (SimpleGraphic gr : simples) {
+			gr.paint(g, (int) camBounds.x, (int) camBounds.y);
+		}
+
+		// Die statischen Objekte
+		statNode.zeichnen(g, groesse);
+
+		// Die Maus
+		if (vordergrund != null) {
+			vordergrund.zeichnen(g, groesse);
 		}
 	}
 
@@ -213,40 +247,5 @@ public class Zeichner extends Canvas implements Runnable {
 
 	public void removeSimple (SimpleGraphic g) {
 		simples.remove(g);
-	}
-
-	/**
-	 * Die render()-Methode, sie fuehrt die gesamte Zeichenroutine aus.
-	 *
-	 * @param g
-	 * 		Das zum Zeichnen uebergebene Graphics-Objekt
-	 */
-	public void render (Graphics2D g) {
-		// Absoluter Hintergrund
-		g.setColor(Color.black);
-		g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
-
-		// Relativer Hintergrund
-		if (hintergrund != null) {
-			hintergrund.zeichnenBasic(g, groesse.verschobeneInstanz(new Vektor(
-					cam.getX() / 5, cam.getY() / 10)));
-		}
-
-		// Die Objekte
-		cam.zeichne(g);
-
-		// Die simplen Grafikobjekte (nicht in Raum)
-		BoundingRechteck camBounds = cam.position();
-		for (SimpleGraphic gr : simples) {
-			gr.paint(g, (int) camBounds.x, (int) camBounds.y);
-		}
-
-		// Die statischen Objekte
-		statNode.zeichnen(g, groesse);
-
-		// Die Maus
-		if (vordergrund != null) {
-			vordergrund.zeichnen(g, groesse);
-		}
 	}
 }

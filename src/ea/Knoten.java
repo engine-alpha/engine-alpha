@@ -188,20 +188,6 @@ public class Knoten extends Raum implements Listung {
 	}
 
 	/**
-	 * Verschiebt diesen Knoten.<br /> Das heisst, dass saemtliche anliegenden Raum-Objekte
-	 * gleichermassen Verschoben werden.
-	 *
-	 * @param v
-	 * 		Der Vektor, der die Verschiebung angibt.
-	 */
-	@Override
-	public void verschieben (Vektor v) {
-		for (int i = list.size() - 1; i >= 0; i--) {
-			list.get(i).verschieben(v);
-		}
-	}
-
-	/**
 	 * Zeichnet den Knoten.<br /> Das heisst, der Zeichnen-Befehl wird an die Unterobjekte
 	 * weitergetragen.<br /> Diese Methode ist nur intern von Bedeutung
 	 *
@@ -249,6 +235,20 @@ public class Knoten extends Raum implements Listung {
 			return new BoundingRechteck(0, 0, 0, 0);
 		} else {
 			return ret;
+		}
+	}
+
+	/**
+	 * Verschiebt diesen Knoten.<br /> Das heisst, dass saemtliche anliegenden Raum-Objekte
+	 * gleichermassen Verschoben werden.
+	 *
+	 * @param v
+	 * 		Der Vektor, der die Verschiebung angibt.
+	 */
+	@Override
+	public void verschieben (Vektor v) {
+		for (int i = list.size() - 1; i >= 0; i--) {
+			list.get(i).verschieben(v);
 		}
 	}
 

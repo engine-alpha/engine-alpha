@@ -26,8 +26,7 @@ import java.awt.*;
  *
  * @author Michael Andonie
  */
-public class Strich
-		extends SimpleGraphic {
+public class Strich extends SimpleGraphic {
 
 	/**
 	 * Der erste Punkt

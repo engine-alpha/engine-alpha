@@ -25,8 +25,7 @@ package ea;
  *
  * @author Michael Andonie
  */
-public class FallDummy
-		implements FallReagierbar {
+public class FallDummy implements FallReagierbar {
 
 	/**
 	 * <i>Singleton</i>-Referenz auf die eine Instanz.

@@ -69,20 +69,6 @@ public final class BoundingRechteck implements Serializable {
 	}
 
 	/**
-	 * Berechnet ein neues BoundingRechteck mit denselben Maßen wie dieses, jedoch um einen
-	 * bestimmten Vektor verschoben.
-	 *
-	 * @param v
-	 * 		Der Vektor, der die Verschiebung des neuen Objektes von diesem beschreibt.
-	 *
-	 * @return Ein neues <code>BoundingRechteck</code>-Objekt, das die selbe Maße wie dieses hat,
-	 * jedoch um die entsprechende Verschiebung verschoben ist.
-	 */
-	public BoundingRechteck verschobeneInstanz (Vektor v) {
-		return new BoundingRechteck(x + v.x, y + v.y, breite, hoehe);
-	}
-
-	/**
 	 * Berechnet aus diesem rein aus Zahlen bestehenden Rahmen ein Rechteck, das in der Zeichenebene
 	 * darstellbar ist.
 	 *
@@ -90,6 +76,16 @@ public final class BoundingRechteck implements Serializable {
 	 */
 	public Rechteck ausDiesem () {
 		return new Rechteck(x, y, breite, hoehe);
+	}
+
+	/**
+	 * Ein Mittenangleich mit einem anderen BoundingRechteck
+	 *
+	 * @param r
+	 * 		Das BoundingRechteck, an dessen Mitte auch die dieses Rechtecks sein soll.
+	 */
+	public BoundingRechteck mittenAngleichInstanz (BoundingRechteck r) {
+		return this.mittenAngleichInstanz(r.zentrum());
 	}
 
 	/**
@@ -107,13 +103,27 @@ public final class BoundingRechteck implements Serializable {
 	}
 
 	/**
-	 * Ein Mittenangleich mit einem anderen BoundingRechteck
+	 * Berechnet den Mittelpunkt dieses BoundingRechtecks in der Zeichenebene.
 	 *
-	 * @param r
-	 * 		Das BoundingRechteck, an dessen Mitte auch die dieses Rechtecks sein soll.
+	 * @return Der Punkt mit den Koordinaten, der im Zentrum des Rechtecks liegt (bei ungeraden
+	 * Koordinaten mit Abrundung)
 	 */
-	public BoundingRechteck mittenAngleichInstanz (BoundingRechteck r) {
-		return this.mittenAngleichInstanz(r.zentrum());
+	public Punkt zentrum () {
+		return new Punkt(x + ((breite) / 2), y + ((hoehe) / 2));
+	}
+
+	/**
+	 * Berechnet ein neues BoundingRechteck mit denselben Maßen wie dieses, jedoch um einen
+	 * bestimmten Vektor verschoben.
+	 *
+	 * @param v
+	 * 		Der Vektor, der die Verschiebung des neuen Objektes von diesem beschreibt.
+	 *
+	 * @return Ein neues <code>BoundingRechteck</code>-Objekt, das die selbe Maße wie dieses hat,
+	 * jedoch um die entsprechende Verschiebung verschoben ist.
+	 */
+	public BoundingRechteck verschobeneInstanz (Vektor v) {
+		return new BoundingRechteck(x + v.x, y + v.y, breite, hoehe);
 	}
 
 	/**
@@ -299,74 +309,12 @@ public final class BoundingRechteck implements Serializable {
 	}
 
 	/**
-	 * Berechnet den Mittelpunkt dieses BoundingRechtecks in der Zeichenebene.
+	 * Berechnet die vier Eckpunkte des umfassenden {@link ea.BoundingRechteck}s
 	 *
-	 * @return Der Punkt mit den Koordinaten, der im Zentrum des Rechtecks liegt (bei ungeraden
-	 * Koordinaten mit Abrundung)
-	 */
-	public Punkt zentrum () {
-		return new Punkt(x + ((breite) / 2), y + ((hoehe) / 2));
-	}
-
-	/**
-	 * TODO Dokumentation
-	 *
-	 * @return Ein Punkt-ArrarealY der Laenge 4, dessen Inhalt die 4 beschreibenden Punkte des
-	 * BoundingRechteck 's darstellt.
+	 * @return Array mit den vier Eckpunkten des umfassenden {@link ea.BoundingRechteck}s
 	 */
 	public Punkt[] punkte () {
-		Punkt[] p = {
-				new Punkt(x, y),
-				new Punkt(x + breite, y),
-				new Punkt(x, y + hoehe),
-				new Punkt(x + breite, y + hoehe)
-		};
-		return p;
-	}
-
-	/**
-	 * Berechnet, ob dieses BoundingRechteck links von einem zweiten ist
-	 *
-	 * @param r
-	 * 		Das Rechteck, bei dem dies getestet werden soll
-	 *
-	 * @return <code>true</code>, wenn dieses Rechteck rechts von dem anderen ist, sonst
-	 * <code>false</code>.
-	 */
-	public boolean linksVon (BoundingRechteck r) {
-		return ((this.x) < (r.x));
-	}
-
-	/**
-	 * Berechnet, ob dieses BoundingRechteck ueber einem zweiten ist
-	 *
-	 * @param r
-	 * 		Das Rechteck, bei dem dies getestet werden soll
-	 *
-	 * @return <code>true</code>, wenn dieses Rechteck rechts von dem anderen ist, sonst
-	 * <code>false</code>.
-	 */
-	public boolean ueber (BoundingRechteck r) {
-		return ((this.y) < (r.y));
-	}
-
-	/**
-	 * Testet, ob ein anderes BoundingRechteck dieses schneidet.<br /> Schneiden bedeutet folgendes
-	 * im Sinne der Engine Alpha:<br /> <i>Beide Rechtecke teilen sich mindestens einen (aber
-	 * meistens mehrere) Punkte auf der Zeichenebene</i>.
-	 *
-	 * @param fig
-	 * 		Das zweite zu testende BoundingRechteck
-	 *
-	 * @return <code>true</code>, wenn sich die beiden schneiden, sonst <code>false</code>.
-	 */
-	public boolean schneidetBasic (BoundingRechteck fig) {
-		if (fig.y < (this.y + this.hoehe) && (fig.y + fig.hoehe) > this.y) {
-			if ((fig.x + fig.breite) > this.x && fig.x < (this.x + this.breite)) {
-				return true;
-			}
-		}
-		return false;
+		return new Punkt[] {new Punkt(x, y), new Punkt(x + breite, y), new Punkt(x, y + hoehe), new Punkt(x + breite, y + hoehe)};
 	}
 
 	/**
@@ -421,6 +369,38 @@ public final class BoundingRechteck implements Serializable {
 	}
 
 	/**
+	 * Testet, ob ein anderes BoundingRechteck dieses schneidet.<br /> Schneiden bedeutet folgendes
+	 * im Sinne der Engine Alpha:<br /> <i>Beide Rechtecke teilen sich mindestens einen (aber
+	 * meistens mehrere) Punkte auf der Zeichenebene</i>.
+	 *
+	 * @param fig
+	 * 		Das zweite zu testende BoundingRechteck
+	 *
+	 * @return <code>true</code>, wenn sich die beiden schneiden, sonst <code>false</code>.
+	 */
+	public boolean schneidetBasic (BoundingRechteck fig) {
+		if (fig.y < (this.y + this.hoehe) && (fig.y + fig.hoehe) > this.y) {
+			if ((fig.x + fig.breite) > this.x && fig.x < (this.x + this.breite)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Berechnet, ob dieses BoundingRechteck links von einem zweiten ist
+	 *
+	 * @param r
+	 * 		Das Rechteck, bei dem dies getestet werden soll
+	 *
+	 * @return <code>true</code>, wenn dieses Rechteck rechts von dem anderen ist, sonst
+	 * <code>false</code>.
+	 */
+	public boolean linksVon (BoundingRechteck r) {
+		return ((this.x) < (r.x));
+	}
+
+	/**
 	 * Berechnet, wie weit man senkrecht ein BoundingRechteck verschieben müsste, damit es dieses
 	 * nicht mehr berührt.
 	 *
@@ -439,6 +419,19 @@ public final class BoundingRechteck implements Serializable {
 		} else {
 			return (this.y + this.hoehe) - r.y;
 		}
+	}
+
+	/**
+	 * Berechnet, ob dieses BoundingRechteck ueber einem zweiten ist
+	 *
+	 * @param r
+	 * 		Das Rechteck, bei dem dies getestet werden soll
+	 *
+	 * @return <code>true</code>, wenn dieses Rechteck rechts von dem anderen ist, sonst
+	 * <code>false</code>.
+	 */
+	public boolean ueber (BoundingRechteck r) {
+		return ((this.y) < (r.y));
 	}
 
 	/**

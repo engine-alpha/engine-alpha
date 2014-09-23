@@ -87,28 +87,11 @@ public class PixelFeld implements java.io.Serializable {
 		farbe = new Color[grX][grY];
 
 		if (faktor <= 0) {
-			throw new IllegalArgumentException(
-					"Der Eingabefaktor muss größer als 0 sein. Deine Eingabe: "
-							+ faktor);
+			throw new IllegalArgumentException("Der Eingabefaktor muss größer als 0 sein. Deine Eingabe: " + faktor);
 		}
 
 		this.faktor = faktor;
 		this.cacheOutdated = true;
-	}
-
-	/**
-	 * Errechnet aus zwei Zahlen die Summe und setzt das Ergebnis, sofern nicht im
-	 * Definitionsbereich der Farbwerte auf den naeheren Grenzwert (0 bzw. 255)
-	 *
-	 * @param a
-	 * 		Wert 1
-	 * @param b
-	 * 		Wert 2
-	 *
-	 * @return Die Summe, unter Garantie im Definitionsbereich
-	 */
-	private static int zahlenSumme (int a, int b) {
-		return Math.max(0, Math.min(255, a + b));
 	}
 
 	/**
@@ -119,57 +102,11 @@ public class PixelFeld implements java.io.Serializable {
 	 */
 	public void faktorSetzen (int faktor) {
 		if (faktor <= 0) {
-			throw new IllegalArgumentException(
-					"Zoomfaktor muss größer als 0 sein. Deine Eingabe: "
-							+ faktor);
+			throw new IllegalArgumentException("Zoomfaktor muss größer als 0 sein. Deine Eingabe: " + faktor);
 		}
 
 		this.faktor = faktor;
 		this.cacheOutdated = true;
-	}
-
-	/**
-	 * Setzt an einer bestimmten Position eine Farbe.
-	 *
-	 * @param x
-	 * 		Die Relative X-Position des zu aendernden Quadrats
-	 * @param y
-	 * 		Die Relative Y-Position des zu aendernden Quadrats
-	 * @param c
-	 * 		Die neu zu setzende Farbe. Ist dieser Wert null, so wird dieses Unterquadrat nicht
-	 * 		mitgezeichnet.
-	 */
-	public void farbeSetzen (int x, int y, Color c) {
-		farbe[x][y] = c;
-		this.cacheOutdated = true;
-	}
-
-	/**
-	 * @return die Breite des Feldes in der Zeichenebene.
-	 */
-	public int breite () {
-		return farbe.length * faktor;
-	}
-
-	/**
-	 * @return die Hoehe des Feldes in der Zeichenebene.
-	 */
-	public int hoehe () {
-		return farbe[0].length * faktor;
-	}
-
-	/**
-	 * @return die Anzahl an Unterquadraten in Richtung X
-	 */
-	public int breiteN () {
-		return farbe.length;
-	}
-
-	/**
-	 * @return die Anzahl an Unterquadraten in Richtung Y
-	 */
-	public int hoeheN () {
-		return farbe[0].length;
 	}
 
 	/**
@@ -200,18 +137,27 @@ public class PixelFeld implements java.io.Serializable {
 	}
 
 	/**
+	 * @return die Anzahl an Unterquadraten in Richtung X
+	 */
+	public int breiteN () {
+		return farbe.length;
+	}
+
+	/**
+	 * @return die Anzahl an Unterquadraten in Richtung Y
+	 */
+	public int hoeheN () {
+		return farbe[0].length;
+	}
+
+	/**
 	 * Ändert alle Farben des Feldes in ihr Negativ um.
 	 */
 	public void negativ () {
 		for (int i = 0; i < farbe.length; i++) {
 			for (int j = 0; j < farbe[0].length; j++) {
 				if (this.farbe[i][j] != null) {
-					this.farbe[i][j] = new Color(
-							255 - farbe[i][j].getRed(),
-							255 - farbe[i][j].getGreen(),
-							255 - farbe[i][j].getBlue(),
-							farbe[i][j].getAlpha()
-					);
+					this.farbe[i][j] = new Color(255 - farbe[i][j].getRed(), 255 - farbe[i][j].getGreen(), 255 - farbe[i][j].getBlue(), farbe[i][j].getAlpha());
 				}
 			}
 		}
@@ -265,12 +211,25 @@ public class PixelFeld implements java.io.Serializable {
 			for (int j = 0; j < farbe[0].length; j++) {
 				if (this.farbe[i][j] != null) {
 					Color c = farbe[i][j];
-					farbe[i][j] = new Color(zahlenSumme(c.getRed(), r),
-							zahlenSumme(c.getGreen(), g), zahlenSumme(
-							c.getBlue(), b));
+					farbe[i][j] = new Color(zahlenSumme(c.getRed(), r), zahlenSumme(c.getGreen(), g), zahlenSumme(c.getBlue(), b));
 				}
 			}
 		}
+	}
+
+	/**
+	 * Errechnet aus zwei Zahlen die Summe und setzt das Ergebnis, sofern nicht im
+	 * Definitionsbereich der Farbwerte auf den naeheren Grenzwert (0 bzw. 255)
+	 *
+	 * @param a
+	 * 		Wert 1
+	 * @param b
+	 * 		Wert 2
+	 *
+	 * @return Die Summe, unter Garantie im Definitionsbereich
+	 */
+	private static int zahlenSumme (int a, int b) {
+		return Math.max(0, Math.min(255, a + b));
 	}
 
 	/**
@@ -346,6 +305,20 @@ public class PixelFeld implements java.io.Serializable {
 	}
 
 	/**
+	 * @return die Breite des Feldes in der Zeichenebene.
+	 */
+	public int breite () {
+		return farbe.length * faktor;
+	}
+
+	/**
+	 * @return die Hoehe des Feldes in der Zeichenebene.
+	 */
+	public int hoehe () {
+		return farbe[0].length * faktor;
+	}
+
+	/**
 	 * In dieser Methode werden die einzelnen Quadrate von ihrer Informationsdichte her
 	 * zurueckgegeben.
 	 *
@@ -353,6 +326,66 @@ public class PixelFeld implements java.io.Serializable {
 	 */
 	public Color[][] getPic () {
 		return farbe;
+	}
+
+	/**
+	 * Erstellt ein neues PixelFeld mit exakt denselben Eigenschaften wie dieses.<br /> Diese
+	 * Methode wird vor allem intern im FigurenEditor verwendet.
+	 *
+	 * @return Ein neues PixelFeld-Objekt mit genau demselben Zustand wie dieses.
+	 */
+	public PixelFeld erstelleKlon () {
+		PixelFeld ret = new PixelFeld(farbe.length, farbe[0].length, faktor);
+
+		for (int i = 0; i < farbe.length; i++) {
+			for (int j = 0; j < farbe[0].length; j++) {
+				ret.farbeSetzen(i, j, farbe[i][j]);
+			}
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Setzt an einer bestimmten Position eine Farbe.
+	 *
+	 * @param x
+	 * 		Die Relative X-Position des zu aendernden Quadrats
+	 * @param y
+	 * 		Die Relative Y-Position des zu aendernden Quadrats
+	 * @param c
+	 * 		Die neu zu setzende Farbe. Ist dieser Wert null, so wird dieses Unterquadrat nicht
+	 * 		mitgezeichnet.
+	 */
+	public void farbeSetzen (int x, int y, Color c) {
+		farbe[x][y] = c;
+		this.cacheOutdated = true;
+	}
+
+	/**
+	 * Berechnet <b>EXAKT</b> die Flaechen aus denen dieses Pixel-Feld besteht.
+	 *
+	 * @param x
+	 * 		Die X-Startkoordinate der linken oberen Ecke
+	 * @param y
+	 * 		Die Y-Startkoordinate der linken oberen Ecke
+	 *
+	 * @return alle Flächen dieses Pixel-Feldes als Array aus Bounding-Rechtecken
+	 */
+	public BoundingRechteck[] flaechen (float x, float y) {
+		BoundingRechteck[] ret = new BoundingRechteck[anzahlPixel()];
+
+		int cnt = 0;
+
+		for (int i = 0; i < farbe.length; i++) {
+			for (int j = 0; j < farbe[0].length; j++) {
+				if (farbe[i][j] != null) {
+					ret[cnt++] = new BoundingRechteck(x + i * faktor, y + j * faktor, faktor, faktor);
+				}
+			}
+		}
+
+		return ret;
 	}
 
 	/**
@@ -377,50 +410,5 @@ public class PixelFeld implements java.io.Serializable {
 		}
 
 		return pixel;
-	}
-
-	/**
-	 * Erstellt ein neues PixelFeld mit exakt denselben Eigenschaften wie dieses.<br /> Diese
-	 * Methode wird vor allem intern im FigurenEditor verwendet.
-	 *
-	 * @return Ein neues PixelFeld-Objekt mit genau demselben Zustand wie dieses.
-	 */
-	public PixelFeld erstelleKlon () {
-		PixelFeld ret = new PixelFeld(farbe.length, farbe[0].length, faktor);
-
-		for (int i = 0; i < farbe.length; i++) {
-			for (int j = 0; j < farbe[0].length; j++) {
-				ret.farbeSetzen(i, j, farbe[i][j]);
-			}
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Berechnet <b>EXAKT</b> die Flaechen aus denen dieses Pixel-Feld besteht.
-	 *
-	 * @param x
-	 * 		Die X-Startkoordinate der linken oberen Ecke
-	 * @param y
-	 * 		Die Y-Startkoordinate der linken oberen Ecke
-	 *
-	 * @return alle Flächen dieses Pixel-Feldes als Array aus Bounding-Rechtecken
-	 */
-	public BoundingRechteck[] flaechen (float x, float y) {
-		BoundingRechteck[] ret = new BoundingRechteck[anzahlPixel()];
-
-		int cnt = 0;
-
-		for (int i = 0; i < farbe.length; i++) {
-			for (int j = 0; j < farbe[0].length; j++) {
-				if (farbe[i][j] != null) {
-					ret[cnt++] = new BoundingRechteck(x + i * faktor, y + j * faktor,
-							faktor, faktor);
-				}
-			}
-		}
-
-		return ret;
 	}
 }

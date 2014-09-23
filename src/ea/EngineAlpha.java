@@ -36,7 +36,7 @@ import java.util.TimeZone;
 /**
  * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box beim Ausführen der
  * .jar-Datei.
- *
+ * <p/>
  * TODO: Commit-ID in Jar packen und mit aktueller ID auf GitHub vergleichen
  *
  * @author Niklas Keller <me@kelunik.com>
@@ -250,16 +250,6 @@ public class EngineAlpha extends Frame {
 			}
 		}
 
-		public void shutdown () {
-			this.alive = false;
-
-			try {
-				thread.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
 		private void update (long passedTime) {
 			alpha += passedTime * .01;
 			alpha %= 360;
@@ -278,8 +268,7 @@ public class EngineAlpha extends Frame {
 				g.setColor(new Color(0, 0, 0, 150));
 				g.fillOval((int) (getWidth() / 2 + 8 * Math.cos(alpha)) - 2, (int) (getHeight() - 80 + 8 * Math.sin(alpha)) - 2, 4, 4);
 				g.fillOval((int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)) - 2, (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)) - 2, 4, 4);
-				g.drawLine((int) (getWidth() / 2 + 8 * Math.cos(alpha)), (int) (getHeight() - 80 + 8 * Math.sin(alpha)),
-						(int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)), (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)));
+				g.drawLine((int) (getWidth() / 2 + 8 * Math.cos(alpha)), (int) (getHeight() - 80 + 8 * Math.sin(alpha)), (int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)), (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)));
 			} else {
 				String message;
 				Color color = new Color(30, 30, 30);
@@ -313,6 +302,16 @@ public class EngineAlpha extends Frame {
 			g.setColor(new Color(100, 100, 100));
 			String str = "Build #" + VERSION_CODE + "   " + sdf.format(date);
 			g.drawString(str, (getWidth() - fm.stringWidth(str)) / 2, getHeight() - 40);
+		}
+
+		public void shutdown () {
+			this.alive = false;
+
+			try {
+				thread.join();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

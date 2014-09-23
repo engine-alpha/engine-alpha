@@ -138,22 +138,6 @@ public class Dreieck extends Geometrie {
 	}
 
 	/**
-	 * Methode zum Verschieben
-	 *
-	 * @param v
-	 * 		Die Verschiebung als Vektor
-	 *
-	 * @see Raum#verschieben(Vektor)
-	 */
-	@Override
-	public void verschieben (Vektor v) {
-		for (int i = 0; i < 3; i++) {
-			x[i] += v.x;
-			y[i] += v.y;
-		}
-	}
-
-	/**
 	 * Zeichnet das Objekt.
 	 *
 	 * @param g
@@ -169,17 +153,9 @@ public class Dreieck extends Geometrie {
 			return;
 		}
 
-		int[] x = {
-				(int) this.x[0],
-				(int) this.x[1],
-				(int) this.x[2]
-		};
+		int[] x = {(int) this.x[0], (int) this.x[1], (int) this.x[2]};
 
-		int[] y = {
-				(int) this.y[0],
-				(int) this.y[1],
-				(int) this.y[2]
-		};
+		int[] y = {(int) this.y[0], (int) this.y[1], (int) this.y[2]};
 
 		for (int i = 0; i < 3; i++) {
 			x[i] -= r.x;
@@ -220,6 +196,22 @@ public class Dreieck extends Geometrie {
 		}
 
 		return new BoundingRechteck(kleinstesX, kleinstesY, (groesstesX - kleinstesX), (groesstesY - kleinstesY));
+	}
+
+	/**
+	 * Methode zum Verschieben
+	 *
+	 * @param v
+	 * 		Die Verschiebung als Vektor
+	 *
+	 * @see Raum#verschieben(Vektor)
+	 */
+	@Override
+	public void verschieben (Vektor v) {
+		for (int i = 0; i < 3; i++) {
+			x[i] += v.x;
+			y[i] += v.y;
+		}
 	}
 
 	/**

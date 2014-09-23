@@ -32,10 +32,11 @@ import java.util.ArrayList;
 
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
+ * <p/>
+ * TODO: Review der ganzen Klasse (v.a. der Dokumentation)
  *
  * @author Michael Andonie
  */
-// TODO Review der ganzen Klasse (v.a. der Dokumentation)
 public class Text extends Raum implements Leuchtend {
 	private static final long serialVersionUID = -2145724725115670955L;
 
@@ -118,6 +119,47 @@ public class Text extends Raum implements Leuchtend {
 	private Anker anker = Anker.LINKS;
 
 	/**
+	 * Ebenefalls ein vereinfachter Konstruktor. Hierbei ist die Farbe "Weiss" und der Text weder
+	 * kursiv noch fett; weiterhin ist die Schriftgroesse automatisch 24.
+	 *
+	 * @param inhalt
+	 * 		Die Zeichenkette, die dargestellt werden soll
+	 * @param x
+	 * 		Die X-Koordinate des Anfangs
+	 * @param y
+	 * 		Die Y-Koordinate des Anfangs
+	 * @param fontName
+	 * 		Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
+	 * 		Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu
+	 * 		empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden,
+	 * 		<b>nicht der Name der schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
+	 */
+	public Text (String inhalt, float x, float y, String fontName) {
+		this(inhalt, x, y, fontName, 24);
+	}
+
+	/**
+	 * Konstruktor ohne Farb- und sonderartseingabezwang. In diesem Fall ist die Farbe "Weiss" und
+	 * der Text weder kursiv noch fett.
+	 *
+	 * @param inhalt
+	 * 		Die Zeichenkette, die dargestellt werden soll
+	 * @param x
+	 * 		Die X-Koordinate des Anfangs
+	 * @param y
+	 * 		Die Y-Koordinate des Anfangs
+	 * @param fontName
+	 * 		Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
+	 * 		Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu
+	 * 		empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden.
+	 * @param schriftGroesse
+	 * 		Die Groesse, in der die Schrift dargestellt werden soll
+	 */
+	public Text (String inhalt, float x, float y, String fontName, int schriftGroesse) {
+		this(inhalt, x, y, fontName, schriftGroesse, 0, "Weiss");
+	}
+
+	/**
 	 * Konstruktor für Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im
 	 * Projektordner sind. Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur
 	 * Verfügung.
@@ -159,44 +201,28 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
-	 * Konstruktor ohne Farb- und sonderartseingabezwang. In diesem Fall ist die Farbe "Weiss" und
-	 * der Text weder kursiv noch fett.
+	 * Setzt einen neuen Font fuer den Text
 	 *
-	 * @param inhalt
-	 * 		Die Zeichenkette, die dargestellt werden soll
-	 * @param x
-	 * 		Die X-Koordinate des Anfangs
-	 * @param y
-	 * 		Die Y-Koordinate des Anfangs
 	 * @param fontName
-	 * 		Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
-	 * 		Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu
-	 * 		empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden.
-	 * @param schriftGroesse
-	 * 		Die Groesse, in der die Schrift dargestellt werden soll
+	 * 		Der Name des neuen Fonts fuer den Text
 	 */
-	public Text (String inhalt, float x, float y, String fontName, int schriftGroesse) {
-		this(inhalt, x, y, fontName, schriftGroesse, 0, "Weiss");
-	}
-
-	/**
-	 * Ebenefalls ein vereinfachter Konstruktor. Hierbei ist die Farbe "Weiss" und der Text weder
-	 * kursiv noch fett; weiterhin ist die Schriftgroesse automatisch 24.
-	 *
-	 * @param inhalt
-	 * 		Die Zeichenkette, die dargestellt werden soll
-	 * @param x
-	 * 		Die X-Koordinate des Anfangs
-	 * @param y
-	 * 		Die Y-Koordinate des Anfangs
-	 * @param fontName
-	 * 		Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
-	 * 		Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu
-	 * 		empfehlen</b>, muss der Name der Schriftart hier ebenfalls einfach nur eingegeben werden,
-	 * 		<b>nicht der Name der schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
-	 */
-	public Text (String inhalt, float x, float y, String fontName) {
-		this(inhalt, x, y, fontName, 24);
+	public void setzeFont (String fontName) {
+		Font base = null;
+		for (int i = 0; i < eigene.length; i++) {
+			if (eigene[i].getName().equals(fontName)) {
+				base = eigene[i];
+				break;
+			}
+		}
+		if (base != null) {
+			this.font = base.deriveFont(schriftart, groesse);
+		} else {
+			if (!Manager.fontExistiert(fontName)) {
+				fontName = "SansSerif";
+				System.err.println("Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
+			}
+			this.font = new Font(fontName, schriftart, groesse);
+		}
 	}
 
 	/**
@@ -264,7 +290,7 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	public Text (int x, int y, int schriftGroesse, String inhalt) {
 		this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
-	} // TODO Mehr Verwirrung als Hilfe?
+	} // TODO: Mehr Verwirrung als Hilfe?
 
 	private static void fontsEinbauen (final ArrayList<File> liste, File akt) {
 		File[] files = akt.listFiles();
@@ -286,7 +312,7 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
-	 * TODO Dokumentation
+	 * TODO: Dokumentation
 	 */
 	public static Font holeFont (String fontName) {
 		Font base = null;
@@ -301,8 +327,7 @@ public class Text extends Raum implements Leuchtend {
 		} else {
 			if (!Manager.fontExistiert(fontName)) {
 				fontName = "SansSerif";
-				System.err.println("Achtung! Die gewuenschte Schriftart existiert weder als geladene Sonderdatei noch im Font-Verzeichnis dieses PC! " +
-						"Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
+				System.err.println("Achtung! Die gewuenschte Schriftart existiert weder als geladene Sonderdatei noch im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
 			}
 			return new Font(fontName, 0, 12);
 		}
@@ -335,6 +360,18 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
+	 * Setzt den Inhalt des Textes.<br /> Parallele Methode zu <code>setzeInhalt()</code>
+	 *
+	 * @param inhalt
+	 * 		Der neue Inhalt des Textes
+	 *
+	 * @see #setzeInhalt(String)
+	 */
+	public void inhaltSetzen (String inhalt) {
+		setzeInhalt(inhalt);
+	}
+
+	/**
 	 * Setzt den Inhalt des Textes.
 	 *
 	 * @param inhalt
@@ -345,15 +382,17 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
-	 * Setzt den Inhalt des Textes.<br /> Parallele Methode zu <code>setzeInhalt()</code>
+	 * Setzt die Schriftart.
 	 *
-	 * @param inhalt
-	 * 		Der neue Inhalt des Textes
+	 * @param art
+	 * 		Die Repraesentation der Schriftart als Zahl:<br/> 0: Normaler Text<br /> 1: Fett<br /> 2:
+	 * 		Kursiv<br /> 3: Fett & Kursiv<br /> <br /> Ist die Eingabe nicht eine dieser 4 Zahlen, so
+	 * 		wird nichts geaendert.<br /> Parallele Methode zu <code>setzeSchriftart()</code>
 	 *
-	 * @see #setzeInhalt(String)
+	 * @see #setzeSchriftart(int)
 	 */
-	public void inhaltSetzen (String inhalt) {
-		setzeInhalt(inhalt);
+	public void schriftartSetzen (int art) {
+		setzeSchriftart(art);
 	}
 
 	/**
@@ -372,38 +411,10 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
-	 * Setzt die Schriftart.
-	 *
-	 * @param art
-	 * 		Die Repraesentation der Schriftart als Zahl:<br/> 0: Normaler Text<br /> 1: Fett<br /> 2:
-	 * 		Kursiv<br /> 3: Fett & Kursiv<br /> <br /> Ist die Eingabe nicht eine dieser 4 Zahlen, so
-	 * 		wird nichts geaendert.<br /> Parallele Methode zu <code>setzeSchriftart()</code>
-	 *
-	 * @see #setzeSchriftart(int)
+	 * Klasseninterne Methode zum aktualisieren des Font-Objektes
 	 */
-	public void schriftartSetzen (int art) {
-		setzeSchriftart(art);
-	}
-
-	/**
-	 * Setzt die Fuellfarbe
-	 *
-	 * @param c
-	 * 		Die neue Fuellfarbe
-	 */
-	public void setzeFarbe (Color c) {
-		farbe = c;
-		aktualisieren();
-	}
-
-	/**
-	 * Setzt die Fuellfarbe
-	 *
-	 * @param farbe
-	 * 		Der Name der neuen Fuellfarbe
-	 */
-	public void setzeFarbe (String farbe) {
-		this.setzeFarbe(zuFarbeKonvertieren(farbe));
+	private void aktualisieren () {
+		this.font = this.font.deriveFont(schriftart, groesse);
 	}
 
 	/**
@@ -422,6 +433,27 @@ public class Text extends Raum implements Leuchtend {
 	/**
 	 * Setzt die Fuellfarbe
 	 *
+	 * @param farbe
+	 * 		Der Name der neuen Fuellfarbe
+	 */
+	public void setzeFarbe (String farbe) {
+		this.setzeFarbe(zuFarbeKonvertieren(farbe));
+	}
+
+	/**
+	 * Setzt die Fuellfarbe
+	 *
+	 * @param c
+	 * 		Die neue Fuellfarbe
+	 */
+	public void setzeFarbe (Color c) {
+		farbe = c;
+		aktualisieren();
+	}
+
+	/**
+	 * Setzt die Fuellfarbe
+	 *
 	 * @param f
 	 * 		Das Farbe-Objekt, das die neue Fuellfarbe beschreibt
 	 *
@@ -429,17 +461,6 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	public void farbeSetzen (Farbe f) {
 		setzeFarbe(f.wert());
-	}
-
-	/**
-	 * Setzt die Schriftgroesse
-	 *
-	 * @param groesse
-	 * 		Die neue Schriftgroesse
-	 */
-	public void setzeGroesse (int groesse) {
-		this.groesse = groesse;
-		aktualisieren();
 	}
 
 	/**
@@ -455,6 +476,17 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
+	 * Setzt die Schriftgroesse
+	 *
+	 * @param groesse
+	 * 		Die neue Schriftgroesse
+	 */
+	public void setzeGroesse (int groesse) {
+		this.groesse = groesse;
+		aktualisieren();
+	}
+
+	/**
 	 * Diese Methode gibt die aktuelle Groesse des Textes aus
 	 *
 	 * @return Die aktuelle Schriftgroesse des Textes
@@ -463,32 +495,6 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	public int groesse () {
 		return groesse;
-	}
-
-	/**
-	 * Setzt einen neuen Font fuer den Text
-	 *
-	 * @param fontName
-	 * 		Der Name des neuen Fonts fuer den Text
-	 */
-	public void setzeFont (String fontName) {
-		Font base = null;
-		for (int i = 0; i < eigene.length; i++) {
-			if (eigene[i].getName().equals(fontName)) {
-				base = eigene[i];
-				break;
-			}
-		}
-		if (base != null) {
-			this.font = base.deriveFont(schriftart, groesse);
-		} else {
-			if (!Manager.fontExistiert(fontName)) {
-				fontName = "SansSerif";
-				System.err.println("Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " +
-						"Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
-			}
-			this.font = new Font(fontName, schriftart, groesse);
-		}
 	}
 
 	/**
@@ -501,13 +507,6 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	public void fontSetzen (String name) {
 		setzeFont(name);
-	}
-
-	/**
-	 * Klasseninterne Methode zum aktualisieren des Font-Objektes
-	 */
-	private void aktualisieren () {
-		this.font = this.font.deriveFont(schriftart, groesse);
 	}
 
 	/**
@@ -531,9 +530,9 @@ public class Text extends Raum implements Leuchtend {
 		FontMetrics f = Fenster.metrik(font);
 		float x = position.x, y = position.y;
 
-		if(anker == Anker.MITTE) {
+		if (anker == Anker.MITTE) {
 			x = position.x - f.stringWidth(inhalt) / 2;
-		} else if(anker == Anker.RECHTS) {
+		} else if (anker == Anker.RECHTS) {
 			x = position.x - f.stringWidth(inhalt);
 		}
 
@@ -553,9 +552,9 @@ public class Text extends Raum implements Leuchtend {
 		FontMetrics f = Fenster.metrik(font);
 		float x = position.x, y = position.y;
 
-		if(anker == Anker.MITTE) {
+		if (anker == Anker.MITTE) {
 			x = position.x - f.stringWidth(inhalt) / 2;
-		} else if(anker == Anker.RECHTS) {
+		} else if (anker == Anker.RECHTS) {
 			x = position.x - f.stringWidth(inhalt);
 		}
 
@@ -635,39 +634,37 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
-	 * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur x-Koordinate befindet.
-	 * Möglich sind:
-	 * <li>{@code Text.Anker.LINKS},</li>
-	 * <li>{@code Text.Anker.MITTE},</li>
-	 * <li>{@code Text.Anker.RECHTS}.</li>
-	 * <br>
-	 * <b>Hinweis</b>: {@code null} wird wie {@code Anker.LINKS} behandelt!
-	 *
-	 * @see ea.Text.Anker
-	 * @see #getAnker()
-	 * @param anker neuer Anker
-	 */
-	public void setAnker(Anker anker) {
-		this.anker = anker;
-	}
-
-	/**
 	 * Gibt den aktuellen Anker zurück.
+	 *
+	 * @return aktueller Anker
 	 *
 	 * @see ea.Text.Anker
 	 * @see #setAnker(ea.Text.Anker)
-	 * @return aktueller Anker
 	 */
-	public Anker getAnker() {
+	public Anker getAnker () {
 		return anker;
 	}
 
 	/**
-	 * Ein Textanker beschreibt, wo sich der Text relativ zu seiner x-Koordinate befindet.
-	 * Möglich sind:
-	 * <li>{@code Anker.LINKS},</li>
-	 * <li>{@code Anker.MITTE},</li>
-	 * <li>{@code Anker.RECHTS}.</li>
+	 * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur x-Koordinate befindet.
+	 * Möglich sind: <li>{@code Text.Anker.LINKS},</li> <li>{@code Text.Anker.MITTE},</li>
+	 * <li>{@code Text.Anker.RECHTS}.</li> <br> <b>Hinweis</b>: {@code null} wird wie {@code
+	 * Anker.LINKS} behandelt!
+	 *
+	 * @param anker
+	 * 		neuer Anker
+	 *
+	 * @see ea.Text.Anker
+	 * @see #getAnker()
+	 */
+	public void setAnker (Anker anker) {
+		this.anker = anker;
+	}
+
+	/**
+	 * Ein Textanker beschreibt, wo sich der Text relativ zu seiner x-Koordinate befindet. Möglich
+	 * sind: <li>{@code Anker.LINKS},</li> <li>{@code Anker.MITTE},</li> <li>{@code
+	 * Anker.RECHTS}.</li>
 	 *
 	 * @see #setAnker(ea.Text.Anker)
 	 * @see #getAnker()

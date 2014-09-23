@@ -62,16 +62,16 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	 */
 	private boolean connectFailed;
 
+	public Client (String ipAdresse, int port) {
+		this("Unbenannter Client", ipAdresse, port);
+	}
+
 	public Client (String name, String ipAdresse, int port) {
 		this.setDaemon(true);
 		this.name = name;
 		this.ipAdresse = ipAdresse;
 		this.port = port;
 		start();
-	}
-
-	public Client (String ipAdresse, int port) {
-		this("Unbenannter Client", ipAdresse, port);
 	}
 
 	/**
@@ -115,27 +115,8 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 			Logger.error("Konnte die IP-Adresse nicht zuordnen...");
 			connectFailed = true;
 		} catch (IOException e) {
-			Logger.error("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer"
-					+ " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
+			Logger.error("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer" + " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
 			connectFailed = true;
-		}
-	}
-
-	/**
-	 * Diese Methode <b>stellt sicher</b>, dass eine Verbindung mit dem Server besteht.<br /> Diese
-	 * Methode friert den ausführenden Thread ein, wenn noch keine Verbindung besteht und endet
-	 * erst, wenn die Verbindung aufgebaut wurde.
-	 */
-	public void warteAufVerbindung () {
-		if (verbindung == null) {
-			synchronized (this) {
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					Logger.warning("Achtung. Es könnte trotz warteAufVerbindung() noch "
-							+ "keine Verbindung bestehen, da der Warteprozess unterbrochen wurde.");
-				}
-			}
 		}
 	}
 
@@ -159,6 +140,23 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	public void empfaengerHinzufuegen (Empfaenger e) {
 		warteAufVerbindung();
 		this.verbindung.getInterpreter().empfaengerHinzufuegen(e);
+	}
+
+	/**
+	 * Diese Methode <b>stellt sicher</b>, dass eine Verbindung mit dem Server besteht.<br /> Diese
+	 * Methode friert den ausführenden Thread ein, wenn noch keine Verbindung besteht und endet
+	 * erst, wenn die Verbindung aufgebaut wurde.
+	 */
+	public void warteAufVerbindung () {
+		if (verbindung == null) {
+			synchronized (this) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					Logger.warning("Achtung. Es könnte trotz warteAufVerbindung() noch " + "keine Verbindung bestehen, da der Warteprozess unterbrochen wurde.");
+				}
+			}
+		}
 	}
 
 	/**

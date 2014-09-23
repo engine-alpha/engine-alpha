@@ -43,9 +43,7 @@ import ea.*;
  * @author Michael Andonie
  */
 @SuppressWarnings ( "serial" )
-public class MechanikClient
-		extends PhysikClient
-		implements Ticker {
+public class MechanikClient extends PhysikClient implements Ticker {
 
 	/**
 	 * Das Intervall, in dem die Spielmechanik upgedated wird <b>in Sekunden</b>. Wird benutzt für
@@ -150,8 +148,7 @@ public class MechanikClient
 		if (meterpropixel <= 0.0f) {
 			throw new IllegalArgumentException("Die Anzahl an Metern pro Pixel muss positiv sein!");
 		} else if (MECH_TIMER.hatAktiveTicker()) {
-			throw new RuntimeException("Die Anzahl von Metern pro Pixel kann nach der Nutzung der "
-					+ "Physik nicht mehr geändert werden!");
+			throw new RuntimeException("Die Anzahl von Metern pro Pixel kann nach der Nutzung der " + "Physik nicht mehr geändert werden!");
 		}
 		METER_PRO_PIXEL = meterpropixel;
 	}
@@ -161,6 +158,45 @@ public class MechanikClient
 	 */
 	public Vektor getVelocity () {
 		return velocity;
+	}
+
+	/**
+	 * In der <code>tick()</code>-Methode des Mechanik-Clients wird die <b>diskrete
+	 * Weiterrechnung</b> der verschiedenen Parameter realisiert sowie die Anwendung der
+	 * Geschwindigkeit auf die aktuelle Position des Client-Objekts. Dies ist vergleichbar mit der
+	 * <i>Methode der kleinen Schritte</i> aus der Physik.
+	 */
+	@Override
+	public void tick () {
+		//Kraftaenderung -> Kraft_aktuell = Kraft + Luftwiderstand
+		//Luftwiderstand = 1/2 * c_W * A * rho * v^2
+		//Heuristik: luftwiderstandskoeffizient * v^2
+		Vektor momentanekraft = force.summe(velocity.gegenrichtung().multiplizieren((luftwiderstandskoeffizient * velocity.laenge())));
+
+		//Beschleunigungsbestimmung -> a = F / m
+
+		//Delta v bestimmen -> delta v = a * delta t = F * (delta t / m)
+		//v_neu = v_alt + delta v
+		velocity = velocity.summe(momentanekraft.multiplizieren(DELTA_T / masse));
+
+		//Delta s bestimmen -> delta s = v_neu * delta t + [1/2 * a_neu * (delta t)^2]
+		// =~= v_neu * delta t  [heuristik]
+		//bewegen um delta s
+		bewegen(velocity.multiplizieren(DELTA_T).teilen(METER_PRO_PIXEL));
+		//System.out.println("Move:" + velocity.multiplizieren(DELTA_T));
+
+		//Critical Depth:
+		if (ziel.positionY() > kritischeTiefe) fallListener.fallReagieren();
+
+		//Genügend für Ende? -> Heuristik: |v| < d [mit d geschickt gewählt]
+		Vektor dif = velocity.differenz(lastVelocity);
+		if (dif.laenge() < 0.0001f && dif.laenge() != 0) {
+			System.out.println("T");
+			velocity = Vektor.NULLVEKTOR;
+		}
+
+		//Update: Lasvelocity für den nächsten Step ist die aktuelle
+		lastVelocity = velocity;
 	}
 
 	/**
@@ -362,47 +398,6 @@ public class MechanikClient
 		//=>p = kraft * t_kraftübertrag
 		//=> Impuls p anwenden.
 		impulsHinzunehmen(kraft.multiplizieren(t_kraftuebertrag));
-	}
-
-	/**
-	 * In der <code>tick()</code>-Methode des Mechanik-Clients wird die <b>diskrete
-	 * Weiterrechnung</b> der verschiedenen Parameter realisiert sowie die Anwendung der
-	 * Geschwindigkeit auf die aktuelle Position des Client-Objekts. Dies ist vergleichbar mit der
-	 * <i>Methode der kleinen Schritte</i> aus der Physik.
-	 */
-	@Override
-	public void tick () {
-		//Kraftaenderung -> Kraft_aktuell = Kraft + Luftwiderstand
-		//Luftwiderstand = 1/2 * c_W * A * rho * v^2
-		//Heuristik: luftwiderstandskoeffizient * v^2
-		Vektor momentanekraft = force.summe(velocity.gegenrichtung().multiplizieren((
-				luftwiderstandskoeffizient * velocity.laenge())));
-
-		//Beschleunigungsbestimmung -> a = F / m
-
-		//Delta v bestimmen -> delta v = a * delta t = F * (delta t / m)
-		//v_neu = v_alt + delta v
-		velocity = velocity.summe(momentanekraft.multiplizieren(DELTA_T / masse));
-
-		//Delta s bestimmen -> delta s = v_neu * delta t + [1/2 * a_neu * (delta t)^2]
-		// =~= v_neu * delta t  [heuristik]
-		//bewegen um delta s
-		bewegen(velocity.multiplizieren(DELTA_T).teilen(METER_PRO_PIXEL));
-		//System.out.println("Move:" + velocity.multiplizieren(DELTA_T));
-
-		//Critical Depth:
-		if (ziel.positionY() > kritischeTiefe)
-			fallListener.fallReagieren();
-
-		//Genügend für Ende? -> Heuristik: |v| < d [mit d geschickt gewählt]
-		Vektor dif = velocity.differenz(lastVelocity);
-		if (dif.laenge() < 0.0001f && dif.laenge() != 0) {
-			System.out.println("T");
-			velocity = Vektor.NULLVEKTOR;
-		}
-
-		//Update: Lasvelocity für den nächsten Step ist die aktuelle
-		lastVelocity = velocity;
 	}
 
 	/**

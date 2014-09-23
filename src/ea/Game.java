@@ -28,7 +28,11 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Random;
 
 /**
@@ -121,6 +125,52 @@ public abstract class Game implements TastenReagierbar {
 	private Font font;
 
 	/**
+	 * Erstellt ein Spiel, bei dem automatisch beim Drücken von ESC alles beendet wird und ohne
+	 * Titel.
+	 *
+	 * @param x
+	 * 		Die Breite des Fensters
+	 * @param y
+	 * 		Die Hoehe des Fensters
+	 * @param vollbild
+	 * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
+	 * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
+	 * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
+	 * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
+	 * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
+	 */
+	public Game (int x, int y, boolean vollbild) {
+		this(x, y, "", vollbild, true);
+	}
+
+	/**
+	 * Konstruktor fuer Objekte der Klasse Game. Erstellt unter anderem ein Fenster, das harmonisch
+	 * im Spielbildschirm liegt.
+	 *
+	 * @param x
+	 * 		Die Breite des Fensters
+	 * @param y
+	 * 		Die Hoehe des Fensters
+	 * @param titel
+	 * 		Der Titel des Spielfensters
+	 * @param vollbild
+	 * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
+	 * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
+	 * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
+	 * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
+	 * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
+	 * @param exitOnEsc
+	 * 		Ist dieser Wert <code>true</code>, so wird das Spiel automatisch beendet, wenn die
+	 * 		"Escape"-Taste gedrueckt wurde. Dies bietet sich vor allem an, wenn das Spiel ein Vollbild
+	 * 		ist oder die Maus aufgrund der Verwendung einer Maus im Spiel nicht auf das "X"-Symbol des
+	 * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" waere und <b>dies
+	 * 		ist etwas unbeschreiblich aergerliches fuer den Spielbenutzer!!!!!!!!!!!</b>
+	 */
+	public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc) {
+		this(x, y, titel, vollbild, exitOnEsc, -1, -1);
+	}
+
+	/**
 	 * Groesster Konstruktor fuer Objekte der Klasse Game.
 	 *
 	 * @param x
@@ -170,30 +220,42 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Game. Erstellt unter anderem ein Fenster, das harmonisch
-	 * im Spielbildschirm liegt.
+	 * Vereinfachter Konstruktor.<br /> Hierbei gilt automatisch, dass das Fenster <b>beim
+	 * Tastendruck auf "Escape" beendet wird</b>, sowie dass kein Vollbild aktiviert wird.<br /> Ist
+	 * dies nicht gewuenscht, so muss der komplexere Konstruktor aufgerufen werden. Es wird kein
+	 * Fenstertitel erstellt.
 	 *
 	 * @param x
 	 * 		Die Breite des Fensters
 	 * @param y
-	 * 		Die Hoehe des Fensters
+	 * 		Die Hoehe des Fenstsers
+	 */
+	public Game (int x, int y) {
+		this(x, y, "");
+	}
+
+	/**
+	 * Vereinfachter Konstruktor.<br /> Hierbei gilt automatisch, dass das Fenster <b>beim
+	 * Tastendruck auf "Escape" beendet wird</b>, sowie dass kein Vollbild aktiviert wird.<br /> Ist
+	 * dies nicht gewuenscht, so muss der komplexere Konstruktor aufgerufen werden.
+	 *
+	 * @param x
+	 * 		Die Breite des Fensters
+	 * @param y
+	 * 		Die Hoehe des Fenstsers
 	 * @param titel
 	 * 		Der Titel des Spielfensters
-	 * @param vollbild
-	 * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
-	 * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
-	 * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
-	 * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
-	 * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
-	 * @param exitOnEsc
-	 * 		Ist dieser Wert <code>true</code>, so wird das Spiel automatisch beendet, wenn die
-	 * 		"Escape"-Taste gedrueckt wurde. Dies bietet sich vor allem an, wenn das Spiel ein Vollbild
-	 * 		ist oder die Maus aufgrund der Verwendung einer Maus im Spiel nicht auf das "X"-Symbol des
-	 * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" waere und <b>dies
-	 * 		ist etwas unbeschreiblich aergerliches fuer den Spielbenutzer!!!!!!!!!!!</b>
 	 */
-	public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc) {
-		this(x, y, titel, vollbild, exitOnEsc, -1, -1);
+	public Game (int x, int y, String titel) {
+		this(x, y, titel, false, true);
+	}
+
+	/**
+	 * Parameterloser Alternativkonstruktor.<br /> Hierbei wird automatisch ein Spielfenster der
+	 * Groesse 500 auf 500 (kein Vollbild) erstellt, das bei Tastendruck auf "Escape" beendet wird.
+	 */
+	public Game () {
+		this(500, 500, "", false);
 	}
 
 	/**
@@ -216,64 +278,6 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public Game (int x, int y, String titel, boolean vollbild) {
 		this(x, y, titel, vollbild, true);
-	}
-
-	/**
-	 * Erstellt ein Spiel, bei dem automatisch beim Drücken von ESC alles beendet wird und ohne
-	 * Titel.
-	 *
-	 * @param x
-	 * 		Die Breite des Fensters
-	 * @param y
-	 * 		Die Hoehe des Fensters
-	 * @param vollbild
-	 * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
-	 * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
-	 * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
-	 * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
-	 * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
-	 */
-	public Game (int x, int y, boolean vollbild) {
-		this(x, y, "", vollbild, true);
-	}
-
-	/**
-	 * Vereinfachter Konstruktor.<br /> Hierbei gilt automatisch, dass das Fenster <b>beim
-	 * Tastendruck auf "Escape" beendet wird</b>, sowie dass kein Vollbild aktiviert wird.<br /> Ist
-	 * dies nicht gewuenscht, so muss der komplexere Konstruktor aufgerufen werden.
-	 *
-	 * @param x
-	 * 		Die Breite des Fensters
-	 * @param y
-	 * 		Die Hoehe des Fenstsers
-	 * @param titel
-	 * 		Der Titel des Spielfensters
-	 */
-	public Game (int x, int y, String titel) {
-		this(x, y, titel, false, true);
-	}
-
-	/**
-	 * Vereinfachter Konstruktor.<br /> Hierbei gilt automatisch, dass das Fenster <b>beim
-	 * Tastendruck auf "Escape" beendet wird</b>, sowie dass kein Vollbild aktiviert wird.<br /> Ist
-	 * dies nicht gewuenscht, so muss der komplexere Konstruktor aufgerufen werden. Es wird kein
-	 * Fenstertitel erstellt.
-	 *
-	 * @param x
-	 * 		Die Breite des Fensters
-	 * @param y
-	 * 		Die Hoehe des Fenstsers
-	 */
-	public Game (int x, int y) {
-		this(x, y, "");
-	}
-
-	/**
-	 * Parameterloser Alternativkonstruktor.<br /> Hierbei wird automatisch ein Spielfenster der
-	 * Groesse 500 auf 500 (kein Vollbild) erstellt, das bei Tastendruck auf "Escape" beendet wird.
-	 */
-	public Game () {
-		this(500, 500, "", false);
 	}
 
 	/**
@@ -303,6 +307,32 @@ public abstract class Game implements TastenReagierbar {
 
 		tasteReagieren(code);
 	}
+
+	/**
+	 * Diese Methode beendet das Spiel gaenzlich.<br /> Das heisst, dass das Fenster geschlossen,
+	 * alle belegten Ressourcen freigegeben und auch die virtuelle Maschine von JAVA beendet
+	 * wird.<br /> Also <b>beendet diese Methode die gesamte Applikation</b>!
+	 *
+	 * @see #schliessen()
+	 */
+	public void beenden () {
+		fenster.loeschen();
+	}
+
+	/**
+	 * Diese Methode wird von der Klasse automatisch aufgerufen, sobald eine Taste einfach gedrueckt
+	 * wurde.<br /> Sie wird dann erst wieder aufgerufen, wenn die Taste erst losgelassen und dann
+	 * wieder gedreuckt wurde.<br /> Sollte allerdings eine Methode vonnoeten sein, die immer wieder
+	 * in Regelmaessigen abstaenden aufgerufen wird, solange die Taste <b>heruntergedrueckt ist, so
+	 * bietet sich dies im Interface <code>TasteGedruecktReagierbar</code> an</b>.
+	 *
+	 * @param code
+	 * 		Code der gedrückten Taste<br />Siehe http://engine-alpha.org/wiki/Tastaturtabelle für eine
+	 * 		vollständige Tabelle
+	 *
+	 * @see ea.TastenReagierbar
+	 */
+	public abstract void tasteReagieren (int code);
 
 	/**
 	 * Fordert vom Benutzer eine Texteingabe (maximal 40 Zeichen) durch ein neues Fenster.<br />
@@ -381,7 +411,23 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
-	 * Oeffnet ein Fenster, das die Highscores des Spiels anzeigt.
+	 * Öffnet ein titelloses Fenster, das die Highscores des Spiels anzeigt.
+	 *
+	 * @param namen
+	 * 		Die Namen der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum schlechtesten auf
+	 * 		der Liste
+	 * @param punkte
+	 * 		Die Punktestaende der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum
+	 * 		schlechtesten auf der Liste
+	 *
+	 * @see #highscoreAnzeigen(String[], int[])
+	 */
+	public void highscoreAnzeigen (String[] namen, int[] punkte) {
+		highscoreAnzeigen(namen, punkte, "");
+	}
+
+	/**
+	 * Öffnet ein Fenster, das die Highscores des Spiels anzeigt.
 	 *
 	 * @param namen
 	 * 		Die Namen der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum schlechtesten auf
@@ -398,25 +444,9 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
-	 * Oeffnet ein titelloses Fenster, das die Highscores des Spiels anzeigt.
-	 *
-	 * @param namen
-	 * 		Die Namen der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum schlechtesten auf
-	 * 		der Liste
-	 * @param punkte
-	 * 		Die Punktestaende der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum
-	 * 		schlechtesten auf der Liste
-	 *
-	 * @see #highscoreAnzeigen(String[], int[])
-	 */
-	public void highscoreAnzeigen (String[] namen, int[] punkte) {
-		highscoreAnzeigen(namen, punkte, "");
-	}
-
-	/**
-	 * Gibt ein <b>zufaelliges</b> <code>boolean</code>-Attribut zurueck.<br /> Mit relativ
-	 * zuverlaessiger Sicherheit sind die Wahrscheinlichkeiten fuer <code>false</code> und
-	 * <code>true</code> gleich gross.
+	 * Gibt ein <b>zufälliges</b> <code>boolean</code>-Attribut zurück.<br /> Mit relativ
+	 * zuverlässiger Sicherheit sind die Wahrscheinlichkeiten für <code>false</code> und
+	 * <code>true</code> gleich groß.
 	 *
 	 * @return <code>false</code> oder <code>true</code>, mit gleich hoher Wahrscheinlichkeit.
 	 */
@@ -425,33 +455,23 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
-	 * Gibt ein <b>zufaelliges</b> <code>int</code>-Attribut zwischen <code>0</code> und einer
-	 * festgelegten Obergrenze zurueck.<br /> Mit relativ zuverlaessiger Sicherheit sind die
-	 * Wahrscheinlichkeiten fuer die Werte zwischen <code>0</code> und der Obergrenze gleich gross.
+	 * Gibt ein <b>zufälliges</b> <code>int</code>-Attribut zwischen <code>0</code> und einer
+	 * festgelegten Obergrenze zurück.<br /> Mit relativ zuverlässiger Sicherheit sind die
+	 * Wahrscheinlichkeiten für die Werte zwischen <code>0</code> und der Obergrenze gleich groß.
 	 *
 	 * @param obergrenze
-	 * 		Die hoechste Zahl, die vorkommen kann.<br /> <b>Die Zahl kann also ebenfalls ergebnis der
-	 * 		Rueckgabe sein!!!!!!</b>
+	 * 		Die höchste Zahl, die vorkommen kann.<br /> <b>Die Zahl kann also ebenfalls Ergebnis der
+	 * 		Rückgabe sein!</b>
 	 *
-	 * @return Eine Zahl zwischen 0 (inklusiv) und der Obergrenze (inklusiv).<br /> Bei eingabe
+	 * @return Eine Zahl zwischen 0 (inklusiv) und der Obergrenze (inklusiv).<br /> Bei Eingabe
 	 * einer negativen Zahl ist das Ergebnis 0.
 	 */
 	public int zufallsZahl (int obergrenze) {
 		if (obergrenze < 0) {
-			System.err.println("Achtung!! Fuer eine Zufallszahl muss die definierte Obergrenze (die inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!!");
+			throw new IllegalArgumentException("Achtung! Für eine Zufallszahl muss die definierte Obergrenze (die inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!");
 		}
-		return zufall.nextInt(obergrenze + 1);
-	}
 
-	/**
-	 * Diese Methode beendet das Spiel gaenzlich.<br /> Das heisst, dass das Fenster geschlossen,
-	 * alle belegten Ressourcen freigegeben und auch die virtuelle Maschine von JAVA beendet
-	 * wird.<br /> Also <b>beendet diese Methode die gesamte Applikation</b>!
-	 *
-	 * @see #schliessen()
-	 */
-	public void beenden () {
-		fenster.loeschen();
+		return zufall.nextInt(obergrenze + 1);
 	}
 
 	/**
@@ -485,6 +505,20 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
+	 * Setzt den Font, der ab sofort von den Fenstern standartmaessig verwendet wird mit einer
+	 * Standartgroesse von 12.
+	 *
+	 * @param fontname
+	 * 		Der Name des zu verwendenden Fonts. <br /> Ein Blick auf das <b>Fontprotokoll</b> (in der
+	 * 		Klasse <code>Text</code> ist empfehlenswert!
+	 *
+	 * @see Text
+	 */
+	public void fensterFontSetzen (String fontname) {
+		fensterFontSetzen(fontname, 12);
+	}
+
+	/**
 	 * Setzt den Font, der ab sofort von den Fenstern standartmaessig verwendet wird.
 	 *
 	 * @param fontname
@@ -497,20 +531,6 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void fensterFontSetzen (String fontname, int schriftgroesse) {
 		this.font = Text.holeFont(fontname).deriveFont(0, schriftgroesse);
-	}
-
-	/**
-	 * Setzt den Font, der ab sofort von den Fenstern standartmaessig verwendet wird mit einer
-	 * Standartgroesse von 12.
-	 *
-	 * @param fontname
-	 * 		Der Name des zu verwendenden Fonts. <br /> Ein Blick auf das <b>Fontprotokoll</b> (in der
-	 * 		Klasse <code>Text</code> ist empfehlenswert!
-	 *
-	 * @see Text
-	 */
-	public void fensterFontSetzen (String fontname) {
-		fensterFontSetzen(fontname, 12);
 	}
 
 	/**
@@ -565,34 +585,6 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
-	 * Meldet ein Mausobjekt an.<br /> Ab sofort wird die anzumeldende Maus im Fenster dargestellt
-	 * und Klicks werden auf die Maus uebertragen.
-	 *
-	 * @param maus
-	 * 		Die anzumeldende Maus
-	 * @param listenerUebernehmen
-	 * 		Ist dieser Wert <code>true</code>, so uebernimmt die neue Maus <b>alle Listener der alten
-	 * 		Maus</b>
-	 *
-	 * @see Maus
-	 */
-	public void mausAnmelden (Maus maus, boolean listenerUebernehmen) {
-		if (maus == null) {
-			System.err.println("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
-			return;
-		}
-
-		Maus alteMaus = fenster.getMaus();
-		fenster.mausLoeschen();
-
-		if (alteMaus != null && listenerUebernehmen) {
-			maus.uebernehmeAlleListener(alteMaus);
-		}
-
-		fenster.anmelden(maus);
-	}
-
-	/**
 	 * Meldet ein <code>KollisionsReagierbar</code>-Interface an. Ab sofort wird es mit dem
 	 * spezifizierten <code>code</code> aufgerufen, sollten sich die <code>Raum</code>-Objekte
 	 * <code>r1</code> und <code>r2</code> schneiden.
@@ -624,6 +616,34 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void mausAnmelden (Maus maus) {
 		mausAnmelden(maus, false);
+	}
+
+	/**
+	 * Meldet ein Mausobjekt an.<br /> Ab sofort wird die anzumeldende Maus im Fenster dargestellt
+	 * und Klicks werden auf die Maus uebertragen.
+	 *
+	 * @param maus
+	 * 		Die anzumeldende Maus
+	 * @param listenerUebernehmen
+	 * 		Ist dieser Wert <code>true</code>, so uebernimmt die neue Maus <b>alle Listener der alten
+	 * 		Maus</b>
+	 *
+	 * @see Maus
+	 */
+	public void mausAnmelden (Maus maus, boolean listenerUebernehmen) {
+		if (maus == null) {
+			System.err.println("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
+			return;
+		}
+
+		Maus alteMaus = fenster.getMaus();
+		fenster.mausLoeschen();
+
+		if (alteMaus != null && listenerUebernehmen) {
+			maus.uebernehmeAlleListener(alteMaus);
+		}
+
+		fenster.anmelden(maus);
 	}
 
 	/**
@@ -721,30 +741,6 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
-	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab,
-	 *
-	 * @param pfad
-	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie {@code screenshot.jpg}
-	 * 		speichert den Screenshot im Projektordner. Für eingabeabhängige Pfade kann
-	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br />
-	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
-	 * @param x
-	 * 		Die X-Koordinate der oberen linken Ecke des Bildausschnitts.
-	 * @param y
-	 * 		Die Y-Koordinate der oberen linken Ecke des Bildausschnitts.
-	 * @param breite
-	 * 		Die gewuenschte Breite des Bildes
-	 * @param hoehe
-	 * 		Die gewuenschte Laenge des Bildes
-	 *
-	 * @see #pfadAuswaehlen(java.lang.String[])
-	 * @see #screenshot(java.lang.String, ea.BoundingRechteck)
-	 */
-	public void screenshot (String pfad, int x, int y, int breite, int hoehe) {
-		screenshot(pfad, new BoundingRechteck(x, y, breite, hoehe));
-	}
-
-	/**
 	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab.
 	 *
 	 * @param pfad
@@ -787,6 +783,30 @@ public abstract class Game implements TastenReagierbar {
 				}
 			}
 		}.start();
+	}
+
+	/**
+	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab,
+	 *
+	 * @param pfad
+	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie {@code screenshot.jpg}
+	 * 		speichert den Screenshot im Projektordner. Für eingabeabhängige Pfade kann
+	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br />
+	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
+	 * @param x
+	 * 		Die X-Koordinate der oberen linken Ecke des Bildausschnitts.
+	 * @param y
+	 * 		Die Y-Koordinate der oberen linken Ecke des Bildausschnitts.
+	 * @param breite
+	 * 		Die gewuenschte Breite des Bildes
+	 * @param hoehe
+	 * 		Die gewuenschte Laenge des Bildes
+	 *
+	 * @see #pfadAuswaehlen(java.lang.String[])
+	 * @see #screenshot(java.lang.String, ea.BoundingRechteck)
+	 */
+	public void screenshot (String pfad, int x, int y, int breite, int hoehe) {
+		screenshot(pfad, new BoundingRechteck(x, y, breite, hoehe));
 	}
 
 	/**
@@ -856,36 +876,16 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public boolean kopieren (String von, String nach, String nameNeu) {
 		try {
-			FileReader re = new FileReader(new File(von));
-			FileWriter wr = new FileWriter(File.createTempFile(nameNeu.split(".")[0], nameNeu.split(".")[1], new File(nach)));
-
-			int r;
-
-			while ((r = re.read()) != -1)
-				wr.write(r);
-
-			wr.close();
-			re.close();
-		} catch (FileNotFoundException ex) {
-			Logger.error("Das Von-File konnte nicht gefunden werden");
+			Files.copy(Paths.get(von), Paths.get(nach, nameNeu));
+		} catch (FileNotFoundException e) {
+			Logger.error("Die Datei konnte nicht gefunden werden!");
 			return false;
-		} catch (IOException ex) {
-			Logger.error("Fehler beim Lesen.");
-			ex.printStackTrace();
+		} catch (IOException e) {
+			Logger.error("Fehler beim Lesen!");
+			e.printStackTrace();
 			return false;
 		}
 
 		return true;
 	}
-
-	/**
-	 * Diese Methode wird von der Klasse automatisch aufgerufen, sobald eine Taste einfach gedrueckt
-	 * wurde.<br /> Sie wird dann erst wieder aufgerufen, wenn die Taste erst losgelassen und dann
-	 * wieder gedreuckt wurde.<br /> Sollte allerdings eine Methode vonnoeten sein, die immer wieder
-	 * in Regelmaessigen abstaenden aufgerufen wird, solange die Taste <b>heruntergedrueckt ist, so
-	 * bietet sich dies im Interface <code>TasteGedruecktReagierbar</code> an</b>.
-	 *
-	 * @see ea.TastenReagierbar
-	 */
-	public abstract void tasteReagieren (int code);
 }

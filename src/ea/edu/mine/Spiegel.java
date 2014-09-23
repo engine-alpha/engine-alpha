@@ -31,9 +31,7 @@ import ea.*;
  *
  * @see ea.edu.mine.Spiegel
  */
-public class Spiegel
-		extends Game
-		implements KlickReagierbar, RechtsKlickReagierbar {
+public class Spiegel extends Game implements KlickReagierbar, RechtsKlickReagierbar {
 
 	/**
 	 * Die aktuellste Spiegelinstanz
@@ -161,8 +159,7 @@ public class Spiegel
  * Ein Errorspiegel ist ein Fenster mit klarer Fehlermeldung.<br /> Es signalisiert dem
  * Programmierer, dass ein Feld erstellt wurde, bevor ein Fenster erstellt wurde.
  */
-class ErrorSpiegel
-		extends Spiegel {
+class ErrorSpiegel extends Spiegel {
 
 	/**
 	 * Erstellt einen Error-Spiegel

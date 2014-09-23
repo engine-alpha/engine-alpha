@@ -52,6 +52,35 @@ public class DiscoveryServer extends Thread {
 		server.interrupt();
 	}
 
+	@Override
+	public void run () {
+		try {
+			socket = new DatagramSocket(15035, InetAddress.getByName("0.0.0.0"));
+			socket.setBroadcast(true);
+
+			while (!isInterrupted()) {
+				byte[] recvBuf = new byte[1024];
+				DatagramPacket packet = new DatagramPacket(recvBuf, recvBuf.length);
+				socket.receive(packet);
+
+				String cmd = new String(packet.getData()).trim();
+				if (cmd.equals("EA_DISCOVERY_REQUEST")) {
+					if (!getLocalAddresses().contains(packet.getAddress().getHostAddress())) {
+						byte[] sendData = "EA_DISCOVERY_RESPONSE".getBytes();
+						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
+						socket.send(sendPacket);
+					}
+				}
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			if (socket != null) {
+				socket.close();
+			}
+		}
+	}
+
 	private static ArrayList<String> getLocalAddresses () {
 		ArrayList<String> addrs = new ArrayList<>();
 
@@ -84,34 +113,5 @@ public class DiscoveryServer extends Thread {
 		}
 
 		return addrs;
-	}
-
-	@Override
-	public void run () {
-		try {
-			socket = new DatagramSocket(15035, InetAddress.getByName("0.0.0.0"));
-			socket.setBroadcast(true);
-
-			while (!isInterrupted()) {
-				byte[] recvBuf = new byte[1024];
-				DatagramPacket packet = new DatagramPacket(recvBuf, recvBuf.length);
-				socket.receive(packet);
-
-				String cmd = new String(packet.getData()).trim();
-				if (cmd.equals("EA_DISCOVERY_REQUEST")) {
-					if (!getLocalAddresses().contains(packet.getAddress().getHostAddress())) {
-						byte[] sendData = "EA_DISCOVERY_RESPONSE".getBytes();
-						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, packet.getAddress(), packet.getPort());
-						socket.send(sendPacket);
-					}
-				}
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} finally {
-			if (socket != null) {
-				socket.close();
-			}
-		}
 	}
 }

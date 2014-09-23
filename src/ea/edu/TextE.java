@@ -21,8 +21,7 @@ package ea.edu;
 
 import ea.Text;
 
-public class TextE
-		extends Text {
+public class TextE extends Text {
 
 	/**
 	 * Konstruktor erstellt einen fertig sichtbaren Text. Seine Position lässt sich leicht über die

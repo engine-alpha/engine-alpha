@@ -67,7 +67,7 @@ public class NetzwerkInterpreter extends Thread {
 	/**
 	 * Gibt an, ob die Verbindung über diesen Interpreter noch aktiv ist.
 	 *
-	 * @return    <code>true</code>, wenn nicht vom Kommunikationspartner gesendet wurde, dass die
+	 * @return <code>true</code>, wenn nicht vom Kommunikationspartner gesendet wurde, dass die
 	 * Verbindung beendet wird. Sonst <code>false</code>.
 	 */
 	public boolean verbindungAktiv () {
@@ -82,6 +82,31 @@ public class NetzwerkInterpreter extends Thread {
 	 */
 	public void empfaengerHinzufuegen (Empfaenger e) {
 		outputListe.add(e);
+	}
+
+	@Override
+	public void run () {
+		while (!isInterrupted() && connectionActive) {
+			try {
+				String got = reader.readLine();
+
+				if (got == null) {
+					connectionActive = false;
+					break;
+				}
+
+				process(got);
+			} catch (IOException e) {
+				System.err.println("Konnte nicht vom Kommunikationspartner einlesen.");
+				connectionActive = false;
+			}
+		}
+
+		try {
+			reader.close();
+		} catch (IOException e) {
+			System.err.println("Konnte die Verbindung nicht schließen.");
+		}
 	}
 
 	/**
@@ -187,30 +212,5 @@ public class NetzwerkInterpreter extends Thread {
 		}
 
 		connectionActive = false;
-	}
-
-	@Override
-	public void run () {
-		while (!isInterrupted() && connectionActive) {
-			try {
-				String got = reader.readLine();
-
-				if (got == null) {
-					connectionActive = false;
-					break;
-				}
-
-				process(got);
-			} catch (IOException e) {
-				System.err.println("Konnte nicht vom Kommunikationspartner einlesen.");
-				connectionActive = false;
-			}
-		}
-
-		try {
-			reader.close();
-		} catch (IOException e) {
-			System.err.println("Konnte die Verbindung nicht schließen.");
-		}
 	}
 }

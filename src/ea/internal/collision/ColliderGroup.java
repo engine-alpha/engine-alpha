@@ -36,16 +36,6 @@ public class ColliderGroup extends Collider {
 	private ArrayList<Collider> colliders = new ArrayList<Collider>();
 
 	/**
-	 * Fügt einen neuen Collider zu dieser Group hinzu.
-	 *
-	 * @param c
-	 * 		Der hinzuzufügende Collider.
-	 */
-	public void addCollider (Collider c) {
-		colliders.add(c);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -78,5 +68,15 @@ public class ColliderGroup extends Collider {
 			group.addCollider(c.clone());
 		}
 		return group;
+	}
+
+	/**
+	 * Fügt einen neuen Collider zu dieser Group hinzu.
+	 *
+	 * @param c
+	 * 		Der hinzuzufügende Collider.
+	 */
+	public void addCollider (Collider c) {
+		colliders.add(c);
 	}
 }

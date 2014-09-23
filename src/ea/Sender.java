@@ -64,6 +64,14 @@ public class Sender implements SenderInterface {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void sendeString (String s) {
+		sende("s" + s);
+	}
+
+	/**
 	 * Interne Routine. Sendet eine Nachricht, wobei wesentliche Eigenschaften geprueft werden und
 	 * Fehler ausgegeben werden.
 	 *
@@ -89,14 +97,6 @@ public class Sender implements SenderInterface {
 		}
 
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void sendeString (String s) {
-		sende("s" + s);
 	}
 
 	/**
@@ -144,8 +144,7 @@ public class Sender implements SenderInterface {
 	 */
 	@Override
 	public void beendeVerbindung () {
-		if (!sende("xq"))
-			return;
+		if (!sende("xq")) return;
 
 		active = false;
 

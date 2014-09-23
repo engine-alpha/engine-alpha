@@ -115,19 +115,6 @@ public abstract class Animierer implements Ticker {
 	}
 
 	/**
-	 * Hält den Tick-Algorythmus an. Dies bedeutet, dass die Animation pausiert wird.
-	 */
-	public void anhalten () {
-		if (!angemeldet) { // TODO Exception?
-			Logger.warning("Dieser Animierer kann nicht angehalten werden, da seine Animation bereits beendet wurde.");
-			return;
-		}
-
-		manager.anhalten(this);
-		angemeldet = false;
-	}
-
-	/**
 	 * Hält den Tick-Algorythmus an. Macht genau dasselbe wie {@link #anhalten()}, weswegen diese
 	 * Methode nun als veraltet gilt. <br> Bitte nutze <code>anhalten()</code> statt dieser Methode,
 	 * die alte Methode wird in Zukunft entfernt werden.
@@ -138,6 +125,19 @@ public abstract class Animierer implements Ticker {
 	@Deprecated
 	public void pausieren () {
 		this.anhalten();
+	}
+
+	/**
+	 * Hält den Tick-Algorythmus an. Dies bedeutet, dass die Animation pausiert wird.
+	 */
+	public void anhalten () {
+		if (!angemeldet) { // TODO Exception?
+			Logger.warning("Dieser Animierer kann nicht angehalten werden, da seine Animation bereits beendet wurde.");
+			return;
+		}
+
+		manager.anhalten(this);
+		angemeldet = false;
 	}
 
 	/**
@@ -157,15 +157,6 @@ public abstract class Animierer implements Ticker {
 	}
 
 	/**
-	 * Gibt das Ziel dieser Animation aus.
-	 *
-	 * @return gemerktes Ziel-Objekt, das von diesem Animierer animiert wird
-	 */
-	public Raum ziel () {
-		return ziel;
-	}
-
-	/**
 	 * In dieser Methode werden die individuellen Methoden für die verschiedenen Animierer
 	 * festgehalten.<br /> Sie wird automatisch von der Super-Klasse <code>Animierer</code>
 	 * aufgerufen, sooft, bis sie intern beendet oder angehalten wird.<br /> In ihr sollte
@@ -177,4 +168,13 @@ public abstract class Animierer implements Ticker {
 	 * @see #anhalten()
 	 */
 	public abstract void animationsSchritt ();
+
+	/**
+	 * Gibt das Ziel dieser Animation aus.
+	 *
+	 * @return gemerktes Ziel-Objekt, das von diesem Animierer animiert wird
+	 */
+	public Raum ziel () {
+		return ziel;
+	}
 }

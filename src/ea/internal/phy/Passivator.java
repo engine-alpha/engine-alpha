@@ -27,8 +27,7 @@ import ea.internal.util.Logger;
  *
  * @author Michael Andonie
  */
-public class Passivator
-		extends PhysikClient {
+public class Passivator extends PhysikClient {
 
 	/**
 	 * Die Aktive Physik
@@ -102,8 +101,7 @@ public class Passivator
 	 */
 	@Override
 	public void schwerkraftAktivSetzen (boolean aktiv) {
-		Logger.error("Achtung! Das Objekt, bei dem der Einfluss der Schwerkraft gesetzt werden sollte, ist ein passives " +
-				"Objekt. Folglich macht der Aufruf dieser Methode keinen Sinn. Dafuer muesste das entsprechende Objekt ein Aktiv-Objekt sein!");
+		Logger.error("Achtung! Das Objekt, bei dem der Einfluss der Schwerkraft gesetzt werden sollte, ist ein passives " + "Objekt. Folglich macht der Aufruf dieser Methode keinen Sinn. Dafuer muesste das entsprechende Objekt ein Aktiv-Objekt sein!");
 	}
 
 	/**
@@ -119,8 +117,7 @@ public class Passivator
 	 */
 	@Override
 	public void kritischeTiefeSetzen (int tiefe) {
-		Logger.error("Achtung! Das Raum-Objekt, dem eine kritische Tiefe gegeben werden sollte, ist kein Aktiv-Objekt, sondern passiv! " +
-				"Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		Logger.error("Achtung! Das Raum-Objekt, dem eine kritische Tiefe gegeben werden sollte, ist kein Aktiv-Objekt, sondern passiv! " + "Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -137,8 +134,7 @@ public class Passivator
 	 */
 	@Override
 	public void fallReagierbarAnmelden (FallReagierbar f, int tiefe) {
-		Logger.error("Achtung! Das Raum-Objekt, dem ein FallReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sondern passiv! " +
-				"Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		Logger.error("Achtung! Das Raum-Objekt, dem ein FallReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sondern passiv! " + "Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -151,8 +147,7 @@ public class Passivator
 	 */
 	@Override
 	public void stehReagierbarAnmelden (StehReagierbar s) {
-		Logger.error("Achtung! Das Raum-Objekt, dem ein StehReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sonder ein " +
-				"passives Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		Logger.error("Achtung! Das Raum-Objekt, dem ein StehReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sonder ein " + "passives Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -164,8 +159,7 @@ public class Passivator
 	 */
 	@Override
 	public boolean steht () {
-		Logger.error("Achtung! Das Raum-Objekt, an dem das Stehen erfragt werden sollte, ist kein Aktiv-Objekt, sonder ein " +
-				"passives Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen! Solange ist die Rueckgabe immer false.");
+		Logger.error("Achtung! Das Raum-Objekt, an dem das Stehen erfragt werden sollte, ist kein Aktiv-Objekt, sonder ein " + "passives Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen! Solange ist die Rueckgabe immer false.");
 		return false;
 	}
 
@@ -182,8 +176,7 @@ public class Passivator
 	 */
 	@Override
 	public void schwerkraftSetzen (int schwerkraft) {
-		Logger.error("Achtung! Ein passives Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. "
-				+ "Nur Aktiv-Objekte koennen eine Schwerkraft gesetzt bekommen.");
+		Logger.error("Achtung! Ein passives Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. " + "Nur Aktiv-Objekte koennen eine Schwerkraft gesetzt bekommen.");
 	}
 
 	/**
@@ -295,32 +288,6 @@ public class Passivator
 	}
 
 	/**
-	 * Vollfuehrt die einzelnen Schritte fuer die Y-Verschiebung.
-	 *
-	 * @param dY
-	 * 		Die Y-Aenderung
-	 */
-	public void yVersch (int dY) {
-		int z;
-		if (dY > 0) {
-			z = 1;
-		} else if (dY < 0) {
-			z = -1;
-			dY = -dY;
-		} else {
-			return;
-		}
-		Vektor v = new Vektor(0, z);
-		for (int i = 0; i < dY; i++) {
-			system.leerenOhnePhysikAbmelden();
-			system.add(ziel);
-			BoundingRechteck test = ziel.dimension().verschErhoeht(Vektor.OBEN, 1);
-			physik.alleAktivenTestenUndEinsetzenOhne(system, test, v, this);
-			system.verschieben(v);
-		}
-	}
-
-	/**
 	 * Vollfuehrt die einzelen Schritte fuer die Y-Verschiebung.
 	 *
 	 * @param dX
@@ -343,6 +310,32 @@ public class Passivator
 			system.add(ziel);
 			BoundingRechteck test = ziel.dimension().verschErhoeht(testV, 1);
 			physik.alleAktivenTestenUndEinsetzen(system, test, v);
+			system.verschieben(v);
+		}
+	}
+
+	/**
+	 * Vollfuehrt die einzelnen Schritte fuer die Y-Verschiebung.
+	 *
+	 * @param dY
+	 * 		Die Y-Aenderung
+	 */
+	public void yVersch (int dY) {
+		int z;
+		if (dY > 0) {
+			z = 1;
+		} else if (dY < 0) {
+			z = -1;
+			dY = -dY;
+		} else {
+			return;
+		}
+		Vektor v = new Vektor(0, z);
+		for (int i = 0; i < dY; i++) {
+			system.leerenOhnePhysikAbmelden();
+			system.add(ziel);
+			BoundingRechteck test = ziel.dimension().verschErhoeht(Vektor.OBEN, 1);
+			physik.alleAktivenTestenUndEinsetzenOhne(system, test, v, this);
 			system.verschieben(v);
 		}
 	}

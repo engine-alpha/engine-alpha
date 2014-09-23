@@ -107,6 +107,19 @@ public class Fenster extends Frame {
 	private Point lastMousePosition;
 
 	/**
+	 * Einfacher Alternativkonstruktor.<br /> Erstellt ein normales Fenster mit der eingegeben
+	 * Groesse.
+	 *
+	 * @param x
+	 * 		Die Breite
+	 * @param y
+	 * 		Die Hoehe
+	 */
+	public Fenster (int x, int y) {
+		this(x, y, "EngineAlpha - Ein Projekt von Michael Andonie", false, 50, 50);
+	}
+
+	/**
 	 * Konstruktor fuer Objekte der Klasse Fenster.
 	 *
 	 * @param breite
@@ -146,8 +159,7 @@ public class Fenster extends Frame {
 
 		// ------------------------------------- //
 
-		GraphicsEnvironment env = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] devices = env.getScreenDevices();
 		Dimension screenSize = getToolkit().getScreenSize();
 
@@ -190,15 +202,10 @@ public class Fenster extends Frame {
 				Logger.info("DisplayModes: " + displayMode.length);
 
 				for (int i = 0; i < displayMode.length; i++) {
-					Logger.info((i + 1) + ": " + "Breite: "
-							+ displayMode[i].getWidth() + ", Höhe: "
-							+ displayMode[i].getHeight());
+					Logger.info((i + 1) + ": " + "Breite: " + displayMode[i].getWidth() + ", Höhe: " + displayMode[i].getHeight());
 
-					if (displayMode[i].getWidth() == breite
-							&& displayMode[i].getHeight() == hoehe) {
-						devices[0].setDisplayMode(new DisplayMode(breite,
-								hoehe, displayMode[i].getBitDepth(),
-								displayMode[i].getRefreshRate()));
+					if (displayMode[i].getWidth() == breite && displayMode[i].getHeight() == hoehe) {
+						devices[0].setDisplayMode(new DisplayMode(breite, hoehe, displayMode[i].getBitDepth(), displayMode[i].getRefreshRate()));
 						Logger.info("SET!");
 						success = true;
 						break;
@@ -206,10 +213,7 @@ public class Fenster extends Frame {
 				}
 
 				if (!success) {
-					Logger.error("Achtung!" + "\n"
-							+ "Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!" + "\n"
-							+ "Nur besondere Auflösungen sind möglich, z.B. 800 x 600." + "\n"
-							+ "Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
+					Logger.error("Achtung!" + "\n" + "Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!" + "\n" + "Nur besondere Auflösungen sind möglich, z.B. 800 x 600." + "\n" + "Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
 				}
 			} else {
 				Logger.error("Dieser Bildschirm unterstützt keine Auflösungsänderung!");
@@ -245,10 +249,7 @@ public class Fenster extends Frame {
 		try {
 			robot = new Robot(devices[0]);
 		} catch (AWTException e) {
-			Logger.error("Achtung!" + "\n"
-					+ "Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!" + "\n"
-					+ "Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren." + "\n"
-					+ "Grund: Dies liegt an diesem Computer.");
+			Logger.error("Achtung!" + "\n" + "Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!" + "\n" + "Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren." + "\n" + "Grund: Dies liegt an diesem Computer.");
 		}
 
 		// Die Listener
@@ -277,9 +278,7 @@ public class Fenster extends Frame {
 						BoundingRechteck praeferenz = mausPlatz();
 						Punkt p = new Punkt(r.x + hs.realX(), r.y + hs.realY());
 						if (!praeferenz.istIn(p) && maus.bewegend()) {
-							getCam().verschieben(
-									(new Vektor(praeferenz.zentrum(), p)
-											.teilen(20)));
+							getCam().verschieben((new Vektor(praeferenz.zentrum(), p).teilen(20)));
 						}
 					} catch (NullPointerException e) {
 						// Einfangen der maximal einmaligen RuntimeException zum
@@ -292,40 +291,6 @@ public class Fenster extends Frame {
 		}, 50);
 
 		instanz = this;
-	}
-
-	/**
-	 * Einfacher Alternativkonstruktor.<br /> Erstellt ein normales Fenster mit der eingegeben
-	 * Groesse.
-	 *
-	 * @param x
-	 * 		Die Breite
-	 * @param y
-	 * 		Die Hoehe
-	 */
-	public Fenster (int x, int y) {
-		this(x, y, "EngineAlpha - Ein Projekt von Michael Andonie", false, 50, 50);
-	}
-
-	/**
-	 * Statische Methode zum Oeffentlichen Berechnen der Fontmetriken des offenen Fensters.
-	 *
-	 * @param f
-	 * 		Der zu ueberpruefende Font
-	 *
-	 * @return Das zu dem Font und aktiven Fenster gehoerende FontMetrics-Objekt
-	 */
-	public static FontMetrics metrik (Font f) {
-		return instanz.getFontMetrics(f);
-	}
-
-	/**
-	 * Gibt die aktuellste Instanz dieser KLasse wieder.
-	 *
-	 * @return Das aktuellste Fenster
-	 */
-	public static Fenster instanz () {
-		return instanz;
 	}
 
 	private void addKeyListener () {
@@ -414,8 +379,208 @@ public class Fenster extends Frame {
 		});
 	}
 
+	/**
+	 * Löscht das Fenster und terminiert damit das Spiel.<br /> <b>Daher nur dann einsetzen, wenn
+	 * die Anwendung beendet werden soll!! Der vorherige Zustand ist nicht
+	 * wiederherstellbar!!</b><br /> Als alternative Methode zum ausschliesslichen Loeschen des
+	 * Fensters steht <code>softLoeschen()</code> zur Verfuegung.
+	 */
+	public void loeschen () {
+		this.zeichner.kill();
+
+		this.setVisible(false);
+		this.dispose();
+
+		if (--frameCount == 0) System.exit(0);
+	}
+
 	private void removeCursor () {
 		mausLoeschen();
+	}
+
+	/**
+	 * Testet, ob eine Maus im Spiel vorhanden ist.
+	 *
+	 * @return TRUE, wenn eine Maus im Spiel ist.
+	 */
+	public boolean hatMaus () {
+		return (maus != null);
+	}
+
+	/**
+	 * @return Das BoundingRechteck, dass den Spielraum der Maus ohne Einbezug der Relativen
+	 * Koordinaten (Kameraposition)<br /> Das Rechteck ist die Masse des Fensters mal 3/4.<br />
+	 * Dies ist natuerlich nur dann im Fenster gebraucht, wenn eine relative Maus angemeldet ist.
+	 */
+	private BoundingRechteck mausPlatz () {
+		Dimension d = this.getSize();
+		int x = (d.width / 4) * 3;
+		int y = (d.height / 4) * 3;
+		return new BoundingRechteck((d.width / 8), (d.height / 8), x, y);
+	}
+
+	/**
+	 * @return Die Kamera, passend zu diesem Fenster
+	 */
+	public Kamera getCam () {
+		return zeichner.cam();
+	}
+
+	/**
+	 * Die Listener-Methode, die vom Fenster selber bei jeder gedrueckten Taste aktiviert wird.<br
+	 * /> Hiebei wird die Zuordnung zu einer Zahl gemacht, und diese dann an alle Listener
+	 * weitergereicht, sofern die Taste innerhalb der Kennung des Fensters liegt.<br /> Hierzu: Die
+	 * Liste der Tasten mit Zuordnung zu einem Buchstaben; sie ist im <b>Handbuch</b> festgehalten.
+	 *
+	 * @param e
+	 * 		Das ausgeloeste KeyEvent zur Weiterverarbeitung.
+	 */
+	private void tastenAktion (KeyEvent e) {
+		int z = zuordnen(e.getKeyCode());
+
+		if (z == -1 || tabelle[z]) {
+			return;
+		}
+
+		for (TastenReagierbar r : listener) {
+			r.reagieren(z);
+		}
+
+		tabelle[z] = true;
+	}
+
+	/**
+	 * Ordnet vom Java-KeyCode-System in das EA-System um.
+	 * <p/>
+	 * Seit Version 3.0.3 ersetzt durch {@link ea.Taste#vonJava(int)}.
+	 *
+	 * @param keyCode
+	 * 		Der Java-KeyCode
+	 *
+	 * @return Entsprechender EA-KeyCode oder <code>-1</code>, falls es keinen passenden EA-KeyCode
+	 * gibt.
+	 *
+	 * @deprecated Seit v3.0.3. Durch {@link ea.Taste#vonJava(int)} ersetzt.
+	 */
+	@Deprecated
+	public int zuordnen (int keyCode) {
+		return Taste.vonJava(keyCode);
+	}
+
+	/**
+	 * Diese Methode wird immer dann ausgefuehrt, wenn ein einfacher Linksklick der Maus ausgefuehrt
+	 * wird.
+	 *
+	 * @param e
+	 * 		Das MausEvent
+	 *
+	 * @paran losgelassen Ist dieser Wert TRUE, wurde die Maus eigentlich losgelassen und nicht
+	 * geklickt.
+	 */
+	private void mausAktion (MouseEvent e, boolean losgelassen) {
+		if (!zaehlt) {
+			zaehlt = true;
+			return;
+		}
+
+		// Linksklick? 1: Links - 2: Mausrad? - 3: Rechts
+		final boolean links = e.getButton() != MouseEvent.BUTTON3;
+
+		if (hatMaus()) {
+			if (maus.absolut() || maus.bewegend()) {
+				Punkt p = maus.klickAufZeichenebene();
+				maus.klick(p.x(), p.y(), links, losgelassen);
+			} else { // FIXME REVIEW BUG
+				maus.klick(maus.getImage().positionX() + getCam().getX(), maus.getImage().positionY() + getCam().getY(), links, losgelassen);
+			}
+		}
+	}
+
+	/**
+	 * Diese Methode wird ausgefuehrt, wenn die Maus bewegt wird.
+	 *
+	 * @param e
+	 * 		Das ausloesende Event
+	 */
+	private void mausBewegung (MouseEvent e) {
+		if (hatMaus()) {
+			Insets insets = this.getInsets();
+
+			int centerX = zeichner.getWidth() / 2;
+			int centerY = zeichner.getHeight() / 2;
+
+			Point windowLocation = getLocation();
+			Point mousePosition = e.getPoint();
+
+			if (maus.absolut()) {
+				if (maus.bewegend()) {
+					Vektor offset = new Vektor(mousePosition.x - centerX, mousePosition.y - centerY);
+
+					getCam().verschieben(offset);
+				}
+
+				if (lastMousePosition != null) {
+					maus.bewegt(mousePosition.x - lastMousePosition.x, mousePosition.y - lastMousePosition.y);
+				}
+			} else {
+				int dx = mousePosition.x - centerX;
+				int dy = mousePosition.y - centerY;
+
+				BoundingRechteck bounds = mausBild.dimension();
+				Punkt hotspot = maus.hotSpot();
+
+				Punkt hotspotX = new Punkt(bounds.x + hotspot.realX() + dx, bounds.y + hotspot.realY());
+
+				Punkt hotspotY = new Punkt(bounds.x + hotspot.realX(), bounds.y + hotspot.realY() + dy);
+
+				// FIXME Maus bis zum Rand bewegen, aber nicht hinaus.
+				// Maus bewegt sich nicht direkt an den Rand, wenn die Bewegung größer als der
+				// Abstand zum Rand ist!
+				if (!zeichner.masse().istIn(hotspotX)) {
+					dx = 0;
+				}
+
+				if (!zeichner.masse().istIn(hotspotY)) {
+					dy = 0;
+				}
+
+				mausBild.verschieben(new Vektor(dx, dy));
+				maus.bewegt(dx, dy);
+			}
+
+			robot.mouseMove(windowLocation.x + insets.left + centerX, windowLocation.y + insets.top + centerY);
+			lastMousePosition = new Point(centerX, centerY);
+		}
+	}
+
+	/**
+	 * Loescht das Maus-Objekt des Fensters.<br /> Hatte das Fenster keine, ergibt sich selbstredend
+	 * keine Aenderung.
+	 */
+	public void mausLoeschen () {
+		this.setCursor(getToolkit().createCustomCursor(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "NOCURSOR"));
+		maus = null;
+	}
+
+	/**
+	 * Statische Methode zum Oeffentlichen Berechnen der Fontmetriken des offenen Fensters.
+	 *
+	 * @param f
+	 * 		Der zu ueberpruefende Font
+	 *
+	 * @return Das zu dem Font und aktiven Fenster gehoerende FontMetrics-Objekt
+	 */
+	public static FontMetrics metrik (Font f) {
+		return instanz.getFontMetrics(f);
+	}
+
+	/**
+	 * Gibt die aktuellste Instanz dieser KLasse wieder.
+	 *
+	 * @return Das aktuellste Fenster
+	 */
+	public static Fenster instanz () {
+		return instanz;
 	}
 
 	/**
@@ -471,6 +636,21 @@ public class Fenster extends Frame {
 	}
 
 	/**
+	 * Meldet einen TastenLosgelassenReagierbar-Listener an als exakt parallele Methode zu
+	 * <code>tastenLosgelassenAnmelden()</code>, jedoch eben ein etwas laengerer, aber vielleicht
+	 * auch logischerer Name; fuehrt jedoch exakt die selbe Methode aus!<br />
+	 * <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
+	 * !!!!!!!!!!!!!!!</b><br /> <code>TastenReagierbar</code> und <code>TastenLosgelassenReagierbar</code>
+	 * sind 2 vollkommen unterschiedliche Interfaces! Das eine wird beim Runterdruecken, das andere
+	 * beim Loslassen der Tasten aktiviert.
+	 *
+	 * @see #tastenLosgelassenAnmelden(TastenLosgelassenReagierbar)
+	 */
+	public void tastenLosgelassenReagierbarAnmelden (TastenLosgelassenReagierbar t) {
+		this.tastenLosgelassenAnmelden(t);
+	}
+
+	/**
 	 * Meldet einen TastenLosgelassenReagierbar-Listener an.<br /> <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
 	 * !!!!!!!!!!!!!!!</b><br /> TastenReagierbar und TastenLosgelassenReagierbar sind 2 vollkommen
 	 * unterschiedliche Interfaces! Das eine wird beim Runterdruecken, das andere beim Loslassen der
@@ -482,22 +662,6 @@ public class Fenster extends Frame {
 		}
 
 		losListener.add(t);
-	}
-
-	/**
-	 * Meldet einen TastenLosgelassenReagierbar-Listener an als exakt parallele Methode zu
-	 * <code>tastenLosgelassenAnmelden()</code>, jedoch eben ein etwas laengerer, aber vielleicht
-	 * auch logischerer Name; fuehrt jedoch exakt die selbe Methode aus!<br />
-	 * <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
-	 * !!!!!!!!!!!!!!!</b><br /> <code>TastenReagierbar</code> und <code>TastenLosgelassenReagierbar</code>
-	 * sind 2 vollkommen unterschiedliche Interfaces! Das eine wird beim Runterdruecken, das andere
-	 * beim Loslassen der Tasten aktiviert.
-	 *
-	 * @see #tastenLosgelassenAnmelden(TastenLosgelassenReagierbar)
-	 */
-	public void tastenLosgelassenReagierbarAnmelden (
-			TastenLosgelassenReagierbar t) {
-		this.tastenLosgelassenAnmelden(t);
 	}
 
 	/**
@@ -515,32 +679,11 @@ public class Fenster extends Frame {
 			maus.fensterSetzen(this);
 
 			BoundingRechteck r = maus.getImage().dimension();
-			maus.getImage().positionSetzen(((getWidth() - r.breite) / 2),
-					(getHeight() - r.hoehe) / 2);
+			maus.getImage().positionSetzen(((getWidth() - r.breite) / 2), (getHeight() - r.hoehe) / 2);
 			mausBild = maus.getImage();
 
 			zeichner.anmelden(mausBild);
 		}
-	}
-
-	/**
-	 * Loescht das Maus-Objekt des Fensters.<br /> Hatte das Fenster keine, ergibt sich selbstredend
-	 * keine Aenderung.
-	 */
-	public void mausLoeschen () {
-		this.setCursor(getToolkit().createCustomCursor(
-				new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
-				new Point(0, 0), "NOCURSOR"));
-		maus = null;
-	}
-
-	/**
-	 * Testet, ob eine Maus im Spiel vorhanden ist.
-	 *
-	 * @return TRUE, wenn eine Maus im Spiel ist.
-	 */
-	public boolean hatMaus () {
-		return (maus != null);
 	}
 
 	/**
@@ -555,13 +698,6 @@ public class Fenster extends Frame {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @return Die Kamera, passend zu diesem Fenster
-	 */
-	public Kamera getCam () {
-		return zeichner.cam();
 	}
 
 	/**
@@ -622,40 +758,12 @@ public class Fenster extends Frame {
 	}
 
 	/**
-	 * Löscht das Fenster und terminiert damit das Spiel.<br /> <b>Daher nur dann einsetzen, wenn
-	 * die Anwendung beendet werden soll!! Der vorherige Zustand ist nicht
-	 * wiederherstellbar!!</b><br /> Als alternative Methode zum ausschliesslichen Loeschen des
-	 * Fensters steht <code>softLoeschen()</code> zur Verfuegung.
-	 */
-	public void loeschen () {
-		this.zeichner.kill();
-
-		this.setVisible(false);
-		this.dispose();
-
-		if (--frameCount == 0)
-			System.exit(0);
-	}
-
-	/**
 	 * Gibt das gespeicherte Bild-Objekt der Maus wieder.
 	 *
 	 * @return Das Bild mit seiner Position und Groesse von der Maus.
 	 */
 	public Raum mausBild () {
 		return this.mausBild;
-	}
-
-	/**
-	 * @return Das BoundingRechteck, dass den Spielraum der Maus ohne Einbezug der Relativen
-	 * Koordinaten (Kameraposition)<br /> Das Rechteck ist die Masse des Fensters mal 3/4.<br />
-	 * Dies ist natuerlich nur dann im Fenster gebraucht, wenn eine relative Maus angemeldet ist.
-	 */
-	private BoundingRechteck mausPlatz () {
-		Dimension d = this.getSize();
-		int x = (d.width / 4) * 3;
-		int y = (d.height / 4) * 3;
-		return new BoundingRechteck((d.width / 8), (d.height / 8), x, y);
 	}
 
 	/**
@@ -666,130 +774,6 @@ public class Fenster extends Frame {
 		for (int i = 0; i < tabelle.length; i++) {
 			tabelle[i] = false;
 		}
-	}
-
-	/**
-	 * Diese Methode wird ausgefuehrt, wenn die Maus bewegt wird.
-	 *
-	 * @param e
-	 * 		Das ausloesende Event
-	 */
-	private void mausBewegung (MouseEvent e) {
-		if (hatMaus()) {
-			Insets insets = this.getInsets();
-
-			int centerX = zeichner.getWidth() / 2;
-			int centerY = zeichner.getHeight() / 2;
-
-			Point windowLocation = getLocation();
-			Point mousePosition = e.getPoint();
-
-			if (maus.absolut()) {
-				if (maus.bewegend()) {
-					Vektor offset = new Vektor(
-							mousePosition.x - centerX,
-							mousePosition.y - centerY
-					);
-
-					getCam().verschieben(offset);
-				}
-
-				if (lastMousePosition != null) {
-					maus.bewegt(
-							mousePosition.x - lastMousePosition.x,
-							mousePosition.y - lastMousePosition.y
-					);
-				}
-			} else {
-				int dx = mousePosition.x - centerX;
-				int dy = mousePosition.y - centerY;
-
-				BoundingRechteck bounds = mausBild.dimension();
-				Punkt hotspot = maus.hotSpot();
-
-				Punkt hotspotX = new Punkt(
-						bounds.x + hotspot.realX() + dx,
-						bounds.y + hotspot.realY()
-				);
-
-				Punkt hotspotY = new Punkt(
-						bounds.x + hotspot.realX(),
-						bounds.y + hotspot.realY() + dy
-				);
-
-				// FIXME Maus bis zum Rand bewegen, aber nicht hinaus.
-				// Maus bewegt sich nicht direkt an den Rand, wenn die Bewegung größer als der
-				// Abstand zum Rand ist!
-				if (!zeichner.masse().istIn(hotspotX)) {
-					dx = 0;
-				}
-
-				if (!zeichner.masse().istIn(hotspotY)) {
-					dy = 0;
-				}
-
-				mausBild.verschieben(new Vektor(dx, dy));
-				maus.bewegt(dx, dy);
-			}
-
-			robot.mouseMove(windowLocation.x + insets.left + centerX, windowLocation.y + insets.top + centerY);
-			lastMousePosition = new Point(centerX, centerY);
-		}
-	}
-
-	/**
-	 * Diese Methode wird immer dann ausgefuehrt, wenn ein einfacher Linksklick der Maus ausgefuehrt
-	 * wird.
-	 *
-	 * @param e
-	 * 		Das MausEvent
-	 *
-	 * @paran losgelassen Ist dieser Wert TRUE, wurde die Maus eigentlich losgelassen und nicht
-	 * geklickt.
-	 */
-	private void mausAktion (MouseEvent e, boolean losgelassen) {
-		if (!zaehlt) {
-			zaehlt = true;
-			return;
-		}
-
-		// Linksklick? 1: Links - 2: Mausrad? - 3: Rechts
-		final boolean links = e.getButton() != MouseEvent.BUTTON3;
-
-		if (hatMaus()) {
-			if (maus.absolut() || maus.bewegend()) {
-				Punkt p = maus.klickAufZeichenebene();
-				maus.klick(p.x(), p.y(), links, losgelassen);
-			} else { // FIXME REVIEW BUG
-				maus.klick(maus.getImage().positionX() + getCam().getX(),
-						maus.getImage().positionY() + getCam().getY(),
-						links,
-						losgelassen);
-			}
-		}
-	}
-
-	/**
-	 * Die Listener-Methode, die vom Fenster selber bei jeder gedrueckten Taste aktiviert wird.<br
-	 * /> Hiebei wird die Zuordnung zu einer Zahl gemacht, und diese dann an alle Listener
-	 * weitergereicht, sofern die Taste innerhalb der Kennung des Fensters liegt.<br /> Hierzu: Die
-	 * Liste der Tasten mit Zuordnung zu einem Buchstaben; sie ist im <b>Handbuch</b> festgehalten.
-	 *
-	 * @param e
-	 * 		Das ausgeloeste KeyEvent zur Weiterverarbeitung.
-	 */
-	private void tastenAktion (KeyEvent e) {
-		int z = zuordnen(e.getKeyCode());
-
-		if (z == -1 || tabelle[z]) {
-			return;
-		}
-
-		for (TastenReagierbar r : listener) {
-			r.reagieren(z);
-		}
-
-		tabelle[z] = true;
 	}
 
 	/**
@@ -806,23 +790,5 @@ public class Fenster extends Frame {
 	 */
 	public boolean istGedrueckt (int tastencode) {
 		return tabelle[tastencode];
-	}
-
-	/**
-	 * Ordnet vom Java-KeyCode-System in das EA-System um.
-	 * <p/>
-	 * Seit Version 3.0.3 ersetzt durch {@link ea.Taste#vonJava(int)}.
-	 *
-	 * @param keyCode
-	 * 		Der Java-KeyCode
-	 *
-	 * @return Entsprechender EA-KeyCode oder <code>-1</code>, falls es keinen passenden EA-KeyCode
-	 * gibt.
-	 *
-	 * @deprecated Seit v3.0.3. Durch {@link ea.Taste#vonJava(int)} ersetzt.
-	 */
-	@Deprecated
-	public int zuordnen (int keyCode) {
-		return Taste.vonJava(keyCode);
 	}
 }

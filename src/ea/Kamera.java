@@ -90,20 +90,6 @@ public class Kamera {
 	 * Kamera.<br /> Die Art des Fokus (vorne, hinten, oben, unten, mittig etc...) kann ueber die
 	 * Methode <b>setzeFokusArt()</b> geaendert werden.<br /> Soll das Fokusverhalten beendet
 	 * werden, muss die paramterlose Methode <b>loescheFokus()</b> ausgefuehrt werden; dann bleibt
-	 * die Kamera bis auf weiteres in der letzten Position.
-	 *
-	 * @param r
-	 * 		Der Fokuspunkt.
-	 */
-	public void setzeFokus (Raum r) {
-		fokus = r;
-	}
-
-	/**
-	 * Setze einen Fokus der Kamera auf ein Objekt.<br /> Dieses Objekt ist ab dann im 'Zentrum' der
-	 * Kamera.<br /> Die Art des Fokus (vorne, hinten, oben, unten, mittig etc...) kann ueber die
-	 * Methode <b>setzeFokusArt()</b> geaendert werden.<br /> Soll das Fokusverhalten beendet
-	 * werden, muss die paramterlose Methode <b>loescheFokus()</b> ausgefuehrt werden; dann bleibt
 	 * die Kamera bis auf weiteres in der letzten Position.<br /> Diese Methode wrappt lediglich
 	 * <code>setzeFokus(Raum)</code>, wurde daher zur verhinderung des Orientierungsverlustes
 	 * geschrieben.
@@ -115,6 +101,20 @@ public class Kamera {
 	 */
 	public void fokusSetzen (Raum r) {
 		this.setzeFokus(r);
+	}
+
+	/**
+	 * Setze einen Fokus der Kamera auf ein Objekt.<br /> Dieses Objekt ist ab dann im 'Zentrum' der
+	 * Kamera.<br /> Die Art des Fokus (vorne, hinten, oben, unten, mittig etc...) kann ueber die
+	 * Methode <b>setzeFokusArt()</b> geaendert werden.<br /> Soll das Fokusverhalten beendet
+	 * werden, muss die paramterlose Methode <b>loescheFokus()</b> ausgefuehrt werden; dann bleibt
+	 * die Kamera bis auf weiteres in der letzten Position.
+	 *
+	 * @param r
+	 * 		Der Fokuspunkt.
+	 */
+	public void setzeFokus (Raum r) {
+		fokus = r;
 	}
 
 	/**
@@ -130,18 +130,6 @@ public class Kamera {
 	 */
 	public void fokusVerzugSetzen (Vektor v) {
 		verzug = v;
-	}
-
-	/**
-	 * Setzt, ob das Fokusverhalten durch Bounds begrenzt wird.
-	 *
-	 * @param b
-	 * 		Ob die gesetzten Minimum- und Maximum-Werte auch aktiviert werden sollen.
-	 *
-	 * @see #boundsSetzen(BoundingRechteck)
-	 */
-	public void hatBoundsSetzen (boolean b) {
-		hatBounds = b;
 	}
 
 	/**
@@ -165,10 +153,15 @@ public class Kamera {
 	}
 
 	/**
-	 * Loescht den Fokus.<br /> Die Kamera bleibt in ihrer letzten Position zurueck.
+	 * Setzt, ob das Fokusverhalten durch Bounds begrenzt wird.
+	 *
+	 * @param b
+	 * 		Ob die gesetzten Minimum- und Maximum-Werte auch aktiviert werden sollen.
+	 *
+	 * @see #boundsSetzen(BoundingRechteck)
 	 */
-	public void loescheFokus () {
-		fokus = null;
+	public void hatBoundsSetzen (boolean b) {
+		hatBounds = b;
 	}
 
 	/**
@@ -184,22 +177,10 @@ public class Kamera {
 	}
 
 	/**
-	 * @return Ob die Kamera steif ist, oder sich mit einem Fokuspunkt mitbewegt.
+	 * Loescht den Fokus.<br /> Die Kamera bleibt in ihrer letzten Position zurueck.
 	 */
-	public boolean hatFokus () {
-		return (fokus != null);
-	}
-
-	/**
-	 * Verschiebt die Kamera um einen bestimmten Wert in X- und Y-Richtung.
-	 *
-	 * @param v
-	 * 		Der die Bewegung beschreibende Vektor.
-	 *
-	 * @see #verschieben(int, int)
-	 */
-	public void verschieben (Vektor v) {
-		bild = bild.verschobeneInstanz(v);
+	public void loescheFokus () {
+		fokus = null;
 	}
 
 	/**
@@ -218,15 +199,15 @@ public class Kamera {
 	}
 
 	/**
-	 * Setzt das Zentrum der Kamera. Von nun an ist der Eingegebene Punkt im Zentrum des Bildes.
+	 * Verschiebt die Kamera um einen bestimmten Wert in X- und Y-Richtung.
 	 *
-	 * @param zentrum
-	 * 		Das neue Zentrum der Kamera
+	 * @param v
+	 * 		Der die Bewegung beschreibende Vektor.
 	 *
-	 * @see #zentrumSetzen(int, int)
+	 * @see #verschieben(int, int)
 	 */
-	public void zentrumSetzen (Punkt zentrum) {
-		bild = bild.mittenAngleichInstanz(zentrum);
+	public void verschieben (Vektor v) {
+		bild = bild.verschobeneInstanz(v);
 	}
 
 	/**
@@ -245,17 +226,15 @@ public class Kamera {
 	}
 
 	/**
-	 * Setzt die Position der <i>linken oberen Ecke</i> der Kameraperspektive.
+	 * Setzt das Zentrum der Kamera. Von nun an ist der Eingegebene Punkt im Zentrum des Bildes.
 	 *
-	 * @param x
-	 * 		Die <i>X-Koordinate der linken oberen Ecke</i> der Kameraperspektive
-	 * @param y
-	 * 		Die <i>Y-Koordinate der linken oberen Ecke</i> der Kameraperspektive
+	 * @param zentrum
+	 * 		Das neue Zentrum der Kamera
 	 *
-	 * @see #positionSetzen(Punkt)
+	 * @see #zentrumSetzen(int, int)
 	 */
-	public void positionSetzen (float x, float y) {
-		bild = bild.anPosition(x, y);
+	public void zentrumSetzen (Punkt zentrum) {
+		bild = bild.mittenAngleichInstanz(zentrum);
 	}
 
 	/**
@@ -268,6 +247,20 @@ public class Kamera {
 	 */
 	public void positionSetzen (Punkt p) {
 		positionSetzen(p.x, p.y);
+	}
+
+	/**
+	 * Setzt die Position der <i>linken oberen Ecke</i> der Kameraperspektive.
+	 *
+	 * @param x
+	 * 		Die <i>X-Koordinate der linken oberen Ecke</i> der Kameraperspektive
+	 * @param y
+	 * 		Die <i>Y-Koordinate der linken oberen Ecke</i> der Kameraperspektive
+	 *
+	 * @see #positionSetzen(Punkt)
+	 */
+	public void positionSetzen (float x, float y) {
+		bild = bild.anPosition(x, y);
 	}
 
 	/**
@@ -316,5 +309,12 @@ public class Kamera {
 			bild = bild.in(bounds);
 		}
 		ebene.basis().zeichnen(g, bild);
+	}
+
+	/**
+	 * @return Ob die Kamera steif ist, oder sich mit einem Fokuspunkt mitbewegt.
+	 */
+	public boolean hatFokus () {
+		return (fokus != null);
 	}
 }

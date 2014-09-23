@@ -102,7 +102,7 @@ public abstract class MineGameE {
 			return;
 		}
 		try {
-			taste.invoke(aim, new Object[]{code});
+			taste.invoke(aim, new Object[] {code});
 		} catch (IllegalAccessException ex) {
 			System.err.println("Achtung! Der Zugriff auf die Methode fuer Tasten hat nicht funktioniert. BUG!");
 		} catch (InvocationTargetException ex) {
@@ -126,7 +126,7 @@ public abstract class MineGameE {
 			return;
 		}
 		try {
-			klick.invoke(aim, new Object[]{x, y});
+			klick.invoke(aim, new Object[] {x, y});
 		} catch (IllegalAccessException ex) {
 			System.err.println("Achtung! Der Zugriff auf die Methode fuer Klicks hat nicht funktioniert. BUG!");
 		} catch (InvocationTargetException ex) {
@@ -150,7 +150,7 @@ public abstract class MineGameE {
 			return;
 		}
 		try {
-			klickR.invoke(aim, new Object[]{x, y});
+			klickR.invoke(aim, new Object[] {x, y});
 		} catch (IllegalAccessException ex) {
 			System.err.println("Achtung! Der Zugriff auf die Methode fuer Klicks hat nicht funktioniert. BUG!");
 		} catch (InvocationTargetException ex) {

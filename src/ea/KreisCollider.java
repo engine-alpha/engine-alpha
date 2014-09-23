@@ -56,19 +56,6 @@ public class KreisCollider {
 	}
 
 	/**
-	 * Hilfstmethode zum möglichst effizienten Quadrieren einer Zahl. Wird benutzt, um die doppelte
-	 * Laengenberechnung zu umgehen.
-	 *
-	 * @param x
-	 * 		eine Zahl.
-	 *
-	 * @return x*x
-	 */
-	public static float quadrieren (float x) {
-		return x * x;
-	}
-
-	/**
 	 * Verschiebt den Collider um einen Vektor.
 	 *
 	 * @param v
@@ -86,7 +73,7 @@ public class KreisCollider {
 	 * @param k2
 	 * 		Ein zweiter Kreis.
 	 *
-	 * @return        <code>true</code>, wenn sich dieser Kreis mit </code>k2</code> <i>schneidet oder
+	 * @return <code>true</code>, wenn sich dieser Kreis mit </code>k2</code> <i>schneidet oder
 	 * berührt</i>. Sonst <code>false</code>.
 	 */
 	public boolean schneidet (KreisCollider k2) {
@@ -95,6 +82,19 @@ public class KreisCollider {
 		}
 
 		return quadrieren(x - k2.x) + quadrieren(y - k2.y) <= quadrieren(radius + k2.radius);
+	}
+
+	/**
+	 * Hilfstmethode zum möglichst effizienten Quadrieren einer Zahl. Wird benutzt, um die doppelte
+	 * Laengenberechnung zu umgehen.
+	 *
+	 * @param x
+	 * 		eine Zahl.
+	 *
+	 * @return x*x
+	 */
+	public static float quadrieren (float x) {
+		return x * x;
 	}
 
 	/**

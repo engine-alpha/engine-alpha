@@ -56,6 +56,14 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	}
 
 	/**
+	 * Beendet sämtliche laufenden Animationen
+	 */
+	@API
+	public static void neutralize () {
+		getAnimationsManager().alleAbmelden();
+	}
+
+	/**
 	 * Diese Methode gibt den <b>einen und einzigen existierenden</b> Animationsmanager aus.<br />
 	 * Dies ist ein realisiserter <i>Singleton</i>.
 	 *
@@ -71,11 +79,41 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	}
 
 	/**
-	 * Beendet sämtliche laufenden Animationen
+	 * Bis ins Lächerliche vereinfachte Methode zum zum Kreisanimieren.<br /> Hierbei wird nicht nur
+	 * die gesamte Bewegung automatisch wiederholt und die Umlaufzeit auf 1,5 Sekunden
+	 * voreingestellt, sondern auch noch der Mittelpunkt der Kreisbewegung automatisch ermittelt. Er
+	 * wird sich 150 Koordinatenpunkte unterhalb des Mittelpunktes des zu animierenden Raum-Objektes
+	 * befinden.
+	 *
+	 * @param ziel
+	 * 		Das zu animierende Raum-Objekt. Hierbei ist dessen Zentrum auf der Kreisbahn.
+	 *
+	 * @see #kreisAnimation(Raum, Punkt, boolean, int)
+	 * @see #kreisAnimation(Raum, Punkt, int)
+	 * @see #kreisAnimation(Raum, Punkt)
 	 */
 	@API
-	public static void neutralize () {
-		getAnimationsManager().alleAbmelden();
+	@SuppressWarnings ( "unused" )
+	public void kreisAnimation (Raum ziel) {
+		kreisAnimation(ziel, unterhalb(ziel));
+	}
+
+	/**
+	 * Extrem vereinfachte Methode zum zum Kreisanimieren.<br /> Hierbei wird nicht nur die gesamte
+	 * Bewegung automatisch wiederholt, sondern auch die Umlaufzeit auf 1,5 Sekunden
+	 * voreingestellt.
+	 *
+	 * @param ziel
+	 * 		Das zu animierende Raum-Objekt. Hierbei ist dessen Zentrum auf der Kreisbahn.
+	 * @param zentrum
+	 * 		Das Zentrum des Animationskreises
+	 *
+	 * @see #kreisAnimation(Raum, Punkt, boolean, int)
+	 * @see #kreisAnimation(Raum, Punkt, int)
+	 */
+	@API
+	public void kreisAnimation (Raum ziel, Punkt zentrum) {
+		kreisAnimation(ziel, zentrum, 1500);
 	}
 
 	/**
@@ -89,45 +127,6 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 */
 	private static Punkt unterhalb (Raum m) {
 		return m.zentrum().verschobenerPunkt(new Vektor(0, -150));
-	}
-
-	/**
-	 * Berechnet eine Zahl, die entweder die Eingabe selbst oder 1 ist, sofern die Eingabe kleiner
-	 * als 1 ist.
-	 *
-	 * @param z
-	 * 		Die einzugebende Zahl
-	 *
-	 * @return 1, wenn <code>z < 1</code>, sonst <code>z</code>.
-	 */
-	public static int intervall (int z) { // TODO @API oder @NoExternalUse?
-		return Math.max(z, 1);
-	}
-
-	/**
-	 * Animiert ein Raum-Objekt auf einer Kreisbahn.
-	 *
-	 * @param ziel
-	 * 		Das zu animierende Raum-Objekt. Hierbei ist dessen Zentrum auf der Kreisbahn.
-	 * @param zentrum
-	 * 		Das Zentrum des Animationskreises
-	 * @param loop
-	 * 		Gibt an, ob die Animation einfach ist oder nicht.
-	 * @param umlaufzeit
-	 * 		Gibt in <b>Millisekunden</b> an, wie lange eine Umdrehung um das Zentrum dauern soll.<br />
-	 * 		<b>ACHTUNG:</b><br /> Dieser Wert muss groesser sein als <b>200</b>, da intern eine
-	 * 		Umdrehung 200 Einzelschritte hat.
-	 */
-	@API
-	public void kreisAnimation (Raum ziel, Punkt zentrum, boolean loop, int umlaufzeit) {
-		final KreisAnimierer k = new KreisAnimierer(
-				ziel, zentrum,
-				intervall(umlaufzeit / 200),
-				loop, this, this
-		);
-
-		animierer.add(k);
-		k.starten();
 	}
 
 	/**
@@ -151,41 +150,66 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	}
 
 	/**
-	 * Extrem vereinfachte Methode zum zum Kreisanimieren.<br /> Hierbei wird nicht nur die gesamte
-	 * Bewegung automatisch wiederholt, sondern auch die Umlaufzeit auf 1,5 Sekunden
-	 * voreingestellt.
+	 * Animiert ein Raum-Objekt auf einer Kreisbahn.
 	 *
 	 * @param ziel
 	 * 		Das zu animierende Raum-Objekt. Hierbei ist dessen Zentrum auf der Kreisbahn.
 	 * @param zentrum
 	 * 		Das Zentrum des Animationskreises
-	 *
-	 * @see #kreisAnimation(Raum, Punkt, boolean, int)
-	 * @see #kreisAnimation(Raum, Punkt, int)
+	 * @param loop
+	 * 		Gibt an, ob die Animation einfach ist oder nicht.
+	 * @param umlaufzeit
+	 * 		Gibt in <b>Millisekunden</b> an, wie lange eine Umdrehung um das Zentrum dauern soll.<br />
+	 * 		<b>ACHTUNG:</b><br /> Dieser Wert muss groesser sein als <b>200</b>, da intern eine
+	 * 		Umdrehung 200 Einzelschritte hat.
 	 */
 	@API
-	public void kreisAnimation (Raum ziel, Punkt zentrum) {
-		kreisAnimation(ziel, zentrum, 1500);
+	public void kreisAnimation (Raum ziel, Punkt zentrum, boolean loop, int umlaufzeit) {
+		final KreisAnimierer k = new KreisAnimierer(ziel, zentrum, intervall(umlaufzeit / 200), loop, this, this);
+
+		animierer.add(k);
+		k.starten();
 	}
 
 	/**
-	 * Bis ins Lächerliche vereinfachte Methode zum zum Kreisanimieren.<br /> Hierbei wird nicht nur
-	 * die gesamte Bewegung automatisch wiederholt und die Umlaufzeit auf 1,5 Sekunden
-	 * voreingestellt, sondern auch noch der Mittelpunkt der Kreisbewegung automatisch ermittelt. Er
-	 * wird sich 150 Koordinatenpunkte unterhalb des Mittelpunktes des zu animierenden Raum-Objektes
-	 * befinden.
+	 * Berechnet eine Zahl, die entweder die Eingabe selbst oder 1 ist, sofern die Eingabe kleiner
+	 * als 1 ist.
+	 *
+	 * @param z
+	 * 		Die einzugebende Zahl
+	 *
+	 * @return 1, wenn <code>z < 1</code>, sonst <code>z</code>.
+	 */
+	public static int intervall (int z) { // TODO @API oder @NoExternalUse?
+		return Math.max(z, 1);
+	}
+
+	/**
+	 * Leicht vereinfachte Form der Streckanimationsmethode.<br /> Hierbei wird, sofern wiederholt
+	 * wird, automatisch in einem Kreislauf animiert.
 	 *
 	 * @param ziel
-	 * 		Das zu animierende Raum-Objekt. Hierbei ist dessen Zentrum auf der Kreisbahn.
+	 * 		Das zu animierende Raum-Objekt. Sein Zentrum (ueber die Methode <code>zentrum()</code>)
+	 * 		wird die Strecke abwandern (und natuerlich mit ihm die ganze Figur).
+	 * @param laufDauer
+	 * 		Die Zeit <b>in Millisekunden</b>, die vergeht, bis die Bewegung dieser Animation alle
+	 * 		"Ettapen"-Punkte einmal abgegangen ist.
+	 * @param wiederholen
+	 * 		Gibt an, ob diese Animation in Dauerschleife wiederholt werden soll, oder ob sie nur einmal
+	 * 		bis zum letzten Punkt sich abspielen soll, und anschliessend sich automatisch selbst
+	 * 		beenden soll.
+	 * @param strecke
+	 * 		Eine beliebige Anzahl von "Ettappen"-Punkten. Das Zielobjekt wird sich zwischen diesen
+	 * 		bewegen, wobei die Bewegung zwischen 2 Punkten immer gleich lang ist, unnabhaengig von
+	 * 		ihrer Entfernung zueinander!<br /> Die Erste Ettappe ist das aktuelle Zentrum des
+	 * 		Zielobjekts.
 	 *
-	 * @see #kreisAnimation(Raum, Punkt, boolean, int)
-	 * @see #kreisAnimation(Raum, Punkt, int)
-	 * @see #kreisAnimation(Raum, Punkt)
+	 * @see #streckenAnimation(Raum, int, boolean, boolean, Punkt...)
 	 */
 	@API
 	@SuppressWarnings ( "unused" )
-	public void kreisAnimation (Raum ziel) {
-		kreisAnimation(ziel, unterhalb(ziel));
+	public void streckenAnimation (Raum ziel, int laufDauer, boolean wiederholen, Punkt... strecke) {
+		streckenAnimation(ziel, laufDauer, wiederholen, wiederholen, strecke);
 	}
 
 	/**
@@ -229,42 +253,10 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 */
 	@API
 	public void streckenAnimation (Raum ziel, int laufDauer, boolean wiederholen, boolean geschlossen, Punkt... strecke) {
-		final StreckenAnimierer s = new StreckenAnimierer(
-				ziel, wiederholen, geschlossen,
-				this, laufDauer / strecke.length,
-				this, strecke
-		);
+		final StreckenAnimierer s = new StreckenAnimierer(ziel, wiederholen, geschlossen, this, laufDauer / strecke.length, this, strecke);
 
 		animierer.add(s);
 		s.starten();
-	}
-
-	/**
-	 * Leicht vereinfachte Form der Streckanimationsmethode.<br /> Hierbei wird, sofern wiederholt
-	 * wird, automatisch in einem Kreislauf animiert.
-	 *
-	 * @param ziel
-	 * 		Das zu animierende Raum-Objekt. Sein Zentrum (ueber die Methode <code>zentrum()</code>)
-	 * 		wird die Strecke abwandern (und natuerlich mit ihm die ganze Figur).
-	 * @param laufDauer
-	 * 		Die Zeit <b>in Millisekunden</b>, die vergeht, bis die Bewegung dieser Animation alle
-	 * 		"Ettapen"-Punkte einmal abgegangen ist.
-	 * @param wiederholen
-	 * 		Gibt an, ob diese Animation in Dauerschleife wiederholt werden soll, oder ob sie nur einmal
-	 * 		bis zum letzten Punkt sich abspielen soll, und anschliessend sich automatisch selbst
-	 * 		beenden soll.
-	 * @param strecke
-	 * 		Eine beliebige Anzahl von "Ettappen"-Punkten. Das Zielobjekt wird sich zwischen diesen
-	 * 		bewegen, wobei die Bewegung zwischen 2 Punkten immer gleich lang ist, unnabhaengig von
-	 * 		ihrer Entfernung zueinander!<br /> Die Erste Ettappe ist das aktuelle Zentrum des
-	 * 		Zielobjekts.
-	 *
-	 * @see #streckenAnimation(Raum, int, boolean, boolean, Punkt...)
-	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public void streckenAnimation (Raum ziel, int laufDauer, boolean wiederholen, Punkt... strecke) {
-		streckenAnimation(ziel, laufDauer, wiederholen, wiederholen, strecke);
 	}
 
 	/**
@@ -317,6 +309,45 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	}
 
 	/**
+	 * Noch staerker vereinfachte Variante der <code>geradenAnimation()</code>-Methode.<br /> Der
+	 * Weg bis zum <code>orientierung</code>-Punkt wird in <b>einer Sekunde</b> abgegangen, und die
+	 * Animation selbst dauert <b>2 Sekunden</b>.
+	 *
+	 * @param ziel
+	 * 		Das zu animierende Raum-Objekt
+	 * @param orientierung
+	 * 		Der Punkt, durch den die Animationslinie verlaeuft.
+	 *
+	 * @see #geradenAnimation(Raum, Punkt, int, int)
+	 * @see #geradenAnimation(Raum, Punkt, int)
+	 */
+	@API
+	@SuppressWarnings ( "unused" )
+	public void geradenAnimation (Raum ziel, Punkt orientierung) {
+		geradenAnimation(ziel, orientierung, 1000);
+	}
+
+	/**
+	 * Vereinfachte Variante der <code>geradenAnimation()</code>-Methode.<br /> HIer wird bereits
+	 * voreingestellt, das die Animation andauert, bis das Objekt den Orientierungspunkt erreicht
+	 * hat und noch einmal die selbe Strecke abgegangen ist (sprich, doppelt so lange laufzeit wie
+	 * die als Argument mitgegebene <code>zielGeschwindigkeit</code>.
+	 *
+	 * @param ziel
+	 * 		Das zu animierende Raum-Objekt
+	 * @param orientierung
+	 * 		Der Punkt, durch den die Animationslinie verlaeuft.
+	 * @param zielGeschwindigkeit
+	 * 		Die <b>Zeit, die vergeht</b> (in millisekunden), bis die Animation den Zielpunkt erreicht.
+	 *
+	 * @see #geradenAnimation(Raum, Punkt, int, int)
+	 */
+	@API
+	public void geradenAnimation (Raum ziel, Punkt orientierung, int zielGeschwindigkeit) {
+		geradenAnimation(ziel, orientierung, zielGeschwindigkeit, zielGeschwindigkeit * 2);
+	}
+
+	/**
 	 * Animiert ein Objekt auf einer einfachen Halbgerade.<br /> Die Animation endet nach dem Ablauf
 	 * ihrer ihr zugesprochenen Dauer (<b>in Millisekunden</b>).<br /> <br /> <b>Ein
 	 * Beispiel:</b><br /> <br /> <code> //Das zu animierende, instanziierte Raum-Objekt<br /> Raum
@@ -347,45 +378,6 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 		GeradenAnimierer g = new GeradenAnimierer(ziel, orientierung, zielGeschwindigkeit, dauerInMS, this, this);
 		animierer.add(g);
 		g.starten();
-	}
-
-	/**
-	 * Vereinfachte Variante der <code>geradenAnimation()</code>-Methode.<br /> HIer wird bereits
-	 * voreingestellt, das die Animation andauert, bis das Objekt den Orientierungspunkt erreicht
-	 * hat und noch einmal die selbe Strecke abgegangen ist (sprich, doppelt so lange laufzeit wie
-	 * die als Argument mitgegebene <code>zielGeschwindigkeit</code>.
-	 *
-	 * @param ziel
-	 * 		Das zu animierende Raum-Objekt
-	 * @param orientierung
-	 * 		Der Punkt, durch den die Animationslinie verlaeuft.
-	 * @param zielGeschwindigkeit
-	 * 		Die <b>Zeit, die vergeht</b> (in millisekunden), bis die Animation den Zielpunkt erreicht.
-	 *
-	 * @see #geradenAnimation(Raum, Punkt, int, int)
-	 */
-	@API
-	public void geradenAnimation (Raum ziel, Punkt orientierung, int zielGeschwindigkeit) {
-		geradenAnimation(ziel, orientierung, zielGeschwindigkeit, zielGeschwindigkeit * 2);
-	}
-
-	/**
-	 * Noch staerker vereinfachte Variante der <code>geradenAnimation()</code>-Methode.<br /> Der
-	 * Weg bis zum <code>orientierung</code>-Punkt wird in <b>einer Sekunde</b> abgegangen, und die
-	 * Animation selbst dauert <b>2 Sekunden</b>.
-	 *
-	 * @param ziel
-	 * 		Das zu animierende Raum-Objekt
-	 * @param orientierung
-	 * 		Der Punkt, durch den die Animationslinie verlaeuft.
-	 *
-	 * @see #geradenAnimation(Raum, Punkt, int, int)
-	 * @see #geradenAnimation(Raum, Punkt, int)
-	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public void geradenAnimation (Raum ziel, Punkt orientierung) {
-		geradenAnimation(ziel, orientierung, 1000);
 	}
 
 	/**

@@ -73,8 +73,7 @@ public class SampledSound extends Thread {
 
 			AudioInputStream tmp;
 			AudioFormat baseFormat = this.ais.getFormat();
-			AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(),
-					16, baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
+			AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16, baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
 			tmp = AudioSystem.getAudioInputStream(decodedFormat, this.ais);
 
 			this.ais = tmp;

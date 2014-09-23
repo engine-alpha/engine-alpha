@@ -25,8 +25,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class SimplerNetzwerkAdapter {
 
-	private final ConcurrentLinkedQueue<String> messages
-			= new ConcurrentLinkedQueue<String>();
+	private final ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<String>();
 
 	protected final Empfaenger messageUpdater = new Empfaenger() {
 		@Override
@@ -71,10 +70,11 @@ public abstract class SimplerNetzwerkAdapter {
 			} catch (InterruptedException e) {
 				//
 			}
-			if (!messages.isEmpty())
+			if (!messages.isEmpty()) {
 				return messages.poll();
-			else
+			} else {
 				return null;
+			}
 		}
 		return messages.poll();
 	}

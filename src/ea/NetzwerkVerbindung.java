@@ -57,7 +57,7 @@ public class NetzwerkVerbindung extends Sender {
 	 * Gibt an, ob diese Verbindung aktiv ist, also derzeit eine Kommunikation über diese Sender /
 	 * Empfaenger denkbar ist.
 	 *
-	 * @return    <code>true</code>, wenn man ueber diese Verbindung senden und empfangen kann. Sonst
+	 * @return <code>true</code>, wenn man ueber diese Verbindung senden und empfangen kann. Sonst
 	 * <code>false</code>.
 	 */
 	public boolean istAktiv () {

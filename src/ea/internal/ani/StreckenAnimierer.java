@@ -62,6 +62,28 @@ public class StreckenAnimierer extends Animierer {
 	private boolean circuit = true;
 
 	/**
+	 * Leicht vereinfachter Konstruktor der Klasse
+	 *
+	 * @param ziel
+	 * 		Das zu animierende Objekt
+	 * @param loop
+	 * 		Ob die Animation dauerhaft wiederholt (geloopt) werden soll, <b> sowie</b>, ob die
+	 * 		animation im Kreislauf stattfinden soll
+	 * @param m
+	 * 		Der Manager, an dem animiert werden soll.
+	 * @param geschwindigkeit
+	 * 		Die Geschwindigkeit, mit der die Bewegung stattfinden soll.<br /> Sie gibt in Millisekunden
+	 * 		an, wie lang die Bewegung zwischen 2 angegebenen Punkten dauern soll.
+	 * @param listener
+	 * 		Der AnimationsEndeReagierbar-Listener, der am Ende der Animation aufgerufen wird.
+	 * @param zielPunkte
+	 * 		Nacheinander alle Punkte, die die Animation ueberlaufen soll.
+	 */
+	public StreckenAnimierer (Raum ziel, boolean loop, Manager m, int geschwindigkeit, AnimationsEndeReagierbar listener, Punkt... zielPunkte) {
+		this(ziel, loop, loop, m, geschwindigkeit, listener, zielPunkte);
+	}
+
+	/**
 	 * Erstellt ein Objekt dieser Klasse zum Animieren.
 	 *
 	 * @param ziel
@@ -93,28 +115,6 @@ public class StreckenAnimierer extends Animierer {
 		Punkt p2 = punkte[1];
 		vektor = new Vektor((p2.realX() - punkte[0].realX()) / schritte, (p2.realY() - punkte[0].realY()) / schritte);
 		modulo = new Vektor((p2.realX() - punkte[0].realX()) % schritte, (p2.realY() - punkte[0].realY()) % schritte);
-	}
-
-	/**
-	 * Leicht vereinfachter Konstruktor der Klasse
-	 *
-	 * @param ziel
-	 * 		Das zu animierende Objekt
-	 * @param loop
-	 * 		Ob die Animation dauerhaft wiederholt (geloopt) werden soll, <b> sowie</b>, ob die
-	 * 		animation im Kreislauf stattfinden soll
-	 * @param m
-	 * 		Der Manager, an dem animiert werden soll.
-	 * @param geschwindigkeit
-	 * 		Die Geschwindigkeit, mit der die Bewegung stattfinden soll.<br /> Sie gibt in Millisekunden
-	 * 		an, wie lang die Bewegung zwischen 2 angegebenen Punkten dauern soll.
-	 * @param listener
-	 * 		Der AnimationsEndeReagierbar-Listener, der am Ende der Animation aufgerufen wird.
-	 * @param zielPunkte
-	 * 		Nacheinander alle Punkte, die die Animation ueberlaufen soll.
-	 */
-	public StreckenAnimierer (Raum ziel, boolean loop, Manager m, int geschwindigkeit, AnimationsEndeReagierbar listener, Punkt... zielPunkte) {
-		this(ziel, loop, loop, m, geschwindigkeit, listener, zielPunkte);
 	}
 
 	/**

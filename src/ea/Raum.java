@@ -39,16 +39,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	/**
 	 * Ein einfacher Farbzyklus, der fuer die Leucht-Animationen genommen wird
 	 */
-	public static final Color[] farbzyklus = {
-			                                         Color.white,
-			                                         Color.blue,
-			                                         Color.red,
-			                                         Color.yellow,
-			                                         Color.magenta,
-			                                         Color.cyan,
-			                                         Color.green,
-			                                         Color.orange,
-	};
+	public static final Color[] farbzyklus = {Color.white, Color.blue, Color.red, Color.yellow, Color.magenta, Color.cyan, Color.green, Color.orange,};
 
 	/**
 	 * Die Serialisierungs-Konstante dieser Klasse. <b>In keiner Weise fuer die Programmierung mit
@@ -272,7 +263,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * TODO Dokumentation
+	 * TODO: Dokumentation
 	 */
 	public void newtonschMachen () {
 		phClient.aufloesen();
@@ -796,25 +787,16 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
-	 * gesehen eine Verschiebung von der aktuellen Position an die neue. <br /><br />
-	 * <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die linke, obere
-	 * Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei Kreisen z.B.
-	 * <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
-	 * <code>mittelpunktSetzen(int x, int y)</code>.
+	 * Zeichnet das Objekt.
 	 *
-	 * @param p
-	 * 		Der neue Zielpunkt
-	 *
-	 * @see #positionSetzen(float, float)
-	 * @see #mittelpunktSetzen(int, int)
-	 * @see #setX(float)
-	 * @see #setY(float)
+	 * @param g
+	 * 		Das zeichnende Graphics-Objekt
+	 * @param r
+	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
+	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
+	 * 		gezeichnet werden.
 	 */
-	public void positionSetzen (Punkt p) {
-		BoundingRechteck r = dimension();
-		verschieben(new Vektor(p.x - r.x, p.y - r.y));
-	}
+	public abstract void zeichnen (Graphics2D g, BoundingRechteck r);
 
 	/**
 	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
@@ -836,6 +818,53 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public void positionSetzen (float x, float y) {
 		this.positionSetzen(new Punkt(x, y));
+	}
+
+	/**
+	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
+	 * gesehen eine Verschiebung von der aktuellen Position an die neue. <br /><br />
+	 * <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die linke, obere
+	 * Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei Kreisen z.B.
+	 * <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
+	 * <code>mittelpunktSetzen(int x, int y)</code>.
+	 *
+	 * @param p
+	 * 		Der neue Zielpunkt
+	 *
+	 * @see #positionSetzen(float, float)
+	 * @see #mittelpunktSetzen(int, int)
+	 * @see #setX(float)
+	 * @see #setY(float)
+	 */
+	public void positionSetzen (Punkt p) {
+		BoundingRechteck r = dimension();
+		verschieben(new Vektor(p.x - r.x, p.y - r.y));
+	}
+
+	/**
+	 * Methode zum Beschreiben der rechteckigen Fläche, die dieses Objekt einnimmt.<br /> Diese
+	 * Methode wird zentral für die Trefferkollisionen innerhalb der Engine benutzt und gehört zu
+	 * den wichtigsten Methoden der Klasse und der Engine.
+	 *
+	 * @return Ein BoundingRechteck mit minimal nötigen Umfang, um das Objekt <b>voll
+	 * einzuschliessen</b>.
+	 */
+	public abstract BoundingRechteck dimension ();
+
+	/**
+	 * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene. Dies ist die <b>zentrale</b>
+	 * Methode zum
+	 *
+	 * @param v
+	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
+	 *
+	 * @see Vektor
+	 * @see #verschieben(float, float)
+	 * @see #bewegen(Vektor)
+	 * @see #bewegen(float, float)
+	 */
+	public void verschieben (Vektor v) {
+		position = position.verschobeneInstanz(v);
 	}
 
 	/**
@@ -876,25 +905,11 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public void mittelpunktSetzen (Punkt p) {
 		this.verschieben(this.zentrum().nach(p));
-	}
-
-	/**
-	 * Gibt die Position der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig sein,
-	 * so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen. <br /><br
-	 * />Mehr Informationen liefert die Methode {@link #dimension()}.
-	 *
-	 * @return Die Koordinaten des Punktes der linken, oberen Ecke in Form eines
-	 * <code>Punkt</code>-Objektes
-	 *
-	 * @see #dimension()
-	 */
-	public Punkt position () {
-		return position;
-	}
-
-	/**
+	}	/**
 	 * Gibt die x-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
 	 * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
+	 * <p/>
+	 * TODO: Deprecate positionX() in favor of this new method?
 	 *
 	 * @return <code>x</code>-Koordinate
 	 *
@@ -906,6 +921,28 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
+	 * Berechnet das Zentrum des Raum-Objekts als Punkt auf der Zeichenebene.
+	 * <p/>
+	 * Das Zentrum wird über die Methode <code>dimension()</code> berechnet, und zwar über die
+	 * Methode des resultierenden BoundingRechtecks:<br /> <code>dimension().zentrum()</code>
+	 *
+	 * @return Zentrum dieses Raumobjekts
+	 */
+	public Punkt zentrum () {
+		return this.dimension().zentrum();
+	}
+
+	/**
+	 * Gibt die Breite des Objekts zurück. Entspricht einem Aufruf von {@code
+	 * raum.dimension().breite}.
+	 *
+	 * @return Breite des Objekts
+	 *
+	 * @see #dimension()
+	 */
+	public float getBreite () {
+		return dimension().breite;
+	}	/**
 	 * Setzt die x-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
 	 * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
 	 * /><br /> <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die
@@ -925,8 +962,31 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
+	 * Gibt die Höhe des Objekts zurück. Entspricht einem Aufruf von {@code
+	 * raum.dimension().hoehe}.
+	 *
+	 * @return Höhe des Objekts
+	 *
+	 * @see #dimension()
+	 */
+	public float getHoehe () {
+		return dimension().hoehe;
+	}
+
+	/**
+	 * Einfache Methode, die die X-Koordinate der linken oberen Ecke des das
+	 * <code>Raum</code>-Objekt exakt umrandenden <code>BoundingRechteck</code>'s auf der
+	 * Zeichenebene zurueckgibt.
+	 *
+	 * @return Die die X-Koordinate der linken oberen Ecke auf der Zeichenebene
+	 */
+	public int positionX () {
+		return (int) this.dimension().x;
+	}	/**
 	 * Gibt die y-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
 	 * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
+	 * <p/>
+	 * TODO: Deprecate positionX() in favor of this new method?
 	 *
 	 * @return <code>y</code>-Koordinate
 	 *
@@ -938,6 +998,27 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
+	 * Einfache Methode, die die Y-Koordinate der linken oberen Ecke des das
+	 * <code>Raum</code>-Objekt exakt umrandenden <code>BoundingRechteck</code>'s auf der
+	 * Zeichenebene zurueckgibt.
+	 *
+	 * @return Die die Y-Koordinate der linken oberen Ecke auf der Zeichenebene
+	 */
+	public int positionY () {
+		return (int) this.dimension().y;
+	}
+
+	/**
+	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
+	 *
+	 * @param r
+	 * 		Das Objekt, das auf Kollision mit diesem getestet werden soll.
+	 *
+	 * @return TRUE, wenn sich beide Objekte schneiden.
+	 */
+	public final boolean schneidet (Raum r) {
+		return this.aktuellerCollider().verursachtCollision(position, r.position, r.aktuellerCollider());
+	}	/**
 	 * Setzt die y-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
 	 * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
 	 * /><br /> <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die
@@ -957,121 +1038,32 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Gibt die Breite des Objekts zurück. Entspricht einem Aufruf von {@code
-	 * raum.dimension().breite}.
+	 * Gibt den <i>aktuellen Collider</i> dieses <code>Raum</code>-Objekts zurück.
 	 *
-	 * @return Breite des Objekts
+	 * @return der aktuelle Collider dieses <code>Raum</code>-Objekts, der für die Collision
+	 * Detection verwendet wird.
 	 *
-	 * @see #dimension()
+	 * @see #colliderSetzen(Collider)
+	 * @see #schneidet(Raum)
 	 */
-	public float getBreite () {
-		return dimension().breite;
+	public final Collider aktuellerCollider () {
+		if (collider.istNullCollider()) {
+			return collider = erzeugeCollider();
+		}
+		return collider;
 	}
 
 	/**
-	 * Gibt die Höhe des Objekts zurück. Entspricht einem Aufruf von {@code
-	 * raum.dimension().hoehe}.
+	 * Erzeugt einen neuen Collider für dieses Objekt. Diese Methode approximiert für das Objekt der
+	 * jeweils implementierenden <code>Raum</code>-Klasse einen möglichst "guten" Collider; also
+	 * einen solchen, der das tatsächliche Objekt möglichst genau umfängt, aber auch möglichst wenig
+	 * Rechenarbeit beansprucht.
 	 *
-	 * @return Höhe des Objekts
+	 * @return Ein möglichst optimaler Collider für dieses Raum-Objekt.
 	 *
-	 * @see #dimension()
+	 * @see #colliderSetzen(Collider)
 	 */
-	public float getHoehe () {
-		return dimension().hoehe;
-	}
-
-	/**
-	 * Methode zum schnellen Herausfinden des Mittelpunktes des Raum-Objektes.
-	 *
-	 * @return Die Koordinaten des Mittelpunktes des Objektes
-	 *
-	 * @see #dimension()
-	 * @see #position()
-	 */
-	public Punkt mittelPunkt () {
-		BoundingRechteck b = this.dimension();
-		return new Punkt(b.x + (b.breite / 2), b.y + (b.hoehe / 2));
-	}
-
-	/**
-	 * Einfache Methode, die die X-Koordinate der linken oberen Ecke des das
-	 * <code>Raum</code>-Objekt exakt umrandenden <code>BoundingRechteck</code>'s auf der
-	 * Zeichenebene zurueckgibt.
-	 *
-	 * @return Die die X-Koordinate der linken oberen Ecke auf der Zeichenebene
-	 */
-	public int positionX () {
-		return (int) this.dimension().x;
-	}
-
-	/**
-	 * Einfache Methode, die die Y-Koordinate der linken oberen Ecke des das
-	 * <code>Raum</code>-Objekt exakt umrandenden <code>BoundingRechteck</code>'s auf der
-	 * Zeichenebene zurueckgibt.
-	 *
-	 * @return Die die Y-Koordinate der linken oberen Ecke auf der Zeichenebene
-	 */
-	public int positionY () {
-		return (int) this.dimension().y;
-	}
-
-	/**
-	 * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene. Dies ist die <b>zentrale</b>
-	 * Methode zum
-	 *
-	 * @param v
-	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
-	 *
-	 * @see Vektor
-	 * @see #verschieben(float, float)
-	 * @see #bewegen(Vektor)
-	 * @see #bewegen(float, float)
-	 */
-	public void verschieben (Vektor v) {
-		position = position.verschobeneInstanz(v);
-	}
-
-	/**
-	 * Verschiebt das Objekt.<br /> Hierbei wird nichts anderes gemacht, als <code>verschieben(new
-	 * Vektor(dX, dY))</code> auszufuehren. Insofern ist diese Methode dafuer gut, sich nicht mit
-	 * der Klasse Vektor auseinandersetzen zu muessen.
-	 *
-	 * @param dX
-	 * 		Die Verschiebung in Richtung X
-	 * @param dY
-	 * 		Die Verschiebung in Richtung Y
-	 *
-	 * @see #verschieben(Vektor)
-	 * @see #bewegen(Vektor)
-	 * @see #bewegen(float, float)
-	 */
-	public void verschieben (float dX, float dY) {
-		this.verschieben(new Vektor(dX, dY));
-	}
-
-	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 *
-	 * @param r
-	 * 		Das Objekt, das auf Kollision mit diesem getestet werden soll.
-	 *
-	 * @return TRUE, wenn sich beide Objekte schneiden.
-	 */
-	public final boolean schneidet (Raum r) {
-		return this.aktuellerCollider().verursachtCollision(position, r.position, r.aktuellerCollider());
-	}
-
-	/**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-	 * 		gezeichnet werden.
-	 */
-	public abstract void zeichnen (Graphics2D g, BoundingRechteck r);
+	public abstract Collider erzeugeCollider ();
 
 	/**
 	 * Dreht die Zeichenfläche um den Mittelpunkt des Raumes um die gegebenen Grad, bevor mit dem
@@ -1098,6 +1090,19 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 		} else {
 			composite = null;
 		}
+	}
+
+	/**
+	 * Methode zum schnellen Herausfinden des Mittelpunktes des Raum-Objektes.
+	 *
+	 * @return Die Koordinaten des Mittelpunktes des Objektes
+	 *
+	 * @see #dimension()
+	 * @see #position()
+	 */
+	public Punkt mittelPunkt () {
+		BoundingRechteck b = this.dimension();
+		return new Punkt(b.x + (b.breite / 2), b.y + (b.hoehe / 2));
 	}
 
 	/**
@@ -1146,26 +1151,17 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Methode zum Beschreiben der rechteckigen Fläche, die dieses Objekt einnimmt.<br /> Diese
-	 * Methode wird zentral für die Trefferkollisionen innerhalb der Engine benutzt und gehört zu
-	 * den wichtigsten Methoden der Klasse und der Engine.
+	 * Berechnet exakter alle Rechteckigen Flaechen, auf denen dieses Objekt liegt.<br /> Diese
+	 * Methode wird von komplexeren Gebilden, wie geometrischen oder Listen ueberschrieben.
 	 *
-	 * @return Ein BoundingRechteck mit minimal nötigen Umfang, um das Objekt <b>voll
-	 * einzuschliessen</b>.
+	 * @return Alle Rechtecksflaechen, auf denen dieses Objekt liegt. Ist standartisiert ein Array
+	 * der Groesse 1 mit der <code>dimension()</code> als Inhalt.
+	 *
+	 * @see Knoten
 	 */
-	public abstract BoundingRechteck dimension ();
-
-	/**
-	 * Erzeugt einen neuen Collider für dieses Objekt. Diese Methode approximiert für das Objekt der
-	 * jeweils implementierenden <code>Raum</code>-Klasse einen möglichst "guten" Collider; also
-	 * einen solchen, der das tatsächliche Objekt möglichst genau umfängt, aber auch möglichst wenig
-	 * Rechenarbeit beansprucht.
-	 *
-	 * @return Ein möglichst optimaler Collider für dieses Raum-Objekt.
-	 *
-	 * @see #colliderSetzen(Collider)
-	 */
-	public abstract Collider erzeugeCollider ();
+	public BoundingRechteck[] flaechen () {
+		return new BoundingRechteck[] {this.dimension()};
+	}
 
 	/**
 	 * Erzeugt einen Collider auf <i>Lazy</i> Art: Es wird das durch die
@@ -1174,22 +1170,22 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	protected Collider erzeugeLazyCollider () {
 		return BoxCollider.fromBoundingRechteck(Vektor.NULLVEKTOR, this.dimension());
-	}
-
-	/**
-	 * Gibt den <i>aktuellen Collider</i> dieses <code>Raum</code>-Objekts zurück.
+	}	/**
+	 * Verschiebt das Objekt.<br /> Hierbei wird nichts anderes gemacht, als <code>verschieben(new
+	 * Vektor(dX, dY))</code> auszufuehren. Insofern ist diese Methode dafuer gut, sich nicht mit
+	 * der Klasse Vektor auseinandersetzen zu muessen.
 	 *
-	 * @return der aktuelle Collider dieses <code>Raum</code>-Objekts, der für die Collision
-	 * Detection verwendet wird.
+	 * @param dX
+	 * 		Die Verschiebung in Richtung X
+	 * @param dY
+	 * 		Die Verschiebung in Richtung Y
 	 *
-	 * @see #colliderSetzen(Collider)
-	 * @see #schneidet(Raum)
+	 * @see #verschieben(Vektor)
+	 * @see #bewegen(Vektor)
+	 * @see #bewegen(float, float)
 	 */
-	public final Collider aktuellerCollider () {
-		if (collider.istNullCollider()) {
-			return collider = erzeugeCollider();
-		}
-		return collider;
+	public void verschieben (float dX, float dY) {
+		this.verschieben(new Vektor(dX, dY));
 	}
 
 	/**
@@ -1226,18 +1222,17 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	}
 
 	/**
-	 * Berechnet exakter alle Rechteckigen Flaechen, auf denen dieses Objekt liegt.<br /> Diese
-	 * Methode wird von komplexeren Gebilden, wie geometrischen oder Listen ueberschrieben.
+	 * Gibt die Position der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig sein,
+	 * so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen. <br /><br
+	 * />Mehr Informationen liefert die Methode {@link #dimension()}.
 	 *
-	 * @return Alle Rechtecksflaechen, auf denen dieses Objekt liegt. Ist standartisiert ein Array
-	 * der Groesse 1 mit der <code>dimension()</code> als Inhalt.
+	 * @return Die Koordinaten des Punktes der linken, oberen Ecke in Form eines
+	 * <code>Punkt</code>-Objektes
 	 *
-	 * @see Knoten
+	 * @see #dimension()
 	 */
-	public BoundingRechteck[] flaechen () {
-		return new BoundingRechteck[]{
-				                             this.dimension()
-		};
+	public Punkt position () {
+		return position;
 	}
 
 	/**
@@ -1252,18 +1247,6 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 */
 	public boolean stehtAuf (Raum m) {
 		return this.dimension().stehtAuf(m.dimension());
-	}
-
-	/**
-	 * Berechnet das Zentrum des Raum-Objekts als Punkt auf der Zeichenebene.
-	 * <p/>
-	 * Das Zentrum wird über die Methode <code>dimension()</code> berechnet, und zwar über die
-	 * Methode des resultierenden BoundingRechtecks:<br /> <code>dimension().zentrum()</code>
-	 *
-	 * @return Zentrum dieses Raumobjekts
-	 */
-	public Punkt zentrum () {
-		return this.dimension().zentrum();
 	}
 
 	/**
@@ -1385,4 +1368,14 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 
 		return 0;
 	}
+
+
+
+
+
+
+
+
+
+
 }

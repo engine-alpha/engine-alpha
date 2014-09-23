@@ -141,10 +141,7 @@ public class Rechteck extends Geometrie {
 	 */
 	@Override
 	public Dreieck[] neuBerechnen () {
-		Dreieck[] i = {
-				new Dreieck(new Punkt(position.x, position.y), new Punkt(position.x + breite, position.y), new Punkt(position.x, position.y + laenge)),
-				new Dreieck(new Punkt(position.x, position.y + laenge), new Punkt(position.x + breite, position.y + laenge), new Punkt(position.x + breite, position.y))
-		};
+		Dreieck[] i = {new Dreieck(new Punkt(position.x, position.y), new Punkt(position.x + breite, position.y), new Punkt(position.x, position.y + laenge)), new Dreieck(new Punkt(position.x, position.y + laenge), new Punkt(position.x + breite, position.y + laenge), new Punkt(position.x + breite, position.y))};
 		return i;
 	}
 }

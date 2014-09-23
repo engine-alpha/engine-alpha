@@ -27,8 +27,7 @@ import ea.Punkt;
  *
  * @author andonie
  */
-public class NullCollider
-		extends Collider {
+public class NullCollider extends Collider {
 
 	/**
 	 * Singeleton-Instanz des Colliders

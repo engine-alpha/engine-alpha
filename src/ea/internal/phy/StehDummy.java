@@ -28,8 +28,7 @@ import ea.StehReagierbar;
  * @author Michael Andonie
  * @see ea.StehReagierbar
  */
-public class StehDummy
-		implements StehReagierbar {
+public class StehDummy implements StehReagierbar {
 
 	/**
 	 * <i>Singleton</i>-Referenz auf die eine Instanz.

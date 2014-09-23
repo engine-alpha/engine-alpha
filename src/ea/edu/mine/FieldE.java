@@ -108,7 +108,7 @@ public abstract class FieldE {
 			public void rechtsKlickReagieren (int x, int y) {
 				if (aussen.dimension().istIn(new Punkt(x, y))) {
 					try {
-						rechtsclick.invoke(aim, new Object[]{});
+						rechtsclick.invoke(aim, new Object[] {});
 					} catch (IllegalAccessException ex) {
 						System.err.println("Achtung! Der Zugriff auf die Methode fuer On-Klicks hat nicht funktioniert. BUG!");
 					} catch (InvocationTargetException ex) {
@@ -124,7 +124,7 @@ public abstract class FieldE {
 	 */
 	private void klick () {
 		try {
-			linksclick.invoke(aim, new Object[]{});
+			linksclick.invoke(aim, new Object[] {});
 		} catch (IllegalAccessException ex) {
 			System.err.println("Achtung! Der Zugriff auf die Methode fuer On-Klicks hat nicht funktioniert. BUG!");
 		} catch (InvocationTargetException ex) {

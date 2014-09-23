@@ -20,8 +20,8 @@
 package ea;
 
 /**
- * Dieses Interface beschreibt die Eigenschaften, die ein Empfaenger von Informationsnachrichten bei
- * der Netzwerkkommunikation hat.<br /> Implementierende Klassen ermoeglichen also die Kommunikation
+ * Dieses Interface beschreibt die Eigenschaften, die ein Empfänger von Informationsnachrichten bei
+ * der Netzwerkkommunikation hat.<br /> Implementierende Klassen ermöglichen also die Kommunikation
  * mit anderen EA-Instanzen.
  *
  * @author Michael Andonie
@@ -32,7 +32,7 @@ public interface Empfaenger {
 	 * verarbeitet werden.
 	 *
 	 * @param string
-	 * 		Der empfangene String.
+	 * 		empfangener String
 	 */
 	public abstract void empfangeString (String string);
 
@@ -41,7 +41,7 @@ public interface Empfaenger {
 	 * verarbeitet werden.
 	 *
 	 * @param i
-	 * 		Der empfangene int.
+	 * 		empfangenes Int
 	 */
 	public abstract void empfangeInt (int i);
 
@@ -49,8 +49,8 @@ public interface Empfaenger {
 	 * Diese Methode wird aufgerufen, wenn ein String empfangen wird. Hierin kann die Eingabe
 	 * verarbeitet werden.
 	 *
-	 * @param string
-	 * 		Der empfangene String.
+	 * @param b
+	 * 		empfangenes Byte
 	 */
 	public abstract void empfangeByte (byte b);
 
@@ -59,7 +59,7 @@ public interface Empfaenger {
 	 * verarbeitet werden.
 	 *
 	 * @param d
-	 * 		Der empfangene double.
+	 * 		empfangenes Double
 	 */
 	public abstract void empfangeDouble (double d);
 
@@ -68,7 +68,7 @@ public interface Empfaenger {
 	 * verarbeitet werden.
 	 *
 	 * @param c
-	 * 		Der empfangene char.
+	 * 		empfangener Char
 	 */
 	public abstract void empfangeChar (char c);
 
@@ -77,7 +77,7 @@ public interface Empfaenger {
 	 * verarbeitet werden.
 	 *
 	 * @param b
-	 * 		Der empfangene boolean.
+	 * 		empfangenes Boolean
 	 */
 	public abstract void empfangeBoolean (boolean b);
 

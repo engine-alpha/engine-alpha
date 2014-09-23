@@ -31,8 +31,7 @@ import ea.internal.util.Logger;
  *
  * @author Michael Andonie
  */
-public class NullClient
-		extends PhysikClient {
+public class NullClient extends PhysikClient {
 
 	/**
 	 * Konstruktor
@@ -90,8 +89,7 @@ public class NullClient
 	 */
 	@Override
 	public void schwerkraftAktivSetzen (boolean aktiv) {
-		System.err.println("Achtung! Das Objekt, bei dem der Einfluss der Schwerkraft gesetzt werden sollte, ist ein neutrales " +
-				"Objekt. Folglich macht der Aufruf dieser Methode keinen Sinn. Dafuer muesste das entsprechende Objekt ein Aktiv-Objekt sein!");
+		System.err.println("Achtung! Das Objekt, bei dem der Einfluss der Schwerkraft gesetzt werden sollte, ist ein neutrales " + "Objekt. Folglich macht der Aufruf dieser Methode keinen Sinn. Dafuer muesste das entsprechende Objekt ein Aktiv-Objekt sein!");
 	}
 
 	/**
@@ -107,8 +105,7 @@ public class NullClient
 	 */
 	@Override
 	public void kritischeTiefeSetzen (int tiefe) {
-		System.err.println("Achtung! Das Raum-Objekt, dem eine kritische Tiefe gegeben werden sollte, ist kein Aktiv-Objekt, sondern neutral! " +
-				"Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		System.err.println("Achtung! Das Raum-Objekt, dem eine kritische Tiefe gegeben werden sollte, ist kein Aktiv-Objekt, sondern neutral! " + "Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -125,8 +122,7 @@ public class NullClient
 	 */
 	@Override
 	public void fallReagierbarAnmelden (FallReagierbar f, int tiefe) {
-		System.err.println("Achtung! Das Raum-Objekt, dem ein FallReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sondern neutral! " +
-				"Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		System.err.println("Achtung! Das Raum-Objekt, dem ein FallReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sondern neutral! " + "Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -139,8 +135,7 @@ public class NullClient
 	 */
 	@Override
 	public void stehReagierbarAnmelden (StehReagierbar s) {
-		System.err.println("Achtung! Das Raum-Objekt, dem ein StehReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sonder ein " +
-				"neutrales Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		System.err.println("Achtung! Das Raum-Objekt, dem ein StehReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sonder ein " + "neutrales Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -152,8 +147,7 @@ public class NullClient
 	 */
 	@Override
 	public boolean steht () {
-		System.err.println("Achtung! Das Raum-Objekt, an dem das Stehen erfragt werden sollte, ist kein Aktiv-Objekt, sonder ein " +
-				"neutrales Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen! Solange ist die Rueckgabe immer false.");
+		System.err.println("Achtung! Das Raum-Objekt, an dem das Stehen erfragt werden sollte, ist kein Aktiv-Objekt, sonder ein " + "neutrales Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen! Solange ist die Rueckgabe immer false.");
 		return false;
 	}
 
@@ -170,8 +164,7 @@ public class NullClient
 	 */
 	@Override
 	public void schwerkraftSetzen (int schwerkraft) {
-		System.err.println("Achtung! Ein neutrales Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. "
-				+ "Nur Aktiv-Objekte koennen eine Schwerkraft gesetzt bekommen.");
+		System.err.println("Achtung! Ein neutrales Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. " + "Nur Aktiv-Objekte koennen eine Schwerkraft gesetzt bekommen.");
 	}
 
 	/**

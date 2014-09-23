@@ -102,6 +102,34 @@ public class Figur extends Raum {
 	}
 
 	/**
+	 * Erstellt eine Figur <b>ohne Positionsangabe</b>. Die Figur liegt an Position (0|0). Dieser
+	 * Konstruktor vereinfacht das Laden <i>vieler Figuren</i>, z.B. für eine
+	 * <code>ActionFigur</code>.
+	 *
+	 * @param verzeichnis
+	 * 		Das Verzeichnis, aus dem die Figur zu laden ist.
+	 *
+	 * @see ea.ActionFigur
+	 */
+	public Figur (String verzeichnis) {
+		this(0, 0, verzeichnis);
+	}
+
+	/**
+	 * Standart-Konstruktor für Objekte der Klasse <code>Figur</code>.
+	 *
+	 * @param x
+	 * 		X-Position; die links obere Ecke
+	 * @param y
+	 * 		Y-Position; die links obere Ecke
+	 * @param verzeichnis
+	 * 		Das verzeichnis, aus dem die Figur zu laden ist.
+	 */
+	public Figur (float x, float y, String verzeichnis) {
+		this(x, y, verzeichnis, true);
+	}
+
+	/**
 	 * Besonderer Konstruktor fuer Objekte der Klasse <code>Figur</code>. Dieser Konstruktor wird
 	 * vor allem intern (fuer Actionfiguren) verwendet. Anders ist nur die Option darauf, dass die
 	 * Figur am Animationssystem direkt teilnimmt. Dies ist beim Standart-Konstruktor immer der
@@ -130,34 +158,6 @@ public class Figur extends Raum {
 	}
 
 	/**
-	 * Standart-Konstruktor für Objekte der Klasse <code>Figur</code>.
-	 *
-	 * @param x
-	 * 		X-Position; die links obere Ecke
-	 * @param y
-	 * 		Y-Position; die links obere Ecke
-	 * @param verzeichnis
-	 * 		Das verzeichnis, aus dem die Figur zu laden ist.
-	 */
-	public Figur (float x, float y, String verzeichnis) {
-		this(x, y, verzeichnis, true);
-	}
-
-	/**
-	 * Erstellt eine Figur <b>ohne Positionsangabe</b>. Die Figur liegt an Position (0|0). Dieser
-	 * Konstruktor vereinfacht das Laden <i>vieler Figuren</i>, z.B. für eine
-	 * <code>ActionFigur</code>.
-	 *
-	 * @param verzeichnis
-	 * 		Das Verzeichnis, aus dem die Figur zu laden ist.
-	 *
-	 * @see ea.ActionFigur
-	 */
-	public Figur (String verzeichnis) {
-		this(0, 0, verzeichnis);
-	}
-
-	/**
 	 * Der parameterlose Konstruktor.<br /> Hiebei wird nichts gesetzt, die Figur hat die Position
 	 * (0|0) sowie keine Animationen, die Referenz auf die einzelnen Pixelfelder ist
 	 * <code>null</code>.<br /> Dieser Konstruktor wird intern verwendet, um Figurdaten zu laden.<br
@@ -182,8 +182,7 @@ public class Figur extends Raum {
 	@SuppressWarnings ( "unused" )
 	public void animationLoeschen (int index) { // TODO War das vorher buggy?
 		if (animation.length < 2) {
-			throw new RuntimeException("Es muss mindestens ein Pixelfeld erhalten bleiben! Eine " +
-					"weitere Löschung hätte das letzte Element entfernt.");
+			throw new RuntimeException("Es muss mindestens ein Pixelfeld erhalten bleiben! Eine " + "weitere Löschung hätte das letzte Element entfernt.");
 		}
 
 		PixelFeld[] neu = new PixelFeld[animation.length - 1];
@@ -321,8 +320,7 @@ public class Figur extends Raum {
 	 */
 	public void animationsBildSetzen (int bildIndex) {
 		if (bildIndex < 0 || bildIndex >= animation.length) {
-			Logger.error("Achtung! Der zu setzende Bildindex war größer als der größte " +
-					"vorhandene Index oder kleiner 0! Daher wird nichts gesetzt.");
+			Logger.error("Achtung! Der zu setzende Bildindex war größer als der größte " + "vorhandene Index oder kleiner 0! Daher wird nichts gesetzt.");
 			return;
 		}
 
@@ -417,6 +415,21 @@ public class Figur extends Raum {
 	 * Faerbt alle Elemente in einer Farbe ein.<br /> Dieser Zustand laesst sich zuruecksetzen mit
 	 * der Methode <code>zurueckFaerben()</code>.
 	 *
+	 * @param farbe
+	 * 		Die Farbe, mit der alle farbenthaltenden Unterquadrate der Figur eingefaerbt werden.<br />
+	 * 		Eingabe als <code>String</code>, so wie bei den anderen einfachen Farbeingaben auch.
+	 *
+	 * @see #zurueckFaerben()
+	 * @see #einfaerben(Farbe)
+	 */
+	public void einfaerben (String farbe) {
+		einfaerben(Farbe.vonString(farbe));
+	}
+
+	/**
+	 * Faerbt alle Elemente in einer Farbe ein.<br /> Dieser Zustand laesst sich zuruecksetzen mit
+	 * der Methode <code>zurueckFaerben()</code>.
+	 *
 	 * @param f
 	 * 		Die Farbe, mit der alle farbenthaltenden Unterquadrate der Figur eingefaerbt werden.
 	 *
@@ -427,21 +440,6 @@ public class Figur extends Raum {
 		for (int i = 0; i < animation.length; i++) {
 			animation[i].einfaerben(f.wert());
 		}
-	}
-
-	/**
-	 * Faerbt alle Elemente in einer Farbe ein.<br /> Dieser Zustand laesst sich zuruecksetzen mit
-	 * der Methode <code>zurueckFaerben()</code>.
-	 *
-	 * @param farbe
-	 * 		Die Farbe, mit der alle farbenthaltenden Unterquadrate der Figur eingefaerbt werden.<br />
-	 * 		Eingabe als <code>String</code>, so wie bei den anderen einfachen Farbeingaben auch.
-	 *
-	 * @see #zurueckFaerben()
-	 * @see #einfaerben(Farbe)
-	 */
-	public void einfaerben (String farbe) {
-		einfaerben(Farbe.vonString(farbe));
 	}
 
 	/**
@@ -571,15 +569,12 @@ public class Figur extends Raum {
 		ColliderGroup cg = new ColliderGroup();
 
 		for (BoundingRechteck r : flaechen()) {
-			cg.addCollider(BoxCollider.fromBoundingRechteck(new Vektor(
-					r.x - position.x,
-					r.y - position.y
-			), r));
+			cg.addCollider(BoxCollider.fromBoundingRechteck(new Vektor(r.x - position.x, r.y - position.y), r));
 		}
 
 		return cg;
 
-		// TODO: Test-Fall
+		// TODO: Entscheiden, ob genauere Collisionsbehandlung es wirklich wert ist.
 		// return new BoxCollider(new Vektor(dimension().breite, dimension().hoehe));
 	}
 

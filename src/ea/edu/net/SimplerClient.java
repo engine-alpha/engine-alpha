@@ -21,8 +21,7 @@ package ea.edu.net;
 
 import ea.Client;
 
-public class SimplerClient
-		extends SimplerNetzwerkAdapter {
+public class SimplerClient extends SimplerNetzwerkAdapter {
 
 	/**
 	 * Der Client, uber den der Client kommuniziert.

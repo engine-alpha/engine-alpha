@@ -20,7 +20,7 @@
 package ea;
 
 /**
- * TODO Dokumentation
+ * TODO: Dokumentation
  *
  * @author Michael Andonie
  */

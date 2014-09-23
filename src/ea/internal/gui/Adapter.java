@@ -28,8 +28,7 @@ import java.awt.event.WindowEvent;
  *
  * @author Michael Andonie
  */
-public class Adapter
-		extends WindowAdapter {
+public class Adapter extends WindowAdapter {
 	/**
 	 * Das Fenster, das hiermit stillgelegt werden kann.
 	 */

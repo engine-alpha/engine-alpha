@@ -53,6 +53,9 @@ public class ActionFigur extends Raum {
 	static {
 		FIGUREN = new ArrayList<>();
 
+		// FIXME: 1 ms ist ein zu kleines Intervall und sorgt für die Performance-Schwierigkeiten bei vielen Figuren
+		// Richtige Time nutzen? Wie schnell sind Time-Aufrufe in Java?
+
 		Manager.standard.anmelden(new Ticker() {
 			int runde = 0;
 
@@ -67,9 +70,7 @@ public class ActionFigur extends Raum {
 					// don't care (ConcurrentModification and NullPointer)
 				}
 			}
-		}, 1); // TODO 1 ms ist glaube ich ein zu kleines Intervall und sorgt für die
-		// Performance-Schwierigkeiten bei vielen Figuren
-		// Richtige Time nutzen? Wie schnell sind Time-Aufrufe in Java?
+		}, 1);
 	}
 
 	/**
@@ -162,6 +163,15 @@ public class ActionFigur extends Raum {
 
 		this.states[this.states.length - 1] = zustand;
 		this.stateNames[this.stateNames.length - 1] = name.toLowerCase();
+	}
+
+	/**
+	 * Gibt die aktuelle Figur zurück.
+	 *
+	 * @return Die Figur, die gerade von dieser ActionFigur zu sehen ist.
+	 */
+	public Figur aktuelleFigur () {
+		return performsAction ? actions[indexAction] : states[indexState];
 	}
 
 	/**
@@ -274,15 +284,6 @@ public class ActionFigur extends Raum {
 	}
 
 	/**
-	 * Gibt die aktuelle Figur zurück.
-	 *
-	 * @return Die Figur, die gerade von dieser ActionFigur zu sehen ist.
-	 */
-	public Figur aktuelleFigur () {
-		return performsAction ? actions[indexAction] : states[indexState];
-	}
-
-	/**
 	 * Gibt den aktuellen Zustand dieser Action-Figur als <code>String</code> aus.
 	 *
 	 * @return Der Name des aktuellen Zustandes. Ist die Figur zur Zeit in einem <b>Zustand</b>, so
@@ -363,6 +364,21 @@ public class ActionFigur extends Raum {
 	 * Färbt <b>alle</b> Figuren dieser Action-Figur in eine Farbe ein.
 	 *
 	 * @param farbe
+	 * 		Die Farbe, die alle Felder aller Figuren annehmen werden. Als Standardfarben-String.
+	 *
+	 * @see Figur#einfaerben(Farbe)
+	 * @see #einfaerben(Farbe)
+	 */
+	@API
+	@SuppressWarnings ( "unused" )
+	public void einfaerben (String farbe) {
+		einfaerben(Farbe.vonString(farbe));
+	}
+
+	/**
+	 * Färbt <b>alle</b> Figuren dieser Action-Figur in eine Farbe ein.
+	 *
+	 * @param farbe
 	 * 		Die Farbe, die alle Felder aller Figuren annehmen werden.
 	 *
 	 * @see Figur#einfaerben(Farbe)
@@ -378,21 +394,6 @@ public class ActionFigur extends Raum {
 		for (int i = 0; i < states.length; i++) {
 			states[i].einfaerben(farbe);
 		}
-	}
-
-	/**
-	 * Färbt <b>alle</b> Figuren dieser Action-Figur in eine Farbe ein.
-	 *
-	 * @param farbe
-	 * 		Die Farbe, die alle Felder aller Figuren annehmen werden. Als Standardfarben-String.
-	 *
-	 * @see Figur#einfaerben(Farbe)
-	 * @see #einfaerben(Farbe)
-	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public void einfaerben (String farbe) {
-		einfaerben(Farbe.vonString(farbe));
 	}
 
 	/**
@@ -474,25 +475,6 @@ public class ActionFigur extends Raum {
 	}
 
 	/**
-	 * Verschiebt die Actionfigur.
-	 *
-	 * @param v
-	 * 		Die Verschiebung als Objekt der Klasse <code>Vektor</code>
-	 */
-	@API
-	@Override
-	@SuppressWarnings ( "unused" )
-	public void verschieben (Vektor v) {
-		for (int i = 0; i < states.length; i++) {
-			states[i].verschieben(v);
-		}
-
-		for (int i = 0; i < actions.length; i++) {
-			actions[i].verschieben(v);
-		}
-	}
-
-	/**
 	 * Zeichnet das Objekt.
 	 *
 	 * @param g
@@ -528,6 +510,25 @@ public class ActionFigur extends Raum {
 	@Override
 	public BoundingRechteck dimension () {
 		return performsAction ? actions[indexAction].dimension() : states[indexState].dimension();
+	}
+
+	/**
+	 * Verschiebt die Actionfigur.
+	 *
+	 * @param v
+	 * 		Die Verschiebung als Objekt der Klasse <code>Vektor</code>
+	 */
+	@API
+	@Override
+	@SuppressWarnings ( "unused" )
+	public void verschieben (Vektor v) {
+		for (int i = 0; i < states.length; i++) {
+			states[i].verschieben(v);
+		}
+
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].verschieben(v);
+		}
 	}
 
 	/**

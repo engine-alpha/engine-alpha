@@ -70,22 +70,6 @@ public final class Punkt {
 	}
 
 	/**
-	 * Gibt einen Punkt aus, der um eine bestimmte Verschiebung verschobenen Koordinaten dieses
-	 * Punktes hat.
-	 *
-	 * @param v
-	 * 		Die Verschiebung, die dieser Punkt erhalten würde, um mit der Ausgabe übereinzustimmen.
-	 *
-	 * @return Ein Punkt, mit der X-Koordinate <code>p.x + v.x</code> und der Y-Koordinate <code>p.y
-	 * + v.y</code>. (tatsächlich werden die <b>reellen</b> Werte addiert.
-	 *
-	 * @see #verschobeneInstanz(Vektor)
-	 */
-	public Punkt verschobenerPunkt (Vektor v) {
-		return new Punkt(this.x + v.x, this.y + v.y);
-	}
-
-	/**
 	 * Gibt einen Punkt aus, der die um eine Verschiebung veraenderten Koordinaten dieses Punktes
 	 * hat.<br /> Also quasi diesen Punkt, waere er um eine Verschiebeung veraendert.<br /> <br />
 	 * Diese Methode ist identisch mit <code>verschobenerPunkt(Vektor)</code>. Sie existiert der
@@ -100,6 +84,22 @@ public final class Punkt {
 	 */
 	public Punkt verschobeneInstanz (Vektor v) {
 		return verschobenerPunkt(v);
+	}
+
+	/**
+	 * Gibt einen Punkt aus, der um eine bestimmte Verschiebung verschobenen Koordinaten dieses
+	 * Punktes hat.
+	 *
+	 * @param v
+	 * 		Die Verschiebung, die dieser Punkt erhalten würde, um mit der Ausgabe übereinzustimmen.
+	 *
+	 * @return Ein Punkt, mit der X-Koordinate <code>p.x + v.x</code> und der Y-Koordinate <code>p.y
+	 * + v.y</code>. (tatsächlich werden die <b>reellen</b> Werte addiert.
+	 *
+	 * @see #verschobeneInstanz(Vektor)
+	 */
+	public Punkt verschobenerPunkt (Vektor v) {
+		return new Punkt(this.x + v.x, this.y + v.y);
 	}
 
 	/**

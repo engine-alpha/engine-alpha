@@ -90,8 +90,7 @@ public class Physik extends Manager implements Ticker {
 	 * Neutralisiert die aktuelle Physik und macht Platz fuer eine neue.
 	 */
 	public static void neutralize () {
-		if (physik == null)
-			return;
+		if (physik == null) return;
 		// Beendet Berechnungen
 		physik.kill();
 		for (Passivator p : physik.passive) {
@@ -194,6 +193,24 @@ public class Physik extends Manager implements Ticker {
 	}
 
 	/**
+	 * Prueft, ob eine Flaeche ein Passiv-Objekt schneidet.
+	 *
+	 * @param r
+	 * 		Die Flaeche der Ueberprueftung, als BoundingRechteck
+	 *
+	 * @return <code>true</code>, wenn diese Flaeche ein Passivobjekt schneidet, sonst
+	 * <code>false</code>.
+	 */
+	public synchronized boolean inPassivem (BoundingRechteck r) {
+		for (Passivator p : passive) {
+			if (p.in(r)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Setzt alle Aktiv-Objekte, die eine bestimmte Flaeche uebertreten, nicht jedoch nach der
 	 * Verschiebung ein Passiv-Objekt schneiden - mit einer bestimmten Ausnahme - in einen Knoten.
 	 *
@@ -216,16 +233,21 @@ public class Physik extends Manager implements Ticker {
 	}
 
 	/**
-	 * Prueft, ob eine Flaeche ein Passiv-Objekt schneidet.
+	 * Prueft, ob eine Flaeche ein Passiv-Objekt - bis auf eine Ausnahme schneidet.
 	 *
 	 * @param r
 	 * 		Die Flaeche der Ueberprueftung, als BoundingRechteck
+	 * @param aus
+	 * 		Die eine Ausnahme, die bei den Kollisionstests nicht beruecksichtigt wird.
 	 *
-	 * @return <code>true</code>, wenn diese Flaeche ein Passivobjekt schneidet, sonst
-	 * <code>false</code>.
+	 * @return <code>true</code>, wenn diese Flaeche ein Passivobjekt - ausser der einen Ausnahme -
+	 * schneidet, sonst <code>false</code>.
 	 */
-	public synchronized boolean inPassivem (BoundingRechteck r) {
+	public synchronized boolean inPassivemAusser (BoundingRechteck r, Passivator aus) {
 		for (Passivator p : passive) {
+			if (p.equals(aus)) {
+				continue;
+			}
 			if (p.in(r)) {
 				return true;
 			}
@@ -312,26 +334,24 @@ public class Physik extends Manager implements Ticker {
 	}
 
 	/**
-	 * Prueft, ob eine Flaeche ein Passiv-Objekt - bis auf eine Ausnahme schneidet.
+	 * Vereinfachte Form der anmelden()-Methode fuer Kollisionstests.<br /> Hierbei wird immer der
+	 * Code </code>code = 0</code> bei der <code>reagieren()</code>-Methode mitgegeben, somit ist
+	 * beim Aufruf dieser Methode <b>keine Fallunterscheidung innerhalb eines
+	 * <code>FallReagierbar</code>-Objektes moeglich!</b>
 	 *
-	 * @param r
-	 * 		Die Flaeche der Ueberprueftung, als BoundingRechteck
-	 * @param aus
-	 * 		Die eine Ausnahme, die bei den Kollisionstests nicht beruecksichtigt wird.
+	 * @param k
+	 * 		Das KollisionsReagierbar-Objekt, das benachrichtigt wird, wenn beide Objekte kollidieren
+	 * @param r1
+	 * 		Der erste Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt
+	 * 		benachrichtigt
+	 * @param r2
+	 * 		Der zweite Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt
+	 * 		benachrichtigt
 	 *
-	 * @return <code>true</code>, wenn diese Flaeche ein Passivobjekt - ausser der einen Ausnahme -
-	 * schneidet, sonst <code>false</code>.
+	 * @see #anmelden(KollisionsReagierbar, Raum, Raum, int)
 	 */
-	public synchronized boolean inPassivemAusser (BoundingRechteck r, Passivator aus) {
-		for (Passivator p : passive) {
-			if (p.equals(aus)) {
-				continue;
-			}
-			if (p.in(r)) {
-				return true;
-			}
-		}
-		return false;
+	public void anmelden (KollisionsReagierbar k, Raum r1, Raum r2) {
+		anmelden(k, r1, r2, 0);
 	}
 
 	/**
@@ -387,27 +407,6 @@ public class Physik extends Manager implements Ticker {
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="KollisionReagierbar">
-
-	/**
-	 * Vereinfachte Form der anmelden()-Methode fuer Kollisionstests.<br /> Hierbei wird immer der
-	 * Code </code>code = 0</code> bei der <code>reagieren()</code>-Methode mitgegeben, somit ist
-	 * beim Aufruf dieser Methode <b>keine Fallunterscheidung innerhalb eines
-	 * <code>FallReagierbar</code>-Objektes moeglich!</b>
-	 *
-	 * @param k
-	 * 		Das KollisionsReagierbar-Objekt, das benachrichtigt wird, wenn beide Objekte kollidieren
-	 * @param r1
-	 * 		Der erste Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt
-	 * 		benachrichtigt
-	 * @param r2
-	 * 		Der zweite Raum-Teil. Kollidieren beide, so wird das KollisionsReagierbar-Objekt
-	 * 		benachrichtigt
-	 *
-	 * @see #anmelden(KollisionsReagierbar, Raum, Raum, int)
-	 */
-	public void anmelden (KollisionsReagierbar k, Raum r1, Raum r2) {
-		anmelden(k, r1, r2, 0);
-	}
 
 	/**
 	 * Sorgt dafuer, das saemtliche Kollsiionsueberwachungsauftraege eines

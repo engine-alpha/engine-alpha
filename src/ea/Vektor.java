@@ -134,44 +134,6 @@ public final class Vektor implements Cloneable {
 	}
 
 	/**
-	 * Berechnet einen einfachen Vektor (maximale Auslenkung bei jeder Achse 1 (positiv wie
-	 * negativ)), der der entsprechenden Konstante dieser Klasse entspricht möglich sind: <br />
-	 * <code>N</code>, <code>S</code>, <code>O</code>, <code>W</code>, <code>NO</code>,
-	 * <code>NW</code>, <code>SO</code>, <code>SW</code>
-	 *
-	 * @param konstante
-	 * 		Konstante, die die Bewegungsrichtung beschreibt
-	 *
-	 * @return Vektor, der mit einer einfachen Auslenkung (d.h. für <code>x</code> und
-	 * <code>y</code> je ein Wertebereich von {-1, 0, 1}) die entsprechende Bewegung macht.<br />
-	 *
-	 * @throws java.lang.IllegalArgumentException
-	 * 		Falls die Konstante einen nicht verwendbaren Wert hat
-	 */
-	public static Vektor vonKonstante (int konstante) {
-		switch (konstante) {
-			case N:
-				return OBEN;
-			case S:
-				return UNTEN;
-			case O:
-				return RECHTS;
-			case W:
-				return LINKS;
-			case NO:
-				return new Vektor(+1, -1);
-			case NW:
-				return new Vektor(-1, -1);
-			case SO:
-				return new Vektor(+1, +1);
-			case SW:
-				return new Vektor(-1, +1);
-			default:
-				throw new IllegalArgumentException("Die eingegebene Konstante hatte keinen der möglichen Werte!");
-		}
-	}
-
-	/**
 	 * Gibt eine <b>Normierung</b> des Vektors aus. Dies ist ein Vektor, der <li>in die selbe
 	 * Richtung wie der ursprüngliche Vektor zeigt.</li> <li>eine Länge von (möglichst) exakt 1
 	 * hat.</li>
@@ -180,6 +142,27 @@ public final class Vektor implements Cloneable {
 	 */
 	public Vektor normiert () {
 		return this.teilen(this.laenge());
+	}
+
+	/**
+	 * Teilt die effektive Länge des Vektors durch eine Zahl und kürzt dadurch seine Effektivität.
+	 *
+	 * @param divisor
+	 * 		Hierdurch wird die Länge des Vektors auf der Zeichenebene geteilt.
+	 *
+	 * @return Vektor-Objekt, das eine Bewegung in dieselbe Richtung beschreibt, allerdings in der
+	 * Länge gekürzt um den angegebenen Divisor.
+	 *
+	 * @throws java.lang.ArithmeticException
+	 * 		Falls <code>divisor</code> <code>0</code> ist.
+	 * @see #multiplizieren(float)
+	 */
+	public Vektor teilen (float divisor) {
+		if (divisor == 0) {
+			throw new ArithmeticException("Der Divisor für das Teilen war 0!");
+		}
+
+		return new Vektor(x / divisor, y / divisor);
 	}
 
 	/**
@@ -225,27 +208,6 @@ public final class Vektor implements Cloneable {
 	}
 
 	/**
-	 * Teilt die effektive Länge des Vektors durch eine Zahl und kürzt dadurch seine Effektivität.
-	 *
-	 * @param divisor
-	 * 		Hierdurch wird die Länge des Vektors auf der Zeichenebene geteilt.
-	 *
-	 * @return Vektor-Objekt, das eine Bewegung in dieselbe Richtung beschreibt, allerdings in der
-	 * Länge gekürzt um den angegebenen Divisor.
-	 *
-	 * @throws java.lang.ArithmeticException
-	 * 		Falls <code>divisor</code> <code>0</code> ist.
-	 * @see #multiplizieren(float)
-	 */
-	public Vektor teilen (float divisor) {
-		if (divisor == 0) {
-			throw new ArithmeticException("Der Divisor für das Teilen war 0!");
-		}
-
-		return new Vektor(x / divisor, y / divisor);
-	}
-
-	/**
 	 * Multipliziert die effektiven Längen beider Anteile des Vektors (<code>x</code> und
 	 * <code>y</code>) mit einem festen Faktor. <br /> Dadurch entsteht ein neuer Vektor mit anderen
 	 * Werten, welcher zurückgegeben wird.
@@ -283,42 +245,6 @@ public final class Vektor implements Cloneable {
 	 */
 	public boolean unwirksam () {
 		return this.x == 0 && this.y == 0;
-	}
-
-	/**
-	 * Berechnet die Richtung des Vektors, in die er wirkt.<br /> Der Rückgabewert basiert auf den
-	 * Konstanten der eigenen Klasse und sind entweder die Basiswerte (<code>N / S / O / W</code>)
-	 * oder die Kombiwerte (<code>NO / NW / SO / SW</code>). Alle diese sind Konstanten dieser
-	 * Klasse.
-	 *
-	 * @return Der Wert der Konstanten, die diese Bewegung wiederspiegelt.
-	 */
-	public int richtung () {
-		if (x == 0 && y == 0) {
-			return KEINE_BEWEGUNG;
-		}
-
-		if (x == 0) {
-			return y > 0 ? S : N;
-		}
-
-		if (y == 0) {
-			return x > 0 ? O : W;
-		}
-
-		if (x < 0 && y < 0) {
-			return NW;
-		}
-
-		if (x > 0 && y < 0) {
-			return NO;
-		}
-
-		if (x > 0 && y > 0) {
-			return SO;
-		}
-
-		return SW;
 	}
 
 	/**
@@ -366,6 +292,80 @@ public final class Vektor implements Cloneable {
 	 */
 	public Vektor einfacher () {
 		return vonKonstante(richtung());
+	}
+
+	/**
+	 * Berechnet einen einfachen Vektor (maximale Auslenkung bei jeder Achse 1 (positiv wie
+	 * negativ)), der der entsprechenden Konstante dieser Klasse entspricht möglich sind: <br />
+	 * <code>N</code>, <code>S</code>, <code>O</code>, <code>W</code>, <code>NO</code>,
+	 * <code>NW</code>, <code>SO</code>, <code>SW</code>
+	 *
+	 * @param konstante
+	 * 		Konstante, die die Bewegungsrichtung beschreibt
+	 *
+	 * @return Vektor, der mit einer einfachen Auslenkung (d.h. für <code>x</code> und
+	 * <code>y</code> je ein Wertebereich von {-1, 0, 1}) die entsprechende Bewegung macht.<br />
+	 *
+	 * @throws java.lang.IllegalArgumentException
+	 * 		Falls die Konstante einen nicht verwendbaren Wert hat
+	 */
+	public static Vektor vonKonstante (int konstante) {
+		switch (konstante) {
+			case N:
+				return OBEN;
+			case S:
+				return UNTEN;
+			case O:
+				return RECHTS;
+			case W:
+				return LINKS;
+			case NO:
+				return new Vektor(+1, -1);
+			case NW:
+				return new Vektor(-1, -1);
+			case SO:
+				return new Vektor(+1, +1);
+			case SW:
+				return new Vektor(-1, +1);
+			default:
+				throw new IllegalArgumentException("Die eingegebene Konstante hatte keinen der möglichen Werte!");
+		}
+	}
+
+	/**
+	 * Berechnet die Richtung des Vektors, in die er wirkt.<br /> Der Rückgabewert basiert auf den
+	 * Konstanten der eigenen Klasse und sind entweder die Basiswerte (<code>N / S / O / W</code>)
+	 * oder die Kombiwerte (<code>NO / NW / SO / SW</code>). Alle diese sind Konstanten dieser
+	 * Klasse.
+	 *
+	 * @return Der Wert der Konstanten, die diese Bewegung wiederspiegelt.
+	 */
+	public int richtung () {
+		if (x == 0 && y == 0) {
+			return KEINE_BEWEGUNG;
+		}
+
+		if (x == 0) {
+			return y > 0 ? S : N;
+		}
+
+		if (y == 0) {
+			return x > 0 ? O : W;
+		}
+
+		if (x < 0 && y < 0) {
+			return NW;
+		}
+
+		if (x > 0 && y < 0) {
+			return NO;
+		}
+
+		if (x > 0 && y > 0) {
+			return SO;
+		}
+
+		return SW;
 	}
 
 	/**

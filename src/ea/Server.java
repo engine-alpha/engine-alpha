@@ -123,15 +123,13 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 				// Check for initial message.
 				String init = br.readLine();
 				if (init.length() < 1 || !init.startsWith("xe")) {
-					System.err.println("Client gefunden! Dieser hat sich aber falsch angemeldet! "
-							+ "Kommt er sicher von der EA?");
+					System.err.println("Client gefunden! Dieser hat sich aber falsch angemeldet! " + "Kommt er sicher von der EA?");
 					continue;
 				}
 
 				String name;
 				if (init.length() == 1) {
-					System.err.println("Client hat sich angemeldet, jedoch keinen Namen hinterlassen. "
-							+ "Verbindung wird trotzdem aufgebaut.");
+					System.err.println("Client hat sich angemeldet, jedoch keinen Namen hinterlassen. " + "Verbindung wird trotzdem aufgebaut.");
 					name = "";
 				} else {
 					name = init.substring(2);
@@ -143,8 +141,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 				NetzwerkInterpreter interpreter = new NetzwerkInterpreter(ip, this, br);
 				interpreter.empfaengerHinzufuegen(this);
 
-				final NetzwerkVerbindung verbindung = new NetzwerkVerbindung(name, ip,
-						new BufferedWriter(new OutputStreamWriter(os)), interpreter);
+				final NetzwerkVerbindung verbindung = new NetzwerkVerbindung(name, ip, new BufferedWriter(new OutputStreamWriter(os)), interpreter);
 
 				waitingQueue.add(verbindung);
 				verbindungen.add(verbindung);

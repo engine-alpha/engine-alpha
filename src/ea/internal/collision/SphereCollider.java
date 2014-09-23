@@ -23,8 +23,7 @@ import ea.Kreis;
 import ea.Punkt;
 import ea.Vektor;
 
-public class SphereCollider
-		extends Collider {
+public class SphereCollider extends Collider {
 
 	/**
 	 * Der Durchmesser des Kreises, das diesen Collider ausmacht.

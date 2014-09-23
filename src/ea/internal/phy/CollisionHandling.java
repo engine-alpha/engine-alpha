@@ -123,7 +123,7 @@ public class CollisionHandling {
 					for (Auftrag a2 : liste) {
 						if (j > i && a.probablehit(a2) && a.serioushit(a2)) {
 							synchronized (colQueue) {
-								colQueue.add(new Collision(new Auftrag[]{a, a2}));
+								colQueue.add(new Collision(new Auftrag[] {a, a2}));
 								colQueue.notify(); // TODO notifyAll?
 							}
 						}
@@ -172,46 +172,22 @@ public class CollisionHandling {
 			this.clients = clients;
 		}
 
-		/**
-		 * Abarbeiten: Beeinflussbar auf unbeeinflussbar.
-		 *
-		 * @param beeinflussbar
-		 * 		Das beeinflussbare Element.
-		 * @param unbeeinflussbar
-		 * 		Das unbeeinflussbare Element.
-		 */
-		public static void ungleichlogik (MechanikClient beeinflussbar, MechanikClient unbeeinflussbar) {
-			do {
-				beeinflussbar.bewegen(beeinflussbar.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
-			} while (beeinflussbar.ziel().schneidet(unbeeinflussbar.ziel()));
+		public void abarbeiten () {
+			final MechanikClient c1 = clients[0].parent;
+			final MechanikClient c2 = clients[1].parent;
 
-			//stupid logic: nur parallel zum Fenster.
-			Punkt zmov = beeinflussbar.ziel().zentrum();
-			BoundingRechteck bounds = unbeeinflussbar.ziel().dimension();
-
-			Vektor vneu = beeinflussbar.getVelocity();
-
-			if (zmov.realX() <= bounds.x + bounds.breite / 2) {
-				//Aktiv LINKS von Passiv
-				if (zmov.realX() > bounds.x) {
-					//Apprall oben / unten
-					vneu = new Vektor(vneu.x, -vneu.y);
-				} else {
-					//Abprall rechts
-					vneu = new Vektor(-vneu.x, vneu.y);
-				}
-			} else {
-				//Aktiv RECHTS von Passiv
-				if (zmov.realX() < bounds.x + bounds.breite) {
-					//Abprall oben / unten
-					vneu = new Vektor(vneu.x, -vneu.y);
-				} else {
-					//Abprall links
-					vneu = new Vektor(-vneu.x, vneu.y);
-				}
+			//Fenster.instanz.getCam().wurzel().add(c1.ziel().dimension().ausDiesem(),c2.ziel().dimension().ausDiesem());
+			//System.out.println("work: " + c1.ziel() + " - " + c2.ziel());
+			// First of all: Clients voneinander lösen
+			if (c1.istBeeinflussbar() && c2.istBeeinflussbar()) {
+				doppelaktivlogik(c1, c2);
 			}
-
-			beeinflussbar.geschwindigkeitSetzen(vneu);
+			if (c1.istBeeinflussbar() && !c2.istBeeinflussbar()) {
+				ungleichlogik(c1, c2);
+			}
+			if (!c1.istBeeinflussbar() && c2.istBeeinflussbar()) {
+				ungleichlogik(c2, c1);
+			}
 		}
 
 		/**
@@ -257,22 +233,46 @@ public class CollisionHandling {
 			c2.geschwindigkeitSetzen(v2pNeu.summe(v2s));
 		}
 
-		public void abarbeiten () {
-			final MechanikClient c1 = clients[0].parent;
-			final MechanikClient c2 = clients[1].parent;
+		/**
+		 * Abarbeiten: Beeinflussbar auf unbeeinflussbar.
+		 *
+		 * @param beeinflussbar
+		 * 		Das beeinflussbare Element.
+		 * @param unbeeinflussbar
+		 * 		Das unbeeinflussbare Element.
+		 */
+		public static void ungleichlogik (MechanikClient beeinflussbar, MechanikClient unbeeinflussbar) {
+			do {
+				beeinflussbar.bewegen(beeinflussbar.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
+			} while (beeinflussbar.ziel().schneidet(unbeeinflussbar.ziel()));
 
-			//Fenster.instanz.getCam().wurzel().add(c1.ziel().dimension().ausDiesem(),c2.ziel().dimension().ausDiesem());
-			//System.out.println("work: " + c1.ziel() + " - " + c2.ziel());
-			// First of all: Clients voneinander lösen
-			if (c1.istBeeinflussbar() && c2.istBeeinflussbar()) {
-				doppelaktivlogik(c1, c2);
+			//stupid logic: nur parallel zum Fenster.
+			Punkt zmov = beeinflussbar.ziel().zentrum();
+			BoundingRechteck bounds = unbeeinflussbar.ziel().dimension();
+
+			Vektor vneu = beeinflussbar.getVelocity();
+
+			if (zmov.realX() <= bounds.x + bounds.breite / 2) {
+				//Aktiv LINKS von Passiv
+				if (zmov.realX() > bounds.x) {
+					//Apprall oben / unten
+					vneu = new Vektor(vneu.x, -vneu.y);
+				} else {
+					//Abprall rechts
+					vneu = new Vektor(-vneu.x, vneu.y);
+				}
+			} else {
+				//Aktiv RECHTS von Passiv
+				if (zmov.realX() < bounds.x + bounds.breite) {
+					//Abprall oben / unten
+					vneu = new Vektor(vneu.x, -vneu.y);
+				} else {
+					//Abprall links
+					vneu = new Vektor(-vneu.x, vneu.y);
+				}
 			}
-			if (c1.istBeeinflussbar() && !c2.istBeeinflussbar()) {
-				ungleichlogik(c1, c2);
-			}
-			if (!c1.istBeeinflussbar() && c2.istBeeinflussbar()) {
-				ungleichlogik(c2, c1);
-			}
+
+			beeinflussbar.geschwindigkeitSetzen(vneu);
 		}
 	}
 }

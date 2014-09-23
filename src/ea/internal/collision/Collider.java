@@ -30,8 +30,7 @@ import ea.Vektor;
  *
  * @author Andonie
  */
-public abstract class Collider
-		implements Cloneable {
+public abstract class Collider implements Cloneable {
 
 	/**
 	 * Der Offset dieses Colliders. Die Verwendung des Offsets hängt von den implementierenden
@@ -53,7 +52,7 @@ public abstract class Collider
 	 * @param p2
 	 * 		Position von Box 2 auf der Zeichenebene
 	 *
-	 * @return        <code>true</code>, wenn sich beide Boxen bei aktueller Belegung schneiden, sonst
+	 * @return <code>true</code>, wenn sich beide Boxen bei aktueller Belegung schneiden, sonst
 	 * <code>false</code>.
 	 */
 	public static boolean boxboxCollision (BoxCollider b1, BoxCollider b2, Punkt p1, Punkt p2) {
@@ -73,7 +72,7 @@ public abstract class Collider
 	 * @param p2
 	 * 		Position von Kreis 2 auf der Zeichenebene
 	 *
-	 * @return        <code>true</code>, wenn sich beide Kreise bei aktueller Belegung schneiden, sonst
+	 * @return <code>true</code>, wenn sich beide Kreise bei aktueller Belegung schneiden, sonst
 	 * <code>false</code>.
 	 */
 	public static boolean spheresphereCollision (SphereCollider s1, SphereCollider s2, Punkt p1, Punkt p2) {
@@ -98,17 +97,14 @@ public abstract class Collider
 	 * @param pb
 	 * 		Position von Box
 	 *
-	 * @return            <code>true</code>, wenn sich Kreis und Box schneiden, sonst <code>false</code>.
+	 * @return <code>true</code>, wenn sich Kreis und Box schneiden, sonst <code>false</code>.
 	 */
 	public static boolean sphereboxCollision (SphereCollider sphere, BoxCollider box, Punkt ps, Punkt pb) {
 		sphere.modelsphere.positionSetzen(ps.verschobenerPunkt(sphere.offset));
 		for (Dreieck d : sphere.modelsphere.formen()) {
 			Punkt[] punkte = d.punkte();
 			for (int i = 0; i < punkte.length; i++) {
-				if (punkte[i].realX() >= box.offset.x + pb.x
-						&& punkte[i].realY() >= box.offset.y + pb.y
-						&& punkte[i].realX() <= (box.offset.x + pb.x + box.diagonale.x)
-						&& punkte[i].realY() <= (box.offset.y + pb.y + box.diagonale.y)) {
+				if (punkte[i].realX() >= box.offset.x + pb.x && punkte[i].realY() >= box.offset.y + pb.y && punkte[i].realX() <= (box.offset.x + pb.x + box.diagonale.x) && punkte[i].realY() <= (box.offset.y + pb.y + box.diagonale.y)) {
 					return true;
 				}
 			}
@@ -147,7 +143,7 @@ public abstract class Collider
 	 * @param other
 	 * 		Ein zweiter Collider.
 	 *
-	 * @return    <code>true</code>, falls sich dieser Collider mit dem zweiten Collider schneidet.
+	 * @return <code>true</code>, falls sich dieser Collider mit dem zweiten Collider schneidet.
 	 * Schneiden sich dieser Collider und der zweite Collider nicht, so gibt diese Funktion
 	 * <code>false</code> zurück.
 	 */
@@ -157,7 +153,7 @@ public abstract class Collider
 	 * Gibt zur�ck, ob dieser Collider ein <code>NullCollider</code> ist, also nur
 	 * <code>false</code> zur�ckgeben kann.
 	 *
-	 * @return    <code>true</code>, falls dieser Collider ein <i>Null-Collider</i> ist, sonst
+	 * @return <code>true</code>, falls dieser Collider ein <i>Null-Collider</i> ist, sonst
 	 * <code>false</code>.
 	 */
 	public abstract boolean istNullCollider ();

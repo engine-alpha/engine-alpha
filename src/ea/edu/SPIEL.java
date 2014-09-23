@@ -50,6 +50,35 @@ public class SPIEL {
 	private boolean tick;
 
 	/**
+	 * Erstellt ein einfaches Spiel ohne Anzeige und Maus.<br /> Das Spiel hat somit Ticker und
+	 * Tastatureingaben.
+	 */
+	@API
+	@SuppressWarnings ( "unused" )
+	public SPIEL () {
+		this(808, 629, false, false, false);
+	}
+
+	/**
+	 * Erstellt ein Spiel. Startet die Anzeige.
+	 *
+	 * @param punkteLinks
+	 * 		ist dieser Wert <code>true</code>, so sieht man links eine Punkteanzeige. Ist er
+	 * 		<code>false</code> sieht man keine.
+	 * @param punkteRechts
+	 * 		ist dieser Wert <code>true</code>, so sieht man rechts eine Punkteanzeige. Ist er
+	 * 		<code>false</code> sieht man keine.
+	 * @param maus
+	 * 		ist dieser Wert <code>true</code>, wird eine Maus im Spiel angezeigt und verwendet. Ist er
+	 * 		<code>false</code>, gibt es keine Maus.
+	 */
+	@API
+	@SuppressWarnings ( "unused" )
+	public SPIEL (int breite, int hoehe, boolean punkteLinks, boolean punkteRechts, boolean maus) {
+		this(breite, hoehe, punkteLinks, punkteRechts, maus, true);
+	}
+
+	/**
 	 * Erstellt ein Spiel. Startet die Anzeige.
 	 *
 	 * @param punkteLinks
@@ -87,35 +116,6 @@ public class SPIEL {
 		if (tickerAnmelden) {
 			anzeige.tickerAnmelden(this, 500);
 		}
-	}
-
-	/**
-	 * Erstellt ein Spiel. Startet die Anzeige.
-	 *
-	 * @param punkteLinks
-	 * 		ist dieser Wert <code>true</code>, so sieht man links eine Punkteanzeige. Ist er
-	 * 		<code>false</code> sieht man keine.
-	 * @param punkteRechts
-	 * 		ist dieser Wert <code>true</code>, so sieht man rechts eine Punkteanzeige. Ist er
-	 * 		<code>false</code> sieht man keine.
-	 * @param maus
-	 * 		ist dieser Wert <code>true</code>, wird eine Maus im Spiel angezeigt und verwendet. Ist er
-	 * 		<code>false</code>, gibt es keine Maus.
-	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public SPIEL (int breite, int hoehe, boolean punkteLinks, boolean punkteRechts, boolean maus) {
-		this(breite, hoehe, punkteLinks, punkteRechts, maus, true);
-	}
-
-	/**
-	 * Erstellt ein einfaches Spiel ohne Anzeige und Maus.<br /> Das Spiel hat somit Ticker und
-	 * Tastatureingaben.
-	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public SPIEL () {
-		this(808, 629, false, false, false);
 	}
 
 	/**

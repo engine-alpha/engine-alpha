@@ -106,6 +106,19 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	}
 
 	/**
+	 * Setzt, ob die Punkte angezeigt werden sollen.
+	 *
+	 * @param visible
+	 * 		Bei <code>true</code> ist die Punkteanzeige sichtbar, bei <code>false</code> ist sie
+	 * 		unsichtbar.
+	 */
+	public void punkteAnzeigen (boolean visible) {
+		rechts.sichtbarSetzen(visible);
+		links.sichtbarSetzen(visible);
+		strich.sichtbarSetzen(visible);
+	}
+
+	/**
 	 * Interne Align-Methode für harmonisches Aussehen der Punkte
 	 */
 	private void punkteAlignen () {
@@ -138,8 +151,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	 */
 	public int zufallszahlVonBis (int von, int bis) {
 		if (von > bis) {
-			Logger.error("Die Zufallszahl von (" + von + ") war größer als die "
-					+ "Zufallszahl bis (" + bis + ").");
+			Logger.error("Die Zufallszahl von (" + von + ") war größer als die " + "Zufallszahl bis (" + bis + ").");
 			return -1;
 		}
 		return random.nextInt(bis - von + 1) + von;
@@ -189,19 +201,6 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	public void punkteRechtsSichtbarSetzen (boolean sichtbar) {
 		rechts.sichtbarSetzen(sichtbar);
 		strich.sichtbarSetzen(links.sichtbar() && rechts.sichtbar());
-	}
-
-	/**
-	 * Setzt, ob die Punkte angezeigt werden sollen.
-	 *
-	 * @param visible
-	 * 		Bei <code>true</code> ist die Punkteanzeige sichtbar, bei <code>false</code> ist sie
-	 * 		unsichtbar.
-	 */
-	public void punkteAnzeigen (boolean visible) {
-		rechts.sichtbarSetzen(visible);
-		links.sichtbarSetzen(visible);
-		strich.sichtbarSetzen(visible);
 	}
 
 	/**
@@ -315,19 +314,6 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	}
 
 	/**
-	 * Reagiert auf einen Rechtsklick
-	 *
-	 * @param x
-	 * 		X-Koordinate des Klicks
-	 * @param y
-	 * 		Y-Koordinate des Klicks
-	 */
-	@Override
-	public void rechtsKlickReagieren (int x, int y) {
-		klickSub(x, y, false);
-	}
-
-	/**
 	 * Sublogik fuer Mausklicks.
 	 *
 	 * @param x
@@ -343,6 +329,19 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 				a.ausfuehren(x, y);
 			}
 		}
+	}
+
+	/**
+	 * Reagiert auf einen Rechtsklick
+	 *
+	 * @param x
+	 * 		X-Koordinate des Klicks
+	 * @param y
+	 * 		Y-Koordinate des Klicks
+	 */
+	@Override
+	public void rechtsKlickReagieren (int x, int y) {
+		klickSub(x, y, false);
 	}
 
 	/**
@@ -501,7 +500,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		 */
 		private void ausfuehren (int x, int y) {
 			try {
-				methode.invoke(client, new Object[]{x, y});
+				methode.invoke(client, new Object[] {x, y});
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			} catch (java.lang.IllegalAccessException e) {

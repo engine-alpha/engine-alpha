@@ -23,8 +23,7 @@ import ea.BoundingRechteck;
 import ea.Punkt;
 import ea.Vektor;
 
-public class BoxCollider
-		extends Collider {
+public class BoxCollider extends Collider {
 
 	/**
 	 * Der Vektor, der die Diagonale (von links oben nach rechts unten) beschreibt. Beide

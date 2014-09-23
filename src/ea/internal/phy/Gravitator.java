@@ -27,8 +27,7 @@ import ea.internal.util.Logger;
  *
  * @author Michael Andonie
  */
-public class Gravitator
-		extends PhysikClient {
+public class Gravitator extends PhysikClient {
 
 	/**
 	 * Die Physik

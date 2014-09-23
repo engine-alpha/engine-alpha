@@ -21,8 +21,7 @@ package ea.edu.net;
 
 import ea.Server;
 
-public class SimplerServer
-		extends SimplerNetzwerkAdapter {
+public class SimplerServer extends SimplerNetzwerkAdapter {
 
 	/**
 	 * Der Server.

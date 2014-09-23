@@ -138,6 +138,18 @@ public class DateiManager {
 	}
 
 	/**
+	 * Normalisiert einen Pfad, sodass er für das Dateisystem des jeweiligen Systems passt.
+	 *
+	 * @param path
+	 * 		zu normalisierender Pfad
+	 *
+	 * @return normalisierter Pfad
+	 */
+	private static String normalizePath (String path) {
+		return path.replace("\\", "/").replace("/", sep);
+	}
+
+	/**
 	 * Liest eine <code>.eaa</code>-String-Array-Datei ein.
 	 *
 	 * @param pfad
@@ -190,9 +202,7 @@ public class DateiManager {
 			for (int i = 0; i < ret.length; i++) {
 				line = reader.readLine();
 
-				ret[i] = line.equals(Character.toString((char) 0))
-						? null
-						: new String(DatatypeConverter.parseBase64Binary(line));
+				ret[i] = line.equals(Character.toString((char) 0)) ? null : new String(DatatypeConverter.parseBase64Binary(line));
 			}
 
 			return ret;
@@ -322,6 +332,53 @@ public class DateiManager {
 	}
 
 	/**
+	 * Vereinfachte Version der Schreibmethode.<br /> Hierbei wird die eingegebene Figur nach dem
+	 * selben Algorythmus geschrieben, jedoch gibt der eine Eingabeparameter den Namen und den
+	 * gesamten Pfad an.
+	 *
+	 * @param f
+	 * 		Die zu schreibende Figur
+	 * @param pfad
+	 * 		Der absolute (oder auch relative) Dateipfad, der sowohl das Verzeichnis wie auch den
+	 * 		Dateinamen angibt.
+	 *
+	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben wurde, ansonsten
+	 * <code>false</code>.
+	 *
+	 * @see #schreiben(Figur, String, String)
+	 */
+	@API
+	@SuppressWarnings ( "unused" )
+	public static boolean schreiben (Figur f, String pfad) {
+		return schreiben(f, pfad, "");
+	}
+
+	/**
+	 * Schreibt die ".eaf"-Datei zu einer Figur.
+	 * <p/>
+	 * Hierbei wird eine eventuell bestehende Datei dieses Namens rigoros gelöscht, sofern möglich.
+	 * <p/>
+	 * Diese Methode gibt zurück, ob das schreiben der Datei erfolgreich war oder nicht.
+	 *
+	 * @param f
+	 * 		Die zu schreibende Figur
+	 * @param name
+	 * 		Der Name der Datei. Dieser sollte mit ".eaf" enden, wenn nicht, wird dies automatisch
+	 * 		angehaengt.<br /> <b>Sollte der String allerdings sonst ein "."-Zeichen enthalten</b>, wird
+	 * 		nur eine Fehlermeldung ausgespuckt!
+	 * @param verzeichnis
+	 * 		Das Verzeichnis, in dem die Datei gespeichert werden soll. Ist dies ein leerer String (""),
+	 * 		so wird die Figur nur nach ihrem namen gespeichert.
+	 *
+	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben wurde, ansonsten
+	 * <code>false</code>.
+	 */
+	@API
+	public static boolean schreiben (Figur f, String verzeichnis, String name) {
+		return schreiben(f, verzeichnis, name, true);
+	}
+
+	/**
 	 * Schreibt die ".eaf"-Datei zu einer Figur.
 	 * <p/>
 	 * Hierbei wird eine eventuell bestehende Datei dieses Namens rigoros gelöscht, sofern möglich.
@@ -353,8 +410,7 @@ public class DateiManager {
 
 			if (!name.endsWith(".eaf")) {
 				if (name.contains(".")) {
-					System.err.println("Der Verzeichnisname ist ungültig! Die Datei sollte mit '" +
-							".eaf' enden und darf sonst keine '.'-Zeichen enthalten");
+					System.err.println("Der Verzeichnisname ist ungültig! Die Datei sollte mit '" + ".eaf' enden und darf sonst keine '.'-Zeichen enthalten");
 					return false;
 				}
 				name += ".eaf";
@@ -406,50 +462,91 @@ public class DateiManager {
 	}
 
 	/**
-	 * Schreibt die ".eaf"-Datei zu einer Figur.
+	 * Berechnet aus einem PixelFeld die Informationen und gibt sie als String zurück.
 	 * <p/>
-	 * Hierbei wird eine eventuell bestehende Datei dieses Namens rigoros gelöscht, sofern möglich.
-	 * <p/>
-	 * Diese Methode gibt zurück, ob das schreiben der Datei erfolgreich war oder nicht.
-	 *
-	 * @param f
-	 * 		Die zu schreibende Figur
-	 * @param name
-	 * 		Der Name der Datei. Dieser sollte mit ".eaf" enden, wenn nicht, wird dies automatisch
-	 * 		angehaengt.<br /> <b>Sollte der String allerdings sonst ein "."-Zeichen enthalten</b>, wird
-	 * 		nur eine Fehlermeldung ausgespuckt!
-	 * @param verzeichnis
-	 * 		Das Verzeichnis, in dem die Datei gespeichert werden soll. Ist dies ein leerer String (""),
-	 * 		so wird die Figur nur nach ihrem namen gespeichert.
-	 *
-	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben wurde, ansonsten
-	 * <code>false</code>.
+	 * <b>ACHTUNG</b>: Umbruchzeichen werden gesetzt, jedoch endet der String <b>nicht</b> mit einem
+	 * Zeilenumbruch, daher muss bei der Informationsbindung aus mehreren Feldern eine Zeile nach
+	 * dem verwenden dieses Strings geschaltet werden.
 	 */
-	@API
-	public static boolean schreiben (Figur f, String verzeichnis, String name) {
-		return schreiben(f, verzeichnis, name, true);
+	public static String feldInfo (PixelFeld f) {
+		Color[][] farbe = f.getPic();
+		String ret = "";
+
+		for (int i = 0; i < farbe.length; i++) {
+			for (int j = 0; j < farbe[0].length; j++) {
+				ret += "Z" + i + "-" + j + ":" + farbeAnalysieren(farbe[i][j]) + bruch;
+			}
+		}
+
+		return ret;
 	}
 
 	/**
-	 * Vereinfachte Version der Schreibmethode.<br /> Hierbei wird die eingegebene Figur nach dem
-	 * selben Algorythmus geschrieben, jedoch gibt der eine Eingabeparameter den Namen und den
-	 * gesamten Pfad an.
+	 * Analysiert eine Farbe und weist ihr einen String zu.
 	 *
-	 * @param f
-	 * 		Die zu schreibende Figur
-	 * @param pfad
-	 * 		Der absolute (oder auch relative) Dateipfad, der sowohl das Verzeichnis wie auch den
-	 * 		Dateinamen angibt.
+	 * @param c
+	 * 		Zu analysierende Farbe
 	 *
-	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben wurde, ansonsten
-	 * <code>false</code>.
-	 *
-	 * @see #schreiben(Figur, String, String)
+	 * @return Stringrepräsentation der Farbe
 	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public static boolean schreiben (Figur f, String pfad) {
-		return schreiben(f, pfad, "");
+	public static String farbeAnalysieren (Color c) {
+		if (c == null) {
+			return "%%;";
+		}
+
+		if (c == Color.black) {
+			return "schwarz;";
+		}
+
+		if (c == Color.gray) {
+			return "grau;";
+		}
+
+		if (c == Color.green) {
+			return "gruen;";
+		}
+
+		if (c == Color.yellow) {
+			return "gelb;";
+		}
+
+		if (c == Color.blue) {
+			return "blau;";
+		}
+
+		if (c == Color.white) {
+			return "weiss;";
+		}
+
+		if (c == Color.orange) {
+			return "orange;";
+		}
+
+		if (c == Color.red) {
+			return "rot;";
+		}
+
+		if (c == Color.pink) {
+			return "pink;";
+		}
+
+		if (c == Color.magenta) {
+			return "magenta;";
+		}
+
+		if (c == Color.cyan) {
+			return "cyan;";
+		}
+
+		if (c == Color.darkGray) {
+			return "dunkelgrau;";
+		}
+
+		if (c == Color.lightGray) {
+			return "hellgrau;";
+		}
+
+		return "&" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ";";
 	}
 
 	/**
@@ -475,6 +572,28 @@ public class DateiManager {
 	@SuppressWarnings ( "unused" )
 	public static Figur figurLaden (String verzeichnis) {
 		return figurEinlesen(verzeichnis);
+	}
+
+	/**
+	 * Liest eine Figur ein.
+	 *
+	 * @param verzeichnis
+	 * 		Verzeichnis der einzulesenden Datei.
+	 * 		<p/>
+	 * 		Die Eingabe <b>muss</b> ein Dateiname mit dem Ende <code>.eaf</code> sein. Dies kann ohne
+	 * 		Ordnerangaben gemacht werden, wenn die Datei im Quelltextordner ist.
+	 *
+	 * @return Eingelesene Figur.
+	 * <p/>
+	 * Tritt ein Fehler auf, weil die Datei nicht einlesbar ist oder nicht existiert, ist dieser
+	 * wert <code>null</code>.
+	 * <p/>
+	 * Trotzdem kann es sein, dass eine beschädigte Datei nicht mehr korrekt einlesbar ist, dennoch
+	 * ein Ergebnis liefert.
+	 */
+	@API
+	public static Figur figurEinlesen (String verzeichnis) {
+		return figurEinlesen(new File(normalizePath(verzeichnis)));
 	}
 
 	/**
@@ -569,8 +688,7 @@ public class DateiManager {
 			fig.animiertSetzen((animationsLaenge != 1));
 			f.close();
 		} catch (IOException e) {
-			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?"
-					+ bruch + verzeichnis);
+			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?" + bruch + verzeichnis);
 			e.printStackTrace();
 		} finally {
 			if (f != null) {
@@ -583,126 +701,6 @@ public class DateiManager {
 		}
 
 		return fig;
-	}
-
-	/**
-	 * Diese Methode ist veraltet, da ein Pfad automatisch relativ ist, wenn er nicht mit
-	 * <code>/</code> (Linux) bzw. <code>C:</code> (Windows, andere Buchstaben ebenso möglich)
-	 * beginnt.
-	 */
-	@Deprecated
-	public static Figur figurEinlesen (String verzeichnis, boolean relativ) {
-		return figurEinlesen(new File(verzeichnis));
-	}
-
-	/**
-	 * Liest eine Figur ein.
-	 *
-	 * @param verzeichnis
-	 * 		Verzeichnis der einzulesenden Datei.
-	 * 		<p/>
-	 * 		Die Eingabe <b>muss</b> ein Dateiname mit dem Ende <code>.eaf</code> sein. Dies kann ohne
-	 * 		Ordnerangaben gemacht werden, wenn die Datei im Quelltextordner ist.
-	 *
-	 * @return Eingelesene Figur.
-	 * <p/>
-	 * Tritt ein Fehler auf, weil die Datei nicht einlesbar ist oder nicht existiert, ist dieser
-	 * wert <code>null</code>.
-	 * <p/>
-	 * Trotzdem kann es sein, dass eine beschädigte Datei nicht mehr korrekt einlesbar ist, dennoch
-	 * ein Ergebnis liefert.
-	 */
-	@API
-	public static Figur figurEinlesen (String verzeichnis) {
-		return figurEinlesen(new File(normalizePath(verzeichnis)));
-	}
-
-	/**
-	 * Berechnet aus einem PixelFeld die Informationen und gibt sie als String zurück.
-	 * <p/>
-	 * <b>ACHTUNG</b>: Umbruchzeichen werden gesetzt, jedoch endet der String <b>nicht</b> mit einem
-	 * Zeilenumbruch, daher muss bei der Informationsbindung aus mehreren Feldern eine Zeile nach
-	 * dem verwenden dieses Strings geschaltet werden.
-	 */
-	public static String feldInfo (PixelFeld f) {
-		Color[][] farbe = f.getPic();
-		String ret = "";
-
-		for (int i = 0; i < farbe.length; i++) {
-			for (int j = 0; j < farbe[0].length; j++) {
-				ret += "Z" + i + "-" + j + ":" + farbeAnalysieren(farbe[i][j]) + bruch;
-			}
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Analysiert eine Farbe und weist ihr einen String zu.
-	 *
-	 * @param c
-	 * 		Zu analysierende Farbe
-	 *
-	 * @return Stringrepräsentation der Farbe
-	 */
-	public static String farbeAnalysieren (Color c) {
-		if (c == null) {
-			return "%%;";
-		}
-
-		if (c == Color.black) {
-			return "schwarz;";
-		}
-
-		if (c == Color.gray) {
-			return "grau;";
-		}
-
-		if (c == Color.green) {
-			return "gruen;";
-		}
-
-		if (c == Color.yellow) {
-			return "gelb;";
-		}
-
-		if (c == Color.blue) {
-			return "blau;";
-		}
-
-		if (c == Color.white) {
-			return "weiss;";
-		}
-
-		if (c == Color.orange) {
-			return "orange;";
-		}
-
-		if (c == Color.red) {
-			return "rot;";
-		}
-
-		if (c == Color.pink) {
-			return "pink;";
-		}
-
-		if (c == Color.magenta) {
-			return "magenta;";
-		}
-
-		if (c == Color.cyan) {
-			return "cyan;";
-		}
-
-		if (c == Color.darkGray) {
-			return "dunkelgrau;";
-		}
-
-		if (c == Color.lightGray) {
-			return "hellgrau;";
-		}
-
-		return "&" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ";";
 	}
 
 	/**
@@ -767,14 +765,12 @@ public class DateiManager {
 	}
 
 	/**
-	 * Normalisiert einen Pfad, sodass er für das Dateisystem des jeweiligen Systems passt.
-	 *
-	 * @param path
-	 * 		zu normalisierender Pfad
-	 *
-	 * @return normalisierter Pfad
+	 * Diese Methode ist veraltet, da ein Pfad automatisch relativ ist, wenn er nicht mit
+	 * <code>/</code> (Linux) bzw. <code>C:</code> (Windows, andere Buchstaben ebenso möglich)
+	 * beginnt.
 	 */
-	private static String normalizePath (String path) {
-		return path.replace("\\", "/").replace("/", sep);
+	@Deprecated
+	public static Figur figurEinlesen (String verzeichnis, boolean relativ) {
+		return figurEinlesen(new File(verzeichnis));
 	}
 }

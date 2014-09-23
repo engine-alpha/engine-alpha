@@ -16,7 +16,7 @@ public class KnotenTest {
 		k.entfernen(r);
 		assertFalse(k.besitzt(r));
 
-		// TODO Für Schüler evtl. unerwartetes Verhalten - Exception?
+		// TODO: Für Schüler evtl. unerwartetes Verhalten - Exception?
 		k.add(r, r);
 		assertEquals(2, k.alleElemente().length);
 

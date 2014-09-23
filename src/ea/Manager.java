@@ -82,6 +82,16 @@ public class Manager {
 	private volatile ArrayList<Job> jobs = new ArrayList<>();
 
 	/**
+	 * Vereinfachter Konstruktor ohne Parameter.<br /> Bei einem normalen Spiel muss nicht extra ein
+	 * Manager erstellt werden. Dafür gibt es bereits eine Referenz<br /> <br /> <code>public final
+	 * Manager manager;</code><br /> <br /> in der Klass <code>Game</code> und damit auch in jeder
+	 * spielsteurnden Klasse.
+	 */
+	public Manager () {
+		this("Tickerthread " + (cnt + 1));
+	}
+
+	/**
 	 * Konstruktor eines Managers.<br /> Bei einem normalen Spiel muss nicht extra ein Manager
 	 * erstellt werden. Dafuer gibt es bereits eine Referenz<br /> <br /> <code>public final Manager
 	 * manager;</code><br /> <br /> in der Klass <code>Game</code> und damit auch in jeder
@@ -99,16 +109,6 @@ public class Manager {
 		this.executor = Executors.newScheduledThreadPool(10);
 
 		cnt++;
-	}
-
-	/**
-	 * Vereinfachter Konstruktor ohne Parameter.<br /> Bei einem normalen Spiel muss nicht extra ein
-	 * Manager erstellt werden. Dafür gibt es bereits eine Referenz<br /> <br /> <code>public final
-	 * Manager manager;</code><br /> <br /> in der Klass <code>Game</code> und damit auch in jeder
-	 * spielsteurnden Klasse.
-	 */
-	public Manager () {
-		this("Tickerthread " + (cnt + 1));
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class Manager {
 	 * Diese Methode prüft, ob zur Zeit <b>mindestens 1 Ticker</b> an diesem Manager ausgeführt
 	 * wird.
 	 *
-	 * @return    <code>true</code>, wenn mindestens 1 Ticker an diesem Manager zur Zeit mit seiner
+	 * @return <code>true</code>, wenn mindestens 1 Ticker an diesem Manager zur Zeit mit seiner
 	 * <code>tick()</code>-Methode ausgeführt wird. Sonst <code>false</code>.
 	 */
 	public boolean hatAktiveTicker () {
@@ -175,41 +175,6 @@ public class Manager {
 		}
 
 		jobs.add(new Job(t, 1000, false));
-	}
-
-	/**
-	 * Gibt den Job zu einem bestimmten Ticker aus.
-	 *
-	 * @param t
-	 * 		Der Ticker zu dem entsprechenden Job
-	 */
-	private Job getJob (final Ticker t) {
-		for (Job a : jobs) {
-			if (a.steuert(t)) {
-				return a;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Prüft, ob ein Ticker t bereits angemeldet ist.
-	 *
-	 * @param t
-	 * 		Der zu prüfende Ticker.
-	 *
-	 * @return <code>true</code>, falls der Ticker bereits an diesem <code>Manager</code> angemeldet
-	 * ist, sonst <code>false</code>.
-	 */
-	public boolean istAngemeldet (Ticker t) {
-		for (Job a : jobs) {
-			if (a.steuert(t)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -261,26 +226,38 @@ public class Manager {
 	}
 
 	/**
-	 * Hält einen Ticker an, der <b>bereits an diesem Manager angemeldet ist</b>.<br /> Ist der
-	 * Ticker bereits angehalten, passiert gar nichts. War der Ticker nicht angemeldet, kommt eine
-	 * Fehlermeldung.
+	 * Prüft, ob ein Ticker t bereits angemeldet ist.
 	 *
 	 * @param t
-	 * 		Der anzuhaltende Ticker
+	 * 		Der zu prüfende Ticker.
 	 *
-	 * @see #starten(Ticker, int)
+	 * @return <code>true</code>, falls der Ticker bereits an diesem <code>Manager</code> angemeldet
+	 * ist, sonst <code>false</code>.
 	 */
-	public void anhalten (Ticker t) {
-		if (!istAngemeldet(t)) {
-			Logger.error("Der Ticker ist noch nicht angemeldet.");
-			return;
+	public boolean istAngemeldet (Ticker t) {
+		for (Job a : jobs) {
+			if (a.steuert(t)) {
+				return true;
+			}
 		}
 
-		Job job = getJob(t);
-		ScheduledFuture<?> future = job.scheduledFuture;
+		return false;
+	}
 
-		future.cancel(false);
-		job.setActive(false);
+	/**
+	 * Gibt den Job zu einem bestimmten Ticker aus.
+	 *
+	 * @param t
+	 * 		Der Ticker zu dem entsprechenden Job
+	 */
+	private Job getJob (final Ticker t) {
+		for (Job a : jobs) {
+			if (a.steuert(t)) {
+				return a;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -313,6 +290,29 @@ public class Manager {
 	}
 
 	/**
+	 * Hält einen Ticker an, der <b>bereits an diesem Manager angemeldet ist</b>.<br /> Ist der
+	 * Ticker bereits angehalten, passiert gar nichts. War der Ticker nicht angemeldet, kommt eine
+	 * Fehlermeldung.
+	 *
+	 * @param t
+	 * 		Der anzuhaltende Ticker
+	 *
+	 * @see #starten(Ticker, int)
+	 */
+	public void anhalten (Ticker t) {
+		if (!istAngemeldet(t)) {
+			Logger.error("Der Ticker ist noch nicht angemeldet.");
+			return;
+		}
+
+		Job job = getJob(t);
+		ScheduledFuture<?> future = job.scheduledFuture;
+
+		future.cancel(false);
+		job.setActive(false);
+	}
+
+	/**
 	 * Meldet einen Ticker ab.<br /> War dieser Ticker nicht angemeldet, so passiert nichts &ndash;
 	 * außer einer Fehlermeldung.
 	 *
@@ -335,6 +335,14 @@ public class Manager {
 	}
 
 	/**
+	 * Beendet den Thread, den dieser Manager verwendet und damit den Manager selbst. Sollte
+	 * <b>nur</b> aufgerufen werden, wenn der Manager selbst gelöscht werden soll.
+	 */
+	public final void kill () {
+		alleAbmelden();
+	}
+
+	/**
 	 * Macht diesen Manager frei von allen aktiven Tickern, jedoch ohne ihn selbst zu beenden. Neue
 	 * Ticker können jederzeit wieder angemeldet werden.
 	 */
@@ -346,14 +354,6 @@ public class Manager {
 		}
 
 		jobs = new ArrayList<>();
-	}
-
-	/**
-	 * Beendet den Thread, den dieser Manager verwendet und damit den Manager selbst. Sollte
-	 * <b>nur</b> aufgerufen werden, wenn der Manager selbst gelöscht werden soll.
-	 */
-	public final void kill () {
-		alleAbmelden();
 	}
 
 	/**
@@ -385,7 +385,7 @@ public class Manager {
 		 * Konstruktor.
 		 *
 		 * @param ticker
-		 *      Ticker dieses Auftrages
+		 * 		Ticker dieses Auftrages
 		 * @param intervall
 		 * 		Aufrufintervall des Tickers in ms<sup>-1</sup>
 		 * @param aktiv

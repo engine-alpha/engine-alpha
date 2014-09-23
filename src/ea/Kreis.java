@@ -79,8 +79,7 @@ public class Kreis extends RegEck {
 	 * @return Der log2(eckenzahl).
 	 */
 	private static int log2helper (int eckenzahl) {
-		if (eckenzahl <= 1)
-			return 0;
+		if (eckenzahl <= 1) return 0;
 		return 1 + log2helper(eckenzahl / 2);
 	}
 

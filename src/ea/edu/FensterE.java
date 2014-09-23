@@ -29,8 +29,7 @@ import ea.Game;
  *
  * @author Andonie
  */
-public class FensterE
-		extends Game {
+public class FensterE extends Game {
 	/**
 	 * Referenz auf das Fenster. Nicht anfechtbar; ebenfalls nach <i>Singleton</i>.
 	 */

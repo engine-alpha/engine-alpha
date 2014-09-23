@@ -68,6 +68,33 @@ public class Logger {
 	}
 
 	/**
+	 * Logger-Funktion für Warnungen
+	 *
+	 * @param s
+	 * 		Text der Warnung
+	 */
+	public static void warning (String s) {
+		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
+		write("WARNUNG", e.getFileName(), e.getLineNumber(), s);
+	}
+
+	private static String write (String type, String filename, int line, String message) {
+		return write(type, filename, line, message, false);
+	}
+
+	private static String write (String type, String filename, int line, String message, boolean error) {
+		String str = String.format("[%s][%s] %s (%s:%s)", getTime(), type, message, filename, Integer.toString(line));
+
+		if (error) {
+			System.err.println(str);
+		} else {
+			System.out.println(str);
+		}
+
+		return write(str);
+	}
+
+	/**
 	 * Zeit im Log-Format
 	 *
 	 * @return gibt die Zeit für die Logs zurück
@@ -77,14 +104,24 @@ public class Logger {
 	}
 
 	/**
-	 * Logger-Funktion für Warnungen
+	 * Funktion in die Log-Datei zu schreiben
 	 *
-	 * @param s
-	 * 		Text der Warnung
+	 * @param text
+	 * 		Meldungs-Text der zur Log übergeben wird
+	 *
+	 * @return Gibt den geschrieben Text zurück, im Fehlerfall <code>null</code>
 	 */
-	public static void warning (String s) {
-		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-		write("WARNUNG", e.getFileName(), e.getLineNumber(), s);
+	private static String write (String text) {
+		try {
+			writer.write(text);
+			writer.newLine();
+
+			return text;
+		} catch (IOException e) {
+			System.err.println("Logger konnte folgende Zeile nicht schreiben:\n" + text);
+
+			return null;
+		}
 	}
 
 	/**
@@ -107,42 +144,5 @@ public class Logger {
 	public static void info (String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
 		write("INFO", e.getFileName(), e.getLineNumber(), s);
-	}
-
-	private static String write (String type, String filename, int line, String message) {
-		return write(type, filename, line, message, false);
-	}
-
-	private static String write (String type, String filename, int line, String message, boolean error) {
-		String str = String.format("[%s][%s] %s (%s:%s)", getTime(), type, message, filename, Integer.toString(line));
-
-		if (error) {
-			System.err.println(str);
-		} else {
-			System.out.println(str);
-		}
-
-		return write(str);
-	}
-
-	/**
-	 * Funktion in die Log-Datei zu schreiben
-	 *
-	 * @param text
-	 * 		Meldungs-Text der zur Log übergeben wird
-	 *
-	 * @return Gibt den geschrieben Text zurück, im Fehlerfall <code>null</code>
-	 */
-	private static String write (String text) {
-		try {
-			writer.write(text);
-			writer.newLine();
-
-			return text;
-		} catch (IOException e) {
-			System.err.println("Logger konnte folgende Zeile nicht schreiben:\n" + text);
-
-			return null;
-		}
 	}
 }

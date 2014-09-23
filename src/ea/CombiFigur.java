@@ -61,8 +61,8 @@ public class CombiFigur extends Raum {
 	 * 		Der Name der ersten Figur.
 	 */
 	public CombiFigur (ActionFigur figur1, String name1) {
-		figuren = new ActionFigur[]{figur1};
-		namen = new String[]{name1};
+		figuren = new ActionFigur[] {figur1};
+		namen = new String[] {name1};
 	}
 
 	/**
@@ -105,22 +105,6 @@ public class CombiFigur extends Raum {
 	}
 
 	/**
-	 * Verschiebt das Objekt.
-	 *
-	 * @param v
-	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
-	 *
-	 * @see Vektor
-	 * @see #verschieben(float, float)
-	 */
-	@Override
-	public void verschieben (Vektor v) {
-		for (int i = 0; i < figuren.length; i++) {
-			figuren[i].verschieben(v);
-		}
-	}
-
-	/**
 	 * Zeichnet das Objekt.
 	 *
 	 * @param g
@@ -157,6 +141,22 @@ public class CombiFigur extends Raum {
 			dim = dim.summe(f.dimension());
 
 		return dim;
+	}
+
+	/**
+	 * Verschiebt das Objekt.
+	 *
+	 * @param v
+	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
+	 *
+	 * @see Vektor
+	 * @see #verschieben(float, float)
+	 */
+	@Override
+	public void verschieben (Vektor v) {
+		for (int i = 0; i < figuren.length; i++) {
+			figuren[i].verschieben(v);
+		}
 	}
 
 	/**
