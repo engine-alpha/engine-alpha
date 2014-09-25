@@ -314,4 +314,14 @@ public class EngineAlpha extends Frame {
 			}
 		}
 	}
+
+	private static boolean debug;
+
+	public static boolean isDebug() {
+		return debug;
+	}
+
+	public static void setDebug(boolean value) {
+		debug = value;
+	}
 }

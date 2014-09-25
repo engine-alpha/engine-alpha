@@ -175,6 +175,10 @@ public class Manager {
 		}
 
 		jobs.add(new Job(t, 1000, false));
+
+		if(EngineAlpha.isDebug()) {
+			Logger.info("Ticker wurde angemeldet: " + t.toString());
+		}
 	}
 
 	/**
@@ -310,6 +314,10 @@ public class Manager {
 
 		future.cancel(false);
 		job.setActive(false);
+
+		if(EngineAlpha.isDebug()) {
+			Logger.info("Ticker wurde angehalten: " + t.toString());
+		}
 	}
 
 	/**
@@ -332,6 +340,10 @@ public class Manager {
 		}
 
 		jobs.remove(job);
+
+		if(EngineAlpha.isDebug()) {
+			Logger.info("Ticker wurde abgemeldet: " + t.toString());
+		}
 	}
 
 	/**
