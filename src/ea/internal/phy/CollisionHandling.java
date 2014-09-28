@@ -50,12 +50,7 @@ public class CollisionHandling {
 	 * 		der anzumeldende Client.
 	 */
 	public static void anmelden (MechanikClient c) {
-		// von kelunik
-		// TODO ArrayList.add braucht glaube ich kein synchronized.
-
-		synchronized (liste) {
-			liste.add(new Auftrag(c));
-		}
+		liste.add(new Auftrag(c));
 	}
 
 	/**
@@ -124,7 +119,7 @@ public class CollisionHandling {
 						if (j > i && a.probablehit(a2) && a.serioushit(a2)) {
 							synchronized (colQueue) {
 								colQueue.add(new Collision(new Auftrag[] {a, a2}));
-								colQueue.notify(); // TODO notifyAll?
+								colQueue.notifyAll();
 							}
 						}
 

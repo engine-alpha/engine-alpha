@@ -208,6 +208,22 @@ public class Knoten extends Raum implements Listung {
 	}
 
 	/**
+	 * Setzt die Durchsichtigkeit für jedes angemeldete Objekt.
+	 *
+	 * @param opacity {@inheritDoc}
+	 */
+	@Override
+	public void setOpacity (float opacity) {
+		try {
+			for (int i = list.size() - 1; i >= 0; i--) {
+				list.get(i).setOpacity(opacity);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// Wahrscheinlich wurde die Liste geleert.
+		}
+	}
+
+	/**
 	 * Die dimension()-Methode.<br /> Gibt ein <code>BoundingRechteck</code> aus, das alle
 	 * Komponente dieses Knotens bedeckt.
 	 *
