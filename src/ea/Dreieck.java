@@ -20,6 +20,7 @@
 package ea;
 
 import ea.internal.collision.Collider;
+import ea.internal.util.Logger;
 
 import java.awt.*;
 
@@ -76,11 +77,12 @@ public class Dreieck extends Geometrie {
 	 */
 	public Dreieck (float[] x, float[] y) {
 		super(0, 0);
+
 		if (x.length == 3 && y.length == 3) {
 			this.x = x;
 			this.y = y;
 		} else {
-			System.out.println("Läuft nicht, falsche Arraylengen bei Dreiecksbildung!");
+			Logger.error("Läuft nicht, falsche Arraylängen bei Dreiecksbildung!");
 		}
 	}
 
@@ -231,12 +233,12 @@ public class Dreieck extends Geometrie {
 
 	/**
 	 * Gibt an, ob diese Dreieck sich mit einem anderen schneidet.<br /> Dem Test zugrunde liegt
-	 * folgene Mathematische Schlussfolgerung als Bedingung fuer das schneiden:<br/ > <b> 2 Dreiecke
+	 * folgene Mathematische Schlussfolgerung als Bedingung für das schneiden:<br/ > <b> 2 Dreiecke
 	 * schneiden sich,<br /> ->sobald mindestens ein Punkt des einen Dreiecks innerhalb des anderen
-	 * liegt.</b><br /> Dies ist die Grundlegende Testeinheit fuer alle geometrischen Formen Formen
+	 * liegt.</b><br /> Dies ist die Grundlegende Testeinheit für alle geometrischen Formen
 	 * der Engine.
 	 *
-	 * @return <code>true</code>, wenn sich die beiden Dreiecke theoretisch schneiden wuerden, sonst
+	 * @return <code>true</code>, wenn sich die beiden Dreiecke theoretisch schneiden würden, sonst
 	 * <code>false</code>.
 	 */
 	public boolean schneidetBasic (Dreieck d) {

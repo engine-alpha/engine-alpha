@@ -20,6 +20,7 @@
 package ea;
 
 import ea.internal.gra.Zeichenebene;
+import ea.internal.util.Logger;
 
 import java.awt.*;
 
@@ -145,7 +146,7 @@ public class Kamera {
 	 */
 	public void boundsSetzen (BoundingRechteck r) {
 		if (r == null) {
-			System.err.println("Der Eingabewert fuer den Fokusbereich war null!");
+			Logger.error("Der Eingabewert fuer den Fokusbereich war null!");
 			return;
 		}
 		hatBoundsSetzen(true);

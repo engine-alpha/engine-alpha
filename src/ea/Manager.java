@@ -119,9 +119,9 @@ public class Manager {
 	 *
 	 * @return <code>true</code>, falls der Font auf dem System existiert, sonst <code>false</code>
 	 */
-	public static final boolean fontExistiert (String name) {
-		for (int i = 0; i < fontNamen.length; i++) {
-			if (fontNamen[i].equals(name)) {
+	public static boolean fontExistiert (String name) {
+		for (String s : fontNamen) {
+			if (s.equals(name)) {
 				return true;
 			}
 		}
@@ -360,8 +360,8 @@ public class Manager {
 	 */
 	public final void alleAbmelden () {
 		for (Job job : jobs) {
-			if (job.active) {
-				anhalten(job.ticker);
+			if (job.isActive()) {
+				anhalten(job.getTicker());
 			}
 		}
 
@@ -433,6 +433,15 @@ public class Manager {
 		}
 
 		/**
+		 * Gibt zurück, ob der Job aktiv ist.
+		 *
+		 * @return <code>true</code>, falls der Job gerade aktiv ist, sonst <code>false</code>.
+		 */
+		public boolean isActive () {
+			return this.active;
+		}
+
+		/**
 		 * Setzt, ob der anliegende Ticker momentan aktiv ist.
 		 *
 		 * @param active
@@ -450,6 +459,15 @@ public class Manager {
 		 */
 		public void setFuture (ScheduledFuture<?> future) {
 			this.scheduledFuture = future;
+		}
+
+		/**
+		 * Gibt den Ticker zurück, der zu diesem Job gehört.
+		 *
+		 * @return Ticker, der zu diesem Job gehört
+		 */
+		public Ticker getTicker () {
+			return ticker;
 		}
 	}
 }

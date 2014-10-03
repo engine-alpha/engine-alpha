@@ -391,7 +391,9 @@ public class Fenster extends Frame {
 		this.setVisible(false);
 		this.dispose();
 
-		if (--frameCount == 0) System.exit(0);
+		frameCount--;
+
+		if (frameCount == 0) System.exit(0);
 	}
 
 	private void removeCursor () {
@@ -468,13 +470,13 @@ public class Fenster extends Frame {
 	}
 
 	/**
-	 * Diese Methode wird immer dann ausgefuehrt, wenn ein einfacher Linksklick der Maus ausgefuehrt
+	 * Diese Methode wird immer dann ausgeführt, wenn ein einfacher Linksklick der Maus ausgeführt
 	 * wird.
 	 *
 	 * @param e
 	 * 		Das MausEvent
 	 *
-	 * @paran losgelassen Ist dieser Wert TRUE, wurde die Maus eigentlich losgelassen und nicht
+	 * @param losgelassen Ist dieser Wert <code>true</code>, wurde die Maus eigentlich losgelassen und nicht
 	 * geklickt.
 	 */
 	private void mausAktion (MouseEvent e, boolean losgelassen) {

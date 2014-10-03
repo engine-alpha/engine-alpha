@@ -410,7 +410,7 @@ public class DateiManager {
 
 			if (!name.endsWith(".eaf")) {
 				if (name.contains(".")) {
-					System.err.println("Der Verzeichnisname ist ungültig! Die Datei sollte mit '" + ".eaf' enden und darf sonst keine '.'-Zeichen enthalten");
+					Logger.error("Der Verzeichnisname ist ungültig! Die Datei sollte mit '" + ".eaf' enden und darf sonst keine '.'-Zeichen enthalten");
 					return false;
 				}
 				name += ".eaf";
@@ -456,7 +456,7 @@ public class DateiManager {
 
 			return true;
 		} catch (IOException e) {
-			System.err.println("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?" + bruch + verzeichnis);
+			Logger.error("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?" + bruch + verzeichnis);
 			return false;
 		}
 	}
@@ -494,55 +494,55 @@ public class DateiManager {
 			return "%%;";
 		}
 
-		if (c == Color.black) {
+		if (c.equals(Color.black)) {
 			return "schwarz;";
 		}
 
-		if (c == Color.gray) {
+		if (c.equals(Color.gray)) {
 			return "grau;";
 		}
 
-		if (c == Color.green) {
+		if (c.equals(Color.green)) {
 			return "gruen;";
 		}
 
-		if (c == Color.yellow) {
+		if (c.equals(Color.yellow)) {
 			return "gelb;";
 		}
 
-		if (c == Color.blue) {
+		if (c.equals(Color.blue)) {
 			return "blau;";
 		}
 
-		if (c == Color.white) {
+		if (c.equals(Color.white)) {
 			return "weiss;";
 		}
 
-		if (c == Color.orange) {
+		if (c.equals(Color.orange)) {
 			return "orange;";
 		}
 
-		if (c == Color.red) {
+		if (c.equals(Color.red)) {
 			return "rot;";
 		}
 
-		if (c == Color.pink) {
+		if (c.equals(Color.pink)) {
 			return "pink;";
 		}
 
-		if (c == Color.magenta) {
+		if (c.equals(Color.magenta)) {
 			return "magenta;";
 		}
 
-		if (c == Color.cyan) {
+		if (c.equals(Color.cyan)) {
 			return "cyan;";
 		}
 
-		if (c == Color.darkGray) {
+		if (c.equals(Color.darkGray)) {
 			return "dunkelgrau;";
 		}
 
-		if (c == Color.lightGray) {
+		if (c.equals(Color.lightGray)) {
 			return "hellgrau;";
 		}
 
@@ -632,15 +632,10 @@ public class DateiManager {
 		try {
 			String add = "";
 
-			// if(relativ) {
-			// add = verz;
-			// }
-
 			f = new LineNumberReader(new FileReader(add + verzeichnis));
 			line = f.readLine();
 
-			// FIXME equals() between objects of inconvertible types 'boolean' and 'String'
-			if (line.equals(line.compareTo("_fig_") != 0)) { // Format  bestätigen
+			if (line.compareTo("_fig_") != 0) { // Format  bestätigen
 				Logger.error("Die Datei ist keine Figur-Datei!" + line);
 
 				return null;
@@ -725,8 +720,9 @@ public class DateiManager {
 
 			for (int i = 1; i < s.length(); i++) {
 				if (s.charAt(i) == ',' || s.charAt(i) == ';') {
-					rgb[cnt++] = Integer.valueOf(s.substring(temp, i));
+					rgb[cnt] = Integer.valueOf(s.substring(temp, i));
 					temp = i + 1;
+					cnt++;
 				}
 			}
 
@@ -770,6 +766,7 @@ public class DateiManager {
 	 * beginnt.
 	 */
 	@Deprecated
+	@SuppressWarnings("unused")
 	public static Figur figurEinlesen (String verzeichnis, boolean relativ) {
 		return figurEinlesen(new File(verzeichnis));
 	}

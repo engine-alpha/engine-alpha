@@ -146,7 +146,7 @@ public class Figur extends Raum {
 	 */
 	public Figur (float x, float y, String verzeichnis, boolean add) {
 		super();
-		super.position = new Punkt(x, y);
+		position = new Punkt(x, y);
 
 		this.animation = DateiManager.figurEinlesen(verzeichnis).animation;
 

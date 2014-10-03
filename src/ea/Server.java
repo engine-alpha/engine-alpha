@@ -123,13 +123,13 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 				// Check for initial message.
 				String init = br.readLine();
 				if (init.length() < 1 || !init.startsWith("xe")) {
-					System.err.println("Client gefunden! Dieser hat sich aber falsch angemeldet! " + "Kommt er sicher von der EA?");
+					Logger.error("Client gefunden! Dieser hat sich aber falsch angemeldet! " + "Kommt er sicher von der EA?");
 					continue;
 				}
 
 				String name;
 				if (init.length() == 1) {
-					System.err.println("Client hat sich angemeldet, jedoch keinen Namen hinterlassen. " + "Verbindung wird trotzdem aufgebaut.");
+					Logger.error("Client hat sich angemeldet, jedoch keinen Namen hinterlassen. " + "Verbindung wird trotzdem aufgebaut.");
 					name = "";
 				} else {
 					name = init.substring(2);

@@ -20,6 +20,7 @@
 package ea.edu.mine;
 
 import ea.*;
+import ea.internal.util.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -79,9 +80,10 @@ public abstract class FieldE {
 	 */
 	public FieldE (final int x, final int y, final int laenge) {
 		if (laenge < 10) {
-			System.err.println("ACHTUNG! Die Laenge dieses Feldes ist laecherlich klein (" + laenge + " Pixel).");
-			System.err.println("Ein groesseres stellt die Funktionsfaehigkeit sicher.");
+			Logger.error("ACHTUNG! Die Laenge dieses Feldes ist laecherlich klein (" + laenge + " Pixel).");
+			Logger.error("Ein groesseres stellt die Funktionsfaehigkeit sicher.");
 		}
+
 		Spiegel s = Spiegel.getSpiegel();
 		aussen = new Rechteck(x, y, laenge, laenge);
 		aussen.farbeSetzen(new Farbe(30, 30, 30));
@@ -110,9 +112,9 @@ public abstract class FieldE {
 					try {
 						rechtsclick.invoke(aim, new Object[] {});
 					} catch (IllegalAccessException ex) {
-						System.err.println("Achtung! Der Zugriff auf die Methode fuer On-Klicks hat nicht funktioniert. BUG!");
+						Logger.error("Achtung! Der Zugriff auf die Methode fuer On-Klicks hat nicht funktioniert. BUG!");
 					} catch (InvocationTargetException ex) {
-						System.err.println("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
+						Logger.error("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
 					}
 				}
 			}
@@ -126,9 +128,9 @@ public abstract class FieldE {
 		try {
 			linksclick.invoke(aim, new Object[] {});
 		} catch (IllegalAccessException ex) {
-			System.err.println("Achtung! Der Zugriff auf die Methode fuer On-Klicks hat nicht funktioniert. BUG!");
+			Logger.error("Achtung! Der Zugriff auf die Methode fuer On-Klicks hat nicht funktioniert. BUG!");
 		} catch (InvocationTargetException ex) {
-			System.err.println("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
+			Logger.error("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
 		}
 	}
 
@@ -192,7 +194,7 @@ public abstract class FieldE {
 	 */
 	public void figurEinsetzen (String datei) {
 		if (!datei.endsWith(".eaf")) {
-			System.err.println("Achtung! Der eingegebene Dateiname endet nicht mit .eaf!");
+			Logger.error("Achtung! Der eingegebene Dateiname endet nicht mit .eaf!");
 			return;
 		}
 		if (fig != null) {

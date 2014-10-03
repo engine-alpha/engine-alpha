@@ -76,7 +76,7 @@ public class NullClient extends PhysikClient {
 	 */
 	@Override
 	public boolean sprung (int kraft) {
-		System.err.println("Achtung! Ein fuer die Physik neutrales Objekt wurde zum Sprung gezwungen. Es passiert nichts.");
+		Logger.error("Achtung! Ein fuer die Physik neutrales Objekt wurde zum Sprung gezwungen. Es passiert nichts.");
 		return false;
 	}
 
@@ -89,7 +89,7 @@ public class NullClient extends PhysikClient {
 	 */
 	@Override
 	public void schwerkraftAktivSetzen (boolean aktiv) {
-		System.err.println("Achtung! Das Objekt, bei dem der Einfluss der Schwerkraft gesetzt werden sollte, ist ein neutrales " + "Objekt. Folglich macht der Aufruf dieser Methode keinen Sinn. Dafuer muesste das entsprechende Objekt ein Aktiv-Objekt sein!");
+		Logger.error("Achtung! Das Objekt, bei dem der Einfluss der Schwerkraft gesetzt werden sollte, ist ein neutrales " + "Objekt. Folglich macht der Aufruf dieser Methode keinen Sinn. Dafuer muesste das entsprechende Objekt ein Aktiv-Objekt sein!");
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class NullClient extends PhysikClient {
 	 */
 	@Override
 	public void kritischeTiefeSetzen (int tiefe) {
-		System.err.println("Achtung! Das Raum-Objekt, dem eine kritische Tiefe gegeben werden sollte, ist kein Aktiv-Objekt, sondern neutral! " + "Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		Logger.error("Achtung! Das Raum-Objekt, dem eine kritische Tiefe gegeben werden sollte, ist kein Aktiv-Objekt, sondern neutral! " + "Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -118,11 +118,11 @@ public class NullClient extends PhysikClient {
 	 * @param tiefe
 	 * 		Die kritische Tiefe, ab der das Interface informiert wird.
 	 *
-	 * @see kritischeTiefeSetzen
+	 * @see #kritischeTiefeSetzen(int)
 	 */
 	@Override
 	public void fallReagierbarAnmelden (FallReagierbar f, int tiefe) {
-		System.err.println("Achtung! Das Raum-Objekt, dem ein FallReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sondern neutral! " + "Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		Logger.error("Achtung! Das Raum-Objekt, dem ein FallReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sondern neutral! " + "Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class NullClient extends PhysikClient {
 	 */
 	@Override
 	public void stehReagierbarAnmelden (StehReagierbar s) {
-		System.err.println("Achtung! Das Raum-Objekt, dem ein StehReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sonder ein " + "neutrales Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
+		Logger.error("Achtung! Das Raum-Objekt, dem ein StehReagierbar-Listener zugewiesen werden sollte, ist kein Aktiv-Objekt, sonder ein " + "neutrales Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen!");
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class NullClient extends PhysikClient {
 	 */
 	@Override
 	public boolean steht () {
-		System.err.println("Achtung! Das Raum-Objekt, an dem das Stehen erfragt werden sollte, ist kein Aktiv-Objekt, sonder ein " + "neutrales Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen! Solange ist die Rueckgabe immer false.");
+		Logger.error("Achtung! Das Raum-Objekt, an dem das Stehen erfragt werden sollte, ist kein Aktiv-Objekt, sonder ein " + "neutrales Objekt! Bitte erst dieses Objekt aktiv machen, dann diese Methode aufrufen! Solange ist die Rueckgabe immer false.");
 		return false;
 	}
 
@@ -164,7 +164,7 @@ public class NullClient extends PhysikClient {
 	 */
 	@Override
 	public void schwerkraftSetzen (int schwerkraft) {
-		System.err.println("Achtung! Ein neutrales Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. " + "Nur Aktiv-Objekte koennen eine Schwerkraft gesetzt bekommen.");
+		Logger.error("Achtung! Ein neutrales Raum-Objekt sollte eine neue Schwerkraft verpasst bekommen. Das ist nicht moeglich. " + "Nur Aktiv-Objekte koennen eine Schwerkraft gesetzt bekommen.");
 	}
 
 	/**

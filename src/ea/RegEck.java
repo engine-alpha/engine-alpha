@@ -97,7 +97,7 @@ public class RegEck extends Geometrie {
 		Punkt letzter = new Punkt((float) ((Math.sin(winkel + (Math.PI / 2)) * radius)) + x, (float) ((Math.sin(winkel) * radius)) + y);
 		final Punkt erster = letzter;
 		for (int i = 0; i < ret.length - 1; i++) {
-			winkel = winkel + winkelSchritt;
+			winkel += winkelSchritt;
 			float koordX = (float) ((Math.sin(winkel + (Math.PI / 2)) * radius)) + x;
 			float koordY = (float) ((Math.sin(winkel) * radius)) + y;
 			Punkt neuer = new Punkt(koordX, koordY);

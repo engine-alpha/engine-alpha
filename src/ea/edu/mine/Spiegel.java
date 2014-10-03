@@ -20,6 +20,7 @@
 package ea.edu.mine;
 
 import ea.*;
+import ea.internal.util.Logger;
 
 /**
  * Diese Interne Klasse ermoeglicht folgendes:<br /> Das sich aus der Hauptklasse ableitende Spiel
@@ -101,7 +102,7 @@ public class Spiegel extends Game implements KlickReagierbar, RechtsKlickReagier
 		if (instanz == null) {
 			return instanz = new Spiegel(mine, breiteF, hoeheF, titelF);
 		}
-		System.err.println("Achtung! Es existiert schon ein Spiel! Ein zweites kann nicht erstellt werden.");
+		Logger.error("Achtung! Es existiert schon ein Spiel! Ein zweites kann nicht erstellt werden.");
 		return instanz;
 	}
 

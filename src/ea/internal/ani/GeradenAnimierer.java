@@ -20,6 +20,7 @@
 package ea.internal.ani;
 
 import ea.*;
+import ea.internal.util.Logger;
 
 /**
  * Animiert ein Raum-Objekt auf einer Geraden, bis eine gewisse Maximallaenge abgelaufen wurde, dann
@@ -63,7 +64,7 @@ public class GeradenAnimierer extends Animierer {
 		super(ziel, schritte, false, m, listener);
 		bewegung = new Vektor(ziel.zentrum(), richtung).teilen(AnimationsManager.intervall(geschwindigkeit / schritte));
 		if (dauer <= 0) {
-			System.err.println("Die Dauer fuer die Geraden-Animation kann nie 0 oder negativ sein!!!");
+			Logger.error("Die Dauer fuer die Geraden-Animation kann nie 0 oder negativ sein!!!");
 			ende = 0;
 		} else {
 			ende = dauer / schritte;

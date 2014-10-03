@@ -69,10 +69,7 @@ public class Physik extends Manager implements Ticker {
 	private int runde = 1;
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Physik
-	 *
-	 * @param kapazitaet
-	 * 		Gibt an, wie viele Kollisionspartner maximal merkbar sind
+	 * Konstruktor.
 	 */
 	private Physik () {
 		super("Physik-Management");
@@ -149,7 +146,7 @@ public class Physik extends Manager implements Ticker {
 	/**
 	 * Meldet einen Gravitator wieder ab - Vorausgesetzt er war auch angemeldet.
 	 *
-	 * @param p
+	 * @param g
 	 * 		Der abzumeldende Gravitator
 	 */
 	public void aktivAbmelden (Gravitator g) {
@@ -304,7 +301,7 @@ public class Physik extends Manager implements Ticker {
 	 *
 	 * @return Die noch noetige Verschiebung, um das Bounding-Rechteck sicher zu entblocken.
 	 *
-	 * @see entblocken(BoundingRechteck)
+	 * @see #entblocken(BoundingRechteck)
 	 */
 	private synchronized Vektor entblocken (BoundingRechteck r, Vektor letzte) {
 		for (Passivator p : passive) {
@@ -391,22 +388,7 @@ public class Physik extends Manager implements Ticker {
 			r2 = r;
 		}
 		kollisionsListe.add(new Auftrag(r1, r2, k, code));
-	}	/**
-	 * In diesem Tick findet ein DELTA-t der Physik statt (= 1ms).
-	 */
-	@Override
-	public void tick () {
-		for (Gravitator g : gravitatoren) {
-			g.tick(runde);
-		}
-		if (runde == 10) {
-			runde = 1;
-		} else {
-			runde++;
-		}
 	}
-
-	// <editor-fold defaultstate="collapsed" desc="KollisionReagierbar">
 
 	/**
 	 * Sorgt dafuer, das saemtliche Kollsiionsueberwachungsauftraege eines
@@ -426,6 +408,23 @@ public class Physik extends Manager implements Ticker {
 			kollisionsListe.remove(a);
 		}
 	}
+
+	/**
+	 * In diesem Tick findet ein DELTA-t der Physik statt (= 1ms).
+	 */
+	@Override
+	public void tick () {
+		for (Gravitator g : gravitatoren) {
+			g.tick(runde);
+		}
+		if (runde == 10) {
+			runde = 1;
+		} else {
+			runde++;
+		}
+	}
+
+	// <editor-fold defaultstate="collapsed" desc="KollisionReagierbar">
 
 	/**
 	 * Die Auftraege, der Kollisionstests
@@ -488,6 +487,8 @@ public class Physik extends Manager implements Ticker {
 			return listener == k;
 		}
 	}// </editor-fold>
+
+
 
 
 }

@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.util.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,7 +99,7 @@ public class NetzwerkInterpreter extends Thread {
 
 				process(got);
 			} catch (IOException e) {
-				System.err.println("Konnte nicht vom Kommunikationspartner einlesen.");
+				Logger.error("Konnte nicht vom Kommunikationspartner einlesen.");
 				connectionActive = false;
 			}
 		}
@@ -105,7 +107,7 @@ public class NetzwerkInterpreter extends Thread {
 		try {
 			reader.close();
 		} catch (IOException e) {
-			System.err.println("Konnte die Verbindung nicht schließen.");
+			Logger.error("Konnte die Verbindung nicht schließen.");
 		}
 	}
 
@@ -208,7 +210,7 @@ public class NetzwerkInterpreter extends Thread {
 		try {
 			reader.close();
 		} catch (IOException e1) {
-			System.err.println("Konnte den Kommunikationskanal nicht mehr schließen.");
+			Logger.error("Konnte den Kommunikationskanal nicht mehr schließen.");
 		}
 
 		connectionActive = false;

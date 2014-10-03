@@ -19,6 +19,8 @@
 
 package ea.edu.mine;
 
+import ea.internal.util.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -104,9 +106,9 @@ public abstract class MineGameE {
 		try {
 			taste.invoke(aim, new Object[] {code});
 		} catch (IllegalAccessException ex) {
-			System.err.println("Achtung! Der Zugriff auf die Methode fuer Tasten hat nicht funktioniert. BUG!");
+			Logger.error("Achtung! Der Zugriff auf die Methode fuer Tasten hat nicht funktioniert. BUG!");
 		} catch (InvocationTargetException ex) {
-			System.err.println("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
+			Logger.error("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
 		}
 	}
 
@@ -128,9 +130,9 @@ public abstract class MineGameE {
 		try {
 			klick.invoke(aim, new Object[] {x, y});
 		} catch (IllegalAccessException ex) {
-			System.err.println("Achtung! Der Zugriff auf die Methode fuer Klicks hat nicht funktioniert. BUG!");
+			Logger.error("Achtung! Der Zugriff auf die Methode fuer Klicks hat nicht funktioniert. BUG!");
 		} catch (InvocationTargetException ex) {
-			System.err.println("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
+			Logger.error("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
 		}
 	}
 
@@ -152,9 +154,9 @@ public abstract class MineGameE {
 		try {
 			klickR.invoke(aim, new Object[] {x, y});
 		} catch (IllegalAccessException ex) {
-			System.err.println("Achtung! Der Zugriff auf die Methode fuer Klicks hat nicht funktioniert. BUG!");
+			Logger.error("Achtung! Der Zugriff auf die Methode fuer Klicks hat nicht funktioniert. BUG!");
 		} catch (InvocationTargetException ex) {
-			System.err.println("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
+			Logger.error("Achtung! Das Objekt, an dem die Methode aufzurufen war, besass selbige nicht. BUG!");
 		}
 	}
 }

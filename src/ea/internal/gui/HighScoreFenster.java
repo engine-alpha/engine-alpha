@@ -19,6 +19,8 @@
 
 package ea.internal.gui;
 
+import ea.internal.util.Logger;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -50,7 +52,7 @@ public class HighScoreFenster extends JDialog {
 		super(parent, titel, true);
 
 		if (namen.length != punkte.length) {
-			System.err.println("Achtung!! Die eingegebenen String- und int-Arrays haben nicht die selbe Laenge!!!");
+			Logger.error("Achtung!! Die eingegebenen String- und int-Arrays haben nicht die selbe Laenge!!!");
 			return;
 		}
 

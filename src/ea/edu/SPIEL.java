@@ -125,7 +125,7 @@ public class SPIEL {
 	public void tick () {
 		// Einfache Bildschirmausgabe. Kann spaeter in Subklasse beliebig ueberschreiben werden.
 		tick = !tick; // toggle
-		System.out.println(tick ? "Tick!" : "Tack!");
+		Logger.info(tick ? "Tick!" : "Tack!");
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class SPIEL {
 	@SuppressWarnings ( "unused" )
 	public void klickReagieren (int x, int y) {
 		// Einfache Bildschirmausgabe. Kann spaeter in Subklasse beliebig ueberschrieben werden.
-		System.out.println("Klick bei (" + x + ", " + y + ").");
+		Logger.info("Klick bei (" + x + ", " + y + ").");
 	}
 
 	/**

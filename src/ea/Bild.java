@@ -208,12 +208,14 @@ public class Bild extends Raum {
 	/**
 	 * Rotiert das Objekt um eine bereits definierte Rotation.
 	 *
+	 * TODO: Unterschied zu #drehen erklären
+	 * FIXME: Es wird keine neue Breite gesetzt, aber die Breite verändert sich, falls nicht um 90 * n Grad gedreht wird
+	 *
 	 * @param rot
 	 * 		Das Rotationsobjekt, das die Rotation beschreibt
 	 *
 	 * @see Rotation
 	 */
-	// TODO Unterschied zu #drehen erklären
 	public void rotieren (Rotation rot) {
 		img = rotieren(img, rot.winkelBogen());
 	}

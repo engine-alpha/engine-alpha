@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.util.Logger;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 
@@ -83,7 +85,7 @@ public class Sender implements SenderInterface {
 	 */
 	boolean sende (String s) { // package private, weil NetzwerkInterpreter das braucht!
 		if (!active) {
-			System.err.println("Kann nach dem Schließen nicht mehr senden.");
+			Logger.error("Kann nach dem Schließen nicht mehr senden.");
 			return false;
 		}
 
@@ -92,7 +94,7 @@ public class Sender implements SenderInterface {
 			writer.newLine();
 			writer.flush();
 		} catch (IOException e) {
-			System.err.println("Es gab einen internen Fehler beim Schreiben.");
+			Logger.error("Es gab einen internen Fehler beim Schreiben.");
 			return false;
 		}
 
@@ -151,7 +153,7 @@ public class Sender implements SenderInterface {
 		try {
 			writer.close();
 		} catch (IOException e) {
-			System.err.println("Konnte die Verbindung nicht schließen.");
+			Logger.error("Konnte die Verbindung nicht schließen.");
 		}
 	}
 }

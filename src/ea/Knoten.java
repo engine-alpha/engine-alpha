@@ -25,6 +25,7 @@ import ea.internal.gra.Listung;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -208,22 +209,6 @@ public class Knoten extends Raum implements Listung {
 	}
 
 	/**
-	 * Setzt die Durchsichtigkeit für jedes angemeldete Objekt.
-	 *
-	 * @param opacity {@inheritDoc}
-	 */
-	@Override
-	public void setOpacity (float opacity) {
-		try {
-			for (int i = list.size() - 1; i >= 0; i--) {
-				list.get(i).setOpacity(opacity);
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// Wahrscheinlich wurde die Liste geleert.
-		}
-	}
-
-	/**
 	 * Die dimension()-Methode.<br /> Gibt ein <code>BoundingRechteck</code> aus, das alle
 	 * Komponente dieses Knotens bedeckt.
 	 *
@@ -282,24 +267,36 @@ public class Knoten extends Raum implements Listung {
 	}
 
 	/**
-	 * Berechnet exakter alle Rechteckigen Flaechen, auf denen dieses Objekt liegt.<br /> Diese
+	 * Berechnet exakter alle rechteckigen Flächen, auf denen dieses Objekt liegt.<br /> Diese
 	 * Methode wird von komplexeren Gebilden, wie geometrischen oder Listen ueberschrieben.
 	 *
-	 * @return Alle Rechtecksflaechen, auf denen dieses Objekt liegt. Ist standartisiert ein Array
-	 * der Groesse 1 mit der <code>dimension()</code> als Inhalt.
+	 * @return Alle Rechtecksflächen, auf denen dieses Objekt liegt. Ist standardisiert ein Array
+	 * der Größe 1 mit der <code>dimension()</code> als Inhalt.
 	 */
 	@Override
 	public BoundingRechteck[] flaechen () {
-		ArrayList<BoundingRechteck> data = new ArrayList<BoundingRechteck>();
+		ArrayList<BoundingRechteck> data = new ArrayList<>();
 
 		for (int i = list.size() - 1; i >= 0; i--) {
-			BoundingRechteck[] arr = list.get(i).flaechen();
-
-			for (BoundingRechteck br : arr) {
-				data.add(br);
-			}
+			data.addAll(Arrays.asList(list.get(i).flaechen()));
 		}
 
 		return data.toArray(new BoundingRechteck[data.size()]);
+	}
+
+	/**
+	 * Setzt die Durchsichtigkeit für jedes angemeldete Objekt.
+	 *
+	 * @param opacity {@inheritDoc}
+	 */
+	@Override
+	public void setOpacity (float opacity) {
+		try {
+			for (int i = list.size() - 1; i >= 0; i--) {
+				list.get(i).setOpacity(opacity);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// Wahrscheinlich wurde die Liste geleert.
+		}
 	}
 }

@@ -43,9 +43,7 @@ public class Passivator extends PhysikClient {
 	 * Konstruktor.
 	 *
 	 * @param ziel
-	 * 		Das zu ueberwachende Raum-Objekt
-	 * @param p
-	 * 		Die Aktive Physik
+	 * 		zu überwachendes Raum-Objekt
 	 */
 	public Passivator (Raum ziel) {
 		super(ziel);
@@ -130,7 +128,7 @@ public class Passivator extends PhysikClient {
 	 * @param tiefe
 	 * 		Die kritische Tiefe, ab der das Interface informiert wird.
 	 *
-	 * @see kritischeTiefeSetzen
+	 * @see #kritischeTiefeSetzen(int)
 	 */
 	@Override
 	public void fallReagierbarAnmelden (FallReagierbar f, int tiefe) {

@@ -49,7 +49,7 @@ public class MechanikClient extends PhysikClient implements Ticker {
 	 * Das Intervall, in dem die Spielmechanik upgedated wird <b>in Sekunden</b>. Wird benutzt für
 	 * die Extrapolation. Orientiert sich an der <b>Update-Geschwindigkeit</b> der Zeichenebene
 	 *
-	 * @see ea.internal.gra.Zeichner.UPDATE_INTERVALL
+	 * @see ea.internal.gra.Zeichner#UPDATE_INTERVALL
 	 */
 	static final float DELTA_T = (float) ea.internal.gra.Zeichner.UPDATE_INTERVALL * 0.001f;
 

@@ -26,6 +26,7 @@ import ea.internal.gui.Fenster;
 import ea.internal.phy.*;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Locale;
 
 /**
@@ -35,7 +36,7 @@ import java.util.Locale;
  *
  * @author Michael Andonie, Niklas Keller
  */
-public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
+public abstract class Raum implements Serializable, Comparable<Raum> {
 	/**
 	 * Ein einfacher Farbzyklus, der fuer die Leucht-Animationen genommen wird
 	 */
@@ -1357,6 +1358,7 @@ public abstract class Raum implements java.io.Serializable, Comparable<Raum> {
 	 * @see #zIndex(int)
 	 */
 	@Override
+	@NoExternalUse
 	public int compareTo (Raum r) {
 		if (zIndex < r.zIndex) {
 			return 1;

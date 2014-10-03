@@ -58,14 +58,12 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	private Color alte = Color.white;
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Geometrie
+	 * Konstruktor.
 	 *
-	 * @param anzahlFormen
-	 * 		Die Anzahl der Dreiecke, aus denen die Form bestehen wird.
 	 * @param x
-	 * 		Die bestimmende X-Koordinate
+	 * 		bestimmende x-Koordinate
 	 * @param y
-	 * 		Die bestimmende Y-Koordinate
+	 * 		bestimmende y-Koordinate
 	 */
 	public Geometrie (float x, float y) {
 		position = new Punkt(x, y);
@@ -219,7 +217,9 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	@Override
 	public void leuchtSchritt () {
 		for (int i = 0; i < formen.length; i++) {
-			formen[i].setColor(farbzyklus[leuchtzaehler = ((++leuchtzaehler) % farbzyklus.length)]);
+			leuchtzaehler++;
+			leuchtzaehler %= farbzyklus.length;
+			formen[i].setColor(farbzyklus[leuchtzaehler]);
 		}
 	}
 

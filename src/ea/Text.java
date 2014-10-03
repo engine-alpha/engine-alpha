@@ -219,7 +219,7 @@ public class Text extends Raum implements Leuchtend {
 		} else {
 			if (!Manager.fontExistiert(fontName)) {
 				fontName = "SansSerif";
-				System.err.println("Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
+				Logger.error("Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
 			}
 			this.font = new Font(fontName, schriftart, groesse);
 		}
@@ -298,7 +298,7 @@ public class Text extends Raum implements Leuchtend {
 		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].equals(akt)) {
-					System.err.println("Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
+					Logger.error("Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
 					continue;
 				}
 				if (files[i].isDirectory()) {
@@ -327,7 +327,7 @@ public class Text extends Raum implements Leuchtend {
 		} else {
 			if (!Manager.fontExistiert(fontName)) {
 				fontName = "SansSerif";
-				System.err.println("Achtung! Die gewuenschte Schriftart existiert weder als geladene Sonderdatei noch im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
+				Logger.error("Achtung! Die gewuenschte Schriftart existiert weder als geladene Sonderdatei noch im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
 			}
 			return new Font(fontName, 0, 12);
 		}
@@ -343,20 +343,18 @@ public class Text extends Raum implements Leuchtend {
 	 * dient diese Methode der Praevention von Verwirrung, wegen "nicht darstellbarer" Fonts.
 	 */
 	public static void geladeneSchriftartenAusgeben () {
-		System.out.println("Protokoll aller aus dem Projektordner geladener Fontdateien");
-		System.out.println();
+		Logger.info("Protokoll aller aus dem Projektordner geladener Fontdateien");
 
 		if (eigene.length == 0) {
-			System.out.println("Es wurden keine \".ttf\"-Dateien im Projektordner gefunden");
+			Logger.info("Es wurden keine \".ttf\"-Dateien im Projektordner gefunden");
 		} else {
-			System.out.println("Es wurden " + eigene.length + " \".ttf\"-Dateien im Projektordner gefunden.");
-			System.out.println("Diese sind unter folgenden Namen abrufbar:");
-			for (int i = 0; i < eigene.length; i++) {
-				System.out.println(eigene[i].getName());
+			Logger.info("Es wurden " + eigene.length + " \".ttf\"-Dateien im Projektordner gefunden.");
+			Logger.info("Diese sind unter folgenden Namen abrufbar:");
+
+			for (Font font : eigene) {
+				Logger.info(font.getName());
 			}
 		}
-
-		System.out.println("Ende des Protokolls");
 	}
 
 	/**
@@ -619,7 +617,9 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	@Override
 	public void leuchtSchritt () {
-		this.setzeFarbe(farbzyklus[leuchtzaehler = ((++leuchtzaehler) % farbzyklus.length)]);
+		leuchtzaehler++;
+		leuchtzaehler %= farbzyklus.length;
+		this.setzeFarbe(farbzyklus[leuchtzaehler]);
 	}
 
 	/**
@@ -670,6 +670,6 @@ public class Text extends Raum implements Leuchtend {
 	 * @see #getAnker()
 	 */
 	public enum Anker {
-		LINKS, MITTE, RECHTS;
+		LINKS, MITTE, RECHTS
 	}
 }

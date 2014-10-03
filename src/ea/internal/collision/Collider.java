@@ -36,7 +36,7 @@ public abstract class Collider implements Cloneable {
 	 * Der Offset dieses Colliders. Die Verwendung des Offsets hängt von den implementierenden
 	 * Subklassen ab.
 	 *
-	 * @see #offsetSetzen(Punkt)
+	 * @see #offsetSetzen(ea.Vektor)
 	 */
 	protected Vektor offset = Vektor.NULLVEKTOR;
 

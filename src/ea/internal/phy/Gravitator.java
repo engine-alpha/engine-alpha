@@ -83,9 +83,7 @@ public class Gravitator extends PhysikClient {
 	 * Konstruktor.
 	 *
 	 * @param ziel
-	 * 		Das Ziel des Gravitators: Dieses Objekt wird von ihm ueberwacht.
-	 * @param p
-	 * 		Die Aktive Physik
+	 * 		Ziel des Gravitators: Dieses Objekt wird von ihm überwacht
 	 */
 	public Gravitator (Raum ziel) {
 		super(ziel);
@@ -169,7 +167,7 @@ public class Gravitator extends PhysikClient {
 	@Override
 	public boolean sprung (int kraft) {
 		if (!hatSchwerkraft) {
-			System.err.println("Achtung! Ein Raum-Objekt, fuer das KEINE Schwerkraft gilt, kann nicht springen!");
+			Logger.error("Achtung! Ein Raum-Objekt, fuer das KEINE Schwerkraft gilt, kann nicht springen!");
 			return false;
 		}
 		if (steht()) {
@@ -382,7 +380,7 @@ public class Gravitator extends PhysikClient {
 	 * Vollfuehrt portionsweises (in Pixelschritten) Verschieben auf der X-Richtung.
 	 *
 	 * @param dX
-	 * 		Die X-Aenderung (Delta-X)
+	 * 		Die x-Änderung (Delta-X)
 	 *
 	 * @return <code>true</code>, wenn die Bewegung in X-Richtung ohne Passiv-Block moeglich war,
 	 * sonst <code>false</code>.
@@ -412,8 +410,8 @@ public class Gravitator extends PhysikClient {
 	 * Vollfuehrt portionsweises (in Pixelschritten) Verschieben auf der Y-Richtung unter
 	 * beruecksichtung von SChwerkrafteigenschaften.
 	 *
-	 * @param dX
-	 * 		Die Y-Aenderung (Delta-Y)
+	 * @param dY
+	 * 		Die y-Änderung (Delta-Y)
 	 *
 	 * @return <code>true</code>, wenn die Bewegung in Y-Richtung ohne Passiv-Block moeglich war,
 	 * sonst <code>false</code>.

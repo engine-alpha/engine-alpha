@@ -632,7 +632,7 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void mausAnmelden (Maus maus, boolean listenerUebernehmen) {
 		if (maus == null) {
-			System.err.println("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
+			Logger.error("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
 			return;
 		}
 
@@ -758,9 +758,7 @@ public abstract class Game implements TastenReagierbar {
 	public void screenshot (final String pfad, final BoundingRechteck ausschnitt) {
 		final String ext = pfad.toLowerCase().substring(pfad.length() - 3);
 
-		if (ext.equals("png") || ext.equals("jpg")) {
-			// ok, just pass
-		} else {
+		if (!ext.equals("png") && !ext.equals("jpg")) {
 			throw new IllegalArgumentException("Pfad muss auf .jpg oder .png enden!");
 		}
 

@@ -127,7 +127,7 @@ public class CompatDateiManager {
 
 			// check type info
 			if (line.compareTo("typ:Integer") != 0) {
-				System.err.println("Die geladene .eaa-Datei beschreibt kein int-Array oder ist beschädigt!");
+				Logger.error("Die geladene .eaa-Datei beschreibt kein int-Array oder ist beschädigt!");
 				return null;
 			}
 
