@@ -24,6 +24,7 @@ import ea.internal.ani.GeradenAnimierer;
 import ea.internal.ani.KreisAnimierer;
 import ea.internal.ani.StreckenAnimierer;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -46,7 +47,7 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	/**
 	 * Eine Liste mit allen aktive Animierern.
 	 */
-	private CopyOnWriteArrayList<Animierer> animierer = new CopyOnWriteArrayList<>();
+	private List<Animierer> animierer = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Konstruktor. Nur Intern benutzt, da Singleton.

@@ -81,7 +81,7 @@ public class Figur extends Raum {
 	private boolean spiegelY = false;
 
 	static {
-		liste = new ArrayList<Figur>();
+		liste = new ArrayList<>();
 		Manager.standard.anmelden((new Ticker() {
 			int runde = 0;
 

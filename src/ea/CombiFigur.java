@@ -182,7 +182,7 @@ public class CombiFigur extends Raum {
 	 */
 	@Override
 	public BoundingRechteck[] flaechen () {
-		ArrayList<BoundingRechteck> list = new ArrayList<BoundingRechteck>();
+		ArrayList<BoundingRechteck> list = new ArrayList<>();
 
 		for (ActionFigur f : figuren)
 			list.add(f.dimension());

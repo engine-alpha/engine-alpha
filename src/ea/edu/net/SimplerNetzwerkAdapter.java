@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class SimplerNetzwerkAdapter {
 
-	private final ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<String>();
+	private final ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<>();
 
 	protected final Empfaenger messageUpdater = new Empfaenger() {
 		@Override

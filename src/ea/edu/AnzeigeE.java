@@ -96,9 +96,9 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	public AnzeigeE (int breite, int hoehe) {
 		links = new Text(0, 10, "0");
 		rechts = new Text(0, 10, "0");
-		aufgaben = new ArrayList<TastenAuftrag>();
-		aufgabenT = new ArrayList<Auftrag>();
-		aufgabenKlick = new ArrayList<KlickAuftrag>();
+		aufgaben = new ArrayList<>();
+		aufgabenT = new ArrayList<>();
+		aufgabenKlick = new ArrayList<>();
 		FensterE.getFenster(breite, hoehe).wurzel.add(links, rechts, strich = new Text(0, 10, "-"));
 		FensterE.getFenster(breite, hoehe).tastenReagierbarAnmelden(this);
 		super.anmelden(this, 1);
@@ -409,9 +409,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		public final void ausfuehren () {
 			try {
 				methode.invoke(client, new Object[0]);
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (InvocationTargetException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}

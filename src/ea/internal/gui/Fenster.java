@@ -27,7 +27,8 @@ import ea.internal.util.Logger;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 /**
  * Das Fenster als Oberfenster.<br /> In ihm fängt sich die Maus, sie kann also das Fenster nicht
@@ -61,12 +62,12 @@ public class Fenster extends Frame {
 	/**
 	 * Die Liste aller TastenListener.
 	 */
-	private final ArrayList<TastenReagierbar> listener = new ArrayList<>();
+	private final java.util.List<TastenReagierbar> listener = new ArrayList<>();
 
 	/**
 	 * Die Liste aller TastenLosgelassen-Listener
 	 */
-	private final ArrayList<TastenLosgelassenReagierbar> losListener = new ArrayList<>();
+	private final List<TastenLosgelassenReagierbar> losListener = new ArrayList<>();
 
 	/**
 	 * Gibt an, ob die aktuelle (relative) Maus innerhalb des passablen Fensterbereiches liegt.<br
@@ -695,11 +696,7 @@ public class Fenster extends Frame {
 	 * Maus angemeldet, ist das Ergebnis ebenfalls FALSE.
 	 */
 	public boolean mausBewegt () {
-		if (hatMaus()) {
-			return maus.bewegend();
-		}
-
-		return false;
+		return hatMaus() &&  maus.bewegend();
 	}
 
 	/**

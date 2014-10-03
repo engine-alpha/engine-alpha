@@ -77,12 +77,16 @@ public class CompatDateiManager {
 				String[] split = line.split(":", 2);
 				String erg;
 
-				if (split[1].equals("%%")) {
-					erg = null;
-				} else if (split[1].equals("~~")) {
-					erg = "";
-				} else {
-					erg = split[1];
+				switch (split[1]) {
+					case "%%":
+						erg = null;
+						break;
+					case "~~":
+						erg = "";
+						break;
+					default:
+						erg = split[1];
+						break;
 				}
 
 				ret[i] = erg;

@@ -263,7 +263,7 @@ public class Bild extends Raum {
 				g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), null);
 			} else {
 				// Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmaße
-				TexturePaint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX(), -r.y + position.realY(), img.getWidth(), img.getHeight()));
+				Paint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX(), -r.y + position.realY(), img.getWidth(), img.getHeight()));
 				// Texturfarbe setzen
 				g.setPaint(tp);
 				// Rechteck füllen

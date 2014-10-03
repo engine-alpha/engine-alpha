@@ -26,6 +26,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 // http://michieldemey.be/blog/network-discovery-using-udp-broadcast/
 public class DiscoveryServer extends Thread {
@@ -81,7 +82,7 @@ public class DiscoveryServer extends Thread {
 		}
 	}
 
-	private static ArrayList<String> getLocalAddresses () {
+	private static List<String> getLocalAddresses () {
 		ArrayList<String> addrs = new ArrayList<>();
 
 		addrs.add("127.0.0.1");

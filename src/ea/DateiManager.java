@@ -28,6 +28,8 @@ import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Der Dateimanager liest und schreibt Dateien und beachtet dabei die jeweiligen System-abhängigen
@@ -60,7 +62,7 @@ public class DateiManager {
 	/**
 	 * Eine Liste, die alle bereits verwendeten Farben einmalig listet
 	 */
-	private static final ArrayList<Color> colors = new ArrayList<>();
+	private static final List<Color> colors = new ArrayList<>();
 
 	static {
 		colors.add(Color.RED);
@@ -181,7 +183,7 @@ public class DateiManager {
 			}
 
 			String[] metaInfos = line.split(",");
-			HashMap<String, String> meta = new HashMap<>();
+			Map<String, String> meta = new HashMap<>();
 
 			for (String metaInfo : metaInfos) {
 				String[] info = metaInfo.split(":");
@@ -299,7 +301,7 @@ public class DateiManager {
 			}
 
 			String[] metaInfos = line.split(",");
-			HashMap<String, String> meta = new HashMap<>();
+			Map<String, String> meta = new HashMap<>();
 
 			for (String metaInfo : metaInfos) {
 				String[] info = metaInfo.split(":");

@@ -22,6 +22,7 @@ package ea.internal.collision;
 import ea.Punkt;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Eine Aggregation von Collidern.
@@ -33,7 +34,7 @@ public class ColliderGroup extends Collider {
 	/**
 	 * Die Liste der Collider, die zu dieser Collider-Group gehören.
 	 */
-	private ArrayList<Collider> colliders = new ArrayList<Collider>();
+	private List<Collider> colliders = new ArrayList<>();
 
 	/**
 	 * {@inheritDoc}

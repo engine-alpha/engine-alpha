@@ -19,6 +19,7 @@
 
 package ea;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -31,7 +32,7 @@ public class LeuchtMacher implements Ticker {
 	/**
 	 * Die Liste aller Leuchter.
 	 */
-	private CopyOnWriteArrayList<Leuchtend> leuchter = new CopyOnWriteArrayList<Leuchtend>();
+	private List<Leuchtend> leuchter = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Konstruktor fuer Objekte der Klasse LeuchtMacher.<br /> <b>Dieser sollte niemals vom

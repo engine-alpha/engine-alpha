@@ -51,17 +51,17 @@ public class Physik extends Manager implements Ticker {
 	/**
 	 * Die Liste aller Kollisionstestauftraege
 	 */
-	private ArrayList<Auftrag> kollisionsListe = new ArrayList<Auftrag>();
+	private ArrayList<Auftrag> kollisionsListe = new ArrayList<>();
 
 	/**
 	 * Eine Liste aller Passiven Objekte.
 	 */
-	private CopyOnWriteArrayList<Passivator> passive = new CopyOnWriteArrayList<Passivator>();
+	private CopyOnWriteArrayList<Passivator> passive = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Eine Liste aller Gravitatoren (indirekt Aktivobjekte)
 	 */
-	private CopyOnWriteArrayList<Gravitator> gravitatoren = new CopyOnWriteArrayList<Gravitator>();
+	private CopyOnWriteArrayList<Gravitator> gravitatoren = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Der Rundenzaehler der Physik
@@ -398,7 +398,7 @@ public class Physik extends Manager implements Ticker {
 	 * 		Das Interface, an dem jede Ueberwachung von Raum-Objekten abgebrochen werden soll.
 	 */
 	public void entfernen (KollisionsReagierbar k) {
-		ArrayList<Auftrag> out = new ArrayList<Auftrag>();
+		ArrayList<Auftrag> out = new ArrayList<>();
 		for (Auftrag a : kollisionsListe) {
 			if (a.benachrichtigt(k)) {
 				out.add(a);
