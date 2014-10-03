@@ -501,6 +501,7 @@ public abstract class Game implements TastenReagierbar {
 		try {
 			Thread.sleep(millisekunden);
 		} catch (InterruptedException e) {
+			Logger.error(e.getLocalizedMessage());
 		}
 	}
 

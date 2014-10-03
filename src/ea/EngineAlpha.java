@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.util.Logger;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -64,6 +66,7 @@ public class EngineAlpha extends Frame {
 		try {
 			setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
 		} catch (IOException e) {
+			Logger.error(e.getLocalizedMessage());
 		}
 
 		this.addWindowListener(new WindowAdapter() {

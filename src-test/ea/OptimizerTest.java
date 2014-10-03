@@ -1,5 +1,6 @@
 package ea;
 
+import ea.internal.util.Logger;
 import ea.internal.util.Optimizer;
 import org.junit.Test;
 
@@ -17,6 +18,7 @@ public class OptimizerTest {
 		try {
 			img = ImageIO.read(EngineAlpha.class.getResource("/assets/logo.png"));
 		} catch (Exception e) {
+			Logger.error(e.getLocalizedMessage());
 		}
 
 		assertNotNull(img);

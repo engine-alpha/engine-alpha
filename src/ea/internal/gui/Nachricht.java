@@ -19,6 +19,8 @@
 
 package ea.internal.gui;
 
+import ea.internal.util.Logger;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -69,11 +71,14 @@ public class Nachricht extends JDialog {
 		});
 		p.add(b);
 		getContentPane().add(p, BorderLayout.SOUTH);
+
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			SwingUtilities.updateComponentTreeUI(this);
 		} catch (Exception e) {
+			Logger.error(e.getLocalizedMessage());
 		}
+
 		pack();
 		setVisible(true);
 	}

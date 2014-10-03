@@ -25,6 +25,7 @@ import ea.internal.util.Logger;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Random;
 
 /**
@@ -371,7 +372,8 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 				}
 			}
 			runde++;
-		} catch (java.util.ConcurrentModificationException e) {
+		} catch (ConcurrentModificationException e) {
+			// TODO: Add Handling?
 		}
 	}
 
