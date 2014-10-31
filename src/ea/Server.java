@@ -218,7 +218,11 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 		return this.broadcast;
 	}
 
-	CopyOnWriteArrayList<NetzwerkVerbindung> getVerbindungen () {
+	/**
+	 * Gibt die Liste der Netzwerkverbindungen aus, die am diesem Server liegen.
+	 * @return	Die Liste aller
+	 */
+	public CopyOnWriteArrayList<NetzwerkVerbindung> getVerbindungen () {
 		return this.verbindungen;
 	}
 

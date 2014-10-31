@@ -83,7 +83,7 @@ public class Sender implements SenderInterface {
 	 * @return <code>true</code>, wenn die Nachricht erfolgreich gesendet werden konnte, sonst
 	 * <code>false</code>.
 	 */
-	boolean sende (String s) { // package private, weil NetzwerkInterpreter das braucht!
+	public boolean sende (String s) { // package private, weil NetzwerkInterpreter das braucht!
 		if (!active) {
 			Logger.error("Kann nach dem Schließen nicht mehr senden.");
 			return false;
