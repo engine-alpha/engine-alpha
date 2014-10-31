@@ -491,11 +491,12 @@ public class Fenster extends Frame {
 
 		if (hatMaus()) {
 			if (maus.absolut() || maus.bewegend()) {
-				Punkt p = maus.klickAufZeichenebene();
-				maus.klick(p.x(), p.y(), links, losgelassen);
+				Punkt pu = maus.klickAufZeichenebene();
+				maus.klick(pu, links, losgelassen);
 			} else { // FIXME REVIEW BUG
-				maus.klick(maus.getImage().positionX() + getCam().getX(), maus.getImage().positionY() + getCam().getY(), links, losgelassen);
-			}
+				//maus.klick(maus.getImage().positionX() + getCam().getX(), maus.getImage().positionY() + getCam().getY(), links, losgelassen);
+				maus.klick(maus.getImage().position().verschobeneInstanz(getCam().position().position().alsVektor()), links, losgelassen);
+			} 
 		}
 	}
 
@@ -509,8 +510,8 @@ public class Fenster extends Frame {
 		if (hatMaus()) {
 			Insets insets = this.getInsets();
 
-			int centerX = zeichner.getWidth() / 2;
-			int centerY = zeichner.getHeight() / 2;
+			float centerX = zeichner.getWidth() / 2;
+			float centerY = zeichner.getHeight() / 2;
 
 			Point windowLocation = getLocation();
 			Point mousePosition = e.getPoint();
@@ -523,11 +524,11 @@ public class Fenster extends Frame {
 				}
 
 				if (lastMousePosition != null) {
-					maus.bewegt(mousePosition.x - lastMousePosition.x, mousePosition.y - lastMousePosition.y);
+					maus.bewegt(new Vektor(mousePosition.x - lastMousePosition.x, mousePosition.y - lastMousePosition.y));
 				}
 			} else {
-				int dx = mousePosition.x - centerX;
-				int dy = mousePosition.y - centerY;
+				float dx = mousePosition.x - centerX;
+				float dy = mousePosition.y - centerY;
 
 				BoundingRechteck bounds = mausBild.dimension();
 				Punkt hotspot = maus.hotSpot();
@@ -546,13 +547,14 @@ public class Fenster extends Frame {
 				if (!zeichner.masse().istIn(hotspotY)) {
 					dy = 0;
 				}
-
-				mausBild.verschieben(new Vektor(dx, dy));
-				maus.bewegt(dx, dy);
+				
+				Vektor bewegung = new Vektor(dx, dy);
+				mausBild.verschieben(bewegung);
+				maus.bewegt(bewegung);
 			}
 
-			robot.mouseMove(windowLocation.x + insets.left + centerX, windowLocation.y + insets.top + centerY);
-			lastMousePosition = new Point(centerX, centerY);
+			robot.mouseMove((int)(windowLocation.x + insets.left + centerX), (int)(windowLocation.y + insets.top + centerY));
+			lastMousePosition = new Point((int)centerX, (int)centerY);
 		}
 	}
 

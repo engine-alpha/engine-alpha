@@ -107,7 +107,8 @@ public abstract class FieldE {
 			}
 		}, aussen);
 		s.maus().rechtsKlickReagierbarAnmelden(new RechtsKlickReagierbar() {
-			public void rechtsKlickReagieren (int x, int y) {
+			public void rechtsKlickReagieren (Punkt p) {
+				int x = p.x(), y = p.y();
 				if (aussen.dimension().istIn(new Punkt(x, y))) {
 					try {
 						rechtsclick.invoke(aim, new Object[] {});

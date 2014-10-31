@@ -38,12 +38,11 @@ public interface RechtsKlickReagierbar {
 	 * bei jedem Rechtsklick benachrichtigt.<br /> maus.rechtsKlickReagierbarAnmelden(klick);
 	 * </code>
 	 *
-	 * @param x
-	 * 		Die X-Koordinate der Maus beim Klick <b>auf der Zeichenebene</b>
-	 * @param y
-	 * 		Die Y-Koordinate der Maus beim Klick <b>auf der Zeichenebene</b>
+	 * @param @param punkt
+	 *			Der Punkt, der die Mausposition (Referenzpunkt: Hotspot) zum Zeitpunkt des Loslassens
+	 *			der Maustaste angibt.
 	 *
 	 * @see ea.Maus
 	 */
-	public abstract void rechtsKlickReagieren (int x, int y);
+	public abstract void rechtsKlickReagieren (Punkt punkt);
 }

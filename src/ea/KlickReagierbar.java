@@ -40,10 +40,9 @@ public interface KlickReagierbar {
 	 * dann wird dieses Interface ueber seine Methode <code>klick()</code> benachrichtigt, immer
 	 * wenn ein <b>Rechtsklick</b> mit der Maus passiert ist.
 	 *
-	 * @param x
-	 * 		Die X-Koordinate des Klickpunktes <b>auf der Zeichenebene</b>
-	 * @param y
-	 * 		Die Y-Koordinate des Klickpunktes <b>auf der Zeichenebene</b>
+	 * @param punkt
+	 *			Der Punkt, der die Mausposition (Referenzpunkt: Hotspot) zum Zeitpunkt des Loslassens
+	 *			der Maustaste angibt.
 	 */
-	public abstract void klickReagieren (int x, int y);
+	public abstract void klickReagieren (Punkt p);
 }

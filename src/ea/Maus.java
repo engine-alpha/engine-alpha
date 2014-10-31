@@ -449,38 +449,32 @@ public class Maus {
 	 * Bei einer angemeldeten Maus wird bei einem Klick diese Methode aufgerufen.<br /> Theoretisch
 	 * liessen sich so Tastenklicks "simulieren".
 	 *
-	 * @param x
-	 * 		Die X-Koordinate des Klicks
-	 * @param y
-	 * 		Die Y-Koordinate des Klicks
+	 * @param p der respektive Punkt für den simulierten Mausklick.
 	 * @param links
 	 * 		War der Klick ein Linksklick, ist dieser Wert <code>true</code>. Fuer jede andere Klickart
 	 * 		ist dieser Wert <code>false</code>. In diesem Fall wird mit einem Rechtsklick gerechnet.
 	 *
 	 * @see ea.Maus#klick(int, int, boolean, boolean)
 	 */
-	public void klick (int x, int y, boolean links) {
-		this.klick(x, y, links, false);
+	public void klick (Punkt p, boolean links) {
+		this.klick(p, links, false);
 	}
 
 	/**
 	 * Bei einer angemeldeten Maus wird bei einem Klick diese Methode aufgerufen.<br /> So lassen
 	 * sich auch Klicks auf die Maus "simulieren".
 	 *
-	 * @param x
-	 * 		Die X-Koordinate des Klicks
-	 * @param y
-	 * 		Die Y-Koordinate des Klicks
+	 * @param p der Punkt des Klicks
 	 * @param links
 	 * 		War der Klick ein Linksklick, ist dieser Wert <code>true</code>. Fuer jede andere Klickart
 	 * 		ist dieser Wert <code>false</code>. In diesem Fall wird mit einem Rechtsklick gerechnet.
 	 * @param losgelassen
 	 * 		ist dieser Wert <code>true</code>, so wird dies als losgelassene Taste behandelt.
 	 */
-	public void klick (int x, int y, boolean links, boolean losgelassen) {
+	public void klick (Punkt p, boolean links, boolean losgelassen) {
 		if (losgelassen) {
 			for (MausLosgelassenReagierbar m : mausLosgelassenListeners) {
-				m.mausLosgelassen(x, y, links);
+				m.mausLosgelassen(p, links);
 			}
 
 			return;
@@ -488,15 +482,15 @@ public class Maus {
 
 		if (links) {
 			for (Auftrag a : mausListe) {
-				a.klick(new Punkt(x, y));
+				a.klick(p);
 			}
 
 			for (KlickReagierbar k : klickListeners) {
-				k.klickReagieren(x, y);
+				k.klickReagieren(p);
 			}
 		} else {
 			for (RechtsKlickReagierbar k : rechtsKlickListeners) {
-				k.rechtsKlickReagieren(x, y);
+				k.rechtsKlickReagieren(p);
 			}
 		}
 	}
@@ -504,18 +498,15 @@ public class Maus {
 	/**
 	 * Benachrichtigt alle Listener, falls die Bewegung nicht (0|0) war.
 	 *
-	 * @param dx
-	 * 		Bewegte Pixel in x-Richtung
-	 * @param dy
-	 * 		Bewegte Pixel in y-Richtung
+	 * @param bewegung der Vektor, der die Bewegung der Maus beschreibt.
 	 */
-	public void bewegt (int dx, int dy) {
-		if (dx == 0 && dy == 0) {
+	public void bewegt (Vektor bewegung) {
+		if (bewegung.unwirksam()) {
 			return;
 		}
-
+		
 		for (MausBewegungReagierbar m : mausBewegungListeners) {
-			m.mausBewegt(dx, dy);
+			m.mausBewegt(bewegung);
 		}
 	}
 

@@ -28,10 +28,7 @@ public interface MausBewegungReagierbar {
 	/**
 	 * Wird immer aufgerufen, wenn die Maus bewegt wurde.
 	 *
-	 * @param dx
-	 * 		Delta-x
-	 * @param dy
-	 * 		Delta-y
+	 * @param bewegung ein Vektor, der die Bewegung der Maus beschreibt.
 	 */
-	public void mausBewegt (int dx, int dy);
+	public void mausBewegt (Vektor bewegung);
 }

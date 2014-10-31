@@ -119,14 +119,11 @@ public class Spiegel extends Game implements KlickReagierbar, RechtsKlickReagier
 	 * Die Methode zum "echten" Reagieren auf den Klick im Spiel.<br /> Wird jedoch direkt an die
 	 * falsche Game-Klasse <code>MineGameE</code> weitergeleitet.
 	 *
-	 * @param x
-	 * 		Die X-Koordinate des Klicks
-	 * @param y
-	 * 		Die Y-Koordinate des Klicks
+	 * @param punkt beschreibt den Punkt des Klicks.
 	 */
 	@Override
-	public void klickReagieren (int x, int y) {
-		mine.klick(x, y);
+	public void klickReagieren (Punkt punkt) {
+		mine.klick(punkt.x(), punkt.y());
 	}
 
 	/**
@@ -145,14 +142,11 @@ public class Spiegel extends Game implements KlickReagierbar, RechtsKlickReagier
 	/**
 	 * Rechtsklick-Reaktionsmethode
 	 *
-	 * @param x
-	 * 		Die X-Koordinate des Klicks
-	 * @param y
-	 * 		Die Y-Koordinate des Klicks
+	 * @param punkt Beschreibt den Punkt des Klicks.
 	 */
 	@Override
-	public void rechtsKlickReagieren (int x, int y) {
-		mine.klickR(x, y);
+	public void rechtsKlickReagieren (Punkt punkt) {
+		mine.klickR(punkt.x(), punkt.y());
 	}
 }
 

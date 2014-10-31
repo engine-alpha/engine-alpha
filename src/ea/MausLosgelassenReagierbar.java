@@ -31,13 +31,12 @@ public interface MausLosgelassenReagierbar {
 	 * Diese Methode wird bei jedem an der aktiven Maus angemeldeten Listener ausgefuehrt, sobald
 	 * eine Maustaste losgelassen wird.
 	 *
-	 * @param x
-	 * 		Die X-Koordinate der Maus zum Zeitpunkt des Loslassens
-	 * @param y
-	 * 		Die Y-Koordinate der Maus zum Zeitpunkt des Loslassens
+	 * @param punkt
+	 *			Der Punkt, der die Mausposition (Referenzpunkt: Hotspot) zum Zeitpunkt des Loslassens
+	 *			der Maustaste angibt.
 	 * @param linksklick
 	 * 		Ist dieser Wert <code>true</code>, war die Losgelassene Maustaste die Linke. Ansonsten ist
 	 * 		dieser Wert <code>false</code>.
 	 */
-	public abstract void mausLosgelassen (int x, int y, boolean linksklick);
+	public abstract void mausLosgelassen (Punkt punkt, boolean linksklick);
 }

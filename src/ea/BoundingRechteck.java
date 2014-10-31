@@ -579,4 +579,14 @@ public final class BoundingRechteck implements Serializable {
 	public float getRealHoehe () {
 		return hoehe;
 	}
+
+	/**
+	 * Gibt die exakte Position der linken oberen Ecke dieses Bounding-Rechtecks
+	 * aus.
+	 * @return die Position des BoundingRechtecks, beschrieben durch den Punkt der
+	 * 			linken oberen Ecke dieses Objekts.
+	 */
+	public Punkt position() {
+		return new Punkt(x,y);
+	}
 }

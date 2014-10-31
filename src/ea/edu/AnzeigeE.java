@@ -304,14 +304,11 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	/**
 	 * Reagiert auf einen Linksklick
 	 *
-	 * @param x
-	 * 		X-Koordinate des Klicks
-	 * @param y
-	 * 		Y-Koordinate des Klicks
+	 * @param punkt beschreibt den Punkt des Linksklicks
 	 */
 	@Override
-	public void klickReagieren (int x, int y) {
-		klickSub(x, y, true);
+	public void klickReagieren (Punkt punkt) {
+		klickSub(punkt.x(), punkt.y(), true);
 	}
 
 	/**
@@ -335,14 +332,11 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	/**
 	 * Reagiert auf einen Rechtsklick
 	 *
-	 * @param x
-	 * 		X-Koordinate des Klicks
-	 * @param y
-	 * 		Y-Koordinate des Klicks
+	 * @param punkt beschreibt den Punkt des Rechtsklicks
 	 */
 	@Override
-	public void rechtsKlickReagieren (int x, int y) {
-		klickSub(x, y, false);
+	public void rechtsKlickReagieren (Punkt punkt) {
+		klickSub(punkt.x(), punkt.y(), false);
 	}
 
 	/**
