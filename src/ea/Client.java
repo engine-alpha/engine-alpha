@@ -63,10 +63,22 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	 */
 	private boolean connectFailed;
 
+	/**
+	 * Erstellt einen neuen Client.
+	 * @param ipAdresse	Die IP-Adresse des Servers, mit dem sich der Client verbinden soll.
+	 * @param port		Der Port, an dem sich der Client mit dem Server verbinden soll.
+	 */
 	public Client (String ipAdresse, int port) {
 		this("Unbenannter Client", ipAdresse, port);
 	}
 
+	/**
+	 * Erstellt einen neuen Client.
+	 * @param name		Der Name, mit dem sich der Client (im Hintergrund) dem Server vorstellt. Wird nur
+	 * 					intern verwendet.
+	 * @param ipAdresse	Die IP-Adresse des Servers, mit dem sich der Client verbinden soll.
+	 * @param port		Der Port, an dem sich der Client mit dem Server verbinden soll.
+	 */
 	public Client (String name, String ipAdresse, int port) {
 		this.setDaemon(true);
 		this.name = name;
