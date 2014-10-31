@@ -558,6 +558,12 @@ public abstract class Game implements TastenReagierbar {
 	 * 		Das anzumeldende <code>TastenReagierbar</code>-Objekt
 	 */
 	public void tastenReagierbarAnmelden (TastenReagierbar g) {
+		if(g instanceof Game) {
+			Logger.error("Der Eingabe-Parameter g leitet sich von der Klasse Game ab. Das würde für einen"
+					+ " internen Fehler sorgen und ist daher nicht möglich. Stattdessen kann man die tasteReagieren-"
+					+ "Methode verwenden oder über eine andere mit diesem Interface den selben Effekt erzeugen.");
+			return;
+		}
 		fenster.anmelden(g);
 	}
 
@@ -583,6 +589,34 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void tastenLosgelassenReagierbarAnmelden (TastenLosgelassenReagierbar g) {
 		fenster.tastenLosgelassenAnmelden(g);
+	}
+	
+	/**
+	 * Meldet einen Ticker an. Nach Ausführung dieser Methode wird die <code>tick</code>-Methode
+	 * dieses Tickers regelmäßig und unerlässlich im angegebenen Intervall ausgeführt.
+	 * @param ticker		Der Ticker, dessen <code>tick</code>-Methode ab sofort regelmäßig
+	 * 						ausgeführt werden soll.
+	 * @param intervall		Das Intervall (<i>in Millisekunden</i>), in dem die <code>tick</code>-Methode 
+	 * 						des angegebenen Tickers ausgeführt werden soll. Zwischen zwei
+	 * 						<code>tick</code>-Aufrufen vergehen <code>intervall</code> Millisekunden.
+	 * @see #tickerAbmelden(Ticker)
+	 * @see ea.Ticker
+	 */
+	public void tickerAnmelden(Ticker ticker, int intervall) {
+		this.manager.anmelden(ticker, intervall);
+	}
+	
+	/**
+	 * Meldet einen (aktiven) Ticker ab. Nach ausführen dieser Methode wird die <code>tick</code>-Methode 
+	 * des übergebenen Ticker-Objekts nicht mehr ausgeführt, bis der Ticker erneut angemeldet wird.
+	 * @param ticker		Der Ticker, dessen <code>tick</code>-Methode ab sofort nicht mehr ausgeführt
+	 * 						werden soll. Ist dieser Ticker noch gar nicht angemeldet, wird eine Fehlermeldung
+	 * 						ausgegeben.
+	 * @see #tickerAnmelden(Ticker, int)
+	 * @see ea.Ticker
+	 */
+	public void tickerAbmelden(Ticker ticker) {
+		this.manager.abmelden(ticker);
 	}
 
 	/**
