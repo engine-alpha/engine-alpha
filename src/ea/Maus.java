@@ -472,6 +472,7 @@ public class Maus {
 	 * 		ist dieser Wert <code>true</code>, so wird dies als losgelassene Taste behandelt.
 	 */
 	public void klick (Punkt p, boolean links, boolean losgelassen) {
+		p = p.verschobeneInstanz(hotspot.alsVektor());
 		if (losgelassen) {
 			for (MausLosgelassenReagierbar m : mausLosgelassenListeners) {
 				m.mausLosgelassen(p, links);

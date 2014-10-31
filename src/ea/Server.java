@@ -30,7 +30,12 @@ import java.util.Queue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Server-Klasse für einfache Verwendung von Kommunikation.
+ * Server-Klasse für einfache Verwendung von Kommunikation.<br /><br />
+ * 
+ * Lauscht stets nach Verbindungsaufnahmen durch beliebig viele Clients.<br />
+ * Sendet stets an alle Verbundenen Teilnehmer.
+ * 
+ * @see ea.Client
  *
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
