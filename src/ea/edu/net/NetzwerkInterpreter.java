@@ -17,8 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.edu.net;
 
+import ea.Empfaenger;
+import ea.NetzwerkVerbindung;
+import ea.Server;
 import ea.internal.util.Logger;
 
 import java.io.BufferedReader;

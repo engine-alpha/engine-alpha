@@ -20,7 +20,19 @@
 package ea;
 
 /**
- * TODO: Dokumentation
+ * Dieses Interface beschreibt alle Eigenschaften, die ein
+ * <i>Sender</i> in der Engine hat. Ein Sender hat implizit den Verbindungsvorgang
+ * bereits abgeschlossen. Die Verbindung steht also entweder oder wurde
+ * bereits beendet. Ein <i>Sender</i> kann: <br/>
+ * <ul>
+ * <li> Strings versenden </li>
+ * <li> Integers versenden </li>
+ * <li> Bytes versenden </li>
+ * <li> Doubles versenden </li>
+ * <li> Characters versenden </li>
+ * <li> Booleans versenden </li>
+ * <li> Die Verbindung beenden</li>
+ * </ul>
  *
  * @author Michael Andonie
  */

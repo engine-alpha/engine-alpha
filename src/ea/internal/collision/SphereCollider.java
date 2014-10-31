@@ -102,6 +102,14 @@ public class SphereCollider extends Collider {
 		return new SphereCollider(durchmesser, offset);
 	}
 
+	/**
+	 * Gibt ein <code>Kreis</code>-Objekt zurück, das denselben Durchmesser hat
+	 * wie dieser Collider.
+	 * @param position	Die Position der linken oberen Ecke, des den Kontext des Kreises umspannenden
+	 * 					Rechtecks.
+	 * @return			Ein Kreis mit dem Durchmesser des Sphere-Colliders und der angegebenen Position
+	 * 					(Plus offset).
+	 */
 	public Kreis ausDiesem (Punkt position) {
 		return new Kreis(position.x + offset.x, position.y + offset.y, modelsphere.radius() * 2);
 	}

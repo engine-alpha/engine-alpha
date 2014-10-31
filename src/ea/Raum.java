@@ -597,7 +597,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
 	 * <p/>
 	 * Setzt, ob dieses <code>Raum</code>-Objekt <i>beeinflussbar</i> sein soll für Impulse von
-	 * anderen Objekten, die mit diesem Kollidieren. Ist es <b>nicht beeinflussbar<b>, so prallen
+	 * anderen Objekten, die mit diesem Kollidieren. Ist es <b>nicht beeinflussbar</b>, so prallen
 	 * (beeinflussbare) Objekte einfach an ihm ab. Typische unbeeinflussbare Objekte sind:<br />
 	 * <ul> <li>Böden</li><li>Wände</li><li>Decken</li><li>bewegliche Plattformen</li> </ul><br />
 	 * Ist ein <code>Raum</code>-Objekt <b>beeinflussbar</b>, so kann es an anderen Objekten

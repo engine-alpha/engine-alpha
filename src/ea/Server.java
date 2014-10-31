@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.edu.net.NetzwerkInterpreter;
 import ea.internal.net.DiscoveryServer;
 import ea.internal.util.Logger;
 
@@ -437,6 +438,10 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 		}
 	}
 
+	/**
+	 * 
+	 * @param sichtbar
+	 */
 	public void netzwerkSichtbarkeit (boolean sichtbar) {
 		if (sichtbar) {
 			DiscoveryServer.startServer();

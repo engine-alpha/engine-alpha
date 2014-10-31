@@ -116,12 +116,12 @@ public class BoxCollider extends Collider {
 	}
 
 	/**
-	 * TODO Dokumentation
+	 * Gibt ein Äquivalent des Box Colliders als <code>BoundingRechteck</code> aus.
 	 *
-	 * @param start
-	 * 		??
-	 *
-	 * @return ??
+	 * @param start	Die aktuelle linke obere Ecke, an der der Box Collider für das
+	 * 				Äquivalent stehen soll.
+	 * @return Ein <code>BoundingRechteck</code>, dass die selbe Breite und Höhe wie
+	 * 			dieser Box Collider hat, und dessen linke obere Ecke <code>start</code> ist.
 	 */
 	public BoundingRechteck alsBR (Punkt start) {
 		return new BoundingRechteck(start.x + offset.x, start.y + offset.y, diagonale.x, diagonale.y);

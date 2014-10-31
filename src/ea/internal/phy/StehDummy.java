@@ -22,8 +22,8 @@ package ea.internal.phy;
 import ea.StehReagierbar;
 
 /**
- * Die Nichtstuende Dummy-Standartklasse, die fuer einen Gravitator der nichtstuende
- * Initial-StehReagierbar-Listener ist.
+ * Die nichts-tuende Dummy-Standartklasse, die fuer einen Gravitator der nichtstuende
+ * Initial-StehReagierbar-Listener ist. Wird nur intern verwendet.
  *
  * @author Michael Andonie
  * @see ea.StehReagierbar

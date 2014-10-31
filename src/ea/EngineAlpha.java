@@ -44,15 +44,31 @@ import java.util.TimeZone;
  * @author Niklas Keller <me@kelunik.com>
  */
 public class EngineAlpha extends Frame {
-	// 10000 * major + 100 * minor + 1 * bugfix
+	
+	/**
+	 * Der Versionscode des aktuellen Release.<br />
+	 * Rechnung:<br/>
+	 * <code>
+	 * 10000 * major + 100 * minor + 1 * bugfix
+	 * </code>
+	 */
 	public static final int VERSION_CODE = 30003;
 
+	
 	public static final String VERSION_STRING = "v3.0.3";
 
+	/**
+	 * Gibt an, ob dieser Release in .jar - Form vorliegt. Ist das der Fall,
+	 * ist dieser Wert <code>true</code>, sonst ist er <code>false</code>.
+	 */
 	public static final boolean IS_JAR;
 
 	public static final long BUILD_TIME;
 
+	/**
+	 * Statischer Konstruktor.
+	 * Ermittelt <code>IS_JAR</code> und <code>BUILD_TIME</code>.
+	 */
 	static {
 		IS_JAR = isJar();
 		BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;

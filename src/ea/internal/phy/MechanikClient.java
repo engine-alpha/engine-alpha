@@ -91,7 +91,8 @@ public class MechanikClient extends PhysikClient implements Ticker {
 	private Vektor lastVelocity;
 
 	/**
-	 * Die aktuelle Kraft F, die auf das Client-Objekt wirkt. <br /> <b>Einheit: N = m/s^2</b>
+	 * Die aktuelle Kraft F, die konstant auf das Client-Objekt wirkt. <br /> <b>Einheit: N = m/s^2</b><br />
+	 * Konkret z.B. Schwerkraft.
 	 */
 	private Vektor force;
 

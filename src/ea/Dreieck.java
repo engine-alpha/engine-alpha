@@ -245,6 +245,13 @@ public class Dreieck extends Geometrie {
 		return false;
 	}
 
+	/**
+	 * Prüft, ob dieses Dreieck ein gegebenes <code>BoundingRechteck</code>
+	 * schneidet.
+	 * @param r		Ein <code>BoundingRechteck</code>.
+	 * @return		<code>true</code>, wenn dieses Dreieck sich mit dem übergebenen
+	 * 				<code>BoundingRechteck</code> schneidet, sonst <code>false</code>.
+	 */
 	public boolean schneidetBasic (BoundingRechteck r) {
 		return r.schneidet(this);
 	}

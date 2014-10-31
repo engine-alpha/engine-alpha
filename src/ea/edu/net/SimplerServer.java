@@ -21,13 +21,36 @@ package ea.edu.net;
 
 import ea.Server;
 
+/**
+ * Ein <code>SimplerServer</code> ist die vereinfachte Version der Serverseite
+ * der Netzwerkkommunikation in der EDU-Variante der Engine. Damit ist er Teil der
+ * simpelsten Netzwerkkommunikation der Engine Alpha. <br /> <br />
+ * 
+ * <ul>
+ * <li>Ein Simpler Server kann mit beliebig vielen simplen Clients gleichzeitig kommunizieren</li>
+ * <li>Ein Simpler Server kann <i>nicht</i> zwischen seinen Clients unterscheiden. Er kann nur
+ * die selbe Nachricht an alle Clients senden (sog. Broadcasts).</li>
+ * <li>Die Kernfunktionalität ist in der Klasse <code>SimplerNetzwerkAdapter</code> beschrieben.</li>
+ * </ul>
+ * @author andonie
+ * @see ea.edu.net.SimplerClient
+ * @see ea.edu.net.SimplerNetzwerkAdapter
+ */
 public class SimplerServer extends SimplerNetzwerkAdapter {
 
 	/**
-	 * Der Server.
+	 * Der Server, über den diese Wrapper-Klasse arbeitet.
 	 */
 	private final Server server;
 
+	/**
+	 * Erstellt einen neuen simplen Server.
+	 * @param port			Der Port, unter dem der Server mit den Clients kommunizieren will.
+	 * 						Muss identisch mit dem des Servers sein. <b>Achtung:</b> Es ist
+	 * 						empfehlenswert einen Port > 1024 zu wählen, da die darunter stehenden
+	 * 						Ports für feste Dienste (wie Telnet / HTTP) reserviert sind (sog.
+	 * 						<i>well known ports</i>).
+	 */
 	public SimplerServer (int port) {
 		this.server = new Server(port);
 		server.globalenEmpfaengerSetzen(messageUpdater);

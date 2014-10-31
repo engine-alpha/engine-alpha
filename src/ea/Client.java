@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.edu.net.NetzwerkInterpreter;
 import ea.internal.util.Logger;
 
 import java.io.*;

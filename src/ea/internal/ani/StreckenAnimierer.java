@@ -22,8 +22,8 @@ package ea.internal.ani;
 import ea.*;
 
 /**
- * Ein Linienanimierer laesst ein Raum-Objekt zwischen verschiedenen Punkten zusammenlaufen. sich
- * fest zwischen 2 Punkten gleichmaessig hin- und herbewegen.
+ * Ein <code>StreckenAnimierer</code> lässt ein Raum-Objekt sich auf einem Pfad von
+ * beliebig vielen Punkten "wandern".
  *
  * @author Michael Andonie
  */

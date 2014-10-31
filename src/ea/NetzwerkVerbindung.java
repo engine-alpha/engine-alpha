@@ -21,6 +21,8 @@ package ea;
 
 import java.io.BufferedWriter;
 
+import ea.edu.net.NetzwerkInterpreter;
+
 /**
  * Diese Klasse sammelt die beiden wesentlichen Objekte einer Netzverbindung
  * (<code>NetwerkInterpreter</code>, der die Informationen an alle angemeldeten

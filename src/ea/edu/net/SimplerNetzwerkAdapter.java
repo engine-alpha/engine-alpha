@@ -23,10 +23,34 @@ import ea.Empfaenger;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Diese abstrakte Klasse beschreibt die allgemeinen Eigenschaften
+ * einer <i>simplen</i> Netzwerkklasse. <i>Simpel</i> bedeutet in 
+ * diesem Zusammenhang, dass es um eine Vereinfachung im Sinne der
+ * EDU-Version der Engine handelt.<br /><br />
+ * 
+ * Der simple Netzwerkadapter arbeitet <i>nur auf Basis von Strings</i> kann:
+ * <ul>
+ * <li> Jederzeit Strings senden</li>
+ * <li> Den nächsten noch nicht gelesenen String ausgeben (bzw. auf den nächsten
+ * zu String vom Kommunikationspartner warten).</li>
+ * </ul>
+ * @author andonie
+ *
+ */
 public abstract class SimplerNetzwerkAdapter {
 
+	/**
+	 * Die Liste, die die noch nicht abgearbeiteten Nachrichten speichert.
+	 */
 	private final ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<>();
 
+	/**
+	 * Der Standard-Empfänger für beide Seiten der simplen Kommunikation.
+	 * Empfangene Strings werden in die Queue <code>messages</code> eingereiht.
+	 * Andere Datentypen sollten nicht empfangen werden; die entsprechenden
+	 * Methoden sind daher leer.
+	 */
 	protected final Empfaenger messageUpdater = new Empfaenger() {
 		@Override
 		public void empfangeString (String string) {
@@ -61,7 +85,18 @@ public abstract class SimplerNetzwerkAdapter {
 		}
 	};
 
-	public synchronized String lauschen () {
+	/**
+	 * Diese Methode gibt die <i>nächste ungelesene String-Nachricht</i> aus.
+	 * Das bedeutet:<br/>
+	 * <ul>
+	 * <li>Gibt es bereits (mindestens) eine noch nicht "abgehörte" Nachricht, wird
+	 * einfach die nächste in der Schlange ausgegeben.</li>
+	 * <li>Gibt es derzeit keine neue Nachricht, wird solange gewartet, bis eine
+	 * neue Nachricht vom Kommunikationspartner eingetroffen ist.</li>
+	 * </ul>
+	 * @return die nächste Nachricht des Kommunikationspartners.
+	 */
+	public final synchronized String lauschen () {
 		if (messages.isEmpty()) {
 			try {
 				synchronized (messages) {
