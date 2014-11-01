@@ -81,7 +81,15 @@ public class EngineAlpha extends Frame {
 		BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;
 	}
 
+	/**
+	 * Wird debug auf <code>true</code> gesetzt, so werden ausführliche Informationen zu Tickern im
+	 * Logger ausgegeben.
+	 */
 	private static boolean debug;
+
+	/**
+	 * Panel, das den Fensterinhalt zeichnet.
+	 */
 	private EngineAlphaPromotion promo;
 
 	public EngineAlpha () {
