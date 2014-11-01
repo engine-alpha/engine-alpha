@@ -121,61 +121,109 @@ public class Taste {
 
 	/**
 	 * Gibt den Namen der Konstante für eine bestimmte Taste aus.
-	 * @param code	Ein Tastencode.
-	 * @return		Der Name der Konstante, die diesen Tastencode beschreibt.
-	 * 				Oder "[unbekannter Code]".
+	 *
+	 * @param code
+	 * 		Ein Tastencode.
+	 *
+	 * @return Der Name der Konstante, die diesen Tastencode beschreibt oder "INVALID".
 	 */
-	public static final String nameVon(int code) {
-		switch(code) {
-		case A: return "A";
-		case B: return "B";
-		case C: return "C";
-		case D: return "D";
-		case E: return "E";
-		case F: return "F";
-		case G: return "G";
-		case H: return "H";
-		case I: return "I";
-		case J: return "J";
-		case K: return "K";
-		case L: return "L";
-		case M: return "M";
-		case N: return "N";
-		case O: return "O";
-		case P: return "P";
-		case Q: return "Q";
-		case R: return "R";
-		case S: return "S";
-		case T: return "T";
-		case U: return "U";
-		case V: return "V";
-		case W: return "W";
-		case X: return "X";
-		case Y: return "Y";
-		case Z: return "Z";
-		case _0: return "_0";
-		case _1: return "_1";
-		case _2: return "_2";
-		case _3: return "_3";
-		case _4: return "_4";
-		case _5: return "_5";
-		case _6: return "_6";
-		case _7: return "_7";
-		case _8: return "_8";
-		case _9: return "_9";
-		case LEERTASTE: return "LEERTASTE";
-		case ESCAPE: return "ESCAPE";
-		case ENTER: return "ENTER";
-		case PLUS: return "PLUS";
-		case MINUS: return "MINUS";
-		case OBEN: return "OBEN";
-		case UNTEN: return "UNTEN";
-		case LINKS: return "LINKS";
-		case RECHTS: return "RECHTS";
+	public static final String nameVon (int code) {
+		switch (code) {
+			case A:
+				return "A";
+			case B:
+				return "B";
+			case C:
+				return "C";
+			case D:
+				return "D";
+			case E:
+				return "E";
+			case F:
+				return "F";
+			case G:
+				return "G";
+			case H:
+				return "H";
+			case I:
+				return "I";
+			case J:
+				return "J";
+			case K:
+				return "K";
+			case L:
+				return "L";
+			case M:
+				return "M";
+			case N:
+				return "N";
+			case O:
+				return "O";
+			case P:
+				return "P";
+			case Q:
+				return "Q";
+			case R:
+				return "R";
+			case S:
+				return "S";
+			case T:
+				return "T";
+			case U:
+				return "U";
+			case V:
+				return "V";
+			case W:
+				return "W";
+			case X:
+				return "X";
+			case Y:
+				return "Y";
+			case Z:
+				return "Z";
+			case _0:
+				return "_0";
+			case _1:
+				return "_1";
+			case _2:
+				return "_2";
+			case _3:
+				return "_3";
+			case _4:
+				return "_4";
+			case _5:
+				return "_5";
+			case _6:
+				return "_6";
+			case _7:
+				return "_7";
+			case _8:
+				return "_8";
+			case _9:
+				return "_9";
+			case LEERTASTE:
+				return "LEERTASTE";
+			case ESCAPE:
+				return "ESCAPE";
+			case ENTER:
+				return "ENTER";
+			case PLUS:
+				return "PLUS";
+			case MINUS:
+				return "MINUS";
+			case OBEN:
+				return "OBEN";
+			case UNTEN:
+				return "UNTEN";
+			case LINKS:
+				return "LINKS";
+			case RECHTS:
+				return "RECHTS";
+			default:
+				return "INVALID";
 		}
-		return "[unbekannter Code]";
 	}
-	
+
 	/**
 	 * Ordnet vom Java-KeyCode-System in das EA-System um.
 	 *
