@@ -134,6 +134,12 @@ public class EngineAlpha extends Frame {
 		return classJar.startsWith("jar:");
 	}
 
+	/**
+	 * Gibt den Namen der Jar-Datei zurück, die gerade ausgeführt wird.
+	 *
+	 * @return Dateiname der Jar-Datei oder <code>null</code>, falls das Programm nicht über eine
+	 * Jar-Datei ausgeführt wird.
+	 */
 	@SuppressWarnings ( "unused" )
 	public static String getJarName () {
 		String className = EngineAlpha.class.getName().replace('.', '/');
