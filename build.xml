@@ -49,12 +49,12 @@
     </target>
 
     <target name="compile" depends="clean, makedir">
-        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${bin.dir}" debug="true">
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${bin.dir}" debug="true" encoding="utf-8">
             <classpath refid="classpath"/>
         </javac>
 
         <javac includeantruntime="false" srcdir="${test.src.dir}" destdir="${test.bin.dir}"
-               debug="true">
+               debug="true" encoding="utf-8">
             <classpath location="${bin.dir}"/>
             <classpath refid="classpath.junit"/>
         </javac>
@@ -71,7 +71,7 @@
     </target>
 
     <target name="docs" depends="compile">
-        <javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}">
+        <javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}" encoding="utf-8">
             <fileset dir="${src.dir}">
                 <include name="**"/>
             </fileset>

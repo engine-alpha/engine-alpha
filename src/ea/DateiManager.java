@@ -352,7 +352,7 @@ public class DateiManager {
 	@API
 	@SuppressWarnings ( "unused" )
 	public static boolean schreiben (Figur f, String pfad) {
-		return schreiben(f, pfad, "");
+		return schreiben(f, "", pfad);
 	}
 
 	/**
@@ -377,60 +377,18 @@ public class DateiManager {
 	 */
 	@API
 	public static boolean schreiben (Figur f, String verzeichnis, String name) {
-		return schreiben(f, verzeichnis, name, true);
-	}
-
-	/**
-	 * Schreibt die ".eaf"-Datei zu einer Figur.
-	 * <p/>
-	 * Hierbei wird eine eventuell bestehende Datei dieses Namens rigoros gelöscht, sofern möglich.
-	 * <p/>
-	 * Diese Methode gibt zurück, ob das schreiben der Datei erfolgreich war oder nicht.
-	 *
-	 * @param f
-	 * 		Die zu schreibende Figur
-	 * @param name
-	 * 		Der Name der Datei. Dieser sollte mit ".eaf" enden, wenn nicht, wird dies automatisch
-	 * 		angehaengt.<br /> <b>Sollte der String allerdings sonst ein "."-Zeichen enthalten</b>, wird
-	 * 		nur eine Fehlermeldung ausgespuckt!
-	 * @param verzeichnis
-	 * 		Das Verzeichnis, in dem die Datei gespeichert werden soll. Ist dies ein leerer String (""),
-	 * 		so wird die Figur nur nach ihrem namen gespeichert.
-	 * @param relativ
-	 * 		Gibt an, ob das Verzeichnis relativ zum Spielprojekt geshen werden soll (standard)
-	 *
-	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben wurde, sonst
-	 * <code>false</code>.
-	 */
-	@API
-	public static boolean schreiben (Figur f, String name, String verzeichnis, boolean relativ) {
 		BufferedWriter writer;
 		PixelFeld[] feld = f.animation();
 
+		if (!name.endsWith(".eaf")) {
+			name += ".eaf";
+		}
+
+		String verz = verzeichnis.isEmpty() ? name : verzeichnis + sep + name;
+
 		try {
-			String verz;
+			writer = new BufferedWriter(new FileWriter(verz));
 
-			if (!name.endsWith(".eaf")) {
-				if (name.contains(".")) {
-					Logger.error("Der Verzeichnisname ist ungültig! Die Datei sollte mit '" + ".eaf' enden und darf sonst keine '.'-Zeichen enthalten");
-					return false;
-				}
-				name += ".eaf";
-			}
-
-			if (verzeichnis.isEmpty()) {
-				verz = name;
-			} else {
-				verz = verzeichnis + sep + name;
-			}
-
-			String add = DateiManager.verz;
-
-			if (!relativ) {
-				add = "";
-			}
-
-			writer = new BufferedWriter(new FileWriter(add + verz));
 			// Basics
 			writer.write("_fig_"); // Basisdeklaration
 			writer.newLine();
@@ -458,9 +416,41 @@ public class DateiManager {
 
 			return true;
 		} catch (IOException e) {
-			Logger.error("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?" + bruch + verzeichnis);
+			Logger.error("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?" + bruch + verz);
+			Logger.error(e.getMessage());
 			return false;
 		}
+	}
+
+	/**
+	 * Schreibt die ".eaf"-Datei zu einer Figur.
+	 * <p/>
+	 * Hierbei wird eine eventuell bestehende Datei dieses Namens rigoros gelöscht, sofern möglich.
+	 * <p/>
+	 * Diese Methode gibt zurück, ob das schreiben der Datei erfolgreich war oder nicht.
+	 *
+	 * @param f
+	 * 		Die zu schreibende Figur
+	 * @param name
+	 * 		Der Name der Datei. Dieser sollte mit ".eaf" enden, wenn nicht, wird dies automatisch
+	 * 		angehaengt.<br /> <b>Sollte der String allerdings sonst ein "."-Zeichen enthalten</b>, wird
+	 * 		nur eine Fehlermeldung ausgespuckt!
+	 * @param verzeichnis
+	 * 		Das Verzeichnis, in dem die Datei gespeichert werden soll. Ist dies ein leerer String (""),
+	 * 		so wird die Figur nur nach ihrem namen gespeichert.
+	 * @param relativ
+	 * 		Gibt an, ob das Verzeichnis relativ zum Spielprojekt geshen werden soll (standard)
+	 *
+	 * @return Ist <code>true</code>, wenn die Datei erfolgreich geschrieben wurde, sonst
+	 * <code>false</code>.
+	 *
+	 * @deprecated Deprecated, weil Pfade, die nicht mit <code>/</code> beginnen (bzw.
+	 * <code>C:\</code> auf Windows) automatisch relativ sind.
+	 */
+	@API
+	@Deprecated
+	public static boolean schreiben (Figur f, String name, String verzeichnis, boolean relativ) {
+		return schreiben(f, name, verzeichnis);
 	}
 
 	/**
@@ -768,7 +758,7 @@ public class DateiManager {
 	 * beginnt.
 	 */
 	@Deprecated
-	@SuppressWarnings("unused")
+	@SuppressWarnings ( "unused" )
 	public static Figur figurEinlesen (String verzeichnis, boolean relativ) {
 		return figurEinlesen(new File(verzeichnis));
 	}

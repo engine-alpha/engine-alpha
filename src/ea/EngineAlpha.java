@@ -54,7 +54,10 @@ public class EngineAlpha extends Frame {
 	 */
 	public static final int VERSION_CODE = 30003;
 
-	
+	/**
+	 * Format: v(major).(minor).(bugfix)
+	 * Beispiel: v3.1.2
+	 */
 	public static final String VERSION_STRING = "v3.0.3";
 
 	/**
@@ -63,6 +66,10 @@ public class EngineAlpha extends Frame {
 	 */
 	public static final boolean IS_JAR;
 
+	/**
+	 * Zeitpunkt, an dem diese Jar-Datei erzeugt wurde, falls als Jar-Datei ausgeführt, sonst die
+	 * aktuelle Zeit in Sekunden seit dem 01.01.1970 (Unix Timestamp)
+	 */
 	public static final long BUILD_TIME;
 
 	/**
@@ -74,6 +81,15 @@ public class EngineAlpha extends Frame {
 		BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;
 	}
 
+	/**
+	 * Wird debug auf <code>true</code> gesetzt, so werden ausführliche Informationen zu Tickern im
+	 * Logger ausgegeben.
+	 */
+	private static boolean debug;
+
+	/**
+	 * Panel, das den Fensterinhalt zeichnet.
+	 */
 	private EngineAlphaPromotion promo;
 
 	public EngineAlpha () {
@@ -99,10 +115,18 @@ public class EngineAlpha extends Frame {
 		promo = new EngineAlphaPromotion();
 	}
 
+	/**
+	 * Main-Methode der Engine Alpha. Diese öffnet ein Fenster, das einen Versionsabgleich der
+	 * aktuellen Version mit der aktuell verfügbaren Version macht.
+	 */
 	public static void main (String[] args) {
 		new EngineAlpha();
 	}
 
+	/**
+	 * Gibt an, ob das Programm gerade aus einer Jar heraus gestartet wurde.
+	 * @return <code>true</code>, falls ja, sonst <code>false</code>.
+	 */
 	public static boolean isJar () {
 		String className = EngineAlpha.class.getName().replace('.', '/');
 		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
@@ -110,7 +134,13 @@ public class EngineAlpha extends Frame {
 		return classJar.startsWith("jar:");
 	}
 
-	@SuppressWarnings ("unused")
+	/**
+	 * Gibt den Namen der Jar-Datei zurück, die gerade ausgeführt wird.
+	 *
+	 * @return Dateiname der Jar-Datei oder <code>null</code>, falls das Programm nicht über eine
+	 * Jar-Datei ausgeführt wird.
+	 */
+	@SuppressWarnings ( "unused" )
 	public static String getJarName () {
 		String className = EngineAlpha.class.getName().replace('.', '/');
 		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
@@ -132,6 +162,12 @@ public class EngineAlpha extends Frame {
 		return null;
 	}
 
+	/**
+	 * Gibt an, wann die Jar-Datei erzeugt wurde.
+	 *
+	 * @return Erzeugungsdatum der Jar-Datei in Sekunden seit dem 01.01.1970 (Unix Timestamp) oder
+	 * den aktuellen Timestamp, falls nicht von einer Jar-Datei ausgeführt.
+	 */
 	public static long getBuildTime () {
 		try {
 			String uri = EngineAlpha.class.getName().replace('.', '/') + ".class";
@@ -178,6 +214,14 @@ public class EngineAlpha extends Frame {
 		}
 
 		return null;
+	}
+
+	public static boolean isDebug () {
+		return debug;
+	}
+
+	public static void setDebug (boolean value) {
+		debug = value;
 	}
 
 	private class EngineAlphaPromotion extends Canvas implements Runnable {
@@ -332,15 +376,5 @@ public class EngineAlpha extends Frame {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private static boolean debug;
-
-	public static boolean isDebug() {
-		return debug;
-	}
-
-	public static void setDebug(boolean value) {
-		debug = value;
 	}
 }
