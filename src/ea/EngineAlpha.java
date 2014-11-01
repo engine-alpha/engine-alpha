@@ -162,6 +162,12 @@ public class EngineAlpha extends Frame {
 		return null;
 	}
 
+	/**
+	 * Gibt an, wann die Jar-Datei erzeugt wurde.
+	 *
+	 * @return Erzeugungsdatum der Jar-Datei in Sekunden seit dem 01.01.1970 (Unix Timestamp) oder
+	 * den aktuellen Timestamp, falls nicht von einer Jar-Datei ausgeführt.
+	 */
 	public static long getBuildTime () {
 		try {
 			String uri = EngineAlpha.class.getName().replace('.', '/') + ".class";
