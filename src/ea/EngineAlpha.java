@@ -115,10 +115,18 @@ public class EngineAlpha extends Frame {
 		promo = new EngineAlphaPromotion();
 	}
 
+	/**
+	 * Main-Methode der Engine Alpha. Diese öffnet ein Fenster, das einen Versionsabgleich der
+	 * aktuellen Version mit der aktuell verfügbaren Version macht.
+	 */
 	public static void main (String[] args) {
 		new EngineAlpha();
 	}
 
+	/**
+	 * Gibt an, ob das Programm gerade aus einer Jar heraus gestartet wurde.
+	 * @return <code>true</code>, falls ja, sonst <code>false</code>.
+	 */
 	public static boolean isJar () {
 		String className = EngineAlpha.class.getName().replace('.', '/');
 		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
