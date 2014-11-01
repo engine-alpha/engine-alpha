@@ -71,7 +71,7 @@
     </target>
 
     <target name="docs" depends="compile">
-        <javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}">
+        <javadoc packagenames="src" sourcepath="${src.dir}" destdir="${docs.dir}" encoding="utf-8">
             <fileset dir="${src.dir}">
                 <include name="**"/>
             </fileset>
