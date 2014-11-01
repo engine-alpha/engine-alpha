@@ -54,7 +54,10 @@ public class EngineAlpha extends Frame {
 	 */
 	public static final int VERSION_CODE = 30003;
 
-	
+	/**
+	 * Format: v(major).(minor).(bugfix)
+	 * Beispiel: v3.1.2
+	 */
 	public static final String VERSION_STRING = "v3.0.3";
 
 	/**
