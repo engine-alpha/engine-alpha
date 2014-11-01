@@ -189,7 +189,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 				}
 
 				synchronized (waitingQueue) {
-					waitingQueue.notify();
+					waitingQueue.notifyAll();
 				}
 			} catch (IOException e) {
 				Logger.error("Beim Herstellen einer Verbindung ist ein Input/Output - Fehler aufgetreten.");
@@ -252,6 +252,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 				e.printStackTrace();
 			}
 		}
+		
 
 		return waitingQueue.poll();
 	}

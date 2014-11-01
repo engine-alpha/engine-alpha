@@ -20,6 +20,7 @@
 package ea.internal.phy;
 
 import ea.*;
+import ea.internal.util.Logger;
 
 /**
  * Ein <code>Physik</code>-Client, der eine rudimentäre Implementierung <b>Newton'scher Mechanik</b>
@@ -45,6 +46,21 @@ import ea.*;
 @SuppressWarnings ( "serial" )
 public class MechanikClient extends PhysikClient implements Ticker {
 
+	/**
+	 * Die Grenze d, ab der Vektoren v mit |v|<d auf 0 abgerundet werden.
+	 */
+	private static float THRESHOLD = 0.00001f;
+
+	/**
+	 * Setzt einen neuen Threshold d. Ein Objekt, dass sich mit |v| < d bewegt,
+	 * wird angehalten (die Engine sorgt also manuell für v' = 0)
+	 * @param threshold	Der Threshold d (in px), ab dem die Engine Geschwindigkeitsvektoren
+	 * 					auf 0 setzt.
+	 */
+	public static void tresholdSetzen(float threshold) {
+		THRESHOLD = threshold;
+	}
+	
 	/**
 	 * Das Intervall, in dem die Spielmechanik upgedated wird <b>in Sekunden</b>. Wird benutzt für
 	 * die Extrapolation. Orientiert sich an der <b>Update-Geschwindigkeit</b> der Zeichenebene
@@ -118,6 +134,14 @@ public class MechanikClient extends PhysikClient implements Ticker {
 	private float luftwiderstandskoeffizient = 40f;
 
 	/**
+	 * Gibt an, wie viel Energie beim Aufprall gegen dieses Objekt (als nicht beeinflussbares Objekt)
+	 * erhalten bleibt.
+	 * 1 ~= 100%
+	 * 0 ~=   0%
+	 */
+	private float elastizitaet = 0.34f;
+
+	/**
 	 * Der Collider für schnelle und effiziente Praekollisionstests.
 	 */
 	private KreisCollider collider;
@@ -134,6 +158,7 @@ public class MechanikClient extends PhysikClient implements Ticker {
 		einfluesseZuruecksetzen();
 		MECH_TIMER.anmelden(this, ea.internal.gra.Zeichner.UPDATE_INTERVALL);
 		CollisionHandling.anmelden(this);
+		
 	}
 
 	/**
@@ -191,7 +216,7 @@ public class MechanikClient extends PhysikClient implements Ticker {
 
 		//Genügend für Ende? -> Heuristik: |v| < d [mit d geschickt gewählt]
 		Vektor dif = velocity.differenz(lastVelocity);
-		if (dif.laenge() < 0.0001f && dif.laenge() != 0) {
+		if (dif.manhattanLength() < THRESHOLD && dif.manhattanLength() != 0) {
 			System.out.println("T");
 			velocity = Vektor.NULLVEKTOR;
 		}
@@ -334,6 +359,27 @@ public class MechanikClient extends PhysikClient implements Ticker {
 	@Override
 	public Vektor getForce () {
 		return force;
+	}
+	
+	/**
+	 * @return Die Elastizitaet des Objekts.
+	 */
+	public float getElastizitaet() {
+		return elastizitaet;
+	}
+
+	/**
+	 * Setzt die Elastizität für dieses Objekt neu. Hat nur einen Effekt, wenn 
+	 * dieses Objekt nicht beeinflussbar ist.
+	 * @param elastizitaet Die Elastizität dieses Objekts in %. 1 = Voller Energieerhalt
+	 *  					 --- 0 = Voller Energieverlust
+	 */
+	public void setElastizitaet(float elastizitaet) {
+		if(elastizitaet < 0) {
+			Logger.error("Die Elastizität eines Objekts kann nicht negativ sein. Die Eingabe war " + elastizitaet + " .");
+			return;
+		}
+		this.elastizitaet = elastizitaet;
 	}
 
 	/**

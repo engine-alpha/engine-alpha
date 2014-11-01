@@ -170,7 +170,7 @@ public class CollisionHandling {
 		public void abarbeiten () {
 			final MechanikClient c1 = clients[0].parent;
 			final MechanikClient c2 = clients[1].parent;
-
+			
 			//Fenster.instanz.getCam().wurzel().add(c1.ziel().dimension().ausDiesem(),c2.ziel().dimension().ausDiesem());
 			//System.out.println("work: " + c1.ziel() + " - " + c2.ziel());
 			// First of all: Clients voneinander lösen
@@ -237,6 +237,7 @@ public class CollisionHandling {
 		 * 		Das unbeeinflussbare Element.
 		 */
 		public static void ungleichlogik (MechanikClient beeinflussbar, MechanikClient unbeeinflussbar) {
+			
 			do {
 				beeinflussbar.bewegen(beeinflussbar.getVelocity().gegenrichtung().multiplizieren(MechanikClient.DELTA_T));
 			} while (beeinflussbar.ziel().schneidet(unbeeinflussbar.ziel()));
@@ -245,7 +246,7 @@ public class CollisionHandling {
 			Punkt zmov = beeinflussbar.ziel().zentrum();
 			BoundingRechteck bounds = unbeeinflussbar.ziel().dimension();
 
-			Vektor vneu = beeinflussbar.getVelocity();
+			Vektor vneu = beeinflussbar.getVelocity().multiplizieren(unbeeinflussbar.getElastizitaet());
 
 			if (zmov.realX() <= bounds.x + bounds.breite / 2) {
 				//Aktiv LINKS von Passiv

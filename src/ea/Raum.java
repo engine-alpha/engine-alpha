@@ -481,7 +481,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * 		denen aus der klassischen Mechanik. Die Einheit für Impuls ist [kg * (m / s)]
 	 *
 	 * @see #masseSetzen(float)
-	 * @see #kraftSetzen(Vektor)
+	 * @see #konstanteKraftSetzen(Vektor)
 	 * @see #setzeMeterProPixel(float)
 	 * @see #newtonschMachen()
 	 */
@@ -492,16 +492,17 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	/**
 	 * <b>Physik-Methode</b> - funktioniert nur bei <i>Newton'schen Raum-Objekten</i>
 	 * <p/>
-	 * Setzt <b>hart</b> (also ohne Rücksicht auf mögliche Umstände) die Geschwindigkeit dieses
-	 * <code>Raum</code>-Objektes. Es bewegt sich ab sofort mit dieser Geschwindigkeit weiter.
+	 * Addiert <b>hart</b> (also ohne Rücksicht auf das Gewicht des Objekts) eine neue Geschwindigkeit
+	 * auf die aktuelle Geschwindigkeit dieses <code>Raum</code>-Objektes. Die neue Geschwidig
 	 *
 	 * @param geschwindigkeit
-	 * 		die Geschwindigkeit, die dieses <code>Raum</code>-Objekt ab sofort annehmen soll.
+	 * 		die Geschwindigkeit, die zu der aktuellen Geschwindigkeit von diesem <code>Raum</code>-Objekt.
+	 * 		hinzuaddiert werden soll. Die neue Geschwindigkeit ist damit <code>v1 + v2</code>. <br />
 	 * 		<b>WICHTIG:</b> Die Einheiten für physikalische Größen innerhalb der Engine entsprechen
 	 * 		denen aus der klassischen Mechanik. Die Einheit für Geschwindigkeit ist [m / s]
 	 *
 	 * @see #masseSetzen(float)
-	 * @see #kraftSetzen(Vektor)
+	 * @see #konstanteKraftSetzen(Vektor)
 	 * @see #setzeMeterProPixel(float)
 	 * @see #luftwiderstandskoeffizientSetzen(float)
 	 * @see #newtonschMachen()
@@ -652,7 +653,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #getForce()
 	 * @see #newtonschMachen()
 	 */
-	public void kraftSetzen (Vektor kraft) {
+	public void konstanteKraftSetzen (Vektor kraft) {
 		phClient.kraftSetzen(kraft);
 	}
 

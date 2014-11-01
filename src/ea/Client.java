@@ -173,6 +173,10 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 				}
 			}
 		}
+		//Additional Waiting: 200 ms to ensure synchronization buffer on server side.
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {}
 	}
 
 	/**
