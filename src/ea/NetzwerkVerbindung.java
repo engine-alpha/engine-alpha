@@ -84,6 +84,20 @@ public class NetzwerkVerbindung extends Sender {
 		return interpreter;
 	}
 
+	/**
+	 * Fuegt dieser Verbindung einen Empfänger zu, der ab sofort bei allen
+	 * empfangenen Nachrichten informiert wird.
+	 * @param e ein neuer Empfänger, der ab sofort bei jeder gesendeten
+	 * 				Nachricht informiert wird.
+	 */
+	public void empfaengerHinzufuegen(Empfaenger e) {
+		this.interpreter.empfaengerHinzufuegen(e);
+	}
+	
+	/**
+	 * Beendet die Verbindung zum Kommunikationspartner.
+	 * Anschließend werden alle Ressourcen der Verbindung wieder freigegeben.
+	 */
 	@Override
 	public void beendeVerbindung () {
 		super.beendeVerbindung();

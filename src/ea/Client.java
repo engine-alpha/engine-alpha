@@ -133,6 +133,9 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 		}
 	}
 
+	/**
+	 * Schließt die Verbindung mit dem Server.
+	 */
 	public void verbindungSchliessen () {
 		if (!socket.isClosed()) {
 			verbindung.beendeVerbindung();

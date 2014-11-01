@@ -336,7 +336,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	public void beendeVerbindung () {
 		if (!socket.isClosed()) {
 			for (NetzwerkVerbindung v : verbindungen) {
-				v.beendeVerbindung();
+				if(v.istAktiv()) v.beendeVerbindung();
 			}
 			try {
 				socket.close();
@@ -427,6 +427,22 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	public void empfangeBoolean (boolean b) {
 		if (globalerEmpfaenger != null) {
 			globalerEmpfaenger.empfangeBoolean(b);
+		}
+	}
+	
+	/**
+	 * Schließt die Verbindung mit dem Server.
+	 */
+	public void verbindungSchliessen () {
+		if (!socket.isClosed()) {
+			for(NetzwerkVerbindung verbindung : verbindungen) {
+				verbindung.beendeVerbindung();
+			}
+			try {
+				socket.close();
+			} catch (IOException e) {
+				Logger.error("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+			}
 		}
 	}
 
