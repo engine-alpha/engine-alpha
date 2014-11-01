@@ -54,7 +54,7 @@
         </javac>
 
         <javac includeantruntime="false" srcdir="${test.src.dir}" destdir="${test.bin.dir}"
-               debug="true">
+               debug="true" encoding="utf-8">
             <classpath location="${bin.dir}"/>
             <classpath refid="classpath.junit"/>
         </javac>
