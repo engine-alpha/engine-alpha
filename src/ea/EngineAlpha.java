@@ -66,6 +66,10 @@ public class EngineAlpha extends Frame {
 	 */
 	public static final boolean IS_JAR;
 
+	/**
+	 * Zeitpunkt, an dem diese Jar-Datei erzeugt wurde, falls als Jar-Datei ausgeführt, sonst die
+	 * aktuelle Zeit in Sekunden seit dem 01.01.1970 (Unix Timestamp)
+	 */
 	public static final long BUILD_TIME;
 
 	/**
@@ -77,6 +81,7 @@ public class EngineAlpha extends Frame {
 		BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;
 	}
 
+	private static boolean debug;
 	private EngineAlphaPromotion promo;
 
 	public EngineAlpha () {
@@ -113,7 +118,7 @@ public class EngineAlpha extends Frame {
 		return classJar.startsWith("jar:");
 	}
 
-	@SuppressWarnings ("unused")
+	@SuppressWarnings ( "unused" )
 	public static String getJarName () {
 		String className = EngineAlpha.class.getName().replace('.', '/');
 		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
@@ -181,6 +186,14 @@ public class EngineAlpha extends Frame {
 		}
 
 		return null;
+	}
+
+	public static boolean isDebug () {
+		return debug;
+	}
+
+	public static void setDebug (boolean value) {
+		debug = value;
 	}
 
 	private class EngineAlphaPromotion extends Canvas implements Runnable {
@@ -335,15 +348,5 @@ public class EngineAlpha extends Frame {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private static boolean debug;
-
-	public static boolean isDebug() {
-		return debug;
-	}
-
-	public static void setDebug(boolean value) {
-		debug = value;
 	}
 }
