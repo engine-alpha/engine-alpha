@@ -49,7 +49,7 @@
     </target>
 
     <target name="compile" depends="clean, makedir">
-        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${bin.dir}" debug="true">
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${bin.dir}" debug="true" encoding="utf-8">
             <classpath refid="classpath"/>
         </javac>
 
