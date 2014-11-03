@@ -256,9 +256,9 @@ public class Bild extends Raum {
 	 * 		gezeichnet werden.
 	 */
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
 		if (r.schneidetBasic(this.dimension())) {
+			super.beforeRender(g, r);
+
 			if (!wiederholen) {
 				g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), null);
 			} else {
@@ -269,9 +269,9 @@ public class Bild extends Raum {
 				// Rechteck füllen
 				g.fill(new Rectangle2D.Double(position.realX() - r.x, position.realY() - r.y, breite, hoehe));
 			}
-		}
 
-		super.afterRender(g, r);
+			super.afterRender(g, r);
+		}
 	}
 
 	/**

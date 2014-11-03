@@ -519,11 +519,11 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+
+		super.beforeRender(g, r);
 
 		FontMetrics f = Fenster.metrik(font);
 		float x = position.x, y = position.y;

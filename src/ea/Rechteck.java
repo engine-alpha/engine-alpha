@@ -111,11 +111,11 @@ public class Rechteck extends Geometrie {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+
+		super.beforeRender(g, r);
 
 		g.setColor(super.formen()[0].getColor());
 		g.fillRect((int) (position.x - r.x), (int) (position.y - r.y), (int) breite, (int) laenge);

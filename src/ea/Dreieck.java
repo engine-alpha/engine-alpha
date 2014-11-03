@@ -149,11 +149,11 @@ public class Dreieck extends Geometrie {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
 		if (!r.schneidetBasic(this.dimension())) {
 			return;
 		}
+
+		super.beforeRender(g, r);
 
 		int[] x = {(int) this.x[0], (int) this.x[1], (int) this.x[2]};
 
