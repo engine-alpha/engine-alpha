@@ -62,12 +62,12 @@ public class Zeichner extends Canvas implements Runnable {
 	private Knoten statNode = new Knoten();
 
 	/**
-	 * Der Relative Hintergrund, ist immer das Hinterste.
+	 * Der relative Hintergrund, ist immer das Hinterste.
 	 */
 	private Raum hintergrund;
 
 	/**
-	 * Der Absolute Vordergrund. Er liegt immer im Zentrum<br /> Reserviert fuer die Absolute Maus.
+	 * Der absolute Vordergrund. Er liegt immer im Zentrum<br /> Reserviert fuer die absolute Maus.
 	 */
 	private Raum vordergrund;
 
@@ -79,12 +79,12 @@ public class Zeichner extends Canvas implements Runnable {
 	private Thread thread;
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Zeichner
+	 * Konstruktor für Objekte der Klasse Zeichner
 	 *
 	 * @param x
-	 * 		Die Groesse des Einflussbereichs des Panels in Richtung X.
+	 * 		Die Größe des Einflussbereichs des Panels in Richtung <code>x</code>.
 	 * @param y
-	 * 		Die Groesse des Einflussbereichs des Panels in Richtung Y.
+	 * 		Die Größe des Einflussbereichs des Panels in Richtung <code>y</code>.
 	 * @param c
 	 * 		Die Kamera, deren Sicht grafisch dargestellt werden soll.
 	 */
@@ -120,19 +120,9 @@ public class Zeichner extends Canvas implements Runnable {
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-		long sec = 0;
-
 		while (work) {
-			long time = System.currentTimeMillis();
-
 			render(g);
 			bs.show();
-
-			if (System.currentTimeMillis() / 1000 != sec) {
-				// System.out.println("RenderCycle-Duration: " + (System.currentTimeMillis() - time));
-			}
-
-			sec = time / 1000;
 
 			try {
 				Thread.sleep(UPDATE_INTERVALL);
@@ -143,7 +133,7 @@ public class Zeichner extends Canvas implements Runnable {
 	}
 
 	/**
-	 * Die render()-Methode, sie fuehrt die gesamte Zeichenroutine aus.
+	 * Die render()-Methode, sie führt die gesamte Zeichenroutine aus.
 	 *
 	 * @param g
 	 * 		Das zum Zeichnen uebergebene Graphics-Objekt
@@ -228,14 +218,14 @@ public class Zeichner extends Canvas implements Runnable {
 	}
 
 	/**
-	 * Loescht den absoluten Vordergrund
+	 * Löscht den absoluten Vordergrund
 	 */
 	void vordergrundLoeschen () {
 		vordergrund = null;
 	}
 
 	/**
-	 * @return Ein BoundingRechteck, dass die BReite und Hoehe des Fensters hat.
+	 * @return Ein BoundingRechteck, dass die Breite und Höhe des Fensters hat.
 	 */
 	public BoundingRechteck masse () {
 		return groesse;

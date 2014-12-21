@@ -22,9 +22,9 @@ package ea.edu;
 import ea.Game;
 
 /**
- * Das Standartspielfenster fuer Unterricht. Bei diesem "<code>Game</code>-Objekt" wie auch bei dem
+ * Das Standard-Spielfenster für den Unterricht. Bei diesem "<code>Game</code>-Objekt" wie auch beim
  * gesamten Paket <code>ea.edu</code> handelt es sich um eine <b>drastische Reduktion</b> der
- * ohnehin aeusserst geringen Anforderungen.<br /> Entwickelt als <i>Singleton</i>, da dies das
+ * ohnehin äußerst geringen Anforderungen.<br /> Entwickelt als <i>Singleton</i>, da dies das
  * Generalfenster aller "edu"-Grafiken ist.
  *
  * @author Andonie

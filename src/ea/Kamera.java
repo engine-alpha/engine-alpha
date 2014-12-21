@@ -306,10 +306,34 @@ public class Kamera {
 			bild = bild.mittenAngleichInstanz(fokus.dimension());
 			bild = bild.verschobeneInstanz(verzug);
 		}
+
 		if (hatBounds) {
 			bild = bild.in(bounds);
 		}
+
 		ebene.basis().zeichnen(g, bild);
+
+		if (EngineAlpha.isDebug()) {
+			int tx = (int) bild.x;
+			int ty = (int) bild.y;
+			int gridSize = 50;
+
+			g.translate(-tx, -ty);
+			g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
+			g.setColor(new Color(0, 0, 0, 100));
+
+			for(int x = tx / gridSize * gridSize; x < tx + bild.breite; x += gridSize) {
+				g.drawLine(x, ty, x, ty + (int) bild.hoehe);
+				g.drawString("" + x, x + 10, ty + 20);
+			}
+
+			for(int y = ty / gridSize * gridSize; y < ty + bild.hoehe; y += gridSize) {
+				g.drawLine(tx, y, tx + (int) bild.breite, y);
+				g.drawString("" + y, tx + 10, y + 20);
+			}
+
+			g.translate(tx, ty);
+		}
 	}
 
 	/**

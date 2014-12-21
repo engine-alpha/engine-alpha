@@ -29,10 +29,10 @@ import java.util.ConcurrentModificationException;
 import java.util.Random;
 
 /**
- * Die Anzeige ermoeglicht Punktedarstellung im EDU-Konzept.<br /> Zusaetzlich realisiert sie das
- * <b>Interfacefreie</b> Reagieren auf Tastendruck und Ticken. Dies jedoch wird einem Schueler, der
- * nach dem EDU-Konzept lernt so nie vorkommen. Fuer den Lerneffekt wird die Funktionalitaet in den
- * paketexternen Klassen auf spezielle Interfaces beschraenkt.
+ * Die Anzeige ermöglicht Punktedarstellung im EDU-Konzept.<br /> Zusätzlich realisiert sie das
+ * <b>Interfacefreie</b> Reagieren auf Tastendruck und Ticken. Dies jedoch wird einem Schüler, der
+ * nach dem EDU-Konzept lernt so nie vorkommen. Für den Lerneffekt wird die Funktionalität in den
+ * paketexternen Klassen auf spezielle Interfaces beschränkt.
  *
  * @author Michael Andonie
  */
