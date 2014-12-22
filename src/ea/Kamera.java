@@ -320,7 +320,7 @@ public class Kamera {
 
 			g.translate(-tx, -ty);
 			g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-			g.setColor(new Color(0, 0, 0, 100));
+			g.setColor(new Color(255, 255, 255, 100));
 
 			for(int x = tx / gridSize * gridSize; x < tx + bild.breite; x += gridSize) {
 				g.drawLine(x, ty, x, ty + (int) bild.hoehe);
