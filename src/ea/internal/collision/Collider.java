@@ -19,9 +19,7 @@
 
 package ea.internal.collision;
 
-import ea.Dreieck;
-import ea.Punkt;
-import ea.Vektor;
+import ea.*;
 
 /**
  * Ein Collider ist die abstrakte Form einer <i>Umgebung in der Zeichenebene</i>. Durch das
@@ -150,13 +148,22 @@ public abstract class Collider implements Cloneable {
 	public abstract boolean verursachtCollision (Punkt positionThis, Punkt positionOther, Collider other);
 
 	/**
-	 * Gibt zur�ck, ob dieser Collider ein <code>NullCollider</code> ist, also nur
+	 * Gibt zurück, ob dieser Collider ein <code>NullCollider</code> ist, also nur
 	 * <code>false</code> zur�ckgeben kann.
 	 *
 	 * @return <code>true</code>, falls dieser Collider ein <i>Null-Collider</i> ist, sonst
 	 * <code>false</code>.
 	 */
 	public abstract boolean istNullCollider ();
+
+    /**
+     * Gibt eine visuelle Interpretation dieses Colliders als <code>Raum-Objekt</code> aus.
+     * @param color Die (Füll)Farbe, in der das grafische Objekt ggf. dargestellt werden soll.
+     * @param p Der Punkt, an dem das zugehörige Objekt derzeit ist.
+     * @return Ein-Raum-Objekt, das den Collider ideal annähert in Form, Position und Größe. <b>Das ausgegebene
+     * Objekt ist <u>nicht</u> an der Wurzel angemeldet und wird damit nicht ohne Weiteres grafisch dargestellt.</b>
+     */
+    public abstract Raum visualize(Punkt p, Farbe color);
 
 	/**
 	 * Überschriebene Clone-Methode für effizientes, <b>tiefgehendes</b> klonen von Collidern. Das

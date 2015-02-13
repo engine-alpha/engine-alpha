@@ -19,9 +19,7 @@
 
 package ea.internal.collision;
 
-import ea.Kreis;
-import ea.Punkt;
-import ea.Vektor;
+import ea.*;
 
 public class SphereCollider extends Collider {
 
@@ -92,7 +90,17 @@ public class SphereCollider extends Collider {
 		return false;
 	}
 
-	/**
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Raum visualize(Punkt p, Farbe color) {
+        Kreis k = ausDiesem(p);
+        k.farbeSetzen(color);
+        return k;
+    }
+
+    /**
 	 * {@inheritDoc}
 	 */
 	@Override

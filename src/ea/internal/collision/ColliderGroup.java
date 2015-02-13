@@ -19,7 +19,10 @@
 
 package ea.internal.collision;
 
+import ea.Farbe;
+import ea.Knoten;
 import ea.Punkt;
+import ea.Raum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +62,20 @@ public class ColliderGroup extends Collider {
 		return false;
 	}
 
-	/**
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Raum visualize(Punkt p, Farbe color) {
+        Punkt positionMitOffset = p.verschobenerPunkt(offset);
+        Knoten ret = new Knoten();
+        for(Collider c : colliders) {
+            ret.add(c.visualize(positionMitOffset, color));
+        }
+        return ret;
+    }
+
+    /**
 	 * {@inheritDoc}
 	 */
 	@Override

@@ -19,7 +19,10 @@
 
 package ea.internal.collision;
 
+import ea.Farbe;
+import ea.Knoten;
 import ea.Punkt;
+import ea.Raum;
 
 /**
  * Dieser Collider kann sich nicht mit irgendetwas schneiden. Es kann keine Collision mit diesem
@@ -60,7 +63,15 @@ public class NullCollider extends Collider {
 		return true;
 	}
 
-	/**
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Raum visualize(Punkt p, Farbe color) {
+        return new Knoten();
+    }
+
+    /**
 	 * {@inheritDoc} Nachdem es nur eine unterscheidbare Instanz von <code>NullCollider</code> gibt,
 	 * wird hier aus Performance-Gründen eine Referenz auf das Objekt selbst zurückgegeben, um nicht
 	 * unnötig Speicher zu allozieren.

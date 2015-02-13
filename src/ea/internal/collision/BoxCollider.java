@@ -19,9 +19,7 @@
 
 package ea.internal.collision;
 
-import ea.BoundingRechteck;
-import ea.Punkt;
-import ea.Vektor;
+import ea.*;
 
 public class BoxCollider extends Collider {
 
@@ -107,7 +105,14 @@ public class BoxCollider extends Collider {
 		return false;
 	}
 
-	/**
+    @Override
+    public Raum visualize(Punkt p, Farbe color) {
+        Rechteck r = alsBR(p).ausDiesem();
+        r.farbeSetzen(color);
+        return r;
+    }
+
+    /**
 	 * {@inheritDoc}
 	 */
 	@Override
