@@ -54,7 +54,7 @@ extends FrameSubthread {
                 synchronized (dispatchableQueue) {
                     //Warten, Unterbrechung erwünscht
                     try {
-                        dispatchableQueue.wait(2);
+                        dispatchableQueue.wait(1);
                     } catch (InterruptedException e) { }
                 }
             } else {

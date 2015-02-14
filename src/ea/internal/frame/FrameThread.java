@@ -69,6 +69,13 @@ extends Thread {
     private final RenderThread renderThread;
 
     /**
+     * Der Dispatcher-Thread. Übernimmt die Ausführung von Listener-Events aus der API.
+     */
+    private final DispatcherThread dispatcherThread;
+
+    private final ProducerThread[] producerThreads;
+
+    /**
      * Konstruktor erstellt den Thread, aber <b>startet ihn nicht</b>.
      */
     public FrameThread(Zeichner zeichner, World world) {
@@ -81,13 +88,14 @@ extends Thread {
         //Die Childs initiieren
         worldThread = new WorldThread(world);
         renderThread = new RenderThread(zeichner);
+        dispatcherThread = new DispatcherThread(queue);
 
 
         //Startet die Threads. Sie verharren vorerst in Wartehaltung, bis die Run-Methode dieses Threads
         //Sie aus dem Wartezustand holt.
-
         worldThread.start();
         renderThread.start();
+        dispatcherThread.start();
     }
 
     /**
@@ -108,6 +116,8 @@ extends Thread {
             worldThread.setDT(deltaT);
             worldThread.semi_start();
 
+            //Start Producers
+
             //Join: WorldThread
             try {
                 worldThread.semi_join();
@@ -115,6 +125,20 @@ extends Thread {
                 e.printStackTrace();
             }
 
+            //Start Dispatcher
+            dispatcherThread.semi_start();
+
+            //Join: Producers
+
+            //-> Beende Wartehaltung d. Dispatchers
+            dispatcherThread.frameAbschliessen();
+
+            //Join: Dispatcher
+            try {
+                dispatcherThread.semi_join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             //Join: RenderThread
             try {
