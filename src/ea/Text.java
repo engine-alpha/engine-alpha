@@ -188,7 +188,7 @@ public class Text extends Raum implements Leuchtend {
 		this.inhalt = inhalt;
 		this.position = new Punkt(x, y);
 		this.groesse = schriftGroesse;
-		this.farbe = zuFarbeKonvertieren(farbe);
+		this.farbe = Farbe.zuFarbeKonvertieren(farbe);
 
 		if (schriftart >= 0 && schriftart <= 3) {
 			this.schriftart = schriftart;
@@ -435,7 +435,7 @@ public class Text extends Raum implements Leuchtend {
 	 * 		Der Name der neuen Fuellfarbe
 	 */
 	public void setzeFarbe (String farbe) {
-		this.setzeFarbe(zuFarbeKonvertieren(farbe));
+		this.setzeFarbe(Farbe.zuFarbeKonvertieren(farbe));
 	}
 
 	/**

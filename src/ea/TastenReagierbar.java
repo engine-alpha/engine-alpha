@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.ano.API;
+
 /**
  * Dieses Interface wird implementiert, um auf die verschiedenen Tastaturbefehle reagieren zu
  * können.

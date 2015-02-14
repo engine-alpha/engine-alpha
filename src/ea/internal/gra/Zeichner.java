@@ -20,7 +20,6 @@
 package ea.internal.gra;
 
 import ea.*;
-import ea.internal.phy.Physik;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -39,12 +38,6 @@ public class Zeichner extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 188647530006553893L;
 
-	/**
-	 * Die Liste der einfachen Geometrischen Koerper, die gezeichnet werden sollen.
-	 *
-	 * @see ea.SimpleGraphic
-	 */
-	private final ArrayList<SimpleGraphic> simples = new ArrayList<>();
 
 	/**
 	 * Die Kamera.<br /> Letzendlich wird das gezeichnet, was sich in ihr befindet
@@ -151,12 +144,6 @@ public class Zeichner extends Canvas implements Runnable {
 		// Die Objekte
 		cam.zeichne(g);
 
-		// Die simplen Grafikobjekte (nicht in Raum)
-		BoundingRechteck camBounds = cam.position();
-		for (SimpleGraphic gr : simples) {
-			gr.paint(g, (int) camBounds.x, (int) camBounds.y);
-		}
-
 		// Die statischen Objekte
 		statNode.zeichnen(g, groesse);
 
@@ -179,7 +166,6 @@ public class Zeichner extends Canvas implements Runnable {
 			e.printStackTrace();
 		}
 
-		Physik.neutralize();
 		AnimationsManager.neutralize();
 	}
 
@@ -229,13 +215,5 @@ public class Zeichner extends Canvas implements Runnable {
 	 */
 	public BoundingRechteck masse () {
 		return groesse;
-	}
-
-	public void addSimple (SimpleGraphic g) {
-		simples.add(g);
-	}
-
-	public void removeSimple (SimpleGraphic g) {
-		simples.remove(g);
 	}
 }

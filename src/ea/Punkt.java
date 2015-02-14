@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.ano.API;
+
 /**
  * Ein Punkt beschreibt einen exakt bestimmten eindimensionalen Punkt auf der Zeichenebene.<br /> Er
  * ist durch 2 Koordinaten exakt bestimmt.

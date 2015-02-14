@@ -19,7 +19,7 @@
 
 package ea.compat;
 
-import ea.NoExternalUse;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
 
 import java.io.BufferedReader;

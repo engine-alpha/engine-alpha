@@ -19,10 +19,6 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
-import ea.internal.collision.ColliderGroup;
-import ea.internal.gra.Listung;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +31,7 @@ import java.util.Vector;
  *
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
-public class Knoten extends Raum implements Listung {
+public class Knoten extends Raum {
 	/**
 	 * Die Liste aller Raum-Objekte, die dieser Knoten fasst.
 	 */
@@ -48,22 +44,6 @@ public class Knoten extends Raum implements Listung {
 		list = new Vector<>();
 	}
 
-	/**
-	 * Entfernt alle Raum-Objekte von diesem Knoten, die an diesem Knoten gelagert sind.<br /> <br
-	 * /> <b>ACHTUNG</b><br /> Sollte <i>Physik</i> benutzt werden:<br /> Diese Methode macht alle
-	 * abgemeldeten <code>Raum</code>-Objekt fuer die Physik neutral!!!<br /> Sollte dies NICHT
-	 * gewuenscht sein, gibt es hierfuer die Methode <code>leerenOhnePhysikAbmelden()</code>.
-	 *
-	 * @see #leerenOhnePhysikAbmelden()
-	 */
-	public void leeren () {
-		for (int i = list.size() - 1; i >= 0; i--) {
-			list.get(i).neutralMachen();
-			list.get(i).loeschen();
-		}
-
-		list.clear();
-	}
 
 	/**
 	 * Loescht alle Raum-Objekte, die an diesem Knoten gelagert sind, ohne sie jedoch von ihrer
@@ -87,7 +67,6 @@ public class Knoten extends Raum implements Listung {
 	 */
 	public void entfernen (Raum m) {
 		if (list.contains(m)) {
-			m.neutralMachen();
 			m.loeschen();
 		}
 
@@ -209,37 +188,6 @@ public class Knoten extends Raum implements Listung {
 	}
 
 	/**
-	 * Die dimension()-Methode.<br /> Gibt ein <code>BoundingRechteck</code> aus, das alle
-	 * Komponente dieses Knotens bedeckt.
-	 *
-	 * @return Das BoundingRechteck, das alle Komponente dieses Knotens bedeckt.<br /> Ist ein
-	 * BoundingRechteck mit den Werten (0|0|0|0), wenn dieses Knoten keine Konkreten Raum-Objekte
-	 * gesammelt hat.
-	 */
-	@Override
-	public BoundingRechteck dimension () {
-		BoundingRechteck ret = null;
-
-		try {
-			for (int i = list.size() - 1; i >= 0; i--) {
-				if (ret == null) {
-					ret = list.get(i).dimension();
-				} else {
-					ret = ret.summe(list.get(i).dimension());
-				}
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// Wahrscheinlich wurde die Liste geleert.
-		}
-
-		if (ret == null) {
-			return new BoundingRechteck(0, 0, 0, 0);
-		} else {
-			return ret;
-		}
-	}
-
-	/**
 	 * Verschiebt diesen Knoten.<br /> Das heisst, dass saemtliche anliegenden Raum-Objekte
 	 * gleichermassen Verschoben werden.
 	 *
@@ -251,37 +199,6 @@ public class Knoten extends Raum implements Listung {
 		for (int i = list.size() - 1; i >= 0; i--) {
 			list.get(i).verschieben(v);
 		}
-	}
-
-	/**
-	 * {@inheritDoc} Collider ist eine Gruppierung der Collider aller <code>Raum</code>-Objekte, die
-	 * an diesem Knoten angehängt sind.
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		ColliderGroup group = new ColliderGroup();
-		for (Raum r : list) {
-			group.addCollider(r.erzeugeCollider());
-		}
-		return group;
-	}
-
-	/**
-	 * Berechnet exakter alle rechteckigen Flächen, auf denen dieses Objekt liegt.<br /> Diese
-	 * Methode wird von komplexeren Gebilden, wie geometrischen oder Listen ueberschrieben.
-	 *
-	 * @return Alle Rechtecksflächen, auf denen dieses Objekt liegt. Ist standardisiert ein Array
-	 * der Größe 1 mit der <code>dimension()</code> als Inhalt.
-	 */
-	@Override
-	public BoundingRechteck[] flaechen () {
-		ArrayList<BoundingRechteck> data = new ArrayList<>();
-
-		for (int i = list.size() - 1; i >= 0; i--) {
-			data.addAll(Arrays.asList(list.get(i).flaechen()));
-		}
-
-		return data.toArray(new BoundingRechteck[data.size()]);
 	}
 
 	/**

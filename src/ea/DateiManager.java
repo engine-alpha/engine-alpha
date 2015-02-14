@@ -20,6 +20,7 @@
 package ea;
 
 import ea.compat.CompatDateiManager;
+import ea.internal.ano.API;
 import ea.internal.gra.PixelFeld;
 import ea.internal.util.Logger;
 
@@ -704,7 +705,7 @@ public class DateiManager {
 		if (s.compareTo("%%;") == 0) {
 			return null;
 		} else if (s.charAt(0) != '&') {
-			return Raum.zuFarbeKonvertieren(s.replace(";", ""));
+			return Farbe.zuFarbeKonvertieren(s.replace(";", ""));
 		} else {
 			int[] rgb = new int[3];
 			int cnt = 0;

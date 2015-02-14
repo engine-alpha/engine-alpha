@@ -17,17 +17,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.internal.gra;
+package ea.internal.ano;
+
+import java.lang.annotation.Documented;
 
 /**
- * Dieses Interface bezeichnet eine Raum-Klasse, die Wiederum eine Anreihung mehrer anderer
- * Raum-Objekte beinhaltet. Hierzu zaehlen bis jetzt nur die Klassen <code>Knoten</code> und
- * <code>Geometrie</code>.<br /> Diese Schnittstelle hat keinerlei Konstanten oder abstrakte
- * Methoden; ihr Implementieren dient nur der Kennzeichnung fuer die Engine intern. Es findet so
- * verwendung bei Kollisionstests.
+ * Markiert Methoden, die Schüler verwenden sollen. Methoden ohne @API sollen nicht verwendet
+ * werden!
+ * <p/>
+ * Bisher müssen diese Methoden auch mit @SuppressWarnings("unused") zusätzlich markiert werden.
  *
- * @author Michael Andonie
+ * @author Niklas Keller <me@kelunik.com>
  */
-public interface Listung {
+@Documented
+public @interface API {
 
 }

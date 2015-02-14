@@ -19,8 +19,6 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
-
 import java.awt.*;
 
 /**
@@ -121,16 +119,6 @@ public class Rechteck extends Geometrie {
 		g.fillRect((int) (position.x - r.x), (int) (position.y - r.y), (int) breite, (int) laenge);
 
 		super.afterRender(g, r);
-	}
-
-	/**
-	 * {@inheritDoc} Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden
-	 * <code>BoundingRechteck</code> erzeugt, dass über die <code>dimension()</code>-Methode
-	 * berechnet wird.
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		return erzeugeLazyCollider();
 	}
 
 	/**

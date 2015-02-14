@@ -19,10 +19,6 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
-import ea.internal.collision.ColliderGroup;
-import ea.internal.gra.Listung;
-
 import java.awt.*;
 
 /**
@@ -30,7 +26,7 @@ import java.awt.*;
  *
  * @author Michael Andonie
  */
-public abstract class Geometrie extends Raum implements Leuchtend, Listung {
+public abstract class Geometrie extends Raum {
 	/**
 	 * Die Dimension des Objektes; zur schnellen Ausgabe
 	 */
@@ -68,7 +64,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	public Geometrie (float x, float y) {
 		position = new Punkt(x, y);
 		dimension = new BoundingRechteck(x, y, 0, 0);
-		super.leuchterAnmelden(this);
 	}
 
 	/**
@@ -83,10 +78,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 		}
 
 		super.afterRender(g, r);
-	}
-
-	public BoundingRechteck dimension () {
-		return dimension.klon();
 	}
 
 	/**
@@ -107,35 +98,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	}
 
 	/**
-	 * {@inheritDoc} Collider ist eine Gruppierung aus den Collidern der Dreiecke, die dieses Objekt
-	 * ausmachen.
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		ColliderGroup group = new ColliderGroup();
-		for (Dreieck d : formen) {
-			group.addCollider(d.erzeugeCollider());
-		}
-		return group;
-	}
-
-	/**
-	 * Berechnet exakter alle Rechteckigen Flaechen, auf denen dieses Objekt liegt.<br /> Diese
-	 * Methode wird von komplexeren Gebilden, wie geometrischen oder Listen ueberschrieben.
-	 *
-	 * @return Alle Rechtecksflaechen, auf denen dieses Objekt liegt. Ist standartisiert ein Array
-	 * der Groesse 1 mit der <code>dimension()</code> als Inhalt.
-	 */
-	@Override
-	public BoundingRechteck[] flaechen () {
-		BoundingRechteck[] ret = new BoundingRechteck[formen.length];
-		for (int i = 0; i < formen.length; i++) {
-			ret[i] = formen[i].dimension();
-		}
-		return ret;
-	}
-
-	/**
 	 * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
 	 * Objekt, damit es problemlos geloescht werden kann.<br /> <b>Achtung:</b> zwar werden
 	 * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
@@ -147,7 +109,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	 */
 	@Override
 	public void loeschen () {
-		super.leuchterAbmelden(this);
 		super.loeschen();
 	}
 
@@ -189,52 +150,6 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	public abstract Dreieck[] neuBerechnen ();
 
 	/**
-	 * Setzt, ob dieses Geometrie-Objekt leuchten soll.<br /> Ist dies der Fall, so werden immer
-	 * wieder schnell dessen Farben geaendert; so entsteht ein Leuchteffekt.
-	 *
-	 * @param leuchtet
-	 * 		Ob dieses Objekt nun leuchten soll oder nicht (mehr).
-	 */
-	@Override
-	public void leuchtetSetzen (boolean leuchtet) {
-		if (this.leuchtet == leuchtet) {
-			return;
-		}
-		this.leuchtet = leuchtet;
-		if (leuchtet) {
-			alte = formen[0].getColor();
-		} else {
-			this.farbeSetzen(alte);
-		}
-	}
-
-	/**
-	 * Fuehrt einen Leuchtschritt aus.<br /> Dies heisst, dass in dieser Methode die Farbe einfach
-	 * gewechselt wird. Da diese Methode schnell und oft hintereinander ausgefuehrt wird, soll so
-	 * der Leuchteffekt entstehen.<br /> <b>Diese Methode sollte nur innerhalb der Engine
-	 * ausgefuehrt werden! Also nicht fuer den Entwickler gedacht.</b>
-	 */
-	@Override
-	public void leuchtSchritt () {
-		for (int i = 0; i < formen.length; i++) {
-			leuchtzaehler++;
-			leuchtzaehler %= farbzyklus.length;
-			formen[i].setColor(farbzyklus[leuchtzaehler]);
-		}
-	}
-
-	/**
-	 * Gibt wieder, ob das Leuchtet-Objekt gerade leuchtet oder nicht.
-	 *
-	 * @return <code>true</code>, wenn das Objekt gerade leuchtet, wenn nicht, dann ist die
-	 * Rueckgabe <code>false</code>
-	 */
-	@Override
-	public boolean leuchtet () {
-		return this.leuchtet;
-	}
-
-	/**
 	 * aktualisisert die Dreiecke, aus denen die Figur besteht UND weisst sie ein. Diese Methode
 	 * MUSS am Ende eines jeden Konstruktors einer Klasse stehen, die sich hieraus ableitet<br />
 	 * Zugrunde liegt eine neue Wertzuweisung des Arrays, es wird <code>neuBerechnen()</code>
@@ -267,7 +182,7 @@ public abstract class Geometrie extends Raum implements Leuchtend, Listung {
 	 * 		Der String-Wert der Farbe. Zu der Zuordnung siehe <b>Handbuch</b>
 	 */
 	public void farbeSetzen (String farbe) {
-		farbeSetzen(zuFarbeKonvertieren(farbe));
+		farbeSetzen(Farbe.zuFarbeKonvertieren(farbe));
 	}
 
 	/**

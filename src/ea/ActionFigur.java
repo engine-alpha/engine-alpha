@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.collision.Collider;
 import ea.internal.util.Logger;
 

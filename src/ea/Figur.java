@@ -19,9 +19,8 @@
 
 package ea;
 
-import ea.internal.collision.BoxCollider;
-import ea.internal.collision.Collider;
-import ea.internal.collision.ColliderGroup;
+import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.PixelFeld;
 import ea.internal.util.Logger;
 
@@ -538,47 +537,9 @@ public class Figur extends Raum {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		if (r.schneidetBasic(this.dimension())) {
-			super.beforeRender(g, r);
-			animation[aktuelle].zeichnen(g, (int) (position.x - r.x), (int) (position.y - r.y), spiegelX, spiegelY);
-			super.afterRender(g, r);
-		}
-	}
-
-	/**
-	 * @return Ein BoundingRechteck mit minimal nötigem Umfang, um das Objekt <b>voll
-	 * einzuschließen</b>.
-	 */
-	@Override
-	public BoundingRechteck dimension () {
-		if (animation != null && animation[aktuelle] != null) {
-			// FIXME: animation[aktuelle] == null => else => Nullpointer
-			return new BoundingRechteck(position.x, position.y, animation[0].breite(), animation[0].hoehe());
-		} else {
-			return new BoundingRechteck(position.x, position.y, animation[aktuelle].breite(), animation[aktuelle].hoehe());
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		ColliderGroup cg = new ColliderGroup();
-
-		for (BoundingRechteck r : flaechen()) {
-			cg.addCollider(BoxCollider.fromBoundingRechteck(new Vektor(r.x - position.x, r.y - position.y), r));
-		}
-
-		return cg;
-
-		// TODO: Entscheiden, ob genauere Collisionsbehandlung es wirklich wert ist.
-		// return new BoxCollider(new Vektor(dimension().breite, dimension().hoehe));
-	}
-
-	@Override
-	public BoundingRechteck[] flaechen () {
-		return animation[aktuelle].flaechen(position.x, position.y);
+        super.beforeRender(g, r);
+		animation[aktuelle].zeichnen(g, (int) (position.x - r.x), (int) (position.y - r.y), spiegelX, spiegelY);
+		super.afterRender(g, r);
 	}
 
 	/**

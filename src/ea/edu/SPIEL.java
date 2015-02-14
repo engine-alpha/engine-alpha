@@ -19,7 +19,7 @@
 
 package ea.edu;
 
-import ea.API;
+import ea.internal.ano.API;
 import ea.Bild;
 import ea.Maus;
 import ea.Punkt;

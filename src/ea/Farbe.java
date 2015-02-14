@@ -21,6 +21,7 @@ package ea;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * Die Klasse Farbe ermöglicht ein sehr einfaches Handling mit allen Farben. Sie basiert auf der
@@ -109,13 +110,84 @@ public final class Farbe implements Serializable {
 	 *
 	 * @return Das Farb-Objekt, das diese Farbe beinhaltet.
 	 *
-	 * @see Raum#zuFarbeKonvertieren(String)
+	 * @see Farbe#zuFarbeKonvertieren(String)
 	 */
 	public static final Farbe vonString (String s) {
-		return new Farbe(Raum.zuFarbeKonvertieren(s));
+		return new Farbe(zuFarbeKonvertieren(s));
 	}
 
-	/**
+    /**
+     * Diese Methode ordnet einem String ein Color-Objekt zu.<br /> Hierdurch ist in den Klassen
+     * außerhalb der Engine keine awt-Klasse nötig.
+     *
+     * @param t
+     * 		Der Name der Farbe.<br /> Ein Katalog mit allen moeglichen Namen findet sich im
+     * 		<b>Handbuch</b>
+     *
+     * @return Das Farbobjekt zum String; ist Color.black bei unzuordnembaren String
+     */
+    public static Color zuFarbeKonvertieren (String t) {
+        Color c;
+
+        switch (t.toLowerCase(Locale.GERMAN)) {
+            case "gelb":
+                c = Color.yellow;
+                break;
+            case "weiss":
+                c = Color.white;
+                break;
+            case "orange":
+                c = Color.orange;
+                break;
+            case "grau":
+                c = Color.gray;
+                break;
+            case "gruen":
+                c = Color.green;
+                break;
+            case "blau":
+                c = Color.blue;
+                break;
+            case "rot":
+                c = Color.red;
+                break;
+            case "pink":
+                c = Color.pink;
+                break;
+            case "magenta":
+            case "lila":
+                c = Color.magenta;
+                break;
+            case "cyan":
+            case "tuerkis":
+                c = Color.cyan;
+                break;
+            case "dunkelgrau":
+                c = Color.darkGray;
+                break;
+            case "hellgrau":
+                c = Color.lightGray;
+                break;
+            default:
+                c = Color.black;
+                break;
+        }
+
+        return DateiManager.ausListe(c);
+    }
+
+    /**
+	 * Erstellt eine Halbdurchsichtige Farbe mit den selben RGB-Werten, wie die eingegebene.<br />
+	 * Diese Methode wird intern verwendet.
+	 *
+	 * @param c
+	 * 		Die Farbe, deren im Alphawert gesenkte Instanz erstellt werden soll.
+	 */
+	public static final Color halbesAlpha (Color c) {
+		return DateiManager.ausListe(new Color(c.getRed(), c.getGreen(), c.getBlue(), 178));
+	}
+
+    /**
 	 * Gibt den Wert der Farbe aus.
 	 *
 	 * @return Der Wert der Farbe als Color-Objekt

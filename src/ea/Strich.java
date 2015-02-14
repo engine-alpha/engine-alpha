@@ -118,7 +118,7 @@ public class Strich extends SimpleGraphic {
 	 * 		Der Name der Farbe als String
 	 */
 	public void farbeSetzen (String s) {
-		c = Raum.zuFarbeKonvertieren(s);
+		c = Farbe.zuFarbeKonvertieren(s);
 	}
 
 	/**

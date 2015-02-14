@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.ano.API;
+
 /**
  * Ein Vektor bezeichnet eine relative Punktangabe, ansonsten unterscheidet er sich nicht weiter von
  * einem Punkt.<br /> Vektoren werden meist für die Beschreibung einer Bewegung benutzt.

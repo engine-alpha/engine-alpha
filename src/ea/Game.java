@@ -20,7 +20,6 @@
 package ea;
 
 import ea.internal.gui.*;
-import ea.internal.phy.Physik;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
@@ -637,7 +636,7 @@ public abstract class Game implements TastenReagierbar {
 	 * 		<code>kollision(int)</code> als Parameter übergeben.
 	 */
 	public void kollisionsReagierbarAnmelden (KollisionsReagierbar reagierbar, Raum r1, Raum r2, int code) {
-		Physik.getPhysik().anmelden(reagierbar, r1, r2, code);
+		//FIXME Implementation
 	}
 
 	/**
@@ -738,27 +737,6 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void ueberblendeSetzen (boolean aktiv) {
 		blende.sichtbarSetzen(aktiv);
-	}
-
-	/**
-	 * Setzt, ob die gesamte Engine Alpha rechenintensiv, oder ressourcensparsam arbeiten soll.
-	 * <p/>
-	 * <b>IM REGELFALL GILT FOLGENDES:</b>
-	 * <p/>
-	 * Die Engine arbeitet auf einem Niveau, das laufzeittechnisch bei normalen Computern
-	 * standardmäßig funktioniert. <i>Sollte es jedoch Probleme mit der Laufzeit geben (haengender
-	 * Bildschirm; Zeitverzögerungen, die klar an der Engine und nicht am eigenen Projekt liegen
-	 * usw.), so sollte mit dieser Methode die rechenintensive Arbeit ausgeschaltet werden.</i>
-	 * <p/>
-	 * <b>Standardmaessig ist die Arbeit rechenintensiv</b>.
-	 *
-	 * @param rechenintensiv
-	 * 		Ist dieser Wert <code>true</code> (Standard), so ist die Arbeit der Engine exakt und
-	 * 		rechenintensiv. Ist dieser Wert <code>false</code> (fuer langsame Computer zu empfehlen -
-	 * 		aber immer erst testen!!!!), so ist die Arbeit ressourcensparender und ungenauer.
-	 */
-	public void rechenintensiveArbeitSetzen (boolean rechenintensiv) {
-		Raum.heavyComputingSetzen(rechenintensiv);
 	}
 
 	/**

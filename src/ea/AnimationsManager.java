@@ -23,6 +23,7 @@ import ea.internal.ani.Animierer;
 import ea.internal.ani.GeradenAnimierer;
 import ea.internal.ani.KreisAnimierer;
 import ea.internal.ani.StreckenAnimierer;
+import ea.internal.ano.API;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
