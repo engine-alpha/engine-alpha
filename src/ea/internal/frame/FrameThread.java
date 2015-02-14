@@ -1,6 +1,8 @@
 package ea.internal.frame;
 
+import ea.internal.gra.Zeichner;
 import ea.internal.util.Logger;
+import org.jbox2d.dynamics.World;
 
 /**
  * Ein Objekt der Klasse <code>FrameLogic</code> überwacht die frameweise "Arbeit" der Engine.
@@ -19,7 +21,7 @@ import ea.internal.util.Logger;
  * Ein Frame ist ein "Schritt" innerhalb der Engine. Jede Bewegung und Berechnung lässt sich einem Frame zuordnen.
  * Created by andonie on 14.02.15.
  */
-public class FrameLogic
+public class FrameThread
 extends Thread {
 
     private static int threadcnt = 1;
@@ -53,14 +55,26 @@ extends Thread {
         return 1000f / ((float) maxmillis);
     }
 
+    /**
+     * Der World-Thread. Übernimmt die Physik-relevanten Änderungen.
+     */
     private final WorldThread worldThread;
+
+    /**
+     * Der Render-Thread. Übernimmt die frameweise Visualisierung.
+     */
+    private final RenderThread renderThread;
 
     /**
      * Konstruktor erstellt den Thread, aber <b>startet ihn nicht</b>.
      */
-    public FrameLogic() {
+    public FrameThread(Zeichner zeichner, World world) {
         super("Frame Master Thread #" + threadcnt++); //<- eigener Name (f. Multi-Window)
         this.setDaemon(true); // Daemon setzen
+
+        //Die Childs initiieren
+        worldThread = new WorldThread(world);
+        renderThread = new RenderThread(zeichner);
     }
 
     /**
@@ -74,12 +88,34 @@ extends Thread {
 
             //Eigentliche Arbeit: Möglichst hoch parallelisiert
 
+            //Render-Thread (läuft vollkommen parallel)
+            renderThread.start();
 
+            //Physics (WorldThread)
+            worldThread.setDT(deltaT);
+            worldThread.run();
+
+
+            //Join: WorldThread
+            try {
+                worldThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+            //Join: RenderThread
+            try {
+                renderThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             //ENDE der eigentlichen Arbeit
 
             long tEnd = System.currentTimeMillis();
             deltaT = tEnd - tStart;
+
 
             //ggf. warten:
             if (deltaT < maxmillis) {

@@ -1,6 +1,9 @@
 package ea.internal.frame;
 
+import ea.internal.gra.Zeichner;
+
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 
 /**
  * Ein <code>Render-Thread</code> führt beim Start (einmalig) seine Render-Routine aus.
@@ -10,12 +13,37 @@ public class RenderThread
 extends Thread {
 
     /**
+     * Counter für Anzahl an aktiven Render-Threads (f. Multi-Window)
+     */
+    private static int rtcnt = 1;
+
+    /**
      * Das Graphics-Objekt, das (dauerhaft) zum Zeichnen verwendet wird.
      */
-    private final Graphics2D graphics2D = null;
+    private final Graphics2D graphics2D;
 
-    public RenderThread() {
-        //
+    /**
+     * Die BufferStrategy zum Canvas.
+     */
+    private final BufferStrategy bufferStrategy;
+
+    /**
+     * Der Zeichner, der für das high-level Rendering verantwortlich ist.
+     */
+    private final Zeichner zeichner;
+
+    /**
+     * Erstellt einen Render-Thread.
+     * @param zeichner  Das <code>Zeichner-Objekt</code>, dass alle relevanten Informationen für das Rendering
+     *                  enthält.
+     */
+    public RenderThread(Zeichner zeichner) {
+        super("Rendering Thread #" + rtcnt++);
+        this.setDaemon(true);
+
+        this.zeichner = zeichner;
+        graphics2D = zeichner.getG();
+        bufferStrategy = zeichner.getBs();
     }
 
     /**
@@ -23,6 +51,7 @@ extends Thread {
      */
     @Override
     public void run() {
-
+        zeichner.render(graphics2D);
+        bufferStrategy.show();
     }
 }

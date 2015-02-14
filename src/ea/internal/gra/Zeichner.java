@@ -30,7 +30,7 @@ import java.util.ArrayList;
  *
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
-public class Zeichner extends Canvas implements Runnable {
+public class Zeichner extends Canvas {
 	/**
 	 * Das Intervall, in dem das Fenster upgedated wird.
 	 */
@@ -64,14 +64,31 @@ public class Zeichner extends Canvas implements Runnable {
 	 */
 	private Raum vordergrund;
 
-	/**
-	 * Gibt an, ob der Thread noch arbeiten soll.
-	 */
-	private boolean work = true;
-
 	private Thread thread;
 
-	/**
+    /**
+     * Gibt die Buffer Strategy aus.
+     * @return  Die BufferStrategy für den Zeichner.
+     */
+    public BufferStrategy getBs() {
+        return bs;
+    }
+
+    /**
+     * Gibt das Graphics-Object des Zeichners aus.
+     * @return das Graphics-Objekt des Zeichners.
+     */
+    public Graphics2D getG() {
+        return g;
+    }
+
+    /**
+     * Die BufferedStrategy, die hier visualisiert wird
+     */
+    private BufferStrategy bs;
+    private Graphics2D g;
+
+    /**
 	 * Konstruktor für Objekte der Klasse Zeichner
 	 *
 	 * @param x
@@ -88,41 +105,16 @@ public class Zeichner extends Canvas implements Runnable {
 
 		this.groesse = new BoundingRechteck(0, 0, x, y);
 		this.cam = c;
-	}
 
-	public void init () {
-		if (thread == null) {
-			thread = new Thread(this, "Zeichenthread") {{
-				setDaemon(true);
-			}};
-			thread.start();
-		}
-	}
+        createBufferStrategy(2);
+        bs = getBufferStrategy();
+        g = (Graphics2D) bs.getDrawGraphics();
 
-	/**
-	 * Hierin findet in einer Dauerschleife die Zeichenroutine statt.
-	 */
-	@Override
-	public void run () {
-		createBufferStrategy(2);
-		BufferStrategy bs = getBufferStrategy();
-		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+        // have to be the same @ Game.screenshot!
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-		// have to be the same @ Game.screenshot!
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
-		while (work) {
-			render(g);
-			bs.show();
-
-			try {
-				Thread.sleep(UPDATE_INTERVALL);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	/**
@@ -150,20 +142,6 @@ public class Zeichner extends Canvas implements Runnable {
 		// Die Maus
 		if (vordergrund != null) {
 			vordergrund.zeichnen(g, groesse);
-		}
-	}
-
-	/**
-	 * Tötet den Zeichenprozess und entfernt alle Elemente von der Wurzel und neutralisiert die
-	 * Phyisk.
-	 */
-	public void kill () {
-		work = false;
-
-		try {
-			thread.join();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
