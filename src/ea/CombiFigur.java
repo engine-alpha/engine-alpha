@@ -114,28 +114,9 @@ public class CombiFigur extends Raum {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
 		for (int i = 0; i < figuren.length; i++) {
-			figuren[i].zeichnen(g, r);
-		}
-
-		super.afterRender(g, r);
+            figuren[i].zeichnen(g, r);
+        }
 	}
 
-	/**
-	 * Verschiebt das Objekt.
-	 *
-	 * @param v
-	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
-	 *
-	 * @see Vektor
-	 * @see #verschieben(float, float)
-	 */
-	@Override
-	public void verschieben (Vektor v) {
-		for (int i = 0; i < figuren.length; i++) {
-			figuren[i].verschieben(v);
-		}
-	}
 }

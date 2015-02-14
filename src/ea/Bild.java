@@ -255,22 +255,16 @@ public class Bild extends Raum {
 	 * 		gezeichnet werden.
 	 */
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		if (r.schneidetBasic(this.dimension())) {
-			super.beforeRender(g, r);
-
-			if (!wiederholen) {
-				g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), null);
-			} else {
-				// Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmaße
-				Paint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX(), -r.y + position.realY(), img.getWidth(), img.getHeight()));
-				// Texturfarbe setzen
-				g.setPaint(tp);
-				// Rechteck füllen
-				g.fill(new Rectangle2D.Double(position.realX() - r.x, position.realY() - r.y, breite, hoehe));
-			}
-
-			super.afterRender(g, r);
-		}
+        if (!wiederholen) {
+            g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), null);
+        } else {
+            // Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmaße
+            Paint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX(), -r.y + position.realY(), img.getWidth(), img.getHeight()));
+            // Texturfarbe setzen
+            g.setPaint(tp);
+            // Rechteck füllen
+            g.fill(new Rectangle2D.Double(position.realX() - r.x, position.realY() - r.y, breite, hoehe));
+        }
 	}
 
 	/**

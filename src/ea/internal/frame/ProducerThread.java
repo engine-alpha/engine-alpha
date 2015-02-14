@@ -1,7 +1,5 @@
 package ea.internal.frame;
 
-import sun.rmi.server.Dispatcher;
-
 import java.util.Queue;
 
 /**
@@ -10,7 +8,7 @@ import java.util.Queue;
  * Created by andonie on 14.02.15.
  */
 public abstract class ProducerThread
-extends Thread {
+extends FrameSubthread {
 
     private static int ptcnt = 1;
 
@@ -44,7 +42,7 @@ extends Thread {
      * diese synchronized in die Queue ein.
      */
     @Override
-    public final void run() {
+    public final void frameLogic() {
         while(!done) {
             Dispatchable next = nextEvent();
             if(next == null) {

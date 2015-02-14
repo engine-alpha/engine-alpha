@@ -518,8 +518,6 @@ public class Text extends Raum {
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
 
-		super.beforeRender(g, r);
-
 		FontMetrics f = Fenster.metrik(font);
 		float x = position.x, y = position.y;
 
@@ -532,8 +530,6 @@ public class Text extends Raum {
 		g.setColor(farbe);
 		g.setFont(font);
 		g.drawString(inhalt, (int) (x - r.x), (int) (y - r.y + groesse));
-
-		super.afterRender(g, r);
 	}
 
 	/**

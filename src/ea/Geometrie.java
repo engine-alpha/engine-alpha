@@ -32,10 +32,10 @@ public abstract class Geometrie extends Raum {
 	 */
 	protected BoundingRechteck dimension;
 
-	/**
-	 * Die einzelnen, grafisch darstellbaren Formen, aus denen dieses Geometrie-Objekt besteht.
-	 */
-	private Dreieck[] formen;
+    /**
+     * Die Farbe dieses Geometrie-Objekts.
+     */
+    private Color color;
 
 	/**
 	 * Gibt an, ob dieses Geometrie-Objekt gerade leuchtet
@@ -71,16 +71,10 @@ public abstract class Geometrie extends Raum {
 	 * werden.
 	 */
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
-		for (int i = 0; i < formen.length; i++) {
-			formen[i].zeichnen(g, r);
-		}
-
-		super.afterRender(g, r);
+        throw new UnsupportedOperationException("Noch nicht implementiert (4.0)");
 	}
 
-	/**
+    /**
 	 * Verschiebt das Objekt.
 	 *
 	 * @param v
@@ -90,11 +84,7 @@ public abstract class Geometrie extends Raum {
 	 */
 	@Override
 	public void verschieben (Vektor v) {
-		super.verschieben(v);
-		for (int i = 0; i < formen.length; i++) {
-			formen[i].verschieben(v);
-		}
-		dimension = dimension.verschobeneInstanz(v);
+		//FIXME Implementation
 	}
 
 	/**
@@ -132,8 +122,16 @@ public abstract class Geometrie extends Raum {
 	 * 		Die neue Farbe
 	 */
 	public void farbeSetzen (Color c) {
-		//FIXME
+		this.color = c;
 	}
+
+    /**
+     * TODO
+     * @return
+     */
+    public Color getColor() {
+        return color;
+    }
 
 	/**
 	 * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br /> Dadurch faerbt sich
@@ -144,14 +142,5 @@ public abstract class Geometrie extends Raum {
 	 */
 	public void farbeSetzen (String farbe) {
 		farbeSetzen(Farbe.zuFarbeKonvertieren(farbe));
-	}
-
-	/**
-	 * Gibt alle Unterdreiecke dieser Geometrie-Figur wieder.<br />
-	 *
-	 * @return Ein Array mit allen Dreiecken dieser Figur.
-	 */
-	public Dreieck[] formen () {
-		return this.formen;
 	}
 }

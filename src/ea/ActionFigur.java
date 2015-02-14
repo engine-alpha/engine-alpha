@@ -485,15 +485,11 @@ public class ActionFigur extends Raum {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		super.beforeRender(g, r);
-
 		if (performsAction) {
 			actions[indexAction].zeichnen(g, r);
 		} else {
 			states[indexState].zeichnen(g, r);
 		}
-
-		super.afterRender(g, r);
 	}
 
 	/**

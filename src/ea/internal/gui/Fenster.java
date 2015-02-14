@@ -250,6 +250,7 @@ public class Fenster extends Frame {
 
 		this.zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe, new Zeichenebene()));
 		this.add(zeichner);
+        zeichner.init();
 
 		if ((windowMode & (WINDOW_FULLSCREEN_FRAME | WINDOW_FRAME)) > 0) {
 			this.pack();

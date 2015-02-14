@@ -138,7 +138,9 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	public final void zeichnenBasic (Graphics2D g, BoundingRechteck r) {
 
 		if (sichtbar && this.camcheck(r)) {
-			zeichnen(g, r);
+            _beforeRender(g, r);
+            zeichnen(g, r);
+            _afterRender(g, r);
 		}
 	}
 
@@ -149,7 +151,9 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
      *          <code>false</code>.
      */
     private boolean camcheck(BoundingRechteck r) {
-        throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        //FIXME
+        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        return true;
     }
 
     /**
@@ -367,10 +371,10 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * werden.</i></b>
 	 *
 	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 * @see #afterRender(Graphics2D, BoundingRechteck)
+	 * @see #_afterRender(Graphics2D, BoundingRechteck)
 	 */
 	@NoExternalUse
-	public final void beforeRender (Graphics2D g, BoundingRechteck r) {
+	public final void _beforeRender (Graphics2D g, BoundingRechteck r) {
 		/*lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
 
 		lastDrehung = Math.toRadians(drehung);
@@ -385,7 +389,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 		} else {
 			composite = null;
 		}*/
-        throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
         //FIXME Implementation
 	}
 
@@ -406,10 +410,10 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * nicht außerhalb der Engine verwendet werden.</i></b>
 	 *
 	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 * @see #beforeRender(Graphics2D, BoundingRechteck)
+	 * @see #_beforeRender(Graphics2D, BoundingRechteck)
 	 */
 	@NoExternalUse
-	public final void afterRender (Graphics2D g, BoundingRechteck r) {
+	public final void _afterRender (Graphics2D g, BoundingRechteck r) {
 		/*if (composite != null) {
 			g.setComposite(composite);
 		}
@@ -418,7 +422,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 			g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
 		}*/
         //FIXME Implementation
-        throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
 	}
 
 	/**

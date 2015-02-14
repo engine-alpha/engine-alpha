@@ -106,6 +106,9 @@ public class Zeichner extends Canvas {
 		this.groesse = new BoundingRechteck(0, 0, x, y);
 		this.cam = c;
 
+	}
+
+    public void init() {
         createBufferStrategy(2);
         bs = getBufferStrategy();
         g = (Graphics2D) bs.getDrawGraphics();
@@ -114,8 +117,7 @@ public class Zeichner extends Canvas {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
-	}
+    }
 
 	/**
 	 * Die render()-Methode, sie führt die gesamte Zeichenroutine aus.

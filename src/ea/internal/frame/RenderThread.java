@@ -10,7 +10,7 @@ import java.awt.image.BufferStrategy;
  * Created by andonie on 14.02.15.
  */
 public class RenderThread
-extends Thread {
+extends FrameSubthread {
 
     /**
      * Counter für Anzahl an aktiven Render-Threads (f. Multi-Window)
@@ -50,8 +50,12 @@ extends Thread {
      * Führt <i>einen einzelnen Frame-Render-Auftrag</i> aus. Danach ist der Thread fertig.
      */
     @Override
-    public void run() {
+    public void frameLogic() {
         zeichner.render(graphics2D);
-        bufferStrategy.show();
+        try {
+            bufferStrategy.show();
+        } catch(IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 }

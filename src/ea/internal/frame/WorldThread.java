@@ -7,7 +7,7 @@ import org.jbox2d.dynamics.World;
  * Created by andonie on 14.02.15.
  */
 public class WorldThread
-extends Thread {
+extends FrameSubthread {
 
     /**
      * globaler WT-Counter
@@ -58,7 +58,7 @@ extends Thread {
      * Die Run-Methode; führt einen DeltaT-Schritt aus.
      */
     @Override
-    public void run() {
+    public void frameLogic() {
         world.step(deltaT, velocityIterations, positionIterations);
     }
 }

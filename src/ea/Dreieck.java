@@ -82,7 +82,7 @@ public class Dreieck extends Geometrie {
 	/**
 	 * @return Die Farbe dieses Dreiecks
 	 */
-	public java.awt.Color getColor () {
+	public Color getColor() {
 		return farbe;
 	}
 
@@ -143,8 +143,6 @@ public class Dreieck extends Geometrie {
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
 
-		super.beforeRender(g, r);
-
 		int[] x = {(int) this.x[0], (int) this.x[1], (int) this.x[2]};
 
 		int[] y = {(int) this.y[0], (int) this.y[1], (int) this.y[2]};
@@ -156,8 +154,6 @@ public class Dreieck extends Geometrie {
 
 		g.setColor(farbe);
 		g.fillPolygon(x, y, 3);
-
-		super.afterRender(g, r);
 	}
 
 	/**

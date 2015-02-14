@@ -83,6 +83,11 @@ extends Thread {
         renderThread = new RenderThread(zeichner);
 
 
+        //Startet die Threads. Sie verharren vorerst in Wartehaltung, bis die Run-Methode dieses Threads
+        //Sie aus dem Wartezustand holt.
+
+        worldThread.start();
+        renderThread.start();
     }
 
     /**
@@ -97,15 +102,15 @@ extends Thread {
             //Eigentliche Arbeit: Möglichst hoch parallelisiert
 
             //Render-Thread (läuft vollkommen parallel)
-            renderThread.start();
+            renderThread.semi_start();
 
             //Physics (WorldThread)
             worldThread.setDT(deltaT);
-            worldThread.run();
+            worldThread.semi_start();
 
             //Join: WorldThread
             try {
-                worldThread.join();
+                worldThread.semi_join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -113,7 +118,7 @@ extends Thread {
 
             //Join: RenderThread
             try {
-                renderThread.join();
+                renderThread.semi_join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

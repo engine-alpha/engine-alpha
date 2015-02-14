@@ -290,6 +290,7 @@ public class Kamera {
             bild = bild.in(bounds);
         }
 
+
         ebene.basis().zeichnen(g, bild);
 
         if (EngineAlpha.isDebug()) {

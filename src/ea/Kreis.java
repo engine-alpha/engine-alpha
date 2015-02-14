@@ -94,11 +94,8 @@ public class Kreis extends RegEck {
 
 		// Kreis muss nicht gedreht werden,
 		// aber es könnten hier in Zukunft noch andere wichtige Funktionen aufgerunfen werden
-		super.beforeRender(g, r);
 
-		g.setColor(this.formen()[0].getColor());
+		g.setColor(this.getColor());
 		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
-
-		super.afterRender(g, r);
 	}
 }

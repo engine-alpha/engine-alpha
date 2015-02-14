@@ -52,7 +52,7 @@ public class Rechteck extends Geometrie {
 	 */
 	public Rechteck (float x, float y, float breite, float hoehe) {
 		super(x, y);
-        //FIXME
+        masseSetzen(breite, hoehe);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class Rechteck extends Geometrie {
 	 * @param hoehe
 	 * 		Die neue Hoehe des Rechtecks
 	 */
-	public void masseSetzen (int breite, int hoehe) {
+	public void masseSetzen (float breite, float hoehe) {
 		breiteSetzen(breite);
         hoeheSetzen(hoehe);
 	}
@@ -74,10 +74,10 @@ public class Rechteck extends Geometrie {
 	 * @param breite
 	 * 		Die neue Breite des Rechtecks
 	 *
-	 * @see #hoeheSetzen(int)
+	 * @see #hoeheSetzen(float)
 	 */
-	public void breiteSetzen (int breite) {
-        //FIXME
+	public void breiteSetzen (float breite) {
+        this.breite = breite;
 	}
 
 	/**
@@ -86,10 +86,10 @@ public class Rechteck extends Geometrie {
 	 * @param hoehe
 	 * 		Die neue Hoehe des Rechtecks
 	 *
-	 * @see #breiteSetzen(int)
+	 * @see #breiteSetzen(float)
 	 */
-	public void hoeheSetzen (int hoehe) {
-		//FIXME
+	public void hoeheSetzen (float hoehe) {
+		this.laenge = hoehe;
 	}
 
 	/**
@@ -105,11 +105,11 @@ public class Rechteck extends Geometrie {
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
 
-		super.beforeRender(g, r);
 
-		g.setColor(super.formen()[0].getColor());
+
+        g.setColor(getColor());
 		g.fillRect((int) (position.x - r.x), (int) (position.y - r.y), (int) breite, (int) laenge);
 
-		super.afterRender(g, r);
+
 	}
 }
