@@ -1,5 +1,6 @@
 package ea.internal.frame;
 
+import java.util.LinkedList;
 import java.util.Queue;
 
 /**
@@ -7,35 +8,45 @@ import java.util.Queue;
  * entsprechende Queue zur Abarbeitung / Ausführung legt. Welche Art von Events das letztlich ist, hängt von der
  * Created by andonie on 14.02.15.
  */
-public abstract class ProducerThread
+public abstract class ProducerThread<E extends Dispatchable>
 extends FrameSubthread {
 
     private static int ptcnt = 1;
 
     /**
-     * Die Queue, in der die Dispatchables eingeräumt werden sollen.
+     * Die Queue, in der die Dispatchables eingeräumt werden sollen. Diese Queue lehrt der Dispatcher sukzessive aus.
      */
-    private final Queue<Dispatchable> queue;
+    private final Queue<Dispatchable> dispatcherQueue;
 
     /**
-     * Dieser Wert ist dann <code>true</code>, wenn für den aktuellen Frame
-     * von diesem Producer keine weiteren Dispatchable Events kommen werden.
+     * Eine LIFO - Liste mit allen UI-Events, die seit dem letzten Frame-Update geschehen sind.
      */
-    private boolean done;
+    private final Queue<E> lastFrameDispatchables = new LinkedList<E>();
 
     protected ProducerThread(Queue<Dispatchable> queue, String type) {
         super("Producer Thread #" + ptcnt++ + " (" + type + ")");
 
-        this.queue = queue;
+        this.dispatcherQueue = queue;
     }
 
     /**
-     * Berechnet und erstellt - sofern möglich - das nächste Dispatchable Event für diesen Producer Thread.
-     * @return  Ein neues <code>Dispatchable</code> Event, dass noch in diesem Frame ausgeführt werden soll.
-     *          Gibt es für diesen Frame kein weiteres <code>Dispatchable</code>-Event, so ist die
-     *          Rückgabe <code>null</code>.
+     * Informiert den Producer von einem neuen Dispatchable Event. Diese Methode wird (asynchron)
+     * von der Quelle des Ereignisses aufgerufen, sobald der zugehörige Auslöser aktiviert wird.
+     * @param disp  Ein dispatchable-Objekt, das in der folgenden Frame-Logik ausgeführt werden soll.
      */
-    public abstract Dispatchable nextEvent();
+    public void enqueueDispatchableForNextFrame(E disp) {
+        if(isFrameActive()) {
+            //Gerade arbeitet dieser Thread aktiv an der Abarbeitung der Queue. Warten, bis die Queue abgearbeitet ist.
+            synchronized (lastFrameDispatchables) {
+                try {
+                    lastFrameDispatchables.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        lastFrameDispatchables.add(disp);
+    }
 
     /**
      * Die Run-Methode: Holt sukzessive alle noch ausstehenden Dispatcher (Implementierung in Child-Class) und fügt
@@ -43,15 +54,15 @@ extends FrameSubthread {
      */
     @Override
     public final void frameLogic() {
-        while(!done) {
-            Dispatchable next = nextEvent();
-            if(next == null) {
-                done = true;
-            } else {
-                synchronized (queue) {
-                    queue.add(next);
-                }
+        for(Dispatchable d : lastFrameDispatchables) {
+            synchronized (dispatcherQueue) {
+                dispatcherQueue.add(d);
             }
+        }
+
+        //Fertig mit der Übertragung: Die Queue darf wieder gefüllt werden.
+        synchronized (dispatcherQueue) {
+            dispatcherQueue.notifyAll();
         }
     }
 

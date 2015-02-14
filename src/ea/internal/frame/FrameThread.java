@@ -89,13 +89,16 @@ extends Thread {
         worldThread = new WorldThread(world);
         renderThread = new RenderThread(zeichner);
         dispatcherThread = new DispatcherThread(queue);
-
+        producerThreads = new ProducerThread[] {};
 
         //Startet die Threads. Sie verharren vorerst in Wartehaltung, bis die Run-Methode dieses Threads
         //Sie aus dem Wartezustand holt.
         worldThread.start();
         renderThread.start();
         dispatcherThread.start();
+        for (ProducerThread pt : producerThreads) {
+            pt.start();
+        }
     }
 
     /**
@@ -117,6 +120,9 @@ extends Thread {
             worldThread.semi_start();
 
             //Start Producers
+            for (ProducerThread pt : producerThreads) {
+                pt.semi_start();
+            }
 
             //Join: WorldThread
             try {
@@ -129,7 +135,13 @@ extends Thread {
             dispatcherThread.semi_start();
 
             //Join: Producers
-
+            for (ProducerThread pt : producerThreads) {
+                try {
+                    pt.semi_join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             //-> Beende Wartehaltung d. Dispatchers
             dispatcherThread.frameAbschliessen();
 

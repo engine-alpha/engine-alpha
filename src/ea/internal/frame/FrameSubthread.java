@@ -8,9 +8,16 @@ public abstract class FrameSubthread
 extends Thread {
 
     /**
-     * Gibt an, ob dieser Thread gerade für eine Framespezifische Berechnung aktiv ist.
+     * Gibt an, ob dieser Thread gerade für eine framespezifische Berechnung aktiv ist.
      */
     private boolean frameActive;
+
+    /**
+     * Gibt an, ob dieser Thread gerade für eine framespezifische Berechnung aktiv ist.
+     */
+    protected boolean isFrameActive() {
+        return frameActive;
+    }
 
     /**
      * Das Objekt, das ggf. zum Locken des Master-Threads verwendet wird, falls dieser einen Semi-Join auf
