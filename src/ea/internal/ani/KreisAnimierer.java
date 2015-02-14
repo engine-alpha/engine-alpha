@@ -53,6 +53,11 @@ public class KreisAnimierer extends Animierer {
 	 */
 	private Punkt letzter;
 
+    /**
+     * Gibt an, ob die Drehung im Uhrzeigersinn laufen soll.
+     */
+    private boolean uhrzeigersinn;
+
 	/**
 	 * Konstruktor fuer Objekte der Klasse KreisAnimierer
 	 *
@@ -66,11 +71,13 @@ public class KreisAnimierer extends Animierer {
 	 * 		Der Manager, an dem spaeter animiert werden soll.
 	 * @param listener
 	 * 		Der AnimationsEndeReagierbar-Listener, der am Ende der Animation aufgerufen wird.
+     * @param uhrzeigersinn Ob im oder gegen Uhrzeigersinn animiert werden soll.
 	 */
-	public KreisAnimierer (Raum ziel, Punkt zentrum, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener) {
+	public KreisAnimierer (Raum ziel, Punkt zentrum, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener, boolean uhrzeigersinn) {
 		super(ziel, intervall, loop, m, listener);
 		this.zentrum = zentrum;
 		this.letzter = ziel.zentrum();
+        this.uhrzeigersinn = uhrzeigersinn;
 		Punkt zielMitte = ziel.zentrum();
 		radius = zentrum.abstand(zielMitte);
 		winkel = new Gerade(zielMitte, zentrum).winkel();
@@ -80,7 +87,10 @@ public class KreisAnimierer extends Animierer {
 	}
 
 	public void animationsSchritt () {
-		winkel += schritt;
+		if(uhrzeigersinn)
+            winkel += schritt;
+        else
+            winkel -= schritt;
 		float x, y;
 		x = (float) ((-Math.sin(winkel)) * radius) + zentrum.realX();
 		y = (float) ((Math.cos(winkel)) * radius) + zentrum.realY();

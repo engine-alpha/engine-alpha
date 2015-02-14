@@ -166,11 +166,30 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 */
 	@API
 	public void kreisAnimation (Raum ziel, Punkt zentrum, boolean loop, int umlaufzeit) {
-		final KreisAnimierer k = new KreisAnimierer(ziel, zentrum, intervall(umlaufzeit / 200), loop, this, this);
-
-		animierer.add(k);
-		k.starten();
+		this.kreisAnimation(ziel, zentrum, loop, umlaufzeit, true);
 	}
+
+    /**
+     * Animiert ein Raum-Objekt auf einer Kreisbahn.
+     *
+     * @param ziel
+     * 		Das zu animierende Raum-Objekt. Hierbei ist dessen Zentrum auf der Kreisbahn.
+     * @param zentrum
+     * 		Das Zentrum des Animationskreises
+     * @param loop
+     * 		Gibt an, ob die Animation einfach ist oder nicht.
+     * @param umlaufzeit
+     * 		Gibt in <b>Millisekunden</b> an, wie lange eine Umdrehung um das Zentrum dauern soll.<br />
+     * 		<b>ACHTUNG:</b><br /> Dieser Wert muss groesser sein als <b>200</b>, da intern eine
+     * 		Umdrehung 200 Einzelschritte hat.
+     */
+    @API
+    public void kreisAnimation (Raum ziel, Punkt zentrum, boolean loop, int umlaufzeit, boolean uhrzeigersinn) {
+        final KreisAnimierer k = new KreisAnimierer(ziel, zentrum, intervall(umlaufzeit / 200), loop, this, this, uhrzeigersinn);
+
+        animierer.add(k);
+        k.starten();
+    }
 
 	/**
 	 * Berechnet eine Zahl, die entweder die Eingabe selbst oder 1 ist, sofern die Eingabe kleiner
