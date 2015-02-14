@@ -53,12 +53,41 @@ extends Thread {
         return 1000f / ((float) maxmillis);
     }
 
+    private final WorldThread worldThread;
+
     /**
      * Konstruktor erstellt den Thread, aber <b>startet ihn nicht</b>.
      */
     public FrameLogic() {
         super("Frame Master Thread #" + threadcnt++); //<- eigener Name (f. Multi-Window)
         this.setDaemon(true); // Daemon setzen
+    }
+
+    /**
+     * Innerhalb dieser Run-Methode läuft die Frame-Logik.
+     */
+    @Override
+    public void run() {
+        long deltaT = maxmillis; // Das tatsächliche DeltaT aus dem letzten Frame-Schritt (zu Beginn der Idealfall)
+        while(!interrupted()) {
+            long tStart = System.currentTimeMillis();
+
+            //Eigentliche Arbeit: Möglichst hoch parallelisiert
+
+
+
+            //ENDE der eigentlichen Arbeit
+
+            long tEnd = System.currentTimeMillis();
+            deltaT = tEnd - tStart;
+
+            //ggf. warten:
+            if (deltaT < maxmillis) {
+                try {
+                    Thread.sleep(maxmillis-deltaT);
+                } catch (InterruptedException e) {}
+            }
+        }
     }
 
 }
