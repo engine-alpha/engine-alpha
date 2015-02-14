@@ -107,13 +107,6 @@ public abstract class Game implements TastenReagierbar {
 	private final Random zufall = new Random();
 
 	/**
-	 * Die eventuell aktive Blende; diese ueberblendet das Spielgeschehen.<br /> Dieses Rechteck
-	 * sollte nicht in seinen Massen veraendert werden. Ansonsten koennte es die Wirkung als Blende
-	 * verfehlen.
-	 */
-	private final Rechteck blende;
-
-	/**
 	 * Der Font für die Fenstertexte
 	 */
 	private Font font;
@@ -197,12 +190,7 @@ public abstract class Game implements TastenReagierbar {
 		cam = fenster.getCam();
 		cam.wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
 
-		blende = fenster.fenstermasse().ausDiesem();
-		blende.farbeSetzen(new Farbe(255, 255, 255, 190));
-		blende.sichtbarSetzen(false);
-
 		statischeWurzel = fenster.getStatNode();
-		statischeWurzel.add(blende);
 
 		fenster.anmelden(this);
 
@@ -700,38 +688,6 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void hintergrundSetzen (Raum m) {
 		fenster.hintergrundAnmelden(m);
-	}
-
-	/**
-	 * Setzt, ob das Spiel eine allueberstehende Ueberblende ausfuehren soll, die bis zum widerruf
-	 * alles ueberdeckt.<br /> Diese ist niemals gaenzlich durchsichtig, da sie nur ueberblendet und
-	 * nicht ueberdeckt.
-	 *
-	 * @param aktiv
-	 * 		ob die Blende aktiviert oder deaktiviert werden soll
-	 * @param farbe
-	 * 		Die neue Farbe der Blende
-	 *
-	 * @see #ueberblendeSetzen(boolean)
-	 */
-	public void ueberblendeSetzen (boolean aktiv, Farbe farbe) {
-		if (farbe.undurchsichtig()) {
-			farbe = farbe.halbesAlpha();
-		}
-		blende.farbeSetzen(farbe);
-		ueberblendeSetzen(aktiv);
-	}
-
-	/**
-	 * Setzt, ob das Spiel eine allueberstehende Ueberblende ausfuehren soll, die bis zum widerruf
-	 * alles ueberdeckt.<br /> Diese ist niemals gaenzlich durchsichtig, da sie nur ueberblendet und
-	 * nicht ueberdeckt.
-	 *
-	 * @param aktiv
-	 * 		ob die Blende aktiviert oder deaktiviert werden soll
-	 */
-	public void ueberblendeSetzen (boolean aktiv) {
-		blende.sichtbarSetzen(aktiv);
 	}
 
 	/**

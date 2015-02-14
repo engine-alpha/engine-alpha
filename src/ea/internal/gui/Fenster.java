@@ -20,8 +20,10 @@
 package ea.internal.gui;
 
 import ea.*;
+import ea.internal.frame.FrameThread;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gra.Zeichner;
+import ea.internal.phy.Physik;
 import ea.internal.util.Logger;
 
 import java.awt.*;
@@ -106,6 +108,16 @@ public class Fenster extends Frame {
 	 * letzte Maus-Position
 	 */
 	private Point lastMousePosition;
+
+    /**
+     * Der für die Fenster-Framelogik verantwortliche Thread.
+     */
+    private final FrameThread frameThread;
+
+    /**
+     * Die Physik der Welt, die in diesem Fenster enthalten ist.
+     */
+    private final Physik physik;
 
 	/**
 	 * Einfacher Alternativkonstruktor.<br /> Erstellt ein normales Fenster mit der eingegeben
@@ -238,7 +250,6 @@ public class Fenster extends Frame {
 
 		this.zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe, new Zeichenebene()));
 		this.add(zeichner);
-		this.zeichner.init();
 
 		if ((windowMode & (WINDOW_FULLSCREEN_FRAME | WINDOW_FRAME)) > 0) {
 			this.pack();
@@ -292,7 +303,14 @@ public class Fenster extends Frame {
 			}
 		}, 50);*/
 
+        //Die Physik
+        physik = new Physik();
+
 		instanz = this;
+
+        //Starte die Frame-Logic
+        frameThread = new FrameThread(zeichner, physik.getWorld());
+        frameThread.start();
 	}
 
 	private void addKeyListener () {
@@ -388,7 +406,6 @@ public class Fenster extends Frame {
 	 * Fensters steht <code>softLoeschen()</code> zur Verfuegung.
 	 */
 	public void loeschen () {
-		this.zeichner.kill();
 
 		this.setVisible(false);
 		this.dispose();
