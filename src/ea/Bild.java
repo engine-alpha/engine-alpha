@@ -146,31 +146,33 @@ public class Bild extends Raum {
 	}
 
 	/**
-	 * Aendert ein BufferedImage von seinen Massen her.<br /> Wird intern benutzt, im Konstruktor.
+	 * Ändert ein BufferedImage von seinen Maßen her.<br /> Wird intern benutzt im Konstruktor.
+	 *
+	 * // TODO: [4.0] Change visibility
 	 *
 	 * @param img
 	 * 		Das zu beschraenkende Bild
-	 * @param newW
+	 * @param width
 	 * 		Die neue Breite des Bildes
-	 * @param newH
+	 * @param height
 	 * 		Die neue Hoehe des Bildes
 	 */
-	public static BufferedImage resize (BufferedImage img, int newW, int newH) {
-		int w = img.getWidth();
-		int h = img.getHeight();
+	public static BufferedImage resize (BufferedImage img, int width, int height) {
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsConfiguration gc = env.getDefaultScreenDevice().getDefaultConfiguration();
 
-		BufferedImage dimg = new BufferedImage(newW, newH, img.getType());
-		Graphics2D g = dimg.createGraphics();
+		BufferedImage resize = gc.createCompatibleImage(img.getWidth(), img.getHeight(), img.getTransparency());
+		Graphics2D g = resize.createGraphics();
 
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.drawImage(img, 0, 0, newW, newH, 0, 0, w, h, null);
+		g.drawImage(img, 0, 0, width, height, 0, 0, img.getWidth(), img.getHeight(), null);
 		g.dispose();
 
-		return dimg;
+		return resize;
 	}
 
 	/**
-	 * Erstellt ein Bild, unter Eingabe dessen effektiver Groesse als prozentualer Anteil an der der
+	 * Erstellt ein Bild, unter Eingabe dessen effektiver Größe als prozentualer Anteil an der der
 	 * Bilddatei.
 	 *
 	 * @param x
