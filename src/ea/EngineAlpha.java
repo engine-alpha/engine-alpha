@@ -180,6 +180,14 @@ public class EngineAlpha extends Frame {
 		}
 	}
 
+	/**
+	 * Holt den gesamten Inhalt einer einzelnen Webseite und gibt diesen zurück.
+	 *
+	 * @param uri
+	 * 		URL, welche geholt werden soll
+	 *
+	 * @return Response-Body
+	 */
 	private static String getUrlBody (String uri) {
 		// workaround, make sure this is set to false
 		// see http://stackoverflow.com/a/14884941/2373138
@@ -216,14 +224,27 @@ public class EngineAlpha extends Frame {
 		return null;
 	}
 
+	/**
+	 * Gibt an, ob sich die Engine im Debug-Modus befindet.
+	 *
+	 * @return {@code true} falls die Engine im Debug-Modus läuft, sonst {@code false}
+	 */
 	public static boolean isDebug () {
 		return debug;
 	}
 
+	/**
+	 * Ändert den Debug-Status der Engine.
+	 *
+	 * @param value {@code true}, falls die Engine im Debug-Modus arbeiten soll, sonst {@code false}.
+	 */
 	public static void setDebug (boolean value) {
 		debug = value;
 	}
 
+	/**
+	 * Zeichenebene für den Versionschecker
+	 */
 	private class EngineAlphaPromotion extends Canvas implements Runnable {
 		private Thread thread;
 
