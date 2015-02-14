@@ -4,6 +4,9 @@ import ea.internal.gra.Zeichner;
 import ea.internal.util.Logger;
 import org.jbox2d.dynamics.World;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * Ein Objekt der Klasse <code>FrameLogic</code> überwacht die frameweise "Arbeit" der Engine.
  * Innerhalb eines Frames passiert:
@@ -72,9 +75,14 @@ extends Thread {
         super("Frame Master Thread #" + threadcnt++); //<- eigener Name (f. Multi-Window)
         this.setDaemon(true); // Daemon setzen
 
+        //Die Dispatchable-Queue
+        Queue<Dispatchable> queue = new LinkedList<Dispatchable>();
+
         //Die Childs initiieren
         worldThread = new WorldThread(world);
         renderThread = new RenderThread(zeichner);
+
+
     }
 
     /**
@@ -94,7 +102,6 @@ extends Thread {
             //Physics (WorldThread)
             worldThread.setDT(deltaT);
             worldThread.run();
-
 
             //Join: WorldThread
             try {
