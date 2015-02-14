@@ -52,9 +52,7 @@ public class Rechteck extends Geometrie {
 	 */
 	public Rechteck (float x, float y, float breite, float hoehe) {
 		super(x, y);
-		this.breite = breite;
-		this.laenge = hoehe;
-		aktualisierenFirst();
+        //FIXME
 	}
 
 	/**
@@ -66,9 +64,8 @@ public class Rechteck extends Geometrie {
 	 * 		Die neue Hoehe des Rechtecks
 	 */
 	public void masseSetzen (int breite, int hoehe) {
-		this.breite = breite;
-		this.laenge = hoehe;
-		aktualisieren();
+		breiteSetzen(breite);
+        hoeheSetzen(hoehe);
 	}
 
 	/**
@@ -80,8 +77,7 @@ public class Rechteck extends Geometrie {
 	 * @see #hoeheSetzen(int)
 	 */
 	public void breiteSetzen (int breite) {
-		this.breite = breite;
-		aktualisieren();
+        //FIXME
 	}
 
 	/**
@@ -93,8 +89,7 @@ public class Rechteck extends Geometrie {
 	 * @see #breiteSetzen(int)
 	 */
 	public void hoeheSetzen (int hoehe) {
-		this.laenge = hoehe;
-		aktualisieren();
+		//FIXME
 	}
 
 	/**
@@ -109,9 +104,6 @@ public class Rechteck extends Geometrie {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		if (!r.schneidetBasic(this.dimension())) {
-			return;
-		}
 
 		super.beforeRender(g, r);
 
@@ -119,17 +111,5 @@ public class Rechteck extends Geometrie {
 		g.fillRect((int) (position.x - r.x), (int) (position.y - r.y), (int) breite, (int) laenge);
 
 		super.afterRender(g, r);
-	}
-
-	/**
-	 * In dieser Methode werden saemtliche Dreiecke neu berechnet und die Referenz bei Aufruf in der
-	 * Superklasse hierauf gesetzt
-	 *
-	 * @return Ein Dreieck-Array mit allen, die Figur beschreibenden Dreiecken als Inhalt.
-	 */
-	@Override
-	public Dreieck[] neuBerechnen () {
-		Dreieck[] i = {new Dreieck(new Punkt(position.x, position.y), new Punkt(position.x + breite, position.y), new Punkt(position.x, position.y + laenge)), new Dreieck(new Punkt(position.x, position.y + laenge), new Punkt(position.x + breite, position.y + laenge), new Punkt(position.x + breite, position.y))};
-		return i;
 	}
 }

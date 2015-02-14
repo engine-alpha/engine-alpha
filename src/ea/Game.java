@@ -56,11 +56,6 @@ public abstract class Game implements TastenReagierbar {
 	public final Manager manager = new Manager();
 
 	/**
-	 * Der Animations-Manager. Er kann Animationen organisieren.
-	 */
-	public final AnimationsManager animationsManager = AnimationsManager.getAnimationsManager();
-
-	/**
 	 * Der Wurzel-Knoten. An ihm muessen direkt oder indirekt (ueber weitere Knoten) alle
 	 * <code>Raum</code>-Objekte angemeldet werden, die auch (normal) gezeichnet werden sollen.
 	 */

@@ -19,7 +19,6 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
 import ea.internal.util.Logger;
 
 import java.awt.*;
@@ -58,13 +57,7 @@ public class Dreieck extends Geometrie {
 	 */
 	public Dreieck (Punkt p1, Punkt p2, Punkt p3) {
 		super(0, 0);
-		x[0] = p1.x;
-		x[1] = p2.x;
-		x[2] = p3.x;
-		y[0] = p1.y;
-		y[1] = p2.y;
-		y[2] = p3.y;
-		aktualisierenFirst();
+		//FIXME
 	}
 
 	/**
@@ -149,9 +142,6 @@ public class Dreieck extends Geometrie {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		if (!r.schneidetBasic(this.dimension())) {
-			return;
-		}
 
 		super.beforeRender(g, r);
 
@@ -171,36 +161,6 @@ public class Dreieck extends Geometrie {
 	}
 
 	/**
-	 * Die implementierte dimension()-Methode.
-	 *
-	 * @return Das BoundingRechteck, das das Dreieck exakt umschreibt.
-	 */
-	@Override
-	public BoundingRechteck dimension () {
-		float kleinstesX = x[0];
-		float groesstesX = x[0];
-		float kleinstesY = y[0];
-		float groesstesY = y[0];
-
-		for (int i = 0; i < 3; i++) {
-			if (x[i] > groesstesX) {
-				groesstesX = x[i];
-			}
-			if (x[i] < kleinstesX) {
-				kleinstesX = x[i];
-			}
-			if (y[i] > groesstesY) {
-				groesstesY = y[i];
-			}
-			if (y[i] < kleinstesY) {
-				kleinstesY = y[i];
-			}
-		}
-
-		return new BoundingRechteck(kleinstesX, kleinstesY, (groesstesX - kleinstesX), (groesstesY - kleinstesY));
-	}
-
-	/**
 	 * Methode zum Verschieben
 	 *
 	 * @param v
@@ -214,21 +174,6 @@ public class Dreieck extends Geometrie {
 			x[i] += v.x;
 			y[i] += v.y;
 		}
-	}
-
-	/**
-	 * {@inheritDoc} Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden
-	 * <code>BoundingRechteck</code> erzeugt, dass über die <code>dimension()</code>-Methode
-	 * berechnet wird.
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		return erzeugeLazyCollider();
-	}
-
-	public Dreieck[] neuBerechnen () {
-		Dreieck[] e = {this};
-		return e;
 	}
 
 	/**

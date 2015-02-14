@@ -165,8 +165,6 @@ public class Zeichner extends Canvas implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		AnimationsManager.neutralize();
 	}
 
 	/**

@@ -19,9 +19,6 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
-import ea.internal.collision.SphereCollider;
-
 import java.awt.*;
 
 /**
@@ -94,9 +91,6 @@ public class Kreis extends RegEck {
 
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		if (!r.schneidetBasic(this.dimension())) {
-			return;
-		}
 
 		// Kreis muss nicht gedreht werden,
 		// aber es könnten hier in Zukunft noch andere wichtige Funktionen aufgerunfen werden
@@ -106,13 +100,5 @@ public class Kreis extends RegEck {
 		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
 
 		super.afterRender(g, r);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		return new SphereCollider(radius * 2, Vektor.NULLVEKTOR, log2helper(eckenzahl));
 	}
 }

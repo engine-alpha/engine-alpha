@@ -19,7 +19,6 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
 import ea.internal.io.ImageLoader;
 
 import java.awt.*;
@@ -287,16 +286,6 @@ public class Bild extends Raum {
 	}
 
 	/**
-	 * {@inheritDoc} Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden
-	 * <code>BoundingRechteck</code> erzeugt, dass über die <code>dimension()</code>-Methode
-	 * berechnet wird.
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		return erzeugeLazyCollider();
-	}
-
-	/**
 	 * Gibt die Breite der Bilddatei, aus der dieses Bild besteht, in Pixeln zurueck.
 	 *
 	 * @return Die Breite der urspruenglichen Bilddatei in Pixeln
@@ -325,6 +314,6 @@ public class Bild extends Raum {
 	}
 
 	public final Bild clone () {
-		return new Bild(positionX(), positionY(), img);
+		return new Bild(position().x, position().y, img);
 	}
 }

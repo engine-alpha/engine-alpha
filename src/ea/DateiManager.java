@@ -401,9 +401,9 @@ public class DateiManager {
 			writer.newLine();
 			writer.write("y:" + feld[0].hoeheN()); // Die Y-Groesse
 			writer.newLine();
-			writer.write("p:" + (int) f.dimension().x); // Die Position X
+			writer.write("p:" + (int) f.position().x); // Die Position X
 			writer.newLine();
-			writer.write("q:" + (int) f.dimension().y); // Die Position Y
+			writer.write("q:" + (int) f.position().y); // Die Position Y
 			writer.newLine();
 
 			// Die Felder

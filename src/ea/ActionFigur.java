@@ -21,7 +21,6 @@ package ea;
 
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.collision.Collider;
 import ea.internal.util.Logger;
 
 import java.awt.*;
@@ -40,9 +39,6 @@ import java.util.ArrayList;
  * <b>WICHTIG</b>:<br /> Damit eine Actionfigur <i>immer</i> ordnungsgemäß funktioniert
  * (Spiegelungen), sollten alle Figuren die selben Masße ("Pixel"-Hoehe/-Breite) haben.
  * <p/>
- * Es müssen nicht alle Felder ausgefüllt sein, damit Kollisionstests etc. immer funktionieren. Es
- * sei denn, die rechenintensive Arbeit wurde durch die Klasse <code>Game</code> ausgeschaltet
- * ({@link ea.Game#rechenintensiveArbeitSetzen(boolean)}).
  *
  * @author Michael Andonie
  */
@@ -431,14 +427,14 @@ public class ActionFigur extends Raum {
 			states[indexState].animationsSchritt(runde);
 		}
 
-		BoundingRechteck r = this.dimension();
+		Punkt pos = this.position();
 
 		for (int i = 0; i < actions.length; i++) {
-			actions[i].positionSetzen(r.x, r.y);
+			actions[i].positionSetzen(pos.x, pos.y);
 		}
 
 		for (int i = 0; i < states.length; i++) {
-			states[i].positionSetzen(r.x, r.y);
+			states[i].positionSetzen(pos.x, pos.y);
 		}
 	}
 
@@ -501,20 +497,6 @@ public class ActionFigur extends Raum {
 	}
 
 	/**
-	 * Berechnet ein minimales BoundingRechteck, das das Objekt <b>voll einschließt</b>.
-	 *
-	 * @return Ein BoundingRechteck mit dem minimal nötigen Umfang, um das Objekt <b>voll
-	 * einzuschließen</b>.
-	 *
-	 * @see Raum#dimension()
-	 */
-	@API
-	@Override
-	public BoundingRechteck dimension () {
-		return performsAction ? actions[indexAction].dimension() : states[indexState].dimension();
-	}
-
-	/**
 	 * Verschiebt die Actionfigur.
 	 *
 	 * @param v
@@ -531,26 +513,5 @@ public class ActionFigur extends Raum {
 		for (int i = 0; i < actions.length; i++) {
 			actions[i].verschieben(v);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		return states[0].erzeugeCollider();
-	}
-
-	/**
-	 * Berechnet exakt die derzeitig von dieser Figur okkupierten Flächen auf der Zeichenebene.
-	 *
-	 * @return Ein Array aus allen Flächen, die von dieser Figur <b>exakt</b> ausgefüllt werden.
-	 */
-	@Override
-	public BoundingRechteck[] flaechen () {
-		if (performsAction) {
-			return actions[indexAction].flaechen();
-		}
-		return states[indexState].flaechen();
 	}
 }

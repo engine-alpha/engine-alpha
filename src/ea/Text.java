@@ -19,7 +19,6 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
 import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
 
@@ -37,7 +36,7 @@ import java.util.ArrayList;
  *
  * @author Michael Andonie
  */
-public class Text extends Raum implements Leuchtend {
+public class Text extends Raum {
 	private static final long serialVersionUID = -2145724725115670955L;
 
 	/**
@@ -197,7 +196,6 @@ public class Text extends Raum implements Leuchtend {
 		}
 
 		setzeFont(fontName);
-		super.leuchterAnmelden(this);
 	}
 
 	/**
@@ -519,9 +517,6 @@ public class Text extends Raum implements Leuchtend {
 	 */
 	@Override
 	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		if (!r.schneidetBasic(this.dimension())) {
-			return;
-		}
 
 		super.beforeRender(g, r);
 
@@ -539,98 +534,6 @@ public class Text extends Raum implements Leuchtend {
 		g.drawString(inhalt, (int) (x - r.x), (int) (y - r.y + groesse));
 
 		super.afterRender(g, r);
-	}
-
-	/**
-	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll
-	 * einzuschliessen</b>.
-	 */
-	@Override
-	public BoundingRechteck dimension () {
-		FontMetrics f = Fenster.metrik(font);
-		float x = position.x, y = position.y;
-
-		if (anker == Anker.MITTE) {
-			x = position.x - f.stringWidth(inhalt) / 2;
-		} else if (anker == Anker.RECHTS) {
-			x = position.x - f.stringWidth(inhalt);
-		}
-
-		return new BoundingRechteck(x, y, f.stringWidth(inhalt), f.getHeight());
-	}
-
-	/**
-	 * {@inheritDoc} Collider wird direkt aus dem das <code>Raum</code>-Objekt umfassenden
-	 * <code>BoundingRechteck</code> erzeugt, dass über die <code>dimension()</code>-Methode
-	 * berechnet wird.
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		return erzeugeLazyCollider();
-	}
-
-	/**
-	 * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
-	 * Objekt, damit es problemlos geloescht werden kann.<br /> <b>Achtung:</b> zwar werden
-	 * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
-	 * betrifft vor allem Animationen etc), jedoch nicht die innerhalb eines
-	 * <code>Knoten</code>-Objektes!!!!!!!!!<br /> Das heisst, wenn das Objekt an einem Knoten liegt
-	 * (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des
-	 * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
-	 * nicht!!</b>.<br /> Diese Klasse ueberschreibt die Methode wegen des Leuchtens.
-	 */
-	@Override
-	public void loeschen () {
-		super.leuchterAbmelden(this);
-		super.loeschen();
-	}
-
-	/**
-	 * Setzt, ob dieses Leuchtend-Objekt leuchten soll.<br /> Ist dies der Fall, so werden immer
-	 * wieder schnell dessen Farben geaendert; so entsteht ein Leuchteffekt.
-	 *
-	 * @param leuchtet
-	 * 		Ob dieses Objekt nun leuchten soll oder nicht (mehr).<br /> <b>Achtung:</b> Die
-	 * 		Leuchtfunktion kann bei bestimmten Klassen sehr psychadelisch und aufreizend wirken! Daher
-	 * 		sollte sie immer mit Bedacht und in Nuancen verwendet werden!
-	 */
-	@Override
-	public void leuchtetSetzen (boolean leuchtet) {
-		if (this.leuchtet == leuchtet) {
-			return;
-		}
-
-		this.leuchtet = leuchtet;
-
-		if (leuchtet) {
-			alte = farbe;
-		} else {
-			this.setzeFarbe(alte);
-		}
-	}
-
-	/**
-	 * Fuehrt einen Leuchtschritt aus.<br /> Dies heisst, dass in dieser Methode die Farbe einfach
-	 * gewechselt wird. Da diese Methode schnell und oft hintereinander ausgefuehrt wird, soll so
-	 * der Leuchteffekt entstehen.<br /> <b>Diese Methode sollte nur innerhalb der Engine
-	 * ausgefuehrt werden! Also nicht fuer den Entwickler gedacht.</b>
-	 */
-	@Override
-	public void leuchtSchritt () {
-		leuchtzaehler++;
-		leuchtzaehler %= farbzyklus.length;
-		this.setzeFarbe(farbzyklus[leuchtzaehler]);
-	}
-
-	/**
-	 * Gibt wieder, ob das Leuchtet-Objekt gerade leuchtet oder nicht.
-	 *
-	 * @return <code>true</code>, wenn das Objekt gerade leuchtet, wenn nicht, dann ist die
-	 * Rueckgabe <code>false</code>
-	 */
-	@Override
-	public boolean leuchtet () {
-		return this.leuchtet;
 	}
 
 	/**

@@ -549,7 +549,7 @@ public class Maus {
 	 */
 	public Punkt klickAufZeichenebene () {
 		if (absolut()) {
-			BoundingRechteck r = bild.dimension();
+			Punkt r = bild.position();
 			Punkt p = hotSpot();
 
 			return new Punkt((int) (r.x + p.realX() + fenster.getCam().getX()), (int) (r.y + p.realY() + fenster.getCam().getY())); // Mit

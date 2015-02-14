@@ -24,8 +24,6 @@
 
 package ea;
 
-import ea.internal.collision.Collider;
-import ea.internal.collision.ColliderGroup;
 import ea.internal.util.Logger;
 
 import java.awt.*;
@@ -126,24 +124,6 @@ public class CombiFigur extends Raum {
 	}
 
 	/**
-	 * Methode zum Beschreiben der rechteckigen Flaeche, die dieses Objekt einnimmt.<br /> Diese
-	 * Methode wird zentral fuer die Trefferkollisionen innerhalb der Engine benutzt und gehoert zu
-	 * den wichtigsten Methoden der Klasse und der Engine.
-	 *
-	 * @return Ein BoundingRechteck mit dem minimal noetigen Umfang, um das Objekt <b>voll
-	 * einzuschliessen</b>.
-	 */
-	@Override
-	public BoundingRechteck dimension () {
-		BoundingRechteck dim = figuren[0].dimension();
-
-		for (ActionFigur f : figuren)
-			dim = dim.summe(f.dimension());
-
-		return dim;
-	}
-
-	/**
 	 * Verschiebt das Objekt.
 	 *
 	 * @param v
@@ -157,36 +137,5 @@ public class CombiFigur extends Raum {
 		for (int i = 0; i < figuren.length; i++) {
 			figuren[i].verschieben(v);
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Collider erzeugeCollider () {
-		ColliderGroup cg = new ColliderGroup();
-		for (ActionFigur f : figuren) {
-			cg.addCollider(f.erzeugeCollider());
-		}
-		return erzeugeLazyCollider();
-	}
-
-	/**
-	 * Berechnet exakter alle Rechteckigen Flaechen, auf denen dieses Objekt liegt.<br /> Diese
-	 * Methode wird von komplexeren Gebilden, wie geometrischen oder Listen ueberschrieben.
-	 *
-	 * @return Alle Rechtecksflaechen, auf denen dieses Objekt liegt. Ist standartisiert ein Array
-	 * der Groesse 1 mit der <code>dimension()</code> als Inhalt.
-	 *
-	 * @see Knoten
-	 */
-	@Override
-	public BoundingRechteck[] flaechen () {
-		ArrayList<BoundingRechteck> list = new ArrayList<>();
-
-		for (ActionFigur f : figuren)
-			list.add(f.dimension());
-
-		return list.toArray(new BoundingRechteck[list.size()]);
 	}
 }

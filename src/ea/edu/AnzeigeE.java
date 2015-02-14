@@ -123,7 +123,8 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 	 * Interne Align-Methode für harmonisches Aussehen der Punkte
 	 */
 	private void punkteAlignen () {
-		float lLinks = links.dimension().breite;
+        //FIXME Dimension
+		/*float lLinks = links.dimension().breite;
 		float lRechts = rechts.dimension().breite;
 		float lStrich = strich.dimension().breite;
 
@@ -133,7 +134,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 
 		strich.positionSetzen((breite - lStrich) / 2, 10);
 		links.positionSetzen(((breite - lStrich) / 2) - groesser - 5, 10);
-		rechts.positionSetzen((breite + lStrich) / 2 + 5, 10);
+		rechts.positionSetzen((breite + lStrich) / 2 + 5, 10);*/
 	}
 
 	public Maus getMaus () {

@@ -267,7 +267,8 @@ public class Fenster extends Frame {
 		removeCursor();
 
 		// Mausfang
-		Manager.standard.anmelden(new Ticker() {
+        //FIXME effektiveren "Mausfang" implementieren
+		/*Manager.standard.anmelden(new Ticker() {
 			private static final long serialVersionUID = -7552570027596373694L;
 
 			@Override
@@ -289,7 +290,7 @@ public class Fenster extends Frame {
 					}
 				}
 			}
-		}, 50);
+		}, 50);*/
 
 		instanz = this;
 	}
@@ -527,7 +528,9 @@ public class Fenster extends Frame {
 					maus.bewegt(new Vektor(mousePosition.x - lastMousePosition.x, mousePosition.y - lastMousePosition.y));
 				}
 			} else {
-				float dx = mousePosition.x - centerX;
+				//FIXME
+                /*
+                float dx = mousePosition.x - centerX;
 				float dy = mousePosition.y - centerY;
 
 				BoundingRechteck bounds = mausBild.dimension();
@@ -550,7 +553,7 @@ public class Fenster extends Frame {
 				
 				Vektor bewegung = new Vektor(dx, dy);
 				mausBild.verschieben(bewegung);
-				maus.bewegt(bewegung);
+				maus.bewegt(bewegung);*/
 			}
 
 			robot.mouseMove((int)(windowLocation.x + insets.left + centerX), (int)(windowLocation.y + insets.top + centerY));
@@ -680,7 +683,9 @@ public class Fenster extends Frame {
 		if (hatMaus()) {
 			Logger.error("Es ist bereits eine Maus angemeldet!");
 		} else {
-			maus = m;
+			//FIXME Maus
+            /*
+            maus = m;
 			maus.fensterSetzen(this);
 
 			BoundingRechteck r = maus.getImage().dimension();
@@ -688,6 +693,7 @@ public class Fenster extends Frame {
 			mausBild = maus.getImage();
 
 			zeichner.anmelden(mausBild);
+			*/
 		}
 	}
 
@@ -736,26 +742,6 @@ public class Fenster extends Frame {
 	 */
 	public Zeichner zeichner () {
 		return zeichner;
-	}
-
-	/**
-	 * Entfernt ein simples Grafikobjekt.
-	 *
-	 * @param g
-	 * 		Das darzustellende Grafikobjekt
-	 */
-	public void removeSimple (SimpleGraphic g) {
-		zeichner.removeSimple(g);
-	}
-
-	/**
-	 * Fuellt ein simples Grafikobjekt in die anzeige.
-	 *
-	 * @param g
-	 * 		Das darzustellende Grafikobjekt.
-	 */
-	public void fillSimple (SimpleGraphic g) {
-		zeichner.addSimple(g);
 	}
 
 	/**

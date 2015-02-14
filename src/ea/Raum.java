@@ -41,12 +41,6 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	private static final long serialVersionUID = 98L;
 
 	/**
-	 * Der Animations-Manager, über den alle Animationen laufen.<br /> Wird zum Löschen aller
-	 * Referenzen auf dieses Objekt verwendet.
-	 */
-	private static final AnimationsManager animationsManager = AnimationsManager.getAnimationsManager();
-
-	/**
 	 * Die absolute Position des Raum-Objekts. Die Interpretation dieses Parameters hängt von den
 	 * sich <b>ableitenden</b> Klassen ab. Er kann komplett irrelevant sein (Knoten), oder - im
 	 * Regelfall - die linke obere Ecke des Objektes bezeichnen. Default
@@ -488,7 +482,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * nicht!!</b>.
 	 */
 	public void loeschen () {
-		animationsManager.animationBeendenVon(this);
+		//Leer - kann von childs überschrieben werden.
 	}
 
 	/**

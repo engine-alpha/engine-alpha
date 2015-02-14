@@ -279,7 +279,10 @@ public class Kamera {
     public void zeichne(Graphics2D g) {
         if (hatFokus()) {
             // Nachjustieren
-            bild = bild.mittenAngleichInstanz(fokus.dimension());
+
+            //FIXME Dimension gibt es nicht mehr. Neuer mittelpunktangleich
+            //bild = bild.mittenAngleichInstanz(fokus.dimension());
+
             bild = bild.verschobeneInstanz(verzug);
         }
 
@@ -312,13 +315,6 @@ public class Kamera {
             }
 
             g.translate(tx, ty);
-
-
-            //Show Colliders
-
-            Raum debugBoxes = ebene.basis().aktuellerCollider().visualize(ebene.basis().position(),
-                    new Farbe(255,255,255,20));
-            debugBoxes.zeichnen(g, bild);
         }
     }
 

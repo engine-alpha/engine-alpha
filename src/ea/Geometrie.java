@@ -132,46 +132,7 @@ public abstract class Geometrie extends Raum {
 	 * 		Die neue Farbe
 	 */
 	public void farbeSetzen (Color c) {
-		alte = c;
-		if (formen == null) {
-			formen = neuBerechnen();
-		}
-		for (int i = 0; i < formen.length; i++) {
-			formen[i].setColor(c);
-		}
-	}
-
-	/**
-	 * In dieser Methode werden saemtliche Dreiecke neu berechnet und die Referenz bei Aufruf in der
-	 * Superklasse hierauf gesetzt
-	 *
-	 * @return Ein Dreieck-Array mit allen, die Figur beschreibenden Dreiecken als Inhalt.
-	 */
-	public abstract Dreieck[] neuBerechnen ();
-
-	/**
-	 * aktualisisert die Dreiecke, aus denen die Figur besteht UND weisst sie ein. Diese Methode
-	 * MUSS am Ende eines jeden Konstruktors einer Klasse stehen, die sich hieraus ableitet<br />
-	 * Zugrunde liegt eine neue Wertzuweisung des Arrays, es wird <code>neuBerechnen()</code>
-	 * aufgerufen.
-	 */
-	protected void aktualisierenFirst () {
-		aktualisieren();
-		farbeSetzen("Weiss");
-	}
-
-	/**
-	 * aktualisisert die Dreiecke, aus denen die Figur besteht.<br /> Zugrunde liegt eine neue
-	 * Wertzuweisung des Arrays, es wird <code>neuBerechnen()</code> aufgerufen.
-	 */
-	protected void aktualisieren () {
-		formen = neuBerechnen();
-
-		for (int i = 0; i < formen.length; i++) {
-			formen[i].setColor(alte);
-		}
-
-		dimension = ausDreiecken(formen);
+		//FIXME
 	}
 
 	/**
@@ -183,17 +144,6 @@ public abstract class Geometrie extends Raum {
 	 */
 	public void farbeSetzen (String farbe) {
 		farbeSetzen(Farbe.zuFarbeKonvertieren(farbe));
-	}
-
-	/**
-	 * Berechnet ein neues BoundingRechteck fuer ein Array aus Dreiecken
-	 */
-	public static BoundingRechteck ausDreiecken (Dreieck[] ecke) {
-		BoundingRechteck r = ecke[0].dimension();
-		for (int i = 1; i < ecke.length; i++) {
-			r = r.summe(ecke[i].dimension());
-		}
-		return r;
 	}
 
 	/**
