@@ -1019,7 +1019,24 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @return TRUE, wenn sich beide Objekte schneiden.
 	 */
 	public final boolean schneidet (Raum r) {
-		return this.aktuellerCollider().verursachtCollision(position, r.position, r.aktuellerCollider());
+        if(this instanceof Knoten) {
+            Knoten k = (Knoten) this;
+            for(Raum m : k.alleElemente()) {
+                if(r.schneidet(m))
+                    return true;
+            }
+        } else if (r instanceof Knoten) {
+            Knoten k = (Knoten) r;
+            for(Raum m : k.alleElemente()) {
+                if(this.schneidet(m))
+                    return true;
+            }
+        } else if (this instanceof Kreis) {
+            throw new UnsupportedOperationException("Kreiskollision ist nicht effizient implementiert.");
+        } else {
+            return this.dimension().schneidetBasic(r.dimension());
+        }
+        return false;
 	}	/**
 	 * Setzt die y-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
 	 * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
