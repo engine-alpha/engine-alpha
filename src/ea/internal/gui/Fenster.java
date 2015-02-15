@@ -24,6 +24,7 @@ import ea.internal.frame.FrameThread;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gra.Zeichner;
 import ea.internal.phy.Physik;
+import ea.internal.ui.KeyUIEvent;
 import ea.internal.ui.KlickEvent;
 import ea.internal.util.Logger;
 
@@ -62,7 +63,16 @@ public class Fenster extends Frame {
 	 */
 	private final Zeichner zeichner;
 
-	/**
+
+    public List<TastenReagierbar> getListener() {
+        return listener;
+    }
+
+    public List<TastenLosgelassenReagierbar> getLosListener() {
+        return losListener;
+    }
+
+    /**
 	 * Die Liste aller TastenListener.
 	 */
 	private final java.util.List<TastenReagierbar> listener = new ArrayList<>();
@@ -318,28 +328,16 @@ public class Fenster extends Frame {
 	private void addKeyListener () {
 		KeyListener keyListener = new KeyListener() {
 			@Override
-			public void keyTyped (KeyEvent e) {
-
-			}
+			public void keyTyped (KeyEvent e) { /*Nichts tun - wird durch die anderen zwei Methoden abgedeckt.*/}
 
 			@Override
 			public void keyPressed (KeyEvent e) {
-				tastenAktion(e);
+				tastenAktion(e, false);
 			}
 
 			@Override
 			public void keyReleased (KeyEvent e) {
-				int i = zuordnen(e.getKeyCode());
-
-				if (i == -1) {
-					return;
-				}
-
-				tabelle[i] = false;
-
-				for (TastenLosgelassenReagierbar l : losListener) {
-					l.tasteLosgelassen(i);
-				}
+				tastenAktion(e, true);
 			}
 		};
 
@@ -455,21 +453,23 @@ public class Fenster extends Frame {
 	 * weitergereicht, sofern die Taste innerhalb der Kennung des Fensters liegt.<br /> Hierzu: Die
 	 * Liste der Tasten mit Zuordnung zu einem Buchstaben; sie ist im <b>Handbuch</b> festgehalten.
 	 *
-	 * @param e
-	 * 		Das ausgeloeste KeyEvent zur Weiterverarbeitung.
-	 */
-	private void tastenAktion (KeyEvent e) {
+     * @param e
+     * 		Das ausgeloeste KeyEvent zur Weiterverarbeitung.
+     * @param losgelassen true für losgelassene Taste, false für gedrückte Taste.
+     */
+	private void tastenAktion(KeyEvent e, boolean losgelassen) {
 		int z = zuordnen(e.getKeyCode());
 
-		if (z == -1 || tabelle[z]) {
+		if (z == -1) {
 			return;
 		}
 
-		for (TastenReagierbar r : listener) {
-			r.reagieren(z);
-		}
+		//FIXME <- Hier geht's weiter ->
 
-		tabelle[z] = true;
+		tabelle[z] = !losgelassen;
+
+        KeyUIEvent keyEvent = new KeyUIEvent(this, z, losgelassen);
+        frameThread.addUIEvent(keyEvent);
 	}
 
 	/**
@@ -690,6 +690,7 @@ public class Fenster extends Frame {
 		if (t == null) {
 			throw new IllegalArgumentException("Listener darf nicht NULL sein.");
 		}
+
 
 		losListener.add(t);
 	}

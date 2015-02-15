@@ -82,5 +82,7 @@ extends FensterEvent {
                 rkr.rechtsKlickReagieren(punkt);
             }
         }
+
+        //TODO sophisticated interfaces
     }
 }

@@ -108,6 +108,7 @@ extends Thread {
      * Fuegt zum naechsten Frame ein UIEvent hinzu.
      */
     public void addUIEvent(UIEvent uiEvent) {
+        System.out.println("Add UIE");
         uiEventThread.enqueueDispatchableForNextFrame(uiEvent);
     }
 
