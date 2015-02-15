@@ -59,13 +59,6 @@ public class Zeichner extends Canvas {
 	 */
 	private Raum hintergrund;
 
-	/**
-	 * Der absolute Vordergrund. Er liegt immer im Zentrum<br /> Reserviert fuer die absolute Maus.
-	 */
-	private Raum vordergrund;
-
-	private Thread thread;
-
     /**
      * Gibt die Buffer Strategy aus.
      * @return  Die BufferStrategy für den Zeichner.
@@ -140,11 +133,6 @@ public class Zeichner extends Canvas {
 
 		// Die statischen Objekte
 		statNode.zeichnen(g, groesse);
-
-		// Die Maus
-		if (vordergrund != null) {
-			vordergrund.zeichnen(g, groesse);
-		}
 	}
 
 	/**
@@ -159,16 +147,6 @@ public class Zeichner extends Canvas {
 	 */
 	public Knoten statNode () {
 		return statNode;
-	}
-
-	/**
-	 * Meldet einen Vordergrund an.
-	 *
-	 * @param vordergrund
-	 * 		Der neue Vordergrund
-	 */
-	public void anmelden (Raum vordergrund) {
-		this.vordergrund = vordergrund;
 	}
 
 	/**

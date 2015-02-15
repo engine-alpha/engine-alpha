@@ -21,10 +21,12 @@ package ea;
 
 import ea.internal.ano.API;
 import ea.internal.gui.Fenster;
+import ea.internal.ui.KlickEvent;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +60,23 @@ public class Maus {
 	 */
 	public static final int TYPE_KLASSIK = 3;
 
+    /**
+     * Konstante für Linksklick. Wird manchen Reagierbar-Listenern mitgegeben.
+     */
+    public static final int LINKSKLICK = MouseEvent.BUTTON1;
+
+    /**
+     * Konstante für einen Klick mit dem Mausrad. Wird manchen Reagierbar-Listenern mitgegeben.
+     */
+    public static final int MAUSRAD = MouseEvent.BUTTON2;
+
+    /**
+     * Konstante für Rechtsklick. Wird manchen Reagierbar-Listenern mitgegeben.
+     */
+    public static final int RECHTSKLICK = MouseEvent.BUTTON1;
+
+
+
 	/* -------------------- /Konstanten -------------------- */
 
 	/**
@@ -84,7 +103,23 @@ public class Maus {
 	 */
 	private final boolean bewegend;
 
-	/**
+    public ArrayList<KlickReagierbar> getKlickListeners() {
+        return klickListeners;
+    }
+
+    public ArrayList<RechtsKlickReagierbar> getRechtsKlickListeners() {
+        return rechtsKlickListeners;
+    }
+
+    public ArrayList<MausLosgelassenReagierbar> getMausLosgelassenListeners() {
+        return mausLosgelassenListeners;
+    }
+
+    public ArrayList<MausBewegungReagierbar> getMausBewegungListeners() {
+        return mausBewegungListeners;
+    }
+
+    /**
 	 * Die Liste aller Raum-Klick-Auftraege
 	 */
 	private final ArrayList<Auftrag> mausListe = new ArrayList<>();
@@ -447,54 +482,31 @@ public class Maus {
 	// Ansonsten muss mit @NoExternalUse annotiert werden.
 
 	/**
-	 * Bei einer angemeldeten Maus wird bei einem Klick diese Methode aufgerufen.<br /> Theoretisch
-	 * liessen sich so Tastenklicks "simulieren".
+	 * Simuliert einen Mausklick (mit dieser Maus) an einem bestimmten Punkt.
 	 *
 	 * @param p der respektive Punkt für den simulierten Mausklick.
 	 * @param links
 	 * 		War der Klick ein Linksklick, ist dieser Wert <code>true</code>. Fuer jede andere Klickart
 	 * 		ist dieser Wert <code>false</code>. In diesem Fall wird mit einem Rechtsklick gerechnet.
 	 *
-	 * @see ea.Maus#klick(int, int, boolean, boolean)
+	 * @see ea.Maus#klick(Punkt, int, int, boolean)
 	 */
 	public void klick (Punkt p, boolean links) {
-		this.klick(p, links, false);
+		this.klick(p, links ? LINKSKLICK : RECHTSKLICK, 1, false);
 	}
 
 	/**
 	 * Bei einer angemeldeten Maus wird bei einem Klick diese Methode aufgerufen.<br /> So lassen
 	 * sich auch Klicks auf die Maus "simulieren".
 	 *
-	 * @param p der Punkt des Klicks
-	 * @param links
-	 * 		War der Klick ein Linksklick, ist dieser Wert <code>true</code>. Fuer jede andere Klickart
-	 * 		ist dieser Wert <code>false</code>. In diesem Fall wird mit einem Rechtsklick gerechnet.
-	 * @param losgelassen
-	 * 		ist dieser Wert <code>true</code>, so wird dies als losgelassene Taste behandelt.
+	 * @param p die Ausgangsposition für die Maus
 	 */
-	public void klick (Punkt p, boolean links, boolean losgelassen) {
-		p = p.verschobeneInstanz(hotspot.alsVektor());
-		if (losgelassen) {
-			for (MausLosgelassenReagierbar m : mausLosgelassenListeners) {
-				m.mausLosgelassen(p, links);
-			}
+	public void klick (Punkt p, int klicktyp, int anzahlKlicks, boolean loslassen) {
+		p = this.klickAufZeichenebene();
 
-			return;
-		}
+        KlickEvent e = new KlickEvent(fenster, p, klicktyp, anzahlKlicks, loslassen);
 
-		if (links) {
-			for (Auftrag a : mausListe) {
-				a.klick(p);
-			}
-
-			for (KlickReagierbar k : klickListeners) {
-				k.klickReagieren(p);
-			}
-		} else {
-			for (RechtsKlickReagierbar k : rechtsKlickListeners) {
-				k.rechtsKlickReagieren(p);
-			}
-		}
+        fenster.getFrameThread().addUIEvent(e);
 	}
 
 	/**

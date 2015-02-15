@@ -24,6 +24,7 @@ import ea.internal.frame.FrameThread;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gra.Zeichner;
 import ea.internal.phy.Physik;
+import ea.internal.ui.KlickEvent;
 import ea.internal.util.Logger;
 
 import java.awt.*;
@@ -500,23 +501,21 @@ public class Fenster extends Frame {
 	 * geklickt.
 	 */
 	private void mausAktion (MouseEvent e, boolean losgelassen) {
-		if (!zaehlt) {
+		if (!zaehlt || !hatMaus()) {
 			zaehlt = true;
 			return;
 		}
 
-		// Linksklick? 1: Links - 2: Mausrad? - 3: Rechts
-		final boolean links = e.getButton() != MouseEvent.BUTTON3;
+        //Finde Klick auf Zeichenebene.
+        Punkt klick = maus.klickAufZeichenebene();
 
-		if (hatMaus()) {
-			if (maus.absolut() || maus.bewegend()) {
-				Punkt pu = maus.klickAufZeichenebene();
-				maus.klick(pu, links, losgelassen);
-			} else { // FIXME REVIEW BUG
-				//maus.klick(maus.getImage().positionX() + getCam().getX(), maus.getImage().positionY() + getCam().getY(), links, losgelassen);
-				maus.klick(maus.getImage().position().verschobeneInstanz(getCam().position().position().alsVektor()), links, losgelassen);
-			} 
-		}
+        //Nimm die restlichen Werte vom AWT Event
+        int button = e.getButton();
+        int klickcnt = e.getClickCount();
+
+        KlickEvent event = new KlickEvent(this, klick, button, klickcnt, losgelassen);
+
+        this.frameThread.addUIEvent(event);
 	}
 
 	/**
@@ -701,17 +700,16 @@ public class Fenster extends Frame {
 		if (hatMaus()) {
 			Logger.error("Es ist bereits eine Maus angemeldet!");
 		} else {
-			//FIXME Maus
-            /*
             maus = m;
 			maus.fensterSetzen(this);
 
-			BoundingRechteck r = maus.getImage().dimension();
-			maus.getImage().positionSetzen(((getWidth() - r.breite) / 2), (getHeight() - r.hoehe) / 2);
+			//BoundingRechteck r = maus.getImage().dimension();
+			//maus.getImage().positionSetzen(((getWidth() - r.breite) / 2), (getHeight() - r.hoehe) / 2); T
+			//TODO schönere Einbindung (v 4.0)
+            maus.getImage().positionSetzen(((getWidth()) / 2), (getHeight()) / 2);
 			mausBild = maus.getImage();
 
 			zeichner.anmelden(mausBild);
-			*/
 		}
 	}
 
@@ -796,4 +794,12 @@ public class Fenster extends Frame {
 	public boolean istGedrueckt (int tastencode) {
 		return tabelle[tastencode];
 	}
+
+    /**
+     * Gibt den Hauptthread dieses Fensters für die frameweise Abarbeitung an.
+     * @return Hauptthread dieses Fensters für die frameweise Abarbeitung.
+     */
+    public FrameThread getFrameThread() {
+        return frameThread;
+    }
 }

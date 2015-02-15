@@ -10,5 +10,5 @@ import java.util.Queue;
  */
 public abstract class UIEvent
 implements Dispatchable {
-
+    
 }

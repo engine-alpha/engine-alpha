@@ -1,6 +1,7 @@
 package ea.internal.frame;
 
 import ea.internal.gra.Zeichner;
+import ea.internal.ui.UIEvent;
 import ea.internal.util.Logger;
 import org.jbox2d.dynamics.World;
 
@@ -75,6 +76,8 @@ extends Thread {
 
     private final ProducerThread[] producerThreads;
 
+    private final ProducerThread<UIEvent> uiEventThread;
+
     /**
      * Konstruktor erstellt den Thread, aber <b>startet ihn nicht</b>.
      */
@@ -89,7 +92,7 @@ extends Thread {
         worldThread = new WorldThread(world);
         renderThread = new RenderThread(zeichner);
         dispatcherThread = new DispatcherThread(queue);
-        producerThreads = new ProducerThread[] {};
+        producerThreads = new ProducerThread[] {uiEventThread=new ProducerThread<UIEvent>(queue, "UI") };
 
         //Startet die Threads. Sie verharren vorerst in Wartehaltung, bis die Run-Methode dieses Threads
         //Sie aus dem Wartezustand holt.
@@ -99,6 +102,13 @@ extends Thread {
         for (ProducerThread pt : producerThreads) {
             pt.start();
         }
+    }
+
+    /**
+     * Fuegt zum naechsten Frame ein UIEvent hinzu.
+     */
+    public void addUIEvent(UIEvent uiEvent) {
+        uiEventThread.enqueueDispatchableForNextFrame(uiEvent);
     }
 
     /**

@@ -8,7 +8,7 @@ import java.util.Queue;
  * entsprechende Queue zur Abarbeitung / Ausführung legt. Welche Art von Events das letztlich ist, hängt von der
  * Created by andonie on 14.02.15.
  */
-public abstract class ProducerThread<E extends Dispatchable>
+public class ProducerThread<E extends Dispatchable>
 extends FrameSubthread {
 
     private static int ptcnt = 1;
