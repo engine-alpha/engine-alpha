@@ -524,7 +524,7 @@ public class Fenster extends Frame {
 	}
 
 	/**
-	 * Diese Methode wird ausgefuehrt, wenn die Maus bewegt wird.
+	 * Diese Methode wird ausgefuehrt, wenn die Maus bewegungSimulieren wird.
 	 *
 	 * @param e
 	 * 		Das ausloesende Event
@@ -536,50 +536,43 @@ public class Fenster extends Frame {
 			float centerX = zeichner.getWidth() / 2;
 			float centerY = zeichner.getHeight() / 2;
 
-			Point windowLocation = getLocation();
 			Point mousePosition = e.getPoint();
 
-			if (maus.absolut()) {
-				if (maus.bewegend()) {
-					Vektor offset = new Vektor(mousePosition.x - centerX, mousePosition.y - centerY);
+            if(lastMousePosition != null) {
+                maus.bewegungSimulieren(new Vektor(
+                        mousePosition.x - lastMousePosition.x,
+                        mousePosition.y - lastMousePosition.y));
+            }
 
-					getCam().verschieben(offset);
-				}
+            //FIXME
+            /*
+            float dx = mousePosition.x - centerX;
+            float dy = mousePosition.y - centerY;
 
-				if (lastMousePosition != null) {
-					maus.bewegt(new Vektor(mousePosition.x - lastMousePosition.x, mousePosition.y - lastMousePosition.y));
-				}
-			} else {
-				//FIXME
-                /*
-                float dx = mousePosition.x - centerX;
-				float dy = mousePosition.y - centerY;
+            BoundingRechteck bounds = mausBild.dimension();
+            Punkt hotspot = maus.hotSpot();
 
-				BoundingRechteck bounds = mausBild.dimension();
-				Punkt hotspot = maus.hotSpot();
+            Punkt hotspotX = new Punkt(bounds.x + hotspot.realX() + dx, bounds.y + hotspot.realY());
 
-				Punkt hotspotX = new Punkt(bounds.x + hotspot.realX() + dx, bounds.y + hotspot.realY());
+            Punkt hotspotY = new Punkt(bounds.x + hotspot.realX(), bounds.y + hotspot.realY() + dy);
 
-				Punkt hotspotY = new Punkt(bounds.x + hotspot.realX(), bounds.y + hotspot.realY() + dy);
+            // FIXME Maus bis zum Rand bewegen, aber nicht hinaus.
+            // Maus bewegungSimulieren sich nicht direkt an den Rand, wenn die Bewegung größer als der
+            // Abstand zum Rand ist!
+            if (!zeichner.masse().istIn(hotspotX)) {
+                dx = 0;
+            }
 
-				// FIXME Maus bis zum Rand bewegen, aber nicht hinaus.
-				// Maus bewegt sich nicht direkt an den Rand, wenn die Bewegung größer als der
-				// Abstand zum Rand ist!
-				if (!zeichner.masse().istIn(hotspotX)) {
-					dx = 0;
-				}
+            if (!zeichner.masse().istIn(hotspotY)) {
+                dy = 0;
+            }
 
-				if (!zeichner.masse().istIn(hotspotY)) {
-					dy = 0;
-				}
-				
-				Vektor bewegung = new Vektor(dx, dy);
-				mausBild.verschieben(bewegung);
-				maus.bewegt(bewegung);*/
-			}
+            Vektor bewegung = new Vektor(dx, dy);
+            mausBild.verschieben(bewegung);
+            maus.bewegungSimulieren(bewegung);*/
 
 			//robot.mouseMove((int)(windowLocation.x + insets.left + centerX), (int)(windowLocation.y + insets.top + centerY));
-			//lastMousePosition = new Point((int)centerX, (int)centerY);
+			lastMousePosition = mousePosition;
 		}
 	}
 

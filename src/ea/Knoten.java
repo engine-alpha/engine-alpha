@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Vector;
 
 /**
- * Ein Knoten ist eine Sammlung vielen Raum-Objekten, die hierdurch einheitlich bewegt, und
+ * Ein Knoten ist eine Sammlung vielen Raum-Objekten, die hierdurch einheitlich bewegungSimulieren, und
  * einheitlich behandelt werden koennen.
  *
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>

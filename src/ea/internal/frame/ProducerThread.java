@@ -39,13 +39,19 @@ extends FrameSubthread {
             //Gerade arbeitet dieser Thread aktiv an der Abarbeitung der Queue. Warten, bis die Queue abgearbeitet ist.
             synchronized (lastFrameDispatchables) {
                 try {
+                    System.out.println("PreWait (enq)");
                     lastFrameDispatchables.wait();
+                    System.out.println("PostWait (enq)");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+
+
         }
-        lastFrameDispatchables.add(disp);
+        synchronized (lastFrameDispatchables) {
+            lastFrameDispatchables.add(disp);
+        }
     }
 
     /**
@@ -63,6 +69,9 @@ extends FrameSubthread {
         //Fertig mit der Übertragung: Die Queue darf wieder gefüllt werden.
         synchronized (dispatcherQueue) {
             dispatcherQueue.notifyAll();
+        }
+        synchronized (lastFrameDispatchables) {
+            lastFrameDispatchables.notifyAll();
         }
     }
 

@@ -22,6 +22,7 @@ package ea;
 import ea.internal.ano.API;
 import ea.internal.gui.Fenster;
 import ea.internal.ui.KlickEvent;
+import ea.internal.ui.MausBewegungEvent;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
@@ -93,7 +94,7 @@ public class Maus {
 	/**
 	 * Gibt an, ob die Maus fixiert ist oder nicht.
 	 * <p/>
-	 * In diesem Fall ist der Mauszeiger immer Mittelpunkt des Bildes, das Bild bewegt sich dann
+	 * In diesem Fall ist der Mauszeiger immer Mittelpunkt des Bildes, das Bild bewegungSimulieren sich dann
 	 * immer gemäß der Mausbewegung.
 	 */
 	private final boolean fixed;
@@ -195,21 +196,21 @@ public class Maus {
 	 * linke obere Ecke des Mausbildes.
 	 *
 	 * @param mausbild
-	 * 		Das Objekt, das ab sofort das Mausbild sein wird und auch dementsprechend bewegt wird.
+	 * 		Das Objekt, das ab sofort das Mausbild sein wird und auch dementsprechend bewegungSimulieren wird.
 	 * @param hotspot
 	 * 		Der bereits beschriebene Hotspot
 	 * @param fixed
 	 * 		Ob diese Maus fixiert sein soll: Ist dieser Wert <code>true</code>, so ist die Maus immer
 	 * 		in der Mitte. Bei <code>false</code> verhält sich diese Maus genauso wie gewohnt.
 	 * @param bewegend
-	 * 		Regelt, ob die Kamera bei Mausbewegungen bewegt wird.
+	 * 		Regelt, ob die Kamera bei Mausbewegungen bewegungSimulieren wird.
 	 * 		<p/>
 	 * 		Bei <code>true</code>: <ul> <li>Falls die Maus fixiert ist, bleibt sie weiterhin in der
-	 * 		Mitte und die Kamera wird bei jeder Bewegung bewegt.</li> <li>Falls die Maus nicht fixiert
-	 * 		ist, so wird die Kamera erst bewegt, wenn die Maus den Rand des Fensters beführt.</li>
+	 * 		Mitte und die Kamera wird bei jeder Bewegung bewegungSimulieren.</li> <li>Falls die Maus nicht fixiert
+	 * 		ist, so wird die Kamera erst bewegungSimulieren, wenn die Maus den Rand des Fensters beführt.</li>
 	 * 		</ul>
 	 * 		<p/>
-	 * 		Bei <code>false</code> wird die Kamera nie automatisch bewegt. Allerdings ist dies über das
+	 * 		Bei <code>false</code> wird die Kamera nie automatisch bewegungSimulieren. Allerdings ist dies über das
 	 * 		Interface {@link ea.MausBewegungReagierbar} manuell realisierbar. Ohne dieses Interface
 	 * 		gibt <code>false</code> bei einer fixierten Maus wenig Sinn.
 	 *
@@ -226,7 +227,7 @@ public class Maus {
 	}
 
 	/**
-	 * Erstellt eine Maus, die die Kamera nicht bewegt und nicht fixiert ist.
+	 * Erstellt eine Maus, die die Kamera nicht bewegungSimulieren und nicht fixiert ist.
 	 * <p/>
 	 * Weitere Erläuterungen: {@link #Maus(Bild, Punkt, boolean, boolean)}
 	 *
@@ -249,7 +250,7 @@ public class Maus {
 	 * verlinkten Konstanten sollten verständlich dokumentiert sein. Ansonsten ist an dieser Stelle
 	 * auch das Wiki hilfreich.
 	 * <p/>
-	 * Die Maus ist dabei weder fixiert noch wird die Kamera durch ihre Bewegung bewegt.
+	 * Die Maus ist dabei weder fixiert noch wird die Kamera durch ihre Bewegung bewegungSimulieren.
 	 *
 	 * @param type
 	 * 		Die Art der Maus. Jeder Wert steht für eine andere Maus.
@@ -470,7 +471,7 @@ public class Maus {
 
 	/**
 	 * Meldet ein <code>MausBewegungReagierbar</code>-Objekt bei der Maus an. <br /> Ab dann wird es
-	 * jedes mal durch Aufruf seiner Methode benachrichtigt, wenn die Maus bewegt wird.
+	 * jedes mal durch Aufruf seiner Methode benachrichtigt, wenn die Maus bewegungSimulieren wird.
 	 *
 	 * @param m
 	 * 		Listener-Objekt
@@ -478,7 +479,7 @@ public class Maus {
 	public void mausBewegungReagierbarAnmelden (MausBewegungReagierbar m) {
 		mausBewegungListeners.add(m);
 	}
-	// TODO NotUsed. Soll das für bewegt und klick simuliert werden können?
+	// TODO NotUsed. Soll das für bewegungSimulieren und klick simuliert werden können?
 	// Ansonsten muss mit @NoExternalUse annotiert werden.
 
 	/**
@@ -510,18 +511,18 @@ public class Maus {
 	}
 
 	/**
-	 * Benachrichtigt alle Listener, falls die Bewegung nicht (0|0) war.
-	 *
-	 * @param bewegung der Vektor, der die Bewegung der Maus beschreibt.
+	 * Simuliert eine Bewegung der Maus.
+     *
+     * @param bewegung  Der Bewegungsvektor <b>auf der Zeichenebene</b>, den die Maus zurückgelegt
+     *                  hat.
 	 */
-	public void bewegt (Vektor bewegung) {
+	public void bewegungSimulieren(Vektor bewegung) {
 		if (bewegung.unwirksam()) {
 			return;
 		}
-		
-		for (MausBewegungReagierbar m : mausBewegungListeners) {
-			m.mausBewegt(bewegung);
-		}
+
+        MausBewegungEvent event = new MausBewegungEvent(fenster, bewegung);
+        fenster.getFrameThread().addUIEvent(event);
 	}
 
 	/**
@@ -560,6 +561,9 @@ public class Maus {
 	 * würde.
 	 */
 	public Punkt klickAufZeichenebene () {
+        if(true) {
+            throw new UnsupportedOperationException("Klick ist nicht auf Cursor gemappt.");
+        }
 		if (absolut()) {
 			Punkt r = bild.position();
 			Punkt p = hotSpot();

@@ -64,8 +64,10 @@ extends FrameSubthread {
                     } catch (InterruptedException e) { }
                 }
             } else {
-                Dispatchable next = dispatchableQueue.poll();
-                next.dispatch();
+                synchronized (dispatchableQueue) {
+                    Dispatchable next = dispatchableQueue.remove();
+                    next.dispatch();
+                }
             }
         }
     }

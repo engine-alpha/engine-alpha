@@ -108,7 +108,9 @@ extends Thread {
      * Fuegt zum naechsten Frame ein UIEvent hinzu.
      */
     public void addUIEvent(UIEvent uiEvent) {
-        System.out.println("Add UIE");
+        if(uiEvent == null) {
+            throw new IllegalArgumentException("UIEvent to be added was null!");
+        }
         uiEventThread.enqueueDispatchableForNextFrame(uiEvent);
     }
 

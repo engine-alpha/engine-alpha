@@ -5,7 +5,7 @@
  *     <li>Der User macht einen Mausklick.</li>
  *     <li>Der User drückt auf eine Taste.</li>
  *     <li>Der User drückt auf eine bestimmte Stelle auf einem Touchscreen.</li>
- *     <li>Der User bewegt die Maus.</li>
+ *     <li>Der User bewegungSimulieren die Maus.</li>
  * </ul>
  *
  * Für jeden designierten, unterscheidbaren UI-Eventtyp gibt es eine <b>UI-Event-Klasse</b>, die sich aus der

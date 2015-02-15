@@ -26,7 +26,7 @@ package ea;
  */
 public interface MausBewegungReagierbar {
 	/**
-	 * Wird immer aufgerufen, wenn die Maus bewegt wurde.
+	 * Wird immer aufgerufen, wenn die Maus bewegungSimulieren wurde.
 	 *
 	 * @param bewegung ein Vektor, der die Bewegung der Maus beschreibt.
 	 */
