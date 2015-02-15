@@ -37,7 +37,14 @@ import java.util.ArrayList;
  * @author Michael Andonie
  */
 public class Text extends Raum {
-	private static final long serialVersionUID = -2145724725115670955L;
+    /**
+     * Alle möglichen Fontnamen des Systems, auf dem man sich gerade befindet.<br /> Hiernach werden
+     * Überprüfungen gemacht, ob die gewünschte Schriftart auch auf dem hiesigen System vorhanden
+     * ist.
+     */
+    public static final String[] fontNamen;
+
+    private static final long serialVersionUID = -2145724725115670955L;
 
 	/**
 	 * Ein Feld aller existenten Fonts, die im Hauptprojektordner gespeichert sind.<br /> Macht das
@@ -69,6 +76,9 @@ public class Text extends Raum {
 				Logger.error("Lesefehler beim Laden der eigenen Fonts! Zugriffsrechte überprüfen.");
 			}
 		}
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        fontNamen = ge.getAvailableFontFamilyNames();
+
 	}
 
 	/**
@@ -198,7 +208,25 @@ public class Text extends Raum {
 		setzeFont(fontName);
 	}
 
-	/**
+    /**
+     * Prüft, ob ein Font auf diesem Computer existiert.
+     *
+     * @param name
+     * 		Der Name des zu ueberpruefenden Fonts
+     *
+     * @return <code>true</code>, falls der Font auf dem System existiert, sonst <code>false</code>
+     */
+    public static boolean fontExistiert (String name) {
+        for (String s : fontNamen) {
+            if (s.equals(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
 	 * Setzt einen neuen Font fuer den Text
 	 *
 	 * @param fontName
@@ -215,7 +243,7 @@ public class Text extends Raum {
 		if (base != null) {
 			this.font = base.deriveFont(schriftart, groesse);
 		} else {
-			if (!Manager.fontExistiert(fontName)) {
+			if (!fontExistiert(fontName)) {
 				fontName = "SansSerif";
 				Logger.error("Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
 			}
@@ -323,7 +351,7 @@ public class Text extends Raum {
 		if (base != null) {
 			return base;
 		} else {
-			if (!Manager.fontExistiert(fontName)) {
+			if (!fontExistiert(fontName)) {
 				fontName = "SansSerif";
 				Logger.error("Achtung! Die gewuenschte Schriftart existiert weder als geladene Sonderdatei noch im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
 			}

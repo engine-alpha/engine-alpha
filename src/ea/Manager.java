@@ -53,18 +53,6 @@ public class Manager {
 	public static final Manager standard = new Manager("Interner Routinenmanager");
 
 	/**
-	 * Alle möglichen Fontnamen des Systems, auf dem man sich gerade befindet.<br /> Hiernach werden
-	 * Überprüfungen gemacht, ob die gewünschte Schriftart auch auf dem hiesigen System vorhanden
-	 * ist.
-	 */
-	public static final String[] fontNamen;
-
-	static {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		fontNamen = ge.getAvailableFontFamilyNames();
-	}
-
-	/**
 	 * Der Counter aller vorhandenen Manager-Tickerthreads
 	 */
 	private static int cnt = 0;
@@ -111,25 +99,7 @@ public class Manager {
 		cnt++;
 	}
 
-	/**
-	 * Prüft, ob ein Font auf diesem Computer existiert.
-	 *
-	 * @param name
-	 * 		Der Name des zu ueberpruefenden Fonts
-	 *
-	 * @return <code>true</code>, falls der Font auf dem System existiert, sonst <code>false</code>
-	 */
-	public static boolean fontExistiert (String name) {
-		for (String s : fontNamen) {
-			if (s.equals(name)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
+    /**
 	 * Diese Methode prüft, ob zur Zeit <b>mindestens 1 Ticker</b> an diesem Manager ausgeführt
 	 * wird.
 	 *

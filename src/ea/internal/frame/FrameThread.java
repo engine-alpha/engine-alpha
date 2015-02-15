@@ -76,7 +76,9 @@ extends Thread {
 
     private final ProducerThread[] producerThreads;
 
-    private final ProducerThread<UIEvent> uiEventThread;
+    private final EventThread<UIEvent> uiEventThread;
+
+
 
     /**
      * Konstruktor erstellt den Thread, aber <b>startet ihn nicht</b>.
@@ -92,7 +94,7 @@ extends Thread {
         worldThread = new WorldThread(world);
         renderThread = new RenderThread(zeichner);
         dispatcherThread = new DispatcherThread(queue);
-        producerThreads = new ProducerThread[] {uiEventThread=new ProducerThread<UIEvent>(queue, "UI") };
+        producerThreads = new ProducerThread[] {uiEventThread=new EventThread<UIEvent>(queue, "UI") };
 
         //Startet die Threads. Sie verharren vorerst in Wartehaltung, bis die Run-Methode dieses Threads
         //Sie aus dem Wartezustand holt.
