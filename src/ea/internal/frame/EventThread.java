@@ -9,17 +9,17 @@ import java.util.Queue;
  * Created by andonie on 14.02.15.
  */
 public class EventThread<E extends Dispatchable>
-        extends ProducerThread<E> {
+        extends ProducerThread {
 
-    private static int ptcnt = 1;
+    private static int etcnt = 1;
 
     /**
      * Eine LIFO - Liste mit allen UI-Events, die seit dem letzten Frame-Update geschehen sind.
      */
     private final Queue<E> lastFrameDispatchables = new LinkedList<E>();
 
-    protected EventThread(Queue<Dispatchable> queue, String type) {
-        super("Producer Thread #" + ptcnt++ + " (" + type + ")", queue);
+    protected EventThread(String type, Queue<Dispatchable> queue) {
+        super("Event Thread #" + etcnt++ + " (" + type + ")", queue);
 
     }
 

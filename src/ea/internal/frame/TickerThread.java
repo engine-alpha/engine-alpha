@@ -13,9 +13,19 @@ import java.util.Queue;
 public class TickerThread
 extends ProducerThread {
 
+    /**
+     * Thread Counter für die exakte Thread-Bezeichnung
+     */
+    private static int ttcnt = 1;
+
 
 
     protected TickerThread(Queue queue) {
-        super(queue, "Ticker");
+        super("Ticker Thread #" + ttcnt++, queue);
+    }
+
+    @Override
+    public void frameLogic() {
+
     }
 }

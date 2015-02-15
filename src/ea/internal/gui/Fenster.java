@@ -290,30 +290,8 @@ public class Fenster extends Frame {
 		removeCursor();
 
 		// Mausfang
-        //FIXME effektiveren "Mausfang" implementieren
-		/*Manager.standard.anmelden(new Ticker() {
-			private static final long serialVersionUID = -7552570027596373694L;
+        //FIXME effektiveren "Mausfang" für absolute Maus implementieren
 
-			@Override
-			public void tick () {
-				if (hatMaus() && !maus.absolut() && maus.bewegend()) {
-					try {
-						BoundingRechteck r = mausBild.dimension();
-						Punkt hs = maus.hotSpot();
-						BoundingRechteck praeferenz = mausPlatz();
-						Punkt p = new Punkt(r.x + hs.realX(), r.y + hs.realY());
-						if (!praeferenz.istIn(p) && maus.bewegend()) {
-							getCam().verschieben((new Vektor(praeferenz.zentrum(), p).teilen(20)));
-						}
-					} catch (NullPointerException e) {
-						// Einfangen der maximal einmaligen RuntimeException zum
-						// sichern
-						// TODO Wann tritt diese Exception auf? Das muss schöner gehen,
-						// wenn sie immer auftritt.
-					}
-				}
-			}
-		}, 50);*/
 
         //Die Physik
         physik = new Physik();

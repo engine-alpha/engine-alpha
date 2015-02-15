@@ -51,11 +51,6 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
-	 * Der Tickermanager. An ihm werden die Ticker angemeldet.
-	 */
-	public final Manager manager = new Manager();
-
-	/**
 	 * Der Wurzel-Knoten. An ihm muessen direkt oder indirekt (ueber weitere Knoten) alle
 	 * <code>Raum</code>-Objekte angemeldet werden, die auch (normal) gezeichnet werden sollen.
 	 */
@@ -463,7 +458,6 @@ public abstract class Game implements TastenReagierbar {
 	 * <b>nicht</b> beendet.
 	 */
 	public void schliessen () {
-		manager.kill();
 		fenster.loeschen();
 	}
 
@@ -585,7 +579,8 @@ public abstract class Game implements TastenReagierbar {
 	 * @see ea.Ticker
 	 */
 	public void tickerAnmelden(Ticker ticker, int intervall) {
-		this.manager.anmelden(ticker, intervall);
+		//this.manager.anmelden(ticker, intervall);
+        //TODO 4.0 Implementation
 	}
 	
 	/**
@@ -598,7 +593,8 @@ public abstract class Game implements TastenReagierbar {
 	 * @see ea.Ticker
 	 */
 	public void tickerAbmelden(Ticker ticker) {
-		this.manager.abmelden(ticker);
+		//this.manager.abmelden(ticker);
+        //TODO 4.0 Implementation
 	}
 
 	/**
@@ -631,7 +627,7 @@ public abstract class Game implements TastenReagierbar {
 	 *
 	 * @see Maus
 	 */
-	public void mausAnmelden (Maus maus) {
+	public void mausAnmelden(Maus maus) {
 		mausAnmelden(maus, false);
 	}
 

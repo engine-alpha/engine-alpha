@@ -36,7 +36,7 @@ import java.util.Random;
  *
  * @author Michael Andonie
  */
-public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
+public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, RechtsKlickReagierbar {
 	private static final long serialVersionUID = 3387123025090347796L;
 
 	/**
@@ -101,7 +101,10 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		aufgabenKlick = new ArrayList<>();
 		FensterE.getFenster(breite, hoehe).wurzel.add(links, rechts, strich = new Text(0, 10, "-"));
 		FensterE.getFenster(breite, hoehe).tastenReagierbarAnmelden(this);
-		super.anmelden(this, 1);
+		//super.anmelden(this, 1);
+
+        //TODO Ticker-Implementierung
+
 		punkteAnzeigen(false);
 		punkteAlignen();
 	}

@@ -54,7 +54,7 @@ public class ActionFigur extends Raum {
 		// FIXME: 1 ms ist ein zu kleines Intervall und sorgt für die Performance-Schwierigkeiten bei vielen Figuren
 		// Richtige Time nutzen? Wie schnell sind Time-Aufrufe in Java?
 
-		Manager.standard.anmelden(new Ticker() {
+		/*Manager.standard.anmelden(new Ticker() {
 			int runde = 0;
 
 			public void tick () {
@@ -68,7 +68,8 @@ public class ActionFigur extends Raum {
 					// don't care (ConcurrentModification and NullPointer)
 				}
 			}
-		}, 1);
+		}, 1);*/
+        //TODO Neue Figurenanimation
 	}
 
 	/**

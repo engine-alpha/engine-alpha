@@ -80,8 +80,8 @@ public class Figur extends Raum {
 	private boolean spiegelY = false;
 
 	static {
-		liste = new ArrayList<>();
-		Manager.standard.anmelden((new Ticker() {
+		liste = new ArrayList<Figur>();
+		/*Manager.standard.anmelden((new Ticker() {
 			int runde = 0;
 
 			@Override
@@ -97,7 +97,8 @@ public class Figur extends Raum {
 					//
 				}
 			}
-		}), 1);
+		}), 1);*/
+        //TODO effizientere Animation
 	}
 
 	/**
