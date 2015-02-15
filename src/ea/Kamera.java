@@ -75,6 +75,12 @@ public class Kamera {
     private boolean hatBounds = false;
 
     /**
+     * Der aktuelle Kamerazoom.
+     * TODO Zoom erklärung (was macht größer/kleiner?)
+     */
+    private float zoom =1f;
+
+    /**
      * Konstruktor fuer Objekte der Klasse Kamera
      *
      * @param sizeX Die X-Laenge des Fensters
@@ -144,6 +150,17 @@ public class Kamera {
         }
         hatBoundsSetzen(true);
         bounds = r;
+    }
+
+    /**
+     * Setzt den Zoom.
+     *
+     * TODO Erklärung
+     *
+     * @param zoom
+     */
+    public void zoomSetzen(float zoom) {
+        this.zoom = zoom;
     }
 
     /**
