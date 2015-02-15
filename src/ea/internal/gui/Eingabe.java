@@ -19,6 +19,8 @@
 
 package ea.internal.gui;
 
+import ea.internal.util.Logger;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -75,6 +77,13 @@ public class Eingabe extends JDialog {
 			}
 		});
 		fine.setFont(font);
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (Exception e) {
+            Logger.error(e.getLocalizedMessage());
+        }
 
 		pack();
 		setVisible(true);

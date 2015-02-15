@@ -73,8 +73,8 @@ public class Nachricht extends JDialog {
 		getContentPane().add(p, BorderLayout.SOUTH);
 
 		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			SwingUtilities.updateComponentTreeUI(this);
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            SwingUtilities.updateComponentTreeUI(this);
 		} catch (Exception e) {
 			Logger.error(e.getLocalizedMessage());
 		}

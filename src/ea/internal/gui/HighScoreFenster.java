@@ -84,7 +84,16 @@ public class HighScoreFenster extends JDialog {
 		});
 		getContentPane().add(b, BorderLayout.SOUTH);
 
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (Exception e) {
+            Logger.error(e.getLocalizedMessage());
+        }
+
 		validate();
+
+        pack();
 		this.setSize(200, 300);
 		this.setVisible(true);
 	}
