@@ -136,6 +136,16 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
         FensterE.getFenster().nachrichtSchicken(nachricht);
     }
 
+    /**
+     * Erstellt eine (sehr rudimentäre) Highscore-Anzeige.
+     * @param namen         Die Nutzernamen (0: bester -> schlechtester Spieler)
+     * @param punkte        Die zugehörigen Punkte (analog zu den Namen: 0 -> schlechtester)
+     * @param festertitel   Der Titel des Dialogfensters mit den Highscores.
+     */
+    public static void highscoreAnzeigen(String[] namen, int[] punkte, String festertitel) {
+        FensterE.getFenster().highscoreAnzeigen(namen, punkte, festertitel);
+    }
+
 	/**
 	 * Setzt, ob die Punkte angezeigt werden sollen.
 	 *
