@@ -20,8 +20,12 @@
 package ea.edu;
 
 import ea.*;
+import ea.internal.gui.Eingabe;
+import ea.internal.gui.Frage;
+import ea.internal.gui.Nachricht;
 import ea.internal.util.Logger;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -105,6 +109,32 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		punkteAnzeigen(false);
 		punkteAlignen();
 	}
+
+    /**
+     * Schickt einen einfachen <i>Ja / Nein - Dialog</i> an den Nutzer.
+     * @param text  Der Text für den Dialog.
+     * @return      <code>true</code>, wenn der User auf "Ja" drückt, sonst <code>false</code>.
+     */
+    public static boolean frage(String text) {
+        return FensterE.getFenster().frage(text);
+    }
+
+    /**
+     * Öffnet einen Eingabedialog (Text) für den Nutzer.
+     * @param nachricht der Text für den Dialog.
+     * @return          Die Nutzereingabe als String. Hat der Nutzer abgebrochen, ist dieser Wert <code>null</code>.
+     */
+    public static String eingabeFordern(String nachricht) {
+        return FensterE.getFenster().eingabeFordern(nachricht);
+    }
+
+    /**
+     * Schickt einen einseitigen Nachrichtendialog an den Nutzer.
+     * @param nachricht Der Text für die Nachricht.
+     */
+    public static void nachrichtDialog(String nachricht) {
+        FensterE.getFenster().nachrichtSchicken(nachricht);
+    }
 
 	/**
 	 * Setzt, ob die Punkte angezeigt werden sollen.
