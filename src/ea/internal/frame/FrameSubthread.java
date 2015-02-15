@@ -25,8 +25,14 @@ extends Thread {
      */
     private final Object masterLock = new Object();
 
-    protected FrameSubthread(String threadname) {
+    /**
+     * Referenz auf den Master-Framethread, der diesen Subthread nutzt.
+     */
+    protected final FrameThread master;
+
+    protected FrameSubthread(FrameThread master, String threadname) {
         super(threadname);
+        this.master = master;
         super.setDaemon(true);
     }
 
@@ -75,9 +81,13 @@ extends Thread {
      * @throws InterruptedException
      */
     public final void semi_join() throws InterruptedException {
-        if(frameActive) {
-            synchronized (masterLock) { masterLock.wait(); }
+        System.err.println("Enter SemiJoin " + this.getClass());
+        synchronized (masterLock) {
+            if(frameActive) {
+                masterLock.wait();
+            }
         }
+        System.err.println("Leave SemiJoin " + this.getClass());
     }
 
     /**

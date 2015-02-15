@@ -18,8 +18,8 @@ public class EventThread<E extends Dispatchable>
      */
     private final Queue<E> lastFrameDispatchables = new LinkedList<E>();
 
-    protected EventThread(String type, Queue<Dispatchable> queue) {
-        super("Event Thread #" + etcnt++ + " (" + type + ")", queue);
+    protected EventThread(FrameThread master, String type, Queue<Dispatchable> queue) {
+        super(master, "Event Thread #" + etcnt++ + " (" + type + ")", queue);
 
     }
 

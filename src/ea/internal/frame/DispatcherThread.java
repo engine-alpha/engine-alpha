@@ -27,8 +27,8 @@ extends FrameSubthread {
      * Erstellt einen neuen Dispatcher-Thread, der die Abarbeitung der Dispatches übernimmt.
      * @param dispatchableQueue Die Warteschlange, aus der die abzuarbeitenden Dispatchable-Events genommen werden.
      */
-    public DispatcherThread(Queue<Dispatchable> dispatchableQueue) {
-        super("EA Event Dispatcher #" + dtcnt++);
+    public DispatcherThread(FrameThread master, Queue<Dispatchable> dispatchableQueue) {
+        super(master, "EA Event Dispatcher #" + dtcnt++);
         this.setDaemon(true);
 
         this.dispatchableQueue = dispatchableQueue;
@@ -54,7 +54,9 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
+        System.out.println("Dispatch Start");
         while (!nomoreNewStuff || !dispatchableQueue.isEmpty()) {
+            System.out.println("NoMoreNewStuff " + nomoreNewStuff);
             if(dispatchableQueue.isEmpty()) {
                 //Warten
                 synchronized (dispatchableQueue) {
@@ -68,8 +70,11 @@ extends FrameSubthread {
                     Dispatchable next = dispatchableQueue.remove();
                     next.dispatch();
                 }
+
             }
         }
+        System.out.println("Dispatch End");
+
     }
 
 }

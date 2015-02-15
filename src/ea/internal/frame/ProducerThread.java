@@ -12,8 +12,8 @@ extends FrameSubthread {
      */
     protected final Queue<Dispatchable> dispatcherQueue;
 
-    public ProducerThread(String threadname, Queue<Dispatchable> queue) {
-        super(threadname);
+    public ProducerThread(FrameThread master, String threadname, Queue<Dispatchable> queue) {
+        super(master, threadname);
         this.dispatcherQueue = queue;
     }
 }

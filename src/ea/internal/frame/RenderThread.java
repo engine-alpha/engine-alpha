@@ -37,8 +37,8 @@ extends FrameSubthread {
      * @param zeichner  Das <code>Zeichner-Objekt</code>, dass alle relevanten Informationen für das Rendering
      *                  enthält.
      */
-    public RenderThread(Zeichner zeichner) {
-        super("Rendering Thread #" + rtcnt++);
+    public RenderThread(FrameThread master, Zeichner zeichner) {
+        super(master, "Rendering Thread #" + rtcnt++);
         this.setDaemon(true);
 
         this.zeichner = zeichner;

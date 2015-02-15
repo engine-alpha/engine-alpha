@@ -579,8 +579,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see ea.Ticker
 	 */
 	public void tickerAnmelden(Ticker ticker, int intervall) {
-		//this.manager.anmelden(ticker, intervall);
-        //TODO 4.0 Implementation
+		fenster.getFrameThread().tickerAnmelden(ticker, intervall);
 	}
 	
 	/**

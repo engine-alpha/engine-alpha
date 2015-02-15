@@ -49,8 +49,8 @@ extends FrameSubthread {
      * Erstellt
      * @param world
      */
-    public WorldThread(World world) {
-        super("Physics-Thread #" + wtcnt++);
+    public WorldThread(FrameThread master, World world) {
+        super(master, "Physics-Thread #" + wtcnt++);
         this.world = world;
     }
 

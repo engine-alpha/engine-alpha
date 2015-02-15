@@ -1,5 +1,6 @@
 package ea.internal.frame;
 
+import ea.Ticker;
 import ea.internal.gra.Zeichner;
 import ea.internal.ui.UIEvent;
 import ea.internal.util.Logger;
@@ -52,6 +53,19 @@ extends Thread {
     }
 
     /**
+     * Gibt die <i>tatsächliche</i> Dauer des letzten Frames an.
+     */
+    private int lastFrameTime = maxmillis;
+
+    /**
+     * Gibt die tatsächliche Dauer des letzten Frames aus.
+     * @return die tatsächliche Dauer des letzten Frames in Millisekunden.
+     */
+    public int getLastFrameTime() {
+        return lastFrameTime;
+    }
+
+    /**
      * Gibt die <i>ungefähre</i> FPS-Zahl dieser Frame-Logik aus.
      * @return  Die <i>ungefähre</i> Framerate dieser Frame-Logik in Frames/Sekunde.
      */
@@ -77,7 +91,7 @@ extends Thread {
     private final ProducerThread[] producerThreads;
 
     private final EventThread<UIEvent> uiEventThread;
-
+    private final TickerThread tickerThread;
 
 
     /**
@@ -91,10 +105,13 @@ extends Thread {
         Queue<Dispatchable> queue = new LinkedList<Dispatchable>();
 
         //Die Childs initiieren
-        worldThread = new WorldThread(world);
-        renderThread = new RenderThread(zeichner);
-        dispatcherThread = new DispatcherThread(queue);
-        producerThreads = new ProducerThread[] {uiEventThread=new EventThread<UIEvent>("UI", queue) };
+        worldThread = new WorldThread(this, world);
+        renderThread = new RenderThread(this, zeichner);
+        dispatcherThread = new DispatcherThread(this, queue);
+        producerThreads = new ProducerThread[] {
+                uiEventThread=new EventThread<UIEvent>(this, "UI", queue),
+                tickerThread=new TickerThread(this, queue)
+        };
 
         //Startet die Threads. Sie verharren vorerst in Wartehaltung, bis die Run-Methode dieses Threads
         //Sie aus dem Wartezustand holt.
@@ -114,6 +131,10 @@ extends Thread {
             throw new IllegalArgumentException("UIEvent to be added was null!");
         }
         uiEventThread.enqueueDispatchableForNextFrame(uiEvent);
+    }
+
+    public void tickerAnmelden(Ticker ticker, int intervall) {
+        tickerThread.addTicker(ticker, intervall);
     }
 
     /**
@@ -145,6 +166,7 @@ extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            System.err.println("Init Dispatcher");
 
             //Start Dispatcher
             dispatcherThread.frameInit();
@@ -159,6 +181,7 @@ extends Thread {
                 }
             }
 
+            System.err.println("Finish Dispatcher");
             //-> Beende Wartehaltung d. Dispatchers
             dispatcherThread.frameAbschliessen();
 
@@ -185,10 +208,12 @@ extends Thread {
             //ggf. warten:
             if (deltaT < maxmillis) {
                 try {
+                    lastFrameTime = maxmillis;
                     Thread.sleep(maxmillis-deltaT);
                 } catch (InterruptedException e) {}
+            } else {
+                lastFrameTime = (int)deltaT;
             }
         }
     }
-
 }
