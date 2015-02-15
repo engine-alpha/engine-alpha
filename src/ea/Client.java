@@ -19,7 +19,9 @@
 
 package ea;
 
+import com.sun.istack.internal.Nullable;
 import ea.edu.net.NetzwerkInterpreter;
+import ea.internal.frame.FrameThread;
 import ea.internal.util.Logger;
 
 import java.io.*;
@@ -63,24 +65,35 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	 */
 	private boolean connectFailed;
 
+    /**
+     * Eine Referenz auf einen Frame-Thread. Ist diese Referenz nicht <code>null</code>, so werden alle
+     * NetEvents (Empfangen) mit der Frame-Abarbeitung synchronisiert. Ansonsten werden sie unmittelbar mit dem
+     * Empfang (auf dem selben Thread!) abgearbeitet.
+     */
+    private final FrameThread frameThread;
+
 	/**
 	 * Erstellt einen neuen Client.
 	 * @param ipAdresse	Die IP-Adresse des Servers, mit dem sich der Client verbinden soll.
 	 * @param port		Der Port, an dem sich der Client mit dem Server verbinden soll.
 	 */
 	public Client (String ipAdresse, int port) {
-		this("Unbenannter Client", ipAdresse, port);
+		this(null, ipAdresse, port, "Unbenannter Client");
 	}
 
 	/**
 	 * Erstellt einen neuen Client.
-	 * @param name		Der Name, mit dem sich der Client (im Hintergrund) dem Server vorstellt. Wird nur
-	 * 					intern verwendet.
-	 * @param ipAdresse	Die IP-Adresse des Servers, mit dem sich der Client verbinden soll.
-	 * @param port		Der Port, an dem sich der Client mit dem Server verbinden soll.
-	 */
-	public Client (String name, String ipAdresse, int port) {
-		this.setDaemon(true);
+     * @param frameThread   Der Framethread, über den das Empfangen mit der Frame-Abarbeitung synchronisiert werden
+     *                      soll (kann <code>null</code> sein. In diesem Fall wird die Abarbeitung unmittelbar mit
+     *                      Empfang (im selben Thread) ausgeführt.
+     * @param ipAdresse     Die IP-Adresse des Servers, mit dem sich der Client verbinden soll.
+     * @param port          Der Port, an dem sich der Client mit dem Server verbinden soll.
+     * @param name          Der Name, mit dem sich der Client (im Hintergrund) dem Server vorstellt. Wird nur
+* 					        intern verwendet.
+     */
+	public Client(@Nullable FrameThread frameThread, String ipAdresse, int port, String name) {
+        this.frameThread = frameThread;
+        this.setDaemon(true);
 		this.name = name;
 		this.ipAdresse = ipAdresse;
 		this.port = port;
@@ -114,7 +127,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 			String ip = socket.getInetAddress().getHostAddress();
 
 			// set up interpreter
-			NetzwerkInterpreter interpreter = new NetzwerkInterpreter(ip, null, new BufferedReader(new InputStreamReader(is)));
+			NetzwerkInterpreter interpreter = new NetzwerkInterpreter(frameThread, null, new BufferedReader(new InputStreamReader(is)), ip);
 			interpreter.empfaengerHinzufuegen(this);
 
 			NetzwerkVerbindung vb = new NetzwerkVerbindung(name, ip, bw, interpreter);

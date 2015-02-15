@@ -22,7 +22,9 @@ package ea.edu.net;
 import ea.Empfaenger;
 import ea.NetzwerkVerbindung;
 import ea.Server;
+import ea.internal.frame.FrameThread;
 import ea.internal.util.Logger;
+import ea.internal.frame.Dispatchable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,8 +62,15 @@ public class NetzwerkInterpreter extends Thread {
 	 */
 	private Server server;
 
-	public NetzwerkInterpreter (String remoteIP, Server server, BufferedReader br) {
-		this.remoteIP = remoteIP;
+    /**
+     * Referenz auf den Frame-Thread, der die frameweise ausführung der (asynchron ankommenden) Inputs
+     * von der anderen Seite empfängt.
+     */
+    private final FrameThread frameThread;
+
+	public NetzwerkInterpreter(FrameThread frameThread, Server server, BufferedReader br, String remoteIP) {
+        this.frameThread = frameThread;
+        this.remoteIP = remoteIP;
 		this.server = server;
 		this.reader = br;
 		this.connectionActive = true;
@@ -124,7 +133,7 @@ public class NetzwerkInterpreter extends Thread {
 	 */
 	private void process (String raw) {
 		// Die Information
-		String rest = raw.substring(1);
+		final String rest = raw.substring(1);
 
 		if (server != null && server.isBroadcasting()) {
 			switch (raw.charAt(0)) {
@@ -147,51 +156,114 @@ public class NetzwerkInterpreter extends Thread {
 		// Fallunterscheidung gemäß Informationstyp
 		switch (raw.charAt(0)) {
 			case 's': // String
-				for (Empfaenger e : outputListe) {
-					e.empfangeString(rest);
-				}
+                final Dispatchable stringDispatch = new Dispatchable() {
+                    @Override
+                    public void dispatch() {
+                        for (Empfaenger e : outputListe) {
+                            e.empfangeString(rest);
+                        }
+                    }
+                };
+                if(frameThread != null)
+                    frameThread.addNetEvent(stringDispatch);
+                else
+                    stringDispatch.dispatch();
 
 				break;
 			case 'i': // Int
-				int i = Integer.parseInt(rest);
+				final int i = Integer.parseInt(rest);
 
-				for (Empfaenger e : outputListe) {
-					e.empfangeInt(i);
-				}
+                final Dispatchable intDispatch = new Dispatchable() {
+                    @Override
+                    public void dispatch() {
+                        for (Empfaenger e : outputListe) {
+                            e.empfangeInt(i);
+                        }
+                    }
+                };
+                if(frameThread != null)
+                    frameThread.addNetEvent(intDispatch);
+                else
+                    intDispatch.dispatch();
 
 				break;
 			case 'b': // Byte
-				byte b = Byte.parseByte(rest);
+				final byte b = Byte.parseByte(rest);
 
-				for (Empfaenger e : outputListe) {
-					e.empfangeByte(b);
-				}
+                final Dispatchable byteDispatch = new Dispatchable() {
+                    @Override
+                    public void dispatch() {
+                        for (Empfaenger e : outputListe) {
+                            e.empfangeByte(b);
+                        }
+                    }
+                };
+                if(frameThread != null)
+                    frameThread.addNetEvent(byteDispatch);
+                else
+                    byteDispatch.dispatch();
+
+
 
 				break;
 			case 'd': // Double
-				double d = Double.parseDouble(rest);
+				final double d = Double.parseDouble(rest);
 
-				for (Empfaenger e : outputListe) {
-					e.empfangeDouble(d);
-				}
+                final Dispatchable doubleDispatch = new Dispatchable() {
+                    @Override
+                    public void dispatch() {
+                        for (Empfaenger e : outputListe) {
+                            e.empfangeDouble(d);
+                        }
+                    }
+                };
+
+                if(frameThread != null)
+                    frameThread.addNetEvent(doubleDispatch);
+                else
+                    doubleDispatch.dispatch();
+
+
 
 				break;
 			case 'c': // Char
-				char c = rest.charAt(0);
+				final char c = rest.charAt(0);
 
-				for (Empfaenger e : outputListe) {
-					e.empfangeChar(c);
-				}
+                final Dispatchable charDispatch = new Dispatchable() {
+                    @Override
+                    public void dispatch() {
+                        for (Empfaenger e : outputListe) {
+                            e.empfangeChar(c);
+                        }
+                    }
+                };
+
+                if(frameThread != null)
+                    frameThread.addNetEvent(charDispatch);
+                else
+                    charDispatch.dispatch();
+
+
 
 				break;
 			case 'k': // Boolean
-				boolean bo = Boolean.parseBoolean(rest);
+				final boolean bo = Boolean.parseBoolean(rest);
 
-				for (Empfaenger e : outputListe) {
-					e.empfangeBoolean(bo);
-				}
+                final Dispatchable boolDispatch = new Dispatchable() {
+                    @Override
+                    public void dispatch() {
+                        for (Empfaenger e : outputListe) {
+                            e.empfangeBoolean(bo);
+                        }
+                    }
+                };
 
+                if(frameThread != null)
+                    frameThread.addNetEvent(boolDispatch);
+                else
+                    boolDispatch.dispatch();
 				break;
+
 			case 'x': // Steuerzeichen
 				switch (rest.charAt(0)) {
 					case 'q': //quit communication
@@ -206,16 +278,27 @@ public class NetzwerkInterpreter extends Thread {
 	}
 
 	public void quitCommunication () {
-		for (Empfaenger e : outputListe) {
-			e.verbindungBeendet();
-		}
 
-		try {
-			reader.close();
-		} catch (IOException e1) {
-			Logger.error("Konnte den Kommunikationskanal nicht mehr schließen.");
-		}
+        final Dispatchable endDispatch = new Dispatchable() {
+            @Override
+            public void dispatch() {
+                for (Empfaenger e : outputListe) {
+                    e.verbindungBeendet();
+                }
 
-		connectionActive = false;
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                    Logger.error("Konnte den Kommunikationskanal nicht mehr schließen.");
+                }
+
+                connectionActive = false;
+            }
+        };
+
+        if(frameThread != null)
+            frameThread.addNetEvent(endDispatch);
+        else
+            endDispatch.dispatch();
 	}
 }

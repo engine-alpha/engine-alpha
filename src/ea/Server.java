@@ -19,7 +19,9 @@
 
 package ea;
 
+import com.sun.istack.internal.Nullable;
 import ea.edu.net.NetzwerkInterpreter;
+import ea.internal.frame.FrameThread;
 import ea.internal.net.DiscoveryServer;
 import ea.internal.util.Logger;
 
@@ -87,17 +89,36 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	private boolean broadcast;
 
+    /**
+     * Eine Referenz auf einen Frame-Thread. Ist diese Referenz nicht <code>null</code>, so werden alle
+     * NetEvents (Empfangen) mit der Frame-Abarbeitung synchronisiert. Ansonsten werden sie unmittelbar mit dem
+     * Empfang (auf dem selben Thread!) abgearbeitet.
+     */
+    private final FrameThread frameThread;
+
 	/**
 	 * Erstellt einen neuen Server.
 	 *
-	 * @param port
-	 * 		Der Port, auf dem dieser Server auf anfragende <code>Client</code>s antworten soll.
-	 */
-	public Server (int port) {
-		this.port = port;
+     * @param frameThread   Der Framethread, über den das Empfangen mit der Frame-Abarbeitung synchronisiert werden
+     *                      soll (kann <code>null</code> sein. In diesem Fall wird die Abarbeitung unmittelbar mit
+     *                      Empfang (im selben Thread) ausgeführt.
+     * @param port          Der Port, auf dem der Server arbeiten soll.
+     */
+	public Server(@Nullable FrameThread frameThread, int port) {
+        this.frameThread = frameThread;
+        this.port = port;
 		this.setDaemon(true);
 		this.start();
 	}
+
+    /**
+     * Erstellt einen neuen Server. Empfangene Informationen werden unmittelbar im selben Thread ausgeführt.
+     *
+     * @param port          Der Port, auf dem der Server arbeiten soll.
+     */
+    public Server(int port) {
+        this(null, port);
+    }
 
 	/**
 	 * Überschriebene run-Methode. Hierin wird auf neue Verbindungen gewartet und diese werden
@@ -144,7 +165,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 				String ip = got.getInetAddress().getHostAddress();
 
 				// set up interpreter
-				NetzwerkInterpreter interpreter = new NetzwerkInterpreter(ip, this, br);
+				NetzwerkInterpreter interpreter = new NetzwerkInterpreter(frameThread, this, br, ip);
 				interpreter.empfaengerHinzufuegen(this);
 
 				final NetzwerkVerbindung verbindung = new NetzwerkVerbindung(name, ip, new BufferedWriter(new OutputStreamWriter(os)), interpreter);

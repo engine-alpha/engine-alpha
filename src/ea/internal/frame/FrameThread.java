@@ -91,6 +91,7 @@ extends Thread {
     private final ProducerThread[] producerThreads;
 
     private final EventThread<UIEvent> uiEventThread;
+    private final EventThread<Dispatchable> netEventThread;
     private final TickerThread tickerThread;
 
 
@@ -110,6 +111,7 @@ extends Thread {
         dispatcherThread = new DispatcherThread(this, queue);
         producerThreads = new ProducerThread[] {
                 uiEventThread=new EventThread<UIEvent>(this, "UI", queue),
+                netEventThread = new EventThread<Dispatchable>(this, "Network", queue),
                 tickerThread=new TickerThread(this, queue)
         };
 
@@ -131,6 +133,15 @@ extends Thread {
             throw new IllegalArgumentException("UIEvent to be added was null!");
         }
         uiEventThread.enqueueDispatchableForNextFrame(uiEvent);
+    }
+
+    /**
+     * Fuegt ein Netzwerk-Event (empfangene Informationen vom Kommunikationspartner) für die
+     * Abarbeitung des kommenden Threads zu.
+     * @param d Ein Netzwerk-Event, das im kommenden Frame aufgelöst werden soll.
+     */
+    public void addNetEvent(Dispatchable d) {
+        netEventThread.enqueueDispatchableForNextFrame(d);
     }
 
     public void tickerAnmelden(Ticker ticker, int intervall) {
@@ -166,7 +177,6 @@ extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.err.println("Init Dispatcher");
 
             //Start Dispatcher
             dispatcherThread.frameInit();
@@ -181,7 +191,6 @@ extends Thread {
                 }
             }
 
-            System.err.println("Finish Dispatcher");
             //-> Beende Wartehaltung d. Dispatchers
             dispatcherThread.frameAbschliessen();
 

@@ -60,7 +60,7 @@ public class SimplerClient extends SimplerNetzwerkAdapter {
 	 * 						<i>well known ports</i>).
 	 */
 	public SimplerClient (String name, String ipAdresse, int port) {
-		client = new Client(name, ipAdresse, port);
+		client = new Client(null, ipAdresse, port, name);
 		client.empfaengerHinzufuegen(messageUpdater);
 		clientcounter++;
 	}
