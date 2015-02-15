@@ -147,7 +147,7 @@ public class Maus {
 	/**
 	 * Das Mausbild. Wichtig bei einer individuellen Maus.
 	 */
-	private final Raum bild;
+	private final Bild bild;
 
 	/**
 	 * Der individuelle Hotspot
@@ -162,24 +162,24 @@ public class Maus {
 
 	/**
 	 * Dieser Konstruktor ist lediglich eine Vereinfachung. Siehe Dokumentation des vollständigen
-	 * Konstruktors für eine Dokumentation der Parameter: {@link #Maus(Raum, Punkt, boolean,
+	 * Konstruktors für eine Dokumentation der Parameter: {@link #Maus(Bild, Punkt, boolean,
 	 * boolean)}
 	 * <p/>
 	 * <code>bewegend</code> wird bei diesem Konstruktor auf <code>false</code> gesetzt.
 	 *
 	 * @param mausbild
-	 * 		siehe {@link #Maus(Raum, Punkt, boolean, boolean)}
+	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
 	 * @param hotspot
-	 * 		siehe {@link #Maus(Raum, Punkt, boolean, boolean)}
+	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
 	 * @param fixed
-	 * 		siehe {@link #Maus(Raum, Punkt, boolean, boolean)}
+	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
 	 *
-	 * @see #Maus(Raum, Punkt, boolean, boolean)
+	 * @see #Maus(Bild, Punkt, boolean, boolean)
 	 * @see Bild
 	 * @see Kamera
 	 */
 	@API
-	public Maus (Raum mausbild, Punkt hotspot, boolean fixed) {
+	public Maus (Bild mausbild, Punkt hotspot, boolean fixed) {
 		this(mausbild, hotspot, fixed, false);
 	}
 
@@ -217,7 +217,7 @@ public class Maus {
 	 * @see ea.Kamera
 	 */
 	@API
-	public Maus (Raum mausbild, Punkt hotspot, boolean fixed, boolean bewegend) {
+	public Maus (Bild mausbild, Punkt hotspot, boolean fixed, boolean bewegend) {
 		this.type = -1;
 		this.bild = mausbild;
 		this.hotspot = hotspot;
@@ -228,17 +228,17 @@ public class Maus {
 	/**
 	 * Erstellt eine Maus, die die Kamera nicht bewegt und nicht fixiert ist.
 	 * <p/>
-	 * Weitere Erläuterungen: {@link #Maus(Raum, Punkt, boolean, boolean)}
+	 * Weitere Erläuterungen: {@link #Maus(Bild, Punkt, boolean, boolean)}
 	 *
 	 * @param mausbild
-	 * 		siehe {@link #Maus(Raum, Punkt, boolean, boolean)}
+	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
 	 * @param hotspot
-	 * 		siehe {@link #Maus(Raum, Punkt, boolean, boolean)}
+	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
 	 *
 	 * @see #Maus(Raum, Punkt, boolean)
 	 */
 	@API
-	public Maus (Raum mausbild, Punkt hotspot) {
+	public Maus (Bild mausbild, Punkt hotspot) {
 		this(mausbild, hotspot, false, false);
 	}
 
@@ -294,7 +294,7 @@ public class Maus {
 	 *
 	 * @return Das Bild des Mauscursors.
 	 */
-	public Raum getImage () {
+	public Bild getImage () {
 		if (bild != null) {
 			return bild;
 		}

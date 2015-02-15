@@ -366,7 +366,7 @@ public class Fenster extends Frame {
 
 			@Override
 			public void mouseEntered (MouseEvent e) {
-				if (hatMaus()) {
+				/*if (hatMaus()) {
 					Point po = getLocation();
 
 					int startX = (getWidth() / 2);
@@ -378,7 +378,7 @@ public class Fenster extends Frame {
 				zaehlt = false;
 
 				robot.mousePress(InputEvent.BUTTON1_MASK);
-				robot.mouseRelease(InputEvent.BUTTON1_MASK);
+				robot.mouseRelease(InputEvent.BUTTON1_MASK);*/
 			}
 
 			@Override
@@ -507,7 +507,12 @@ public class Fenster extends Frame {
 		}
 
         //Finde Klick auf Zeichenebene.
-        Punkt klick = maus.klickAufZeichenebene();
+        Point sourceklick =  e.getPoint(); //<- Die Klickposition relativ zum Ursprung des Zeichner-Canvas
+
+        Punkt sourcePos = new Punkt(sourceklick.x, sourceklick.y);
+        Punkt camPos = getCam().position().position();
+
+        Punkt klick = sourcePos.verschobeneInstanz(camPos.alsVektor());
 
         //Nimm die restlichen Werte vom AWT Event
         int button = e.getButton();
@@ -573,8 +578,8 @@ public class Fenster extends Frame {
 				maus.bewegt(bewegung);*/
 			}
 
-			robot.mouseMove((int)(windowLocation.x + insets.left + centerX), (int)(windowLocation.y + insets.top + centerY));
-			lastMousePosition = new Point((int)centerX, (int)centerY);
+			//robot.mouseMove((int)(windowLocation.x + insets.left + centerX), (int)(windowLocation.y + insets.top + centerY));
+			//lastMousePosition = new Point((int)centerX, (int)centerY);
 		}
 	}
 
@@ -707,9 +712,10 @@ public class Fenster extends Frame {
 			//maus.getImage().positionSetzen(((getWidth() - r.breite) / 2), (getHeight() - r.hoehe) / 2); T
 			//TODO schönere Einbindung (v 4.0)
             maus.getImage().positionSetzen(((getWidth()) / 2), (getHeight()) / 2);
-			mausBild = maus.getImage();
 
-			zeichner.anmelden(mausBild);
+
+            Punkt hs = maus.hotSpot();
+            this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(maus.getImage().bild(), new Point((int)hs.x, (int)hs.y), maus.toString()));
 		}
 	}
 

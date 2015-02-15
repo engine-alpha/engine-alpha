@@ -35,6 +35,13 @@ extends FrameSubthread {
     }
 
     /**
+     * Initialisiert den Dispatcher für den kommenden Frame.
+     */
+    public void frameInit() {
+        nomoreNewStuff = false;
+    }
+
+    /**
      * Der Aufruf dieser Methode sorgt dafür, dass der Thread nicht mehr auf weitere Dispatchable Events wartet,
      * sobald die Queue als nächstes mal leer ist.
      */
@@ -47,7 +54,6 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
-        nomoreNewStuff = false;
         while (!nomoreNewStuff || !dispatchableQueue.isEmpty()) {
             if(dispatchableQueue.isEmpty()) {
                 //Warten

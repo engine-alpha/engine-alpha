@@ -160,13 +160,6 @@ public class Zeichner extends Canvas {
 	}
 
 	/**
-	 * Löscht den absoluten Vordergrund
-	 */
-	void vordergrundLoeschen () {
-		vordergrund = null;
-	}
-
-	/**
 	 * @return Ein BoundingRechteck, dass die Breite und Höhe des Fensters hat.
 	 */
 	public BoundingRechteck masse () {

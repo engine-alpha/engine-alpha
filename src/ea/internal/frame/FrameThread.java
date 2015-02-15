@@ -142,6 +142,7 @@ extends Thread {
             }
 
             //Start Dispatcher
+            dispatcherThread.frameInit();
             dispatcherThread.semi_start();
 
             //Join: Producers
@@ -152,6 +153,7 @@ extends Thread {
                     e.printStackTrace();
                 }
             }
+
             //-> Beende Wartehaltung d. Dispatchers
             dispatcherThread.frameAbschliessen();
 

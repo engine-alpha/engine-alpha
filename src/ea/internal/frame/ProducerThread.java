@@ -54,9 +54,9 @@ extends FrameSubthread {
      */
     @Override
     public final void frameLogic() {
-        for(Dispatchable d : lastFrameDispatchables) {
+        while(!lastFrameDispatchables.isEmpty()) {
             synchronized (dispatcherQueue) {
-                dispatcherQueue.add(d);
+                dispatcherQueue.add(lastFrameDispatchables.poll());
             }
         }
 
