@@ -91,11 +91,9 @@ extends ProducerThread {
                 //Es ist genug Zeit vergangen, um mindestens einen Tick auszuführen.
                 int rest = ms-countdown; //Overhead berechnen
                 countdown = intervall; //countdown zurücksetzen
-                System.out.println("Before Synch");
                 synchronized (dispatcherQueue) {
                     dispatcherQueue.add(TickerThread.TickerJob.this);
                 }
-                System.out.println("After Synch");
                 //nochmal mit overhead ausführen
                 discount(rest);
             }

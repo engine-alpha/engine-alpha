@@ -54,9 +54,7 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
-        System.out.println("Dispatch Start");
         while (!nomoreNewStuff || !dispatchableQueue.isEmpty()) {
-            System.out.println("NoMoreNewStuff " + nomoreNewStuff);
             if(dispatchableQueue.isEmpty()) {
                 //Warten
                 synchronized (dispatchableQueue) {
@@ -73,8 +71,6 @@ extends FrameSubthread {
 
             }
         }
-        System.out.println("Dispatch End");
-
     }
 
 }

@@ -81,13 +81,11 @@ extends Thread {
      * @throws InterruptedException
      */
     public final void semi_join() throws InterruptedException {
-        System.err.println("Enter SemiJoin " + this.getClass());
         synchronized (masterLock) {
             if(frameActive) {
                 masterLock.wait();
             }
         }
-        System.err.println("Leave SemiJoin " + this.getClass());
     }
 
     /**

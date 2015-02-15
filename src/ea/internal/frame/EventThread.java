@@ -33,9 +33,7 @@ public class EventThread<E extends Dispatchable>
             //Gerade arbeitet dieser Thread aktiv an der Abarbeitung der Queue. Warten, bis die Queue abgearbeitet ist.
             synchronized (lastFrameDispatchables) {
                 try {
-                    System.out.println("PreWait (enq)");
                     lastFrameDispatchables.wait();
-                    System.out.println("PostWait (enq)");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
