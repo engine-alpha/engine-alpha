@@ -23,7 +23,6 @@ import ea.*;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.util.ArrayList;
 
 /**
  * Dies ist das Panel, in dem die einzelnen Dinge gezeichnet werden
@@ -125,14 +124,14 @@ public class Zeichner extends Canvas {
 
 		// Relativer Hintergrund
 		if (hintergrund != null) {
-			hintergrund.zeichnenBasic(g, groesse.verschobeneInstanz(new Vektor(cam.getX() / 5, cam.getY() / 10)));
+			hintergrund.renderBasic(g, groesse.verschobeneInstanz(new Vektor(cam.getX() / 5, cam.getY() / 10)));
 		}
 
 		// Die Objekte
 		cam.zeichne(g);
 
 		// Die statischen Objekte
-		statNode.zeichnen(g, groesse);
+		statNode.render(g, groesse);
 	}
 
 	/**

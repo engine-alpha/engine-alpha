@@ -13,14 +13,14 @@ import ea.internal.ano.NoExternalUse;
  * der Rückgabetyp <code>Position</code> ist und die Rückgabe das Objekt, das die Methode ausgeführt hat. Das ermöglicht
  * übersichtlichere Codes:<br />
  * <code>
- *     raum.get.verschieben(10, 10); //Verschiebe das Objekt um (10|10) <br />
- *     raum.get.drehen(-90);         //Drehe das Objekt 90° im Uhrzeigersinn. <br />
+ *     raum.position.verschieben(10, 10); //Verschiebe das Objekt um (10|10) <br />
+ *     raum.position.drehen(-90);         //Drehe das Objekt 90° im Uhrzeigersinn. <br />
  * </code>
  * <br />
  * <b> ... kann so verkürzt werden zu ... </b> <br /> <br />
  *
  * <code>
- *     raum.get.verschieben(10, 10).drehen(-90); <br />
+ *     raum.position.verschieben(10, 10).drehen(-90); <br />
  * </code>
  *
  * So lassen sich beliebig viele "eigentlich-void-Operationen" hintereinander ausführen.
@@ -274,4 +274,8 @@ public class Position {
     public Punkt get() {
         return raum.getPhysikHandler().position();
     }
+
+
+    /* __________________________ Rotation __________________________ */
+
 }

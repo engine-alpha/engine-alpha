@@ -537,7 +537,7 @@ public class Figur extends Raum {
 	 * 		gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen (Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g, BoundingRechteck r) {
 		animation[aktuelle].zeichnen(g, (int) (position.x - r.x), (int) (position.y - r.y), spiegelX, spiegelY);
 	}
 

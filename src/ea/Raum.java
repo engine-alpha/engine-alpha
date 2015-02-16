@@ -22,8 +22,11 @@ import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
+import ea.internal.phy.WorldHandler;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
+
 
 /**
  * Raum bezeichnet alles, was sich auf der Zeichenebene befindet.<br /> Dies ist die absolute
@@ -66,10 +69,12 @@ public abstract class Raum implements Comparable<Raum> {
     /* _________________________ Die Handler _________________________ */
 
     /**
-     * Über das <code>get</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt
-     * dieses <code>Raum</code>-Objekt betreffen. Dazu gehört:
+     * Über das <code>position</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt
+     * die Position dieses <code>Raum</code>-Objekts betreffen. Dazu gehört:
      * <ul>
-     *     <li>Das Abfragen der aktuellen Position.</li>PositionHandle    <li>Das Setzen einer neuPositioner das verschieben.</li>PositionHandle    <li>Das Rotieren um einePositioninkel.</li>
+     *     <li>Das Abfragen der aktuellen Position.</li>
+     *     <li>Das Setzen einer Position das verschieben.</li>
+     *     <li>Das Rotieren um einen Winkel.</li>
      * </ul>
      *
      * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
@@ -79,6 +84,21 @@ public abstract class Raum implements Comparable<Raum> {
     public final Position position = new Position(this);
 
 
+    /**
+     * Über das <code>physik</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt
+     * die physikalischen Eigenschaften und Ümstände dieses <code>Raum</code>-Objekts betreffen. Dazu gehört:
+     * <ul>
+     *     <li>Das Abfragen und Setzen von physikalischen Eigenschaften des Objekt, wie zum Beispiel
+     *     der <i>Masse</i> oder der <i>Elastizität</i>.</li>
+     *     <li>Das Anwenden von physikalischen Effekten (z.B. <i>Kräfte</i> oder <i>Impulse</i>) auf das
+     *     Objekt.</li>
+     *     <li>Das Ändern des <i>physikalischen Verhaltens</i> des Objekts.</li>
+     * </ul>
+     *
+     * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
+     *
+     * @see Position
+     */
     public final  Physik physik = new Physik(this);
 
 
@@ -175,11 +195,16 @@ public abstract class Raum implements Comparable<Raum> {
         return physikHandler.beinhaltet(p);
     }
 
-
-
-    /* _________________________ Hard Physics _________________________ */
-
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
+
+    /**
+     * Diese Methode wird aufgerufen, wenn die Knotenstruktur um dieses <code>Raum</code>-Objekt verändert wird.
+     * @param worldHandler  Die neue Physik-World, in der das <code>Raum</code>-Objekt liegen soll.
+     */
+    @NoExternalUse
+    public void updateWorld(WorldHandler worldHandler) {
+        this.physikHandler = physikHandler.update(worldHandler);
+    }
 
     /**
      * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
@@ -201,7 +226,7 @@ public abstract class Raum implements Comparable<Raum> {
 	 * außerhalb der Engine verwendet werden.</i></b>
 	 *
 	 * @see #zIndex
-	 * @see #zIndex(int)
+	 * @see #zIndexSetzen(int)
 	 */
 	@Override
 	@NoExternalUse
@@ -218,54 +243,6 @@ public abstract class Raum implements Comparable<Raum> {
 	}
 
     /**
-     * Dreht die Zeichenfläche um den Mittelpunkt des Raumes um die gegebenen Grad, bevor mit dem
-     * Zeichenn begonnen wird.<br /> <b><i>Diese Methode sollte nicht außerhalb der Engine verwendet
-     * werden.</i></b>
-     *
-     * @see #zeichnen(Graphics2D, BoundingRechteck)
-     * @see #afterRender(Graphics2D, BoundingRechteck)
-     */
-    @NoExternalUse
-    private final void beforeRender(Graphics2D g, BoundingRechteck r) {
-		/*lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
-
-		lastDrehung = Math.toRadians(drehung);
-
-		if (lastDrehung != 0) {
-			g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
-		}
-
-		if (opacity != 1) {
-			composite = g.getComposite();
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
-		} else {
-			composite = null;
-		}*/
-        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
-        //FIXME Implementation
-    }
-
-    /**
-     * Dreht die Zeichenfläche wieder zurück in den Ausgangszustand. <b><i>Diese Methode sollte
-     * nicht außerhalb der Engine verwendet werden.</i></b>
-     *
-     * @see #zeichnen(Graphics2D, BoundingRechteck)
-     * @see #beforeRender(Graphics2D, BoundingRechteck)
-     */
-    @NoExternalUse
-    private final void afterRender(Graphics2D g, BoundingRechteck r) {
-		/*if (composite != null) {
-			g.setComposite(composite);
-		}
-
-		if (lastDrehung != 0) {
-			g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
-		}*/
-        //FIXME Implementation
-        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
-    }
-
-    /**
      * Die Basiszeichenmethode.<br /> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese
      * Methode wird bei den einzelnen Gliedern eines Knotens aufgerufen.
      *
@@ -276,14 +253,46 @@ public abstract class Raum implements Comparable<Raum> {
      * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
      * 		gezeichnet werden.
      *
-     * @see #zeichnen(Graphics2D, BoundingRechteck)
      */
     @NoExternalUse
-    public final void zeichnenBasic (Graphics2D g, BoundingRechteck r) {
+    public void renderBasic(Graphics2D g, BoundingRechteck r) {
         if (sichtbar && this.camcheck(r)) {
-            beforeRender(g, r);
-            zeichnen(g, r);
-            afterRender(g, r);
+
+            //Hole Rotation und Position absolut auf der Zeichenebene.
+            float rotation = physikHandler.rotation();
+            Punkt position = physikHandler.position();
+
+
+            // ____ Pre-Render ____
+
+            g.rotate(rotation, position.x, position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
+
+            //Opacity Update
+            if (opacity != 1) {
+                composite = g.getComposite();
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
+            } else {
+                composite = null;
+            }
+
+
+            // ____ Render ____
+
+            render(g);
+
+
+            // ____ Post-Render ____
+
+            //Opacity Update
+            if (composite != null) {
+                g.setComposite(composite);
+            }
+
+            //2' Rotation zurücksetzen
+            g.rotate(-rotation, position.x, position.y);
+
+            //1' Position zurücksetzen
+            g.translate(-position.x, -position.y);
         }
     }
 
@@ -295,7 +304,7 @@ public abstract class Raum implements Comparable<Raum> {
      */
     @NoExternalUse
     private boolean camcheck(BoundingRechteck r) {
-        //FIXME : Parameter ändern (?) - Funktionalität implementieren.
+        //FIXME : Parameter ändern (?) und Funktionalität implementieren.
         //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
         return true;
     }
@@ -312,23 +321,25 @@ public abstract class Raum implements Comparable<Raum> {
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Raum-Objekts _________________________ */
 
     /**
-     * Zeichnet das Objekt.
+     * Rendert das Objekt am Ursprung.
+     * <ul>
+     *     <li>Die Position ist (0|0).</li>
+     *     <li>Die Roation ist 0.</li>
+     * </ul>
      *
      * @param g
      * 		Das zeichnende Graphics-Objekt
-     * @param r
-     * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-     * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-     * 		gezeichnet werden.
      */
     @NoExternalUse
-    public abstract void zeichnen (Graphics2D g, BoundingRechteck r);
+    public abstract void render (Graphics2D g);
 
     /**
      * Berechnet eine Form, die für die Kollisionsberechnungen dieses <code>Raum</code>-Objekts verwendet werden.
      * @param   pixelProMeter   Die [px/m]-Konstante für die Umrechnung.
      * @return                  Die zu dem Objekt zugehörige Shape in <b>[m]-Einheit, nicht in [px]</b>.
      *                          Die Berechnung berücksichtigt die <b>aktuelle Position</b>.PositionHandlePositionalUse
+     */
+    @NoExternalUse
     public abstract Shape berechneShape(float pixelProMeter);
 
 

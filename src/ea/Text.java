@@ -544,7 +544,7 @@ public class Text extends Raum {
 	 * 		gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen (Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g, BoundingRechteck r) {
 
 		FontMetrics f = Fenster.metrik(font);
 		float x = position.x, y = position.y;

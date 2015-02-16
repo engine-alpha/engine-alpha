@@ -19,9 +19,13 @@
 
 package ea;
 
+import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
+import ea.internal.phy.WorldHandler;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
+
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -43,6 +47,11 @@ public class Knoten extends Raum {
 	public Knoten () {
 		list = new Vector<>();
 	}
+
+    /**
+     * Der World Handler dieses Knotens. Beschreibt die physikalische Welt, in der der Knoten sich befindet.
+     */
+    private WorldHandler worldHandler = null;
 
 
 	/**
@@ -132,6 +141,9 @@ public class Knoten extends Raum {
 
 		Collections.reverse(list);
 		Collections.sort(list);
+
+        if(worldHandler != null)
+            m.updateWorld(worldHandler);
 	}
 
 	/**
@@ -143,77 +155,73 @@ public class Knoten extends Raum {
 		return list.toArray(new Raum[list.size()]);
 	}
 
+    /**
+     * {@inheritDoc}
+     *
+     * Reicht das Update-Signal an die childs weiter.
+     */
+    @NoExternalUse
+    @Override
+    public void updateWorld(WorldHandler worldHandler) {
+        if(worldHandler == null) {
+            return;
+        }
+        super.updateWorld(worldHandler);
+        for(Raum r : list) {
+            r.updateWorld(worldHandler);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Überspringt das Pre-Rendering und gibt nur den
+     * Befehl zu zeichnen weiter, um mehrfache Einrechnung der Rotation zu
+     * verhindern.
+     */
+    @Override
+    public void renderBasic(Graphics2D g, BoundingRechteck r) {
+        for(Raum raum : list) {
+            raum.renderBasic(g,r);
+        }
+    }
+
 	/**
-	 * Bewegt jedes angelegte Objekt für sich allein (Physik-Modus)!<br /> Das bedeutet, dass das
-	 * Blockiertwerden eines einzelnen <code>Raum</code>-Objektes an diesem Knoten <b>nicht</b>
-	 * automatisch alle anderen Objekte blockiert.
-	 *
-	 * @param v
-	 * 		Der die Verschiebung beschreibende Vektor.
-	 *
-	 * @return Nur dann <code>true</code>, wenn bei allen anderen Objekten die Rueckgabe auch
-	 * <code>true</code> ist. Sonst ist die Rueckgabe <code>false</code>.
-	 */
-	@Override
-	public boolean bewegen (Vektor v) {
-		boolean ret = true;
-
-		for (int i = list.size() - 1; i >= 0; i--) {
-			if (!list.get(i).bewegen(v)) {
-				ret = false;
-			}
-		}
-
-		return ret;
-	}
-
-	/**
-	 * Zeichnet den Knoten.<br /> Das heisst, der Zeichnen-Befehl wird an die Unterobjekte
-	 * weitergetragen.<br /> Diese Methode ist nur intern von Bedeutung
+	 * {@inheritDoc}
+     * Der Zeichnen-Befehl wird an die Unterobjekte weitergetragen.<br />
 	 *
 	 * @param g
 	 * 		Das Grafik-Objekt
-	 * @param r
-	 * 		Das Rechteck, dass die Kameraposition definiert
 	 */
 	@Override
-	public void zeichnen (Graphics2D g, BoundingRechteck r) {
-		try {
-			for (int i = list.size() - 1; i >= 0; i--) {
-				list.get(i).zeichnenBasic(g, r);
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// Wahrscheinlich wurde die Liste geleert.
-		}
+    @NoExternalUse
+	public void render(Graphics2D g) {
+		throw new IllegalStateException("Die Render-Routine eines Knotens wurde aufgerufen. " +
+                "Dies sollte nicht passieren.");
 	}
 
-	/**
-	 * Verschiebt diesen Knoten.<br /> Das heisst, dass saemtliche anliegenden Raum-Objekte
-	 * gleichermassen Verschoben werden.
-	 *
-	 * @param v
-	 * 		Der Vektor, der die Verschiebung angibt.
-	 */
-	@Override
-	public void verschieben (Vektor v) {
-		for (int i = list.size() - 1; i >= 0; i--) {
-			list.get(i).verschieben(v);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        return null; // Knoten hat keine Shape => Null.
+    }
 
-	/**
-	 * Setzt die Durchsichtigkeit für jedes angemeldete Objekt.
-	 *
-	 * @param opacity {@inheritDoc}
-	 */
-	@Override
-	public void setOpacity (float opacity) {
-		try {
-			for (int i = list.size() - 1; i >= 0; i--) {
-				list.get(i).setOpacity(opacity);
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// Wahrscheinlich wurde die Liste geleert.
-		}
-	}
+    /**
+     * Setzt die Durchsichtigkeit für jedes angemeldete Objekt.
+     *
+     * @param opacity {@inheritDoc}
+     */
+    @Override
+    @API
+    public void setOpacity (float opacity) {
+        try {
+            for (int i = list.size() - 1; i >= 0; i--) {
+                list.get(i).setOpacity(opacity);
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // Wahrscheinlich wurde die Liste geleert.
+        }
+    }
 }

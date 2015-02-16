@@ -70,7 +70,7 @@ public abstract class Geometrie extends Raum {
 	 * Zeichnet das Objekt.<br /> heisst in diesem Fall das saemtliche Unterdreiecke gezeichnet
 	 * werden.
 	 */
-	public void zeichnen (Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g, BoundingRechteck r) {
         throw new UnsupportedOperationException("Noch nicht implementiert (4.0)");
 	}
 

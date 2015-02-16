@@ -103,7 +103,7 @@ public class Rechteck extends Geometrie {
 	 * 		gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen (Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g, BoundingRechteck r) {
 
 
 

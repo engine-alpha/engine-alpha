@@ -100,4 +100,18 @@ public class WorldHandler {
         float y = jb2dV.y * pixelProMeter;
         return new Vektor(x,y);
     }
+
+    /**
+     * Übersetzt einen Winkel in Radians in Grad.
+     * @param rad Ein Winkel in Radians.
+     * @return    Der analoge Winkel in Grad.
+     */
+    public static float radToDeg(float rad) {
+        return rad * degProRad;
+    }
+
+    /**
+     * Umrechnungskonstante für Grad/Radians
+     */
+    private static final float degProRad = (float)((double)180/Math.PI);
 }

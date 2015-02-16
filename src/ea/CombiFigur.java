@@ -27,7 +27,6 @@ package ea;
 import ea.internal.util.Logger;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * Eine Combifigur ist eine Figur, die aus verschiedenen "Unterfiguren" besteht. Im Gegensatz zu
@@ -113,9 +112,9 @@ public class CombiFigur extends Raum {
 	 * 		gezeichnet werden.
 	 */
 	@Override
-	public void zeichnen (Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g, BoundingRechteck r) {
 		for (int i = 0; i < figuren.length; i++) {
-            figuren[i].zeichnen(g, r);
+            figuren[i].render(g, r);
         }
 	}
 

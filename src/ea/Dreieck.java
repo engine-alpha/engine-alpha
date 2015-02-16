@@ -141,7 +141,7 @@ public class Dreieck extends Geometrie {
 	 * 		Das BoundingRechteck, das das Kamerabild beschreibt.
 	 */
 	@Override
-	public void zeichnen (Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g, BoundingRechteck r) {
 
 		int[] x = {(int) this.x[0], (int) this.x[1], (int) this.x[2]};
 

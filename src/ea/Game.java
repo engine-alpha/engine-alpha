@@ -730,7 +730,7 @@ public abstract class Game implements TastenReagierbar {
 				g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 				g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-				cam.wurzel().zeichnen(g, ausschnitt);
+				cam.wurzel().render(g, ausschnitt);
 
 				try {
 					ImageIO.write(img, ext, new File(pfad));

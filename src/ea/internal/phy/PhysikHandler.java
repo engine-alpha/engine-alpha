@@ -3,6 +3,8 @@ package ea.internal.phy;
 import ea.Punkt;
 import ea.Raum;
 import ea.Vektor;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
 
 /**
  * Beschreibt allgemein ein Objekt, dass die physikalischen Eigenschaften eines Raum-Objektes kontrollieren kann.
@@ -15,6 +17,8 @@ import ea.Vektor;
  * Created by andonie on 16.02.15.
  */
 public abstract class PhysikHandler {
+
+
 
     /**
      * Das eine Raum-Objekt, das dieser Handler kontrolliert.
@@ -30,6 +34,16 @@ public abstract class PhysikHandler {
     }
 
     /* __________________________ Kontrakt: Abstrakte Methoden/Funktionen der Physik __________________________ */
+
+    /**
+     * Informiert diesen Handler, wenn es ein Update in der Baumstruktur um das Raum-Objekt gab. Die neue Physik (falls vorhanden)
+     * wird so an alle Raum-Objekte weitergegeben.
+     * @param worldHandler      Die neue Physik-Umgebung.
+     * @return                  Ein Handler, der mit dieser neuen Physik umgehen kann. Kann auch <code>this</code> sein.
+     * @throws java.lang.IllegalStateException  Falls ein Raum-Objekt nach dem anmelden an einer Wurzel auf die Wurzel eines anderen Fensters
+     *                                          verschoben wird.
+     */
+    public abstract PhysikHandler update(WorldHandler worldHandler) throws IllegalStateException;
 
     /**
      * Verschiebt das Ziel-Objekt um einen spezifischen Wert auf der Zeichenebene. Die Ausführung hat <b>erst (ggf.) im
@@ -85,9 +99,8 @@ public abstract class PhysikHandler {
      *                      <li>Werte > 0 : Drehung gegen Uhrzeigersinn</li>
      *                      <li>Werte < 0 : Drehung im Uhrzeigersinn</li>
      *                  </ul>
-     * @return
      */
-    public abstract float rotieren(float radians);
+    public abstract void rotieren(float radians);
 
     public abstract void dichteSetzen(float dichte);
 
@@ -111,7 +124,7 @@ public abstract class PhysikHandler {
      * Gibt die Masse des Ziel-Objekts aus.
      * @return  Die Masse des Ziel-Objekts in [kg].
      */
-    public abstract float masseSetzen();
+    public abstract float masse();
 
     /**
      * Uebt eine Kraft auf das Ziel-Objekt (im Massenschwerpunkt) aus (sofern möglich).
