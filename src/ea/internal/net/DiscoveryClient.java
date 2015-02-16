@@ -22,9 +22,8 @@ package ea.internal.net;
 import ea.ServerGefundenReagierbar;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.*;
+import java.util.Enumeration;
 
 // http://michieldemey.be/blog/network-discovery-using-udp-broadcast/
 public class DiscoveryClient extends Thread {
@@ -39,17 +38,56 @@ public class DiscoveryClient extends Thread {
 		int bufferSize = 8192;
 
 		try {
-			socket = new DatagramSocket(15035, InetAddress.getByName("0.0.0.0"));
+			socket = new DatagramSocket();
+			socket.setBroadcast(true);
+			socket.setSoTimeout(1000);
 
-			while (!isInterrupted()) {
-				byte[] recvBuf = new byte[bufferSize];
-				DatagramPacket receivePacket = new DatagramPacket(recvBuf, bufferSize);
-				socket.receive(receivePacket);
-				String cmd = new String(receivePacket.getData()).trim();
+			try {
+				while (!isInterrupted()) {
+					byte[] sendData = "EA_DISCOVERY_REQ".getBytes();
+					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), 15035);
+					socket.send(sendPacket);
 
-				if (cmd.equals("EA_DISCOVERY")) {
-					listener.serverGefunden(receivePacket.getAddress().getHostAddress());
+					Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+
+					while (interfaces.hasMoreElements()) {
+						NetworkInterface networkInterface = interfaces.nextElement();
+
+						if (networkInterface.isLoopback() || !networkInterface.isUp()) {
+							continue; // Don't want to broadcast to the loopback interface
+						}
+
+						for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+							InetAddress broadcast = interfaceAddress.getBroadcast();
+							if (broadcast == null) {
+								continue;
+							}
+
+							sendPacket = new DatagramPacket(sendData, sendData.length, broadcast, 15035);
+							socket.send(sendPacket);
+						}
+					}
+
+					try {
+						byte[] recvBuf = new byte[bufferSize];
+						DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
+						socket.receive(receivePacket);
+
+						String message = new String(receivePacket.getData()).trim();
+
+						if (message.startsWith("EA_DISCOVERY_RESP")) {
+							listener.serverGefunden(receivePacket.getAddress().getHostAddress());
+						}
+
+						System.out.println("rcvd..." + message);
+
+						Thread.sleep(1000);
+					} catch (SocketTimeoutException e) {
+						// don't care, we want that
+					}
 				}
+			} catch (InterruptedException ie) {
+				// don't care
 			}
 		} catch (IOException ex) {
 			// don't care, may be closed by interrupt
@@ -62,7 +100,10 @@ public class DiscoveryClient extends Thread {
 
 	@Override
 	public void interrupt () {
-		this.socket.close();
+		if (socket != null) {
+			this.socket.close();
+		}
+
 		super.interrupt();
 	}
 }

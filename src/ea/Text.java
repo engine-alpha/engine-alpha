@@ -634,6 +634,15 @@ public class Text extends Raum implements Leuchtend {
 	}
 
 	/**
+	 * Gibt den aktuellen Textinhalt zurück.
+	 *
+	 * @return aktueller Textinhalt
+	 */
+	public String gibInhalt () {
+		return inhalt;
+	}
+
+	/**
 	 * Gibt den aktuellen Anker zurück.
 	 *
 	 * @return aktueller Anker

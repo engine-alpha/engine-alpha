@@ -59,26 +59,38 @@ public class DiscoveryServer extends Thread {
 	@Override
 	public void run () {
 		try {
-			InetAddress address = InetAddress.getByName("255.255.255.255");
-			socket = new DatagramSocket();
+			int bufferSize = 8192;
+			socket = new DatagramSocket(15035, InetAddress.getByName("0.0.0.0"));
 			socket.setBroadcast(true);
 
-			try {
-				while (!isInterrupted()) {
-					byte[] sendData = "EA_DISCOVERY".getBytes();
-					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, address, 15035);
+			while (!isInterrupted()) {
+				byte[] recvBuf = new byte[bufferSize];
+				DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
+				socket.receive(receivePacket);
+				String cmd = new String(receivePacket.getData()).trim();
+
+				if (cmd.startsWith("EA_DISCOVERY_REQ")) {
+					byte[] sendData = "EA_DISCOVERY_RESP".getBytes();
+					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, receivePacket.getAddress(), receivePacket.getPort());
 					socket.send(sendPacket);
-					Thread.sleep(1000);
+					System.out.println("sent...");
 				}
-			} catch (InterruptedException e) {
-				// don't care
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			// don't care, may be closed by interrupt
 		} finally {
 			if (socket != null) {
 				socket.close();
 			}
 		}
+	}
+
+	@Override
+	public void interrupt () {
+		if (socket != null) {
+			this.socket.close();
+		}
+
+		super.interrupt();
 	}
 }
