@@ -24,6 +24,7 @@ import ea.internal.net.DiscoveryServer;
 import ea.internal.util.Logger;
 
 import java.io.*;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -100,6 +101,27 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	}
 
 	/**
+	 * Schließt die Verbindung mit dem Server.
+	 */
+	public void verbindungSchliessen () {
+		if (socket == null) {
+			return;
+		}
+
+		if (!socket.isClosed()) {
+			for (NetzwerkVerbindung verbindung : verbindungen) {
+				verbindung.beendeVerbindung();
+			}
+
+			try {
+				socket.close();
+			} catch (IOException e) {
+				Logger.error("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+			}
+		}
+	}
+
+	/**
 	 * Überschriebene run-Methode. Hierin wird auf neue Verbindungen gewartet und diese werden
 	 * weiterverarbeitet.
 	 */
@@ -107,25 +129,29 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	public void run () {
 		try {
 			this.socket = new ServerSocket(port);
+		} catch (BindException e) {
+			Logger.error("Port wird bereits genutzt. Ports können nicht doppelt genutzt werden.");
+			return;
 		} catch (IOException e) {
 			Logger.error("Konnte keinen Server aufstellen. Ausreichend Rechte vorhanden?\n");
 			e.printStackTrace();
+			return;
 		}
+
+		// Stelle sicher, dass der Socket auch wieder geschlossen wird.
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run () {
+				beendeVerbindung();
+			}
+		});
 
 		while (!isInterrupted() && active) {
 			try {
 				Socket got = socket.accept();
-
-				// Stelle sicher, dass der Socket auch wieder geschlossen wird.
-				Runtime.getRuntime().addShutdownHook(new Thread() {
-					@Override
-					public void run () {
-						beendeVerbindung();
-					}
-				});
-
 				BufferedReader br = new BufferedReader(new InputStreamReader(got.getInputStream()));
 				OutputStream os = got.getOutputStream();
+
 				// Check for initial message.
 				String init = br.readLine();
 				if (init.length() < 1 || !init.startsWith("xe")) {
@@ -192,7 +218,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 					waitingQueue.notifyAll();
 				}
 			} catch (IOException e) {
-				Logger.error("Beim Herstellen einer Verbindung ist ein Input/Output - Fehler aufgetreten.");
+				return;
 			}
 		}
 	}
@@ -335,6 +361,10 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	 */
 	@Override
 	public void beendeVerbindung () {
+		if (socket == null) {
+			return;
+		}
+
 		if (!socket.isClosed()) {
 			for (NetzwerkVerbindung v : verbindungen) {
 				if(v.istAktiv()) v.beendeVerbindung();
@@ -428,22 +458,6 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
 	public void empfangeBoolean (boolean b) {
 		if (globalerEmpfaenger != null) {
 			globalerEmpfaenger.empfangeBoolean(b);
-		}
-	}
-	
-	/**
-	 * Schließt die Verbindung mit dem Server.
-	 */
-	public void verbindungSchliessen () {
-		if (!socket.isClosed()) {
-			for(NetzwerkVerbindung verbindung : verbindungen) {
-				verbindung.beendeVerbindung();
-			}
-			try {
-				socket.close();
-			} catch (IOException e) {
-				Logger.error("Konnte den Verbindungs-Socket nicht mehr schliessen.");
-			}
 		}
 	}
 

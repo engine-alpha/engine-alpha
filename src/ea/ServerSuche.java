@@ -22,11 +22,32 @@ package ea;
 import ea.internal.net.DiscoveryClient;
 
 public class ServerSuche {
+	private static DiscoveryClient client;
+
 	private ServerSuche () {
 
 	}
 
 	public static void start (ServerGefundenReagierbar listener) {
-		new DiscoveryClient(listener).start();
+		if (client != null) {
+			stop();
+		}
+
+		client = new DiscoveryClient(listener);
+		client.start();
+	}
+
+	public static void stop () {
+		if (client == null) {
+			return;
+		}
+
+		client.interrupt();
+
+		try {
+			client.join();
+		} catch (InterruptedException e) {
+			// don't care
+		}
 	}
 }

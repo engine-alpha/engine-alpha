@@ -22,13 +22,13 @@ package ea.internal.net;
 import ea.ServerGefundenReagierbar;
 
 import java.io.IOException;
-import java.net.*;
-import java.util.Enumeration;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 // http://michieldemey.be/blog/network-discovery-using-udp-broadcast/
 public class DiscoveryClient extends Thread {
 	private DatagramSocket socket;
-
 	private ServerGefundenReagierbar listener;
 
 	public DiscoveryClient (ServerGefundenReagierbar listener) {
@@ -36,59 +36,33 @@ public class DiscoveryClient extends Thread {
 	}
 
 	public void run () {
+		int bufferSize = 8192;
+
 		try {
-			socket = new DatagramSocket();
-			socket.setBroadcast(true);
+			socket = new DatagramSocket(15035, InetAddress.getByName("0.0.0.0"));
 
-			byte[] sendData = "EA_DISCOVERY_REQUEST".getBytes();
+			while (!isInterrupted()) {
+				byte[] recvBuf = new byte[bufferSize];
+				DatagramPacket receivePacket = new DatagramPacket(recvBuf, bufferSize);
+				socket.receive(receivePacket);
+				String cmd = new String(receivePacket.getData()).trim();
 
-			try {
-				DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("255.255.255.255"), 15035);
-				socket.send(sendPacket);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-
-			while (interfaces.hasMoreElements()) {
-				NetworkInterface networkInterface = interfaces.nextElement();
-
-				if (networkInterface.isLoopback() || !networkInterface.isUp() || networkInterface.isVirtual()) {
-					continue;
+				if (cmd.equals("EA_DISCOVERY")) {
+					listener.serverGefunden(receivePacket.getAddress().getHostAddress());
 				}
-
-				for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
-					InetAddress broadcast = interfaceAddress.getBroadcast();
-
-					if (broadcast == null) {
-						continue;
-					}
-
-					try {
-						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcast, 15035);
-						socket.send(sendPacket);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			byte[] recvBuf = new byte[1024];
-			DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
-			socket.receive(receivePacket);
-
-			String cmd = new String(receivePacket.getData()).trim();
-
-			if (cmd.equals("EA_DISCOVERY_RESPONSE")) {
-				listener.serverGefunden(receivePacket.getAddress().getHostAddress());
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			// don't care, may be closed by interrupt
 		} finally {
 			if (socket != null) {
 				socket.close();
 			}
 		}
+	}
+
+	@Override
+	public void interrupt () {
+		this.socket.close();
+		super.interrupt();
 	}
 }
