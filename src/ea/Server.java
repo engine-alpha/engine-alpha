@@ -19,7 +19,6 @@
 
 package ea;
 
-import com.sun.istack.internal.Nullable;
 import ea.edu.net.NetzwerkInterpreter;
 import ea.internal.frame.FrameThread;
 import ea.internal.net.DiscoveryServer;
@@ -104,7 +103,7 @@ public class Server extends Thread implements Empfaenger, SenderInterface {
      *                      Empfang (im selben Thread) ausgeführt.
      * @param port          Der Port, auf dem der Server arbeiten soll.
      */
-	public Server(@Nullable FrameThread frameThread, int port) {
+	public Server(FrameThread frameThread, int port) {
         this.frameThread = frameThread;
         this.port = port;
 		this.setDaemon(true);

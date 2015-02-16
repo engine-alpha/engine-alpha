@@ -19,7 +19,6 @@
 
 package ea;
 
-import com.sun.istack.internal.Nullable;
 import ea.edu.net.NetzwerkInterpreter;
 import ea.internal.frame.FrameThread;
 import ea.internal.util.Logger;
@@ -91,7 +90,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
      * @param name          Der Name, mit dem sich der Client (im Hintergrund) dem Server vorstellt. Wird nur
 * 					        intern verwendet.
      */
-	public Client(@Nullable FrameThread frameThread, String ipAdresse, int port, String name) {
+	public Client(FrameThread frameThread, String ipAdresse, int port, String name) {
         this.frameThread = frameThread;
         this.setDaemon(true);
 		this.name = name;

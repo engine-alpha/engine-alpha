@@ -55,10 +55,9 @@ public class Knoten extends Raum {
 
 
 	/**
-	 * Loescht alle Raum-Objekte, die an diesem Knoten gelagert sind, ohne sie jedoch von ihrer
-	 * Physik her zu beeinflussen.
+	 * Loescht alle Raum-Objekte, die an diesem Knoten gelagert sind.
 	 */
-	public void leerenOhnePhysikAbmelden () {
+	public void leeren () {
 		list.clear();
 	}
 

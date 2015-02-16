@@ -308,7 +308,7 @@ public class Kamera {
 
         g.translate(bild.x, bild.y);
 
-        ebene.basis().render(g);
+        ebene.basis().renderBasic(g, position());
 
         g.translate(-bild.x, -bild.y);
 
