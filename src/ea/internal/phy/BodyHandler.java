@@ -36,7 +36,7 @@ public class BodyHandler {
 
     /**
      * Erstellt einen neuen Body-Handler
-     * @param raum  
+     * @param raum
      */
     @NoExternalUse
     public BodyHandler(Raum raum) {

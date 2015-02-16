@@ -22,8 +22,6 @@ import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 
 import java.awt.*;
-import java.io.Serializable;
-import java.util.Locale;
 
 /**
  * Raum bezeichnet alles, was sich auf der Zeichenebene befindet.<br /> Dies ist die absolute
@@ -32,20 +30,7 @@ import java.util.Locale;
  *
  * @author Michael Andonie, Niklas Keller
  */
-public abstract class Raum implements Serializable, Comparable<Raum> {
-
-	/**
-	 * Die Serialisierungs-Konstante dieser Klasse. <b>In keiner Weise fuer die Programmierung mit
-	 * der Engine bedeutsam!</b>
-	 */
-	private static final long serialVersionUID = 98L;
-
-	/**
-	 * Die absolute Position des Raum-Objekts. Die Interpretation dieses Parameters hängt von den
-	 * sich <b>ableitenden</b> Klassen ab. Er kann komplett irrelevant sein (Knoten), oder - im
-	 * Regelfall - die linke obere Ecke des Objektes bezeichnen. Default
-	 */
-	protected Punkt position = Punkt.ZENTRUM;
+public abstract class Raum implements Comparable<Raum> {
 
 	/**
 	 * Gibt an, ob das Objekt zur Zeit ueberhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall,
@@ -71,21 +56,6 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 */
 	private Composite composite;
 
-    /**
-	 * Interne Testmethode, die ein mathematisch simples Konzept hat.<br /> Es gibt kein Problem,
-	 * wenn die Zahlen das selbe Vorzeichen haben oder wenn eine der beiden Zahlen gleich 0 ist.
-	 *
-	 * @return <code>true</code>, falls diese Zahlenkonstellation ein Problem ist, sonst
-	 * <code>false</code>.
-	 */
-	protected static boolean problem (int z1, int z2) {
-		if (z1 == 0 || z2 == 0) {
-			return false;
-		}
-
-		return (z1 < 0 ^ z2 < 0);
-	}
-
 	/**
 	 * Setzt den Z-Index dieses Raumes. Je größer, desto weiter vorne wird ein Raum gezeichnet.
 	 * <b>Diese Methode muss ausgeführt werden, bevor der Raum zu einem Knoten hinzugefügt
@@ -94,6 +64,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @param z
 	 * 		zu setzender Index
 	 */
+    @API
 	public void zIndex (int z) {
 		zIndex = z;
 	}
@@ -107,6 +78,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 *
 	 * @see #sichtbar()
 	 */
+    @API
 	public final void sichtbarSetzen (boolean sichtbar) {
 		this.sichtbar = sichtbar;
 	}
@@ -118,6 +90,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 *
 	 * @see #sichtbarSetzen(boolean)
 	 */
+    @API
 	public final boolean sichtbar () {
 		return this.sichtbar;
 	}
@@ -135,12 +108,12 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 *
 	 * @see #zeichnen(Graphics2D, BoundingRechteck)
 	 */
+    @NoExternalUse
 	public final void zeichnenBasic (Graphics2D g, BoundingRechteck r) {
-
 		if (sichtbar && this.camcheck(r)) {
-            _beforeRender(g, r);
+            beforeRender(g, r);
             zeichnen(g, r);
-            _afterRender(g, r);
+            afterRender(g, r);
 		}
 	}
 
@@ -150,8 +123,9 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
      * @return  <code>true</code>, wenn das Objekt (teilweise) innerhalb des derzeit sichtbaren Breichs liegt, sonst
      *          <code>false</code>.
      */
+    @NoExternalUse
     private boolean camcheck(BoundingRechteck r) {
-        //FIXME
+        //FIXME : Parameter ändern (?) - Funktionalität implementieren.
         //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
         return true;
     }
@@ -166,6 +140,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
 	 * 		gezeichnet werden.
 	 */
+    @NoExternalUse
 	public abstract void zeichnen (Graphics2D g, BoundingRechteck r);
 
 
@@ -188,6 +163,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #setX(float)
 	 * @see #setY(float)
 	 */
+    @API
 	public void positionSetzen (float x, float y) {
 		this.positionSetzen(new Punkt(x, y));
 	}
@@ -208,6 +184,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #setX(float)
 	 * @see #setY(float)
 	 */
+    @API
 	public void positionSetzen (Punkt p) {
 		//FIXME Implementation
 	}
@@ -224,12 +201,14 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #bewegen(Vektor)
 	 * @see #bewegen(float, float)
 	 */
+    @API
 	public void verschieben (Vektor v) {
 
         //TODO Implementierung jb2d
 
 	}
 
+    @API
     public boolean bewegen (Vektor v) {
         //TODO Implementierung jb2d
         return false;
@@ -252,7 +231,8 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #positionSetzen(float, float)
 	 * @see #zentrum()
 	 */
-	public void mittelpunktSetzen (int x, int y) {
+    @API
+	public void mittelpunktSetzen (float x, float y) {
 		this.mittelpunktSetzen(new Punkt(x, y));
 	}
 
@@ -266,11 +246,12 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @param p
 	 * 		Der neue Mittelpunkt des Raum-Objekts
 	 *
-	 * @see #mittelpunktSetzen(int, int)
+	 * @see #mittelpunktSetzen(float, float)
 	 * @see #verschieben(Vektor)
 	 * @see #positionSetzen(float, float)
 	 * @see #zentrum()
 	 */
+    @API
 	public void mittelpunktSetzen (Punkt p) {
 		this.verschieben(this.zentrum().nach(p));
 	}	/**
@@ -284,8 +265,10 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #getY()
 	 * @see #position()
 	 */
+    @API
 	public float getX () {
-		return position.x;
+		//FIXME
+        return 0;
 	}
 
 	/**
@@ -296,6 +279,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 *
 	 * @return Zentrum dieses Raumobjekts
 	 */
+    @API
 	public Punkt zentrum () {
         //FIXME Implementation
 		throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
@@ -316,6 +300,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #mittelpunktSetzen(int, int)
 	 * @see #setY(float)
 	 */
+    @API
 	public void setX (float x) {
 		this.verschieben(x - getX(), 0);
 	}
@@ -331,8 +316,10 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #getX()
 	 * @see #position()
 	 */
+    @API
 	public float getY () {
-		return position.y;
+        //FIXME
+		return 0;
 	}
 
 	/**
@@ -343,10 +330,13 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 *
 	 * @return TRUE, wenn sich beide Objekte schneiden.
 	 */
+    @API
 	public final boolean schneidet (Raum r) {
         //FIXME Implementierung
 		return false;
-	}	/**
+	}
+
+    /**
 	 * Setzt die y-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
 	 * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
 	 * /><br /> <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die
@@ -361,6 +351,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #mittelpunktSetzen(int, int)
 	 * @see #setX(float)
 	 */
+    @API
 	public void setY (float y) {
 		this.verschieben(0, y - getY());
 	}
@@ -371,10 +362,10 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * werden.</i></b>
 	 *
 	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 * @see #_afterRender(Graphics2D, BoundingRechteck)
+	 * @see #afterRender(Graphics2D, BoundingRechteck)
 	 */
 	@NoExternalUse
-	public final void _beforeRender (Graphics2D g, BoundingRechteck r) {
+	public final void beforeRender(Graphics2D g, BoundingRechteck r) {
 		/*lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
 
 		lastDrehung = Math.toRadians(drehung);
@@ -400,6 +391,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 *
 	 * @see #position()
 	 */
+    @API
 	public Punkt mittelPunkt () {
         //FIXME Implementation
         throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
@@ -410,10 +402,10 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * nicht außerhalb der Engine verwendet werden.</i></b>
 	 *
 	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 * @see #_beforeRender(Graphics2D, BoundingRechteck)
+	 * @see #beforeRender(Graphics2D, BoundingRechteck)
 	 */
 	@NoExternalUse
-	public final void _afterRender (Graphics2D g, BoundingRechteck r) {
+	public final void afterRender(Graphics2D g, BoundingRechteck r) {
 		/*if (composite != null) {
 			g.setComposite(composite);
 		}
@@ -433,6 +425,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 *
 	 * @return TRUE, wenn der Punkt innerhalb des Objekts liegt.
 	 */
+    @API
 	public final boolean beinhaltet (Punkt p) {
 		//FIXME Implementation
         return false;
@@ -452,6 +445,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * @see #bewegen(Vektor)
 	 * @see #bewegen(float, float)
 	 */
+    @API
 	public void verschieben (float dX, float dY) {
 		this.verschieben(new Vektor(dX, dY));
 	}
@@ -462,6 +456,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
      * @param dY
      * @return
      */
+    @API
     public boolean bewegen (float dX, float dY) {
         return this.bewegen(new Vektor(dX, dY));
     }
@@ -470,6 +465,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * TODO Doku
 	 *
 	 */
+    @API
 	public Punkt position () {
         //FIXME Implementation
         throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
@@ -485,6 +481,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
 	 * nicht!!</b>.
 	 */
+    @NoExternalUse
 	public void loeschen () {
 		//Leer - kann von childs überschrieben werden.
 	}
