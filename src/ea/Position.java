@@ -4,7 +4,7 @@ import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 
 /**
- * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>get</code>.
+ * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>position</code>.
  * Dieses Objekt bietet eine umfangreiches Set an <i>Methoden</i>, die die Position des entsprechenden
  * <code>Raum</code>-Objekts betreffen.<br /><br />
  *

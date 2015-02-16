@@ -2,15 +2,9 @@ package ea.internal.phy;
 
 import ea.Raum;
 import ea.internal.ano.NoExternalUse;
-import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Ein <code>Body-Handler</code> kümmert sich um die <i>physikalische Darstellung</i> eines <code>Raum</code>-Objekts.<br />
@@ -29,9 +23,9 @@ public class BodyHandler {
     private final Raum raum;
 
     /**
-     * Die Physik des Handlers. Ist zu Beginn undefiniert. Kann nur einmal gesetzt werden.
+     * Referenz auf den Handler der World, in der sich der Body befindet.
      */
-    private final Physik physik;
+    private final WorldHandler worldHandler;
 
     /**
      * Die Fixture Definition des Objekts.
@@ -48,12 +42,12 @@ public class BodyHandler {
      * @param raum
      */
     @NoExternalUse
-    public BodyHandler(Raum raum, Physik physik, BodyDef bd, FixtureDef fixtureDef) {
+    public BodyHandler(Raum raum, WorldHandler worldHandler, BodyDef bd, FixtureDef fixtureDef) {
         this.raum = raum;
-        this.physik = physik;
+        this.worldHandler = worldHandler;
 
         //create the body and add fixture to it
-        body =  physik.getWorld().createBody(bd);
+        body =  worldHandler.getWorld().createBody(bd);
         body.createFixture(this.fixtureDef = fixtureDef);
     }
 }

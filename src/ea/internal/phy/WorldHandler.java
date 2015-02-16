@@ -8,7 +8,7 @@ import org.jbox2d.dynamics.World;
 import sun.misc.Version;
 
 /**
- * Die Physik-Klasse ist die (nicht objektgebundene) Middleware zwischen der JBox2D Engine und der EA.
+ * Die WorldHandler-Klasse ist die (nicht objektgebundene) Middleware zwischen der JBox2D Engine und der EA.
  * Sie ist verantwortlich für:
  * <ul>
  *     <li>Den globalen "World"-Parameter aus der JBox2D Engine.</li>
@@ -16,10 +16,10 @@ import sun.misc.Version;
  * </ul>
  * Created by andonie on 14.02.15.
  */
-public class Physik {
+public class WorldHandler {
 
     /**
-     * Die World dieser Physik. Hierin laufen globale Einstellungen (z.B. Schwerkraft) ein.
+     * Die World dieses Handlers. Hierin laufen globale Einstellungen (z.B. Schwerkraft) ein.
      */
     private final World world;
 
@@ -55,7 +55,7 @@ public class Physik {
     public void setPixelProMeter(float pixelProMeter) {
         if(ppmRequested)
             throw new IllegalStateException("Die Pixel-Pro-Meter Umrechnungszahl darf nach Arbeit mit den Raum-Objekten" +
-                    " der entsprechenden Physik-Umgebung nicht geändert werden. Das Setzen der Konstante vor" +
+                    " der entsprechenden WorldHandler-Umgebung nicht geändert werden. Das Setzen der Konstante vor" +
                     " die Arbeit mit den Raum-Objekten verschieben.");
         this.pixelProMeter = pixelProMeter;
     }
@@ -64,7 +64,7 @@ public class Physik {
      * Erstellt eine neue standardisierte Physik (Schwerkraft senkrecht nach unten, 9,81 m/s^2)
      */
     @NoExternalUse
-    public Physik() {
+    public WorldHandler() {
         this.world = new World(new Vec2(0f, -9.81f)); //Erstelle standard-World mit Standard-Gravitation.
     }
 

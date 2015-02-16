@@ -20,11 +20,8 @@
 package ea;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.phy.BodyHandler;
 import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
-import org.jbox2d.collision.shapes.*;
-import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 
@@ -72,16 +69,17 @@ public abstract class Raum implements Comparable<Raum> {
      * Über das <code>get</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt
      * dieses <code>Raum</code>-Objekt betreffen. Dazu gehört:
      * <ul>
-     *     <li>Das Abfragen der aktuellen Position.</li>
-     *     <li>Das Setzen einer neuen Position oder das verschieben.</li>
-     *     <li>Das Rotieren um einen bestimmten Winkel.</li>
+     *     <li>Das Abfragen der aktuellen Position.</li>PositionHandle    <li>Das Setzen einer neuPositioner das verschieben.</li>PositionHandle    <li>Das Rotieren um einePositioninkel.</li>
      * </ul>
      *
      * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
      *
-     * @see ea.Position
+     * @see Position
      */
     public final Position position = new Position(this);
+
+
+    public final  Physik physik = new Physik(this);
 
 
 
@@ -304,7 +302,7 @@ public abstract class Raum implements Comparable<Raum> {
 
     /**
      * Gibt den aktuellen, internen Physik-Handler aus.
-     * @return der aktuellen, internen Physik-Handler aus.
+     * @return der aktuellen, internen WorldHandler-Handler aus.
      */
     @NoExternalUse
     public PhysikHandler getPhysikHandler() {
@@ -330,9 +328,7 @@ public abstract class Raum implements Comparable<Raum> {
      * Berechnet eine Form, die für die Kollisionsberechnungen dieses <code>Raum</code>-Objekts verwendet werden.
      * @param   pixelProMeter   Die [px/m]-Konstante für die Umrechnung.
      * @return                  Die zu dem Objekt zugehörige Shape in <b>[m]-Einheit, nicht in [px]</b>.
-     *                          Die Berechnung berücksichtigt die <b>aktuelle Position</b>.
-     */
-    @NoExternalUse
+     *                          Die Berechnung berücksichtigt die <b>aktuelle Position</b>.PositionHandlePositionalUse
     public abstract Shape berechneShape(float pixelProMeter);
 
 

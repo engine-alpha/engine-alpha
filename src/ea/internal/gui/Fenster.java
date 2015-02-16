@@ -23,7 +23,7 @@ import ea.*;
 import ea.internal.frame.FrameThread;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gra.Zeichner;
-import ea.internal.phy.Physik;
+import ea.internal.phy.WorldHandler;
 import ea.internal.ui.KeyUIEvent;
 import ea.internal.ui.KlickEvent;
 import ea.internal.util.Logger;
@@ -128,7 +128,7 @@ public class Fenster extends Frame {
     /**
      * Die Physik der Welt, die in diesem Fenster enthalten ist.
      */
-    private final Physik physik;
+    private final WorldHandler worldHandler;
 
 	/**
 	 * Einfacher Alternativkonstruktor.<br /> Erstellt ein normales Fenster mit der eingegeben
@@ -293,13 +293,13 @@ public class Fenster extends Frame {
         //FIXME effektiveren "Mausfang" für absolute Maus implementieren
 
 
-        //Die Physik
-        physik = new Physik();
+        //Erstelle den WorldHandler
+        worldHandler = new WorldHandler();
 
 		instanz = this;
 
         //Starte die Frame-Logic
-        frameThread = new FrameThread(zeichner, physik.getWorld());
+        frameThread = new FrameThread(zeichner, worldHandler.getWorld());
         frameThread.start();
 	}
 
@@ -683,7 +683,7 @@ public class Fenster extends Frame {
 			//BoundingRechteck r = maus.getImage().dimension();
 			//maus.getImage().set(((getWidth() - r.breite) / 2), (getHeight() - r.hoehe) / 2); T
 			//TODO schönere Einbindung (v 4.0)
-            maus.getImage().positionSetzen(((getWidth()) / 2), (getHeight()) / 2);
+            maus.getImage().position.set(((getWidth()) / 2), (getHeight()) / 2);
 
 
             Punkt hs = maus.hotSpot();
