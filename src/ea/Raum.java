@@ -1032,7 +1032,12 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
                     return true;
             }
         } else if (this instanceof Kreis) {
-            throw new UnsupportedOperationException("Kreiskollision ist nicht effizient implementiert.");
+            if(r instanceof Kreis) {
+                float x = r.mittelPunkt().abstand(this.mittelPunkt());
+                return x <= ((Kreis)this).radius() + ((Kreis)r).radius();
+            } else {
+                return this.dimension().schneidetBasic(r.dimension());
+            }
         } else {
             return this.dimension().schneidetBasic(r.dimension());
         }
