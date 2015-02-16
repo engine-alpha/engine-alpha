@@ -79,8 +79,6 @@ public class DiscoveryClient extends Thread {
 							listener.serverGefunden(receivePacket.getAddress().getHostAddress());
 						}
 
-						System.out.println("rcvd..." + message);
-
 						Thread.sleep(1000);
 					} catch (SocketTimeoutException e) {
 						// don't care, we want that

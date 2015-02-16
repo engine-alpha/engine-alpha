@@ -73,7 +73,6 @@ public class DiscoveryServer extends Thread {
 					byte[] sendData = "EA_DISCOVERY_RESP".getBytes();
 					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, receivePacket.getAddress(), receivePacket.getPort());
 					socket.send(sendPacket);
-					System.out.println("sent...");
 				}
 			}
 		} catch (IOException ex) {
