@@ -135,9 +135,9 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 
 		float breite = FensterE.getFenster().fensterGroesse().breite;
 
-		strich.positionSetzen((breite - lStrich) / 2, 10);
-		links.positionSetzen(((breite - lStrich) / 2) - groesser - 5, 10);
-		rechts.positionSetzen((breite + lStrich) / 2 + 5, 10);*/
+		strich.set((breite - lStrich) / 2, 10);
+		links.set(((breite - lStrich) / 2) - groesser - 5, 10);
+		rechts.set((breite + lStrich) / 2 + 5, 10);*/
 	}
 
 	public Maus getMaus () {

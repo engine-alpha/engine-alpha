@@ -64,7 +64,25 @@ public abstract class Raum implements Comparable<Raum> {
     /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
-    protected PhysikHandler physikHandler = new NullHandler(this);
+    private PhysikHandler physikHandler = new NullHandler(this);
+
+    /* _________________________ Die Handler _________________________ */
+
+    /**
+     * Über das <code>get</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt
+     * dieses <code>Raum</code>-Objekt betreffen. Dazu gehört:
+     * <ul>
+     *     <li>Das Abfragen der aktuellen Position.</li>
+     *     <li>Das Setzen einer neuen Position oder das verschieben.</li>
+     *     <li>Das Rotieren um einen bestimmten Winkel.</li>
+     * </ul>
+     *
+     * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
+     *
+     * @see ea.Position
+     */
+    public final Position position = new Position(this);
+
 
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
@@ -131,276 +149,54 @@ public abstract class Raum implements Comparable<Raum> {
         this.opacity = opacity;
     }
 
-    /* _________________________ Position & Rotation (nicht streng physikalisch) _________________________ */
-
-	/**
-	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
-	 * gesehen eine Verschiebung von der aktuellen Position an die neue. <br /><br />
-	 * <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die linke, obere
-	 * Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei Kreisen z.B.
-	 * <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
-	 * <code>mittelpunktSetzen(int x, int y)</code>.
-	 *
-	 * @param x
-	 * 		neue <code>x</code>-Koordinate
-	 * @param y
-	 * 		neue <code>y</code>-Koordinate
-	 *
-	 * @see #positionSetzen(Punkt)
-	 * @see #mittelpunktSetzen(float, float)
-	 * @see #setX(float)
-	 * @see #setY(float)
-	 */
-    @API
-	public void positionSetzen (float x, float y) {
-		this.positionSetzen(new Punkt(x, y));
-	}
-
-	/**
-	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
-	 * gesehen eine Verschiebung von der aktuellen Position an die neue. <br /><br />
-	 * <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die linke, obere
-	 * Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei Kreisen z.B.
-	 * <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
-	 * <code>mittelpunktSetzen(int x, int y)</code>.
-	 *
-	 * @param p
-	 * 		Der neue Zielpunkt
-	 *
-	 * @see #positionSetzen(float, float)
-	 * @see #mittelpunktSetzen(float, float)
-	 * @see #setX(float)
-	 * @see #setY(float)
-	 */
-    @API
-	public void positionSetzen (Punkt p) {
-		this.verschieben(new Vektor(p.x - this.getX(), p.y - this.getY()));
-	}
-
-	/**
-	 * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene. Dies ist die <b>zentrale</b>
-	 * Methode zum
-	 *
-	 * @param v
-	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
-	 *
-	 * @see Vektor
-	 * @see #verschieben(float, float)
-	 */
-    @API
-	public void verschieben (Vektor v) {
-        physikHandler.verschieben(v);
-	}
-
-	/**
-	 * Verschiebt die Raum-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
-	 * <p/>
-	 * Diese Methode arbeitet nach dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
-	 * durch den Aufruf der Methode <code>zentrum()</code>. Daher ist diese Methode in der Anwendung
-	 * auf ein Knoten-Objekt nicht unbedingt sinnvoll.
-	 *
-	 * @param x
-	 * 		Die <code>x</code>-Koordinate des neuen Mittelpunktes des Objektes
-	 * @param y
-	 * 		Die <code>y</code>-Koordinate des neuen Mittelpunktes des Objektes
-	 *
-	 * @see #mittelpunktSetzen(Punkt)
-	 * @see #verschieben(Vektor)
-	 * @see #positionSetzen(float, float)
-	 * @see #zentrum()
-	 */
-    @API
-	public void mittelpunktSetzen (float x, float y) {
-		this.mittelpunktSetzen(new Punkt(x, y));
-	}
-
-	/**
-	 * Verschiebt die Raum-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.<br />
-	 * Diese Methode Arbeitet nach dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
-	 * durch den Aufruf der Methode <code>zentrum()</code>. Daher ist diese Methode im Anwand auf
-	 * ein Knoten-Objekt nicht unbedingt sinnvoll.<br /> Macht dasselbe wie
-	 * <code>mittelPunktSetzen(p.x, p.y)</code>.
-	 *
-	 * @param p
-	 * 		Der neue Mittelpunkt des Raum-Objekts
-	 *
-	 * @see #mittelpunktSetzen(float, float)
-	 * @see #verschieben(Vektor)
-	 * @see #positionSetzen(float, float)
-	 * @see #zentrum()
-	 */
-    @API
-	public void mittelpunktSetzen (Punkt p) {
-		this.verschieben(this.zentrum().nach(p));
-	}
+    /* _________________________ API-Methoden in der Klasse direkt _________________________ */
 
     /**
-	 * Gibt die x-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
-	 * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
-	 * <p/>
-	 * TODO: Deprecate positionX() in favor of this new method?
-	 *
-	 * @return <code>x</code>-Koordinate
-	 *
-	 * @see #getY()
-	 * @see #position()
-	 */
+     * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
+     *
+     * @param r
+     * 		Das Objekt, das auf Kollision mit diesem getestet werden soll.
+     *
+     * @return TRUE, wenn sich beide Objekte schneiden.
+     */
     @API
-	public float getX () {
-		return this.position().x;
-	}
-
-	/**
-	 * Berechnet das gewichtsmäßige Zentrum des Raum-Objekts als Punkt auf der Zeichenebene.
-	 *
-	 * @return Zentrum dieses Raumobjekts
-	 */
-    @API
-	public Punkt zentrum () {
-        return this.mittelPunkt();
-	}
-
-    /**
-	 * Setzt die x-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
-	 * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
-	 * /><br /> <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die
-	 * linke, obere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
-	 * Kreisen z.B. <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
-	 * <code>mittelpunktSetzen(int x, int y)</code>.
-	 *
-	 * @param x
-	 * 		neue <code>x</code>-Koordinate
-	 *
-	 * @see #positionSetzen(float, float)
-	 * @see #mittelpunktSetzen(float, float)
-	 * @see #setY(float)
-	 */
-    @API
-	public void setX (float x) {
-		this.verschieben(x - getX(), 0);
-	}
-
-	/**
-	 * Gibt die y-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
-	 * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
-	 * <p/>
-	 * TODO: Deprecate positionX() in favor of this new method?
-	 *
-	 * @return <code>y</code>-Koordinate
-	 *
-	 * @see #getX()
-	 * @see #position()
-	 */
-    @API
-	public float getY () {
-        return this.position().y;
-	}
-
-	/**
-	 * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-	 *
-	 * @param r
-	 * 		Das Objekt, das auf Kollision mit diesem getestet werden soll.
-	 *
-	 * @return TRUE, wenn sich beide Objekte schneiden.
-	 */
-    @API
-	public final boolean schneidet (Raum r) {
+    public final boolean schneidet (Raum r) {
         return physikHandler.schneidet(r);
-	}
+    }
 
     /**
-	 * Setzt die y-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
-	 * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
-	 * /><br /> <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die
-	 * linke, obere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
-	 * Kreisen z.B. <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
-	 * <code>mittelpunktSetzen(int x, int y)</code>.
-	 *
-	 * @param y
-	 * 		neue <code>y</code>-Koordinate
-	 *
-	 * @see #positionSetzen(float, float)
-	 * @see #mittelpunktSetzen(float, float)
-	 * @see #setX(float)
-	 */
+     * Prueft, ob ein bestimmter Punkt innerhalb des Raum-Objekts liegt.
+     *
+     * @param p
+     * 		Der Punkt, der auf Inhalt im Objekt getestet werden soll.
+     *
+     * @return TRUE, wenn der Punkt innerhalb des Objekts liegt.
+     */
     @API
-	public void setY (float y) {
-		this.verschieben(0, y - getY());
-	}
-
-	/**
-	 * Methode zum schnellen Herausfinden des Mittelpunktes des Raum-Objektes.
-	 *
-	 * @return Die Koordinaten des Mittelpunktes des Objektes
-	 *
-	 * @see #position()
-	 */
-    @API
-	public Punkt mittelPunkt () {
-        return physikHandler.mittelpunkt();
-	}
-
-	/**
-	 * Prueft, ob ein bestimmter Punkt innerhalb des Raum-Objekts liegt.
-	 *
-	 * @param p
-	 * 		Der Punkt, der auf Inhalt im Objekt getestet werden soll.
-	 *
-	 * @return TRUE, wenn der Punkt innerhalb des Objekts liegt.
-	 */
-    @API
-	public final boolean beinhaltet (Punkt p) {
-		return physikHandler.beinhaltet(p);
-	}
-
-    /**
-	 * Verschiebt das Objekt.<br /> Hierbei wird nichts anderes gemacht, als <code>verschieben(new
-	 * Vektor(dX, dY))</code> auszufuehren. Insofern ist diese Methode dafuer gut, sich nicht mit
-	 * der Klasse Vektor auseinandersetzen zu muessen.
-	 *
-	 * @param dX
-	 * 		Die Verschiebung in Richtung X
-	 * @param dY
-	 * 		Die Verschiebung in Richtung Y
-	 *
-	 * @see #verschieben(Vektor)
-	 */
-    @API
-	public void verschieben (float dX, float dY) {
-		this.verschieben(new Vektor(dX, dY));
-	}
-
-	/**
-	 * Gibt die Position dieses Raum-Objekts aus.
-     * @return die aktuelle Position dieses <code>Raum</code>-Objekts.
-	 */
-    @API
-	public Punkt position () {
-        return physikHandler.position();
-	}
-
-	/**
-	 * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
-	 * Objekt, damit es problemlos geloescht werden kann.<br /> <b>Achtung:</b> zwar werden
-	 * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
-	 * betrifft vor allem Animationen etc), jedoch nicht die innerhalb eines
-	 * <code>Knoten</code>-Objektes!!!!!!!!!<br /> Das heisst, wenn das Objekt an einem Knoten liegt
-	 * (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des
-	 * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
-	 * nicht!!</b>.
-	 */
-    @NoExternalUse
-	public void loeschen () {
-		//Leer - kann von childs überschrieben werden.
-	}
-
+    public final boolean beinhaltet (Punkt p) {
+        return physikHandler.beinhaltet(p);
+    }
 
 
 
     /* _________________________ Hard Physics _________________________ */
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
+
+    /**
+     * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
+     * Objekt, damit es problemlos geloescht werden kann.<br /> <b>Achtung:</b> zwar werden
+     * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
+     * betrifft vor allem Animationen etc), jedoch nicht die innerhalb eines
+     * <code>Knoten</code>-Objektes!!!!!!!!!<br /> Das heisst, wenn das Objekt an einem Knoten liegt
+     * (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des
+     * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
+     * nicht!!</b>.
+     */
+    @NoExternalUse
+    public void loeschen () {
+        //Leer - kann von childs überschrieben werden.
+    }
 
 	/**
 	 * Hilfsmethode für die Sortierung der Räume nach dem Z-Index. <b><i>Diese Methode sollte nicht
@@ -504,6 +300,15 @@ public abstract class Raum implements Comparable<Raum> {
         //FIXME : Parameter ändern (?) - Funktionalität implementieren.
         //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
         return true;
+    }
+
+    /**
+     * Gibt den aktuellen, internen Physik-Handler aus.
+     * @return der aktuellen, internen Physik-Handler aus.
+     */
+    @NoExternalUse
+    public PhysikHandler getPhysikHandler() {
+        return physikHandler;
     }
 
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Raum-Objekts _________________________ */

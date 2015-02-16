@@ -681,7 +681,7 @@ public class Fenster extends Frame {
 			maus.fensterSetzen(this);
 
 			//BoundingRechteck r = maus.getImage().dimension();
-			//maus.getImage().positionSetzen(((getWidth() - r.breite) / 2), (getHeight() - r.hoehe) / 2); T
+			//maus.getImage().set(((getWidth() - r.breite) / 2), (getHeight() - r.hoehe) / 2); T
 			//TODO schönere Einbindung (v 4.0)
             maus.getImage().positionSetzen(((getWidth()) / 2), (getHeight()) / 2);
 

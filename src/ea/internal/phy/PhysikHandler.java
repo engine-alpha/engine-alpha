@@ -102,6 +102,18 @@ public abstract class PhysikHandler {
     public abstract float elastizitaet();
 
     /**
+     * Setzt die Masse für das Ziel-Objekt.
+     * @param masse Die Masse, die das Ziel-Objekt einnehmen soll. In [kg]
+     */
+    public abstract void masseSetzen(float masse);
+
+    /**
+     * Gibt die Masse des Ziel-Objekts aus.
+     * @return  Die Masse des Ziel-Objekts in [kg].
+     */
+    public abstract float masseSetzen();
+
+    /**
      * Uebt eine Kraft auf das Ziel-Objekt (im Massenschwerpunkt) aus (sofern möglich).
      * @param kraft Die Kraft, die auf den Massenschwerpunkt angewandt werden soll. <b>Nicht in [px]</b>, sondern in
      *              [N] = [m / s^2].
@@ -110,8 +122,16 @@ public abstract class PhysikHandler {
 
     /**
      * Wirkt einen Drehmoment auf das Ziel-Objekt.
-     * @param drehmoment    der Drehmoment, der auf das Ziel-Objekt wirken soll.
+     * @param drehmoment    der Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
      *
      */
     public abstract void drehMomentWirken(float drehmoment);
+
+    /**
+     * Wirkt einen Drehimpuls auf das Ziel-Objekt.
+     * @param drehimpuls    der Drehimpuls, der auf das Ziel-Objekt wirken soll. in [kg*m*m/s]
+     */
+    public abstract void drehImpulsWirken(float drehimpuls);
+
+
 }
