@@ -290,9 +290,6 @@ public abstract class Raum implements Comparable<Raum> {
 
             //2' Rotation zurücksetzen
             g.rotate(-rotation, position.x, position.y);
-
-            //1' Position zurücksetzen
-            g.translate(-position.x, -position.y);
         }
     }
 

@@ -166,8 +166,8 @@ public class Knoten extends Raum {
             return;
         }
         super.updateWorld(worldHandler);
-        for(Raum r : list) {
-            r.updateWorld(worldHandler);
+        for (int i = list.size() - 1; i >= 0; i--) {
+            list.get(i).updateWorld(worldHandler);
         }
     }
 
@@ -180,8 +180,8 @@ public class Knoten extends Raum {
      */
     @Override
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
-        for(Raum raum : list) {
-            raum.renderBasic(g,r);
+        for (int i = list.size() - 1; i >= 0; i--) {
+            list.get(i).renderBasic(g,r);
         }
     }
 

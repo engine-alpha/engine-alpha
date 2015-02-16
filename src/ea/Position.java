@@ -275,6 +275,15 @@ public class Position {
         return raum.getPhysikHandler().position();
     }
 
+    /**
+     * ToString-Methode.
+     * @return  Gibt einen String aus, der Position und Rotation des Objekts ausgibt.
+     */
+    @Override
+    public String toString() {
+        return "Position: (" + x() + " | " + y() + ") - Rotation: TODO";
+    }
+
 
     /* __________________________ Rotation __________________________ */
 
