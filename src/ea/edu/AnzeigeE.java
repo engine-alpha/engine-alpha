@@ -146,6 +146,15 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
         FensterE.getFenster().highscoreAnzeigen(namen, punkte, festertitel);
     }
 
+    /**
+     * Stellt, ob das Hilfs-Raster, das die Koordinatenachsen visualisiert, dargestellt werden soll.
+     * @param sichtbar  ist dieser Wert <code>true</code>, wird das Raster dargestellt. Ist er <code>false</code>,
+     *                  wird das Raster deaktiviert.
+     */
+    public void rasterSichtbarSetzen(boolean sichtbar) {
+        EngineAlpha.setDebug(sichtbar);
+    }
+
 	/**
 	 * Setzt, ob die Punkte angezeigt werden sollen.
 	 *
