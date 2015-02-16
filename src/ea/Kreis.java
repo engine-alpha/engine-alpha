@@ -19,6 +19,9 @@
 
 package ea;
 
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
+
 import java.awt.*;
 
 /**
@@ -30,26 +33,9 @@ import java.awt.*;
  * @author Michael Andonie
  */
 @SuppressWarnings ("serial")
-public class Kreis extends RegEck {
+public class Kreis extends Geometrie {
 
-	/**
-	 * Konstruktor fuer Objekte der Klasse Kreis
-	 *
-	 * @param x
-	 * 		Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
-	 * 		die des MIttelpunktes</b>
-	 * @param y
-	 * 		Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
-	 * 		die des MIttelpunktes</b>
-	 * @param durchmesser
-	 * 		Der Durchmesser des Kreises
-	 * @param genauigkeit
-	 * 		Die Genauigkeitsstufe des Kreises.<br /> Gibt die Anzzahl an Dreiecken an, die diesen Kreis
-	 * 		(approximiert) für die Kollisionsberechnung mit komplexeren Objekten ausmachen.
-	 */
-	public Kreis (int x, int y, float durchmesser, int genauigkeit) {
-		super(x, y, (int) Math.pow(genauigkeit, 2), durchmesser);
-	}
+    private float durchmesser;
 
 	/**
 	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
@@ -64,20 +50,8 @@ public class Kreis extends RegEck {
 	 * 		Der Durchmesser des Kreises
 	 */
 	public Kreis (float x, float y, float durchmesser) {
-		super(x, y, 6, durchmesser);
-	}
-
-	/**
-	 * Kleine Helper-Methode für den ganzzahligen Log2.
-	 *
-	 * @param eckenzahl
-	 * 		Ein int-Wert. Sollte von der Form 2^n sein.
-	 *
-	 * @return Der log2(eckenzahl).
-	 */
-	private static int log2helper (int eckenzahl) {
-		if (eckenzahl <= 1) return 0;
-		return 1 + log2helper(eckenzahl / 2);
+		super(new Punkt(x,y));
+        this.durchmesser = durchmesser;
 	}
 
 	/**
@@ -86,16 +60,22 @@ public class Kreis extends RegEck {
 	 * @return Der Radius des Kreises
 	 */
 	public float radius () {
-		return radius;
+		return durchmesser/2;
 	}
 
-	@Override
-	public void render(Graphics2D g, BoundingRechteck r) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void render(Graphics2D g) {
+        g.setColor(getColor());
+        g.fillOval((int) position.x(), (int) position.y(), (int) durchmesser, (int) durchmesser);
+    }
 
-		// Kreis muss nicht gedreht werden,
-		// aber es könnten hier in Zukunft noch andere wichtige Funktionen aufgerunfen werden
-
-		g.setColor(this.getColor());
-		g.fillOval((int) (position.x - r.x), (int) (position.y - r.y), (int) (2 * radius), (int) (2 * radius));
-	}
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        CircleShape shape = new CircleShape();
+        shape.m_radius = radius();
+        return shape;
+    }
 }

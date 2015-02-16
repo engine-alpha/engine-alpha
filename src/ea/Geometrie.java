@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.ano.NoExternalUse;
+
 import java.awt.*;
 
 /**
@@ -27,10 +29,6 @@ import java.awt.*;
  * @author Michael Andonie
  */
 public abstract class Geometrie extends Raum {
-	/**
-	 * Die Dimension des Objektes; zur schnellen Ausgabe
-	 */
-	protected BoundingRechteck dimension;
 
     /**
      * Die Farbe dieses Geometrie-Objekts.
@@ -38,68 +36,12 @@ public abstract class Geometrie extends Raum {
     private Color color;
 
 	/**
-	 * Gibt an, ob dieses Geometrie-Objekt gerade leuchtet
-	 */
-	private boolean leuchtet = false;
-
-	/**
-	 * Der Leuchtzaehler fuer die Leucht-Animationen
-	 */
-	private int leuchtzaehler = 0;
-
-	/**
-	 * Die Farbe, die sich das Objekt merkt, wenn es zu leuchten anfaengt, um wieder die alte
-	 * herstellen zu koennen.
-	 */
-	private Color alte = Color.white;
-
-	/**
 	 * Konstruktor.
 	 *
-	 * @param x
-	 * 		bestimmende x-Koordinate
-	 * @param y
-	 * 		bestimmende y-Koordinate
+	 * @param position  Die Ausgangsposition dieses Geometrie-Objekts.
 	 */
-	public Geometrie (float x, float y) {
-		position = new Punkt(x, y);
-		dimension = new BoundingRechteck(x, y, 0, 0);
-	}
-
-	/**
-	 * Zeichnet das Objekt.<br /> heisst in diesem Fall das saemtliche Unterdreiecke gezeichnet
-	 * werden.
-	 */
-	public void render(Graphics2D g, BoundingRechteck r) {
-        throw new UnsupportedOperationException("Noch nicht implementiert (4.0)");
-	}
-
-    /**
-	 * Verschiebt das Objekt.
-	 *
-	 * @param v
-	 * 		Der Vektor, der die Verschiebung des Objekts angibt.
-	 *
-	 * @see Vektor
-	 */
-	@Override
-	public void verschieben (Vektor v) {
-		//FIXME Implementation
-	}
-
-	/**
-	 * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
-	 * Objekt, damit es problemlos geloescht werden kann.<br /> <b>Achtung:</b> zwar werden
-	 * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
-	 * betrifft vor allem Animationen etc), jedoch nicht die innerhalb eines
-	 * <code>Knoten</code>-Objektes!!!!!!!!!<br /> Das heisst, wenn das Objekt an einem Knoten liegt
-	 * (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des
-	 * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
-	 * nicht!!</b>.<br /> Diese Klasse ueberschreibt die Methode wegen des Leuchtens.
-	 */
-	@Override
-	public void loeschen () {
-		super.loeschen();
+	public Geometrie (Punkt position) {
+        this.position.set(position);
 	}
 
 	/**
@@ -126,9 +68,10 @@ public abstract class Geometrie extends Raum {
 	}
 
     /**
-     * TODO
-     * @return
+     * Gibt die AWT-Farbe aus.
+     * @return  Das AWT-Color-Objekt.
      */
+    @NoExternalUse
     public Color getColor() {
         return color;
     }

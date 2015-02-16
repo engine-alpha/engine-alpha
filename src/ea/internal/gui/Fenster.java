@@ -41,12 +41,6 @@ import java.util.List;
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
 public class Fenster extends Frame {
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Statische Hilfsinstanz zur Vereinfachung der frameabhängigen Abfragen
-	 */
-	public static Fenster instanz = null;
 
 	/**
 	 * Counter, der die Anzahl der effektiv vorhandenen Frames zählt.
@@ -296,7 +290,8 @@ public class Fenster extends Frame {
         //Erstelle den WorldHandler
         worldHandler = new WorldHandler();
 
-		instanz = this;
+        //Setze die Welt in die Wurzel.
+        zeichner.cam().wurzel().updateWorld(worldHandler);
 
         //Starte die Frame-Logic
         frameThread = new FrameThread(zeichner, worldHandler.getWorld());
@@ -571,17 +566,8 @@ public class Fenster extends Frame {
 	 *
 	 * @return Das zu dem Font und aktiven Fenster gehoerende FontMetrics-Objekt
 	 */
-	public static FontMetrics metrik (Font f) {
-		return instanz.getFontMetrics(f);
-	}
-
-	/**
-	 * Gibt die aktuellste Instanz dieser KLasse wieder.
-	 *
-	 * @return Das aktuellste Fenster
-	 */
-	public static Fenster instanz () {
-		return instanz;
+	public FontMetrics metrik (Font f) {
+		return getFontMetrics(f);
 	}
 
 	/**

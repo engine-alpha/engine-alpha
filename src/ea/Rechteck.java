@@ -19,6 +19,9 @@
 
 package ea;
 
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
+
 import java.awt.*;
 
 /**
@@ -51,7 +54,7 @@ public class Rechteck extends Geometrie {
 	 * 		Die hoehe des Rechtecks
 	 */
 	public Rechteck (float x, float y, float breite, float hoehe) {
-		super(x, y);
+		super(new Punkt(x,y));
         masseSetzen(breite, hoehe);
 	}
 
@@ -93,23 +96,21 @@ public class Rechteck extends Geometrie {
 	}
 
 	/**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-	 * 		gezeichnet werden.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public void render(Graphics2D g, BoundingRechteck r) {
-
-
-
+	public void render(Graphics2D g) {
         g.setColor(getColor());
-		g.fillRect((int) (position.x - r.x), (int) (position.y - r.y), (int) breite, (int) laenge);
-
-
+		g.fillRect((int) position.x(), (int) position.y(), (int) breite, (int) laenge);
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(laenge, breite);
+        return shape;
+    }
 }

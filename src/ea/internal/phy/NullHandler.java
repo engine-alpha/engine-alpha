@@ -139,6 +139,11 @@ public class NullHandler extends PhysikHandler {
 
         Shape jb2dShape = raum.berechneShape(worldHandler.getPixelProMeter());
 
+        if(jb2dShape == null) {
+            //Das Objekt hat keine Shape (ist Knoten)
+            return this;
+        }
+
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = jb2dShape;
         fixtureDef.density = dichte;
