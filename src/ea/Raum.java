@@ -20,6 +20,11 @@
 package ea;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
+import ea.internal.phy.BodyHandler;
+import ea.internal.phy.NullHandler;
+import ea.internal.phy.PhysikHandler;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 
@@ -56,94 +61,77 @@ public abstract class Raum implements Comparable<Raum> {
 	 */
 	private Composite composite;
 
-	/**
-	 * Setzt den Z-Index dieses Raumes. Je größer, desto weiter vorne wird ein Raum gezeichnet.
-	 * <b>Diese Methode muss ausgeführt werden, bevor der Raum zu einem Knoten hinzugefügt
-	 * wird.</b>
-	 *
-	 * @param z
-	 * 		zu setzender Index
-	 */
-    @API
-	public void zIndex (int z) {
-		zIndex = z;
-	}
+    /**
+     * Der JB2D-Handler für dieses spezifische Objekt.
+     */
+    protected PhysikHandler physikHandler = new NullHandler(this);
 
-	/**
-	 * Setzt die Sichtbarkeit des Objektes.
-	 *
-	 * @param sichtbar
-	 * 		Ob das Objekt sichtbar sein soll oder nicht.<br /> Ist dieser Wert <code>false</code>, so
-	 * 		wird es nicht im Fenster gezeichnet.<br />
-	 *
-	 * @see #sichtbar()
-	 */
-    @API
-	public final void sichtbarSetzen (boolean sichtbar) {
-		this.sichtbar = sichtbar;
-	}
 
-	/**
-	 * Gibt an, ob das Raum-Objekt sichtbar ist.
-	 *
-	 * @return Ist <code>true</code>, wenn das Raum-Objekt zur Zeit sichtbar ist.
-	 *
-	 * @see #sichtbarSetzen(boolean)
-	 */
-    @API
-	public final boolean sichtbar () {
-		return this.sichtbar;
-	}
-
-	/**
-	 * Die Basiszeichenmethode.<br /> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese
-	 * Methode wird bei den einzelnen Gliedern eines Knotens aufgerufen.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-	 * 		gezeichnet werden.
-	 *
-	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 */
-    @NoExternalUse
-	public final void zeichnenBasic (Graphics2D g, BoundingRechteck r) {
-		if (sichtbar && this.camcheck(r)) {
-            beforeRender(g, r);
-            zeichnen(g, r);
-            afterRender(g, r);
-		}
-	}
+    /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
 
     /**
-     * Interne Methode. Prüft, ob das anliegende Objekt (teilweise) innerhalb des sichtbaren Bereichs liegt.
-     * @param r Die Bounds der Kamera.
-     * @return  <code>true</code>, wenn das Objekt (teilweise) innerhalb des derzeit sichtbaren Breichs liegt, sonst
-     *          <code>false</code>.
+     * Setzt den Z-Index dieses Raumes. Je größer, desto weiter vorne wird ein Raum gezeichnet.
+     * <b>Diese Methode muss ausgeführt werden, bevor der Raum zu einem Knoten hinzugefügt
+     * wird.</b>
+     *
+     * @param z
+     * 		zu setzender Index
      */
-    @NoExternalUse
-    private boolean camcheck(BoundingRechteck r) {
-        //FIXME : Parameter ändern (?) - Funktionalität implementieren.
-        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
-        return true;
+    @API
+    public void zIndexSetzen (int z) {
+        zIndex = z;
     }
 
     /**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-	 * 		gezeichnet werden.
-	 */
-    @NoExternalUse
-	public abstract void zeichnen (Graphics2D g, BoundingRechteck r);
+     * Setzt die Sichtbarkeit des Objektes.
+     *
+     * @param sichtbar
+     * 		Ob das Objekt sichtbar sein soll oder nicht.<br /> Ist dieser Wert <code>false</code>, so
+     * 		wird es nicht im Fenster gezeichnet.<br />
+     *
+     * @see #sichtbar()
+     */
+    @API
+    public final void sichtbarSetzen (boolean sichtbar) {
+        this.sichtbar = sichtbar;
+    }
 
+    /**
+     * Gibt an, ob das Raum-Objekt sichtbar ist.
+     *
+     * @return Ist <code>true</code>, wenn das Raum-Objekt zur Zeit sichtbar ist.
+     *
+     * @see #sichtbarSetzen(boolean)
+     */
+    @API
+    public final boolean sichtbar () {
+        return this.sichtbar;
+    }
 
+    /**
+     * Gibt die aktuelle Opacity des Raumes zurück.
+     *
+     * @return Gibt die aktuelle Opacity des Raumes zurück.
+     */
+    @API
+    @SuppressWarnings ( "unused" )
+    public float getOpacity () {
+        return opacity;
+    }
+
+    /**
+     * Setzt die Opacity des Raumes.
+     * <p/>
+     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Raum.</li>
+     * <li><code>1.0f</code> entspricht einem undurchsichtigem Raum.</li></ul>
+     */
+    @API
+    @SuppressWarnings ( "unused" )
+    public void setOpacity (float opacity) {
+        this.opacity = opacity;
+    }
+
+    /* _________________________ Position & Rotation (nicht streng physikalisch) _________________________ */
 
 	/**
 	 * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
@@ -159,7 +147,7 @@ public abstract class Raum implements Comparable<Raum> {
 	 * 		neue <code>y</code>-Koordinate
 	 *
 	 * @see #positionSetzen(Punkt)
-	 * @see #mittelpunktSetzen(int, int)
+	 * @see #mittelpunktSetzen(float, float)
 	 * @see #setX(float)
 	 * @see #setY(float)
 	 */
@@ -180,13 +168,13 @@ public abstract class Raum implements Comparable<Raum> {
 	 * 		Der neue Zielpunkt
 	 *
 	 * @see #positionSetzen(float, float)
-	 * @see #mittelpunktSetzen(int, int)
+	 * @see #mittelpunktSetzen(float, float)
 	 * @see #setX(float)
 	 * @see #setY(float)
 	 */
     @API
 	public void positionSetzen (Punkt p) {
-		//FIXME Implementation
+		this.verschieben(new Vektor(p.x - this.getX(), p.y - this.getY()));
 	}
 
 	/**
@@ -198,21 +186,11 @@ public abstract class Raum implements Comparable<Raum> {
 	 *
 	 * @see Vektor
 	 * @see #verschieben(float, float)
-	 * @see #bewegen(Vektor)
-	 * @see #bewegen(float, float)
 	 */
     @API
 	public void verschieben (Vektor v) {
-
-        //TODO Implementierung jb2d
-
+        physikHandler.verschieben(v);
 	}
-
-    @API
-    public boolean bewegen (Vektor v) {
-        //TODO Implementierung jb2d
-        return false;
-    }
 
 	/**
 	 * Verschiebt die Raum-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
@@ -254,7 +232,9 @@ public abstract class Raum implements Comparable<Raum> {
     @API
 	public void mittelpunktSetzen (Punkt p) {
 		this.verschieben(this.zentrum().nach(p));
-	}	/**
+	}
+
+    /**
 	 * Gibt die x-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
 	 * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
 	 * <p/>
@@ -267,22 +247,17 @@ public abstract class Raum implements Comparable<Raum> {
 	 */
     @API
 	public float getX () {
-		//FIXME
-        return 0;
+		return this.position().x;
 	}
 
 	/**
-	 * Berechnet das Zentrum des Raum-Objekts als Punkt auf der Zeichenebene.
-	 * <p/>
-	 * Das Zentrum wird über die Methode <code>dimension()</code> berechnet, und zwar über die
-	 * Methode des resultierenden BoundingRechtecks:<br /> <code>dimension().zentrum()</code>
+	 * Berechnet das gewichtsmäßige Zentrum des Raum-Objekts als Punkt auf der Zeichenebene.
 	 *
 	 * @return Zentrum dieses Raumobjekts
 	 */
     @API
 	public Punkt zentrum () {
-        //FIXME Implementation
-		throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        return this.mittelPunkt();
 	}
 
     /**
@@ -297,7 +272,7 @@ public abstract class Raum implements Comparable<Raum> {
 	 * 		neue <code>x</code>-Koordinate
 	 *
 	 * @see #positionSetzen(float, float)
-	 * @see #mittelpunktSetzen(int, int)
+	 * @see #mittelpunktSetzen(float, float)
 	 * @see #setY(float)
 	 */
     @API
@@ -318,8 +293,7 @@ public abstract class Raum implements Comparable<Raum> {
 	 */
     @API
 	public float getY () {
-        //FIXME
-		return 0;
+        return this.position().y;
 	}
 
 	/**
@@ -332,8 +306,7 @@ public abstract class Raum implements Comparable<Raum> {
 	 */
     @API
 	public final boolean schneidet (Raum r) {
-        //FIXME Implementierung
-		return false;
+        return physikHandler.schneidet(r);
 	}
 
     /**
@@ -348,40 +321,12 @@ public abstract class Raum implements Comparable<Raum> {
 	 * 		neue <code>y</code>-Koordinate
 	 *
 	 * @see #positionSetzen(float, float)
-	 * @see #mittelpunktSetzen(int, int)
+	 * @see #mittelpunktSetzen(float, float)
 	 * @see #setX(float)
 	 */
     @API
 	public void setY (float y) {
 		this.verschieben(0, y - getY());
-	}
-
-	/**
-	 * Dreht die Zeichenfläche um den Mittelpunkt des Raumes um die gegebenen Grad, bevor mit dem
-	 * Zeichenn begonnen wird.<br /> <b><i>Diese Methode sollte nicht außerhalb der Engine verwendet
-	 * werden.</i></b>
-	 *
-	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 * @see #afterRender(Graphics2D, BoundingRechteck)
-	 */
-	@NoExternalUse
-	public final void beforeRender(Graphics2D g, BoundingRechteck r) {
-		/*lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
-
-		lastDrehung = Math.toRadians(drehung);
-
-		if (lastDrehung != 0) {
-			g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
-		}
-
-		if (opacity != 1) {
-			composite = g.getComposite();
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
-		} else {
-			composite = null;
-		}*/
-        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
-        //FIXME Implementation
 	}
 
 	/**
@@ -393,28 +338,7 @@ public abstract class Raum implements Comparable<Raum> {
 	 */
     @API
 	public Punkt mittelPunkt () {
-        //FIXME Implementation
-        throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
-	}
-
-	/**
-	 * Dreht die Zeichenfläche wieder zurück in den Ausgangszustand. <b><i>Diese Methode sollte
-	 * nicht außerhalb der Engine verwendet werden.</i></b>
-	 *
-	 * @see #zeichnen(Graphics2D, BoundingRechteck)
-	 * @see #beforeRender(Graphics2D, BoundingRechteck)
-	 */
-	@NoExternalUse
-	public final void afterRender(Graphics2D g, BoundingRechteck r) {
-		/*if (composite != null) {
-			g.setComposite(composite);
-		}
-
-		if (lastDrehung != 0) {
-			g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
-		}*/
-        //FIXME Implementation
-        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        return physikHandler.mittelpunkt();
 	}
 
 	/**
@@ -427,8 +351,7 @@ public abstract class Raum implements Comparable<Raum> {
 	 */
     @API
 	public final boolean beinhaltet (Punkt p) {
-		//FIXME Implementation
-        return false;
+		return physikHandler.beinhaltet(p);
 	}
 
     /**
@@ -442,33 +365,19 @@ public abstract class Raum implements Comparable<Raum> {
 	 * 		Die Verschiebung in Richtung Y
 	 *
 	 * @see #verschieben(Vektor)
-	 * @see #bewegen(Vektor)
-	 * @see #bewegen(float, float)
 	 */
     @API
 	public void verschieben (float dX, float dY) {
 		this.verschieben(new Vektor(dX, dY));
 	}
 
-    /**
-     * TODO Doku
-     * @param dX
-     * @param dY
-     * @return
-     */
-    @API
-    public boolean bewegen (float dX, float dY) {
-        return this.bewegen(new Vektor(dX, dY));
-    }
-
 	/**
-	 * TODO Doku
-	 *
+	 * Gibt die Position dieses Raum-Objekts aus.
+     * @return die aktuelle Position dieses <code>Raum</code>-Objekts.
 	 */
     @API
 	public Punkt position () {
-        //FIXME Implementation
-        throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        return physikHandler.position();
 	}
 
 	/**
@@ -486,28 +395,12 @@ public abstract class Raum implements Comparable<Raum> {
 		//Leer - kann von childs überschrieben werden.
 	}
 
-	/**
-	 * Gibt die aktuelle Opacity des Raumes zurück.
-	 *
-	 * @return Gibt die aktuelle Opacity des Raumes zurück.
-	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public float getOpacity () {
-		return opacity;
-	}
 
-	/**
-	 * Setzt die Opacity des Raumes.
-	 * <p/>
-	 * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Raum.</li>
-	 * <li><code>1.0f</code> entspricht einem undurchsichtigem Raum.</li></ul>
-	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public void setOpacity (float opacity) {
-		this.opacity = opacity;
-	}
+
+
+    /* _________________________ Hard Physics _________________________ */
+
+    /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
 
 	/**
 	 * Hilfsmethode für die Sortierung der Räume nach dem Z-Index. <b><i>Diese Methode sollte nicht
@@ -530,12 +423,112 @@ public abstract class Raum implements Comparable<Raum> {
 		return 0;
 	}
 
+    /**
+     * Dreht die Zeichenfläche um den Mittelpunkt des Raumes um die gegebenen Grad, bevor mit dem
+     * Zeichenn begonnen wird.<br /> <b><i>Diese Methode sollte nicht außerhalb der Engine verwendet
+     * werden.</i></b>
+     *
+     * @see #zeichnen(Graphics2D, BoundingRechteck)
+     * @see #afterRender(Graphics2D, BoundingRechteck)
+     */
+    @NoExternalUse
+    private final void beforeRender(Graphics2D g, BoundingRechteck r) {
+		/*lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
 
+		lastDrehung = Math.toRadians(drehung);
 
+		if (lastDrehung != 0) {
+			g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
+		}
 
+		if (opacity != 1) {
+			composite = g.getComposite();
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
+		} else {
+			composite = null;
+		}*/
+        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        //FIXME Implementation
+    }
 
+    /**
+     * Dreht die Zeichenfläche wieder zurück in den Ausgangszustand. <b><i>Diese Methode sollte
+     * nicht außerhalb der Engine verwendet werden.</i></b>
+     *
+     * @see #zeichnen(Graphics2D, BoundingRechteck)
+     * @see #beforeRender(Graphics2D, BoundingRechteck)
+     */
+    @NoExternalUse
+    private final void afterRender(Graphics2D g, BoundingRechteck r) {
+		/*if (composite != null) {
+			g.setComposite(composite);
+		}
 
+		if (lastDrehung != 0) {
+			g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
+		}*/
+        //FIXME Implementation
+        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+    }
 
+    /**
+     * Die Basiszeichenmethode.<br /> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese
+     * Methode wird bei den einzelnen Gliedern eines Knotens aufgerufen.
+     *
+     * @param g
+     * 		Das zeichnende Graphics-Objekt
+     * @param r
+     * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
+     * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
+     * 		gezeichnet werden.
+     *
+     * @see #zeichnen(Graphics2D, BoundingRechteck)
+     */
+    @NoExternalUse
+    public final void zeichnenBasic (Graphics2D g, BoundingRechteck r) {
+        if (sichtbar && this.camcheck(r)) {
+            beforeRender(g, r);
+            zeichnen(g, r);
+            afterRender(g, r);
+        }
+    }
+
+    /**
+     * Interne Methode. Prüft, ob das anliegende Objekt (teilweise) innerhalb des sichtbaren Bereichs liegt.
+     * @param r Die Bounds der Kamera.
+     * @return  <code>true</code>, wenn das Objekt (teilweise) innerhalb des derzeit sichtbaren Breichs liegt, sonst
+     *          <code>false</code>.
+     */
+    @NoExternalUse
+    private boolean camcheck(BoundingRechteck r) {
+        //FIXME : Parameter ändern (?) - Funktionalität implementieren.
+        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        return true;
+    }
+
+    /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Raum-Objekts _________________________ */
+
+    /**
+     * Zeichnet das Objekt.
+     *
+     * @param g
+     * 		Das zeichnende Graphics-Objekt
+     * @param r
+     * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
+     * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
+     * 		gezeichnet werden.
+     */
+    @NoExternalUse
+    public abstract void zeichnen (Graphics2D g, BoundingRechteck r);
+
+    /**
+     * Berechnet eine Form, die für die Kollisionsberechnungen dieses <code>Raum</code>-Objekts verwendet werden.
+     * @param   pixelProMeter   Die [px/m]-Konstante für die Umrechnung.
+     * @return                  Die zu dem Objekt zugehörige Shape in <b>[m]-Einheit, nicht in [px]</b>.
+     *                          Die Berechnung berücksichtigt die <b>aktuelle Position</b>.
+     */
+    @NoExternalUse
+    public abstract Shape berechneShape(float pixelProMeter);
 
 
 

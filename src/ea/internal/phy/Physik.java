@@ -32,11 +32,17 @@ public class Physik {
     private float pixelProMeter = 30f;
 
     /**
+     * Flag, das angibt, ob die Pixel Pro Meter bereits angefragt wurden.
+     */
+    private boolean ppmRequested;
+
+    /**
      * Gibt die Umrechnungsgröße zwischen Größen der Physik-Engine und der Zeichenebene der EA an.
      * @return  Gibt an, wie viele Pixel genau einen Meter ausmachen.<br />
      *          <b>Einheit: [px/m]</b>
      */
     public float getPixelProMeter() {
+        ppmRequested = true;
         return pixelProMeter;
     }
 
@@ -47,6 +53,10 @@ public class Physik {
      *                      <b>Einheit: [px/m]</b>
      */
     public void setPixelProMeter(float pixelProMeter) {
+        if(ppmRequested)
+            throw new IllegalStateException("Die Pixel-Pro-Meter Umrechnungszahl darf nach Arbeit mit den Raum-Objekten" +
+                    " der entsprechenden Physik-Umgebung nicht geändert werden. Das Setzen der Konstante vor" +
+                    " die Arbeit mit den Raum-Objekten verschieben.");
         this.pixelProMeter = pixelProMeter;
     }
 

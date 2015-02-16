@@ -2,6 +2,11 @@ package ea.internal.phy;
 
 import ea.Raum;
 import ea.internal.ano.NoExternalUse;
+import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -26,58 +31,29 @@ public class BodyHandler {
     /**
      * Die Physik des Handlers. Ist zu Beginn undefiniert. Kann nur einmal gesetzt werden.
      */
-    private Physik physik;
+    private final Physik physik;
 
     /**
-     * Die Liste mit Physik-Ausführungen, die vor der Anmeldung einer Physik geschehen sind. Werden nachgeholt, sobald
-     * eine Physik angemeldet wurde.
+     * Die Fixture Definition des Objekts.
      */
-    private List<PrePhysicsInvocation> prePhysicInvocations = new LinkedList<PrePhysicsInvocation>();
+    private final FixtureDef fixtureDef;
+
+    /**
+     * Der Body als die physische Repräsentation des analogen Raum-Objekts in der Physics-Engine.
+     */
+    private Body body;
 
     /**
      * Erstellt einen neuen Body-Handler
      * @param raum
      */
     @NoExternalUse
-    public BodyHandler(Raum raum) {
+    public BodyHandler(Raum raum, Physik physik, BodyDef bd, FixtureDef fixtureDef) {
         this.raum = raum;
-    }
-
-    /**
-     * Gibt an, ob dieser Handler bereits eine Physik-Umgebung hat.
-     * @return  Die
-     */
-    @NoExternalUse
-    public boolean hatPhysik() {
-        return physik!=null;
-    }
-
-    /**
-     * Setzt die Physik für diesen Handler.
-     * Diese Methode kann nur einmal aufgerufen werden. Wird diese Methode ein zweites mal mit einem
-     * anderen Physik-Objekt aufgerufen, so wird eine Exception geworfen.
-     * @param physik    die zu setzende Physik.
-     */
-    @NoExternalUse
-    public void physikSetzen(Physik physik) {
-        if(hatPhysik()) {
-            if (physik == this.physik) return;
-            throw new IllegalStateException("Ein Raum-Objekt, das bereits auf einer Zeichenebene war, wurde an einer" +
-                    " neuen Zeichenebene eingefügt. Das ist nicht möglich.");
-        }
         this.physik = physik;
-        for(PrePhysicsInvocation ppi : prePhysicInvocations) {
-            ppi.physicsCatchup();
-        }
-        prePhysicInvocations = null; //Speicher wieder freigeben (nach Garbage Collection)
-    }
 
-    /**
-     * Dieses Interface beschreibt eine Physik-relevante Aktion, die noch nicht durchführbar ist, da
-     * die aktive Physik noch nicht bekannt ist. Die Aktion wird gespeichert und beim setzen der Physik geändert.
-     */
-    @NoExternalUse
-    private interface PrePhysicsInvocation {
-        public abstract void physicsCatchup();
+        //create the body and add fixture to it
+        body =  physik.getWorld().createBody(bd);
+        body.createFixture(this.fixtureDef = fixtureDef);
     }
 }
