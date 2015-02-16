@@ -21,6 +21,8 @@ package ea;
 
 import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 import java.io.File;
@@ -195,7 +197,7 @@ public class Text extends Raum {
 	 */
 	public Text (String inhalt, float x, float y, String fontName, int schriftGroesse, int schriftart, String farbe) {
 		this.inhalt = inhalt;
-		this.position = new Punkt(x, y);
+		this.position.set(new Punkt(x, y));
 		this.groesse = schriftGroesse;
 		this.farbe = Farbe.zuFarbeKonvertieren(farbe);
 
@@ -534,30 +536,25 @@ public class Text extends Raum {
 	}
 
 	/**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-	 * 		gezeichnet werden.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public void render(Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g) {
 
-		FontMetrics f = Fenster.metrik(font);
-		float x = position.x, y = position.y;
+        Punkt pos = position.get();
+
+		FontMetrics f = g.getFontMetrics(font);
+		float x = pos.x, y = pos.y;
 
 		if (anker == Anker.MITTE) {
-			x = position.x - f.stringWidth(inhalt) / 2;
+			x = pos.x - f.stringWidth(inhalt) / 2;
 		} else if (anker == Anker.RECHTS) {
-			x = position.x - f.stringWidth(inhalt);
+			x = pos.x - f.stringWidth(inhalt);
 		}
 
 		g.setColor(farbe);
 		g.setFont(font);
-		g.drawString(inhalt, (int) (x - r.x), (int) (y - r.y + groesse));
+		g.drawString(inhalt, (int) (x), (int) (y+ groesse));
 	}
 
 	/**
@@ -588,7 +585,12 @@ public class Text extends Raum {
 		this.anker = anker;
 	}
 
-	/**
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        return null;
+    }
+
+    /**
 	 * Ein Textanker beschreibt, wo sich der Text relativ zu seiner x-Koordinate befindet. Möglich
 	 * sind: <li>{@code Anker.LINKS},</li> <li>{@code Anker.MITTE},</li> <li>{@code
 	 * Anker.RECHTS}.</li>

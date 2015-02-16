@@ -23,6 +23,8 @@ import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.PixelFeld;
 import ea.internal.util.Logger;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -146,7 +148,7 @@ public class Figur extends Raum {
 	 */
 	public Figur (float x, float y, String verzeichnis, boolean add) {
 		super();
-		position = new Punkt(x, y);
+		position.set(new Punkt(x, y));
 
 		this.animation = DateiManager.figurEinlesen(verzeichnis).animation;
 
@@ -527,21 +529,25 @@ public class Figur extends Raum {
 	}
 
 	/**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-	 * 		gezeichnet werden.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public void render(Graphics2D g, BoundingRechteck r) {
-		animation[aktuelle].zeichnen(g, (int) (position.x - r.x), (int) (position.y - r.y), spiegelX, spiegelY);
+	public void render(Graphics2D g) {
+        Punkt pos = position.get();
+		animation[aktuelle].zeichnen(g, (int) (pos.x), (int) (pos.y), spiegelX, spiegelY);
 	}
 
-	/**
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.setAsBox(this.animation[0].breite(), animation[0].hoehe());
+        return polygonShape;
+    }
+
+    /**
 	 * Gibt den Index des aktuellen Bildes zurueck.<br /> Die Figur, die im Pixelfeldeditor erstellt
 	 * wurde besteht den Bildern (1, 2, ..., n), aber <b>ACHTUNG</b>, die Indizes fangen bei
 	 * <b>0</b> an und hoeren dann eins frueher auf (0, 1, ..., (n-1)). Das heisst, dass wenn als

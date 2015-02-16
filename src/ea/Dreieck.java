@@ -20,6 +20,9 @@
 package ea;
 
 import ea.internal.util.Logger;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 
@@ -46,21 +49,6 @@ public class Dreieck extends Geometrie {
 	private java.awt.Color farbe = java.awt.Color.white;
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Dreieck
-	 *
-	 * @param p1
-	 * 		Der erste Punkt des Dreiecks
-	 * @param p2
-	 * 		Der zweite Punkt des Dreiecks
-	 * @param p3
-	 * 		Der dritte Punkt des Dreiecks
-	 */
-	public Dreieck (Punkt p1, Punkt p2, Punkt p3) {
-		super(0, 0);
-		//FIXME
-	}
-
-	/**
 	 * Konstruktor
 	 *
 	 * @param x
@@ -69,7 +57,7 @@ public class Dreieck extends Geometrie {
 	 * 		Alle Y-Koordinaten als Feld
 	 */
 	public Dreieck (float[] x, float[] y) {
-		super(0, 0);
+		super(Punkt.ZENTRUM);
 
 		if (x.length == 3 && y.length == 3) {
 			this.x = x;
@@ -78,6 +66,10 @@ public class Dreieck extends Geometrie {
 			Logger.error("Läuft nicht, falsche Arraylängen bei Dreiecksbildung!");
 		}
 	}
+
+    public Dreieck(Punkt p1, Punkt p2, Punkt p3) {
+        this(new float[] {p1.x, p2.x, p3.x}, new float[] {p1.y, p2.y, p3.y});
+    }
 
 	/**
 	 * @return Die Farbe dieses Dreiecks
@@ -133,79 +125,33 @@ public class Dreieck extends Geometrie {
 	}
 
 	/**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zutaendige Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, das das Kamerabild beschreibt.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public void render(Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g) {
+
+        Punkt pos = position.get();
 
 		int[] x = {(int) this.x[0], (int) this.x[1], (int) this.x[2]};
 
 		int[] y = {(int) this.y[0], (int) this.y[1], (int) this.y[2]};
 
 		for (int i = 0; i < 3; i++) {
-			x[i] -= r.x;
-			y[i] -= r.y;
+			x[i] += pos.x;
+			y[i] += pos.y;
 		}
 
 		g.setColor(farbe);
 		g.fillPolygon(x, y, 3);
 	}
 
-	/**
-	 * Methode zum Verschieben
-	 *
-	 * @param v
-	 * 		Die Verschiebung als Vektor
-	 *
-	 * @see Raum#verschieben(Vektor)
-	 */
-	@Override
-	public void verschieben (Vektor v) {
-		for (int i = 0; i < 3; i++) {
-			x[i] += v.x;
-			y[i] += v.y;
-		}
-	}
-
-	/**
-	 * Gibt an, ob diese Dreieck sich mit einem anderen schneidet.<br /> Dem Test zugrunde liegt
-	 * folgene Mathematische Schlussfolgerung als Bedingung für das schneiden:<br/ > <b> 2 Dreiecke
-	 * schneiden sich,<br /> ->sobald mindestens ein Punkt des einen Dreiecks innerhalb des anderen
-	 * liegt.</b><br /> Dies ist die Grundlegende Testeinheit für alle geometrischen Formen
-	 * der Engine.
-	 *
-	 * @return <code>true</code>, wenn sich die beiden Dreiecke theoretisch schneiden würden, sonst
-	 * <code>false</code>.
-	 */
-	public boolean schneidetBasic (Dreieck d) {
-		return false;
-	}
-
-	/**
-	 * Prüft, ob dieses Dreieck ein gegebenes <code>BoundingRechteck</code>
-	 * schneidet.
-	 * @param r		Ein <code>BoundingRechteck</code>.
-	 * @return		<code>true</code>, wenn dieses Dreieck sich mit dem übergebenen
-	 * 				<code>BoundingRechteck</code> schneidet, sonst <code>false</code>.
-	 */
-	public boolean schneidetBasic (BoundingRechteck r) {
-		return r.schneidet(this);
-	}
-
-	/**
-	 * @return Ein Punkt-Array der Groesse 3, das die drei das Dreieck beschreibenden Punkte
-	 * enthaelt.
-	 */
-	public Punkt[] punkte () {
-		Punkt[] ret = new Punkt[3];
-		for (int i = 0; i < 3; i++) {
-			ret[i] = new Punkt(x[i], y[i]);
-		}
-		return ret;
-	}
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        PolygonShape shape = new PolygonShape();
+        shape.set(new Vec2[] {
+                new Vec2(x[0] / pixelProMeter, y[0] / pixelProMeter),
+                new Vec2(x[1] / pixelProMeter, y[1] / pixelProMeter),
+                new Vec2(x[1] / pixelProMeter, y[1] / pixelProMeter)}, 3);
+        return shape;
+    }
 }

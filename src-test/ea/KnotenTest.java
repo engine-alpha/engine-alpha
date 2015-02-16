@@ -20,11 +20,11 @@ public class KnotenTest {
 		k.add(r, r);
 		assertEquals(2, k.alleElemente().length);
 
-		k.verschieben(new Vektor(10, 10));
-		assertEquals(new Punkt(120, 120), r.position());
+		k.position.verschieben(new Vektor(10, 10));
+		assertEquals(new Punkt(120, 120), r.position.get());
 
-		r.verschieben(new Vektor(10, 10));
-		assertEquals(new Punkt(130, 130), r.position());
+		r.position.verschieben(new Vektor(10, 10));
+		assertEquals(new Punkt(130, 130), r.position.get());
 
 		k.entfernen(r);
 		assertEquals(0, k.alleElemente().length);

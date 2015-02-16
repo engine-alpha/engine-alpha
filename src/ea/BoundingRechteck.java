@@ -268,35 +268,6 @@ public final class BoundingRechteck implements Serializable {
 	}
 
 	/**
-	 * Testet, ob sich ein Dreieck in dem BoundingRechteck befindet.<br /> Hierbei wird zuerst
-	 * getestet, ob ein Punkt des Dreiecks im Rechteck ist, dann, falls nötig ob ein Punkt des
-	 * Rechtecks im Dreieck ist.
-	 */
-	public boolean schneidet (Dreieck d) {
-		if (d == null) {
-			return false;
-		}
-
-		Punkt[] punkte = d.punkte();
-
-		for (int i = 0; i < punkte.length; i++) {
-			if (istIn(punkte[i])) {
-				return true;
-			}
-		}
-
-		punkte = this.punkte();
-
-		for (int i = 0; i < punkte.length; i++) {
-			if (d.beinhaltet(punkte[i])) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Testet, ob ein Punkt sich in dem BoundingRechteck befindet.
 	 *
 	 * @param p

@@ -131,7 +131,7 @@ public class Zeichner extends Canvas {
 		cam.zeichne(g);
 
 		// Die statischen Objekte
-		statNode.render(g, groesse);
+		statNode.render(g); // TODO StatNode checken
 	}
 
 	/**

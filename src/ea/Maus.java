@@ -235,8 +235,6 @@ public class Maus {
 	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
 	 * @param hotspot
 	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
-	 *
-	 * @see #Maus(Raum, Punkt, boolean)
 	 */
 	@API
 	public Maus (Bild mausbild, Punkt hotspot) {
@@ -565,7 +563,7 @@ public class Maus {
             throw new UnsupportedOperationException("Klick ist nicht auf Cursor gemappt.");
         }
 		if (absolut()) {
-			Punkt r = bild.position();
+			Punkt r = bild.position.get();
 			Punkt p = hotSpot();
 
 			return new Punkt((int) (r.x + p.realX() + fenster.getCam().getX()), (int) (r.y + p.realY() + fenster.getCam().getY())); // Mit

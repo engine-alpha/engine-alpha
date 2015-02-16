@@ -22,6 +22,8 @@ package ea;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -146,7 +148,7 @@ public class ActionFigur extends Raum {
 		zustand.entfernen();
 
 		if (this.states.length > 0) {
-			zustand.positionSetzen(aktuelleFigur().position());
+			zustand.position.set(aktuelleFigur().position.get());
 		}
 
 		Figur[] statesBefore = this.states;
@@ -189,7 +191,7 @@ public class ActionFigur extends Raum {
 	@SuppressWarnings ( "unused" )
 	public void neueAktion (Figur action, String name) {
 		action.entfernen();
-		action.positionSetzen(aktuelleFigur().position());
+		action.position.set(aktuelleFigur().position.get());
 
 		Figur[] actionsBefore = actions;
 		String[] actionNamesBefore = actionNames;
@@ -428,14 +430,14 @@ public class ActionFigur extends Raum {
 			states[indexState].animationsSchritt(runde);
 		}
 
-		Punkt pos = this.position();
+		Punkt pos = this.position.get();
 
 		for (int i = 0; i < actions.length; i++) {
-			actions[i].positionSetzen(pos.x, pos.y);
+			actions[i].position.set(pos.x, pos.y);
 		}
 
 		for (int i = 0; i < states.length; i++) {
-			states[i].positionSetzen(pos.x, pos.y);
+			states[i].position.set(pos.x, pos.y);
 		}
 	}
 
@@ -474,41 +476,26 @@ public class ActionFigur extends Raum {
 	}
 
 	/**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, das die Kameraperspektive repräsentiert.
-	 * 		<p/>
-	 * 		Hierbei soll zunächst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst
-	 * 		dann gezeichnet werden.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public void render(Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g) {
 		if (performsAction) {
-			actions[indexAction].render(g, r);
+            actions[indexAction].position.set(this.position.get());
+			actions[indexAction].render(g);
 		} else {
-			states[indexState].render(g, r);
+            states[indexState].position.set(this.position.get());
+			states[indexState].render(g);
 		}
 	}
 
-	/**
-	 * Verschiebt die Actionfigur.
-	 *
-	 * @param v
-	 * 		Die Verschiebung als Objekt der Klasse <code>Vektor</code>
-	 */
-	@API
-	@Override
-	@SuppressWarnings ( "unused" )
-	public void verschieben (Vektor v) {
-		for (int i = 0; i < states.length; i++) {
-			states[i].verschieben(v);
-		}
-
-		for (int i = 0; i < actions.length; i++) {
-			actions[i].verschieben(v);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     *
+     * Berechnung auf Basis des 0-Zustands.
+     */
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        return states[0].berechneShape(pixelProMeter);
+    }
 }

@@ -20,6 +20,8 @@
 package ea;
 
 import ea.internal.io.ImageLoader;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -85,7 +87,7 @@ public class Bild extends Raum {
 	 * 		Der Verzeichnispfad des Bildes, das geladen werden soll.
 	 */
 	public Bild (float x, float y, String verzeichnis) {
-		this.position = new Punkt(x, y);
+		this.position.set(new Punkt(x, y));
 		this.wiederholen = false;
 
 		img = ImageLoader.loadExternalImage(verzeichnis);
@@ -195,7 +197,7 @@ public class Bild extends Raum {
 	public Bild (float x, float y, BufferedImage img) {
 		this.img = img;
 
-		this.positionSetzen(new Punkt(x, y));
+		this.position.set(new Punkt(x, y));
 
 		urHoehe = img.getHeight();
 		urBreite = img.getWidth();
@@ -244,28 +246,7 @@ public class Bild extends Raum {
 		return dimg;
 	}
 
-	/**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-	 * 		gezeichnet werden.
-	 */
-	public void render(Graphics2D g, BoundingRechteck r) {
-        if (!wiederholen) {
-            g.drawImage(img, (int) (position.realX() - r.x), (int) (position.realY() - r.y), null);
-        } else {
-            // Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmaße
-            Paint tp = new TexturePaint(img, new Rectangle2D.Double(-r.x + position.realX(), -r.y + position.realY(), img.getWidth(), img.getHeight()));
-            // Texturfarbe setzen
-            g.setPaint(tp);
-            // Rechteck füllen
-            g.fill(new Rectangle2D.Double(position.realX() - r.x, position.realY() - r.y, breite, hoehe));
-        }
-	}
+
 
 	/**
 	 * @return Ein BoundingRechteck mit minimal nötigem Umfang, um das Objekt <b>voll
@@ -273,9 +254,9 @@ public class Bild extends Raum {
 	 */
 	public BoundingRechteck dimension () {
 		if (!wiederholen) {
-			return new BoundingRechteck(position.realX(), position.realY(), img.getWidth(), img.getHeight());
+			return new BoundingRechteck(position.x(), position.y(), img.getWidth(), img.getHeight());
 		} else {
-			return new BoundingRechteck(position.realX(), position.realY(), breite, hoehe);
+			return new BoundingRechteck(position.x(), position.y(), breite, hoehe);
 		}
 	}
 
@@ -308,6 +289,32 @@ public class Bild extends Raum {
 	}
 
 	public final Bild clone () {
-		return new Bild(position().x, position().y, img);
+		return new Bild(position.x(), position.y(), img);
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(breite/pixelProMeter, hoehe/pixelProMeter);
+        return shape;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void render(Graphics2D g) {
+        if (!wiederholen) {
+            g.drawImage(img, (int) (position.x()), (int) (position.y()), null);
+        } else {
+            // Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmaße
+            Paint tp = new TexturePaint(img, new Rectangle2D.Double(position.x(), position.y(), img.getWidth(), img.getHeight()));
+            // Texturfarbe setzen
+            g.setPaint(tp);
+            // Rechteck füllen
+            g.fill(new Rectangle2D.Double(position.x(), position.y(), breite, hoehe));
+        }
+    }
 }

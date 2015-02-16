@@ -306,8 +306,11 @@ public class Kamera {
             bild = bild.in(bounds);
         }
 
+        g.translate(bild.x, bild.y);
 
-        ebene.basis().render(g, bild);
+        ebene.basis().render(g);
+
+        g.translate(-bild.x, -bild.y);
 
         if (EngineAlpha.isDebug()) {
 

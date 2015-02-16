@@ -401,9 +401,9 @@ public class DateiManager {
 			writer.newLine();
 			writer.write("y:" + feld[0].hoeheN()); // Die Y-Groesse
 			writer.newLine();
-			writer.write("p:" + (int) f.position().x); // Die Position X
+			writer.write("p:" + (int) f.position.x()); // Die Position X
 			writer.newLine();
-			writer.write("q:" + (int) f.position().y); // Die Position Y
+			writer.write("q:" + (int) f.position.y()); // Die Position Y
 			writer.newLine();
 
 			// Die Felder
@@ -672,7 +672,7 @@ public class DateiManager {
 				}
 			}
 			fig.animationSetzen(ergebnis);
-			fig.positionSetzen(px, py);
+			fig.position.set(px, py);
 			fig.animiertSetzen((animationsLaenge != 1));
 			f.close();
 		} catch (IOException e) {

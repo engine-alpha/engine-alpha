@@ -25,6 +25,8 @@
 package ea;
 
 import ea.internal.util.Logger;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 
@@ -102,20 +104,21 @@ public class CombiFigur extends Raum {
 	}
 
 	/**
-	 * Zeichnet das Objekt.
-	 *
-	 * @param g
-	 * 		Das zeichnende Graphics-Objekt
-	 * @param r
-	 * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-	 * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-	 * 		gezeichnet werden.
+	 * {@inheritDoc}
 	 */
 	@Override
-	public void render(Graphics2D g, BoundingRechteck r) {
+	public void render(Graphics2D g) {
 		for (int i = 0; i < figuren.length; i++) {
-            figuren[i].render(g, r);
+            figuren[i].render(g);
         }
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Shape berechneShape(float pixelProMeter) {
+        return figuren[0].berechneShape(pixelProMeter);
+    }
 
 }

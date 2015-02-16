@@ -72,10 +72,13 @@ public class Kreis extends Geometrie {
         g.fillOval((int) position.x(), (int) position.y(), (int) durchmesser, (int) durchmesser);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Shape berechneShape(float pixelProMeter) {
         CircleShape shape = new CircleShape();
-        shape.m_radius = radius();
+        shape.m_radius = radius()/pixelProMeter;
         return shape;
     }
 }

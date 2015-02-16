@@ -100,8 +100,9 @@ public class Rechteck extends Geometrie {
 	 */
 	@Override
 	public void render(Graphics2D g) {
+        Punkt pos = position.get();
         g.setColor(getColor());
-		g.fillRect((int) position.x(), (int) position.y(), (int) breite, (int) laenge);
+		g.fillRect((int) pos.x, (int) pos.y, (int) breite, (int) laenge);
 	}
 
     /**
@@ -110,7 +111,7 @@ public class Rechteck extends Geometrie {
     @Override
     public Shape berechneShape(float pixelProMeter) {
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(laenge, breite);
+        shape.setAsBox(laenge/pixelProMeter, breite/pixelProMeter);
         return shape;
     }
 }
