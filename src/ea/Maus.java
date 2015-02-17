@@ -325,7 +325,7 @@ public class Maus {
 		try {
 			ret = ImageIO.read(in);
 		} catch (IOException ex) {
-			Logger.error("Achtung! Das zu ladende Standard-Mausbild konnte nicht geladen werden.");
+			Logger.error("IO", "Das zu ladende Standard-Mausbild konnte nicht geladen werden.");
 		}
 
 		return new Bild(0, 0, ret);

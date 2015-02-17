@@ -63,7 +63,8 @@ public class Dreieck extends Geometrie {
 			this.x = x;
 			this.y = y;
 		} else {
-			Logger.error("Läuft nicht, falsche Arraylängen bei Dreiecksbildung!");
+			Logger.error("Raum", String.format("Die Längen der beiden float-Arrays hatten nicht die passende Länge (3). Waren: %d und %d.",
+                    x.length, y.length));
 		}
 	}
 

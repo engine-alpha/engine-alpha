@@ -46,7 +46,7 @@ extends ProducerThread {
 
     public void removeTicker(Ticker ticker) {
         if(!tickerJobs.remove(ticker)) {
-            Logger.error("Der abzumeldende Ticker war nicht angemeldet.");
+            Logger.error("Ticker", "Der abzumeldende Ticker war nicht angemeldet.");
         }
     }
 

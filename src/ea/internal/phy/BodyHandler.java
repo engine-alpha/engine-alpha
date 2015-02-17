@@ -172,4 +172,14 @@ extends PhysikHandler {
     public Physik.Typ typ() {
         return null;
     }
+
+    @Override
+    public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
+
+    }
+
+    @Override
+    public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
+
+    }
 }

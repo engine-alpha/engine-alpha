@@ -98,7 +98,7 @@ public class EngineAlpha extends Frame {
 		try {
 			setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
 		} catch (IOException e) {
-			Logger.error(e.getLocalizedMessage());
+			Logger.error("IO", e.getLocalizedMessage());
 		}
 
 		this.addWindowListener(new WindowAdapter() {

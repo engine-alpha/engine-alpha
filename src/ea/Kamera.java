@@ -152,7 +152,7 @@ public class Kamera {
      */
     public void boundsSetzen(BoundingRechteck r) {
         if (r == null) {
-            Logger.error("Der Eingabewert fuer den Fokusbereich war null!");
+            Logger.error("Raum", "Der Eingabewert fuer den Fokusbereich war null!");
             return;
         }
         hatBoundsSetzen(true);

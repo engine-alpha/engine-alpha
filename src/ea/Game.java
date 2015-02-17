@@ -192,7 +192,7 @@ public abstract class Game implements TastenReagierbar {
 		try {
 			fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
 		} catch (Exception e) {
-			Logger.warning("Standard-Icon konnte nicht geladen werden.");
+			Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
 		}
 	}
 
@@ -486,7 +486,7 @@ public abstract class Game implements TastenReagierbar {
 		try {
 			Thread.sleep(millisekunden);
 		} catch (InterruptedException e) {
-			Logger.error(e.getLocalizedMessage());
+			Logger.error("Thread", e.getLocalizedMessage());
 		}
 	}
 
@@ -544,7 +544,7 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void tastenReagierbarAnmelden (TastenReagierbar g) {
 		if(g instanceof Game) {
-			Logger.error("Der Eingabe-Parameter g leitet sich von der Klasse Game ab. Das würde für einen"
+			Logger.error("Anmelden", "Der Eingabe-Parameter g leitet sich von der Klasse Game ab. Das würde für einen"
 					+ " internen Fehler sorgen und ist daher nicht möglich. Stattdessen kann man die tasteReagieren-"
 					+ "Methode verwenden oder über eine andere mit diesem Interface den selben Effekt erzeugen.");
 			return;
@@ -653,7 +653,7 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void mausAnmelden (Maus maus, boolean listenerUebernehmen) {
 		if (maus == null) {
-			Logger.error("Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
+			Logger.error("Anmelden", "Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
 			return;
 		}
 
@@ -746,7 +746,7 @@ public abstract class Game implements TastenReagierbar {
 				try {
 					ImageIO.write(img, ext, new File(pfad));
 				} catch (IOException e) {
-					Logger.error("Schreibfehler beim Speichern des Screenshots!");
+					Logger.error("IO", "Schreibfehler beim Speichern des Screenshots!");
 					e.printStackTrace();
 				}
 			}
@@ -846,10 +846,10 @@ public abstract class Game implements TastenReagierbar {
 		try {
 			Files.copy(Paths.get(von), Paths.get(nach, nameNeu));
 		} catch (FileNotFoundException e) {
-			Logger.error("Die Datei konnte nicht gefunden werden!");
+			Logger.error("IO", "Die Datei konnte nicht gefunden werden!");
 			return false;
 		} catch (IOException e) {
-			Logger.error("Fehler beim Lesen!");
+			Logger.error("IO", "Fehler beim Lesen!");
 			e.printStackTrace();
 			return false;
 		}

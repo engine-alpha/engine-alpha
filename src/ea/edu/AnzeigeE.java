@@ -156,7 +156,7 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 	 */
 	public int zufallszahlVonBis (int von, int bis) {
 		if (von > bis) {
-			Logger.error("Die Zufallszahl von (" + von + ") war größer als die " + "Zufallszahl bis (" + bis + ").");
+			Logger.error("Math", "Die Zufallszahl von (" + von + ") war größer als die " + "Zufallszahl bis (" + bis + ").");
 			return -1;
 		}
 		return random.nextInt(bis - von + 1) + von;

@@ -85,7 +85,7 @@ public class Sender implements SenderInterface {
 	 */
 	public boolean sende (String s) { // package private, weil NetzwerkInterpreter das braucht!
 		if (!active) {
-			Logger.error("Kann nach dem Schließen nicht mehr senden.");
+			Logger.error("Netzwerk", "Sendeanfrage nach Schließen der Verbindung.");
 			return false;
 		}
 
@@ -94,7 +94,7 @@ public class Sender implements SenderInterface {
 			writer.newLine();
 			writer.flush();
 		} catch (IOException e) {
-			Logger.error("Es gab einen internen Fehler beim Schreiben.");
+			Logger.error("IO", "Es gab einen internen Fehler beim Schreiben.");
 			return false;
 		}
 
@@ -153,7 +153,7 @@ public class Sender implements SenderInterface {
 		try {
 			writer.close();
 		} catch (IOException e) {
-			Logger.error("Konnte die Verbindung nicht schließen.");
+			Logger.error("Netzwerk", "Konnte die Verbindung nicht schließen.");
 		}
 	}
 }

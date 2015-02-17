@@ -52,7 +52,7 @@ public class HighScoreFenster extends JDialog {
 		super(parent, titel, true);
 
 		if (namen.length != punkte.length) {
-			Logger.error("Achtung!! Die eingegebenen String- und int-Arrays haben nicht die selbe Laenge!!!");
+			Logger.error("Dialog", "Die eingegebenen String- und int-Arrays haben nicht die selbe Laenge.");
 			return;
 		}
 

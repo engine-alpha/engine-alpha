@@ -58,7 +58,7 @@ public class CompatDateiManager {
 
 			// check type info
 			if (line.compareTo("typ:String") != 0) {
-				Logger.error("Die geladene .eaa-Datei beschreibt kein String-Array oder ist beschädigt!");
+				Logger.error("IO", "Die geladene .eaa-Datei beschreibt kein String-Array oder ist beschädigt!");
 				reader.close();
 
 				return null;
@@ -94,7 +94,7 @@ public class CompatDateiManager {
 
 			return ret;
 		} catch (IOException e) {
-			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
+			Logger.error("IO", "Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
 		} finally {
 			if (reader != null) {
 				try {
@@ -131,7 +131,7 @@ public class CompatDateiManager {
 
 			// check type info
 			if (line.compareTo("typ:Integer") != 0) {
-				Logger.error("Die geladene .eaa-Datei beschreibt kein int-Array oder ist beschädigt!");
+				Logger.error("IO", "Die geladene .eaa-Datei beschreibt kein int-Array oder ist beschädigt!");
 				return null;
 			}
 
@@ -149,7 +149,7 @@ public class CompatDateiManager {
 
 			return ret;
 		} catch (IOException e) {
-			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
+			Logger.error("IO", "Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
 		} finally {
 			if (reader != null) {
 				try {

@@ -137,10 +137,10 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 				this.notifyAll();
 			}
 		} catch (UnknownHostException e) {
-			Logger.error("Konnte die IP-Adresse nicht zuordnen...");
+			Logger.error("Netzwerk", "Konnte die IP-Adresse nicht zuordnen...");
 			connectFailed = true;
 		} catch (IOException e) {
-			Logger.error("Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer" + " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
+			Logger.error("Netzwerk", "Es gab Input/Output - Schwierigkeiten. Sind ausreichende Rechte fuer" + " Internet etc. vorhanden? Das System könnte die Netzwerkanfrage ablehnen.");
 			connectFailed = true;
 		}
 	}
@@ -154,7 +154,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 			try {
 				socket.close();
 			} catch (IOException e) {
-				Logger.error("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+				Logger.error("Netzwerk", "Konnte den Verbindungs-Socket nicht mehr schliessen.");
 			}
 		}
 	}
@@ -181,7 +181,8 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					Logger.warning("Achtung. Es könnte trotz warteAufVerbindung() noch " + "keine Verbindung bestehen, da der Warteprozess unterbrochen wurde.");
+					Logger.warning("Netzwerk", "Achtung. Es könnte trotz warteAufVerbindung() noch " +
+                            "keine Verbindung bestehen, da der Warteprozess unterbrochen wurde.");
 				}
 			}
 		}
@@ -266,13 +267,13 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	public void beendeVerbindung () {
 		warteAufVerbindung();
 		if (!verbindung.istAktiv()) {
-			Logger.error("Die Verbindung zum Server wurde bereits beendet.");
+			Logger.error("Netzwerk", "Die Verbindung zum Server wurde bereits beendet.");
 		}
 		verbindung.beendeVerbindung();
 		try {
 			socket.close();
 		} catch (IOException e) {
-			Logger.error("Konnte den Verbindungs-Socket nicht mehr schliessen.");
+			Logger.error("Netzwerk", "Konnte den Verbindungs-Socket nicht mehr schliessen.");
 		}
 	}
 

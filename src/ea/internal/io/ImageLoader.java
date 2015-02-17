@@ -48,7 +48,7 @@ public class ImageLoader {
 			img = ImageIO.read(new FileInputStream(new File(path)));
 			img = Optimizer.toCompatibleImage(img);
 		} catch (IOException e) {
-			Logger.error("Das Bild konnte nicht geladen werden: " + path);
+			Logger.error("IO", "Das Bild konnte nicht geladen werden: " + path);
 		}
 
 		return img;
@@ -69,7 +69,7 @@ public class ImageLoader {
 			img = ImageIO.read(ImageLoader.class.getResource(path));
 			img = Optimizer.toCompatibleImage(img);
 		} catch (IOException e) {
-			Logger.error("Das Bild konnte nicht geladen werden: " + path);
+			Logger.error("IO", "Das Bild konnte nicht geladen werden: " + path);
 		}
 
 		return img;

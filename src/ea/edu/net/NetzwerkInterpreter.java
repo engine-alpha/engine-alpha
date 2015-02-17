@@ -111,7 +111,7 @@ public class NetzwerkInterpreter extends Thread {
 
 				process(got);
 			} catch (IOException e) {
-				Logger.error("Konnte nicht vom Kommunikationspartner einlesen.");
+				Logger.error("Netzwerk", "Konnte nicht vom Kommunikationspartner einlesen.");
 				connectionActive = false;
 			}
 		}
@@ -119,7 +119,7 @@ public class NetzwerkInterpreter extends Thread {
 		try {
 			reader.close();
 		} catch (IOException e) {
-			Logger.error("Konnte die Verbindung nicht schließen.");
+			Logger.error("Netzwerk", "Konnte die Verbindung nicht schließen.");
 		}
 	}
 
@@ -289,7 +289,7 @@ public class NetzwerkInterpreter extends Thread {
                 try {
                     reader.close();
                 } catch (IOException e1) {
-                    Logger.error("Konnte den Kommunikationskanal nicht mehr schließen.");
+                    Logger.error("Netzwerk", "Konnte den Kommunikationskanal nicht mehr schließen.");
                 }
 
                 connectionActive = false;

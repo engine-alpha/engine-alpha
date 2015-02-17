@@ -234,8 +234,8 @@ public class ActionFigur extends Raum {
 			}
 		}
 
-		Logger.error("Achtung! Der Name des auszufuehrenden Zustandes wurde nie bei einer Anmeldung mitgegeben! " +
-				"Der Name, der nicht unter den Zustaenden gefunden wurde war: " + name);
+		Logger.error("Figur", "Der Name des auszufuehrenden Zustandes wurde nie bei einer Anmeldung mitgegeben! " +
+				"Der Name, der nicht unter den Zustaenden gefunden wurde, war: " + name);
 	}
 
 	/**
@@ -262,8 +262,8 @@ public class ActionFigur extends Raum {
 			}
 		}
 
-		Logger.error("Achtung! Der Name der auszufuehrenden Aktion wurde nie bei einer Anmeldung mitgegeben! " +
-				"Der Name, der nicht unter den angemeldeten Aktionen gefunden wurde war: " + name);
+		Logger.error("Figur", "Achtung! Der Name der auszufuehrenden Aktion wurde nie bei einer Anmeldung mitgegeben! " +
+				"Der Name, der nicht unter den angemeldeten Aktionen gefunden wurde, war: " + name);
 	}
 
 	/**

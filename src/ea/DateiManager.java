@@ -134,7 +134,7 @@ public class DateiManager {
 
 			return true;
 		} catch (Exception e) {
-			Logger.error("Fehler beim Schreiben der Datei!");
+			Logger.error("IO", "Fehler beim Schreiben der Datei!");
 		}
 
 		return false;
@@ -192,12 +192,12 @@ public class DateiManager {
 			}
 
 			if (!meta.get("version").equals("2")) {
-				Logger.error("Unbekannte Dateiformatsversion!");
+				Logger.error("IO", "Unbekannte Dateiformatsversion!");
 				return null;
 			}
 
 			if (!meta.get("typ").equals("string")) {
-				Logger.error("Datei hat einen anderen Datentyp gespeichert: " + meta.get("typ"));
+				Logger.error("IO", "Datei hat einen anderen Datentyp gespeichert: " + meta.get("typ"));
 			}
 
 			ret = new String[Integer.parseInt(meta.get("length"))];
@@ -210,7 +210,7 @@ public class DateiManager {
 
 			return ret;
 		} catch (IOException e) {
-			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
+			Logger.error("IO", "Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
 		} finally {
 			try {
 				if (reader != null) {
@@ -265,7 +265,7 @@ public class DateiManager {
 
 			return true;
 		} catch (Exception e) {
-			Logger.error("Fehler beim Schreiben der Datei!");
+			Logger.error("IO", "Fehler beim Schreiben der Datei!");
 		}
 
 		return false;
@@ -310,12 +310,12 @@ public class DateiManager {
 			}
 
 			if (!meta.get("version").equals("2")) {
-				Logger.error("Unbekannte Dateiformatsversion!");
+				Logger.error("IO", "Unbekannte Dateiformatsversion!");
 				return null;
 			}
 
 			if (!meta.get("typ").equals("int")) {
-				Logger.error("Datei hat einen anderen Datentyp gespeichert: " + meta.get("typ"));
+				Logger.error("IO", "Datei hat einen anderen Datentyp gespeichert: " + meta.get("typ"));
 			}
 
 			ret = new int[Integer.parseInt(meta.get("length"))];
@@ -328,7 +328,7 @@ public class DateiManager {
 
 			return ret;
 		} catch (IOException e) {
-			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
+			Logger.error("IO", "Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?\n" + pfad);
 		}
 
 		return null;
@@ -417,8 +417,8 @@ public class DateiManager {
 
 			return true;
 		} catch (IOException e) {
-			Logger.error("Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?" + bruch + verz);
-			Logger.error(e.getMessage());
+			Logger.error("IO", "Fehler beim Erstellen der Datei. Sind die Zugriffsrechte zu stark?" + bruch + verz);
+			Logger.error("IO", e.getMessage());
 			return false;
 		}
 	}
@@ -614,7 +614,7 @@ public class DateiManager {
 		String verzeichnis = file.getAbsolutePath();
 
 		if (!verzeichnis.endsWith(".eaf")) {
-			Logger.warning("Datei hatte nicht die Dateierweiterung .eaf. Diese wurde automatisch ergänzt.");
+			Logger.warning("IO", "Datei hatte nicht die Dateierweiterung .eaf. Diese wurde automatisch ergänzt.");
 			verzeichnis += ".eaf";
 		}
 
@@ -629,7 +629,7 @@ public class DateiManager {
 			line = f.readLine();
 
 			if (line.compareTo("_fig_") != 0) { // Format  bestätigen
-				Logger.error("Die Datei ist keine Figur-Datei!" + line);
+				Logger.error("IO", "Die Datei ist keine Figur-Datei!" + line);
 
 				return null;
 			}
@@ -655,7 +655,7 @@ public class DateiManager {
 			PixelFeld[] ergebnis = new PixelFeld[animationsLaenge];
 			for (int i = 0; i < ergebnis.length; i++) { // Felder basteln
 				if (f.readLine().compareTo("-") != 0) { // Sicherheitstest
-					Logger.error("Die Datei ist beschädigt");
+					Logger.error("IO", "Die Datei ist beschädigt");
 				}
 
 				ergebnis[i] = new PixelFeld(x, y, fakt);
@@ -676,7 +676,7 @@ public class DateiManager {
 			fig.animiertSetzen((animationsLaenge != 1));
 			f.close();
 		} catch (IOException e) {
-			Logger.error("Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?" + bruch + verzeichnis);
+			Logger.error("IO", "Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?" + bruch + verzeichnis);
 			e.printStackTrace();
 		} finally {
 			if (f != null) {

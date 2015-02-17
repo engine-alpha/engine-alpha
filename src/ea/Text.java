@@ -71,11 +71,11 @@ public class Text extends Raum {
 				eigene[i] = Font.createFont(Font.TRUETYPE_FONT, s);
 				s.close();
 			} catch (FileNotFoundException e) {
-				Logger.error("Interner Lesefehler. Dies hätte unter keinen Umständen passieren dürfen.");
+				Logger.error("Text/Fonts", "Interner Lesefehler. Dies hätte unter keinen Umständen passieren dürfen.");
 			} catch (FontFormatException e) {
-				Logger.error("Das TrueType-Font-Format einer Datei (" + unter[i].getPath() + ") war nicht einlesbar!");
+				Logger.error("Text/Fonts", "Das TrueType-Font-Format einer Datei (" + unter[i].getPath() + ") war nicht einlesbar!");
 			} catch (IOException e) {
-				Logger.error("Lesefehler beim Laden der eigenen Fonts! Zugriffsrechte überprüfen.");
+				Logger.error("Text/Fonts", "Lesefehler beim Laden der eigenen Fonts! Zugriffsrechte überprüfen.");
 			}
 		}
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -252,7 +252,7 @@ public class Text extends Raum {
 		} else {
 			if (!fontExistiert(fontName)) {
 				fontName = "SansSerif";
-				Logger.error("Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
+				Logger.error("Text/Fonts", "Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
 			}
 			this.font = new Font(fontName, schriftart, groesse);
 		}
@@ -331,7 +331,7 @@ public class Text extends Raum {
 		if (files != null) {
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].equals(akt)) {
-					Logger.error("Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
+					Logger.error("Text/Fonts", "Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
 					continue;
 				}
 				if (files[i].isDirectory()) {
@@ -360,7 +360,8 @@ public class Text extends Raum {
 		} else {
 			if (!fontExistiert(fontName)) {
 				fontName = "SansSerif";
-				Logger.error("Achtung! Die gewuenschte Schriftart existiert weder als geladene Sonderdatei noch im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
+				Logger.error("Text/Fonts", "Achtung! Die gewuenschte Schriftart existiert weder als geladene Sonderdatei" +
+                        " noch im Font-Verzeichnis dieses PC! Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
 			}
 			return new Font(fontName, 0, 12);
 		}
@@ -376,16 +377,16 @@ public class Text extends Raum {
 	 * dient diese Methode der Praevention von Verwirrung, wegen "nicht darstellbarer" Fonts.
 	 */
 	public static void geladeneSchriftartenAusgeben () {
-		Logger.info("Protokoll aller aus dem Projektordner geladener Fontdateien");
+		Logger.info("Text/Fonts", "Protokoll aller aus dem Projektordner geladener Fontdateien");
 
 		if (eigene.length == 0) {
-			Logger.info("Es wurden keine \".ttf\"-Dateien im Projektordner gefunden");
+			Logger.info("Text/Fonts", "Es wurden keine \".ttf\"-Dateien im Projektordner gefunden");
 		} else {
-			Logger.info("Es wurden " + eigene.length + " \".ttf\"-Dateien im Projektordner gefunden.");
-			Logger.info("Diese sind unter folgenden Namen abrufbar:");
+			Logger.info("Text/Fonts", "Es wurden " + eigene.length + " \".ttf\"-Dateien im Projektordner gefunden.");
+			Logger.info("Text/Fonts", "Diese sind unter folgenden Namen abrufbar:");
 
 			for (Font font : eigene) {
-				Logger.info(font.getName());
+				Logger.info("Text/Fonts", font.getName());
 			}
 		}
 	}

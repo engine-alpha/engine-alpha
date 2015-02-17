@@ -190,8 +190,7 @@ public class Fenster extends Frame {
 				breite = screenSize.width;
 				hoehe = screenSize.height;
 			} else {
-				Logger.error("Achtung!");
-				Logger.error("Vollbild war nicht möglich, weil dieser PC dies nicht unterstützt!");
+				Logger.error("Display", "Vollbild war nicht möglich, weil dieser PC dies nicht unterstützt!");
 
 				windowMode = WINDOW_FULLSCREEN_FRAME;
 			}
@@ -221,28 +220,27 @@ public class Fenster extends Frame {
 			if (devices[0].isDisplayChangeSupported()) {
 				DisplayMode[] displayMode = devices[0].getDisplayModes();
 
-				Logger.info("DisplayModes: " + displayMode.length);
+				Logger.info("Display", "DisplayModes: " + displayMode.length);
 
 				for (int i = 0; i < displayMode.length; i++) {
-					Logger.info((i + 1) + ": " + "Breite: " + displayMode[i].getWidth() + ", Höhe: " + displayMode[i].getHeight());
+					Logger.info("Display", (i + 1) + ": " + "Breite: " + displayMode[i].getWidth() + ", Höhe: " + displayMode[i].getHeight());
 
 					if (displayMode[i].getWidth() == breite && displayMode[i].getHeight() == hoehe) {
 						devices[0].setDisplayMode(new DisplayMode(breite, hoehe, displayMode[i].getBitDepth(), displayMode[i].getRefreshRate()));
-						Logger.info("SET!");
 						success = true;
 						break;
 					}
 				}
 
 				if (!success) {
-					Logger.error("Achtung!" + "\n" + "Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!" + "\n" + "Nur besondere Auflösungen sind möglich, z.B. 800 x 600." + "\n" + "Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
+					Logger.error("Display", "Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!" + "\n" + "Nur besondere Auflösungen sind möglich, z.B. 800 x 600." + "\n" + "Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
 				}
 			} else {
-				Logger.error("Dieser Bildschirm unterstützt keine Auflösungsänderung!");
+				Logger.error("Display", "Dieser Bildschirm unterstützt keine Auflösungsänderung!");
 			}
 
 			if (!success) {
-				Logger.error("Die gewünschte Auflösung wird nicht vom Hauptbildschirm des Computers unterstützt!");
+				Logger.error("Display", "Die gewünschte Auflösung wird nicht vom Hauptbildschirm des Computers unterstützt!");
 			}
 		} else if (windowMode == WINDOW_FULLSCREEN_FRAME) {
 			setVisible(true);
@@ -271,7 +269,7 @@ public class Fenster extends Frame {
 		try {
 			robot = new Robot(devices[0]);
 		} catch (AWTException e) {
-			Logger.error("Achtung!" + "\n" + "Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!" + "\n" + "Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren." + "\n" + "Grund: Dies liegt an diesem Computer.");
+			Logger.error("Display", "Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!" + "\n" + "Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren." + "\n" + "Grund: Dies liegt an diesem Computer.");
 		}
 
 		// Die Listener
@@ -665,7 +663,7 @@ public class Fenster extends Frame {
 	 */
 	public void anmelden (Maus m) {
 		if (hatMaus()) {
-			Logger.error("Es ist bereits eine Maus angemeldet!");
+			Logger.error("Anmelden", "Es ist bereits eine Maus angemeldet!");
 		} else {
             maus = m;
 			maus.fensterSetzen(this);

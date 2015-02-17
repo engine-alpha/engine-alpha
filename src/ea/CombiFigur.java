@@ -99,7 +99,7 @@ public class CombiFigur extends Raum {
 			}
 		}
 
-		Logger.error("Achtung! Der Eingegebene Name eines Gliedes dieser CombiFigur existiert nicht: " + name);
+		Logger.error("Figur", "Der Eingegebene Name eines Gliedes dieser CombiFigur existiert nicht: " + name);
 		return null;
 	}
 

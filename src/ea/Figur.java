@@ -322,7 +322,8 @@ public class Figur extends Raum {
 	 */
 	public void animationsBildSetzen (int bildIndex) {
 		if (bildIndex < 0 || bildIndex >= animation.length) {
-			Logger.error("Achtung! Der zu setzende Bildindex war größer als der größte " + "vorhandene Index oder kleiner 0! Daher wird nichts gesetzt.");
+			Logger.error("Raum", "Der zu setzende Bildindex war größer als der größte "
+                    + "vorhandene Index oder kleiner 0! Daher wird nichts gesetzt.");
 			return;
 		}
 

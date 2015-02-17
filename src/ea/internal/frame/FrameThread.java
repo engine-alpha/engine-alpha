@@ -47,7 +47,7 @@ extends Thread {
      */
     public void setFPS(float fps) {
         if(fps > 100) {
-            Logger.error("Die FPS Zahl darf nicht größer als 100 sein.");
+            Logger.error("Frame-Logik", "Die FPS Zahl darf nicht größer als 100 sein.");
             return;
         }
         maxmillis = (int) (1000 / fps);
