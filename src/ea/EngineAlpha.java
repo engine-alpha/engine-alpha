@@ -52,13 +52,13 @@ public class EngineAlpha extends Frame {
 	 * 10000 * major + 100 * minor + 1 * bugfix
 	 * </code>
 	 */
-	public static final int VERSION_CODE = 30003;
+	public static final int VERSION_CODE = 30100;
 
 	/**
 	 * Format: v(major).(minor).(bugfix)
 	 * Beispiel: v3.1.2
 	 */
-	public static final String VERSION_STRING = "v3.0.3";
+	public static final String VERSION_STRING = "v3.1.0";
 
 	/**
 	 * Gibt an, ob dieser Release in .jar - Form vorliegt. Ist das der Fall,
