@@ -297,9 +297,7 @@ public class Bild extends Raum {
      */
     @Override
     public Shape berechneShape(float pixelProMeter) {
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(breite/pixelProMeter, hoehe/pixelProMeter);
-        return shape;
+        return this.berechneBoxShape(pixelProMeter, breite, hoehe);
     }
 
     /**

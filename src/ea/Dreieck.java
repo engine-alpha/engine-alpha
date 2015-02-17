@@ -152,6 +152,7 @@ public class Dreieck extends Geometrie {
                 new Vec2(x[0] / pixelProMeter, y[0] / pixelProMeter),
                 new Vec2(x[1] / pixelProMeter, y[1] / pixelProMeter),
                 new Vec2(x[1] / pixelProMeter, y[1] / pixelProMeter)}, 3);
+        shape.m_centroid.set((x[0]+x[1]+x[2])/3, (y[0]+y[1]+y[2])/3);
         return shape;
     }
 }

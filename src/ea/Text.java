@@ -129,7 +129,12 @@ public class Text extends Raum {
 	 */
 	private Anker anker = Anker.LINKS;
 
-	/**
+    /**
+     * Referenz auf die jüngsten Font-Metriken, die für die Berechnung der Textmaße verwendet wurden.
+     */
+    private FontMetrics fontMetrics;
+
+    /**
 	 * Ebenefalls ein vereinfachter Konstruktor. Hierbei ist die Farbe "Weiss" und der Text weder
 	 * kursiv noch fett; weiterhin ist die Schriftgroesse automatisch 24.
 	 *
@@ -543,13 +548,13 @@ public class Text extends Raum {
 
         Punkt pos = position.get();
 
-		FontMetrics f = g.getFontMetrics(font);
+		fontMetrics = g.getFontMetrics(font);
 		float x = pos.x, y = pos.y;
 
 		if (anker == Anker.MITTE) {
-			x = pos.x - f.stringWidth(inhalt) / 2;
+			x = pos.x - fontMetrics.stringWidth(inhalt) / 2;
 		} else if (anker == Anker.RECHTS) {
-			x = pos.x - f.stringWidth(inhalt);
+			x = pos.x - fontMetrics.stringWidth(inhalt);
 		}
 
 		g.setColor(farbe);
@@ -587,7 +592,10 @@ public class Text extends Raum {
 
     @Override
     public Shape berechneShape(float pixelProMeter) {
-        return null;
+        if(fontMetrics == null) {
+            throw new IllegalStateException("Text wurde nach Shape gefragt, bevor die Metrik bekannt war.");
+        }
+        return berechneBoxShape(pixelProMeter, fontMetrics.stringWidth(inhalt), fontMetrics.getHeight());
     }
 
     /**

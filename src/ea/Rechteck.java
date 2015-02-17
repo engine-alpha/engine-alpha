@@ -111,19 +111,6 @@ public class Rechteck extends Geometrie {
      */
     @Override
     public Shape berechneShape(float pixelProMeter) {
-        PolygonShape shape = new PolygonShape();
-        float breiteInM = breite /pixelProMeter;
-        float laengeInM = laenge / pixelProMeter;
-        Vec2 relativeCenter = new Vec2(breiteInM/2, laengeInM/2);
-        shape.set(new Vec2[] {
-                new Vec2(0,0),
-                new Vec2(0, laengeInM),
-                new Vec2(breiteInM, laengeInM),
-                new Vec2(breiteInM, 0)
-        }, 4);
-        shape.m_centroid.set(relativeCenter);
-        //System.out.println("Centroid Before "+ shape.m_centroid);
-        //System.out.println("Centroid After "+ shape.m_centroid);
-        return shape;
+        return berechneBoxShape(pixelProMeter, breite, laenge);
     }
 }

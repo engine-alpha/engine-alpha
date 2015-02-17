@@ -23,7 +23,9 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
 import ea.internal.phy.WorldHandler;
+import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -329,6 +331,30 @@ public abstract class Raum implements Comparable<Raum> {
     @NoExternalUse
     public PhysikHandler getPhysikHandler() {
         return physikHandler;
+    }
+
+    /**
+     * Berechnet eine boxartige Shape. Alle Seiten sind parallel zu den Achsen, die linke obere Ecke liegt auf
+     * (0|0).
+     * @param pixelProMeter PPM-Umrechnungskonstante.
+     * @param breite        Die <b>Breite in Pixel</b> der Box.
+     * @param laenge        Die <b>Laenge in Pixel</b> der Box.
+     * @return              Eine Polygon-Shape, die die oben beschriebenen Eigenschaften erfüllt.
+     */
+    @NoExternalUse
+    protected Shape berechneBoxShape(float pixelProMeter, float breite, float laenge) {
+        PolygonShape shape = new PolygonShape();
+        float breiteInM = breite /pixelProMeter;
+        float laengeInM = laenge / pixelProMeter;
+        Vec2 relativeCenter = new Vec2(breiteInM/2, laengeInM/2);
+        shape.set(new Vec2[] {
+                new Vec2(0,0),
+                new Vec2(0, laengeInM),
+                new Vec2(breiteInM, laengeInM),
+                new Vec2(breiteInM, 0)
+        }, 4);
+        shape.m_centroid.set(relativeCenter);
+        return shape;
     }
 
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Raum-Objekts _________________________ */

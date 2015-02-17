@@ -542,9 +542,7 @@ public class Figur extends Raum {
      */
     @Override
     public Shape berechneShape(float pixelProMeter) {
-        PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(this.animation[0].breite(), animation[0].hoehe());
-        return polygonShape;
+        return berechneBoxShape(pixelProMeter, this.animation[0].breite(), animation[0].hoehe());
     }
 
     /**
