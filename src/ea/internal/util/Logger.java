@@ -19,6 +19,8 @@
 
 package ea.internal.util;
 
+import ea.EngineAlpha;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -79,17 +81,19 @@ public class Logger {
 	}
 
 	private static String write (String type, String filename, int line, String message) {
-		return write(type, filename, line, message, false);
+		return write(type, filename, line, message, false, true);
 	}
 
-	private static String write (String type, String filename, int line, String message, boolean error) {
+	private static String write (String type, String filename, int line, String message, boolean error, boolean printOnConsole) {
 		String str = String.format("[%s][%s] %s (%s:%s)", getTime(), type, message, filename, Integer.toString(line));
 
-		if (error) {
-			System.err.println(str);
-		} else {
-			System.out.println(str);
-		}
+        if(printOnConsole) {
+            if (error) {
+                System.err.println(str);
+            } else {
+                System.out.println(str);
+            }
+        }
 
 		return write(str);
 	}
@@ -132,7 +136,7 @@ public class Logger {
 	 */
 	public static void error (String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-		write("ERROR", e.getFileName(), e.getLineNumber(), s, true);
+		write("ERROR", e.getFileName(), e.getLineNumber(), s, true, true);
 	}
 
 	/**
@@ -145,4 +149,16 @@ public class Logger {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
 		write("INFO", e.getFileName(), e.getLineNumber(), s);
 	}
+
+    /**
+     * Logger-Funktion für Debug-Informationen. Log wird nur ausgeführt, wenn <code>EngineAlpha.setDebug(true);</code>
+     * ausgeführt wurde.
+     * @param tag   Der Tag der Debug-Message.
+     * @param s Text der Information
+     * @author Andonie
+     */
+    public static void debug(String tag, String s) {
+        StackTraceElement e = Thread.currentThread().getStackTrace()[2];
+        write("DEBUG", e.getFileName(), e.getLineNumber(), String.format("[%s] %s", tag, s), false, EngineAlpha.isDebug());
+    }
 }

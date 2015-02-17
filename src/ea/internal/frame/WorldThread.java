@@ -61,6 +61,7 @@ extends FrameSubthread {
         super(master, "Physics-Thread #" + wtcnt++);
         this.world = worldHandler.getWorld();
         worldHandler.setWorldThread(this);
+        this.setPriority(Thread.MAX_PRIORITY);
     }
 
     public Body createBody(BodyDef bd) {

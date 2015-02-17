@@ -1,5 +1,7 @@
 package ea.internal.phy;
 
+import ea.Physik;
+import ea.Physik.Typ;
 import ea.Punkt;
 import ea.Raum;
 import ea.Vektor;
@@ -14,13 +16,26 @@ import org.jbox2d.dynamics.FixtureDef;
  */
 public class NullHandler extends PhysikHandler {
 
+    /**
+     * Die Fixture Definition für das Client-Objekt.
+     */
+    private final FixtureDef fixtureDef;
+
+    /**
+     * Masse als hilfeweise gespeicherte Variable.
+     */
+    private float masse;
+
     public NullHandler(Raum raum) {
         super(raum);
         bodyDef = new BodyDef();
-        bodyDef.type = BodyType.DYNAMIC;
+
+        fixtureDef = new FixtureDef();
+        fixtureDef.density = 30f;
+        fixtureDef.friction = 0.3f;
+        fixtureDef.restitution = 0.5f;
+
     }
-
-
 
     /**
      * Speichert die Position des Objekts. Ist zu Beginn immer der Ursprung.
@@ -31,9 +46,6 @@ public class NullHandler extends PhysikHandler {
      * Speichert die aktuelle Rotation in Radians. Ist zu Beginn stets 0.
      */
     private float rotation = 0;
-
-    /**Standard-Physik-Parameter*/
-    private float dichte = 30f, reibung = 0.3f, elastizitaet = 0.5f, masse = 50f;
 
     /**
      * Die Standard Body-Definition. Wird beim Übertrag eines Null-Handlers in einen
@@ -79,32 +91,33 @@ public class NullHandler extends PhysikHandler {
 
     @Override
     public void dichteSetzen(float dichte) {
-        this.dichte = dichte;
+        fixtureDef.density = dichte;
     }
 
     @Override
     public float dichte() {
-        return dichte;
+
+        return fixtureDef.density;
     }
 
     @Override
     public void reibungSetzen(float reibung) {
-        this.reibung = reibung;
+        fixtureDef.friction = reibung;
     }
 
     @Override
     public float reibung() {
-        return reibung;
+        return fixtureDef.friction;
     }
 
     @Override
     public void elastizitaetSetzen(float ela) {
-        this.elastizitaet = ela;
+        fixtureDef.restitution = ela;
     }
 
     @Override
     public float elastizitaet() {
-        return elastizitaet;
+        return fixtureDef.restitution;
     }
 
     @Override
@@ -114,28 +127,65 @@ public class NullHandler extends PhysikHandler {
 
     @Override
     public float masse() {
+
         return masse;
     }
 
     @Override
     public void kraftWirken(Vektor kraft) {
-        //
+        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
     }
 
     @Override
     public void drehMomentWirken(float drehmoment) {
-        //
+        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
     }
 
     @Override
     public void drehImpulsWirken(float drehimpuls) {
-        //
+        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
     }
 
     @Override
     public void schwerkraftSetzen(Vektor schwerkraftInN) {
-        //
+        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
     }
+
+    @Override
+    public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
+        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
+    }
+
+    @Override
+    public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
+        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
+    }
+
+    @Override
+    public void typ(Typ typ) {
+        switch (typ) {
+            case STATISCH:
+                bodyDef.type = BodyType.STATIC;
+                break;
+            case DYNAMISCH:
+                bodyDef.type = BodyType.DYNAMIC;
+                break;
+            case KINEMATISCH:
+                bodyDef.type = BodyType.KINEMATIC;
+                break;
+        }
+        //TODO Typ <-> Update : Generierung vertauschen.
+
+
+
+    }
+
+    @Override
+    public Typ typ() {
+        return null;
+    }
+
+
 
 
     @Override
@@ -153,12 +203,6 @@ public class NullHandler extends PhysikHandler {
         }
 
         worldHandler.blockPPMChanges();
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = jb2dShape;
-        fixtureDef.density = dichte;
-        fixtureDef.friction = reibung;
-        fixtureDef.restitution = elastizitaet;
 
         bodyDef.position.set(worldHandler.fromVektor(position.alsVektor()));
 

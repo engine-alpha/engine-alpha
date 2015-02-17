@@ -81,7 +81,6 @@ public class Kreis extends Geometrie {
         CircleShape shape = new CircleShape();
         shape.m_radius = radius()/pixelProMeter;
         shape.m_p.set(shape.m_radius,shape.m_radius);
-        System.out.println("Circle Shape made " + shape.m_p);
         return shape;
     }
 }

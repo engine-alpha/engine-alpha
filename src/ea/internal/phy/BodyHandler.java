@@ -1,5 +1,6 @@
 package ea.internal.phy;
 
+import ea.Physik;
 import ea.Punkt;
 import ea.Raum;
 import ea.Vektor;
@@ -53,8 +54,6 @@ extends PhysikHandler {
         //create the body and add fixture to it
         body =  worldHandler.createBody(bd);
         body.createFixture(this.fixtureDef = fixtureDef);
-
-        System.out.println("Got Body: " + body.getMass());
     }
 
     @Override
@@ -162,5 +161,15 @@ extends PhysikHandler {
     @Override
     public void schwerkraftSetzen(Vektor schwerkraftInN) {
         worldHandler.getWorld().setGravity(new Vec2(schwerkraftInN.x, schwerkraftInN.y));
+    }
+
+    @Override
+    public void typ(Physik.Typ typ) {
+
+    }
+
+    @Override
+    public Physik.Typ typ() {
+        return null;
     }
 }

@@ -50,7 +50,7 @@ public class Physik {
     }
 
 
-    /* _________________________ API-Methoden _________________________ */
+    /* _________________________ Einheiten / Eigenschaften _________________________ */
 
     /**
      * Setzt die Masse des Objekts neu. Hat Einfluss auf das physikalische Verhalten des Objekts.
@@ -118,6 +118,9 @@ public class Physik {
         return raum.getPhysikHandler().reibung();
     }
 
+
+    /* _________________________ World-Wrap _________________________ */
+
     /**
      * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb des Fensters</b> wirkt.
      * @param schwerkraftInN    Die neue Schwerkraft als Vektor. Die Einheit ist <b>[N]</b>.
@@ -129,6 +132,9 @@ public class Physik {
         return this;
     }
 
+
+    /* _________________________ Doers : Direkter Effekt auf Simulation _________________________ */
+
     /**
      * Wirkt eine Kraft auf den <i>Schwerpunkt</i> des Objekts.
      * @param kraftInN  Ein Kraft-Vektor. Einheit ist <b>nicht [px], sonder [N]</b.
@@ -137,10 +143,107 @@ public class Physik {
      */
     @API
     public Physik kraftWirken(Vektor kraftInN) {
-        //TODO
+        raum.getPhysikHandler().kraftWirken(kraftInN);
         return this;
     }
 
-    //public Physik impulsWirken(Vektor impulsIn)
+    /**
+     * Wirkt eine Kraft auf einem bestimmten <i>Punkt in der Welt</i>.
+     * @param kraftInN              Eine Kraft. Einheit ist <b>[N]</b>
+     * @param globalerPunkt         Der Ort auf der <i>Zeichenebene</i>, an dem die Kraft wirken soll.
+     * @return                      Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     *                              Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     */
+    @API
+    public Physik kraftWirken(Vektor kraftInN, Punkt globalerPunkt) {
+        raum.getPhysikHandler().kraftWirken(kraftInN, globalerPunkt);
+        return this;
+    }
+
+    /**
+     * Wirkt einen Impuls auf den <i>Schwerpunkt</i> des Objekts.
+     * @param impulsInNS    Der Impuls, der auf den Schwerpunkt wirken soll. Einheit ist <b>[Ns]</b>
+     * @return              Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     *                      Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     */
+    public Physik impulsWirken(Vektor impulsInNS) {
+        raum.getPhysikHandler().impulsWirken(impulsInNS, raum.getPhysikHandler().mittelpunkt());
+        return this;
+    }
+
+    /**
+     * Wirkt einen Impuls an einem bestimmten <i>Punkt in der Welt</i>.
+     * @param impulsInNS    Ein Impuls. Einheit ist <b>[Ns]</b>
+     * @param globalerOrt   Der Ort auf der <i>Zeichenebene</i>, an dem der Impuls wirken soll.
+     * @return              Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     *                      Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     */
+    public Physik impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
+        raum.getPhysikHandler().impulsWirken(impulsInNS, globalerOrt);
+        return this;
+    }
+
+
+    /* _________________________ Physik-Typ _________________________ */
+
+    /**
+     * Setzt, was für eine Typ physikalisches Objekt das Objekt sein soll. Erläuterung findet
+     * sich im <code>enum Typ</code>.
+     * @param typ   Der Typ Physik-Objekt, der ab sofort dieses Objekt sein soll.
+     * @return      Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     *              Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     * @see ea.Physik.Typ
+     */
+    @API
+    public Physik typ(Typ typ) {
+        raum.getPhysikHandler().typ(typ);
+        return this;
+    }
+
+    /**
+     * Gibt aus, was für ein Typ Physik-Objekt dieses Objekt momentan ist.
+     * @return  der Typ Physik-Objekt, der das entsprechende <code>Raum</code>-Objekt momentan ist.
+     * @see ea.Physik.Typ
+     */
+    @API
+    public Typ typ() {
+        return raum.getPhysikHandler().typ();
+    }
+
+    /**
+     * Aufzählung der drei verschiedenen Typen von Objekten innerhalb der Physik der EA.
+     * <ul>
+     *     <li>
+     *         <b>Statische</b> Objekte:
+     *         <ul>
+     *             <li>Haben keine Geschwindigkeit</li>
+     *             <li>Bewegen sich nicht in der Simulation, Kräfte haben keinen Einfluss auf sie.</li>
+     *         </ul>
+     *         Diese Eigenschaft gehört zum Beispiel zu <i>Wänden, Böden und Decken</i>.
+     *     </li>
+     *     <li>
+     *         <b>Dynamische</b> Objekte:
+     *         <ul>
+     *             <li>Verhalten sich wie Objekte der newton'schen Mechanik.</li>
+     *             <li>Können Kräfte auf sich wirken lassen und miteinander interagieren.</li>
+     *         </ul>
+     *         Diese Eigenschaft gehört zum Beispiel zu <i>Billiardkugeln, Spielfiguren und Wurfgeschossen</i>.
+     *     </li>
+     *     <li>
+     *         <b>Kinematische</b> Objekte:
+     *         <ul>
+     *             <li>Können eine Geschwindigkeit haben, aber reagieren nicht auf Kräfte.</li>
+     *             <li>Kollidieren (im Sinne der Physik) nur mit dynamischen Objekten.</li>
+     *         </ul>
+     *         Doese Eigenschaft gehört zum Beispiel zu <i>beweglichen Plattformen</i>.
+     *     </li>
+     * </ul>
+     * @see #typ(ea.Physik.Typ)
+     * @see #typ()
+     */
+    @API
+    public enum Typ {
+        STATISCH, DYNAMISCH, KINEMATISCH
+    }
 
 }

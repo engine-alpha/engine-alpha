@@ -1,5 +1,6 @@
 package ea.internal.phy;
 
+import ea.Physik;
 import ea.Punkt;
 import ea.Raum;
 import ea.Vektor;
@@ -151,4 +152,17 @@ public abstract class PhysikHandler {
      * @param schwerkraftInN    die neue Schwerkraft als Vektor. in [N].
      */
     public abstract void schwerkraftSetzen(Vektor schwerkraftInN);
+
+    public abstract void typ(Physik.Typ typ);
+
+    public abstract Physik.Typ typ();
+
+    public abstract void kraftWirken(Vektor kraftInN, Punkt globalerOrt);
+
+    /**
+     * Wirkt einen Impuls auf einem Welt-Punkt.
+     * @param impulsInNS        Ein Impuls (in [Ns]).
+     * @param globalerOrt       Der
+     */
+    public abstract void impulsWirken(Vektor impulsInNS, Punkt globalerOrt);
 }
