@@ -2,6 +2,7 @@ package ea;
 
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
+import org.jbox2d.dynamics.BodyType;
 
 /**
  * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>physik</code>.
@@ -243,7 +244,24 @@ public class Physik {
      */
     @API
     public enum Typ {
-        STATISCH, DYNAMISCH, KINEMATISCH
+        STATISCH, DYNAMISCH, KINEMATISCH;
+
+        /**
+         * Konvertierungsmethode zwischen Engine-Physiktyp und JB2D-Physiktyp.
+         * @return      Der zugehörige JB2D-Phy-Typ zu diesem Engine-Phy-Typ.
+         */
+        @NoExternalUse
+        public BodyType convert() {
+            switch (this) {
+                case STATISCH:
+                    return BodyType.STATIC;
+                case DYNAMISCH:
+                    return BodyType.DYNAMIC;
+                case KINEMATISCH:
+                    return BodyType.KINEMATIC;
+            }
+            return null;
+        }
     }
 
 }

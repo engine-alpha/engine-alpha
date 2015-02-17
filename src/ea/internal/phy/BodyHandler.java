@@ -6,10 +6,7 @@ import ea.Raum;
 import ea.Vektor;
 import ea.internal.ano.NoExternalUse;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.*;
 
 /**
  * Ein <code>Body-Handler</code> kümmert sich um die <i>physikalische Darstellung</i> eines <code>Raum</code>-Objekts.<br />
@@ -57,11 +54,10 @@ extends PhysikHandler {
     }
 
     @Override
-    public PhysikHandler update(WorldHandler worldHandler) throws IllegalStateException {
+    public void update(WorldHandler worldHandler) throws IllegalStateException {
         if(worldHandler != this.worldHandler) {
             throw new IllegalStateException("Ein Raum-Objekt darf nicht zwischen Wurzeln wechseln.");
         }
-        return this;
     }
 
     @Override
@@ -164,8 +160,13 @@ extends PhysikHandler {
     }
 
     @Override
-    public void typ(Physik.Typ typ) {
-
+    public PhysikHandler typ(Physik.Typ typ) {
+        BodyType newType = typ.convert();
+        if(newType == this.body.getType()) {
+            return this; //kein Update nötig.
+        }
+        body.setType(newType);
+        return this;
     }
 
     @Override

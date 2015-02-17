@@ -206,7 +206,11 @@ public abstract class Raum implements Comparable<Raum> {
      */
     @NoExternalUse
     public void updateWorld(WorldHandler worldHandler) {
-        this.physikHandler = physikHandler.update(worldHandler);
+        physikHandler.update(worldHandler);
+    }
+
+    void bodyTypeSetzen(Physik.Typ typ) {
+        this.physikHandler = physikHandler.typ(typ);
     }
 
     /**

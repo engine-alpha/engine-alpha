@@ -5,6 +5,7 @@ import ea.Physik.Typ;
 import ea.Punkt;
 import ea.Raum;
 import ea.Vektor;
+import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
@@ -25,6 +26,16 @@ public class NullHandler extends PhysikHandler {
      * Masse als hilfeweise gespeicherte Variable.
      */
     private float masse;
+
+    /**
+     * Die Shape des Objekts.
+     */
+    private Shape shape;
+
+    /**
+     * Referenz auf die World, in der sich der Handler befindet.
+     */
+    private WorldHandler worldHandler;
 
     public NullHandler(Raum raum) {
         super(raum);
@@ -161,22 +172,28 @@ public class NullHandler extends PhysikHandler {
         throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
     }
 
+    /**
+     *
+     * @param typ   Der neue Typ.
+     * @return
+     */
     @Override
-    public void typ(Typ typ) {
-        switch (typ) {
-            case STATISCH:
-                bodyDef.type = BodyType.STATIC;
-                break;
-            case DYNAMISCH:
-                bodyDef.type = BodyType.DYNAMIC;
-                break;
-            case KINEMATISCH:
-                bodyDef.type = BodyType.KINEMATIC;
-                break;
+    public PhysikHandler typ(Typ typ) {
+        if(typ == null) {
+            Logger.error("Physik", "Physik-Typ wurde nicht spezifiziert.");
+            return this;
         }
-        //TODO Typ <-> Update : Generierung vertauschen.
+        bodyDef.type = typ.convert();
+
+        if(shape == null) {
+            //Das Objekt hat keine Shape (ist Knoten)
+            return this;
+        }
 
 
+        bodyDef.position.set(worldHandler.fromVektor(position.alsVektor()));
+
+        return new BodyHandler(raum, worldHandler, bodyDef, fixtureDef);
 
     }
 
@@ -189,23 +206,13 @@ public class NullHandler extends PhysikHandler {
 
 
     @Override
-    public PhysikHandler update(WorldHandler worldHandler) throws IllegalStateException {
+    public void update(WorldHandler worldHandler) throws IllegalStateException {
         if(worldHandler == null)
-            return this;
+            return;
 
-
-
-        Shape jb2dShape = raum.berechneShape(worldHandler.getPixelProMeter());
-
-        if(jb2dShape == null) {
-            //Das Objekt hat keine Shape (ist Knoten)
-            return this;
-        }
+        this.worldHandler = worldHandler;
 
         worldHandler.blockPPMChanges();
-
-        bodyDef.position.set(worldHandler.fromVektor(position.alsVektor()));
-
-        return new BodyHandler(raum, worldHandler, bodyDef, fixtureDef);
+        shape = raum.berechneShape(worldHandler.getPixelProMeter());
     }
 }

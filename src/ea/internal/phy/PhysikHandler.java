@@ -40,11 +40,10 @@ public abstract class PhysikHandler {
      * Informiert diesen Handler, wenn es ein Update in der Baumstruktur um das Raum-Objekt gab. Die neue Physik (falls vorhanden)
      * wird so an alle Raum-Objekte weitergegeben.
      * @param worldHandler      Die neue Physik-Umgebung.
-     * @return                  Ein Handler, der mit dieser neuen Physik umgehen kann. Kann auch <code>this</code> sein.
      * @throws java.lang.IllegalStateException  Falls ein Raum-Objekt nach dem anmelden an einer Wurzel auf die Wurzel eines anderen Fensters
      *                                          verschoben wird.
      */
-    public abstract PhysikHandler update(WorldHandler worldHandler) throws IllegalStateException;
+    public abstract void update(WorldHandler worldHandler) throws IllegalStateException;
 
     /**
      * Verschiebt das Ziel-Objekt um einen spezifischen Wert auf der Zeichenebene. Die Ausführung hat <b>erst (ggf.) im
@@ -153,7 +152,12 @@ public abstract class PhysikHandler {
      */
     public abstract void schwerkraftSetzen(Vektor schwerkraftInN);
 
-    public abstract void typ(Physik.Typ typ);
+    /**
+     * Macht ein Typ-Update für diesen Handler.
+     * @param typ   Der neue Typ.
+     * @return      Ein Handler, der diesen Typ behandelt (ggf. this).
+     */
+    public abstract PhysikHandler typ(Physik.Typ typ);
 
     public abstract Physik.Typ typ();
 
