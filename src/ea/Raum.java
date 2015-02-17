@@ -152,6 +152,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 				c = Color.yellow;
 				break;
 			case "weiss":
+			case "weiß":
 				c = Color.white;
 				break;
 			case "orange":
@@ -161,6 +162,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 				c = Color.gray;
 				break;
 			case "gruen":
+			case "grün":
 				c = Color.green;
 				break;
 			case "blau":
@@ -178,6 +180,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 				break;
 			case "cyan":
 			case "tuerkis":
+			case "türkis":
 				c = Color.cyan;
 				break;
 			case "dunkelgrau":
@@ -185,6 +188,9 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 				break;
 			case "hellgrau":
 				c = Color.lightGray;
+				break;
+			case "braun":
+				c = new Color(110,68,14);
 				break;
 			default:
 				c = Color.black;
