@@ -37,6 +37,10 @@ extends PhysikHandler {
      */
     private Body body;
 
+    public Body getBody() {
+        return body;
+    }
+
     /**
      * Erstellt einen neuen Body-Handler
      * @param raum
@@ -47,8 +51,10 @@ extends PhysikHandler {
         this.worldHandler = worldHandler;
 
         //create the body and add fixture to it
-        body =  worldHandler.getWorld().createBody(bd);
+        body =  worldHandler.createBody(bd);
         body.createFixture(this.fixtureDef = fixtureDef);
+
+        System.out.println("Got Body: " + body.getMass());
     }
 
     @Override
@@ -67,7 +73,8 @@ extends PhysikHandler {
 
     @Override
     public Punkt mittelpunkt() {
-        return worldHandler.fromVec2(body.getWorldCenter()).alsPunkt();
+        Vec2 wc = body.getWorldCenter();
+        return worldHandler.fromVec2(wc).alsPunkt();
     }
 
     @Override
@@ -92,6 +99,7 @@ extends PhysikHandler {
 
     @Override
     public void rotieren(float radians) {
+        System.out.println("Rotiere um " + radians);
         body.setTransform(body.getPosition(), body.getAngle() + radians);
     }
 
@@ -132,12 +140,13 @@ extends PhysikHandler {
 
     @Override
     public float masse() {
-        return 0;
+        return body.getMass();
     }
 
     @Override
     public void kraftWirken(Vektor kraft) {
-
+        //System.out.println("Kraft " + kraft);
+        body.applyForceToCenter(new Vec2(kraft.x, kraft.y));
     }
 
     @Override
@@ -148,5 +157,10 @@ extends PhysikHandler {
     @Override
     public void drehImpulsWirken(float drehimpuls) {
 
+    }
+
+    @Override
+    public void schwerkraftSetzen(Vektor schwerkraftInN) {
+        worldHandler.getWorld().setGravity(new Vec2(schwerkraftInN.x, schwerkraftInN.y));
     }
 }

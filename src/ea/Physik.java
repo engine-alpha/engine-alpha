@@ -118,6 +118,16 @@ public class Physik {
         return raum.getPhysikHandler().reibung();
     }
 
+    /**
+     * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb des Fensters</b> wirkt.
+     * @param schwerkraftInN    Die neue Schwerkraft als Vektor. Die Einheit ist <b>[N]</b>.
+     * @return                  Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     *                          Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     */
+    public Physik schwerkraft(Vektor schwerkraftInN) {
+        raum.getPhysikHandler().schwerkraftSetzen(schwerkraftInN);
+        return this;
+    }
 
     /**
      * Wirkt eine Kraft auf den <i>Schwerpunkt</i> des Objekts.

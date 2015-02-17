@@ -21,6 +21,7 @@ package ea;
 
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 
@@ -79,6 +80,8 @@ public class Kreis extends Geometrie {
     public Shape berechneShape(float pixelProMeter) {
         CircleShape shape = new CircleShape();
         shape.m_radius = radius()/pixelProMeter;
+        shape.m_p.set(shape.m_radius,shape.m_radius);
+        System.out.println("Circle Shape made " + shape.m_p);
         return shape;
     }
 }

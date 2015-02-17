@@ -26,6 +26,7 @@ import ea.internal.phy.WorldHandler;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 
 /**
@@ -259,13 +260,25 @@ public abstract class Raum implements Comparable<Raum> {
         if (sichtbar && this.camcheck(r)) {
 
             //Hole Rotation und Position absolut auf der Zeichenebene.
-            float rotation = physikHandler.rotation();
+            float rotation = (float)Math.toRadians(physikHandler.rotation());
             Punkt position = physikHandler.position();
+
+            Punkt mittelpunkt = physikHandler.mittelpunkt();
+
+
+
+            if(mittelpunkt == null) {
+                //Objekt gerade erst erstellt. Braucht noch einen Moment...
+                return;
+            }
+
 
 
             // ____ Pre-Render ____
 
+
             g.rotate(rotation, position.x, position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
+
 
             //Opacity Update
             if (opacity != 1) {
@@ -290,7 +303,10 @@ public abstract class Raum implements Comparable<Raum> {
 
             //2' Rotation zurücksetzen
             g.rotate(-rotation, position.x, position.y);
+
+            //System.out.println("R: " + position + " - " + rotation);
         }
+
     }
 
     /**

@@ -146,5 +146,9 @@ public abstract class PhysikHandler {
      */
     public abstract void drehImpulsWirken(float drehimpuls);
 
-
+    /**
+     * Setzt global für die Physik-Umgebung, in der sich das Zielobjekt befindet, die Schwerkraft neu.
+     * @param schwerkraftInN    die neue Schwerkraft als Vektor. in [N].
+     */
+    public abstract void schwerkraftSetzen(Vektor schwerkraftInN);
 }

@@ -30,10 +30,6 @@ import java.awt.image.BufferStrategy;
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
 public class Zeichner extends Canvas {
-	/**
-	 * Das Intervall, in dem das Fenster upgedated wird.
-	 */
-	public static final int UPDATE_INTERVALL = 40;
 
 	private static final long serialVersionUID = 188647530006553893L;
 

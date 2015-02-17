@@ -1,5 +1,8 @@
 package ea.internal.frame;
 
+import ea.internal.phy.WorldHandler;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
 
 /**
@@ -46,12 +49,24 @@ extends FrameSubthread {
     }
 
     /**
+     * Ein Lock, der sicherstellt, dass nur ein Thread auf einmal die World beansprucht.
+     */
+    private Object worldLock = new Object();
+
+    /**
      * Erstellt
      * @param world
      */
-    public WorldThread(FrameThread master, World world) {
+    public WorldThread(FrameThread master, WorldHandler worldHandler) {
         super(master, "Physics-Thread #" + wtcnt++);
-        this.world = world;
+        this.world = worldHandler.getWorld();
+        worldHandler.setWorldThread(this);
+    }
+
+    public Body createBody(BodyDef bd) {
+        synchronized (worldLock) {
+            return world.createBody(bd);
+        }
     }
 
     /**
@@ -59,6 +74,8 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
-        world.step(deltaT, velocityIterations, positionIterations);
+        synchronized (worldLock) {
+            world.step(deltaT, velocityIterations, positionIterations);
+        }
     }
 }

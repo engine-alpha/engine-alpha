@@ -17,7 +17,7 @@ public class NullHandler extends PhysikHandler {
     public NullHandler(Raum raum) {
         super(raum);
         bodyDef = new BodyDef();
-        bodyDef.type = BodyType.STATIC;
+        bodyDef.type = BodyType.DYNAMIC;
     }
 
 
@@ -33,7 +33,7 @@ public class NullHandler extends PhysikHandler {
     private float rotation = 0;
 
     /**Standard-Physik-Parameter*/
-    private float dichte = 0.5f, reibung = 0.3f, elastizitaet = 0.5f, masse = 50f;
+    private float dichte = 30f, reibung = 0.3f, elastizitaet = 0.5f, masse = 50f;
 
     /**
      * Die Standard Body-Definition. Wird beim Übertrag eines Null-Handlers in einen
@@ -48,6 +48,7 @@ public class NullHandler extends PhysikHandler {
 
     @Override
     public Punkt mittelpunkt() {
+        System.out.println("Nullhandler Mittelpunkt");
         return null;
     }
 
@@ -131,11 +132,18 @@ public class NullHandler extends PhysikHandler {
         //
     }
 
+    @Override
+    public void schwerkraftSetzen(Vektor schwerkraftInN) {
+        //
+    }
+
 
     @Override
     public PhysikHandler update(WorldHandler worldHandler) throws IllegalStateException {
         if(worldHandler == null)
             return this;
+
+
 
         Shape jb2dShape = raum.berechneShape(worldHandler.getPixelProMeter());
 
@@ -143,6 +151,8 @@ public class NullHandler extends PhysikHandler {
             //Das Objekt hat keine Shape (ist Knoten)
             return this;
         }
+
+        worldHandler.blockPPMChanges();
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = jb2dShape;

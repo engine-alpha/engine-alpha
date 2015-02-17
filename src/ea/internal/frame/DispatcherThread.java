@@ -66,6 +66,7 @@ extends FrameSubthread {
             } else {
                 synchronized (dispatchableQueue) {
                     Dispatchable next = dispatchableQueue.remove();
+                    if(next == null) continue;
                     next.dispatch();
                 }
 

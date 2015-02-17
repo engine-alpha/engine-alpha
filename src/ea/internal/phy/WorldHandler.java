@@ -3,7 +3,10 @@ package ea.internal.phy;
 import ea.*;
 
 import ea.internal.ano.NoExternalUse;
+import ea.internal.frame.WorldThread;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
 import sun.misc.Version;
 
@@ -24,6 +27,18 @@ public class WorldHandler {
     private final World world;
 
     /**
+     * Der WorldThread, der sich um die Rechen-Steps innerhalb der Engine kümmert.
+     * Die Referenz wird genutzt, um sicherzustellen, dass keine Bodies erstellt werden,
+     * während die world sich im step befindet.
+     */
+    private WorldThread worldThread;
+
+    @NoExternalUse
+    public void setWorldThread(WorldThread worldThread) {
+        this.worldThread = worldThread;
+    }
+
+    /**
      * Umrechnungsgröße zwischen Größen der Physik-Engine und der Zeichenebene der EA.
      * Gibt an, wie viele Pixel genau einen Meter ausmachen.<br/>
      *
@@ -34,7 +49,7 @@ public class WorldHandler {
     /**
      * Flag, das angibt, ob die Pixel Pro Meter bereits angefragt wurden.
      */
-    private boolean ppmRequested;
+    private boolean ppmRequested = false;
 
     /**
      * Gibt die Umrechnungsgröße zwischen Größen der Physik-Engine und der Zeichenebene der EA an.
@@ -42,8 +57,15 @@ public class WorldHandler {
      *          <b>Einheit: [px/m]</b>
      */
     public float getPixelProMeter() {
-        ppmRequested = true;
         return pixelProMeter;
+    }
+
+    /**
+     * Blockiert die Möglichkeit weitere PPM-Changes zu machen.
+     * Wird intern aufgerufen, sobald innerhalb der Engine die erste Shape kreiert wurde.
+     */
+    public void blockPPMChanges() {
+        ppmRequested = true;
     }
 
     /**
@@ -65,7 +87,7 @@ public class WorldHandler {
      */
     @NoExternalUse
     public WorldHandler() {
-        this.world = new World(new Vec2(0f, -9.81f)); //Erstelle standard-World mit Standard-Gravitation.
+        this.world = new World(new Vec2(0f, 0f)); //Erstelle standard-World mit Standard-Gravitation.
     }
 
     /**
@@ -101,6 +123,10 @@ public class WorldHandler {
         return new Vektor(x,y);
     }
 
+    public Body createBody(BodyDef bd) {
+        return worldThread.createBody(bd);
+    }
+
     /**
      * Übersetzt einen Winkel in Radians in Grad.
      * @param rad Ein Winkel in Radians.
@@ -114,4 +140,6 @@ public class WorldHandler {
      * Umrechnungskonstante für Grad/Radians
      */
     private static final float degProRad = (float)((double)180/Math.PI);
+
+
 }

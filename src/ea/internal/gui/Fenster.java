@@ -124,7 +124,11 @@ public class Fenster extends Frame {
      */
     private final WorldHandler worldHandler;
 
-	/**
+    public WorldHandler getWorldHandler() {
+        return worldHandler;
+    }
+
+    /**
 	 * Einfacher Alternativkonstruktor.<br /> Erstellt ein normales Fenster mit der eingegeben
 	 * Groesse.
 	 *
@@ -253,7 +257,7 @@ public class Fenster extends Frame {
 			setVisible(true);
 		}
 
-		this.zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe, new Zeichenebene()));
+		this.zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe, new Zeichenebene(), this));
 		this.add(zeichner);
         zeichner.init();
 
@@ -294,7 +298,7 @@ public class Fenster extends Frame {
         zeichner.cam().wurzel().updateWorld(worldHandler);
 
         //Starte die Frame-Logic
-        frameThread = new FrameThread(zeichner, worldHandler.getWorld());
+        frameThread = new FrameThread(zeichner, worldHandler);
         frameThread.start();
 	}
 

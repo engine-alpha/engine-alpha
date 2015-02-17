@@ -143,6 +143,8 @@ public class Knoten extends Raum {
 
         if(worldHandler != null)
             m.updateWorld(worldHandler);
+        else
+            System.out.println("No World Handler");
 	}
 
 	/**
@@ -165,6 +167,7 @@ public class Knoten extends Raum {
         if(worldHandler == null) {
             return;
         }
+        this.worldHandler = worldHandler;
         super.updateWorld(worldHandler);
         for (int i = list.size() - 1; i >= 0; i--) {
             list.get(i).updateWorld(worldHandler);

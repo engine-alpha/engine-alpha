@@ -2,6 +2,7 @@ package ea.internal.frame;
 
 import ea.Ticker;
 import ea.internal.gra.Zeichner;
+import ea.internal.phy.WorldHandler;
 import ea.internal.ui.UIEvent;
 import ea.internal.util.Logger;
 import org.jbox2d.dynamics.World;
@@ -98,7 +99,7 @@ extends Thread {
     /**
      * Konstruktor erstellt den Thread, aber <b>startet ihn nicht</b>.
      */
-    public FrameThread(Zeichner zeichner, World world) {
+    public FrameThread(Zeichner zeichner, WorldHandler worldHandler) {
         super("Frame Master Thread #" + threadcnt++); //<- eigener Name (f. Multi-Window)
         this.setDaemon(true); // Daemon setzen
 
@@ -106,7 +107,7 @@ extends Thread {
         Queue<Dispatchable> queue = new LinkedList<Dispatchable>();
 
         //Die Childs initiieren
-        worldThread = new WorldThread(this, world);
+        worldThread = new WorldThread(this, worldHandler);
         renderThread = new RenderThread(this, zeichner);
         dispatcherThread = new DispatcherThread(this, queue);
         producerThreads = new ProducerThread[] {
@@ -154,6 +155,7 @@ extends Thread {
     @Override
     public void run() {
         long deltaT = maxmillis; // Das tatsächliche DeltaT aus dem letzten Frame-Schritt (zu Beginn der Idealfall)
+        lastFrameTime = maxmillis;
         while(!interrupted()) {
             long tStart = System.currentTimeMillis();
 
@@ -163,7 +165,7 @@ extends Thread {
             renderThread.semi_start();
 
             //Physics (WorldThread)
-            worldThread.setDT(deltaT);
+            worldThread.setDT(maxmillis);
             worldThread.semi_start();
 
             //Start Producers

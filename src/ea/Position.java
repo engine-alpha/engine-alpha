@@ -27,6 +27,8 @@ import ea.internal.ano.NoExternalUse;
  * Created by andonie on 16.02.15.
  */
 public class Position {
+    private static final float DEG_PRO_RADIAN = (float) (180f/Math.PI);
+
     /**
      * Das Raum-Objekt, zu dem dieses Objekt eine Schnittstelle darstellt.
      */
@@ -291,8 +293,7 @@ public class Position {
 
 
     public Position rotieren(float winkel) {
-        System.out.println("Rotation:");
-        raum.getPhysikHandler().rotieren(winkel);
+        raum.getPhysikHandler().rotieren((float)Math.toRadians(winkel));
         return this;
     }
 }

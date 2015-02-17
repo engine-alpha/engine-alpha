@@ -20,9 +20,11 @@
 package ea;
 
 import ea.internal.gra.Zeichenebene;
+import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene;
@@ -74,6 +76,11 @@ public class Kamera {
     private boolean hatBounds = false;
 
     /**
+     * Referenz auf das Fenster, in dem diese Kamera den sichtbaren Bereich bestimmt.
+     */
+    private final Fenster fenster;
+
+    /**
      * Der aktuelle Kamerazoom.
      * TODO Zoom erklärung (was macht größer/kleiner?)
      */
@@ -81,13 +88,14 @@ public class Kamera {
 
     /**
      * Konstruktor fuer Objekte der Klasse Kamera
-     *
-     * @param sizeX Die X-Laenge des Fensters
+     *  @param sizeX Die X-Laenge des Fensters
      * @param sizeY Die Y-Laenge des Fensters
+     * @param fenster
      */
-    public Kamera(int sizeX, int sizeY, Zeichenebene z) {
+    public Kamera(int sizeX, int sizeY, Zeichenebene z, Fenster fenster) {
         ebene = z;
         bild = new BoundingRechteck(0, 0, sizeX, sizeY);
+        this.fenster = fenster;
     }
 
     /**
@@ -335,6 +343,20 @@ public class Kamera {
             }
 
             g.translate(tx, ty);
+
+            //Display FPS
+            g.setColor(new Color(200,200,200, 150));
+
+            String fpsMessage = " FPS: " + (1000 /fenster.getFrameThread().getLastFrameTime());
+            Font displayFont = new Font("Monospaced", Font.PLAIN, 12);
+            FontMetrics fm = g.getFontMetrics(displayFont);
+
+            Rectangle2D r2d = fm.getStringBounds(fpsMessage, g);
+
+            g.fillRect(10, 20, (int)r2d.getWidth(), (int)r2d.getHeight());
+
+            g.setColor(Color.black);
+            g.drawString(fpsMessage, 10, 30);
         }
     }
 

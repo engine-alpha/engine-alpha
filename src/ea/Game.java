@@ -277,6 +277,7 @@ public abstract class Game implements TastenReagierbar {
 	 *
 	 * @see ea.Taste
 	 */
+    @Override
 	public void reagieren (int code) {
 		if (exitOnEsc && code == Taste.ESCAPE) {
 			beenden();
@@ -445,11 +446,19 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public int zufallsZahl (int obergrenze) {
 		if (obergrenze < 0) {
-			throw new IllegalArgumentException("Achtung! Für eine Zufallszahl muss die definierte Obergrenze (die inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!");
+			throw new IllegalArgumentException("Achtung! Für eine Zufallszahl muss die definierte Obergrenze (die " +
+                    "inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!");
 		}
 
 		return zufall.nextInt(obergrenze + 1);
 	}
+
+    /**
+     * Aktiviert die Physik innerhalb der Umgebung dieses Game-Objekts.
+     */
+    public void physikAktivieren() {
+        //TODO
+    }
 
 	/**
 	 * Beendet dieses Game auf softe weise:<br /> - Das Fenster wird geschlossen<br /> - Die Physik
@@ -847,4 +856,8 @@ public abstract class Game implements TastenReagierbar {
 
 		return true;
 	}
+
+    public void ppmSetzen(float pixelprometer) {
+        fenster.getWorldHandler().setPixelProMeter(pixelprometer);
+    }
 }
