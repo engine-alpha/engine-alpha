@@ -75,17 +75,17 @@ public class Logger {
 	 * @param s
 	 * 		Text der Warnung
 	 */
-	public static void warning (String s) {
+	public static void warning (String s, String tag) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-		write("WARNUNG", e.getFileName(), e.getLineNumber(), s);
+		write("WARNUNG", tag, e.getFileName(), e.getLineNumber(), s);
 	}
 
-	private static String write (String type, String filename, int line, String message) {
-		return write(type, filename, line, message, false, true);
+	private static String write (String type, String tag, String filename, int line, String message) {
+		return write(type, tag, filename, line, message, false, true);
 	}
 
-	private static String write (String type, String filename, int line, String message, boolean error, boolean printOnConsole) {
-		String str = String.format("[%s][%s] %s (%s:%s)", getTime(), type, message, filename, Integer.toString(line));
+	private static String write (String type, String tag, String filename, int line, String message, boolean error, boolean printOnConsole) {
+		String str = String.format("[%s][%s][%s] %s (%s:%s)", getTime(), type, tag, message, filename, Integer.toString(line));
 
         if(printOnConsole) {
             if (error) {
@@ -134,9 +134,9 @@ public class Logger {
 	 * @param s
 	 * 		Text des Fehlers
 	 */
-	public static void error (String s) {
+	public static void error (String tag, String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-		write("ERROR", e.getFileName(), e.getLineNumber(), s, true, true);
+		write("ERROR", tag, e.getFileName(), e.getLineNumber(), s, true, true);
 	}
 
 	/**
@@ -145,9 +145,9 @@ public class Logger {
 	 * @param s
 	 * 		Text der Information
 	 */
-	public static void info (String s) {
+	public static void info (String tag, String s) {
 		StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-		write("INFO", e.getFileName(), e.getLineNumber(), s);
+		write("INFO", tag, e.getFileName(), e.getLineNumber(), s);
 	}
 
     /**
@@ -159,6 +159,6 @@ public class Logger {
      */
     public static void debug(String tag, String s) {
         StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-        write("DEBUG", e.getFileName(), e.getLineNumber(), String.format("[%s] %s", tag, s), false, EngineAlpha.isDebug());
+        write("DEBUG", tag, e.getFileName(), e.getLineNumber(), s, false, EngineAlpha.isDebug());
     }
 }

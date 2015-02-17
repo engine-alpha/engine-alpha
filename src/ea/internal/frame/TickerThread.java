@@ -1,6 +1,7 @@
 package ea.internal.frame;
 
 import ea.Ticker;
+import ea.internal.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Queue;
@@ -40,6 +41,13 @@ extends ProducerThread {
      */
     public void addTicker(Ticker ticker, int intervall) {
         tickerJobs.add(new TickerJob(ticker, intervall));
+        Logger.debug("Ticker", String.format("Neuer Ticker mit Intervall %s ms angemeldet.", intervall));
+    }
+
+    public void removeTicker(Ticker ticker) {
+        if(!tickerJobs.remove(ticker)) {
+            Logger.error("Der abzumeldende Ticker war nicht angemeldet.");
+        }
     }
 
     @Override
