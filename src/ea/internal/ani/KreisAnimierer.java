@@ -86,6 +86,8 @@ public class KreisAnimierer extends Animierer {
 		}
 	}
 
+	private int stepCount = 0;
+
 	public void animationsSchritt () {
 		if(uhrzeigersinn)
             winkel += schritt;
@@ -97,5 +99,8 @@ public class KreisAnimierer extends Animierer {
 		Vektor v = new Vektor(x - letzter.realX(), y - letzter.realY());
 		ziel.bewegen(v);
 		letzter = letzter.verschobenerPunkt(v);
+		if(!loop && ++stepCount == 200) {
+			super.anhalten();
+		}
 	}
 }
