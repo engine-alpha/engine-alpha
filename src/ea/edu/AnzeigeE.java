@@ -20,12 +20,8 @@
 package ea.edu;
 
 import ea.*;
-import ea.internal.gui.Eingabe;
-import ea.internal.gui.Frage;
-import ea.internal.gui.Nachricht;
 import ea.internal.util.Logger;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

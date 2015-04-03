@@ -23,7 +23,6 @@ import ea.internal.gra.Zeichenebene;
 import ea.internal.util.Logger;
 
 import java.awt.*;
-import java.util.ListIterator;
 
 /**
  * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene;
