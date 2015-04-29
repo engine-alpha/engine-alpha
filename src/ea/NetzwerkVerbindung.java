@@ -19,9 +19,9 @@
 
 package ea;
 
-import java.io.BufferedWriter;
-
 import ea.edu.net.NetzwerkInterpreter;
+
+import java.io.BufferedWriter;
 
 /**
  * Diese Klasse sammelt die beiden wesentlichen Objekte einer Netzverbindung
