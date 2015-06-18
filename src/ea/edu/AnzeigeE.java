@@ -183,7 +183,7 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 
 	/**
 	 *
-	 * @param farbe		Die Farbe in der Die Punktestaende angezeigt werden sollen
+	 * @param farbe		Die Farbe in der die Punktestaende angezeigt werden sollen
 	 */
 	public void setzeFarbePunktestand(String farbe) {
 		links.setzeFarbe(farbe);
