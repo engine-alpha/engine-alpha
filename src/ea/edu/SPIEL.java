@@ -290,6 +290,14 @@ public class SPIEL {
 	}
 
 	/**
+	 *
+	 * @param farbe		Die neue Farbe der Punkteanzeige
+	 */
+	public void setzeFarbePunktestand(String farbe) {
+		anzeige.setzeFarbePunktestand(farbe);
+	}
+
+	/**
 	 * Gibt eine Zufallszahl aus.
 	 *
 	 * @param von

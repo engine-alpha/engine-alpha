@@ -181,6 +181,16 @@ public class AnzeigeE extends Manager implements Ticker, TastenReagierbar, Klick
 		rechts.positionSetzen((breite + lStrich) / 2 + 5, 10);
 	}
 
+	/**
+	 *
+	 * @param farbe		Die Farbe in der Die Punktestaende angezeigt werden sollen
+	 */
+	public void setzeFarbePunktestand(String farbe) {
+		links.setzeFarbe(farbe);
+		rechts.setzeFarbe(farbe);
+		strich.setzeFarbe(farbe);
+	}
+
 	public Maus getMaus () {
 		return maus;
 	}
