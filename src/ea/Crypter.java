@@ -10,7 +10,7 @@ import sun.misc.*;
 
 public class Crypter {
 	 public String verschluesseln(String text, String schluessel){
-	 if(schluessel.lenght() == 16){
+	 if(schluessel.length() == 16){
 	   Key key;
 	   String encryptedValue=null;
 		try {
@@ -27,7 +27,7 @@ public class Crypter {
 	}
 
 	public String entschluesseln(String text,String schluessel){
-	if(schluessel.lenght() == 16){
+	if(schluessel.length() == 16){
 	    Key key;
 	    String decryptedValue = null;
 		try {
