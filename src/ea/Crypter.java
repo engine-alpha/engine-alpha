@@ -22,7 +22,7 @@ public class Crypter {
 		}catch(Exception e){e.printStackTrace();}
 	    return encryptedValue;
 	    }else{
-	    System.out.println("Der SChluessel muss 16 Zeichen haben!");
+		 System.out.println("Der SChluessel muss 16 Zeichen haben!");
 	    }
 	}
 
@@ -40,7 +40,7 @@ public class Crypter {
 		}catch(Exception e){e.printStackTrace();}
 	    return decryptedValue;
 	     }else{
-	    System.out.println("Der SChluessel muss 16 Zeichen haben!");
+		 System.out.println("Der SChluessel muss 16 Zeichen haben!");
 	    }
 	}
 }
