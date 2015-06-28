@@ -10,9 +10,9 @@ import sun.misc.*;
 
 public class Crypter {
 	 public String verschluesseln(String text, String schluessel){
+		 Key key;
+		 String encryptedValue=null;
 	 if(schluessel.length() == 16){
-	   Key key;
-	   String encryptedValue=null;
 		try {
 	  	key = new SecretKeySpec(schluessel.getBytes(Charset.forName("UTF-8")), "AES");
 	  	Cipher c = Cipher.getInstance("AES");
@@ -20,16 +20,17 @@ public class Crypter {
 	  	byte[] encValue = c.doFinal(text.getBytes());
 	  	encryptedValue = new BASE64Encoder().encode(encValue);
 		}catch(Exception e){e.printStackTrace();}
-	    return encryptedValue;
-	    }else{
+	   	}else{
 		 System.out.println("Der Schluessel muss 16 Zeichen haben!");
 	    }
-	}
+	 	return encryptedValue;
+	    
+	    }
 
 	public String entschluesseln(String text,String schluessel){
+		Key key;
+		String decryptedValue = null;
 	if(schluessel.length() == 16){
-	    Key key;
-	    String decryptedValue = null;
 		try {
 	  	key = new SecretKeySpec(schluessel.getBytes(Charset.forName("UTF-8")), "AES");
 	  	Cipher c = Cipher.getInstance("AES");
@@ -38,9 +39,10 @@ public class Crypter {
 		  byte[] decValue = c.doFinal(decordedValue);
 		  decryptedValue = new String(decValue);
 		}catch(Exception e){e.printStackTrace();}
-	    return decryptedValue;
+	 
 	     }else{
 		 System.out.println("Der Schluessel muss 16 Zeichen haben!");
 	    }
+	   return decryptedValue;
 	}
 }
