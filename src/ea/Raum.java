@@ -102,7 +102,7 @@ public abstract class Raum implements Comparable<Raum> {
      *
      * @see Position
      */
-    public final  Physik physik = new Physik(this);
+    public final Physik physik = new Physik(this);
 
 
 

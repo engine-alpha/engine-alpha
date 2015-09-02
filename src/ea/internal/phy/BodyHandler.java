@@ -50,6 +50,7 @@ extends PhysikHandler {
 
         //create the body and add fixture to it
         body =  worldHandler.createBody(bd);
+
         body.createFixture(this.fixtureDef = fixtureDef);
     }
 

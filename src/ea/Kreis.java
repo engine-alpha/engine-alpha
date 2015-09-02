@@ -70,7 +70,7 @@ public class Kreis extends Geometrie {
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillOval((int) position.x(), (int) position.y(), (int) durchmesser, (int) durchmesser);
+        g.fillOval(Math.round(position.x()), Math.round(position.y()), Math.round(durchmesser), Math.round(durchmesser));
     }
 
     /**

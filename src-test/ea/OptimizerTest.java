@@ -18,7 +18,7 @@ public class OptimizerTest {
 		try {
 			img = ImageIO.read(EngineAlpha.class.getResource("/assets/logo.png"));
 		} catch (Exception e) {
-			Logger.error(e.getLocalizedMessage());
+			Logger.error("OptimizerTest", e.getLocalizedMessage());
 		}
 
 		assertNotNull(img);

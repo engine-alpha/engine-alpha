@@ -197,7 +197,7 @@ public class Physik {
      */
     @API
     public Physik typ(Typ typ) {
-        raum.getPhysikHandler().typ(typ);
+        raum.bodyTypeSetzen(typ);
         return this;
     }
 

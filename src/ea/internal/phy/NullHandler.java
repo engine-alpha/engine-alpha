@@ -1,10 +1,7 @@
 package ea.internal.phy;
 
-import ea.Physik;
+import ea.*;
 import ea.Physik.Typ;
-import ea.Punkt;
-import ea.Raum;
-import ea.Vektor;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.BodyDef;
@@ -19,6 +16,7 @@ public class NullHandler extends PhysikHandler {
 
     /**
      * Die Fixture Definition für das Client-Objekt.
+     * Enthält auch die <b>shape</b>-Informationen.
      */
     private final FixtureDef fixtureDef;
 
@@ -26,11 +24,6 @@ public class NullHandler extends PhysikHandler {
      * Masse als hilfeweise gespeicherte Variable.
      */
     private float masse;
-
-    /**
-     * Die Shape des Objekts.
-     */
-    private Shape shape;
 
     /**
      * Referenz auf die World, in der sich der Handler befindet.
@@ -185,8 +178,8 @@ public class NullHandler extends PhysikHandler {
         }
         bodyDef.type = typ.convert();
 
-        if(shape == null) {
-            //Das Objekt hat keine Shape (ist Knoten)
+        if(fixtureDef.shape == null) {
+            //Das Objekt hat keine Shape (ist Knoten oder nicht an einem Knoten angemeldet)
             return this;
         }
 
@@ -212,7 +205,8 @@ public class NullHandler extends PhysikHandler {
 
         this.worldHandler = worldHandler;
 
-        worldHandler.blockPPMChanges();
-        shape = raum.berechneShape(worldHandler.getPixelProMeter());
+
+        if(! (this.raum instanceof Knoten)) worldHandler.blockPPMChanges();
+        fixtureDef.shape = raum.berechneShape(worldHandler.getPixelProMeter());
     }
 }
