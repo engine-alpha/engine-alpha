@@ -19,118 +19,104 @@
 
 package ea;
 
-import ea.internal.sound.SampledSound;
-
+import javax.sound.sampled.*;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class Sound {
-	private byte[] data;
+    private Clip clip;
+    private AudioInputStream ais;
 
-	private SampledSound ss;
+    public Sound(String datei) {
+        try {
+            byte[] data = loadFromStream(new FileInputStream(datei));
+            ais = AudioSystem.getAudioInputStream(new ByteArrayInputStream(data));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public Sound (String datei) {
-		try {
-			data = loadFromStream(new FileInputStream(datei));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
+    public static byte[] loadFromStream(InputStream is) {
+        byte[] bytes;
 
-	public static byte[] loadFromStream (InputStream is) {
-		byte[] bytes;
+        if (is == null) {
+            return null;
+        }
 
-		if (is == null) {
-			return null;
-		}
+        try {
+            bytes = new byte[is.available()];
 
-		try {
-			bytes = new byte[is.available()];
+            int off = 0;
+            int n;
 
-			int off = 0;
-			int n;
+            while (off < bytes.length && (n = is.read(bytes, off, bytes.length - off)) >= 0) {
+                off += n;
+            }
 
-			while (off < bytes.length && (n = is.read(bytes, off, bytes.length - off)) >= 0) {
-				off += n;
-			}
+            is.close();
 
-			is.close();
+            return bytes;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                // ignore here...
+            }
+        }
+    }
 
-			return bytes;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+    public void play() {
+        try {
+            ais.reset();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-		return null;
-	}
+        try {
+            openClip();
+            clip.start();
+        } catch (LineUnavailableException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public void play () {
-		if (ss != null) {
-			ss.stopSound();
+    public void loop() {
+        try {
+            ais.reset();
+        } catch (IOException e) {
+            return;
+        }
 
-			try {
-				ss.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+        try {
+            openClip();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (LineUnavailableException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-			ss = null;
-		}
+    public void stop() {
+        if (clip == null) {
+            return;
+        }
 
-		if (data != null) {
-			ss = new SampledSound(data, false);
-			ss.start();
-		}
-	}
+        clip.stop();
+    }
 
-	public void loop () {
-		if (ss != null) {
-			ss.stopSound();
-
-			try {
-				ss.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			ss = null;
-		}
-
-		if (data != null) {
-			ss = new SampledSound(data, true);
-			ss.start();
-		}
-	}
-
-	public void pause () {
-		if (ss == null) {
-			return;
-		}
-
-		ss.pauseSound(true);
-	}
-
-	public void unpause () {
-		if (ss == null) {
-			return;
-		}
-
-		ss.pauseSound(false);
-	}
-
-	public void stop () {
-		if (ss == null) {
-			return;
-		}
-
-		ss.stopSound();
-	}
+    private void openClip() throws LineUnavailableException, IOException {
+        clip = AudioSystem.getClip();
+        clip.open(ais);
+        clip.addLineListener(new LineListener() {
+            @Override
+            public void update(LineEvent event) {
+                if (event.getType().equals(LineEvent.Type.STOP)) {
+                    event.getLine().close();
+                }
+            }
+        });
+    }
 }
