@@ -296,4 +296,8 @@ public class Position {
         raum.getPhysikHandler().rotieren((float)Math.toRadians(winkel));
         return this;
     }
+
+    public float rotation() {
+        return raum.getPhysikHandler().rotation();
+    }
 }

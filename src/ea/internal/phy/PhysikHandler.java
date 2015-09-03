@@ -62,9 +62,17 @@ public class PhysikHandler {
     static {
         standardBody = new BodyDef();
         standardBody.active = false;
+        standardBody.type = BodyType.STATIC;
+        //standardBody.fixedRotation = false;
 
         standardFixture = new FixtureDef();
         standardFixture.isSensor = true;
+        //standardFixture.density = 1f;
+
+        standardFixture.density = 30f;
+        standardFixture.friction = 0.3f;
+        standardFixture.restitution = 0.5f;
+
     }
 
 
@@ -219,7 +227,10 @@ public class PhysikHandler {
     public void rotationFixiertSetzen(boolean fixiert) {
         if(!checkBody()) return;
 
+        //System.out.println("Rotation fixiert: " + fixiert);
+
         body.setFixedRotation(fixiert);
+
     }
 
     public boolean rotationFixiert() {
@@ -363,7 +374,7 @@ public class PhysikHandler {
         if(!checkBody()) return;
 
         BodyType newType = typ.convert();
-        if(newType == this.body.getType()) {
+        if(typ == physiktyp) {
             return;
         }
 
@@ -376,6 +387,8 @@ public class PhysikHandler {
                 body.setActive(true);
                 break;
         }
+
+        this.physiktyp = typ;
 
         body.setType(newType);
     }
