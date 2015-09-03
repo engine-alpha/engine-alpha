@@ -216,6 +216,18 @@ public class PhysikHandler {
         return body.getAngle();
     }
 
+    public void rotationFixiertSetzen(boolean fixiert) {
+        if(!checkBody()) return;
+
+        body.setFixedRotation(fixiert);
+    }
+
+    public boolean rotationFixiert() {
+        if(!checkBody()) return false;
+
+        return body.isFixedRotation();
+    }
+
     /**
      * Rotiert das Ziel-Objekt um einen festen Winkel.
      * @param radians   Der Winkel, um den das Ziel-Objekt gedreht werden soll (in <i>Radians</i>).

@@ -37,11 +37,8 @@ public abstract class Geometrie extends Raum {
 
 	/**
 	 * Konstruktor.
-	 *
-	 * @param position  Die Ausgangsposition dieses Geometrie-Objekts.
 	 */
-	public Geometrie (Punkt position) {
-        this.position.set(position);
+	public Geometrie () {
 	}
 
 	/**

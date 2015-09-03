@@ -1,5 +1,6 @@
 package ea;
 
+import ea.internal.phy.WorldHandler;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -7,8 +8,11 @@ import static org.junit.Assert.*;
 public class KnotenTest {
 	@Test
 	public void basic () {
-		Rechteck r = new Rechteck(100, 100, 100, 100);
-		Knoten k = new Knoten();
+        Knoten k = new Knoten();
+        k.updateWorld(new WorldHandler());
+		Rechteck r = new Rechteck(100, 100);
+        r.position.set(100, 100);
+
 
 		k.add(r);
 		assertTrue(k.besitzt(r));

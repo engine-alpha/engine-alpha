@@ -119,6 +119,29 @@ public class Physik {
         return raum.getPhysikHandler().reibung();
     }
 
+    /**
+     * Setzt, ob die Rotation dieses Objekts fixiert sein soll. Ist die Rotation dieses Objekts
+     * fixiert, dreht sich das Objekt nicht durch Kräfte oder Kollisionen, die an dem Objekt wirken.<br />
+     * Nur <b>dynamische</b> Objekte können rotieren, da nur an ihnen Impulse wirken können.
+     * @param fixiert   Ist dieser Wert <code>true</code>, ist die Rotation dieses Objekts ab sofort
+     *                  <i>fixiert</i> (Standard), ist er <code>false</code>, ist die Rotation dieses
+     *                  Objektes <i>frei</i>.
+     * @see #rotationFixiert()
+     */
+    @API
+    public void rotationFixiert(boolean fixiert) {
+        raum.getPhysikHandler().rotationFixiertSetzen(fixiert);
+    }
+
+    /**
+     * Gibt an, ob die Rotation dieses Objekts derzeit als fixiert gesetzt ist.
+     * @return  Ist dieser Wert <code>true</code>, so ist die Rotation dieses Objekts <i>fixiert</i>,
+     *          ist er <code>false</code>, so ist die Rotation dieses Objekts <i>frei</i>.
+     * @see #rotationFixiert(boolean)
+     */
+    public boolean rotationFixiert() {
+        return raum.getPhysikHandler().rotationFixiert();
+    }
 
     /* _________________________ World-Wrap _________________________ */
 

@@ -57,7 +57,7 @@ public class Dreieck extends Geometrie {
 	 * 		Alle Y-Koordinaten als Feld
 	 */
 	public Dreieck (float[] x, float[] y) {
-		super(Punkt.ZENTRUM);
+		super();
 
 		if (x.length == 3 && y.length == 3) {
 			this.x = x;

@@ -34,8 +34,9 @@ public class RechteckE extends Rechteck {
 	 * sichtbar.
 	 */
 	public RechteckE () {
-		super(50, 200, 200, 130);
+		super(200, 130);
 		farbeSetzen("Rot");
 		FensterE.getFenster().wurzel.add(this);
+        position.set(50,200);
 	}
 }

@@ -44,18 +44,13 @@ public class Rechteck extends Geometrie {
 
 	/**
 	 * Konstruktor fuer Objekte der Klasse Rechteck
-	 *
-	 * @param x
-	 * 		Die X Position (Koordinate der linken oberen Ecke) des Rechtecks
-	 * @param y
-	 * 		Die X Position (Koordinate der linken oberen Ecke) des Rechtecks
 	 * @param breite
 	 * 		Die Breite des Rechtecks
 	 * @param hoehe
 	 * 		Die hoehe des Rechtecks
 	 */
-	public Rechteck (float x, float y, float breite, float hoehe) {
-		super(new Punkt(x,y));
+	public Rechteck (float breite, float hoehe) {
+		super();
         masseSetzen(breite, hoehe);
 	}
 

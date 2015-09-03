@@ -39,19 +39,12 @@ public class Kreis extends Geometrie {
     private float durchmesser;
 
 	/**
-	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
-	 *
-	 * @param x
-	 * 		Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
-	 * 		die des Mittelpunktes</b>
-	 * @param y
-	 * 		Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
-	 * 		die des Mittelpunktes</b>
+	 * Alternativkonstruktor mit vorgefertigter Genauigkeit.
 	 * @param durchmesser
 	 * 		Der Durchmesser des Kreises
 	 */
-	public Kreis (float x, float y, float durchmesser) {
-		super(new Punkt(x,y));
+	public Kreis (float durchmesser) {
+		super();
         this.durchmesser = durchmesser;
 	}
 

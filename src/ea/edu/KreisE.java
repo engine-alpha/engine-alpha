@@ -34,8 +34,9 @@ public class KreisE extends Kreis {
 	 * im "edu"-Standartfenster sichtbar.
 	 */
 	public KreisE () {
-		super(300, 200, 100);
+		super(100);
 		farbeSetzen("Blau");
 		FensterE.getFenster().wurzel.add(this);
+        position.set(300,200);
 	}
 }

@@ -75,7 +75,7 @@ public final class BoundingRechteck implements Serializable {
 	 * @return Ein neues Rechteck-Objekt, das genau dieses BoundingRechteck abdeckt
 	 */
 	public Rechteck ausDiesem () {
-		return new Rechteck(x, y, breite, hoehe);
+		return new Rechteck(breite, hoehe); //TODO: Position wird nicht mitgenommen.
 	}
 
 	/**
