@@ -26,6 +26,7 @@ import ea.internal.gui.Fenster;
 import ea.internal.phy.*;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 import java.util.Locale;
 
@@ -71,10 +72,6 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 */
 	protected Punkt position = Punkt.ZENTRUM;
 
-	private Punkt lastMiddle;
-
-	private double lastDrehung;
-
 	/**
 	 * Gibt an, ob das Objekt zur Zeit ueberhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall,
 	 * so wird die Zeichenroutine direkt uebergangen.
@@ -119,6 +116,11 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 * Composite des Grafik-Objekts. Zwischenspeicherung des letzten Zustands
 	 */
 	private Composite composite;
+
+	/**
+	 * Transofrm des Grafik-Objekts. Zwischenspeicherung des letzten Zustands
+	 */
+	private AffineTransform transform;
 
 	/**
 	 * Setzt, ob sämtliche Kollisionstests in der Engine Alpha grob oder fein sein sollen.
@@ -1107,11 +1109,11 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 	 */
 	@NoExternalUse
 	public final void beforeRender (Graphics2D g, BoundingRechteck r) {
-		lastMiddle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
-		lastDrehung = Math.toRadians(drehung);
+		transform = g.getTransform();
+		Punkt middle = mittelPunkt().verschobeneInstanz(new Vektor(-r.x, -r.y));
 
-		if (lastDrehung != 0) {
-			g.rotate(lastDrehung, lastMiddle.x, lastMiddle.y);
+		if (drehung != 0) {
+			g.rotate(Math.toRadians(drehung), middle.x, middle.y);
 		}
 
 		if (opacity != 1) {
@@ -1150,9 +1152,7 @@ public abstract class Raum implements Serializable, Comparable<Raum> {
 			g.setComposite(composite);
 		}
 
-		if (lastDrehung != 0) {
-			g.rotate(-lastDrehung, lastMiddle.x, lastMiddle.y);
-		}
+		g.setTransform(transform);
 	}
 
 	/**

@@ -88,7 +88,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * @param c
 	 * 		Die Kamera, deren Sicht grafisch dargestellt werden soll.
 	 */
-	public Zeichner (int x, int y, Kamera c) {
+	public Zeichner(int x, int y, Kamera c) {
 		this.setSize(x, y);
 		this.setPreferredSize(getSize());
 		this.setFocusable(true);
@@ -97,7 +97,7 @@ public class Zeichner extends Canvas implements Runnable {
 		this.cam = c;
 	}
 
-	public void init () {
+	public void init() {
 		if (thread == null) {
 			thread = new Thread(this, "Zeichenthread") {{
 				setDaemon(true);
@@ -110,7 +110,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * Hierin findet in einer Dauerschleife die Zeichenroutine statt.
 	 */
 	@Override
-	public void run () {
+	public void run() {
 		createBufferStrategy(2);
 		BufferStrategy bs = getBufferStrategy();
 		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
@@ -138,7 +138,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * @param g
 	 * 		Das zum Zeichnen uebergebene Graphics-Objekt
 	 */
-	public void render (Graphics2D g) {
+	public void render(Graphics2D g) {
 		// Absoluter Hintergrund
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
@@ -170,7 +170,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * Tötet den Zeichenprozess und entfernt alle Elemente von der Wurzel und neutralisiert die
 	 * Phyisk.
 	 */
-	public void kill () {
+	public void kill() {
 		work = false;
 
 		try {
@@ -186,14 +186,14 @@ public class Zeichner extends Canvas implements Runnable {
 	/**
 	 * @return Die Kamera, die dieser Zeichner aufruft
 	 */
-	public Kamera cam () {
+	public Kamera cam() {
 		return cam;
 	}
 
 	/**
 	 * @return Der statische Basisknoten
 	 */
-	public Knoten statNode () {
+	public Knoten statNode() {
 		return statNode;
 	}
 
@@ -203,7 +203,7 @@ public class Zeichner extends Canvas implements Runnable {
 	 * @param vordergrund
 	 * 		Der neue Vordergrund
 	 */
-	public void anmelden (Raum vordergrund) {
+	public void anmelden(Raum vordergrund) {
 		this.vordergrund = vordergrund;
 	}
 
@@ -213,29 +213,29 @@ public class Zeichner extends Canvas implements Runnable {
 	 * @param hintergrund
 	 * 		Der neue Hintergrund
 	 */
-	public void hintergrundAnmelden (Raum hintergrund) {
+	public void hintergrundAnmelden(Raum hintergrund) {
 		this.hintergrund = hintergrund;
 	}
 
 	/**
 	 * Löscht den absoluten Vordergrund
 	 */
-	void vordergrundLoeschen () {
+	void vordergrundLoeschen() {
 		vordergrund = null;
 	}
 
 	/**
 	 * @return Ein BoundingRechteck, dass die Breite und Höhe des Fensters hat.
 	 */
-	public BoundingRechteck masse () {
+	public BoundingRechteck masse() {
 		return groesse;
 	}
 
-	public void addSimple (SimpleGraphic g) {
+	public void addSimple(SimpleGraphic g) {
 		simples.add(g);
 	}
 
-	public void removeSimple (SimpleGraphic g) {
+	public void removeSimple(SimpleGraphic g) {
 		simples.remove(g);
 	}
 }
