@@ -244,7 +244,7 @@ public class Physik {
      */
     @API
     public enum Typ {
-        STATISCH, DYNAMISCH, KINEMATISCH;
+        STATISCH, DYNAMISCH, KINEMATISCH, PASSIV;
 
         /**
          * Konvertierungsmethode zwischen Engine-Physiktyp und JB2D-Physiktyp.
@@ -254,6 +254,7 @@ public class Physik {
         public BodyType convert() {
             switch (this) {
                 case STATISCH:
+                case PASSIV:
                     return BodyType.STATIC;
                 case DYNAMISCH:
                     return BodyType.DYNAMIC;

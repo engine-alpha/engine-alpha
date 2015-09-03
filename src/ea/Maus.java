@@ -655,9 +655,11 @@ public class Maus {
 		 * 		Der Klickpunkt
 		 */
 		public void klick (Punkt p) {
-			if (koll.beinhaltet(p)) {
-				listener.mausReagieren(signal);
-			}
+            //TODO : Implement!
+            throw new UnsupportedOperationException("Beinhaltet-Methode nicht implementiert.");
+			//if (koll.beinhaltet(p)) {
+			//	listener.mausReagieren(signal);
+			//}
 		}
 
 		/**

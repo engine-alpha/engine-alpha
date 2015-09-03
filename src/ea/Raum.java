@@ -20,7 +20,6 @@
 package ea;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
 import ea.internal.phy.WorldHandler;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -67,7 +66,7 @@ public abstract class Raum implements Comparable<Raum> {
     /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
-    private PhysikHandler physikHandler = new NullHandler(this);
+    private PhysikHandler physikHandler = new PhysikHandler(this);
 
     /* _________________________ Die Handler _________________________ */
 
@@ -172,31 +171,6 @@ public abstract class Raum implements Comparable<Raum> {
 
     /* _________________________ API-Methoden in der Klasse direkt _________________________ */
 
-    /**
-     * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-     *
-     * @param r
-     * 		Das Objekt, das auf Kollision mit diesem getestet werden soll.
-     *
-     * @return TRUE, wenn sich beide Objekte schneiden.
-     */
-    @API
-    public final boolean schneidet (Raum r) {
-        return physikHandler.schneidet(r);
-    }
-
-    /**
-     * Prueft, ob ein bestimmter Punkt innerhalb des Raum-Objekts liegt.
-     *
-     * @param p
-     * 		Der Punkt, der auf Inhalt im Objekt getestet werden soll.
-     *
-     * @return TRUE, wenn der Punkt innerhalb des Objekts liegt.
-     */
-    @API
-    public final boolean beinhaltet (Punkt p) {
-        return physikHandler.beinhaltet(p);
-    }
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
 
@@ -210,7 +184,7 @@ public abstract class Raum implements Comparable<Raum> {
     }
 
     void bodyTypeSetzen(Physik.Typ typ) {
-        this.physikHandler = physikHandler.typ(typ);
+        physikHandler.typ(typ);
     }
 
     /**
