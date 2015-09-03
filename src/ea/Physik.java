@@ -238,13 +238,21 @@ public class Physik {
      *         </ul>
      *         Doese Eigenschaft gehört zum Beispiel zu <i>beweglichen Plattformen</i>.
      *     </li>
+     *     <li>
+     *         <b>Passive</b> Objekte:
+     *         <ul>
+     *              <li>Nehmen nicht an der Physik teil. Sie werden von der Physik so behandelt,
+     *              <i>als wären sie nicht da</i>.</li>
+     *              <li>Dies ist die <b>Standardeinstellung</b> für Objekte.</li>
+     *         </ul>
+     *     </li>
      * </ul>
      * @see #typ(ea.Physik.Typ)
      * @see #typ()
      */
     @API
     public enum Typ {
-        STATISCH, DYNAMISCH, KINEMATISCH;
+        STATISCH, DYNAMISCH, KINEMATISCH, PASSIV;
 
         /**
          * Konvertierungsmethode zwischen Engine-Physiktyp und JB2D-Physiktyp.
@@ -254,6 +262,7 @@ public class Physik {
         public BodyType convert() {
             switch (this) {
                 case STATISCH:
+                case PASSIV:
                     return BodyType.STATIC;
                 case DYNAMISCH:
                     return BodyType.DYNAMIC;

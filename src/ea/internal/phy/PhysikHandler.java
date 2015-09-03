@@ -27,11 +27,25 @@ public abstract class PhysikHandler {
     protected final Raum raum;
 
     /**
+     * Der physikalische Typ, den der Klient gerade fährt.
+     */
+    protected Physik.Typ physikTyp;
+
+    /**
+     * Diese Variable speichert die Sensor-Flag des Klienten.
+     * Die Sensor-Flag is true, wenn ein passives Objekt (= keine Physik) trotzdem
+     * an Kollisionstests teilnehmen soll.
+     */
+    protected boolean isSensor;
+
+    /**
      * Initialisiert den Physik-Handler.
      * @param raum  Das eine Raum-Objekt, das dieser Handler kontrolliert.
      */
-    protected PhysikHandler(Raum raum) {
+    protected PhysikHandler(Raum raum, Physik.Typ physikTyp, boolean isSensor) {
         this.raum = raum;
+        this.physikTyp = physikTyp;
+        this.isSensor = isSensor;
     }
 
     /* __________________________ Kontrakt: Abstrakte Methoden/Funktionen der Physik __________________________ */
@@ -159,7 +173,9 @@ public abstract class PhysikHandler {
      */
     public abstract PhysikHandler typ(Physik.Typ typ);
 
-    public abstract Physik.Typ typ();
+    public Physik.Typ typ() {
+        return physikTyp;
+    }
 
     public abstract void kraftWirken(Vektor kraftInN, Punkt globalerOrt);
 
@@ -169,4 +185,17 @@ public abstract class PhysikHandler {
      * @param globalerOrt       Der
      */
     public abstract void impulsWirken(Vektor impulsInNS, Punkt globalerOrt);
+
+    /**
+     * Entfernt den Körper von diesem Handler.
+     * Danach ist das Objekt physikalisch nicht mehr existent.
+     */
+    public abstract void killBody();
+
+    /**
+     * Gibt den WorldHandler aus, der die Welt handelt, in der sich der Klient
+     * befindet.
+     * @return  Der World-Handler, der zu diesem Physik-Handler gehört.
+     */
+    public abstract WorldHandler worldHandler();
 }

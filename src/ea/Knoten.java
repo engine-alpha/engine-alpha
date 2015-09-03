@@ -58,6 +58,9 @@ public class Knoten extends Raum {
 	 * Loescht alle Raum-Objekte, die an diesem Knoten gelagert sind.
 	 */
 	public void leeren () {
+        for(Raum m : list) {
+            m.loeschen();
+        }
 		list.clear();
 	}
 
@@ -73,6 +76,7 @@ public class Knoten extends Raum {
 	 *
 	 * @see #entfernenOhnePhysikAbmelden(Raum)
 	 */
+    @API
 	public void entfernen (Raum m) {
 		if (list.contains(m)) {
 			m.loeschen();
@@ -90,6 +94,7 @@ public class Knoten extends Raum {
 	 * @param m
 	 * 		Das von diesem Knoten zu entfernende Raum-Objekt
 	 */
+    @NoExternalUse
 	public void entfernenOhnePhysikAbmelden (Raum m) {
 		list.remove(m);
 	}

@@ -31,7 +31,7 @@ public class NullHandler extends PhysikHandler {
     private WorldHandler worldHandler;
 
     public NullHandler(Raum raum) {
-        super(raum);
+        super(raum, Typ.PASSIV, false);
         bodyDef = new BodyDef();
 
         fixtureDef = new FixtureDef();
@@ -137,32 +137,49 @@ public class NullHandler extends PhysikHandler {
 
     @Override
     public void kraftWirken(Vektor kraft) {
-        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
+        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
     }
 
     @Override
     public void drehMomentWirken(float drehmoment) {
-        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
+        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
     }
 
     @Override
     public void drehImpulsWirken(float drehimpuls) {
-        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
+        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
     }
 
     @Override
     public void schwerkraftSetzen(Vektor schwerkraftInN) {
-        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
+        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
     }
 
     @Override
     public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
-        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
+            Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                    "sein.");
     }
 
     @Override
     public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
-        throw new IllegalStateException("Das Objekt hat noch keine physikalischen Eigenschaften zugewiesen bekommen.");
+            Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                    "sein.");
+    }
+
+    @Override
+    public void killBody() {
+        Logger.warning("Physik/INTERNAL WARNING", "Kill Body wurde an einem Null-Handler aufgerufen.");
+    }
+
+    @Override
+    public WorldHandler worldHandler() {
+        Logger.error("Physik", "Ein Objekt wurde physikalisch angefragt, bevor es an einer Wurzel war.");
+        return null;
     }
 
     /**
@@ -184,15 +201,13 @@ public class NullHandler extends PhysikHandler {
         }
 
 
+        bodyDef.active = typ != Typ.PASSIV || isSensor;
+        fixtureDef.isSensor = typ == Typ.PASSIV && isSensor;
+
         bodyDef.position.set(worldHandler.fromVektor(position.alsVektor()));
 
-        return new BodyHandler(raum, worldHandler, bodyDef, fixtureDef);
+        return new BodyHandler(raum, worldHandler, bodyDef, fixtureDef, physikTyp, isSensor);
 
-    }
-
-    @Override
-    public Typ typ() {
-        return null;
     }
 
 
@@ -208,5 +223,7 @@ public class NullHandler extends PhysikHandler {
 
         if(! (this.raum instanceof Knoten)) worldHandler.blockPPMChanges();
         fixtureDef.shape = raum.berechneShape(worldHandler.getPixelProMeter());
+
+        raum.bodyTypeSetzen(physikTyp);
     }
 }

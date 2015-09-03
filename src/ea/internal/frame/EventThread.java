@@ -52,6 +52,7 @@ public class EventThread<E extends Dispatchable>
      */
     @Override
     public final void frameLogic() {
+        System.out.println("3");
         while(!lastFrameDispatchables.isEmpty()) {
             synchronized (dispatcherQueue) {
                 dispatcherQueue.add(lastFrameDispatchables.poll());
@@ -65,6 +66,7 @@ public class EventThread<E extends Dispatchable>
         synchronized (lastFrameDispatchables) {
             lastFrameDispatchables.notifyAll();
         }
+        System.out.println("4");
     }
 
 }

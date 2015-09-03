@@ -209,7 +209,8 @@ public abstract class Raum implements Comparable<Raum> {
         physikHandler.update(worldHandler);
     }
 
-    void bodyTypeSetzen(Physik.Typ typ) {
+    @NoExternalUse
+    public void bodyTypeSetzen(Physik.Typ typ) {
         this.physikHandler = physikHandler.typ(typ);
     }
 
@@ -224,8 +225,10 @@ public abstract class Raum implements Comparable<Raum> {
      * nicht!!</b>.
      */
     @NoExternalUse
-    public void loeschen () {
+    public final void loeschen () {
         //Leer - kann von childs überschrieben werden.
+        physikHandler.killBody();
+        physikHandler = new NullHandler(this);
     }
 
 	/**
@@ -269,14 +272,14 @@ public abstract class Raum implements Comparable<Raum> {
             float rotation = (float)Math.toRadians(physikHandler.rotation());
             Punkt position = physikHandler.position();
 
-            Punkt mittelpunkt = physikHandler.mittelpunkt();
+            /*Punkt mittelpunkt = physikHandler.mittelpunkt();
 
 
 
             if(mittelpunkt == null) {
                 //Objekt gerade erst erstellt. Braucht noch einen Moment...
                 return;
-            }
+            }*/
 
 
 

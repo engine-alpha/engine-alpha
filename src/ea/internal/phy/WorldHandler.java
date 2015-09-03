@@ -4,10 +4,15 @@ import ea.*;
 
 import ea.internal.ano.NoExternalUse;
 import ea.internal.frame.WorldThread;
+import ea.internal.util.Logger;
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 import sun.misc.Version;
 
 /**
@@ -19,7 +24,21 @@ import sun.misc.Version;
  * </ul>
  * Created by andonie on 14.02.15.
  */
-public class WorldHandler {
+public class WorldHandler
+implements ContactListener {
+
+    public static void kollisionsReagierbarEingliedern(KollisionsReagierbar kr, Raum r1, Raum r2) {
+        final WorldHandler wh1 = r1.getPhysikHandler().worldHandler();
+        final WorldHandler wh2 = r2.getPhysikHandler().worldHandler();
+        if(wh1 == null || wh2 == null || wh1 != wh2) {
+            Logger.error("Kollision", "Zwei Objekte sollten zur Kollision angemeldet werden. " +
+                    "Dafür müssen beide an der selben Wurzel (direkt oder indirekt) angemeldet sein.");
+        }
+
+        final WorldHandler worldHandler = wh1;
+
+
+    }
 
     /**
      * Die World dieses Handlers. Hierin laufen globale Einstellungen (z.B. Schwerkraft) ein.
@@ -88,6 +107,7 @@ public class WorldHandler {
     @NoExternalUse
     public WorldHandler() {
         this.world = new World(new Vec2(0f, 0f)); //Erstelle standard-World mit Standard-Gravitation.
+        this.world.setContactListener(this);
     }
 
     /**
@@ -142,4 +162,41 @@ public class WorldHandler {
     private static final float degProRad = (float)((double)180/Math.PI);
 
 
+    public final void addCollisionListening(KollisionsReagierbar kr, Raum r1, Raum r2, int code) {
+
+    }
+
+    /* ____________ CONTACT LISTENER INTERFACE ____________ */
+
+    @Override
+    public void beginContact(Contact contact) {
+        //contact.getFixtureA();
+        System.out.println("BEGIN");
+        Body b1 = contact.getFixtureA().getBody();
+        Body b2 = contact.getFixtureB().getBody();
+        if(b1==b2) {
+            //Gleicher Body, don't care
+            Logger.debug("Collision", "Inter-Body Collision!");
+            return;
+        }
+
+    }
+
+    @Override
+    public void endContact(Contact contact) {
+
+        System.out.println("____________________END____________________");
+    }
+
+    @Override
+    public void preSolve(Contact contact, Manifold manifold) {
+
+        System.out.println("PRE");
+    }
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse contactImpulse) {
+
+        System.out.println("POST");
+    }
 }

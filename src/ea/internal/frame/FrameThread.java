@@ -210,6 +210,8 @@ extends Thread {
                 e.printStackTrace();
             }
 
+            System.out.println("_______________");
+
             //ENDE der eigentlichen Arbeit
 
             long tEnd = System.currentTimeMillis();
