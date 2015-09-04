@@ -44,11 +44,6 @@ implements ContactListener {
 
     }
 
-    private final CopyOnWriteArrayList<BodyHandler> waitingForFixture = new CopyOnWriteArrayList<>();
-
-    private final CopyOnWriteArrayList<BodyHandler> wantToDo = new CopyOnWriteArrayList<>();
-
-    private final CopyOnWriteArrayList<BodyHandler> killMe = new CopyOnWriteArrayList<>();
     /**
      * Die World dieses Handlers. Hierin laufen globale Einstellungen (z.B. Schwerkraft) ein.
      */
@@ -207,34 +202,6 @@ implements ContactListener {
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
 
         System.out.println("POST");
-    }
-
-    /**
-     * Wird vom World-Thread aufgerufen, <b>nachdem</b> ein Sorld-Step ausgeführt
-     * wurde. Innerhalb dieses Aufrufes ist die World garantiert NICHT im locked
-     * state. Hierin können sicher Fixtures u.Ä. erstellt werden.
-     */
-    @NoExternalUse
-    public void afterWorldStep() {
-        for(BodyHandler bh : waitingForFixture) {
-            bh.createBodyAndFixture();
-        }
-        waitingForFixture.clear();
-
-        for(BodyHandler bh : wantToDo) {
-
-        }
-    }
-
-    /**
-     * Wird von einem BodyHandler am Ende des Konstruktors aufgerufen.
-     * Reiht eben den ein, dass die Body / Fixture Creation direkt nach
-     * dem nächsten World Step stattfinden kann.
-     * @param bh
-     */
-    @NoExternalUse
-    public void enqueueNewBodyHandler(BodyHandler bh) {
-        this.waitingForFixture.add(bh);
     }
 
 

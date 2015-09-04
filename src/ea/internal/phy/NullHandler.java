@@ -4,6 +4,7 @@ import ea.*;
 import ea.Physik.Typ;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
@@ -182,6 +183,12 @@ public class NullHandler extends PhysikHandler {
         return null;
     }
 
+    @Override
+    public Body getBody() {
+        Logger.warning("Physik/Internal", "getBody()-Ausgabe wurde an Null-Handler aufgegeben.");
+        return null;
+    }
+
     /**
      *
      * @param typ   Der neue Typ.
@@ -189,6 +196,9 @@ public class NullHandler extends PhysikHandler {
      */
     @Override
     public PhysikHandler typ(Typ typ) {
+
+        //System.out.println("TYPE " + typ + " at " + this);
+
         if(typ == null) {
             Logger.error("Physik", "Physik-Typ wurde nicht spezifiziert.");
             return this;
@@ -201,8 +211,8 @@ public class NullHandler extends PhysikHandler {
         }
 
 
-        bodyDef.active = typ != Typ.PASSIV || isSensor;
-        fixtureDef.isSensor = typ == Typ.PASSIV && isSensor;
+        bodyDef.active = true;
+        fixtureDef.isSensor = typ == Typ.PASSIV;// && isSensor;
 
         bodyDef.position.set(worldHandler.fromVektor(position.alsVektor()));
 
@@ -211,7 +221,10 @@ public class NullHandler extends PhysikHandler {
     }
 
 
-
+    @Override
+    public void setSensor(boolean isSensor) {
+        this.isSensor = isSensor;
+    }
 
     @Override
     public void update(WorldHandler worldHandler) throws IllegalStateException {

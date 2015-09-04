@@ -85,8 +85,6 @@ extends FrameSubthread {
             world.step(deltaT, velocityIterations, positionIterations);
         }
 
-        worldHandler.afterWorldStep();
-
         //logger.log("2");
     }
 }

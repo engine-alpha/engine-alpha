@@ -4,6 +4,8 @@ import ea.Physik;
 import ea.Punkt;
 import ea.Raum;
 import ea.Vektor;
+import ea.internal.ano.NoExternalUse;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 
@@ -48,7 +50,18 @@ public abstract class PhysikHandler {
         this.isSensor = isSensor;
     }
 
+    @NoExternalUse
+    public boolean isSensor() {
+        return isSensor;
+    }
+
     /* __________________________ Kontrakt: Abstrakte Methoden/Funktionen der Physik __________________________ */
+
+    /**
+     * Setzt, ob das Klient-Objekt Sensorstatus haben soll oder nicht.
+     * @param isSensor  Ob das Klient-Objekt Sensorstatus haben soll oder nicht.
+     */
+    public abstract void setSensor(boolean isSensor);
 
     /**
      * Informiert diesen Handler, wenn es ein Update in der Baumstruktur um das Raum-Objekt gab. Die neue Physik (falls vorhanden)
@@ -198,4 +211,11 @@ public abstract class PhysikHandler {
      * @return  Der World-Handler, der zu diesem Physik-Handler gehört.
      */
     public abstract WorldHandler worldHandler();
+
+    /**
+     * Wird intern zum Debuggen benutzt. Gibt den korrespondierenden Body aus.
+     * @return  Der korrespondierende Body.
+     */
+    @NoExternalUse
+    public abstract Body getBody();
 }

@@ -6,6 +6,7 @@ import ea.Raum;
 import ea.Vektor;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
+import org.jbox2d.collision.shapes.MassData;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
@@ -80,6 +81,12 @@ extends PhysikHandler {
     }
 
     @Override
+    public void setSensor(boolean isSensor) {
+        this.isSensor = isSensor;
+        this.body.getFixtureList().setSensor(isSensor);
+    }
+
+    @Override
     public void update(WorldHandler worldHandler) throws IllegalStateException {
         if(worldHandler != this.worldHandler) {
             throw new IllegalStateException("Ein Raum-Objekt darf nicht zwischen Wurzeln wechseln.");
@@ -98,13 +105,15 @@ extends PhysikHandler {
 
         Vec2 phyVec = worldHandler.fromVektor(v);
         body.setTransform(phyVec.add(body.getPosition()), body.getAngle());
+
+        //Wake Up Body -> Ensure In-Engine (JB2D) Adjustments will happen, e.g. Collision Readjustment
+        body.setAwake(true);
         //System.out.println("Position after: " + body.getPosition());
         //System.out.println();
     }
 
     @Override
     public Punkt mittelpunkt() {
-        bodyGate();
         if(physikTyp== Physik.Typ.DYNAMISCH) {
             Vec2 wc = body.getWorldCenter();
             return worldHandler.fromVec2(wc).alsPunkt();
@@ -118,13 +127,11 @@ extends PhysikHandler {
 
     @Override
     public boolean schneidet(Raum r) {
-        bodyGate();
         return false;
     }
 
     @Override
     public boolean beinhaltet(Punkt p) {
-        bodyGate();
         return false;
     }
 
@@ -138,7 +145,6 @@ extends PhysikHandler {
 
     @Override
     public float rotation() {
-        //bodyGate();
         if(body == null) {
             return predecessor.rotation();
         }
@@ -147,81 +153,72 @@ extends PhysikHandler {
 
     @Override
     public void rotieren(float radians) {
-        bodyGate();
         System.out.println("Rotiere um " + radians);
         body.setTransform(body.getPosition(), body.getAngle() + radians);
     }
 
     @Override
     public void dichteSetzen(float dichte) {
-        bodyGate();
         //Fixture body.getFixtureList()
     }
 
     @Override
     public float dichte() {
-        bodyGate();
         return body.getFixtureList().getDensity();
     }
 
     @Override
     public void reibungSetzen(float reibung) {
-        bodyGate();
         //
     }
 
     @Override
     public float reibung() {
-        bodyGate();
         return body.getFixtureList().getFriction();
     }
 
     @Override
     public void elastizitaetSetzen(float ela) {
-        bodyGate();
 
     }
 
     @Override
     public float elastizitaet() {
-        bodyGate();
         return 0;
     }
 
     @Override
     public void masseSetzen(float masse) {
-        bodyGate();
 
+        MassData md = new MassData();
+        body.getMassData(md);
+        md.mass = masse;
+        body.setMassData(md);
     }
 
     @Override
     public float masse() {
-        bodyGate();
         return body.getMass();
     }
 
     @Override
     public void kraftWirken(Vektor kraft) {
-        bodyGate();
         //System.out.println("Kraft " + kraft);
         body.applyForceToCenter(new Vec2(kraft.x, kraft.y));
     }
 
     @Override
     public void drehMomentWirken(float drehmoment) {
-        bodyGate();
 
     }
 
     @Override
     public void drehImpulsWirken(float drehimpuls) {
-        bodyGate();
 
     }
 
     @Override
     public void schwerkraftSetzen(Vektor schwerkraftInN) {
-        bodyGate();
         worldHandler.getWorld().setGravity(new Vec2(schwerkraftInN.x, schwerkraftInN.y));
     }
 
@@ -233,12 +230,14 @@ extends PhysikHandler {
         }
         BodyType newType = typ.convert();
         body.setType(newType);
-        isSensor = true; //TODO Delete again.
+        //isSensor = true; //TODO Delete again.
 
         //System.out.println("I have a fixture: " + body.getFixtureList());
 
-        body.setActive(typ != Physik.Typ.PASSIV || isSensor);
-        fixture.setSensor(typ == Physik.Typ.PASSIV && isSensor);
+        //body.setActive(typ != Physik.Typ.PASSIV);
+        //System.out.println("Set active!");
+        body.setActive(true);
+        fixture.setSensor(typ == Physik.Typ.PASSIV);// && isSensor);
 
         //System.out.println("Ph-Update: Sensor=" + body.getFixtureList().isSensor() + " - " + body.isActive());
 
@@ -248,13 +247,11 @@ extends PhysikHandler {
 
     @Override
     public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
-        bodyGate();
 
     }
 
     @Override
     public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
-        bodyGate();
 
     }
 
@@ -266,27 +263,6 @@ extends PhysikHandler {
     @Override
     public WorldHandler worldHandler() {
         return worldHandler;
-    }
-
-    /**
-     * Stellt sicher, dass der Body bereits existiert und
-     * wartet ggf. auf dessen Erstellung. Wird vor
-     * der Nutzung von Methoden verwendet, die den Body
-     * zwingend voraussetzen (Impulse, Kräfte etc.)
-     */
-    @NoExternalUse
-    private void bodyGate() {
-        System.out.println("ENTER");
-        while(body == null) {
-            synchronized (this) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    //
-                }
-            }
-        }
-        System.out.println("LEFT");
     }
 
     /**

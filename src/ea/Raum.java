@@ -225,7 +225,7 @@ public abstract class Raum implements Comparable<Raum> {
      * nicht!!</b>.
      */
     @NoExternalUse
-    public final void loeschen () {
+    public void loeschen () {
         //Leer - kann von childs überschrieben werden.
         physikHandler.killBody();
         physikHandler = new NullHandler(this);

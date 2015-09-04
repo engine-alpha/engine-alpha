@@ -262,9 +262,9 @@ public class Physik {
         public BodyType convert() {
             switch (this) {
                 case STATISCH:
-                case PASSIV:
                     return BodyType.STATIC;
                 case DYNAMISCH:
+                case PASSIV:
                     return BodyType.DYNAMIC;
                 case KINEMATISCH:
                     return BodyType.KINEMATIC;
