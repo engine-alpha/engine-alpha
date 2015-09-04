@@ -54,7 +54,7 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
-        logger.log("3");
+        //logger.log("3");
         while (!nomoreNewStuff || !dispatchableQueue.isEmpty()) {
             if(dispatchableQueue.isEmpty()) {
                 //Warten
@@ -73,7 +73,7 @@ extends FrameSubthread {
 
             }
         }
-        logger.log("4");
+        //logger.log("4");
     }
 
 }

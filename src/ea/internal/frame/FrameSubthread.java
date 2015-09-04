@@ -79,7 +79,6 @@ extends Thread {
                 e.printStackTrace();
             }
 
-            frameActive = true;
             frameLogic();
             frameActive = false;
 
@@ -95,6 +94,7 @@ extends Thread {
      * starten.
      */
     public final void semi_start() {
+        frameActive = true;
         synchronized (this) {
             this.notifyAll();
         }

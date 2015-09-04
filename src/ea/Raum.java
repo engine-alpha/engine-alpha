@@ -285,6 +285,7 @@ public abstract class Raum implements Comparable<Raum> {
 
             // ____ Pre-Render ____
 
+            AffineTransform transform = g.getTransform();
 
             g.rotate(rotation, position.x, position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
 
@@ -311,7 +312,7 @@ public abstract class Raum implements Comparable<Raum> {
             }
 
             //2' Rotation zurücksetzen
-            g.rotate(-rotation, position.x, position.y);
+            g.setTransform(transform);
 
             //System.out.println("R: " + position + " - " + rotation);
         }
