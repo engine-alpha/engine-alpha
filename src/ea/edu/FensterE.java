@@ -98,4 +98,9 @@ public class FensterE extends Game {
 	public void tasteReagieren (int code) {
 		//
 	}
+
+    @Override
+    public void scheissdrauf() {
+        //INITIERUNG (Noch) LEER
+    }
 }

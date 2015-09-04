@@ -23,6 +23,11 @@ extends FrameSubthread {
     private final World world;
 
     /**
+     * Referenz auf den internen World-Handler.
+     */
+    private WorldHandler worldHandler;
+
+    /**
      * Das deltaT für die kommende Berechnung. Wird vom Parent-Thread upgedated.
      */
     private float deltaT;
@@ -55,13 +60,13 @@ extends FrameSubthread {
 
     /**
      * Erstellt
-     * @param world
      */
     public WorldThread(FrameThread master, WorldHandler worldHandler) {
         super(master, "Physics-Thread #" + wtcnt++);
         this.world = worldHandler.getWorld();
         worldHandler.setWorldThread(this);
         this.setPriority(Thread.MAX_PRIORITY);
+        this.worldHandler = worldHandler;
     }
 
     public Body createBody(BodyDef bd) {
@@ -79,6 +84,9 @@ extends FrameSubthread {
         synchronized (worldLock) {
             world.step(deltaT, velocityIterations, positionIterations);
         }
+
+        worldHandler.afterWorldStep();
+
         //logger.log("2");
     }
 }

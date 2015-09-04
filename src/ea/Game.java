@@ -194,6 +194,8 @@ public abstract class Game implements TastenReagierbar {
 		} catch (Exception e) {
 			Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
 		}
+
+        fenster.getFrameThread().setInitHook(this);
 	}
 
 	/**
@@ -296,21 +298,6 @@ public abstract class Game implements TastenReagierbar {
 	public void beenden () {
 		fenster.loeschen();
 	}
-
-	/**
-	 * Diese Methode wird von der Klasse automatisch aufgerufen, sobald eine Taste einfach gedrueckt
-	 * wurde.<br /> Sie wird dann erst wieder aufgerufen, wenn die Taste erst losgelassen und dann
-	 * wieder gedreuckt wurde.<br /> Sollte allerdings eine Methode vonnoeten sein, die immer wieder
-	 * in Regelmaessigen abstaenden aufgerufen wird, solange die Taste <b>heruntergedrueckt ist, so
-	 * bietet sich dies im Interface <code>TasteGedruecktReagierbar</code> an</b>.
-	 *
-	 * @param code
-	 * 		Code der gedrückten Taste<br />Siehe http://engine-alpha.org/wiki/Tastaturtabelle für eine
-	 * 		vollständige Tabelle
-	 *
-	 * @see ea.TastenReagierbar
-	 */
-	public abstract void tasteReagieren (int code);
 
 	/**
 	 * Fordert vom Benutzer eine Texteingabe (maximal 40 Zeichen) durch ein neues Fenster.<br />
@@ -601,8 +588,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see ea.Ticker
 	 */
 	public void tickerAbmelden(Ticker ticker) {
-		//this.manager.abmelden(ticker);
-        //TODO 4.0 Implementation
+		fenster.getFrameThread().tickerAbmelden(ticker);
 	}
 
 	/**
@@ -860,4 +846,32 @@ public abstract class Game implements TastenReagierbar {
     public void ppmSetzen(float pixelprometer) {
         fenster.getWorldHandler().setPixelProMeter(pixelprometer);
     }
+
+    /* _______________________ Kontrakt: Abstrakte Methoden _______________________ */
+
+    /**
+     * Diese Methode wird von der Klasse automatisch aufgerufen, sobald eine Taste einfach gedrueckt
+     * wurde.<br /> Sie wird dann erst wieder aufgerufen, wenn die Taste erst losgelassen und dann
+     * wieder gedreuckt wurde.<br /> Sollte allerdings eine Methode vonnoeten sein, die immer wieder
+     * in Regelmaessigen abstaenden aufgerufen wird, solange die Taste <b>heruntergedrueckt ist, so
+     * bietet sich dies im Interface <code>TasteGedruecktReagierbar</code> an</b>.
+     *
+     * @param code
+     * 		Code der gedrückten Taste<br />Siehe http://engine-alpha.org/wiki/Tastaturtabelle für eine
+     * 		vollständige Tabelle
+     *
+     * @see ea.TastenReagierbar
+     */
+    public abstract void tasteReagieren (int code);
+
+    /**
+     * Wird aufgerufen, sobald die <b>Initialisierung des Spiels</b> starten kann. <br/>
+     * Diese Methode wird intern <i>einmalig aufgerufen, sobald die Spielumgebung initiiert werden soll</i>.
+     * Das bedeutet, hierin werden die Operationen angesetzt, die klassischerweise in einem <i>Konstruktor</i>
+     * durchgeführt werden.<br/>
+     *
+     * Um interne Fehler zu vermeiden, sollte die <b>gesamte Initiierung hier stattfinden</b> und nicht
+     * im Konstruktor.
+     */
+    public abstract void scheissdrauf();
 }

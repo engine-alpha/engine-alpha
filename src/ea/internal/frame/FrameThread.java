@@ -1,6 +1,8 @@
 package ea.internal.frame;
 
+import ea.Game;
 import ea.Ticker;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Zeichner;
 import ea.internal.phy.WorldHandler;
 import ea.internal.ui.UIEvent;
@@ -149,6 +151,10 @@ extends Thread {
         tickerThread.addTicker(ticker, intervall);
     }
 
+    public void tickerAbmelden(Ticker ticker) {
+        tickerThread.removeTicker(ticker);
+    }
+
     /**
      * Innerhalb dieser Run-Methode läuft die Frame-Logik.
      */
@@ -173,17 +179,22 @@ extends Thread {
                 pt.semi_start();
             }
 
+
+            //System.out.println("Join World");
             //Join: WorldThread
             try {
                 worldThread.semi_join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            //System.out.println("Joined World");
 
             //Start Dispatcher
             dispatcherThread.frameInit();
             dispatcherThread.semi_start();
 
+
+            //System.out.println("Join Producers");
             //Join: Producers
             for (ProducerThread pt : producerThreads) {
                 try {
@@ -192,17 +203,22 @@ extends Thread {
                     e.printStackTrace();
                 }
             }
+            //System.out.println("Joined Producers");
 
             //-> Beende Wartehaltung d. Dispatchers
             dispatcherThread.frameAbschliessen();
 
+
+            //System.out.println("Join Dispatcher");
             //Join: Dispatcher
             try {
                 dispatcherThread.semi_join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            //System.out.println("Joined Dispatcher");
 
+            //System.out.println("Join Render");
             //Join: RenderThread
             try {
                 renderThread.semi_join();
@@ -210,6 +226,9 @@ extends Thread {
                 e.printStackTrace();
             }
 
+            //System.out.println("Joined Render");
+
+            //System.out.println("__________________________");
             //FrameSubthread.logger.log("_______________");
 
             //ENDE der eigentlichen Arbeit
@@ -228,5 +247,22 @@ extends Thread {
                 lastFrameTime = (int)deltaT;
             }
         }
+    }
+
+    /**
+     * Meldet ein (frisch gestartetes) Spiel zum Initiieren innerhalb der Frame-Logik
+     * an. Im nächsten Frame wird die Intiierungsmethode der Game-Klasse dispatcht.
+     * @param game Das Spiel, das initiert werden soll.
+     */
+    @NoExternalUse
+    public void setInitHook(final Game game) {
+        //Add Dispatchable Event to execute Game Init.
+        //Arbitrarily in the network thread.
+        this.netEventThread.enqueueDispatchableForNextFrame(new Dispatchable() {
+            @Override
+            public void dispatch() {
+                game.scheissdrauf();
+            }
+        });
     }
 }

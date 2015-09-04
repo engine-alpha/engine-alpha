@@ -206,7 +206,7 @@ public class NullHandler extends PhysikHandler {
 
         bodyDef.position.set(worldHandler.fromVektor(position.alsVektor()));
 
-        return new BodyHandler(raum, worldHandler, bodyDef, fixtureDef, physikTyp, isSensor);
+        return new BodyHandler(raum, worldHandler, bodyDef, fixtureDef, physikTyp, isSensor, this);
 
     }
 

@@ -51,11 +51,14 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
+        //System.out.println("_______________________Render");
         zeichner.render(graphics2D);
+        //System.out.println("_______________________Rendered");
         try {
             bufferStrategy.show();
         } catch(IllegalStateException e) {
             e.printStackTrace();
         }
+        //System.out.println("_______________________BUFFERDONE");
     }
 }

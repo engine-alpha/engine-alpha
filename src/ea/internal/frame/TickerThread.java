@@ -5,6 +5,7 @@ import ea.internal.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Der Ticker-Thread ist ein Subthread der Frame-Logik. Er bestimmt innerhalb seiner Frame-Logik alle Ticker,
@@ -22,7 +23,7 @@ extends ProducerThread {
     /**
      * Die Liste mit allen Ticker-Jobs.
      */
-    private final ArrayList<TickerJob> tickerJobs;
+    private final CopyOnWriteArrayList<TickerJob> tickerJobs;
 
     /**
      * Erstellt einen neuen TickerThread.
@@ -31,7 +32,7 @@ extends ProducerThread {
      */
     protected TickerThread(FrameThread master, Queue queue) {
         super(master, "Ticker Thread #" + ttcnt++, queue);
-        tickerJobs = new ArrayList<TickerJob>();
+        tickerJobs = new CopyOnWriteArrayList<TickerJob>();
     }
 
     /**

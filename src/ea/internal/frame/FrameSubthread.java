@@ -73,14 +73,19 @@ extends Thread {
             //Warte auf Okay von Master
             try {
                 synchronized (this) {
-                    this.wait();
+                    while(!frameActive)
+                        this.wait();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
+            //System.out.println("~~~~~~~~~~~~~~Frame Start: " + getName());
+
             frameLogic();
             frameActive = false;
+            //System.out.println("~~~~~~~~~~~~~~~~~~~~~~END: " + getName());
+
 
             synchronized (masterLock) {
                 masterLock.notifyAll();
@@ -109,8 +114,10 @@ extends Thread {
      */
     public final void semi_join() throws InterruptedException {
         synchronized (masterLock) {
-            if(frameActive) {
+            while(frameActive) {
+                //System.out.println("Enter Wait");
                 masterLock.wait();
+                //System.out.println("Left Wait");
             }
         }
     }
