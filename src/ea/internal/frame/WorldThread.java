@@ -75,10 +75,10 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
-        System.out.println("1");
+        logger.log("1");
         synchronized (worldLock) {
             world.step(deltaT, velocityIterations, positionIterations);
         }
-        System.out.println("2");
+        logger.log("2");
     }
 }

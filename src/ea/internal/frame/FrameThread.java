@@ -210,7 +210,7 @@ extends Thread {
                 e.printStackTrace();
             }
 
-            System.out.println("_______________");
+            FrameSubthread.logger.log("_______________");
 
             //ENDE der eigentlichen Arbeit
 

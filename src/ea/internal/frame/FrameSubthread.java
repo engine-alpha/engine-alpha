@@ -1,11 +1,37 @@
 package ea.internal.frame;
 
+import java.io.BufferedWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+
 /**
  * Dieser
  * Created by andonie on 14.02.15.
  */
 public abstract class FrameSubthread
 extends Thread {
+
+    /**
+     * Interne Klasse zum Loggen eines Strings
+     */
+    public static class StringLogger {
+        StringWriter writer;
+
+        public StringLogger() {
+            writer = new StringWriter();
+        }
+
+        synchronized void log(String s) {
+            writer.write(s + "\n");
+        }
+
+        public synchronized String getString() {
+            writer.flush();
+            return writer.toString();
+        }
+    }
+
+    public static final StringLogger logger = new StringLogger();
 
     /**
      * Gibt an, ob dieser Thread gerade für eine framespezifische Berechnung aktiv ist.
@@ -52,6 +78,7 @@ extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             frameActive = true;
             frameLogic();
             frameActive = false;
