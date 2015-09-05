@@ -215,6 +215,7 @@ public class NullHandler extends PhysikHandler {
         fixtureDef.isSensor = typ == Typ.PASSIV;// && isSensor;
 
         bodyDef.position.set(worldHandler.fromVektor(position.alsVektor()));
+        bodyDef.gravityScale = typ == Typ.PASSIV ? 0 : 1;
 
         return new BodyHandler(raum, worldHandler, bodyDef, fixtureDef, physikTyp, isSensor, this);
 

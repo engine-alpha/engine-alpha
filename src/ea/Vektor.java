@@ -458,4 +458,25 @@ public final class Vektor implements Cloneable {
 		float v = x+y;
 		return v < 0 ? -v : v;
 	}
+
+    /**
+     * Berechnet den Winkel zwischen diesem Vektor und einem weiteren. Hierzu wird diese Formel
+     * verwendet: <br />
+     * <code>cos t = [a o b] / [|a| * |b|]</code><br />
+     * <ul>
+     *     <li>cos ist der Kosinus</li>
+     *     <li>t ist der gesuchte Winkel</li>
+     *     <li>a und b sind die Vektoren</li>
+     *     <li>|a| ist die Länge des Vektors a</li>
+     * </ul>
+     * @param anderer   Ein zweiter Vektor.
+     * @return          Der Winkel zwischen diesem Vektor und dem zweiten.
+     *                  Ist zwischen 0 und 180 Grad.
+     */
+    @API
+    public float winkelZwischen(Vektor anderer) {
+        //System.out.println("Acos of " + this.skalarprodukt(anderer) / this.laenge() * anderer.laenge() + " is "
+        //+ (float)Math.acos((double)(this.skalarprodukt(anderer) / ((this.laenge() * anderer.laenge())))));
+        return (float)Math.acos((double)(this.skalarprodukt(anderer) / (this.laenge() * anderer.laenge())));
+    }
 }

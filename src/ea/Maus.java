@@ -555,11 +555,13 @@ public class Maus {
 	 * würde. Diese Methode rechnet alle Umstände der Maus (z.B. relativ bzw. fixed) mit ein und
 	 * gibt die genaue Position des Klicks zurück.
 	 *
-	 * @return Der genaue Punkt auf der Zeichenebene, auf den diese Maus bei einem Klick deuten
+	 * @return Der genaue Punkt auf der Zeichenebene, auf den diese Maus bei einem Klick deuten würde.
+     *          Ist <code>null</code>, wenn die Maus sich gerade nicht über der Zeichenebene befindet.
 	 * würde.
 	 */
+    @API
 	public Punkt klickAufZeichenebene () {
-        if(true) {
+        /*if(true) {
             throw new UnsupportedOperationException("Klick ist nicht auf Cursor gemappt.");
         }
 		if (absolut()) {
@@ -576,7 +578,18 @@ public class Maus {
 			int startX = (dim.width / 2);
 			int startY = (dim.height / 2);
 			return new Punkt(startX + fenster.getCam().getX(), startY + fenster.getCam().getY());
-		}
+		}*/
+
+        //TODO absolute implementation
+        //TODO Kamera einberechnen
+
+        //PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+        //Point pointOnScreen = pointerInfo.getLocation();
+
+        Point p = fenster.zeichner().getMousePosition();
+        if(p == null)
+            return null;
+        return new Punkt(p.x, p.y);
 	}
 
 	/**

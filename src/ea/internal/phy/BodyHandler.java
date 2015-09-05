@@ -248,6 +248,9 @@ extends PhysikHandler {
     @Override
     public void schwerkraftSetzen(Vektor schwerkraftInN) {
         worldHandler.getWorld().setGravity(new Vec2(schwerkraftInN.x, schwerkraftInN.y));
+        if(physikBodyCheck()) {
+            body.setAwake(true);
+        }
     }
 
     @Override
@@ -266,6 +269,7 @@ extends PhysikHandler {
         //System.out.println("Set active!");
         body.setActive(true);
         fixture.setSensor(typ == Physik.Typ.PASSIV);// && isSensor);
+        body.setGravityScale(typ == Physik.Typ.PASSIV ? 0 : 1);
 
         //System.out.println("Ph-Update: Sensor=" + body.getFixtureList().isSensor() + " - " + body.isActive());
 
