@@ -184,6 +184,11 @@ public class NullHandler extends PhysikHandler {
         return null;
     }
 
+    @Override
+    public void physicalReset() {
+        //Nothing to do.
+    }
+
     /**
      *
      * @param typ   Der neue Typ.

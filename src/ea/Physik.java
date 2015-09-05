@@ -5,7 +5,7 @@ import ea.internal.ano.NoExternalUse;
 import org.jbox2d.dynamics.BodyType;
 
 /**
- * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>physik</code>.
+ * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>physik</code> dieser Klasse.
  * Dieses Objekt bietet eine umfangreiches Set an <i>Methoden</i>, die die Physik des entsprechenden
  * <code>Raum</code>-Objekts betreffen.<br /><br />
  *
@@ -181,6 +181,19 @@ public class Physik {
      */
     public Physik impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
         raum.getPhysikHandler().impulsWirken(impulsInNS, globalerOrt);
+        return this;
+    }
+
+    /**
+     * Versetzt das Objekt - unabhängig von aktuellen Kräften und Geschwindigkeiten -
+     * <i>in Ruhe</i>. Damit werden alle (physikalischen) Bewegungen des Objektes zurückgesetzt.
+     * Sollte eine konstante <i>Schwerkraft</i> (oder etwas Vergleichbares) exisitieren, wo
+     * wird dieses Objekt jedoch möglicherweise aus der Ruhelage wieder in Bewegung versetzt.
+     * @return              Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     *                      Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     */
+    public Physik inRuheVersetzen() {
+        raum.getPhysikHandler().physicalReset();
         return this;
     }
 

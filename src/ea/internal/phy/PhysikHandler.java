@@ -209,4 +209,11 @@ public abstract class PhysikHandler {
      */
     @NoExternalUse
     public abstract Body getBody();
+
+    /**
+     * Setzt die Wirkung aller physikalischer Bewegungen (Geschwindigkeit und Drehung) zurück.
+     * Hiernach ist das Objekt in Ruhe.
+     */
+    @NoExternalUse
+    public abstract void physicalReset();
 }

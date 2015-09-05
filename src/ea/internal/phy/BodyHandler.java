@@ -63,6 +63,8 @@ extends PhysikHandler {
         return body;
     }
 
+
+
     /**
      * Erstellt einen neuen Body-Handler
      * @param raum
@@ -148,68 +150,99 @@ extends PhysikHandler {
 
     @Override
     public void rotieren(float radians) {
-        System.out.println("Rotiere um " + radians);
+        //System.out.println("Rotiere um " + radians);
         body.setTransform(body.getPosition(), body.getAngle() + radians);
     }
 
     @Override
     public void dichteSetzen(float dichte) {
         //Fixture body.getFixtureList()
+        if(physikBodyCheck()) {
+            Fixture fixture = body.getFixtureList();
+            while(fixture != null) {
+                fixture.setDensity(dichte);
+                fixture = fixture.getNext();
+            }
+        }
     }
 
     @Override
     public float dichte() {
-        return body.getFixtureList().getDensity();
+        if(physikBodyCheck()) {
+            return body.getFixtureList().getDensity();
+        } return -1;
     }
 
     @Override
     public void reibungSetzen(float reibung) {
-        //
+        if(physikBodyCheck()) {
+            Fixture fixture = body.getFixtureList();
+            while(fixture != null) {
+                fixture.setFriction(reibung);
+                fixture = fixture.getNext();
+            }
+        }
     }
 
     @Override
     public float reibung() {
-        return body.getFixtureList().getFriction();
+        if(physikBodyCheck()) {
+            return body.getFixtureList().getFriction();
+        } return -1;
     }
 
     @Override
     public void elastizitaetSetzen(float ela) {
-
+        if(physikBodyCheck()) {
+            Fixture fixture = body.getFixtureList();
+            while(fixture != null) {
+                fixture.setRestitution(ela);
+            }
+        }
     }
 
     @Override
     public float elastizitaet() {
-        return 0;
+        if(physikBodyCheck()) {
+            return body.getFixtureList().getRestitution();
+        } return -1;
     }
 
     @Override
     public void masseSetzen(float masse) {
-
-        MassData md = new MassData();
-        body.getMassData(md);
-        md.mass = masse;
-        body.setMassData(md);
+        if(physikBodyCheck()) {
+            MassData md = new MassData();
+            body.getMassData(md);
+            md.mass = masse;
+            body.setMassData(md);
+        }
     }
 
     @Override
     public float masse() {
-        return body.getMass();
+        if(physikBodyCheck()) {
+            return body.getMass();
+        } return -1;
     }
 
     @Override
     public void kraftWirken(Vektor kraft) {
-        //System.out.println("Kraft " + kraft);
-        body.applyForceToCenter(new Vec2(kraft.x, kraft.y));
+        if(physikBodyCheck())
+            body.applyForceToCenter(new Vec2(kraft.x, kraft.y));
     }
 
     @Override
     public void drehMomentWirken(float drehmoment) {
-
+        if(physikBodyCheck()) {
+            body.applyTorque(drehmoment);
+        }
     }
 
     @Override
     public void drehImpulsWirken(float drehimpuls) {
-
+        if(physikBodyCheck()) {
+            body.applyAngularImpulse(drehimpuls);
+        }
     }
 
     @Override
@@ -242,12 +275,24 @@ extends PhysikHandler {
 
     @Override
     public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
-
+        if(physikBodyCheck()) {
+            body.applyForce(new Vec2(kraftInN.x, kraftInN.y), new Vec2(globalerOrt.x, globalerOrt.y));
+        }
     }
 
     @Override
     public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
+        if(physikBodyCheck()) {
+            body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), new Vec2(globalerOrt.x, globalerOrt.y));
+        }
+    }
 
+    @Override
+    public void physicalReset() {
+        if(physikBodyCheck()) {
+            body.setLinearVelocity(new Vec2());
+            body.setAngularVelocity(0);
+        }
     }
 
     @Override
@@ -275,9 +320,19 @@ extends PhysikHandler {
         bodyDef = null;
         fixtureDef = null;
         predecessor = null;
+    }
 
-        synchronized (this) {
-            this.notifyAll();
-        }
+    /**
+     * Interner Check, ob der Body bereits erstellt wurde. Falls dies nicht der Fall ist,
+     * wird eine Fehlermeldung ausgegeben.
+     * @return  <code>true</code>, wenn der Body bereits existiert (ungleich <code>null</code> ist),
+     *          sonst <code>false</code>.
+     */
+    private boolean physikBodyCheck() {
+        if(body == null) {
+            Logger.error("Physik", "Bevor das Raum-Objekt an einer Physik-Umgebung (~Wurzel) angemeldet war, " +
+                    "wurde versucht, eine physikalische Operation daran auszuführen.");
+            return false;
+        } else return true;
     }
 }
