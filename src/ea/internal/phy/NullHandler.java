@@ -174,8 +174,10 @@ public class NullHandler extends PhysikHandler {
 
     @Override
     public WorldHandler worldHandler() {
-        Logger.error("Physik", "Ein Objekt wurde physikalisch angefragt, bevor es an einer Wurzel war.");
-        return null;
+        if(worldHandler == null) {
+            Logger.error("Physik", "Ein Objekt wurde physikalisch angefragt, bevor es an einer Wurzel war.");
+            return null;
+        } return worldHandler;
     }
 
     @Override
@@ -187,6 +189,19 @@ public class NullHandler extends PhysikHandler {
     @Override
     public void physicalReset() {
         //Nothing to do.
+    }
+
+    @Override
+    public void geschwindigkeitSetzen(Vektor geschwindigkeitInMProS) {
+        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
+    }
+
+    @Override
+    public Vektor geschwindigkeit() {
+        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
+        return null;
     }
 
     /**

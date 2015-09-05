@@ -216,4 +216,18 @@ public abstract class PhysikHandler {
      */
     @NoExternalUse
     public abstract void physicalReset();
+
+    /**
+     * Setzt die Geschwindigkeit für das Handler-Objekt.
+     * @param geschwindigkeitInMProS    Setzt die Geschwindigkeit, mit der sich das Zielobjekt bewegen soll.
+     */
+    @NoExternalUse
+    public abstract void geschwindigkeitSetzen(Vektor geschwindigkeitInMProS);
+
+    /**
+     * Gibt die aktuelle Geschwindigkeit aus.
+     * @return  Die aktuelle Geschwindigkeit.
+     */
+    @NoExternalUse
+    public abstract Vektor geschwindigkeit();
 }

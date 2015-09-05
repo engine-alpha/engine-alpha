@@ -21,6 +21,7 @@ package ea;
 
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
+import ea.internal.phy.KnotenHandler;
 import ea.internal.phy.WorldHandler;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
@@ -46,6 +47,7 @@ public class Knoten extends Raum {
 	 */
 	public Knoten () {
 		list = new Vector<>();
+        super.physikHandler = new KnotenHandler(this);
 	}
 
     /**
@@ -148,8 +150,6 @@ public class Knoten extends Raum {
 
         if(worldHandler != null)
             m.updateWorld(worldHandler);
-        else
-            System.out.println("No World Handler");
 	}
 
 	/**

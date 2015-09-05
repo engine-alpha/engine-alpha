@@ -594,7 +594,8 @@ public class Text extends Raum {
     @Override
     public Shape berechneShape(float pixelProMeter) {
         if(fontMetrics == null) {
-            throw new IllegalStateException("Text wurde nach Shape gefragt, bevor die Metrik bekannt war.");
+            fontMetrics = super.getPhysikHandler().worldHandler().getWorldThread().getMaster().getGame().fenster.getFontMetrics(font);
+            //throw new IllegalStateException("Text wurde nach Shape gefragt, bevor die Metrik bekannt war.");
         }
         return berechneBoxShape(pixelProMeter, fontMetrics.stringWidth(inhalt), fontMetrics.getHeight());
     }

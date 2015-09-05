@@ -67,7 +67,7 @@ public abstract class Raum implements Comparable<Raum> {
     /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
-    private PhysikHandler physikHandler = new NullHandler(this);
+    protected PhysikHandler physikHandler = new NullHandler(this);
 
     /* _________________________ Die Handler _________________________ */
 

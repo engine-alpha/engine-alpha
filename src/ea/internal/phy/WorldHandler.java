@@ -115,6 +115,15 @@ implements ContactListener {
     }
 
     /**
+     * Gibt die interne Referenz auf den World Thread aus.
+     * @return die World-Thread Referenz.
+     */
+    @NoExternalUse
+    public WorldThread getWorldThread() {
+        return worldThread;
+    }
+
+    /**
      * Übersetzt einen EA-Vektor in einen JB2D-Vektor auf Basis des gesetzten Pixel/Meter-Verhältnisses.
      * @param eaV   Ein EA-Vektor.
      * @return      Der analoge Vektor in der JB2D-Engine.

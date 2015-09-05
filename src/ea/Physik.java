@@ -82,6 +82,7 @@ public class Physik {
      * @return                  Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      *                          Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
+    @API
     public Physik dichte(float dichteInKgProQM) {
         raum.getPhysikHandler().dichteSetzen(dichteInKgProQM);
         return this;
@@ -119,6 +120,30 @@ public class Physik {
         return raum.getPhysikHandler().reibung();
     }
 
+    /**
+     * Setzt die Geschwindigkeit "hart" für dieses Objekt. Damit wird die aktuelle
+     * Bewegung (nicht aber die Rotation) des Objekts ignoriert und hart auf den
+     * übergebenen Wert gesetzt.
+     * @param geschwindigkeitInMProS    Die Geschwindigkeit, mit der sich dieses Objekt ab sofort
+     *                                  bewegen soll. In <b>[m / s]</b>
+     * @return                          Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     *                                  Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     */
+    @API
+    public Physik geschwindigkeit(Vektor geschwindigkeitInMProS) {
+        raum.getPhysikHandler().geschwindigkeitSetzen(geschwindigkeitInMProS);
+        return this;
+    }
+
+    /**
+     * Gibt die Geschwindigkeit aus, mit der sich dieses Objekt gerade (also in diesem Frame) bewegt.
+     * @return  Die Geschwindigkeit, mit der sich dieses Objekt gerade (also in diesem Frame) bewegt.
+     *          In <b>[m / s]</b>
+     */
+    @API
+    public Vektor geschwindigkeit() {
+        return raum.getPhysikHandler().geschwindigkeit();
+    }
 
     /* _________________________ World-Wrap _________________________ */
 
@@ -128,6 +153,7 @@ public class Physik {
      * @return                  Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      *                          Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
+    @API
     public Physik schwerkraft(Vektor schwerkraftInN) {
         raum.getPhysikHandler().schwerkraftSetzen(schwerkraftInN);
         return this;
@@ -167,6 +193,7 @@ public class Physik {
      * @return              Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      *                      Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
+    @API
     public Physik impulsWirken(Vektor impulsInNS) {
         raum.getPhysikHandler().impulsWirken(impulsInNS, raum.getPhysikHandler().mittelpunkt());
         return this;
@@ -179,6 +206,7 @@ public class Physik {
      * @return              Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      *                      Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
+    @API
     public Physik impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
         raum.getPhysikHandler().impulsWirken(impulsInNS, globalerOrt);
         return this;
@@ -192,6 +220,7 @@ public class Physik {
      * @return              Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      *                      Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
+    @API
     public Physik inRuheVersetzen() {
         raum.getPhysikHandler().physicalReset();
         return this;

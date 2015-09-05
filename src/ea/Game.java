@@ -84,7 +84,7 @@ public abstract class Game implements TastenReagierbar {
 	/**
 	 * Das Spielfenster
 	 */
-	private final Fenster fenster;
+	final Fenster fenster;
 
 	/**
 	 * An diesem Knoten angelegte Objekte werden immer im Vordergrund sein.<br /> Dies wird zB fuer

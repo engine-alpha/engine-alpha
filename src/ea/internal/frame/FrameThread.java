@@ -48,6 +48,15 @@ extends Thread {
     private Game game;
 
     /**
+     * Gibt die Game Referenz aus
+     * @return  Die Referenz auf das Game Objekt, das zu diesem Frame Thread gehört.
+     */
+    @NoExternalUse
+    public Game getGame() {
+        return game;
+    }
+
+    /**
      * Gibt an, ob das Spiel bereits initiiert wurde, also ob innerhalb des
      * Frame-Threads bereits die Initiierungs-Methode des zugehörigen Game-Objekts aufgerufen
      * wurde.

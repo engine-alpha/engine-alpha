@@ -301,6 +301,20 @@ extends PhysikHandler {
     }
 
     @Override
+    public void geschwindigkeitSetzen(Vektor geschwindigkeitInMProS) {
+        if(physikBodyCheck()) {
+            body.setLinearVelocity(new Vec2(geschwindigkeitInMProS.x, geschwindigkeitInMProS.y));
+        }
+    }
+
+    @Override
+    public Vektor geschwindigkeit() {
+        if(physikBodyCheck()) {
+            return worldHandler.fromVec2(body.getLinearVelocity());
+        } return null;
+    }
+
+    @Override
     public void killBody() {
         worldHandler.getWorld().destroyBody(body);
     }
