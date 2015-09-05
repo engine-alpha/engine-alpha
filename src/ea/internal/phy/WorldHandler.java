@@ -5,6 +5,7 @@ import ea.*;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.frame.FrameThread;
 import ea.internal.frame.WorldThread;
+import ea.internal.frame.Dispatchable;
 import ea.internal.util.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -164,8 +165,15 @@ implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
-        //contact.getFixtureA();
-        //System.out.println("BEGIN");
+        processContact(contact, true);
+    }
+
+    @Override
+    public void endContact(Contact contact) {
+        processContact(contact, false);
+    }
+
+    private void processContact(Contact contact, boolean isBegin) {
         Body b1 = contact.getFixtureA().getBody();
         Body b2 = contact.getFixtureB().getBody();
         if(b1==b2) {
@@ -179,13 +187,13 @@ implements ContactListener {
             List<Checkup> result1 = collisionTracker.get(b1);
             if(result1 != null) {
                 for(Checkup c : result1) {
-                    c.checkCollision(b2);
+                    c.checkCollision(b2, isBegin);
                 }
             }
             List<Checkup> result2 = collisionTracker.get(b2);
             if(result2 != null) {
                 for(Checkup c : result2) {
-                    c.checkCollision(b1);
+                    c.checkCollision(b1, isBegin);
                 }
             }
             return;
@@ -202,16 +210,9 @@ implements ContactListener {
         List<Checkup> result = collisionTracker.get(lower);
         if(result != null) {
             for(Checkup c : result) {
-                c.checkCollision(higher);
+                c.checkCollision(higher, isBegin);
             }
         }
-
-    }
-
-    @Override
-    public void endContact(Contact contact) {
-
-        //System.out.println("____________________END____________________");
     }
 
     @Override
@@ -232,12 +233,24 @@ implements ContactListener {
     /**
      * Speichert ein Korrespondierendes Body-Objekt sowie
      */
-    private static class Checkup
-    implements ea.internal.frame.Dispatchable {
+    private static class Checkup {
         private final KollisionsReagierbar reagierbar;  //Aufzurufen
         private final Body body2;                       //Der zweite Body (erster Body ist Hashmap-Schlüssel)
         private final int code;                         //Der Code für den Aufruf
         private final FrameThread frameThread;          //Zum Anmelden des Dispatches
+
+        private final Dispatchable begin = new Dispatchable() {
+            @Override
+            public void dispatch() {
+                reagierbar.kollision(code);
+            }
+        };
+        private final Dispatchable end = new Dispatchable() {
+            @Override
+            public void dispatch() {
+                reagierbar.kollisionBeendet(code);
+            }
+        };
 
         /**
          * Erstellt das Checkup-Objekt
@@ -253,21 +266,10 @@ implements ContactListener {
             this.frameThread = frameThread;
         }
 
-        public void checkCollision(Body secondBodyOfActualCollision) {
+        public void checkCollision(Body secondBodyOfActualCollision, boolean isBegin) {
             if(body2 == secondBodyOfActualCollision) {
-                frameThread.addInternalEvent(this);
+                frameThread.addInternalEvent(isBegin ? begin : end);
             }
-        }
-
-        /**
-         * Dispatch-Methode. Wird MAXIMAL EINMAL PRO FRAME aufgerufen
-         * (daher kann die Methode sicher innerhalb des Checkup implementiert werden).
-         * Hierin wird das KollisionReagierbar informiert. Hierdurch wird
-         * dies mit der Frame-Logik synchronisiert.
-         */
-        @Override
-        public void dispatch() {
-            reagierbar.kollision(code);
         }
     }
 

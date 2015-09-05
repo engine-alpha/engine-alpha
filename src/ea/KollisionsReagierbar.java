@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.ano.API;
+
 /**
  * Ein KollisionsReagierbar-Objekt kann auf das aufeinandertreffen zweier Raum-Objekte reagieren.<br
  * /> Bei einer komplizierteren Aufgabe sieht das Anmelden bei einem <code>WorldHandler</code>-Objekt des
@@ -37,8 +39,20 @@ public interface KollisionsReagierbar {
 	 * Raum-Objekte kollidieren.
 	 *
 	 * @param code
-	 * 		Der bei der Anmeldung mitgegebene Code zur eventuellen Weiterverarbeitung bei
-	 * 		Mehrfachanmeldung Dieses Interfaces
+	 * 		Der bei der Anmeldung mit zwei Raum-Objekten mitgegebene Code zur Weiterverarbeitung bei
+	 * 		Mehrfachanmeldung dieses Interfaces.
 	 */
+    @API
 	public abstract void kollision (int code);
+
+    /**
+     * Diese Methode wird dann aufgerufen, wenn die mit diesem Interface zusammen angemeldeten
+     * Raum-Objekte den Kollisionszustand verlassen.
+     *
+     * @param code
+     *      Der bei der Anmeldung mit zwei Raum-Objekten mitgegebene Code zur Weiterverarbeitung bei
+     * 		Mehrfachanmeldung dieses Interfaces.
+     */
+    @API
+    public abstract void kollisionBeendet(int code);
 }

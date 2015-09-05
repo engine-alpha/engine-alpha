@@ -259,6 +259,7 @@ extends PhysikHandler {
         if(typ == physikTyp) {
             return this; //kein Update nötig.
         }
+        this.physikTyp = typ;
         BodyType newType = typ.convert();
         body.setType(newType);
         //isSensor = true; //TODO Delete again.
