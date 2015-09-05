@@ -173,19 +173,6 @@ public abstract class Raum implements Comparable<Raum> {
     /* _________________________ API-Methoden in der Klasse direkt _________________________ */
 
     /**
-     * Test, ob ein anderes Raum-Objekt von diesem geschnitten wird.
-     *
-     * @param r
-     * 		Das Objekt, das auf Kollision mit diesem getestet werden soll.
-     *
-     * @return TRUE, wenn sich beide Objekte schneiden.
-     */
-    @API
-    public final boolean schneidet (Raum r) {
-        return physikHandler.schneidet(r);
-    }
-
-    /**
      * Prueft, ob ein bestimmter Punkt innerhalb des Raum-Objekts liegt.
      *
      * @param p

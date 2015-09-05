@@ -20,6 +20,7 @@
 package ea;
 
 import ea.internal.gui.*;
+import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
@@ -609,7 +610,7 @@ public abstract class Game implements TastenReagierbar {
 	 * 		<code>kollision(int)</code> als Parameter übergeben.
 	 */
 	public void kollisionsReagierbarAnmelden (KollisionsReagierbar reagierbar, Raum r1, Raum r2, int code) {
-		//FIXME Implementation
+        WorldHandler.kollisionsReagierbarEingliedern(reagierbar, code, r1, r2);
 	}
 
 	/**
@@ -653,7 +654,7 @@ public abstract class Game implements TastenReagierbar {
 		fenster.anmelden(maus);
 	}
 
-	/**
+    /**
 	 * Gibt ein BoundingRechteck zurueck, dass die Masse des Fensters beschreibt.<br /> Die Hoehe
 	 * und Breite geben die Hoehe und Breite des Fensters wieder. Die Position ist immer (0|0), da
 	 * dies nicht relevant ist fuer die Masse des Fensters.

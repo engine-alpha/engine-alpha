@@ -88,15 +88,6 @@ public abstract class PhysikHandler {
     public abstract Punkt mittelpunkt();
 
     /**
-     * Gibt an, ob ein <code>Raum</code>-Objekt ein anderes schneidet. Wie genau diese Methode arbeitet, hängt von der
-     * implementierenden Klasse an. Sie kann eine überschaubare Heuristik sein oder ein komplexe Berechnung.
-     * @param r Ein anderes <code>Raum</code>-Objekt.
-     * @return  <code>true</code>, wenn sich das Ziel-Objekt und das übergebene Objekt (nach ggf. heuristischer
-     *          Berechnung) schneiden, sonst <code>false</code>.
-     */
-    public abstract boolean schneidet(Raum r);
-
-    /**
      * Gibt an, ob ein bestimmter Punkt auf der Zeichenebene innerhalb des Ziel-Objekts liegt.
      * @param p Ein Punkt auf der Zeichenebene.
      * @return  <code>true</code>, wenn der übergebene Punkt innerhalb des Ziel-Objekts liegt, sonst <code>false</code>.

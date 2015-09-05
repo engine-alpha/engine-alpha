@@ -165,7 +165,7 @@ public class NetzwerkInterpreter extends Thread {
                     }
                 };
                 if(frameThread != null)
-                    frameThread.addNetEvent(stringDispatch);
+                    frameThread.addInternalEvent(stringDispatch);
                 else
                     stringDispatch.dispatch();
 
@@ -182,7 +182,7 @@ public class NetzwerkInterpreter extends Thread {
                     }
                 };
                 if(frameThread != null)
-                    frameThread.addNetEvent(intDispatch);
+                    frameThread.addInternalEvent(intDispatch);
                 else
                     intDispatch.dispatch();
 
@@ -199,7 +199,7 @@ public class NetzwerkInterpreter extends Thread {
                     }
                 };
                 if(frameThread != null)
-                    frameThread.addNetEvent(byteDispatch);
+                    frameThread.addInternalEvent(byteDispatch);
                 else
                     byteDispatch.dispatch();
 
@@ -219,7 +219,7 @@ public class NetzwerkInterpreter extends Thread {
                 };
 
                 if(frameThread != null)
-                    frameThread.addNetEvent(doubleDispatch);
+                    frameThread.addInternalEvent(doubleDispatch);
                 else
                     doubleDispatch.dispatch();
 
@@ -239,7 +239,7 @@ public class NetzwerkInterpreter extends Thread {
                 };
 
                 if(frameThread != null)
-                    frameThread.addNetEvent(charDispatch);
+                    frameThread.addInternalEvent(charDispatch);
                 else
                     charDispatch.dispatch();
 
@@ -259,7 +259,7 @@ public class NetzwerkInterpreter extends Thread {
                 };
 
                 if(frameThread != null)
-                    frameThread.addNetEvent(boolDispatch);
+                    frameThread.addInternalEvent(boolDispatch);
                 else
                     boolDispatch.dispatch();
 				break;
@@ -297,7 +297,7 @@ public class NetzwerkInterpreter extends Thread {
         };
 
         if(frameThread != null)
-            frameThread.addNetEvent(endDispatch);
+            frameThread.addInternalEvent(endDispatch);
         else
             endDispatch.dispatch();
 	}

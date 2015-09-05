@@ -7,7 +7,6 @@ import ea.internal.gra.Zeichner;
 import ea.internal.phy.WorldHandler;
 import ea.internal.ui.UIEvent;
 import ea.internal.util.Logger;
-import org.jbox2d.dynamics.World;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -94,7 +93,7 @@ extends Thread {
     private final ProducerThread[] producerThreads;
 
     private final EventThread<UIEvent> uiEventThread;
-    private final EventThread<Dispatchable> netEventThread;
+    private final EventThread<Dispatchable> internalJokerProducer;
     private final TickerThread tickerThread;
 
 
@@ -114,7 +113,7 @@ extends Thread {
         dispatcherThread = new DispatcherThread(this, queue);
         producerThreads = new ProducerThread[] {
                 uiEventThread=new EventThread<UIEvent>(this, "UI", queue),
-                netEventThread = new EventThread<Dispatchable>(this, "Network", queue),
+                internalJokerProducer = new EventThread<Dispatchable>(this, "Network", queue),
                 tickerThread=new TickerThread(this, queue)
         };
 
@@ -139,12 +138,16 @@ extends Thread {
     }
 
     /**
-     * Fuegt ein Netzwerk-Event (empfangene Informationen vom Kommunikationspartner) für die
-     * Abarbeitung des kommenden Threads zu.
+     * Fuegt ein internes Event für die
+     * Abarbeitung des kommenden Threads zu. Dies kann z.B. sein:
+     * <ul>
+     *     <li>Netzwerk-Event (empfangene Informationen vom Kommunikationspartner)</li>
+     *     <li>Interne Kollision</li>
+     * </ul>
      * @param d Ein Netzwerk-Event, das im kommenden Frame aufgelöst werden soll.
      */
-    public void addNetEvent(Dispatchable d) {
-        netEventThread.enqueueDispatchableForNextFrame(d);
+    public void addInternalEvent(Dispatchable d) {
+        internalJokerProducer.enqueueDispatchableForNextFrame(d);
     }
 
     public void tickerAnmelden(Ticker ticker, int intervall) {
@@ -258,7 +261,7 @@ extends Thread {
     public void setInitHook(final Game game) {
         //Add Dispatchable Event to execute Game Init.
         //Arbitrarily in the network thread.
-        this.netEventThread.enqueueDispatchableForNextFrame(new Dispatchable() {
+        this.internalJokerProducer.enqueueDispatchableForNextFrame(new Dispatchable() {
             @Override
             public void dispatch() {
                 game.scheissdrauf();

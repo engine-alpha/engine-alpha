@@ -123,6 +123,14 @@ extends Thread {
     }
 
     /**
+     * Gibt den Frame-Thread aus, zu dem dieser Sub-Thread gehört.
+     * @return  der Frame-Thread, zu dem dieser Sub-Thread gehört.
+     */
+    public FrameThread getMaster() {
+        return master;
+    }
+
+    /**
      * In dieser Methode wird die jeweilige (frameweise) Logik des Threads ausgeführt.
      */
     public abstract void frameLogic();

@@ -126,11 +126,6 @@ extends PhysikHandler {
     }
 
     @Override
-    public boolean schneidet(Raum r) {
-        return false;
-    }
-
-    @Override
     public boolean beinhaltet(Punkt p) {
         return false;
     }
