@@ -292,8 +292,17 @@ public class Position {
     /* __________________________ Rotation __________________________ */
 
 
-    public Position rotieren(float winkel) {
-        raum.getPhysikHandler().rotieren((float)Math.toRadians(winkel));
+    public Position rotieren(float radians) {
+        raum.getPhysikHandler().rotieren(radians);
+        return this;
+    }
+
+    public float rotation() {
+        return raum.getPhysikHandler().rotation();
+    }
+
+    public Position rotation(float winkelInRad) {
+        raum.getPhysikHandler().rotieren(winkelInRad - rotation());
         return this;
     }
 }

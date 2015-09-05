@@ -145,7 +145,7 @@ extends PhysikHandler {
         if(body == null) {
             return predecessor.rotation();
         }
-        return WorldHandler.radToDeg(body.getAngle());
+        return body.getAngle();
     }
 
     @Override
@@ -276,14 +276,14 @@ extends PhysikHandler {
     @Override
     public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
         if(physikBodyCheck()) {
-            body.applyForce(new Vec2(kraftInN.x, kraftInN.y), new Vec2(globalerOrt.x, globalerOrt.y));
+            body.applyForce(new Vec2(kraftInN.x, kraftInN.y), worldHandler.fromVektor(globalerOrt.alsVektor()));
         }
     }
 
     @Override
     public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
         if(physikBodyCheck()) {
-            body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), new Vec2(globalerOrt.x, globalerOrt.y));
+            body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), worldHandler.fromVektor(globalerOrt.alsVektor()));
         }
     }
 

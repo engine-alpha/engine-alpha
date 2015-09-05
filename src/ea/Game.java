@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.internal.ano.API;
 import ea.internal.gui.*;
 import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
@@ -196,7 +197,7 @@ public abstract class Game implements TastenReagierbar {
 			Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
 		}
 
-        fenster.getFrameThread().setInitHook(this);
+        fenster.getFrameThread().gameHandshake(this);
 	}
 
 	/**
@@ -848,7 +849,20 @@ public abstract class Game implements TastenReagierbar {
         fenster.getWorldHandler().setPixelProMeter(pixelprometer);
     }
 
-    /* _______________________ Kontrakt: Abstrakte Methoden _______________________ */
+    /* _______________________ Kontrakt: Abstrakte und Überschreibbare Methoden _______________________ */
+
+    /**
+     * Diese Methode kann von der erbenden Klasse <i>überschrieben werden</i>. <br />
+     * Diese Methode wird <i>in jedem Frame aufgerufen</i>. Möchte man <i>kontinuierlich wirkende
+     * Änderungen</i> im Spiel implementieren, ist diese Methode der beste Ort dafür.
+     * @param ts    Die tatsächliche Zeit <i>in Sekunden</i>, die seit dem letzten Frame
+     *              vergangen ist. Bei 60 FPS (Frames pro Sekunde) ist also ein Durchschnittswert
+     *              von <code>ts = 1/60 = 0.016666f</code> zu erwarten.
+     */
+    @API
+    public void frameUpdate(float ts) {
+        //LEER - kann überschrieben werden.
+    }
 
     /**
      * Diese Methode wird von der Klasse automatisch aufgerufen, sobald eine Taste einfach gedrueckt
@@ -863,6 +877,7 @@ public abstract class Game implements TastenReagierbar {
      *
      * @see ea.TastenReagierbar
      */
+    @API
     public abstract void tasteReagieren (int code);
 
     /**
@@ -874,5 +889,6 @@ public abstract class Game implements TastenReagierbar {
      * Um interne Fehler zu vermeiden, sollte die <b>gesamte Initiierung hier stattfinden</b> und nicht
      * im Konstruktor.
      */
+    @API
     public abstract void scheissdrauf();
 }

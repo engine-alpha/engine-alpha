@@ -42,6 +42,19 @@ extends Thread {
     private int maxmillis = 16;
 
     /**
+     * Referenz auf das Spiel, das diesen Thread erstellt hat (und das damit zu diesem
+     * Thread gehört).
+     */
+    private Game game;
+
+    /**
+     * Gibt an, ob das Spiel bereits initiiert wurde, also ob innerhalb des
+     * Frame-Threads bereits die Initiierungs-Methode des zugehörigen Game-Objekts aufgerufen
+     * wurde.
+     */
+    private boolean gameInitiated = false;
+
+    /**
      * Setzt die aktuelle FPS-Zahl neu
      * @param fps   Die Anzahl an Frames pro Sekunde, die berechnet werden sollen.
      * @see #setFPS(float)
@@ -55,7 +68,7 @@ extends Thread {
     }
 
     /**
-     * Gibt die <i>tatsächliche</i> Dauer des letzten Frames an.
+     * Gibt die <i>tatsächliche</i> Dauer des letzten Frames an. (in ms)
      */
     private int lastFrameTime = maxmillis;
 
@@ -221,6 +234,11 @@ extends Thread {
             }
             //System.out.println("Joined Dispatcher");
 
+            //Frame Update für die World
+            if(gameInitiated) {
+                game.frameUpdate(lastFrameTime/1000f);
+            }
+
             //System.out.println("Join Render");
             //Join: RenderThread
             try {
@@ -240,6 +258,8 @@ extends Thread {
             deltaT = tEnd - tStart;
 
 
+
+
             //ggf. warten:
             if (deltaT < maxmillis) {
                 try {
@@ -253,18 +273,21 @@ extends Thread {
     }
 
     /**
-     * Meldet ein (frisch gestartetes) Spiel zum Initiieren innerhalb der Frame-Logik
-     * an. Im nächsten Frame wird die Intiierungsmethode der Game-Klasse dispatcht.
+     * Meldet ein (frisch gestartetes) Spiel beim Frame-Thread an.
+     * Zum Initiieren innerhalb der Frame-Logik und für die kommenden Frame Updates.
+     * Im nächsten Frame wird die Intiierungsmethode der Game-Klasse dispatcht.
      * @param game Das Spiel, das initiert werden soll.
      */
     @NoExternalUse
-    public void setInitHook(final Game game) {
+    public void gameHandshake(final Game game) {
         //Add Dispatchable Event to execute Game Init.
         //Arbitrarily in the network thread.
+        this.game =game;
         this.internalJokerProducer.enqueueDispatchableForNextFrame(new Dispatchable() {
             @Override
             public void dispatch() {
                 game.scheissdrauf();
+                gameInitiated = true;
             }
         });
     }
