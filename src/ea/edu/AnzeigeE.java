@@ -79,11 +79,10 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 	 */
 	private int runde = 0;
 
-	/**
-	 * Die Maus des Fensters. Erscheint <b>automatisch</b>, sobald der erste Listener angemeldet
-	 * wird.
-	 */
-	private Maus maus;
+    /**
+     * Gibt an, ob eine Maus bereits erstellt wurde.
+     */
+    private boolean hatMaus = false;
 
 	/**
 	 * Konstruktor. Erstellt die Texte fuer Links- und Rechtspunkte.
@@ -138,10 +137,6 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 		strich.set((breite - lStrich) / 2, 10);
 		links.set(((breite - lStrich) / 2) - groesser - 5, 10);
 		rechts.set((breite + lStrich) / 2 + 5, 10);*/
-	}
-
-	public Maus getMaus () {
-		return maus;
 	}
 
 	/**
@@ -289,12 +284,13 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 	 * @see RechtsKlickReagierbar
 	 */
 	public void klickReagierbarAnmelden (Object client, boolean linksklick) {
-		if (maus == null) {
+		if (!hatMaus) {
 			// Erstmal Maus erstellen
-			maus = new Maus(1);
-			FensterE.getFenster().mausAnmelden(maus);
-			maus.klickReagierbarAnmelden(this);
-		}
+
+            FensterE.getFenster().maus.standardCursorSetzen(Maus.TYP_STANDARD);
+			FensterE.getFenster().maus.klickReagierbarAnmelden(this);
+		    hatMaus = true;
+        }
 		Class<?> klasse = client.getClass();
 		Method[] methoden = klasse.getMethods();
 		for (int i = 0; i < methoden.length; i++) {

@@ -20,6 +20,7 @@
 package ea.internal.gui;
 
 import ea.*;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.frame.FrameThread;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gra.Zeichner;
@@ -46,11 +47,6 @@ public class Fenster extends Frame {
 	 * Counter, der die Anzahl der effektiv vorhandenen Frames zählt.
 	 */
 	private static volatile int frameCount = 0;
-
-	/**
-	 * Gibt an, ob das Fenster im Vollbildmodus arbeitet
-	 */
-	private final boolean vollbild;
 
 	/**
 	 * Das Panel, das fuer die Zeichenroutine verantwortlich ist.
@@ -91,17 +87,12 @@ public class Fenster extends Frame {
 	 * Die Maus, die in dem Fenster sichtbar ist.<br /> Ist diese Referenz <code>null</code>, kann
 	 * man keine Maus sehen.
 	 */
-	private volatile Maus maus = null;
+	private final Maus maus;
 
 	/**
 	 * Ein Roboter, der die Maus bei Austritt im Fenster hält.
 	 */
 	private Robot robot;
-
-	/**
-	 * Das Bild der Maus.
-	 */
-	private Raum mausBild;
 
 	/**
 	 * Ein Array als die Tastentabelle, nach der für die gedrueckt-Methoden vorgegangen wird.<br />
@@ -175,7 +166,6 @@ public class Fenster extends Frame {
 
 		tabelle = new boolean[45];
 
-		this.vollbild = vollbild;
 		this.setSize(breite, hoehe);
 		this.setResizable(false);
 
@@ -278,15 +268,12 @@ public class Fenster extends Frame {
 		addMouseMotionListener();
 		addWindowListener(new Adapter(this));
 		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing (WindowEvent e) {
-				loeschen();
-			}
-		});
-		removeCursor();
+            @Override
+            public void windowClosing(WindowEvent e) {
+                loeschen();
+            }
+        });
 
-		// Mausfang
-        //FIXME effektiveren "Mausfang" für absolute Maus implementieren
 
 
         //Erstelle den WorldHandler
@@ -298,6 +285,9 @@ public class Fenster extends Frame {
         //Starte die Frame-Logic
         frameThread = new FrameThread(zeichner, worldHandler);
         frameThread.start();
+
+        //Erstelle den Maus Handle
+        this.maus = new Maus(this);
 	}
 
 	private void addKeyListener () {
@@ -322,23 +312,23 @@ public class Fenster extends Frame {
 
 	private void addMouseListener () {
 		zeichner.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked (MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
 
-			}
+            }
 
-			@Override
-			public void mousePressed (MouseEvent e) {
-				mausAktion(e, false);
-			}
+            @Override
+            public void mousePressed(MouseEvent e) {
+                mausAktion(e, false);
+            }
 
-			@Override
-			public void mouseReleased (MouseEvent e) {
-				mausAktion(e, true);
-			}
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                mausAktion(e, true);
+            }
 
-			@Override
-			public void mouseEntered (MouseEvent e) {
+            @Override
+            public void mouseEntered(MouseEvent e) {
 				/*if (hatMaus()) {
 					Point po = getLocation();
 
@@ -352,46 +342,41 @@ public class Fenster extends Frame {
 
 				robot.mousePress(InputEvent.BUTTON1_MASK);
 				robot.mouseRelease(InputEvent.BUTTON1_MASK);*/
-			}
+            }
 
-			@Override
-			public void mouseExited (MouseEvent e) {
-			}
-		});
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
 	}
 
 	private void addMouseMotionListener () {
 		zeichner.addMouseMotionListener(new MouseMotionListener() {
-			@Override
-			public void mouseDragged (MouseEvent e) {
-				mausBewegung(e);
-			}
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                mausBewegung(e);
+            }
 
-			@Override
-			public void mouseMoved (MouseEvent e) {
-				mausBewegung(e);
-			}
-		});
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mausBewegung(e);
+            }
+        });
 	}
 
 	/**
-	 * Löscht das Fenster und terminiert damit das Spiel.<br /> <b>Daher nur dann einsetzen, wenn
-	 * die Anwendung beendet werden soll!! Der vorherige Zustand ist nicht
-	 * wiederherstellbar!!</b><br /> Als alternative Methode zum ausschliesslichen Loeschen des
-	 * Fensters steht <code>softLoeschen()</code> zur Verfuegung.
+	 * Löscht das Fenster.
 	 */
 	public void loeschen () {
 
 		this.setVisible(false);
 		this.dispose();
 
+        frameThread.anhalten();
+
 		frameCount--;
 
 		if (frameCount == 0) System.exit(0);
-	}
-
-	private void removeCursor () {
-		mausLoeschen();
 	}
 
 	/**
@@ -403,21 +388,11 @@ public class Fenster extends Frame {
 		return (maus != null);
 	}
 
-	/**
-	 * @return Das BoundingRechteck, dass den Spielraum der Maus ohne Einbezug der Relativen
-	 * Koordinaten (Kameraposition)<br /> Das Rechteck ist die Masse des Fensters mal 3/4.<br />
-	 * Dies ist natuerlich nur dann im Fenster gebraucht, wenn eine relative Maus angemeldet ist.
-	 */
-	private BoundingRechteck mausPlatz () {
-		Dimension d = this.getSize();
-		int x = (d.width / 4) * 3;
-		int y = (d.height / 4) * 3;
-		return new BoundingRechteck((d.width / 8), (d.height / 8), x, y);
-	}
 
 	/**
 	 * @return Die Kamera, passend zu diesem Fenster
 	 */
+    @NoExternalUse
 	public Kamera getCam () {
 		return zeichner.cam();
 	}
@@ -433,7 +408,7 @@ public class Fenster extends Frame {
      * @param losgelassen true für losgelassene Taste, false für gedrückte Taste.
      */
 	private void tastenAktion(KeyEvent e, boolean losgelassen) {
-		int z = zuordnen(e.getKeyCode());
+		int z = Taste.vonJava(e.getKeyCode());
 
 		if (z == -1) {
 			return;
@@ -445,24 +420,6 @@ public class Fenster extends Frame {
 
         KeyUIEvent keyEvent = new KeyUIEvent(this, z, losgelassen);
         frameThread.addUIEvent(keyEvent);
-	}
-
-	/**
-	 * Ordnet vom Java-KeyCode-System in das EA-System um.
-	 * <p/>
-	 * Seit Version 3.0.3 ersetzt durch {@link ea.Taste#vonJava(int)}.
-	 *
-	 * @param keyCode
-	 * 		Der Java-KeyCode
-	 *
-	 * @return Entsprechender EA-KeyCode oder <code>-1</code>, falls es keinen passenden EA-KeyCode
-	 * gibt.
-	 *
-	 * @deprecated Seit v3.0.3. Durch {@link ea.Taste#vonJava(int)} ersetzt.
-	 */
-	@Deprecated
-	public int zuordnen (int keyCode) {
-		return Taste.vonJava(keyCode);
 	}
 
 	/**
@@ -551,17 +508,9 @@ public class Fenster extends Frame {
 		}
 	}
 
-	/**
-	 * Loescht das Maus-Objekt des Fensters.<br /> Hatte das Fenster keine, ergibt sich selbstredend
-	 * keine Aenderung.
-	 */
-	public void mausLoeschen () {
-		this.setCursor(getToolkit().createCustomCursor(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "NOCURSOR"));
-		maus = null;
-	}
 
 	/**
-	 * Statische Methode zum Oeffentlichen Berechnen der Fontmetriken des offenen Fensters.
+	 * Methode zum Oeffentlichen Berechnen der Fontmetriken des offenen Fensters.
 	 *
 	 * @param f
 	 * 		Der zu ueberpruefende Font
@@ -580,34 +529,10 @@ public class Fenster extends Frame {
 	}
 
 	/**
-	 * Maximiert das Fenster (bringt es aus der Taskleiste wieder auf den Bildschirm)
+	 * Stellt das Fenster wieder her(bringt es aus der Taskleiste wieder auf den Bildschirm)
 	 */
-	public void maximieren () {
+	public void wiederherstellen() {
 		setState(NORMAL);
-	}
-
-	/**
-	 * Gibt zurueck, ob dieses Fenster ein Vollbild ist oder nicht.
-	 *
-	 * @return <code>true</code>, wenn das Fenster ein Vollbild ist, sonst <code>false</code>.
-	 */
-	public boolean vollbild () {
-		return vollbild;
-	}
-
-	/**
-	 * Meldet den hintergrund dieses Fensters und damit des Spiels an.<br /> Gibt es bereits einen,
-	 * so wird dieser fortan nicht mehr gezeichnet, dafuer nun dieser. Sollten mehrere Objekte
-	 * erwuenscht sein, gezeichnet zu werden, so empfiehlt es sich, diese in einem
-	 * <code>Knoten</code>-Objekt zu sammeln und dann anzumelden.<br /> <b>Achtung!</b><br /> Diese
-	 * Objekte sollten nicht an der Physik angemeldet werden, dies fuehrt natuerlich zu ungewollten
-	 * Problemen!
-	 *
-	 * @param hintergrund
-	 * 		Der anzumeldende Hintergrund
-	 */
-	public void hintergrundAnmelden (Raum hintergrund) {
-		zeichner.hintergrundAnmelden(hintergrund);
 	}
 
 	/**
@@ -655,31 +580,6 @@ public class Fenster extends Frame {
 	}
 
 	/**
-	 * Meldet eine Maus an.<br /> Im Gegensatz zu den TastenReagierbar-Listenern kann nur eine Maus
-	 * am Fenster angemeldet sein.
-	 *
-	 * @param m
-	 * 		Die anzumeldende Maus
-	 */
-	public void anmelden (Maus m) {
-		if (hatMaus()) {
-			Logger.error("Anmelden", "Es ist bereits eine Maus angemeldet!");
-		} else {
-            maus = m;
-			maus.fensterSetzen(this);
-
-			//BoundingRechteck r = maus.getImage().dimension();
-			//maus.getImage().set(((getWidth() - r.breite) / 2), (getHeight() - r.hoehe) / 2); T
-			//TODO schönere Einbindung (v 4.0)
-            maus.getImage().position.set(((getWidth()) / 2), (getHeight()) / 2);
-
-
-            Punkt hs = maus.hotSpot();
-            this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(maus.getImage().bild(), new Point((int)hs.x, (int)hs.y), maus.toString()));
-		}
-	}
-
-	/**
 	 * Gibt an, ob die Maus den Bildschirm bewegen kann.
 	 *
 	 * @return TRUE, wenn die Maus den Bildschirm bewegen kann, FALSE, wenn nicht.<br /> Ist keine
@@ -722,23 +622,16 @@ public class Fenster extends Frame {
 	 *
 	 * @return Der Zeichner des Fensters.
 	 */
+    @NoExternalUse
 	public Zeichner zeichner () {
 		return zeichner;
-	}
-
-	/**
-	 * Gibt das gespeicherte Bild-Objekt der Maus wieder.
-	 *
-	 * @return Das Bild mit seiner Position und Groesse von der Maus.
-	 */
-	public Raum mausBild () {
-		return this.mausBild;
 	}
 
 	/**
 	 * Deaktiviert den eventuell vorhandenen gemerkten Druck auf allen Tasten.<br /> Wird innerhalb
 	 * der Engine benutzt, sobald das Fenster deaktiviert etc. wurde.
 	 */
+    @NoExternalUse
 	public void druckAufheben () {
 		for (int i = 0; i < tabelle.length; i++) {
 			tabelle[i] = false;

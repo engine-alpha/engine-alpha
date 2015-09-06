@@ -12,6 +12,11 @@ public abstract class FrameSubthread
 extends Thread {
 
     /**
+     * Ist solange true, wie dieser Thread laufen soll.
+     */
+    private boolean sollLaufen = true;
+
+    /**
      * Interne Klasse zum Loggen eines Strings
      */
     public static class StringLogger {
@@ -69,7 +74,7 @@ extends Thread {
      */
     @Override
     public final void run() {
-        while(!interrupted()) {
+        while(sollLaufen && !interrupted()) {
             //Warte auf Okay von Master
             try {
                 synchronized (this) {
@@ -79,6 +84,8 @@ extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            //Soll der Thread aufhören?
+            if(!sollLaufen) break;
 
             //System.out.println("~~~~~~~~~~~~~~Frame Start: " + getName());
 
@@ -128,6 +135,16 @@ extends Thread {
      */
     public FrameThread getMaster() {
         return master;
+    }
+
+    /**
+     * Hält diesen Thread an. Kann nicht rückgängig gemacht werden.
+     */
+    public void anhalten() {
+        sollLaufen = false;
+        synchronized (this) {
+            this.notifyAll();
+        }
     }
 
     /**

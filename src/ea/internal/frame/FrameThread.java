@@ -64,6 +64,11 @@ extends Thread {
     private boolean gameInitiated = false;
 
     /**
+     * Ist solange true, wie der Thread laufen soll.
+     */
+    private boolean sollLaufen = true;
+
+    /**
      * Setzt die aktuelle FPS-Zahl neu
      * @param fps   Die Anzahl an Frames pro Sekunde, die berechnet werden sollen.
      * @see #setFPS(float)
@@ -187,7 +192,7 @@ extends Thread {
     public void run() {
         long deltaT = maxmillis; // Das tatsächliche DeltaT aus dem letzten Frame-Schritt (zu Beginn der Idealfall)
         lastFrameTime = maxmillis;
-        while(!interrupted()) {
+        while(sollLaufen && !interrupted()) {
             long tStart = System.currentTimeMillis();
 
             //Eigentliche Arbeit: Möglichst hoch parallelisiert
@@ -279,6 +284,15 @@ extends Thread {
                 lastFrameTime = (int)deltaT;
             }
         }
+
+        //Thread soll aufhören: Sauber machen!
+        worldThread.anhalten();
+        renderThread.anhalten();
+        dispatcherThread.anhalten();
+        uiEventThread.anhalten();
+        internalJokerProducer.anhalten();
+        tickerThread.anhalten();
+
     }
 
     /**
@@ -299,5 +313,13 @@ extends Thread {
                 gameInitiated = true;
             }
         });
+    }
+
+    /**
+     * Stoppt den Thread sicher. Kann nicht rückgängig gemacht werden.
+     */
+    @NoExternalUse
+    public void anhalten() {
+
     }
 }

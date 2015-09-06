@@ -19,9 +19,7 @@
 
 package ea;
 
-import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
-import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
@@ -594,7 +592,7 @@ public class Text extends Raum {
     @Override
     public Shape berechneShape(float pixelProMeter) {
         if(fontMetrics == null) {
-            fontMetrics = super.getPhysikHandler().worldHandler().getWorldThread().getMaster().getGame().fenster.getFontMetrics(font);
+            fontMetrics = super.getPhysikHandler().worldHandler().getWorldThread().getMaster().getGame().real_fenster.getFontMetrics(font);
             //throw new IllegalStateException("Text wurde nach Shape gefragt, bevor die Metrik bekannt war.");
         }
         return berechneBoxShape(pixelProMeter, fontMetrics.stringWidth(inhalt), fontMetrics.getHeight());

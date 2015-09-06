@@ -49,11 +49,6 @@ public class Zeichner extends Canvas {
 	 */
 	private Knoten statNode = new Knoten();
 
-	/**
-	 * Der relative Hintergrund, ist immer das Hinterste.
-	 */
-	private Raum hintergrund;
-
     /**
      * Gibt die Buffer Strategy aus.
      * @return  Die BufferStrategy für den Zeichner.
@@ -118,11 +113,6 @@ public class Zeichner extends Canvas {
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
 
-		// Relativer Hintergrund
-		if (hintergrund != null) {
-			hintergrund.renderBasic(g, groesse.verschobeneInstanz(new Vektor(cam.getX() / 5, cam.getY() / 10)));
-		}
-
 		// Die Objekte
 		cam.zeichne(g);
 
@@ -142,16 +132,6 @@ public class Zeichner extends Canvas {
 	 */
 	public Knoten statNode () {
 		return statNode;
-	}
-
-	/**
-	 * Meldet den zu zeichnenden Hintergrund an.
-	 *
-	 * @param hintergrund
-	 * 		Der neue Hintergrund
-	 */
-	public void hintergrundAnmelden (Raum hintergrund) {
-		this.hintergrund = hintergrund;
 	}
 
 	/**

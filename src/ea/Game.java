@@ -20,6 +20,7 @@
 package ea;
 
 import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.gui.*;
 import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
@@ -34,7 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Random;
 
 /**
  * Diese Klasse ist für die sofortige, einfache Verwendung der Engine verantwortlich.<br /> Aus ihr
@@ -43,6 +43,9 @@ import java.util.Random;
  * @author Michael Andonie
  */
 public abstract class Game implements TastenReagierbar {
+
+    /* _______________________ STATIC STUFF _______________________ */
+
 	static {
 		System.setProperty("sun.java2d.opengl", "true"); // ok
 		System.setProperty("sun.java2d.d3d", "false"); // ok
@@ -52,10 +55,14 @@ public abstract class Game implements TastenReagierbar {
 		System.setProperty("sun.java2d.ddscale", "true"); // ok, hardware accelerated image scaling on windows
 	}
 
+
+    /* _______________________ FIELDS _______________________ */
+
 	/**
 	 * Der Wurzel-Knoten. An ihm muessen direkt oder indirekt (ueber weitere Knoten) alle
 	 * <code>Raum</code>-Objekte angemeldet werden, die auch (normal) gezeichnet werden sollen.
 	 */
+    @API
 	public final Knoten wurzel;
 
 	/**
@@ -65,6 +72,7 @@ public abstract class Game implements TastenReagierbar {
 	 * (<b>statisch</b>) auf ihrer festen Position. Dies bietet sich zum Beispiel fuer eine
 	 * Punkte-Anzeige etc an.
 	 */
+    @API
 	public final Knoten statischeWurzel;
 
 	/**
@@ -72,6 +80,7 @@ public abstract class Game implements TastenReagierbar {
 	 * ein bestimmtes Raum-Objekt immer im Zentrum zeigen. Es gibt auch weitere interessante
 	 * Methoden dieser Klasse.<br /> Hierzu siehe <b>Handbuch oder Doku</b>.
 	 */
+    @API
 	public final Kamera cam;
 
 	/**
@@ -79,29 +88,41 @@ public abstract class Game implements TastenReagierbar {
 	 * einfach bei Pfadangaben verwendet werden kann:<br /> <br /> <code> String verzeichnis =
 	 * "meinOrdner" + "meinDarinLiegenderUnterordner" + "meineDatei.eaf"; </code>
 	 */
+    @API
 	public final String pfadtrenner = DateiManager.sep;
+
+    /**
+     * Über diese Referenz kann die Maus des Spiels beeinflusst werden.
+     */
+    public final Maus maus;
 
 	/**
 	 * Das Spielfenster
 	 */
-	final Fenster fenster;
+    @NoExternalUse
+	final Fenster real_fenster;
 
 	/**
 	 * An diesem Knoten angelegte Objekte werden immer im Vordergrund sein.<br /> Dies wird zB fuer
 	 * einen Abblendbildschirm verwendet.
 	 */
-	@SuppressWarnings ( "unused" )
+    @NoExternalUse
 	private final Knoten superWurzel;
 
 	/**
 	 * Gibt an, ob bei Escape-Druck das Spiel beendet werden soll.
 	 */
+    @NoExternalUse
 	private final boolean exitOnEsc;
 
 	/**
 	 * Der Font für die Fenstertexte
 	 */
+    @NoExternalUse
 	private Font font;
+
+
+    /* _______________________ CONSTRUCTOR OVERKILL _______________________ */
 
 	/**
 	 * Erstellt ein Spiel, bei dem automatisch beim Drücken von ESC alles beendet wird und ohne
@@ -176,23 +197,25 @@ public abstract class Game implements TastenReagierbar {
 	 * 		Die Y-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm
 	 */
 	public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc, int fensterX, int fensterY) {
-		fenster = new Fenster(x, y, titel, vollbild, fensterX, fensterY);
+		real_fenster = new Fenster(x, y, titel, vollbild, fensterX, fensterY);
 		this.exitOnEsc = exitOnEsc;
 
-		cam = fenster.getCam();
+		cam = real_fenster.getCam();
 		cam.wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
 
-		statischeWurzel = fenster.getStatNode();
+		statischeWurzel = real_fenster.getStatNode();
 
-		fenster.anmelden(this);
+		real_fenster.anmelden(this);
 
 		try {
-			fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
+			real_fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
 		} catch (Exception e) {
 			Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
 		}
 
-        fenster.getFrameThread().gameHandshake(this);
+        maus = real_fenster.getMaus();
+
+        real_fenster.getFrameThread().gameHandshake(this);
 	}
 
 	/**
@@ -256,6 +279,9 @@ public abstract class Game implements TastenReagierbar {
 		this(x, y, titel, vollbild, true);
 	}
 
+
+
+
 	/**
 	 * Setzt das übergebene Bild als Icon des Fensters
 	 *
@@ -263,7 +289,7 @@ public abstract class Game implements TastenReagierbar {
 	 * 		zu setzendes Icon
 	 */
 	public void iconSetzen (Bild icon) {
-		fenster.setIconImage(icon.bild());
+		real_fenster.setIconImage(icon.bild());
 	}
 
 	/**
@@ -293,7 +319,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see #schliessen()
 	 */
 	public void beenden () {
-		fenster.loeschen();
+		real_fenster.loeschen();
 	}
 
 	/**
@@ -313,7 +339,7 @@ public abstract class Game implements TastenReagierbar {
 	 * geschlossen, so ist die Rueckgabe <code>null</code>.
 	 */
 	public String eingabeFordern (String nachricht) {
-		new Eingabe(fenster, nachricht, font);
+		new Eingabe(real_fenster, nachricht, font);
 		return Eingabe.ergebnis;
 	}
 
@@ -333,7 +359,7 @@ public abstract class Game implements TastenReagierbar {
 	 * wenn die Frage mit "Abbrechen" beantwortet oder das Fenster geschlossen wurde.
 	 */
 	public boolean sicherheitsFrage (String frage) {
-		new Frage(fenster, frage, false, font);
+		new Frage(real_fenster, frage, false, font);
 		return Frage.ergebnis;
 	}
 
@@ -353,7 +379,7 @@ public abstract class Game implements TastenReagierbar {
 	 * wenn die Frage mit "Nein" beantwortet oder das Fenster geschlossen wurde.
 	 */
 	public boolean frage (String frage) {
-		new Frage(fenster, frage, true, font);
+		new Frage(real_fenster, frage, true, font);
 		return Frage.ergebnis;
 	}
 
@@ -369,7 +395,7 @@ public abstract class Game implements TastenReagierbar {
 	 * 		Die Nachricht, die Angezeigt werden soll
 	 */
 	public void nachrichtSchicken (String nachricht) {
-		new Nachricht(fenster, true, nachricht, font);
+		new Nachricht(real_fenster, true, nachricht, font);
 	}
 
 	/**
@@ -402,15 +428,8 @@ public abstract class Game implements TastenReagierbar {
 	 * 		gibt es eine alternative Methode, die diesen Titel nicht erwartet.
 	 */
 	public void highscoreAnzeigen (String[] namen, int[] punkte, String fenstertitel) {
-		new HighScoreFenster(fenster, fenstertitel, namen, punkte, font);
+		new HighScoreFenster(real_fenster, fenstertitel, namen, punkte, font);
 	}
-
-    /**
-     * Aktiviert die Physik innerhalb der Umgebung dieses Game-Objekts.
-     */
-    public void physikAktivieren() {
-        //TODO
-    }
 
 	/**
 	 * Beendet dieses Game auf softe weise:<br /> - Das Fenster wird geschlossen<br /> - Die Physik
@@ -419,7 +438,7 @@ public abstract class Game implements TastenReagierbar {
 	 * <b>nicht</b> beendet.
 	 */
 	public void schliessen () {
-		fenster.loeschen();
+		real_fenster.loeschen();
 	}
 
 	/**
@@ -475,7 +494,7 @@ public abstract class Game implements TastenReagierbar {
 	 * Minimiert das Fenster.<br /> Dadurch wird es in die Taskleiste hinein minimiert.
 	 */
 	public void fensterMinimieren () {
-		fenster.minimieren();
+		real_fenster.minimieren();
 	}
 
 	/**
@@ -483,7 +502,7 @@ public abstract class Game implements TastenReagierbar {
 	 * befindet - wieder maximiert.
 	 */
 	public void fensterMaximieren () {
-		fenster.maximieren();
+		real_fenster.wiederherstellen();
 	}
 
 	/**
@@ -501,7 +520,7 @@ public abstract class Game implements TastenReagierbar {
 					+ "Methode verwenden oder über eine andere mit diesem Interface den selben Effekt erzeugen.");
 			return;
 		}
-		fenster.anmelden(g);
+		real_fenster.anmelden(g);
 	}
 
 	/**
@@ -514,7 +533,7 @@ public abstract class Game implements TastenReagierbar {
 	 * <code>false</code>.
 	 */
 	public boolean tasteGedrueckt (int code) {
-		return fenster.istGedrueckt(code);
+		return real_fenster.istGedrueckt(code);
 	}
 
 	/**
@@ -525,7 +544,7 @@ public abstract class Game implements TastenReagierbar {
 	 * 		Das anzumeldende <code>TastenLosgelassenReagierbar</code>-Objekt.
 	 */
 	public void tastenLosgelassenReagierbarAnmelden (TastenLosgelassenReagierbar g) {
-		fenster.tastenLosgelassenAnmelden(g);
+		real_fenster.tastenLosgelassenAnmelden(g);
 	}
 	
 	/**
@@ -540,7 +559,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see ea.Ticker
 	 */
 	public void tickerAnmelden(Ticker ticker, int intervall) {
-		fenster.getFrameThread().tickerAnmelden(ticker, intervall);
+		real_fenster.getFrameThread().tickerAnmelden(ticker, intervall);
 	}
 	
 	/**
@@ -553,7 +572,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @see ea.Ticker
 	 */
 	public void tickerAbmelden(Ticker ticker) {
-		fenster.getFrameThread().tickerAbmelden(ticker);
+		real_fenster.getFrameThread().tickerAbmelden(ticker);
 	}
 
 	/**
@@ -577,47 +596,6 @@ public abstract class Game implements TastenReagierbar {
         WorldHandler.kollisionsReagierbarEingliedern(reagierbar, code, r1, r2);
 	}
 
-	/**
-	 * Meldet ein Mausobjekt an.<br /> Ab sofort wird die anzumeldende Maus im Fenster dargestellt
-	 * und Klicks werden auf die Maus uebertragen.
-	 *
-	 * @param maus
-	 * 		Die anzumeldende Maus
-	 *
-	 * @see Maus
-	 */
-	public void mausAnmelden(Maus maus) {
-		mausAnmelden(maus, false);
-	}
-
-	/**
-	 * Meldet ein Mausobjekt an.<br /> Ab sofort wird die anzumeldende Maus im Fenster dargestellt
-	 * und Klicks werden auf die Maus uebertragen.
-	 *
-	 * @param maus
-	 * 		Die anzumeldende Maus
-	 * @param listenerUebernehmen
-	 * 		Ist dieser Wert <code>true</code>, so uebernimmt die neue Maus <b>alle Listener der alten
-	 * 		Maus</b>
-	 *
-	 * @see Maus
-	 */
-	public void mausAnmelden (Maus maus, boolean listenerUebernehmen) {
-		if (maus == null) {
-			Logger.error("Anmelden", "Die anzumeldende Maus war ein nicht instanziertes Objekt (sprich: null)!");
-			return;
-		}
-
-		Maus alteMaus = fenster.getMaus();
-		fenster.mausLoeschen();
-
-		if (alteMaus != null && listenerUebernehmen) {
-			maus.uebernehmeAlleListener(alteMaus);
-		}
-
-		fenster.anmelden(maus);
-	}
-
     /**
 	 * Gibt ein BoundingRechteck zurueck, dass die Masse des Fensters beschreibt.<br /> Die Hoehe
 	 * und Breite geben die Hoehe und Breite des Fensters wieder. Die Position ist immer (0|0), da
@@ -626,23 +604,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @return Das besagte BoundingRechteck mit den Fenstermassen.
 	 */
 	public BoundingRechteck fensterGroesse () {
-		return fenster.fenstermasse();
-	}
-
-	/**
-	 * Setzt einen Hintergrund fuer das Spiel.<br /> Das kann ein beliebiges
-	 * <code>Raum</code>-Objekt sein, vorwiegend bieten sich jedoch Bilder an.<br /> Dieses Objekt
-	 * wird dann immer im absoluten Hintergrund sein und wird auch weiter entfernt wirken, wenn
-	 * Bewegungen stattfinden. Daher sollte dieses Objekt nicht in Berechnungen, wie Kollisionstests
-	 * oder den Physik-Modus, eingebunden werden!<br /> <br /> <br /> <br /> Soll der Hintergrund
-	 * etwas besonderes sein, das aus vielen Objekten besteht, so bietet es sich an, all diese an
-	 * einem Knoten zu binden und diesen Knoten hier anzumelden.
-	 *
-	 * @param m
-	 * 		Das Raum-Objekt, das ab jetzt der Hintergrund sein wird.
-	 */
-	public void hintergrundSetzen (Raum m) {
-		fenster.hintergrundAnmelden(m);
+		return real_fenster.fenstermasse();
 	}
 
 	/**
@@ -772,7 +734,7 @@ public abstract class Game implements TastenReagierbar {
 		};
 		JFileChooser ch = new JFileChooser();
 		ch.setFileFilter(filter);
-		int erg = ch.showOpenDialog(fenster);
+		int erg = ch.showOpenDialog(real_fenster);
 		if (erg == JFileChooser.APPROVE_OPTION) {
 			return ch.getSelectedFile().getPath();
 		} else {
@@ -809,7 +771,7 @@ public abstract class Game implements TastenReagierbar {
 	}
 
     public void ppmSetzen(float pixelprometer) {
-        fenster.getWorldHandler().setPixelProMeter(pixelprometer);
+        real_fenster.getWorldHandler().setPixelProMeter(pixelprometer);
     }
 
     /* _______________________ Kontrakt: Abstrakte und Überschreibbare Methoden _______________________ */

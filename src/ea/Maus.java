@@ -20,6 +20,7 @@
 package ea;
 
 import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.gui.Fenster;
 import ea.internal.ui.KlickEvent;
 import ea.internal.ui.MausBewegungEvent;
@@ -39,27 +40,43 @@ import java.util.ArrayList;
  * @author Michael Andonie, Niklas Keller <me@kelunik.com>
  */
 public class Maus {
+
+
+    /* -------------------- INTERNAL STRUCTURES -------------------- */
+
+    /**
+     * Beschreibt, das Verfahren, nach dem eine Maus erstellt wurde
+     */
+    private static enum MausTyp {
+        Standard, Custom
+    }
+
 	/* -------------------- Konstanten -------------------- */
 
 	/**
-	 * Standard-Maus-Zeiger der Engine Alpha
+	 * Diese Konstante gehört zum Standard-Cursor des jeweiligen Betriebssystems.
 	 */
-	public static final int TYPE_STANDARD = 0;
+	public static final int TYP_STANDARD = Cursor.DEFAULT_CURSOR;
 
 	/**
-	 * Ein Fadenkreuz
+	 * Diese Konstante gehört zum Fadenkreuz-Cursor
 	 */
-	public static final int TYPE_FADENKREUZ = 1;
+	public static final int TYP_FADENKREUZ = Cursor.CROSSHAIR_CURSOR;
 
 	/**
 	 * Ein klassischer Zeiger, der eine Hand darstellt mit einem Zeigefinger
 	 */
-	public static final int TYPE_HAND = 2;
+	public static final int TYP_HAND = Cursor.HAND_CURSOR;
 
 	/**
 	 * Ein klassischer Zeiger, wie unter Windows gewohnt
 	 */
-	public static final int TYPE_KLASSIK = 3;
+	public static final int TYP_MOVE = Cursor.MOVE_CURSOR;
+
+    /**
+     * Diese Konstante gehört zu einem komplett unsichtbaren Cursor.
+     */
+    private static final int TYP_UNSICHTBAR = -10;
 
     /**
      * Konstante für Linksklick. Wird manchen Reagierbar-Listenern mitgegeben.
@@ -80,29 +97,7 @@ public class Maus {
 
 	/* -------------------- /Konstanten -------------------- */
 
-	/**
-	 * Die Art der Maus.
-	 * <p/>
-	 * Eine Maus kann ein klassischer Pfeil, ein Textbearbeitungszeichen, eine Sanduhr, ein
-	 * Fadenkreuz oder jedes andere beliebiges Raum-Objekt sein. Gerade kreative Mäuse werden für
-	 * Spiele verwendet.
-	 * <p/>
-	 * Die Liste aller Mausarten ist im Konstruktor sowie im <b>Handbuch</b> festgehalten.
-	 */
-	private final int type;
-
-	/**
-	 * Gibt an, ob die Maus fixiert ist oder nicht.
-	 * <p/>
-	 * In diesem Fall ist der Mauszeiger immer Mittelpunkt des Bildes, das Bild bewegungSimulieren sich dann
-	 * immer gemäß der Mausbewegung.
-	 */
-	private final boolean fixed;
-
-	/**
-	 * Gibt an, ob die Maus den angezeigten Bildschirmbereich verschieben kann.
-	 */
-	private final boolean bewegend;
+    /* -------------------- FIELDS -------------------- */
 
     public ArrayList<KlickReagierbar> getKlickListeners() {
         return klickListeners;
@@ -121,253 +116,102 @@ public class Maus {
     }
 
     /**
-	 * Die Liste aller Raum-Klick-Auftraege
-	 */
-	private final ArrayList<Auftrag> mausListe = new ArrayList<>();
+     * Die Liste aller Raum-Klick-Auftraege
+     */
+    private final ArrayList<Auftrag> mausListe = new ArrayList<>();
+
+    /**
+     * Eine Liste aller angemeldeten KlickReagierbar Objekte.
+     */
+    private final ArrayList<KlickReagierbar> klickListeners = new ArrayList<>();
+
+    /**
+     * Eine Liste aller angemeldeten RechtsKlickReagierbar Objekte.
+     */
+    private final ArrayList<RechtsKlickReagierbar> rechtsKlickListeners = new ArrayList<>();
+
+    /**
+     * Eine Liste aller angemeldeten MausLosgelassenReagierbar Objekte.
+     */
+    private final ArrayList<MausLosgelassenReagierbar> mausLosgelassenListeners = new ArrayList<>();
+
+    /**
+     * Eine Liste aller angemeldeten MausBewegungReagierbar Objekte.
+     */
+    private final ArrayList<MausBewegungReagierbar> mausBewegungListeners = new ArrayList<>();
 
 	/**
-	 * Eine Liste aller angemeldeten KlickReagierbar Objekte.
+	 * Gibt an, ob die Maus fixiert ist oder nicht.
+	 * <p/>
+	 * In diesem Fall ist der Mauszeiger immer Mittelpunkt des Bildes, das Bild bewegungSimulieren sich dann
+	 * immer gemäß der Mausbewegung.
 	 */
-	private final ArrayList<KlickReagierbar> klickListeners = new ArrayList<>();
+	private boolean fixed;
 
 	/**
-	 * Eine Liste aller angemeldeten RechtsKlickReagierbar Objekte.
+	 * Gibt an, ob die Maus den angezeigten Bildschirmbereich verschieben kann.
 	 */
-	private final ArrayList<RechtsKlickReagierbar> rechtsKlickListeners = new ArrayList<>();
+	private boolean bewegend;
 
-	/**
-	 * Eine Liste aller angemeldeten MausLosgelassenReagierbar Objekte.
-	 */
-	private final ArrayList<MausLosgelassenReagierbar> mausLosgelassenListeners = new ArrayList<>();
-
-	/**
-	 * Eine Liste aller angemeldeten MausBewegungReagierbar Objekte.
-	 */
-	private final ArrayList<MausBewegungReagierbar> mausBewegungListeners = new ArrayList<>();
-
-	/**
-	 * Das Mausbild. Wichtig bei einer individuellen Maus.
-	 */
-	private final Bild bild;
-
-	/**
-	 * Der individuelle Hotspot
-	 */
-	private final Punkt hotspot;
+    private MausTyp mausTyp;
 
 	/**
 	 * Das Fenster, in dem diese Maus aktiv ist. <code>null</code>, falls es kein solches Fenster
 	 * gibt.
 	 */
-	private Fenster fenster;
+	private final Fenster fenster;
+
+
+    /* -------------------- CONSTRUCTOR -------------------- */
 
 	/**
-	 * Dieser Konstruktor ist lediglich eine Vereinfachung. Siehe Dokumentation des vollständigen
-	 * Konstruktors für eine Dokumentation der Parameter: {@link #Maus(Bild, Punkt, boolean,
-	 * boolean)}
-	 * <p/>
-	 * <code>bewegend</code> wird bei diesem Konstruktor auf <code>false</code> gesetzt.
-	 *
-	 * @param mausbild
-	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
-	 * @param hotspot
-	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
-	 * @param fixed
-	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
-	 *
-	 * @see #Maus(Bild, Punkt, boolean, boolean)
-	 * @see Bild
-	 * @see Kamera
+	 * Erstellt einen Maus-Handle.
+     * Der Cursor ist der System-Standardcursor
 	 */
-	@API
-	public Maus (Bild mausbild, Punkt hotspot, boolean fixed) {
-		this(mausbild, hotspot, fixed, false);
+	@NoExternalUse
+	public Maus (Fenster fenster) {
+        this.fenster = fenster;
+        standardCursorSetzen(TYP_STANDARD);
 	}
 
-	/**
-	 * Dieser Konstruktor ermöglicht es, ein eigenes Mausbild einzubringen.
-	 * <p/>
-	 * Hierfür muss klar sein, was ein Hotspot ist:<br> Ein Hotspot ist ein Punkt, relativ entfernt
-	 * von der linken oberen Ecke des Mausbildes. Dieser Punkt ist der eigentliche Klickpunkt.
-	 * <p/>
-	 * Angenommen das Mausbild misst 20 x 20 Pixel und der Hotspot ist ein Punkt mit den Koordinaten
-	 * (10|10), so wäre der Hotspot in der Mitte des Bildes und bei einem Klick wären diese
-	 * Klick-Koordinaten genau in der Mitte. Wäre der Hotspot (0|0), so wäre der Hotspot genau die
-	 * linke obere Ecke des Mausbildes.
-	 *
-	 * @param mausbild
-	 * 		Das Objekt, das ab sofort das Mausbild sein wird und auch dementsprechend bewegungSimulieren wird.
-	 * @param hotspot
-	 * 		Der bereits beschriebene Hotspot
-	 * @param fixed
-	 * 		Ob diese Maus fixiert sein soll: Ist dieser Wert <code>true</code>, so ist die Maus immer
-	 * 		in der Mitte. Bei <code>false</code> verhält sich diese Maus genauso wie gewohnt.
-	 * @param bewegend
-	 * 		Regelt, ob die Kamera bei Mausbewegungen bewegungSimulieren wird.
-	 * 		<p/>
-	 * 		Bei <code>true</code>: <ul> <li>Falls die Maus fixiert ist, bleibt sie weiterhin in der
-	 * 		Mitte und die Kamera wird bei jeder Bewegung bewegungSimulieren.</li> <li>Falls die Maus nicht fixiert
-	 * 		ist, so wird die Kamera erst bewegungSimulieren, wenn die Maus den Rand des Fensters beführt.</li>
-	 * 		</ul>
-	 * 		<p/>
-	 * 		Bei <code>false</code> wird die Kamera nie automatisch bewegungSimulieren. Allerdings ist dies über das
-	 * 		Interface {@link ea.MausBewegungReagierbar} manuell realisierbar. Ohne dieses Interface
-	 * 		gibt <code>false</code> bei einer fixierten Maus wenig Sinn.
-	 *
-	 * @see ea.Bild
-	 * @see ea.Kamera
-	 */
-	@API
-	public Maus (Bild mausbild, Punkt hotspot, boolean fixed, boolean bewegend) {
-		this.type = -1;
-		this.bild = mausbild;
-		this.hotspot = hotspot;
-		this.fixed = fixed;
-		this.bewegend = bewegend;
-	}
 
-	/**
-	 * Erstellt eine Maus, die die Kamera nicht bewegungSimulieren und nicht fixiert ist.
-	 * <p/>
-	 * Weitere Erläuterungen: {@link #Maus(Bild, Punkt, boolean, boolean)}
-	 *
-	 * @param mausbild
-	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
-	 * @param hotspot
-	 * 		siehe {@link #Maus(Bild, Punkt, boolean, boolean)}
-	 */
-	@API
-	public Maus (Bild mausbild, Punkt hotspot) {
-		this(mausbild, hotspot, false, false);
-	}
 
-	/**
-	 * Vereinfachter Konstruktor für eine Standard-Maus.
-	 * <p/>
-	 * Hierbei gibt es verschiedene Mäuse, die über ihren Index gewählt werden können. Die
-	 * verlinkten Konstanten sollten verständlich dokumentiert sein. Ansonsten ist an dieser Stelle
-	 * auch das Wiki hilfreich.
-	 * <p/>
-	 * Die Maus ist dabei weder fixiert noch wird die Kamera durch ihre Bewegung bewegungSimulieren.
-	 *
-	 * @param type
-	 * 		Die Art der Maus. Jeder Wert steht für eine andere Maus.
-	 * 		<p/>
-	 * 		{@link #TYPE_STANDARD}, {@link #TYPE_FADENKREUZ}, {@link #TYPE_HAND} oder {@link
-	 * 		#TYPE_KLASSIK}
-	 */
-	@API
-	public Maus (int type) {
-		this(type, false, false);
-	}
+    /* -------------------- METHODS -------------------- */
 
-	/**
-	 * Vollständiger Konstruktor für eine Standard-Maus.
-	 * <p/>
-	 * Hierbei gibt es verschiedene Mäuse, die über ihren Index gewählt werden können. Die
-	 * verlinkten Konstanten sollten verständlich dokumentiert sein. Ansonsten ist an dieser Stelle
-	 * auch das Wiki hilfreich.
-	 *
-	 * @param type
-	 * 		Die Art der Maus. Jeder Wert steht für eine andere Maus.
-	 * 		<p/>
-	 * 		{@link #TYPE_STANDARD}, {@link #TYPE_FADENKREUZ}, {@link #TYPE_HAND} oder {@link
-	 * 		#TYPE_KLASSIK}
-	 * @param fixed
-	 * 		Ob diese Maus fixiert sein soll: Ist dieser Wert <code>true</code>, so ist die Maus immer
-	 * 		in der Mitte. Bei <code>false</code> verhält sich diese Maus genauso wie gewohnt.
-	 * @param bewegend
-	 * 		Ob die Maus die Kamera bewegen koennen soll oder nicht.
-	 */
-	@API
-	public Maus (int type, boolean fixed, boolean bewegend) {
-		this.type = type;
-		this.fixed = fixed;
-		this.bewegend = bewegend;
-		this.bild = getImage();
-		this.hotspot = hotSpot();
-	}
+    /**
+     * Setzt einen Standard-Cursor für die Maus.
+     * @param cursorTyp Der Code, der den gewünschten Cursor-Typ beschreibt.
+     *                  Die zugehörigen Konstanten liegen in dieser Klasse.
+     *                  Zum Beispiel <code>Maus.TYP_HAND</code>.
+     */
+    @API
+    public void standardCursorSetzen(int cursorTyp) {
+        if(!fixed) {
+            mausTyp = MausTyp.Standard;
 
-	/**
-	 * <b>Berechnet</b> das Bild von der Maus, das in der Engine dargestellt wird.
-	 *
-	 * @return Das Bild des Mauscursors.
-	 */
-	public Bild getImage () {
-		if (bild != null) {
-			return bild;
-		}
+            Cursor cursor = cursorTyp == TYP_UNSICHTBAR ?
+                    fenster.getToolkit().createCustomCursor(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "NOCURSOR")
+                        : Cursor.getPredefinedCursor(cursorTyp);
+            fenster.setCursor(cursor);
+        } else {
+            throw new UnsupportedOperationException("Implementierung des fixed Cursor steht aus");
+        }
+    }
 
-		BufferedImage ret = null;
-		String verzeichnis = "/assets/mouse/"; // Das Verzeichnis der Mauskomponenten
+    /**
+     * Setzt einen Custom-Cursor aus einem beliebigen Bild für die Maus.
+     * @param cursorBild    Das Bild für den Cursor. (Die Position des Bild-Objektes ist egal)
+     * @param hotSpot       Der Hotspot des Cursors relativ zur linken oberen Ecke des Cursor-Bildes. Die Koordinaten
+     *                      des Punktes sollten ganzzahlig sein und werden in Pixel gemessen.
+     */
+    public void customCursorSetzen(Bild cursorBild, Punkt hotSpot) {
+        if(!fixed) {
+            fenster.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursorBild.bild(), new Point((int) hotSpot.x, (int) hotSpot.y), cursorBild.toString()));
+        } else {
+            throw new UnsupportedOperationException("Implementierung des fixed Cursor steht aus");
+        }
+    }
 
-		switch (type) {
-			case TYPE_STANDARD:
-				verzeichnis += "blau.gif";
-				break;
-			case TYPE_FADENKREUZ:
-				verzeichnis += "fadenkreuz.gif";
-				break;
-			case TYPE_HAND:
-				verzeichnis += "hand.gif";
-				break;
-			case TYPE_KLASSIK:
-				verzeichnis += "klassisch.gif";
-				break;
-			default:
-				// TODO Die Datei existierte nicht, gibt es da noch einzweites Fadenkreuz?
-				verzeichnis += "fadenkreuz.gif";
-				break;
-		}
-
-		InputStream in = Maus.class.getResourceAsStream(verzeichnis);
-
-		try {
-			ret = ImageIO.read(in);
-		} catch (IOException ex) {
-			Logger.error("IO", "Das zu ladende Standard-Mausbild konnte nicht geladen werden.");
-		}
-
-		return new Bild(0, 0, ret);
-	}
-
-	/**
-	 * @return der Punkt auf dem Mausbild, der als Hotspot fungiert.
-	 */
-	public Punkt hotSpot () {
-		if (hotspot != null) {
-			return hotspot;
-		}
-
-		int x = 0, y = 0;
-
-		switch (type) {
-			case TYPE_FADENKREUZ:
-				x = y = 12;
-				break;
-			case TYPE_HAND:
-				x = 5;
-				y = 0;
-				break;
-			case 3: // Hotspot bleibt auf (0|0)
-			default:
-				break;
-		}
-
-		return new Punkt(x, y);
-	}
-
-	/**
-	 * Setzt die Referenz auf das Fenster, in dem diese Maus sitzt, neu. <b>ACHTUNG:</b> Sollte
-	 * nicht von Außen benutzt werden, falls man sich nicht genau mit der Struktur der Engine
-	 * auskennt.
-	 *
-	 * @param f
-	 * 		Die neue Fensterreferenz.
-	 */
-	public void fensterSetzen (Fenster f) {
-		this.fenster = f;
-	}
 
 	/**
 	 * Alternativmethopde zum anmelden. Hierbei gibt es keinen Code-Parameter; dieser wird
@@ -495,13 +339,12 @@ public class Maus {
 	}
 
 	/**
-	 * Bei einer angemeldeten Maus wird bei einem Klick diese Methode aufgerufen.<br /> So lassen
-	 * sich auch Klicks auf die Maus "simulieren".
+	 * Simuliert einen Klick
 	 *
 	 * @param p die Ausgangsposition für die Maus
 	 */
 	public void klick (Punkt p, int klicktyp, int anzahlKlicks, boolean loslassen) {
-		p = this.klickAufZeichenebene();
+		p = this.positionAufZeichenebene();
 
         KlickEvent e = new KlickEvent(fenster, p, klicktyp, anzahlKlicks, loslassen);
 
@@ -559,8 +402,9 @@ public class Maus {
      *          Ist <code>null</code>, wenn die Maus sich gerade nicht über der Zeichenebene befindet.
 	 * würde.
 	 */
+    @SuppressWarnings("unused")
     @API
-	public Punkt klickAufZeichenebene () {
+	public Punkt positionAufZeichenebene () {
         /*if(true) {
             throw new UnsupportedOperationException("Klick ist nicht auf Cursor gemappt.");
         }
@@ -568,16 +412,16 @@ public class Maus {
 			Punkt r = bild.position.get();
 			Punkt p = hotSpot();
 
-			return new Punkt((int) (r.x + p.realX() + fenster.getCam().getX()), (int) (r.y + p.realY() + fenster.getCam().getY())); // Mit
+			return new Punkt((int) (r.x + p.realX() + real_fenster.getCam().getX()), (int) (r.y + p.realY() + real_fenster.getCam().getY())); // Mit
 			// zurückrechnen
 			// auf die
 			// Bildebene!
 		} else {
 			//Fenster Dimension
-			Dimension dim = fenster.getSize();
+			Dimension dim = real_fenster.getSize();
 			int startX = (dim.width / 2);
 			int startY = (dim.height / 2);
-			return new Punkt(startX + fenster.getCam().getX(), startY + fenster.getCam().getY());
+			return new Punkt(startX + real_fenster.getCam().getX(), startY + real_fenster.getCam().getY());
 		}*/
 
         //TODO absolute implementation
@@ -593,9 +437,9 @@ public class Maus {
 	}
 
 	/**
-	 * @return Ob die Maus fixed ist oder nicht.
+	 * @return Ob die Maus fix ist oder nicht.
 	 */
-	public boolean absolut () {
+	public boolean istFix () {
 		return this.fixed;
 	}
 
@@ -656,7 +500,6 @@ public class Maus {
 		 * @param signal
 		 * 		Das neue Signal
 		 */
-		@SuppressWarnings ( "unused" )
 		public void signalSetzen (int signal) {
 			this.signal = signal;
 		}
