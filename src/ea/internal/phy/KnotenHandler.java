@@ -174,4 +174,14 @@ extends PhysikHandler {
     public Vektor geschwindigkeit() {
         return null;
     }
+
+    @Override
+    public void rotationBlockiertSetzen(boolean block) {
+
+    }
+
+    @Override
+    public boolean rotationBlockiert() {
+        return false;
+    }
 }

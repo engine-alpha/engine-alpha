@@ -162,6 +162,61 @@ public abstract class Game implements TastenReagierbar {
 
     /* _______________________ CONSTRUCTOR OVERKILL _______________________ */
 
+    /**
+     * Groesster Konstruktor fuer Objekte der Klasse Game.
+     *
+     * @param x
+     * 		Die Breite des Fensters
+     * @param y
+     * 		Die Hoehe des Fensters
+     * @param titel
+     * 		Der Titel des Spielfensters
+     * @param vollbild
+     * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
+     * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
+     * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
+     * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
+     * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
+     * @param exitOnEsc
+     * 		Ist dieser Wert <code>true</code>, so wird das Spiel automatisch beendet, wenn die
+     * 		"Escape"-Taste gedrueckt wurde. Dies bietet sich vor allem an, wenn das Spiel ein Vollbild
+     * 		ist oder die Maus aufgrund der Verwendung einer Maus im Spiel nicht auf das "X"-Symbol des
+     * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" waere und <b>dies
+     * 		ist etwas unbeschreiblich aergerliches fuer den Spielbenutzer!!!!!!!!!!!</b>
+     * @param fensterX
+     * 		Die X-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm
+     * @param fensterY
+     * 		Die Y-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm
+     */
+    public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc, int fensterX, int fensterY) {
+        real_fenster = new Fenster(x, y, titel, vollbild, fensterX, fensterY);
+        this.exitOnEsc = exitOnEsc;
+        this.font = new Font("SansSerif", Font.PLAIN, 16);
+
+        // ------------- Die Helper-Referenzen -------------
+        kamera = real_fenster.getCam();
+        kamera.wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
+
+        statischeWurzel = real_fenster.getStatNode();
+
+        real_fenster.tastenReagierbarAnmelden(this);
+
+        try {
+            real_fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
+        } catch (Exception e) {
+            Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
+        }
+
+
+
+        real_fenster.getFrameThread().gameHandshake(this);
+
+        // ------------- Die Handles -------------
+        this.anmelden = new Anmelden(this);
+        this.fenster = new FensterHelper(this);
+        this.maus = real_fenster.getMaus();
+    }
+
 	/**
 	 * Erstellt ein Spiel, bei dem automatisch beim Drücken von ESC alles beendet wird und ohne
 	 * Titel.
@@ -207,62 +262,6 @@ public abstract class Game implements TastenReagierbar {
 	public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc) {
 		this(x, y, titel, vollbild, exitOnEsc, -1, -1);
 	}
-
-	/**
-	 * Groesster Konstruktor fuer Objekte der Klasse Game.
-	 *
-	 * @param x
-	 * 		Die Breite des Fensters
-	 * @param y
-	 * 		Die Hoehe des Fensters
-	 * @param titel
-	 * 		Der Titel des Spielfensters
-	 * @param vollbild
-	 * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
-	 * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
-	 * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
-	 * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
-	 * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
-	 * @param exitOnEsc
-	 * 		Ist dieser Wert <code>true</code>, so wird das Spiel automatisch beendet, wenn die
-	 * 		"Escape"-Taste gedrueckt wurde. Dies bietet sich vor allem an, wenn das Spiel ein Vollbild
-	 * 		ist oder die Maus aufgrund der Verwendung einer Maus im Spiel nicht auf das "X"-Symbol des
-	 * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" waere und <b>dies
-	 * 		ist etwas unbeschreiblich aergerliches fuer den Spielbenutzer!!!!!!!!!!!</b>
-	 * @param fensterX
-	 * 		Die X-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm
-	 * @param fensterY
-	 * 		Die Y-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm
-	 */
-	public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc, int fensterX, int fensterY) {
-		real_fenster = new Fenster(x, y, titel, vollbild, fensterX, fensterY);
-		this.exitOnEsc = exitOnEsc;
-        this.font = new Font("SansSerif", Font.PLAIN, 16);
-
-        // ------------- Die Helper-Referenzen -------------
-		kamera = real_fenster.getCam();
-		kamera.wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
-
-		statischeWurzel = real_fenster.getStatNode();
-
-		real_fenster.tastenReagierbarAnmelden(this);
-
-		try {
-			real_fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
-		} catch (Exception e) {
-			Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
-		}
-
-
-
-        real_fenster.getFrameThread().gameHandshake(this);
-
-        // ------------- Die Handles -------------
-        this.anmelden = new Anmelden(this);
-        this.fenster = new FensterHelper(this);
-        this.maus = real_fenster.getMaus();
-	}
-
 	/**
 	 * Vereinfachter Konstruktor.<br /> Hierbei gilt automatisch, dass das Fenster <b>beim
 	 * Tastendruck auf "Escape" beendet wird</b>, sowie dass kein Vollbild aktiviert wird.<br /> Ist
@@ -325,29 +324,7 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 
-
-
-
-
-	/**
-	 * Die aus <code>TastenReagierbar</code> implemetierte Methode zum Reagieren auf einen
-	 * einfachen, einmaligen Tastendruck.
-	 *
-	 * @param code
-	 * 		Der Code dieser Taste zu den Codes:<br /> Siehe http://engine-alpha.org/wiki/Tastaturtabelle
-	 * 		für eine vollständige Tabelle
-	 *
-	 * @see ea.Taste
-	 */
-    @NoExternalUse
-    @Override
-	public final void reagieren (int code) {
-		if (exitOnEsc && code == Taste.ESCAPE) {
-			beenden();
-		}
-
-		tasteReagieren(code);
-	}
+    /* _______________________ ECHET API METHODEN _______________________ */
 
 	/**
 	 * Diese Methode beendet das Spiel gaenzlich.<br /> Das heisst, dass das Fenster geschlossen,
@@ -359,17 +336,6 @@ public abstract class Game implements TastenReagierbar {
 		real_fenster.loeschen();
 	}
 
-
-
-
-
-
-
-
-
-
-
-
 	/**
 	 * Prüft, ob eine bestimmte Taste gerade jetzt heruntergedrückt wird.
 	 *
@@ -379,160 +345,9 @@ public abstract class Game implements TastenReagierbar {
 	 * @return <code>true</code>, falls die gewählte Taste gerade jetzt heruntergedrückt wird. Sonst
 	 * <code>false</code>.
 	 */
+    @API
 	public boolean tasteGedrueckt (int code) {
 		return real_fenster.istGedrueckt(code);
-	}
-	
-
-	
-
-
-
-
-    /**
-	 * Gibt ein BoundingRechteck zurueck, dass die Masse des Fensters beschreibt.<br /> Die Hoehe
-	 * und Breite geben die Hoehe und Breite des Fensters wieder. Die Position ist immer (0|0), da
-	 * dies nicht relevant ist fuer die Masse des Fensters.
-	 *
-	 * @return Das besagte BoundingRechteck mit den Fenstermassen.
-	 */
-	public BoundingRechteck fensterGroesse () {
-		return real_fenster.fenstermasse();
-	}
-
-	/**
-	 * Macht vom aktuell sichtbaren Bereich (also dem von der Kamera derzeit erfassten Bereich)
-	 * einen Screenshot.
-	 *
-	 * @param pfad
-	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie {@code screenshot.jpg}
-	 * 		speichert den Screenshot im Projektordner. Für eingabeabhängige Pfade kann
-	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br />
-	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
-	 */
-	public void screenshot (String pfad) {
-		screenshot(pfad, kamera.position());
-	}
-
-	/**
-	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab.
-	 *
-	 * @param pfad
-	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie {@code screenshot.jpg}
-	 * 		speichert den Screenshot im Projektordner. Für eingabeabhängige Pfade kann
-	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br />
-	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
-	 * @param ausschnitt
-	 * 		Der Ausschnitt aus der Zeichenebene, der als Bild gespeichert werden soll als
-	 * 		<code>BoundingRechteck</code>.
-	 *
-	 * @see #pfadAuswaehlen(java.lang.String[])
-	 * @see #screenshot(java.lang.String, int, int, int, int)
-	 */
-	public void screenshot (final String pfad, final BoundingRechteck ausschnitt) {
-		final String ext = pfad.toLowerCase().substring(pfad.length() - 3);
-
-		if (!ext.equals("png") && !ext.equals("jpg")) {
-			throw new IllegalArgumentException("Pfad muss auf .jpg oder .png enden!");
-		}
-
-		new Thread() {
-			public void run () {
-				BufferedImage img = new BufferedImage((int) ausschnitt.breite, (int) ausschnitt.hoehe, BufferedImage.TYPE_INT_RGB);
-				Graphics2D g = img.createGraphics();
-
-				g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-				g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-				g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
-                // TODO -> Camera-Translation einbauen!
-
-				kamera.wurzel().render(g);
-
-				try {
-					ImageIO.write(img, ext, new File(pfad));
-				} catch (IOException e) {
-					Logger.error("IO", "Schreibfehler beim Speichern des Screenshots!");
-					e.printStackTrace();
-				}
-			}
-		}.start();
-	}
-
-	/**
-	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab,
-	 *
-	 * @param pfad
-	 * 		Der Pfad, in dem das Bild gespeichert werden soll. Ein Wert wie {@code screenshot.jpg}
-	 * 		speichert den Screenshot im Projektordner. Für eingabeabhängige Pfade kann
-	 * 		<code>pfadAuswaehlen(String[])</code> benutzt werden.<br /> <br /> <b> ACHTUNG!! </b><br />
-	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
-	 * @param x
-	 * 		Die X-Koordinate der oberen linken Ecke des Bildausschnitts.
-	 * @param y
-	 * 		Die Y-Koordinate der oberen linken Ecke des Bildausschnitts.
-	 * @param breite
-	 * 		Die gewuenschte Breite des Bildes
-	 * @param hoehe
-	 * 		Die gewuenschte Laenge des Bildes
-	 *
-	 * @see #pfadAuswaehlen(java.lang.String[])
-	 * @see #screenshot(java.lang.String, ea.BoundingRechteck)
-	 */
-	public void screenshot (String pfad, int x, int y, int breite, int hoehe) {
-		screenshot(pfad, new BoundingRechteck(x, y, breite, hoehe));
-	}
-
-	/**
-	 * Öffnet einen Such-Dialog, der die Auswahl eines Pfades ermöglicht.
-	 *
-	 * @param akzeptierteEndungen
-	 * 		Eine Reihe beliebig vieler akzeptierter Endungen (Gross/Kleinschreibung vollkommen egal)<br
-	 * 		/> z.B. : <code>pfadAuswaehlen("jpg", "bmp", "gif");</code><br /> Wird <code>null</code>
-	 * 		als Parameter gegeben, so sind saemtliche Dateien waehlbar.<br /> z.B. :
-	 * 		<code>pfadAuswaehlen(null);</code>
-	 *
-	 * @return Der Pfad der ausgewaehlten Datei als String. Ist "null", wenn kein Pfad ausgewaehlt
-	 * wurde, sondern das Fenster manuell geschlossen wurde
-	 */
-	public String pfadAuswaehlen (final String... akzeptierteEndungen) {
-		FileFilter filter = new FileFilter() {
-			public boolean accept (File pathname) {
-				if (akzeptierteEndungen == null) {
-					return true;
-				} else if (pathname.isDirectory()) {
-					return true;
-				} else {
-					for (int i = 0; i < akzeptierteEndungen.length; i++) {
-						if (pathname.getName().toLowerCase().endsWith("." + akzeptierteEndungen[i].toLowerCase())) {
-							return true;
-						}
-					}
-					return false;
-				}
-			}
-
-			@Override
-			public String getDescription () {
-				if (akzeptierteEndungen == null) {
-					return "Alle Dateien wählbar";
-				} else {
-					String sel = "";
-					for (int i = 0; i < akzeptierteEndungen.length; i++) {
-						sel += "." + akzeptierteEndungen[i].toLowerCase() + " ";
-					}
-					return "Ausgewählte Formate (" + sel + ")";
-				}
-			}
-		};
-		JFileChooser ch = new JFileChooser();
-		ch.setFileFilter(filter);
-		int erg = ch.showOpenDialog(real_fenster);
-		if (erg == JFileChooser.APPROVE_OPTION) {
-			return ch.getSelectedFile().getPath();
-		} else {
-			return null;
-		}
 	}
 
 	/**
@@ -548,6 +363,7 @@ public abstract class Game implements TastenReagierbar {
 	 * @return <code>true</code>, wenn das kopieren vollends erfolgreich war, sonst
 	 * <code>false</code>.
 	 */
+    @API
 	public boolean kopieren (String von, String nach, String nameNeu) {
 		try {
 			Files.copy(Paths.get(von), Paths.get(nach, nameNeu));
@@ -567,6 +383,10 @@ public abstract class Game implements TastenReagierbar {
         real_fenster.getWorldHandler().setPixelProMeter(pixelprometer);
     }
 
+
+
+    /* _______________________ INTERNE METHODEN _______________________ */
+
     /**
      * Gibt den Font aus, der für Dialogfenster genutzt werden soll.
      * @return  der Font, der für Dialogfenster genutzt werden soll.
@@ -583,6 +403,26 @@ public abstract class Game implements TastenReagierbar {
     @NoExternalUse
     void fontSetzen(Font font) {
         this.font = font;
+    }
+
+    /**
+     * Die aus <code>TastenReagierbar</code> implemetierte Methode zum Reagieren auf einen
+     * einfachen, einmaligen Tastendruck.
+     *
+     * @param code
+     * 		Der Code dieser Taste zu den Codes:<br /> Siehe http://engine-alpha.org/wiki/Tastaturtabelle
+     * 		für eine vollständige Tabelle
+     *
+     * @see ea.Taste
+     */
+    @NoExternalUse
+    @Override
+    public final void reagieren (int code) {
+        if (exitOnEsc && code == Taste.ESCAPE) {
+            beenden();
+        }
+
+        tasteReagieren(code);
     }
 
     /* _______________________ Kontrakt: Abstrakte und Überschreibbare Methoden _______________________ */

@@ -51,7 +51,43 @@ public class Physik {
     }
 
 
-    /* _________________________ Einheiten / Eigenschaften _________________________ */
+    /* _________________________ Einheiten / Passive Eigenschaften _________________________ */
+
+    /**
+     * Setzt, ob <i>im Rahmen der physikalischen Simulation</i> die Rotation dieses Objekts
+     * blockiert werden soll. <br/>
+     * Das Objekt kann in jedem Fall weiterhin über einen direkten Methodenaufruf rotiert
+     * werden. Der folgende Code ist immer wirksam, unabhängig davon, ob die Rotation
+     * im Rahmen der physikalischen Simulation blockiert ist:<br />
+     * <code>
+     *     raum.position.rotieren(4.31f);
+     * </code>
+     * @param rotationBlockiert
+     *                  Ist dieser Wert <code>true</code>, rotiert sich dieses
+     *                  Objekts innerhalb der physikalischen Simulation <b>nicht mehr</b>.
+     *                  Ist dieser Wert <code>false</code>, rotiert sich dieses
+     *                  Objekt innerhalb der physikalsichen Simulation.
+     * @return          Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     *                  Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     * @see #rotationBlockiert()
+     */
+    @API
+    public Physik rotationBlockiertSetzen(boolean rotationBlockiert) {
+        raum.getPhysikHandler().rotationBlockiertSetzen(rotationBlockiert);
+        return this;
+    }
+
+    /**
+     * Gibt an, ob die Rotation dieses Objekts derzeit innerhalb der physikalischen Simulation
+     * blockiert ist.
+     * @return          <code>true</code>, wenn die Rotation dieses Objekts derzeit innerhalb der
+     *                  physikalischen Simulation blockiert ist.
+     * @see #rotationBlockiertSetzen(boolean)
+     */
+    @API
+    public boolean rotationBlockiert() {
+        return raum.getPhysikHandler().rotationBlockiert();
+    }
 
     /**
      * Setzt die Masse des Objekts neu. Hat Einfluss auf das physikalische Verhalten des Objekts.

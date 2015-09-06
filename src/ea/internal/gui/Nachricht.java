@@ -38,7 +38,7 @@ import java.awt.event.ActionListener;
  * @author Michael Andonie
  */
 @SuppressWarnings ("serial")
-public class Nachricht extends JDialog {
+public class Nachricht extends EngineDialog {
 
 	/**
 	 * Der Konstruktor der Klasse Nachricht.
@@ -49,14 +49,14 @@ public class Nachricht extends JDialog {
 	 * 		Ob die Nachricht modal ist oder nicht.
 	 * @param nachricht
 	 * 		Die Nachricht, die angezeigt werden soll.
+     * @param titel
+     *      Der Titel für den Dialog.
 	 * @param font
 	 * 		Der Darstellungsfont
 	 */
-	public Nachricht (Frame parent, boolean modal, String nachricht, Font font) {
-		super(parent, "Nachricht", modal);
+	public Nachricht (Frame parent, boolean modal, String nachricht, String titel, Font font) {
+		super(parent, titel, modal);
 		setLayout(new BorderLayout());
-		Dimension screenSize = getToolkit().getScreenSize();
-		this.setLocation(screenSize.width / 4, screenSize.height / 4);
 		JLabel l = new JLabel(nachricht);
 		l.setFont(font);
 		getContentPane().add(l, BorderLayout.CENTER);
@@ -71,13 +71,6 @@ public class Nachricht extends JDialog {
 		});
 		p.add(b);
 		getContentPane().add(p, BorderLayout.SOUTH);
-
-		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			SwingUtilities.updateComponentTreeUI(this);
-		} catch (Exception e) {
-			Logger.error("Dialog", e.getLocalizedMessage());
-		}
 
 		pack();
 		setVisible(true);

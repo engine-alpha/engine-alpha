@@ -56,8 +56,6 @@ public class HighScoreFenster extends JDialog {
 			return;
 		}
 
-		Dimension screenSize = getToolkit().getScreenSize();
-		this.setLocation(screenSize.width / 4, screenSize.height / 4);
 
 		this.setLayout(new BorderLayout());
 

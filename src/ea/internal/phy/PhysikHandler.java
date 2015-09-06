@@ -230,4 +230,16 @@ public abstract class PhysikHandler {
      */
     @NoExternalUse
     public abstract Vektor geschwindigkeit();
+
+    /**
+     * Setzt, ob die Rotation blockiert sein soll.
+     */
+    @NoExternalUse
+    public abstract void rotationBlockiertSetzen(boolean block);
+
+    /**
+     * @return ob die Rotation des Objekts blockiert ist.
+     */
+    @NoExternalUse
+    public abstract boolean rotationBlockiert();
 }

@@ -29,7 +29,7 @@ import java.awt.event.ActionListener;
  *
  * @author Michael Andonie
  */
-public class Eingabe extends JDialog {
+public class Eingabe extends EngineDialog {
 
 	/**
 	 * Das Ergebnis der juengsten Eingabe.<br /> Oeffentlich abrufbar.
@@ -46,12 +46,10 @@ public class Eingabe extends JDialog {
 	 * @param font
 	 * 		Der Darstellungsfont
 	 */
-	public Eingabe (Frame parent, String nachricht, Font font) {
-		super(parent, true);
+	public Eingabe (Frame parent, String titel, String nachricht, Font font) {
+		super(parent, titel, true);
 		ergebnis = null;
 		setLayout(new BorderLayout());
-		Dimension screenSize = getToolkit().getScreenSize();
-		this.setLocation(screenSize.width / 4, screenSize.height / 4);
 		JLabel l = new JLabel(nachricht);
 		l.setFont(font);
 		getContentPane().add(l, BorderLayout.NORTH);

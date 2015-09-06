@@ -36,8 +36,7 @@ import java.awt.event.ActionListener;
  *
  * @author Michael Andonie
  */
-@SuppressWarnings ("serial")
-public class Frage extends JDialog {
+public class Frage extends EngineDialog {
 
 	/**
 	 * Das Ergebnis der Frage.
@@ -56,12 +55,10 @@ public class Frage extends JDialog {
 	 * @param font
 	 * 		Der Font, in dem die Texte dargestellt werden.
 	 */
-	public Frage (Frame parent, String frage, boolean janein, Font font) {
-		super(parent, true);
+	public Frage (Frame parent, String titel, String frage, boolean janein, Font font) {
+		super(parent, titel, true);
 		ergebnis = false;
 		setLayout(new BorderLayout());
-		Dimension screenSize = getToolkit().getScreenSize();
-		this.setLocation(screenSize.width / 4, screenSize.height / 4);
 		JLabel l = new JLabel(frage);
 		l.setFont(font);
 		getContentPane().add(l, BorderLayout.CENTER);
@@ -94,12 +91,7 @@ public class Frage extends JDialog {
 		p.add(d);
 		getContentPane().add(p, BorderLayout.SOUTH);
 
-		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			SwingUtilities.updateComponentTreeUI(this);
-		} catch (Exception e) {
-			Logger.error("Dialog", e.getLocalizedMessage());
-		}
+
 
 		pack();
 		setVisible(true);

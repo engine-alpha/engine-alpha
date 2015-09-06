@@ -315,6 +315,20 @@ extends PhysikHandler {
     }
 
     @Override
+    public void rotationBlockiertSetzen(boolean block) {
+        if(physikBodyCheck()) {
+            body.setFixedRotation(block);
+        }
+    }
+
+    @Override
+    public boolean rotationBlockiert() {
+        if(physikBodyCheck()) {
+            return body.isFixedRotation();
+        } return false;
+    }
+
+    @Override
     public void killBody() {
         worldHandler.getWorld().destroyBody(body);
     }

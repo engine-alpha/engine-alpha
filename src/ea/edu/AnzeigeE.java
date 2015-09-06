@@ -99,7 +99,7 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 		aufgabenT = new ArrayList<>();
 		aufgabenKlick = new ArrayList<>();
 		FensterE.getFenster(breite, hoehe).wurzel.add(links, rechts, strich = new Text(0, 10, "-"));
-		FensterE.getFenster(breite, hoehe).tastenReagierbarAnmelden(this);
+		FensterE.getFenster(breite, hoehe).anmelden.tastenReagierbar(this);
 		//super.tastenReagierbarAnmelden(this, 1);
 
         //TODO Ticker-Implementierung

@@ -204,6 +204,19 @@ public class NullHandler extends PhysikHandler {
         return null;
     }
 
+    @Override
+    public void rotationBlockiertSetzen(boolean block) {
+        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
+    }
+
+    @Override
+    public boolean rotationBlockiert() {
+        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
+        return false;
+    }
+
     /**
      *
      * @param typ   Der neue Typ.
