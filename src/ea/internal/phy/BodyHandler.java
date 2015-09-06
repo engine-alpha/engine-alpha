@@ -195,7 +195,7 @@ extends PhysikHandler {
     public void elastizitaetSetzen(float ela) {
         if(physikBodyCheck()) {
             Fixture fixture = body.getFixtureList();
-            while(fixture != null) {
+            if(fixture != null) {
                 fixture.setRestitution(ela);
             }
         }

@@ -42,6 +42,16 @@ public class Knoten extends Raum {
 	 */
 	private Vector<Raum> list;
 
+    /**
+     * Gibt die interne Darstellung der Child-Liste als Vector
+     * aus.
+     * @return  die interne Darstellung der Child-Liste als Vector
+     */
+    @NoExternalUse
+    public Vector<Raum> getList() {
+        return list;
+    }
+
 	/**
 	 * Konstruktor für Objekte der Klasse Knoten
 	 */
@@ -70,13 +80,11 @@ public class Knoten extends Raum {
 	 * Entfernt ein Raum-Objekt von diesem Knoten.<br /> War es mehrfach angesteckt, so werden alle
 	 * Verbindungen geloescht, war es niemals angemeldet, so passiert <b>gar nichts</b>.<br /> <br
 	 * /> <b>Achtung!!</b><br /> Sollte <i>Physik</i> benutzt werden:<br /> Diese Methode macht alle
-	 * abgemeldeten <code>Raum</code>-Objekt fuer die Physik neutral!!!<br /> Sollte dies NICHT
-	 * gewuenscht sein, gibt es hierfuer die Methode <code>entfernenOhnePhysikAbmelden()</code>.
+	 * abgemeldeten <code>Raum</code>-Objekt fuer die Physik neutral!!!
 	 *
 	 * @param m
 	 * 		Das von diesem Knoten zu entfernende Raum-Objekt
 	 *
-	 * @see #entfernenOhnePhysikAbmelden(Raum)
 	 */
     @API
 	public void entfernen (Raum m) {
@@ -86,19 +94,6 @@ public class Knoten extends Raum {
 
 		// noinspection StatementWithEmptyBody
 		while (list.remove(m)) ;
-	}
-
-	/**
-	 * Entfernt ein Raum-Objekt von diesem Knoten, <b>ohne seine Physik zu beeinflussen</b>.<br />
-	 * War es mehrfach angesteckt, so werden alle Verbindungen geloescht, war es niemals angemeldet,
-	 * so passiert <b>gar nichts</b>.
-	 *
-	 * @param m
-	 * 		Das von diesem Knoten zu entfernende Raum-Objekt
-	 */
-    @NoExternalUse
-	public void entfernenOhnePhysikAbmelden (Raum m) {
-		list.remove(m);
 	}
 
 	/**
@@ -188,9 +183,10 @@ public class Knoten extends Raum {
      */
     @Override
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
-        for (int i = list.size() - 1; i >= 0; i--) {
-            list.get(i).renderBasic(g,r);
-        }
+        if(sichtbar())
+            for (int i = list.size() - 1; i >= 0; i--) {
+                list.get(i).renderBasic(g,r);
+            }
     }
 
 	/**

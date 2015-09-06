@@ -13,6 +13,11 @@ extends PhysikHandler {
     private final Knoten knoten;
 
     /**
+     * Symbolische Position des Knotens.
+     */
+    private Punkt position = Punkt.ZENTRUM;
+
+    /**
      * Initialisiert den Physik-Handler.
      *
      * @param raum      Der Knoten, um den sich dieser Handler kümmert.
@@ -29,12 +34,15 @@ extends PhysikHandler {
 
     @Override
     public void update(WorldHandler worldHandler) throws IllegalStateException {
-
+        //
     }
 
     @Override
     public void verschieben(Vektor v) {
-
+        position = position.verschobeneInstanz(v);
+        for(Raum m : knoten.getList()) {
+            m.position.verschieben(v);
+        }
     }
 
     @Override
@@ -49,7 +57,7 @@ extends PhysikHandler {
 
     @Override
     public Punkt position() {
-        return null;
+        return position;
     }
 
     @Override

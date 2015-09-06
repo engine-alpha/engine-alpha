@@ -145,6 +145,15 @@ public class Physik {
         return raum.getPhysikHandler().geschwindigkeit();
     }
 
+    public Physik elastizitaet(float elastizitaet) {
+        raum.getPhysikHandler().elastizitaetSetzen(elastizitaet);
+        return this;
+    }
+
+    public float elastizitaet() {
+        return raum.getPhysikHandler().elastizitaet();
+    }
+
     /* _________________________ World-Wrap _________________________ */
 
     /**
