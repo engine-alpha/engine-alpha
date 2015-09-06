@@ -132,7 +132,7 @@ public class Kamera {
      * Vektor, um den das Bild, das <b>den Fokus exakt im Zentrum hat</b>, verschoben wird.<br />
      * Das heisst, dass eine FIgur im Fokus um 100 Pixel tiefer als im Absoluten Bildzentrum liegt,
      * wenn der Fokusverzug mit folgender Methode gesetzt wurde:<br /> <br /> <code> /*Irgendwo in
-     * der spielsteuernden Klasse* /<br /> cam.fokusVerzugSetzen(new Vektor(0, -100));<br /> <br
+     * der spielsteuernden Klasse* /<br /> kamera.fokusVerzugSetzen(new Vektor(0, -100));<br /> <br
      * /></code>
      *
      * @param v Der Vektor, um den ab sofort die Kamera vom Zentrum des Fokus verschoben wird.

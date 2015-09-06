@@ -22,7 +22,6 @@ package ea;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gui.*;
-import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
@@ -58,6 +57,37 @@ public abstract class Game implements TastenReagierbar {
 
     /* _______________________ FIELDS _______________________ */
 
+
+    // ~~~~~ Internal Stuff ~~~~~
+
+    /**
+     * An diesem Knoten angelegte Objekte werden immer im Vordergrund sein.<br /> Dies wird zB fuer
+     * einen Abblendbildschirm verwendet.
+     */
+    @NoExternalUse
+    private final Knoten superWurzel;
+
+    /**
+     * Das Spielfenster
+     */
+    @NoExternalUse
+    final Fenster real_fenster;
+
+    /**
+     * Gibt an, ob bei Escape-Druck das Spiel beendet werden soll.
+     */
+    @NoExternalUse
+    private final boolean exitOnEsc;
+
+    /**
+     * Der Font für die Fenstertexte
+     */
+    @NoExternalUse
+    private Font font;
+
+
+    // ~~~~~ Basic API References ~~~~~
+
 	/**
 	 * Der Wurzel-Knoten. An ihm muessen direkt oder indirekt (ueber weitere Knoten) alle
 	 * <code>Raum</code>-Objekte angemeldet werden, die auch (normal) gezeichnet werden sollen.
@@ -81,7 +111,7 @@ public abstract class Game implements TastenReagierbar {
 	 * Methoden dieser Klasse.<br /> Hierzu siehe <b>Handbuch oder Doku</b>.
 	 */
     @API
-	public final Kamera cam;
+	public final Kamera kamera;
 
 	/**
 	 * Dieser String ist <b>immer das korrekte, Systemabhaengige Pfadtrenner</b>-Literal, das ganz
@@ -91,36 +121,15 @@ public abstract class Game implements TastenReagierbar {
     @API
 	public final String pfadtrenner = DateiManager.sep;
 
+
+
+    // ~~~~~ Handles ~~~~~
+
     /**
      * Über diese Referenz kann die Maus des Spiels beeinflusst werden.
      */
     @API
     public final Maus maus;
-
-	/**
-	 * Das Spielfenster
-	 */
-    @NoExternalUse
-	final Fenster real_fenster;
-
-	/**
-	 * An diesem Knoten angelegte Objekte werden immer im Vordergrund sein.<br /> Dies wird zB fuer
-	 * einen Abblendbildschirm verwendet.
-	 */
-    @NoExternalUse
-	private final Knoten superWurzel;
-
-	/**
-	 * Gibt an, ob bei Escape-Druck das Spiel beendet werden soll.
-	 */
-    @NoExternalUse
-	private final boolean exitOnEsc;
-
-	/**
-	 * Der Font für die Fenstertexte
-	 */
-    @NoExternalUse
-	private Font font;
 
     /**
      * Über dieses Objekt können alle Anmelde-Methoden aufgerufen werden. Zum Beispiel für:
@@ -132,6 +141,23 @@ public abstract class Game implements TastenReagierbar {
      */
     @API
     public final Anmelden anmelden;
+
+    /**
+     * Über dieses Objekt können alle Fenster-Funktionalitäten genutzt werden. Zum Beispiel:
+     * <ul>
+     *     <li>Eine Dialogfenster öffnen</li>
+     *     <li>Eine Nutzereingabe in einem neuen Fenster anfordern</li>
+     *     <li>Ein Highscore-Fenster anzeigen</li>
+     *     <li>Das Spielfenster-Icon einstellen</li>
+     *     <li>Das Spielfenster minimieren / wiederherstellen</li>
+     * </ul>
+     */
+    @API
+    public final FensterHelper fenster;
+
+
+
+
 
 
     /* _______________________ CONSTRUCTOR OVERKILL _______________________ */
@@ -211,9 +237,11 @@ public abstract class Game implements TastenReagierbar {
 	public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc, int fensterX, int fensterY) {
 		real_fenster = new Fenster(x, y, titel, vollbild, fensterX, fensterY);
 		this.exitOnEsc = exitOnEsc;
+        this.font = new Font("SansSerif", Font.PLAIN, 16);
 
-		cam = real_fenster.getCam();
-		cam.wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
+        // ------------- Die Helper-Referenzen -------------
+		kamera = real_fenster.getCam();
+		kamera.wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
 
 		statischeWurzel = real_fenster.getStatNode();
 
@@ -225,12 +253,14 @@ public abstract class Game implements TastenReagierbar {
 			Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
 		}
 
-        maus = real_fenster.getMaus();
+
 
         real_fenster.getFrameThread().gameHandshake(this);
 
         // ------------- Die Handles -------------
         this.anmelden = new Anmelden(this);
+        this.fenster = new FensterHelper(this);
+        this.maus = real_fenster.getMaus();
 	}
 
 	/**
@@ -297,15 +327,7 @@ public abstract class Game implements TastenReagierbar {
 
 
 
-	/**
-	 * Setzt das übergebene Bild als Icon des Fensters
-	 *
-	 * @param icon
-	 * 		zu setzendes Icon
-	 */
-	public void iconSetzen (Bild icon) {
-		real_fenster.setIconImage(icon.bild());
-	}
+
 
 	/**
 	 * Die aus <code>TastenReagierbar</code> implemetierte Methode zum Reagieren auf einen
@@ -317,8 +339,9 @@ public abstract class Game implements TastenReagierbar {
 	 *
 	 * @see ea.Taste
 	 */
+    @NoExternalUse
     @Override
-	public void reagieren (int code) {
+	public final void reagieren (int code) {
 		if (exitOnEsc && code == Taste.ESCAPE) {
 			beenden();
 		}
@@ -329,196 +352,21 @@ public abstract class Game implements TastenReagierbar {
 	/**
 	 * Diese Methode beendet das Spiel gaenzlich.<br /> Das heisst, dass das Fenster geschlossen,
 	 * alle belegten Ressourcen freigegeben und auch die virtuelle Maschine von JAVA beendet
-	 * wird.<br /> Also <b>beendet diese Methode die gesamte Applikation</b>!
-	 *
-	 * @see #schliessen()
+	 * wird (sollten keine weiteren Fenster/Spiel-Instanzen existieren.
 	 */
+    @API
 	public void beenden () {
 		real_fenster.loeschen();
 	}
 
-	/**
-	 * Fordert vom Benutzer eine Texteingabe (maximal 40 Zeichen) durch ein neues Fenster.<br />
-	 * Dieses Fenster muss erst wieder geschlossen werden, damit das Spielfenster wieder in den
-	 * Vordergrund ruecken kann. Diese Methode ist auch erst dann zu ende, wenn das Fenster
-	 * geschlossen wurde.<br /> <br /> <b>Achtung:<br /> Bei dem Einsatz zusaetzlicher Fenster
-	 * sollte vor dem Oeffnen eines solchen der Spielbetrieb angehalten werden, da das Fenster
-	 * nunmehr den Vordergrund abdeckt und die Aufmerksamkeit und den Einfluss (Tastatur, Maus) auf
-	 * das Spiel wegnimmt.</b>
-	 *
-	 * @param nachricht
-	 * 		Ein Text, der ebenfalls angezeigt wird und erlaeutern sollte, wozu die Eingabe dient, und
-	 * 		was die Eingabe sein sollte.
-	 *
-	 * @return Die Eingabe vom Benutzer.<br /> Wurde das Fenster ueber den "X"-Knopf "gewaltsam"
-	 * geschlossen, so ist die Rueckgabe <code>null</code>.
-	 */
-	public String eingabeFordern (String nachricht) {
-		new Eingabe(real_fenster, nachricht, font);
-		return Eingabe.ergebnis;
-	}
 
-	/**
-	 * Stellt eine Sicherheitsfrage, also eine Frage auf die mit "OK" oder "Abbrechen" geantwortet
-	 * werden kann, in einem neuen Fenster.<br /> Dieses Fenster muss erst wieder geschlossen
-	 * werden, damit das Spielfenster wieder in den Vordergrund ruecken kann. Diese Methode ist auch
-	 * erst dann zu ende, wenn das Fenster geschlossen wurde.<br /> <br /> <b>Achtung:<br /> Bei dem
-	 * Einsatz zusaetzlicher Fenster sollte vor dem Oeffnen eines solchen der Spielbetrieb
-	 * angehalten werden, da das Fenster nunmehr den Vordergrund abdeckt und die Aufmerksamkeit und
-	 * den Einfluss (Tastatur, Maus) auf das Spiel wegnimmt.</b>
-	 *
-	 * @param frage
-	 * 		Die Frage, die im Fenster angezeigt wird.
-	 *
-	 * @return <code>true</code>, wenn die Frage mit "OK" beantwortet wurde; <code>false</code>,
-	 * wenn die Frage mit "Abbrechen" beantwortet oder das Fenster geschlossen wurde.
-	 */
-	public boolean sicherheitsFrage (String frage) {
-		new Frage(real_fenster, frage, false, font);
-		return Frage.ergebnis;
-	}
 
-	/**
-	 * Stellt eine einfache Frage, also eine Frage, auf die mit "Ja" oder "Nein" geantwortet werden
-	 * kann, in einem neuen Fenster.<br /> Dieses Fenster muss erst wieder geschlossen werden, damit
-	 * das Spielfenster wieder in den Vordergrund ruecken kann. Diese Methode ist auch erst dann zu
-	 * ende, wenn das Fenster geschlossen wurde.<br /> <br /> <b>Achtung:<br /> Bei dem Einsatz
-	 * zusaetzlicher Fenster sollte vor dem Oeffnen eines solchen der Spielbetrieb angehalten
-	 * werden, da das Fenster nunmehr den Vordergrund abdeckt und die Aufmerksamkeit und den
-	 * Einfluss (Tastatur, Maus) auf das Spiel wegnimmt.</b>
-	 *
-	 * @param frage
-	 * 		Die Frage, die im Fenster angezeigt wird.
-	 *
-	 * @return <code>true</code>, wenn die Frage mit "Ja" beantwortet wurde; <code>false</code>,
-	 * wenn die Frage mit "Nein" beantwortet oder das Fenster geschlossen wurde.
-	 */
-	public boolean frage (String frage) {
-		new Frage(real_fenster, frage, true, font);
-		return Frage.ergebnis;
-	}
 
-	/**
-	 * Schickt eine einfache Nachricht in einem Fenster nach draussen.<br /> Dieses Fenster muss
-	 * erst wieder geschlossen werden, damit das Spielfenster wieder in den Vordergrund ruecken
-	 * kann. Diese Methode ist auch erst dann zu ende, wenn das Fenster geschlossen wurde.<br /> <br
-	 * /> <b>Achtung:<br /> Bei dem Einsatz zusaetzlicher Fenster sollte vor dem Oeffnen eines
-	 * solchen der Spielbetrieb angehalten werden, da das Fenster nunmehr den Vordergrund abdeckt
-	 * und die Aufmerksamkeit und den Einfluss (Tastatur, Maus) auf das Spiel wegnimmt.</b>
-	 *
-	 * @param nachricht
-	 * 		Die Nachricht, die Angezeigt werden soll
-	 */
-	public void nachrichtSchicken (String nachricht) {
-		new Nachricht(real_fenster, true, nachricht, font);
-	}
 
-	/**
-	 * Öffnet ein titelloses Fenster, das die Highscores des Spiels anzeigt.
-	 *
-	 * @param namen
-	 * 		Die Namen der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum schlechtesten auf
-	 * 		der Liste
-	 * @param punkte
-	 * 		Die Punktestaende der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum
-	 * 		schlechtesten auf der Liste
-	 *
-	 * @see #highscoreAnzeigen(String[], int[])
-	 */
-	public void highscoreAnzeigen (String[] namen, int[] punkte) {
-		highscoreAnzeigen(namen, punkte, "");
-	}
 
-	/**
-	 * Öffnet ein Fenster, das die Highscores des Spiels anzeigt.
-	 *
-	 * @param namen
-	 * 		Die Namen der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum schlechtesten auf
-	 * 		der Liste
-	 * @param punkte
-	 * 		Die Punktestaende der Liste als Array. Von <b>Index 0 als dem besten</b> bis zum
-	 * 		schlechtesten auf der Liste
-	 * @param fenstertitel
-	 * 		Der Titel des sich oeffnenden Fensters. Dieser Parameter kann weggelassen werden, hierfuer
-	 * 		gibt es eine alternative Methode, die diesen Titel nicht erwartet.
-	 */
-	public void highscoreAnzeigen (String[] namen, int[] punkte, String fenstertitel) {
-		new HighScoreFenster(real_fenster, fenstertitel, namen, punkte, font);
-	}
 
-	/**
-	 * Beendet dieses Game auf softe weise:<br /> - Das Fenster wird geschlossen<br /> - Die Physik
-	 * wird beendet (alle bestehenden Raum-Objekte werden automatisch neutral<br /> - Alle
-	 * Animationen werden beendet<br /> - Der <b>ABER:</b><br /> -> Die virtuelle Maschine wird
-	 * <b>nicht</b> beendet.
-	 */
-	public void schliessen () {
-		real_fenster.loeschen();
-	}
 
-	/**
-	 * Dieser Methodenaufruf dauert eine bestimmte Zeit. So kann man sozusagen eine gewisse Zeit
-	 * "Pause machen" und warten.<br /> <br /> <b>ACHTUNG!</b><br /> Der Aufruf dieser Methode haelt
-	 * technisch gesehen diesen <i>Thread</i> an, das bedeutet zum Beispiel, dass - sollte dies in
-	 * einer Tick-Methode ausgefuehrt werden, <b>alle anderen Ticker nicht aufgerufen werden, bevonr
-	 * diese Methode beendet ist</b>. <br /> <br /> <i>Daher sollte diese Methode nur mit Bedacht
-	 * verwendet werden!</i>
-	 *
-	 * @param millisekunden
-	 * 		Die Anzahl an Millisekunden, die dieser Methodenaufruf dauert. So lange "wartet" man also
-	 * 		durch den Aufruf dieser Methode.
-	 */
-	public void warten (int millisekunden) {
-		try {
-			Thread.sleep(millisekunden);
-		} catch (InterruptedException e) {
-			Logger.error("Thread", e.getLocalizedMessage());
-		}
-	}
 
-	/**
-	 * Setzt den Font, der ab sofort von den Fenstern standartmaessig verwendet wird mit einer
-	 * Standartgroesse von 12.
-	 *
-	 * @param fontname
-	 * 		Der Name des zu verwendenden Fonts. <br /> Ein Blick auf das <b>Fontprotokoll</b> (in der
-	 * 		Klasse <code>Text</code> ist empfehlenswert!
-	 *
-	 * @see Text
-	 */
-	public void fensterFontSetzen (String fontname) {
-		fensterFontSetzen(fontname, 12);
-	}
-
-	/**
-	 * Setzt den Font, der ab sofort von den Fenstern standartmaessig verwendet wird.
-	 *
-	 * @param fontname
-	 * 		Der Name des zu verwendenden Fonts. <br /> Ein Blick auf das <b>Fontprotokoll</b> (in der
-	 * 		Klasse <code>Text</code> ist empfehlenswert!
-	 * @param schriftgroesse
-	 * 		Die Schriftgroesse, in der die texte dargestellt werden sollen.
-	 *
-	 * @see Text
-	 */
-	public void fensterFontSetzen (String fontname, int schriftgroesse) {
-		this.font = Text.holeFont(fontname).deriveFont(0, schriftgroesse);
-	}
-
-	/**
-	 * Minimiert das Fenster.<br /> Dadurch wird es in die Taskleiste hinein minimiert.
-	 */
-	public void fensterMinimieren () {
-		real_fenster.minimieren();
-	}
-
-	/**
-	 * Maximiert das Fenster.<br /> Dadurch wird es - sofern es sich in der Taskleiste minimiert
-	 * befindet - wieder maximiert.
-	 */
-	public void fensterMaximieren () {
-		real_fenster.wiederherstellen();
-	}
 
 
 
@@ -563,7 +411,7 @@ public abstract class Game implements TastenReagierbar {
 	 * 		Als Endung wird bisher nur ".jpg" und ".png" unterstützt!
 	 */
 	public void screenshot (String pfad) {
-		screenshot(pfad, cam.position());
+		screenshot(pfad, kamera.position());
 	}
 
 	/**
@@ -599,7 +447,7 @@ public abstract class Game implements TastenReagierbar {
 
                 // TODO -> Camera-Translation einbauen!
 
-				cam.wurzel().render(g);
+				kamera.wurzel().render(g);
 
 				try {
 					ImageIO.write(img, ext, new File(pfad));
@@ -717,6 +565,24 @@ public abstract class Game implements TastenReagierbar {
 
     public void ppmSetzen(float pixelprometer) {
         real_fenster.getWorldHandler().setPixelProMeter(pixelprometer);
+    }
+
+    /**
+     * Gibt den Font aus, der für Dialogfenster genutzt werden soll.
+     * @return  der Font, der für Dialogfenster genutzt werden soll.
+     */
+    @NoExternalUse
+    Font getFont() {
+        return font;
+    }
+
+    /**
+     * Setzt den Font für Dialogfenster neu.
+     * @param font  Der Font für Dialogfenster.
+     */
+    @NoExternalUse
+    void fontSetzen(Font font) {
+        this.font = font;
     }
 
     /* _______________________ Kontrakt: Abstrakte und Überschreibbare Methoden _______________________ */
