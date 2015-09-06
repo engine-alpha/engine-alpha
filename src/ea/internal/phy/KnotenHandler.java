@@ -18,6 +18,11 @@ extends PhysikHandler {
     private Punkt position = Punkt.ZENTRUM;
 
     /**
+     * Symbolische Rotation des Knotens
+     */
+    private float rotation = 0f;
+
+    /**
      * Initialisiert den Physik-Handler.
      *
      * @param raum      Der Knoten, um den sich dieser Handler kümmert.
@@ -34,7 +39,8 @@ extends PhysikHandler {
 
     @Override
     public void update(WorldHandler worldHandler) throws IllegalStateException {
-        //
+        //NICHTS ZU TUN
+        // (die Weitergabe wurde bereits im Knoten implementiert)
     }
 
     @Override
@@ -62,12 +68,15 @@ extends PhysikHandler {
 
     @Override
     public float rotation() {
-        return 0;
+        return rotation;
     }
 
     @Override
     public void rotieren(float radians) {
-
+        rotation += radians;
+        for(Raum m : knoten.getList()) {
+            m.position.rotieren(radians);
+        }
     }
 
     @Override
@@ -162,7 +171,9 @@ extends PhysikHandler {
 
     @Override
     public void physicalReset() {
-
+        for(Raum m : knoten.getList()) {
+            m.physik.inRuheVersetzen();
+        }
     }
 
     @Override

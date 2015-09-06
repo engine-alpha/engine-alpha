@@ -41,7 +41,8 @@ import java.nio.file.Paths;
  *
  * @author Michael Andonie
  */
-public abstract class Game implements TastenReagierbar {
+public abstract class Game
+        implements TastenReagierbar, FrameUpdateReagierbar {
 
     /* _______________________ STATIC STUFF _______________________ */
 
@@ -436,6 +437,7 @@ public abstract class Game implements TastenReagierbar {
      *              von <code>ts = 1/60 = 0.016666f</code> zu erwarten.
      */
     @API
+    @Override
     public void frameUpdate(float ts) {
         //LEER - kann überschrieben werden.
     }

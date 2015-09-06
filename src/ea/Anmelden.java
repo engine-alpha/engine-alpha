@@ -109,4 +109,13 @@ public class Anmelden {
     public void kollisionsReagierbar (KollisionsReagierbar reagierbar, Raum r1, Raum r2, int code) {
         WorldHandler.kollisionsReagierbarEingliedern(reagierbar, code, r1, r2);
     }
+
+    /**
+     * Meldet ein <code>FrameUpdateReagierbar</code>-Objekt
+     * @param reagierbar
+     */
+    @API
+    public void frameUpdateReagierbar(FrameUpdateReagierbar reagierbar) {
+
+    }
 }
