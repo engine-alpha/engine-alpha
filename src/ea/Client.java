@@ -280,7 +280,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br /> So
 	 * wird man moeglichst einfach von neuen Nachrichten an den Client informiert. Natuerlich kann
-	 * man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist
+	 * man auch direkt einen <code>Empfaenger</code> an diesem Client tastenReagierbarAnmelden. Der Effekt ist
 	 * derselbe.
 	 *
 	 * @see #empfaengerHinzufuegen(Empfaenger)
@@ -293,7 +293,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br /> So
 	 * wird man moeglichst einfach von neuen Nachrichten an den Client informiert. Natuerlich kann
-	 * man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist
+	 * man auch direkt einen <code>Empfaenger</code> an diesem Client tastenReagierbarAnmelden. Der Effekt ist
 	 * derselbe.
 	 *
 	 * @see #empfaengerHinzufuegen(Empfaenger)
@@ -306,7 +306,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br /> So
 	 * wird man moeglichst einfach von neuen Nachrichten an den Client informiert. Natuerlich kann
-	 * man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist
+	 * man auch direkt einen <code>Empfaenger</code> an diesem Client tastenReagierbarAnmelden. Der Effekt ist
 	 * derselbe.
 	 *
 	 * @see #empfaengerHinzufuegen(Empfaenger)
@@ -319,7 +319,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br /> So
 	 * wird man moeglichst einfach von neuen Nachrichten an den Client informiert. Natuerlich kann
-	 * man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist
+	 * man auch direkt einen <code>Empfaenger</code> an diesem Client tastenReagierbarAnmelden. Der Effekt ist
 	 * derselbe.
 	 *
 	 * @see #empfaengerHinzufuegen(Empfaenger)
@@ -332,7 +332,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br /> So
 	 * wird man moeglichst einfach von neuen Nachrichten an den Client informiert. Natuerlich kann
-	 * man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist
+	 * man auch direkt einen <code>Empfaenger</code> an diesem Client tastenReagierbarAnmelden. Der Effekt ist
 	 * derselbe.
 	 *
 	 * @see #empfaengerHinzufuegen(Empfaenger)
@@ -345,7 +345,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br /> So
 	 * wird man moeglichst einfach von neuen Nachrichten an den Client informiert. Natuerlich kann
-	 * man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist
+	 * man auch direkt einen <code>Empfaenger</code> an diesem Client tastenReagierbarAnmelden. Der Effekt ist
 	 * derselbe.
 	 *
 	 * @see #empfaengerHinzufuegen(Empfaenger)
@@ -358,7 +358,7 @@ public class Client extends Thread implements Empfaenger, SenderInterface {
 	/**
 	 * {@inheritDoc} Diese Methode kann von einer anderen Klasse ueberschrieben werden.<br /> So
 	 * wird man moeglichst einfach von neuen Nachrichten an den Client informiert. Natuerlich kann
-	 * man auch direkt einen <code>Empfaenger</code> an diesem Client anmelden. Der Effekt ist
+	 * man auch direkt einen <code>Empfaenger</code> an diesem Client tastenReagierbarAnmelden. Der Effekt ist
 	 * derselbe.
 	 *
 	 * @see #empfaengerHinzufuegen(Empfaenger)

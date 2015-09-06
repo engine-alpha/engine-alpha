@@ -156,6 +156,8 @@ public class Fenster extends Frame {
 	public Fenster (int breite, int hoehe, String titel, boolean vollbild, int fensterX, int fensterY) {
 		super(titel);
 
+        // ------------- Basic Setup -------------
+
 		frameCount++;
 
 		int WINDOW_FRAME = 1;
@@ -169,13 +171,15 @@ public class Fenster extends Frame {
 		this.setSize(breite, hoehe);
 		this.setResizable(false);
 
-		// ------------------------------------- //
+
+		// ------------- Fenster & Vollbild -------------
 
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] devices = env.getScreenDevices();
 		Dimension screenSize = getToolkit().getScreenSize();
 
 		if (vollbild) {
+            Logger.error("Display", "Vollbildfunktion wurde angefragt. Ist aber noch nicht implementiert");
 			if (devices[0].isFullScreenSupported()) {
 				breite = screenSize.width;
 				hoehe = screenSize.height;
@@ -198,40 +202,12 @@ public class Fenster extends Frame {
 			setLocation(x, y);
 		}
 
+
+
 		// ------------------------------------- //
 
 		if (windowMode == WINDOW_FULLSCREEN) {
-			setUndecorated(true);
-			devices[0].setFullScreenWindow(this);
-
-			// Resolution-Check
-			boolean success = false;
-
-			if (devices[0].isDisplayChangeSupported()) {
-				DisplayMode[] displayMode = devices[0].getDisplayModes();
-
-				Logger.info("Display", "DisplayModes: " + displayMode.length);
-
-				for (int i = 0; i < displayMode.length; i++) {
-					Logger.info("Display", (i + 1) + ": " + "Breite: " + displayMode[i].getWidth() + ", Höhe: " + displayMode[i].getHeight());
-
-					if (displayMode[i].getWidth() == breite && displayMode[i].getHeight() == hoehe) {
-						devices[0].setDisplayMode(new DisplayMode(breite, hoehe, displayMode[i].getBitDepth(), displayMode[i].getRefreshRate()));
-						success = true;
-						break;
-					}
-				}
-
-				if (!success) {
-					Logger.error("Display", "Die angegebene Auflösung wird von diesem Bildschirm nicht unterstützt!" + "\n" + "Nur besondere Auflösungen sind möglich, z.B. 800 x 600." + "\n" + "Diese sollten in der Konsole vor dieser Fehlerausgabe gelistet sein.");
-				}
-			} else {
-				Logger.error("Display", "Dieser Bildschirm unterstützt keine Auflösungsänderung!");
-			}
-
-			if (!success) {
-				Logger.error("Display", "Die gewünschte Auflösung wird nicht vom Hauptbildschirm des Computers unterstützt!");
-			}
+			//TODO Implementierung Vollbildmodus Sauber.
 		} else if (windowMode == WINDOW_FULLSCREEN_FRAME) {
 			setVisible(true);
 
@@ -245,6 +221,9 @@ public class Fenster extends Frame {
 			setVisible(true);
 		}
 
+        // ------------- Zeichner -------------
+
+
 		this.zeichner = new Zeichner(breite, hoehe, new Kamera(breite, hoehe, new Zeichenebene(), this));
 		this.add(zeichner);
         zeichner.init();
@@ -253,7 +232,8 @@ public class Fenster extends Frame {
 			this.pack();
 		}
 
-		// ------------------------------------- //
+
+		// ------------- UI -------------
 
 		// Der Roboter
 		try {
@@ -275,6 +255,7 @@ public class Fenster extends Frame {
         });
 
 
+        // ------------- Environment -------------
 
         //Erstelle den WorldHandler
         worldHandler = new WorldHandler();
@@ -414,8 +395,6 @@ public class Fenster extends Frame {
 			return;
 		}
 
-		//FIXME <- Hier geht's weiter ->
-
 		tabelle[z] = !losgelassen;
 
         KeyUIEvent keyEvent = new KeyUIEvent(this, z, losgelassen);
@@ -541,7 +520,7 @@ public class Fenster extends Frame {
 	 * @param t
 	 * 		Der neu anzumeldende Listener.
 	 */
-	public void anmelden (TastenReagierbar t) {
+	public void tastenReagierbarAnmelden(TastenReagierbar t) {
 		if (t == null) {
 			throw new IllegalArgumentException("Listener darf nicht NULL sein.");
 		}
@@ -549,33 +528,14 @@ public class Fenster extends Frame {
 		listener.add(t);
 	}
 
-	/**
-	 * Meldet einen TastenLosgelassenReagierbar-Listener an als exakt parallele Methode zu
-	 * <code>tastenLosgelassenAnmelden()</code>, jedoch eben ein etwas laengerer, aber vielleicht
-	 * auch logischerer Name; fuehrt jedoch exakt die selbe Methode aus!<br />
-	 * <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
-	 * !!!!!!!!!!!!!!!</b><br /> <code>TastenReagierbar</code> und <code>TastenLosgelassenReagierbar</code>
-	 * sind 2 vollkommen unterschiedliche Interfaces! Das eine wird beim Runterdruecken, das andere
-	 * beim Loslassen der Tasten aktiviert.
-	 *
-	 * @see #tastenLosgelassenAnmelden(TastenLosgelassenReagierbar)
-	 */
-	public void tastenLosgelassenReagierbarAnmelden (TastenLosgelassenReagierbar t) {
-		this.tastenLosgelassenAnmelden(t);
-	}
 
 	/**
-	 * Meldet einen TastenLosgelassenReagierbar-Listener an.<br /> <b>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ACHTUNG!!!!!!!!!!!!!!!!!!!!!!!!
-	 * !!!!!!!!!!!!!!!</b><br /> TastenReagierbar und TastenLosgelassenReagierbar sind 2 vollkommen
-	 * unterschiedliche Interfaces! Das eine wird beim Runterdruecken, das andere beim Loslassen der
-	 * Tasten aktiviert.
+	 * Meldet einen TastenLosgelassenReagierbar-Listener an.
 	 */
-	public void tastenLosgelassenAnmelden (TastenLosgelassenReagierbar t) {
+	public void tastenLosgelassenReagierbarAnmelden(TastenLosgelassenReagierbar t) {
 		if (t == null) {
 			throw new IllegalArgumentException("Listener darf nicht NULL sein.");
 		}
-
-
 		losListener.add(t);
 	}
 

@@ -113,7 +113,7 @@ public class Knoten extends Raum {
 
 	/**
 	 * Kombinationsmethode. Hiermit kann man so viele Raum-Objekte gleichzeitig an den Knoten
-	 * anmelden, wie man will.<br /> <b>Beispiel:</b><br /> <br /> <code> //Der Knoten, um alle
+	 * tastenReagierbarAnmelden, wie man will.<br /> <b>Beispiel:</b><br /> <br /> <code> //Der Knoten, um alle
 	 * Objekte zu sammeln<br /> Knoten knoten = new Knoten();<br /> <br /> //Lauter gebastelte
 	 * Raum-Objekte<br /> Raum r1<br /> Raum r2;<br /> Raum r3;<br /> Raum r4;<br /> Raum r5<br />
 	 * Raum r6;<br /> Raum r7;<br /> Raum r8;<br /> Raum r9<br /> Raum r10;<br /> Raum r11;<br />

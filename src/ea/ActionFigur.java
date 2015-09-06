@@ -56,7 +56,7 @@ public class ActionFigur extends Raum {
 		// FIXME: 1 ms ist ein zu kleines Intervall und sorgt für die Performance-Schwierigkeiten bei vielen Figuren
 		// Richtige Time nutzen? Wie schnell sind Time-Aufrufe in Java?
 
-		/*Manager.standard.anmelden(new Ticker() {
+		/*Manager.standard.tastenReagierbarAnmelden(new Ticker() {
 			int runde = 0;
 
 			public void tick () {
@@ -216,7 +216,7 @@ public class ActionFigur extends Raum {
 	 *
 	 * @param name
 	 * 		Der Name des Zustandes, in den die Figur versetzt werden soll. Dies ist der Name, der beim
-	 * 		Anmelden des Zustandes mitgegeben wurde.
+	 * 		ea.Anmelden des Zustandes mitgegeben wurde.
 	 * 		<p/>
 	 * 		<b>Beim Namen wird die Groß- / Kleinschreibung ignoriert.</b>
 	 *
@@ -242,7 +242,7 @@ public class ActionFigur extends Raum {
 	 * Versetzt diese Actionfigur in eine bestimmte Aktion.
 	 *
 	 * @param name
-	 * 		Der Name der Aktion, die die Figur ausführen soll. Dies ist der Name, der beim Anmelden der
+	 * 		Der Name der Aktion, die die Figur ausführen soll. Dies ist der Name, der beim ea.Anmelden der
 	 * 		Aktion mitgegeben wurde.
 	 * 		<p/>
 	 * 		<b>Beim Namen wird die Groß- / Kleinschreibung ignoriert.</b>

@@ -94,6 +94,7 @@ public abstract class Game implements TastenReagierbar {
     /**
      * Über diese Referenz kann die Maus des Spiels beeinflusst werden.
      */
+    @API
     public final Maus maus;
 
 	/**
@@ -120,6 +121,17 @@ public abstract class Game implements TastenReagierbar {
 	 */
     @NoExternalUse
 	private Font font;
+
+    /**
+     * Über dieses Objekt können alle Anmelde-Methoden aufgerufen werden. Zum Beispiel für:
+     * <ul>
+     *     <li>Tastendruck</li>
+     *     <li>Mausklick / -bewegung</li>
+     *     <li>Ticker</li>
+     * </ul>
+     */
+    @API
+    public final Anmelden anmelden;
 
 
     /* _______________________ CONSTRUCTOR OVERKILL _______________________ */
@@ -205,7 +217,7 @@ public abstract class Game implements TastenReagierbar {
 
 		statischeWurzel = real_fenster.getStatNode();
 
-		real_fenster.anmelden(this);
+		real_fenster.tastenReagierbarAnmelden(this);
 
 		try {
 			real_fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
@@ -216,6 +228,9 @@ public abstract class Game implements TastenReagierbar {
         maus = real_fenster.getMaus();
 
         real_fenster.getFrameThread().gameHandshake(this);
+
+        // ------------- Die Handles -------------
+        this.anmelden = new Anmelden(this);
 	}
 
 	/**
@@ -505,23 +520,7 @@ public abstract class Game implements TastenReagierbar {
 		real_fenster.wiederherstellen();
 	}
 
-	/**
-	 * Meldet ein "<code>TastenReagierbar</code>"-Objekt an. Ab diesem Moment wird seine
-	 * "<code>reagieren</code>"-Methode immer dann aufgerufen, wenn eine Taste heruntergedrueckt
-	 * wird.
-	 *
-	 * @param g
-	 * 		Das anzumeldende <code>TastenReagierbar</code>-Objekt
-	 */
-	public void tastenReagierbarAnmelden (TastenReagierbar g) {
-		if(g instanceof Game) {
-			Logger.error("Anmelden", "Der Eingabe-Parameter g leitet sich von der Klasse Game ab. Das würde für einen"
-					+ " internen Fehler sorgen und ist daher nicht möglich. Stattdessen kann man die tasteReagieren-"
-					+ "Methode verwenden oder über eine andere mit diesem Interface den selben Effekt erzeugen.");
-			return;
-		}
-		real_fenster.anmelden(g);
-	}
+
 
 	/**
 	 * Prüft, ob eine bestimmte Taste gerade jetzt heruntergedrückt wird.
@@ -535,66 +534,12 @@ public abstract class Game implements TastenReagierbar {
 	public boolean tasteGedrueckt (int code) {
 		return real_fenster.istGedrueckt(code);
 	}
-
-	/**
-	 * Meldet ein <code>TastenLosgelassenReagierbar</code>-Objekt an. Ab diesem Moment wird seine
-	 * "<code>tasteGedrueckt</code>"-Methode immer aufgerufen, wenn eine Taste losgelassen wird.
-	 *
-	 * @param g
-	 * 		Das anzumeldende <code>TastenLosgelassenReagierbar</code>-Objekt.
-	 */
-	public void tastenLosgelassenReagierbarAnmelden (TastenLosgelassenReagierbar g) {
-		real_fenster.tastenLosgelassenAnmelden(g);
-	}
 	
-	/**
-	 * Meldet einen Ticker an. Nach Ausführung dieser Methode wird die <code>tick</code>-Methode
-	 * dieses Tickers regelmäßig und unerlässlich im angegebenen Intervall ausgeführt.
-	 * @param ticker		Der Ticker, dessen <code>tick</code>-Methode ab sofort regelmäßig
-	 * 						ausgeführt werden soll.
-	 * @param intervall		Das Intervall (<i>in Millisekunden</i>), in dem die <code>tick</code>-Methode 
-	 * 						des angegebenen Tickers ausgeführt werden soll. Zwischen zwei
-	 * 						<code>tick</code>-Aufrufen vergehen <code>intervall</code> Millisekunden.
-	 * @see #tickerAbmelden(Ticker)
-	 * @see ea.Ticker
-	 */
-	public void tickerAnmelden(Ticker ticker, int intervall) {
-		real_fenster.getFrameThread().tickerAnmelden(ticker, intervall);
-	}
-	
-	/**
-	 * Meldet einen (aktiven) Ticker ab. Nach ausführen dieser Methode wird die <code>tick</code>-Methode 
-	 * des übergebenen Ticker-Objekts nicht mehr ausgeführt, bis der Ticker erneut angemeldet wird.
-	 * @param ticker		Der Ticker, dessen <code>tick</code>-Methode ab sofort nicht mehr ausgeführt
-	 * 						werden soll. Ist dieser Ticker noch gar nicht angemeldet, wird eine Fehlermeldung
-	 * 						ausgegeben.
-	 * @see #tickerAnmelden(Ticker, int)
-	 * @see ea.Ticker
-	 */
-	public void tickerAbmelden(Ticker ticker) {
-		real_fenster.getFrameThread().tickerAbmelden(ticker);
-	}
 
-	/**
-	 * Meldet ein <code>KollisionsReagierbar</code>-Interface an. Ab sofort wird es mit dem
-	 * spezifizierten <code>code</code> aufgerufen, sollten sich die <code>Raum</code>-Objekte
-	 * <code>r1</code> und <code>r2</code> schneiden.
-	 *
-	 * @param reagierbar
-	 * 		Das anzumeldende <code>KollisionsReagierbar</code>-Interface, das ab sofort von Kollisionen
-	 * 		von <code>r1</code> und <code>r2</code> informiert werden soll.
-	 * @param r1
-	 * 		Ein <code>Raum</code>-Objekt
-	 * @param r2
-	 * 		Ein zweites <code>Raum</code>-Objekt
-	 * @param code
-	 * 		Ein beliebiger Code. Dieser kann verwendet werden, um mit einem Interface mehrere
-	 * 		Kollisionen <i>unterscheidbar</i> zu behandeln. Er wird im Aufruf der
-	 * 		<code>kollision(int)</code> als Parameter übergeben.
-	 */
-	public void kollisionsReagierbarAnmelden (KollisionsReagierbar reagierbar, Raum r1, Raum r2, int code) {
-        WorldHandler.kollisionsReagierbarEingliedern(reagierbar, code, r1, r2);
-	}
+	
+
+
+
 
     /**
 	 * Gibt ein BoundingRechteck zurueck, dass die Masse des Fensters beschreibt.<br /> Die Hoehe
@@ -815,5 +760,5 @@ public abstract class Game implements TastenReagierbar {
      * im Konstruktor.
      */
     @API
-    public abstract void scheissdrauf();
+    public abstract void initialisieren();
 }

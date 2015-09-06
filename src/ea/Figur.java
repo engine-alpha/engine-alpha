@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * Figur(30, 100, "meineFigurDateiImProjektordner.eaf"); //Laedt die Figur und setzt sie an Position
  * (30|100) <br /><br /> //Die Bewegung der Figur starten (muss nicht ausgefuehrt werden, Sa
  * standard) <br /> meineFigur.animiertSetzen(true);<br /><br /> // Die Figur an dem entsprechenden
- * Knoten zum halten und Zeichnen anmelden (In diesem Fall die Wurzel in der Klasse Game)<br />
+ * Knoten zum halten und Zeichnen tastenReagierbarAnmelden (In diesem Fall die Wurzel in der Klasse Game)<br />
  * wurzel.add(meineFigur);<br /> </code><br /> <br /> <br /> Dies ist einfachste Methode, eine Figur
  * zu laden.<br /> Der Figureneditor zum Erstellen der zu ladenden ".eaf"-Dateien ist als
  * ausfuehrbare ".jar"-Datei fester Bestandteil des Engine-Alpha-Programmierkits.
@@ -83,7 +83,7 @@ public class Figur extends Raum {
 
 	static {
 		liste = new ArrayList<Figur>();
-		/*Manager.standard.anmelden((new Ticker() {
+		/*Manager.standard.tastenReagierbarAnmelden((new Ticker() {
 			int runde = 0;
 
 			@Override

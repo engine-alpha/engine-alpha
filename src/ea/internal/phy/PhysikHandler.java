@@ -67,7 +67,7 @@ public abstract class PhysikHandler {
      * Informiert diesen Handler, wenn es ein Update in der Baumstruktur um das Raum-Objekt gab. Die neue Physik (falls vorhanden)
      * wird so an alle Raum-Objekte weitergegeben.
      * @param worldHandler      Die neue Physik-Umgebung.
-     * @throws java.lang.IllegalStateException  Falls ein Raum-Objekt nach dem anmelden an einer Wurzel auf die Wurzel eines anderen Fensters
+     * @throws java.lang.IllegalStateException  Falls ein Raum-Objekt nach dem tastenReagierbarAnmelden an einer Wurzel auf die Wurzel eines anderen Fensters
      *                                          verschoben wird.
      */
     public abstract void update(WorldHandler worldHandler) throws IllegalStateException;

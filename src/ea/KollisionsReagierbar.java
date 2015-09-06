@@ -23,7 +23,7 @@ import ea.internal.ano.API;
 
 /**
  * Ein KollisionsReagierbar-Objekt kann auf das aufeinandertreffen zweier Raum-Objekte reagieren.<br
- * /> Bei einer komplizierteren Aufgabe sieht das Anmelden bei einem <code>WorldHandler</code>-Objekt des
+ * /> Bei einer komplizierteren Aufgabe sieht das ea.Anmelden bei einem <code>WorldHandler</code>-Objekt des
  * Listeners ungefaehr so aus:<br /> <br /><br /><br /><br /> <code> //Bereits Instanziiertes
  * WorldHandler-Objekt. WorldHandler physik;
  * <p/>

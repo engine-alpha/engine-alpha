@@ -309,7 +309,7 @@ extends Thread {
         this.internalJokerProducer.enqueueDispatchableForNextFrame(new Dispatchable() {
             @Override
             public void dispatch() {
-                game.scheissdrauf();
+                game.initialisieren();
                 gameInitiated = true;
             }
         });

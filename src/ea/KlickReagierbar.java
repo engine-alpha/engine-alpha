@@ -36,7 +36,7 @@ public interface KlickReagierbar {
 	 * //Mein Interface, in welcher Form auch immer, instanziiert<br /> KlickReagierbar
 	 * meinKlick;<br /><br />
 	 * <p/>
-	 * //Mein Interface an der Maus anmelden<br /> maus.anmelden(meinKlick);<br /> </code><br /> Ab
+	 * //Mein Interface an der Maus tastenReagierbarAnmelden<br /> maus.tastenReagierbarAnmelden(meinKlick);<br /> </code><br /> Ab
 	 * dann wird dieses Interface über seine Methode <code>klick()</code> benachrichtigt, immer
 	 * wenn ein <b>Linksklick</b> mit der Maus passiert ist.
 	 *

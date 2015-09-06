@@ -37,7 +37,7 @@ import java.util.Locale;
  * // Die Farbe dem Rechteck uebergeben rechteck.farbeSetzen(farbe);
  * <p/>
  * // Das Rechteck an der Wurzel (hierzu siehe Klasse Knoten und Klasse Game) der Game-Klasse
- * anmelden, // um ihn auch im Fenster sehen zu koennen! wurzel.add(rechteck);
+ * tastenReagierbarAnmelden, // um ihn auch im Fenster sehen zu koennen! wurzel.add(rechteck);
  * <p/>
  * // Geschachtelte Form, so empfiehlt es sich meistens eher (da platzsparender):
  * rechteck.farbeSetzen(new Farbe(200, 200, 200)); </pre>

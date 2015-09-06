@@ -100,7 +100,7 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 		aufgabenKlick = new ArrayList<>();
 		FensterE.getFenster(breite, hoehe).wurzel.add(links, rechts, strich = new Text(0, 10, "-"));
 		FensterE.getFenster(breite, hoehe).tastenReagierbarAnmelden(this);
-		//super.anmelden(this, 1);
+		//super.tastenReagierbarAnmelden(this, 1);
 
         //TODO Ticker-Implementierung
 
@@ -205,7 +205,7 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 
 	/**
 	 * Meldet ein Objekt zum Ticken an. Intern laesst sich theoretisch ein Objekt <b>JEDER</b>
-	 * Klasse anmelden!<br /> Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des
+	 * Klasse tastenReagierbarAnmelden!<br /> Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des
 	 * EDU-<code>TICKER</code>-Interfaces sind!!</i>
 	 *
 	 * @param o
@@ -247,7 +247,7 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 
 	/**
 	 * Meldet ein Objekt an, das ab sofort auf Tastendruck reagieren wird.<br /> Intern laesst sich
-	 * theoretisch ein Objekt <b>JEDER</b> Klasse anmelden!<br /> Deshalb <i>sollten nur Objekte
+	 * theoretisch ein Objekt <b>JEDER</b> Klasse tastenReagierbarAnmelden!<br /> Deshalb <i>sollten nur Objekte
 	 * angemeldet werden, die Instanzen des EDU-<code>TASTENREAGIERBARANMELDEN</code>-Interfaces
 	 * sind!!</i>
 	 *
@@ -269,7 +269,7 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 
 	/**
 	 * Meldet ein Objekt an, das ab sofort auf Mausklicks reagieren wird.<br /> Intern laesst sich
-	 * theoretisch ein Objekt <b>JEDER</b> Klasse anmelden!<br /> Deshalb <i>sollten nur Objekte
+	 * theoretisch ein Objekt <b>JEDER</b> Klasse tastenReagierbarAnmelden!<br /> Deshalb <i>sollten nur Objekte
 	 * angemeldet werden, die Instanzen eines interfaces EDU-<code>KLICKREAGIERBAR</code>-Interfaces
 	 * sind!!</i><br /> <br /> <br /> Example:<br /> <b /> <code>KLICKREAGIERBAR { <br /> //Eine
 	 * Methode diesen Namens MUSS existieren!!<br /> public abstract void klickReagieren(int x, int

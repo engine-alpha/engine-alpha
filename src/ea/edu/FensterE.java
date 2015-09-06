@@ -100,7 +100,7 @@ public class FensterE extends Game {
 	}
 
     @Override
-    public void scheissdrauf() {
+    public void initialisieren() {
         //INITIERUNG (Noch) LEER
     }
 }

@@ -214,7 +214,7 @@ public class Maus {
 
 
 	/**
-	 * Alternativmethopde zum anmelden. Hierbei gibt es keinen Code-Parameter; dieser wird
+	 * Alternativmethopde zum tastenReagierbarAnmelden. Hierbei gibt es keinen Code-Parameter; dieser wird
 	 * automatisch auf <code>0</code> gesetzt.
 	 *
 	 * @param m

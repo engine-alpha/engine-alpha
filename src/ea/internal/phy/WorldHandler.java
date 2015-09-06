@@ -246,7 +246,7 @@ implements ContactListener {
         private final KollisionsReagierbar reagierbar;  //Aufzurufen
         private final Body body2;                       //Der zweite Body (erster Body ist Hashmap-Schlüssel)
         private final int code;                         //Der Code für den Aufruf
-        private final FrameThread frameThread;          //Zum Anmelden des Dispatches
+        private final FrameThread frameThread;          //Zum ea.Anmelden des Dispatches
 
         private final Dispatchable begin = new Dispatchable() {
             @Override
