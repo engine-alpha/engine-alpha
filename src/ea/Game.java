@@ -99,11 +99,6 @@ public abstract class Game implements TastenReagierbar {
 	private final boolean exitOnEsc;
 
 	/**
-	 * Der Zufallsgenerator des Spiels. Basiert nicht auf echtem Zufall.
-	 */
-	private final Random zufall = new Random();
-
-	/**
 	 * Der Font für die Fenstertexte
 	 */
 	private Font font;
@@ -408,38 +403,6 @@ public abstract class Game implements TastenReagierbar {
 	 */
 	public void highscoreAnzeigen (String[] namen, int[] punkte, String fenstertitel) {
 		new HighScoreFenster(fenster, fenstertitel, namen, punkte, font);
-	}
-
-	/**
-	 * Gibt ein <b>zufälliges</b> <code>boolean</code>-Attribut zurück.<br /> Mit relativ
-	 * zuverlässiger Sicherheit sind die Wahrscheinlichkeiten für <code>false</code> und
-	 * <code>true</code> gleich groß.
-	 *
-	 * @return <code>false</code> oder <code>true</code>, mit gleich hoher Wahrscheinlichkeit.
-	 */
-	public boolean zufallsBoolean () {
-		return zufall.nextBoolean();
-	}
-
-	/**
-	 * Gibt ein <b>zufälliges</b> <code>int</code>-Attribut zwischen <code>0</code> und einer
-	 * festgelegten Obergrenze zurück.<br /> Mit relativ zuverlässiger Sicherheit sind die
-	 * Wahrscheinlichkeiten für die Werte zwischen <code>0</code> und der Obergrenze gleich groß.
-	 *
-	 * @param obergrenze
-	 * 		Die höchste Zahl, die vorkommen kann.<br /> <b>Die Zahl kann also ebenfalls Ergebnis der
-	 * 		Rückgabe sein!</b>
-	 *
-	 * @return Eine Zahl zwischen 0 (inklusiv) und der Obergrenze (inklusiv).<br /> Bei Eingabe
-	 * einer negativen Zahl ist das Ergebnis 0.
-	 */
-	public int zufallsZahl (int obergrenze) {
-		if (obergrenze < 0) {
-			throw new IllegalArgumentException("Achtung! Für eine Zufallszahl muss die definierte Obergrenze (die " +
-                    "inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!");
-		}
-
-		return zufall.nextInt(obergrenze + 1);
 	}
 
     /**
