@@ -111,11 +111,24 @@ public class Anmelden {
     }
 
     /**
-     * Meldet ein <code>FrameUpdateReagierbar</code>-Objekt
-     * @param reagierbar
+     * Meldet ein <code>FrameUpdateReagierbar</code>-Objekt an.<br />
+     * Nach Aufruf dieser Methode wird die <code>frameUpdate(float)</code>-Methode des
+     * übergebenen Objektes in jedem Frame aufgerufen.
+     * @param reagierbar    Das anzumeldende <code>FrameUpdateReagierbar</code>-Objekt.
      */
     @API
     public void frameUpdateReagierbar(FrameUpdateReagierbar reagierbar) {
+        game.real_fenster.getFrameThread().frameUpdateReagierbarAnmelden(reagierbar);
+    }
 
+    /**
+     * Meldet ein <code>FrameUpdateReagierbar</code>-Objekt ab.<br />
+     * Nach Aufruf dieser Methode wird die <code>frameUpdate(float)</code>-Methode des
+     * übergebenen Objektes nicht mehr in jedem Frame aufgerufen.
+     * @param reagierbar    Das abzumeldende <code>FrameUpdateReagierbar</code>-Objekt.
+     */
+    @API
+    public void frameUpdateReagierbarAbmelden(FrameUpdateReagierbar reagierbar) {
+        game.real_fenster.getFrameThread().frameUpdateReagierbarAbmelden(reagierbar);
     }
 }

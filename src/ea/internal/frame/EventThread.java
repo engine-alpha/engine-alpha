@@ -6,6 +6,7 @@ import java.util.Queue;
 /**
  * Ein Producer-Thread ist ein Thread, der <code>Dispatchable</code> Events erzeugt und in eine
  * entsprechende Queue zur Abarbeitung / Ausführung legt. Welche Art von Events das letztlich ist, hängt von der
+ * Implementierung dahinter ab.
  * Created by andonie on 14.02.15.
  */
 public class EventThread<E extends Dispatchable>

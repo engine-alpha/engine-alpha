@@ -1,5 +1,6 @@
 package ea.internal.frame;
 
+import ea.FrameUpdateReagierbar;
 import ea.Game;
 import ea.Ticker;
 import ea.internal.ano.NoExternalUse;
@@ -122,6 +123,7 @@ extends Thread {
     private final EventThread<UIEvent> uiEventThread;
     private final EventThread<Dispatchable> internalJokerProducer;
     private final TickerThread tickerThread;
+    private final FrameUpdateThread frameUpdateThread;
 
 
     /**
@@ -141,7 +143,8 @@ extends Thread {
         producerThreads = new ProducerThread[] {
                 uiEventThread=new EventThread<UIEvent>(this, "UI", queue),
                 internalJokerProducer = new EventThread<Dispatchable>(this, "Network", queue),
-                tickerThread=new TickerThread(this, queue)
+                tickerThread=new TickerThread(this, queue),
+                frameUpdateThread=new FrameUpdateThread(this, queue)
         };
 
         //Startet die Threads. Sie verharren vorerst in Wartehaltung, bis die Run-Methode dieses Threads
@@ -183,6 +186,14 @@ extends Thread {
 
     public void tickerAbmelden(Ticker ticker) {
         tickerThread.removeTicker(ticker);
+    }
+
+    public void frameUpdateReagierbarAnmelden(FrameUpdateReagierbar fur) {
+        frameUpdateThread.addFrameUpdateReagierbar(fur);
+    }
+
+    public void frameUpdateReagierbarAbmelden(FrameUpdateReagierbar fur) {
+        frameUpdateThread.removeFrameUpdateReagierbar(fur);
     }
 
     /**
@@ -249,9 +260,9 @@ extends Thread {
             //System.out.println("Joined Dispatcher");
 
             //Frame Update für die World
-            if(gameInitiated) {
-                game.frameUpdate(lastFrameTime/1000f);
-            }
+            //if(gameInitiated) {
+            //    game.frameUpdate(lastFrameTime/1000f);
+            //}
 
             //System.out.println("Join Render");
             //Join: RenderThread
@@ -289,9 +300,9 @@ extends Thread {
         worldThread.anhalten();
         renderThread.anhalten();
         dispatcherThread.anhalten();
-        uiEventThread.anhalten();
-        internalJokerProducer.anhalten();
-        tickerThread.anhalten();
+        for(ProducerThread pt : producerThreads) {
+            pt.anhalten();
+        }
 
     }
 
@@ -311,6 +322,7 @@ extends Thread {
             public void dispatch() {
                 game.initialisieren();
                 gameInitiated = true;
+                frameUpdateReagierbarAnmelden(game);
             }
         });
     }
