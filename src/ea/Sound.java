@@ -28,6 +28,7 @@ import java.io.InputStream;
 public class Sound {
     private Clip clip;
     private AudioInputStream ais;
+    private boolean paused = false;
 
     public Sound(String datei) {
         try {
@@ -78,6 +79,7 @@ public class Sound {
 
         try {
             openClip();
+            paused = false;
             clip.start();
         } catch (LineUnavailableException | IOException e) {
             throw new RuntimeException(e);
@@ -93,6 +95,7 @@ public class Sound {
 
         try {
             openClip();
+            paused = false;
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (LineUnavailableException | IOException e) {
             throw new RuntimeException(e);
@@ -105,6 +108,27 @@ public class Sound {
         }
 
         clip.stop();
+        clip = null;
+    }
+
+    public void pause() {
+        if (clip == null || paused) {
+            return;
+        }
+
+        if (clip.isRunning()) {
+            paused = true;
+            clip.stop();
+        }
+    }
+
+    public void unpause() {
+        if (clip == null || !paused) {
+            return;
+        }
+
+        paused = false;
+        clip.start();
     }
 
     private void openClip() throws LineUnavailableException, IOException {
@@ -113,7 +137,7 @@ public class Sound {
         clip.addLineListener(new LineListener() {
             @Override
             public void update(LineEvent event) {
-                if (event.getType().equals(LineEvent.Type.STOP)) {
+                if (event.getType().equals(LineEvent.Type.CLOSE) && !paused) {
                     event.getLine().close();
                 }
             }
