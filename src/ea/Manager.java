@@ -23,6 +23,7 @@ import ea.internal.util.Logger;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -136,9 +137,9 @@ public class Manager {
 	 * @return <code>true</code>, wenn mindestens 1 Ticker an diesem Manager zur Zeit mit seiner
 	 * <code>tick()</code>-Methode ausgeführt wird. Sonst <code>false</code>.
 	 */
-	public boolean hatAktiveTicker () {
-		for (Job job : jobs) {
-			if (job.active) {
+	public synchronized boolean hatAktiveTicker () {
+		for (Iterator<Job> iterator = jobs.iterator(); iterator.hasNext();) {
+			if (iterator.next().active) {
 				return true;
 			}
 		}
@@ -155,7 +156,7 @@ public class Manager {
 	 *
 	 * @see #anmelden(Ticker)
 	 */
-	public void anmelden (Ticker t, int intervall) {
+	public synchronized void anmelden (Ticker t, int intervall) {
 		anmelden(t);
 		starten(t, intervall);
 	}
@@ -168,7 +169,7 @@ public class Manager {
 	 *
 	 * @see #anmelden(Ticker, int)
 	 */
-	public void anmelden (Ticker t) {
+	public synchronized void anmelden (Ticker t) {
 		if (istAngemeldet(t)) {
 			Logger.warning("Der Ticker ist bereits an diesem Manager angemeldet und wird nicht erneut angemeldet.");
 			return;
@@ -194,7 +195,7 @@ public class Manager {
 	 *
 	 * @see #anhalten(Ticker)
 	 */
-	public void starten (final Ticker t, int intervall) {
+	public synchronized void starten (final Ticker t, int intervall) {
 		if (!istAngemeldet(t)) {
 			Logger.error("Der Ticker ist noch nicht angemeldet.");
 			return;
@@ -238,9 +239,10 @@ public class Manager {
 	 * @return <code>true</code>, falls der Ticker bereits an diesem <code>Manager</code> angemeldet
 	 * ist, sonst <code>false</code>.
 	 */
-	public boolean istAngemeldet (Ticker t) {
-		for (Job a : jobs) {
-			if (a.steuert(t)) {
+	public synchronized boolean istAngemeldet (Ticker t) {
+		for (Iterator<Job> iterator = jobs.iterator(); iterator.hasNext();) {
+			Job currentJob = iterator.next();
+			if (currentJob.steuert(t)) {
 				return true;
 			}
 		}
@@ -254,10 +256,11 @@ public class Manager {
 	 * @param t
 	 * 		Der Ticker zu dem entsprechenden Job
 	 */
-	private Job getJob (final Ticker t) {
-		for (Job a : jobs) {
-			if (a.steuert(t)) {
-				return a;
+	private synchronized Job getJob (final Ticker t) {
+		for (Iterator<Job> iterator = jobs.iterator(); iterator.hasNext();) {
+			Job currentJob = iterator.next();
+			if (currentJob.steuert(t)) {
+				return currentJob;
 			}
 		}
 
@@ -273,7 +276,7 @@ public class Manager {
 	 * @param intervall
 	 * 		Das neue Intervall fuer den Ticker
 	 */
-	public void intervallSetzen (Ticker t, int intervall) {
+	public synchronized void intervallSetzen (Ticker t, int intervall) {
 		if (!istAngemeldet(t)) {
 			Logger.error("Der Ticker ist noch nicht angemeldet.");
 			return;
@@ -303,7 +306,7 @@ public class Manager {
 	 *
 	 * @see #starten(Ticker, int)
 	 */
-	public void anhalten (Ticker t) {
+	public synchronized void anhalten (Ticker t) {
 		if (!istAngemeldet(t)) {
 			Logger.error("Der Ticker ist noch nicht angemeldet.");
 			return;
@@ -327,7 +330,7 @@ public class Manager {
 	 * @param t
 	 * 		abzumeldender Ticker
 	 */
-	public void abmelden (Ticker t) {
+	public synchronized void abmelden (Ticker t) {
 		if (!istAngemeldet(t)) {
 			Logger.error("Der Ticker ist noch nicht angemeldet.");
 			return;
@@ -358,10 +361,11 @@ public class Manager {
 	 * Macht diesen Manager frei von allen aktiven Tickern, jedoch ohne ihn selbst zu beenden. Neue
 	 * Ticker können jederzeit wieder angemeldet werden.
 	 */
-	public final void alleAbmelden () {
-		for (Job job : jobs) {
-			if (job.isActive()) {
-				anhalten(job.getTicker());
+	public synchronized final void alleAbmelden () {
+		for (Iterator<Job> iterator = jobs.iterator(); iterator.hasNext();) {
+			Job currentJob = iterator.next();
+			if (currentJob.isActive()) {
+				anhalten(currentJob.getTicker());
 			}
 		}
 
