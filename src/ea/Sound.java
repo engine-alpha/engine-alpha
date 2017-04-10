@@ -25,11 +25,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+@API
 public class Sound {
     private Clip clip;
     private AudioInputStream ais;
     private boolean paused = false;
 
+    @API
     public Sound(String datei) {
         try {
             byte[] data = loadFromStream(new FileInputStream(datei));
@@ -70,6 +72,7 @@ public class Sound {
         }
     }
 
+    @API
     public void play() {
         try {
             ais.reset();
@@ -86,6 +89,7 @@ public class Sound {
         }
     }
 
+    @API
     public void loop() {
         try {
             ais.reset();
@@ -102,6 +106,7 @@ public class Sound {
         }
     }
 
+    @API
     public void stop() {
         if (clip == null) {
             return;
@@ -111,6 +116,7 @@ public class Sound {
         clip = null;
     }
 
+    @API
     public void pause() {
         if (clip == null || paused) {
             return;
@@ -122,6 +128,7 @@ public class Sound {
         }
     }
 
+    @API
     public void unpause() {
         if (clip == null || !paused) {
             return;
