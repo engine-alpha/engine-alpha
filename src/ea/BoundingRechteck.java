@@ -89,7 +89,8 @@ public final class BoundingRechteck implements Serializable {
 	}
 
 	/**
-	 * Gibt ein neues BoundingRechteck zurück, das seinen Punkt genau im angegebenen Zentrum hat.
+	 * Gibt ein neues BoundingRechteck mit der selben Höhe und Breite zurück,
+	 * das seinen Punkt genau im angegebenen Zentrum hat.
 	 *
 	 * @param p
 	 * 		Das Zentrum des zurückzugebenden BoundingRechtecks.

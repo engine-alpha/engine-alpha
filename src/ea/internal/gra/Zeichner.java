@@ -110,8 +110,9 @@ public class Zeichner extends Canvas {
 	 */
 	public void render (Graphics2D g) {
 		// Absoluter Hintergrund
-		g.setColor(Color.black);
+		g.setColor(Color.red);
 		g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
+
 
 		// Die Objekte
 		cam.zeichne(g);

@@ -32,6 +32,7 @@ import org.jbox2d.dynamics.BodyType;
  *
  * Created by andonie on 16.02.15.
  */
+@API
 public class Physik {
 
     /**
@@ -186,6 +187,7 @@ public class Physik {
         return this;
     }
 
+    @API
     public float elastizitaet() {
         return raum.getPhysikHandler().elastizitaet();
     }

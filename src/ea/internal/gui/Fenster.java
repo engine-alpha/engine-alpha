@@ -179,14 +179,19 @@ public class Fenster extends Frame {
 		Dimension screenSize = getToolkit().getScreenSize();
 
 		if (vollbild) {
-            Logger.error("Display", "Vollbildfunktion wurde angefragt. Ist aber noch nicht implementiert");
+			GraphicsDevice fullscreenDevice = devices[0];
+			if(devices.length > 1) { //Randfall devices.length==0 ist nicht realistisch, daher nicht beachtet hier.
+				Logger.debug("Display", "Mehr als ein Display gefunden. Nehme das automatisch das Erste.");
+			}
 			if (devices[0].isFullScreenSupported()) {
-				breite = screenSize.width;
-				hoehe = screenSize.height;
+				this.setUndecorated(true);
+				fullscreenDevice.setFullScreenWindow(this);
+				DisplayMode fullscreenDeviceDisplayMode = fullscreenDevice.getDisplayMode();
+				breite = fullscreenDeviceDisplayMode.getWidth();
+				hoehe = fullscreenDeviceDisplayMode.getHeight();
 			} else {
-				Logger.error("Display", "Vollbild war nicht möglich, weil dieser PC dies nicht unterstützt!");
+				Logger.error("Display", "Vollbildmodus auf diesem Gerät ist nicht unterstützt.");
 
-				windowMode = WINDOW_FULLSCREEN_FRAME;
 			}
 		} else {
 			int x = screenSize.width / 8, y = screenSize.height / 8;
@@ -206,20 +211,7 @@ public class Fenster extends Frame {
 
 		// ------------------------------------- //
 
-		if (windowMode == WINDOW_FULLSCREEN) {
-			//TODO Implementierung Vollbildmodus Sauber.
-		} else if (windowMode == WINDOW_FULLSCREEN_FRAME) {
-			setVisible(true);
-
-			setBounds(env.getMaximumWindowBounds());
-			setExtendedState(MAXIMIZED_BOTH);
-
-			Insets insets = getInsets();
-			breite = getWidth() - insets.left - insets.right;
-			hoehe = getHeight() - insets.top - insets.bottom;
-		} else {
-			setVisible(true);
-		}
+		setVisible(true);
 
         // ------------- Zeichner -------------
 
@@ -231,6 +223,7 @@ public class Fenster extends Frame {
 		if ((windowMode & (WINDOW_FULLSCREEN_FRAME | WINDOW_FRAME)) > 0) {
 			this.pack();
 		}
+		//this.pack();
 
 
 		// ------------- UI -------------
@@ -239,7 +232,9 @@ public class Fenster extends Frame {
 		try {
 			robot = new Robot(devices[0]);
 		} catch (AWTException e) {
-			Logger.error("Display", "Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!" + "\n" + "Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren." + "\n" + "Grund: Dies liegt an diesem Computer.");
+			Logger.error("Display", "Es war nicht möglich ein GUI-Controlobjekt zu erstelllen!" + "\n"
+					+ "Zentrale Funktionen der Maus-Interaktion werden nicht funktionieren." + "\n"
+					+ "Grund: Dies liegt an diesem Computer.");
 		}
 
 		// Die Listener
@@ -269,6 +264,9 @@ public class Fenster extends Frame {
 
         //Erstelle den Maus Handle
         this.maus = new Maus(this);
+
+
+
 	}
 
 	private void addKeyListener () {

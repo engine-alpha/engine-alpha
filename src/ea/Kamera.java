@@ -303,10 +303,7 @@ public class Kamera {
     public void zeichne(Graphics2D g) {
         if (hatFokus()) {
             // Nachjustieren
-
-            //FIXME Dimension gibt es nicht mehr. Neuer mittelpunktangleich
-            //bild = bild.mittenAngleichInstanz(fokus.dimension());
-
+            bild = bild.mittenAngleichInstanz(fokus.position.mittelPunkt());
             bild = bild.verschobeneInstanz(verzug);
         }
 
