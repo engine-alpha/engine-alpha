@@ -36,11 +36,11 @@ import ea.internal.util.Logger;
  * @author Michael Andonie
  */
 public abstract class Animierer implements Ticker {
+
 	/**
-	 * Festgelegter Normwert, der die Anzahl der Unterschritten pro Animations-Etappe der einzelnen
-	 * Animierer wiedergibt. Je kleiner er ist, desto durchschaubarer / flüssiger ist die Animation
+	 * Die Anzahl an Millisekunden, die zwischen allen Animationsticks vergeht
 	 */
-	protected static final int schritte = 100;
+	public static final int MILLISPERTICK=5;
 
 	/**
 	 * Objekt, welches animiert wird
@@ -73,7 +73,8 @@ public abstract class Animierer implements Ticker {
 	private boolean angemeldet;
 
 	/**
-	 * TODO: Dokumentation
+	 * Der <code>AnimationsEndeReagierbar</code>-Listener, der beim Beenden dieser Animation
+	 * informiert wird.
 	 */
 	private AnimationsEndeReagierbar listener;
 
