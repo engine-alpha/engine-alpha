@@ -95,21 +95,15 @@ public class Zeichner extends Canvas {
 	 * 		Das zum Zeichnen uebergebene Graphics-Objekt
 	 */
 	public void render (Graphics2D g) {
-	    try{
-            // Absoluter Hintergrund
-            g.setColor(Color.black);
-            g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
+	    // Absoluter Hintergrund
+        g.setColor(Color.black);
+        g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
 
+        // Die Objekte
+        cam.zeichne(g);
 
-            // Die Objekte
-            cam.zeichne(g);
-
-            // Die statischen Objekte
-            statNode.renderBasic(g, cam.position()); // TODO StatNode checken
-        } finally {
-            g.dispose();
-        }
-
+        // Die statischen Objekte
+        statNode.renderBasic(g, cam.position()); // TODO StatNode checken
 	}
 
 	/**
