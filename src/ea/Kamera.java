@@ -55,7 +55,7 @@ public class Kamera {
     /**
      * Die aktuelle Bemessung der Kameraperspektive
      */
-    private BoundingRechteck bild;
+    private BoundingRechteck kameraAuschschnitt;
 
     /**
      * Die Bounds der Kamera (sofern vorhanden)
@@ -96,7 +96,7 @@ public class Kamera {
      */
     public Kamera(int sizeX, int sizeY, Zeichenebene z, Fenster fenster) {
         ebene = z;
-        bild = new BoundingRechteck(0, 0, sizeX, sizeY);
+        kameraAuschschnitt = new BoundingRechteck(0, 0, sizeX, sizeY);
         this.fenster = fenster;
     }
 
@@ -219,7 +219,7 @@ public class Kamera {
      * @param y Die Verschiebung in Y-Richtung
      * @see #verschieben(Vektor)
      */
-    public void verschieben(int x, int y) {
+    public void verschieben(float x, float y) {
         this.verschieben(new Vektor(x, y));
     }
 
@@ -227,10 +227,10 @@ public class Kamera {
      * Verschiebt die Kamera um einen bestimmten Wert in X- und Y-Richtung.
      *
      * @param v Der die Bewegung beschreibende Vektor.
-     * @see #verschieben(int, int)
+     * @see #verschieben(float, float)
      */
     public void verschieben(Vektor v) {
-        bild = bild.verschobeneInstanz(v);
+        kameraAuschschnitt = kameraAuschschnitt.verschobeneInstanz(v);
     }
 
     /**
@@ -252,7 +252,7 @@ public class Kamera {
      * @see #zentrumSetzen(int, int)
      */
     public void zentrumSetzen(Punkt zentrum) {
-        bild = bild.mittenAngleichInstanz(zentrum);
+        kameraAuschschnitt = kameraAuschschnitt.mittenAngleichInstanz(zentrum);
     }
 
     /**
@@ -273,7 +273,7 @@ public class Kamera {
      * @see #positionSetzen(Punkt)
      */
     public void positionSetzen(float x, float y) {
-        bild = bild.anPosition(x, y);
+        kameraAuschschnitt = kameraAuschschnitt.anPosition(x, y);
     }
 
     /**
@@ -289,7 +289,7 @@ public class Kamera {
      * @return Das aktuelle BoundingRechteck, dass die aktuelle Fensterdarstellung beschreibt.
      */
     public BoundingRechteck position() {
-        return bild;
+        return kameraAuschschnitt;
     }
 
     /**
@@ -297,7 +297,7 @@ public class Kamera {
      * 0) hat.
      */
     public int getX() {
-        return (int) bild.x;
+        return (int) kameraAuschschnitt.x;
     }
 
     /**
@@ -305,7 +305,7 @@ public class Kamera {
      * 0) hat.
      */
     public int getY() {
-        return (int) bild.y;
+        return (int) kameraAuschschnitt.y;
     }
 
     /**
@@ -321,20 +321,25 @@ public class Kamera {
      * Zeichnet alle Objekte neu, die sich auf der Zeichenebene und im Blickfeld der Kamera
      * befinden.
      */
+    @NoExternalUse
     public void zeichne(Graphics2D g) {
         if (hatFokus()) {
             // Nachjustieren
-            bild = bild.mittenAngleichInstanz(fokus.position.mittelPunkt());
-            bild = bild.verschobeneInstanz(verzug);
+            kameraAuschschnitt = kameraAuschschnitt.mittenAngleichInstanz(fokus.position.mittelPunkt());
+            kameraAuschschnitt = kameraAuschschnitt.verschobeneInstanz(verzug);
         }
 
         if (hatBounds) {
-            bild = bild.in(bounds);
+            kameraAuschschnitt = kameraAuschschnitt.in(bounds);
         }
 
-        g.translate(bild.x, bild.y);
+        //Setze Clip mit etwas Extra-Rand (Rundungsfehler von Float zu Int)
+        g.setClip(0,0, (int) (kameraAuschschnitt.breite)+4, (int) (kameraAuschschnitt.hoehe)+4);
+
+
 
         g.scale(zoom, zoom);
+        g.translate(-kameraAuschschnitt.x, -kameraAuschschnitt.y);
         ebene.basis().renderBasic(g, position());
 
 
@@ -342,21 +347,21 @@ public class Kamera {
 
             //Debug Grid
 
-            int tx = (int) bild.x;
-            int ty = (int) bild.y;
+            int tx = (int) kameraAuschschnitt.x;
+            int ty = (int) kameraAuschschnitt.y;
             int gridSize = 50;
 
             g.translate(-tx, -ty);
             g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
             g.setColor(new Color(255, 255, 255, 100));
 
-            for (int x = tx / gridSize * gridSize; x < tx + bild.breite; x += gridSize) {
-                g.drawLine(x, ty, x, ty + (int) bild.hoehe);
+            for (int x = tx / gridSize * gridSize; x < tx + kameraAuschschnitt.breite; x += gridSize) {
+                g.drawLine(x, ty, x, ty + (int) kameraAuschschnitt.hoehe);
                 g.drawString("" + x, x + 10, ty + 20);
             }
 
-            for (int y = ty / gridSize * gridSize; y < ty + bild.hoehe; y += gridSize) {
-                g.drawLine(tx, y, tx + (int) bild.breite, y);
+            for (int y = ty / gridSize * gridSize; y < ty + kameraAuschschnitt.hoehe; y += gridSize) {
+                g.drawLine(tx, y, tx + (int) kameraAuschschnitt.breite, y);
                 g.drawString("" + y, tx + 10, y + 20);
             }
 
@@ -379,13 +384,32 @@ public class Kamera {
 
         g.scale(1/zoom, 1/zoom);
 
-        g.translate(-bild.x, -bild.y);
+        g.translate(-kameraAuschschnitt.x, -kameraAuschschnitt.y);
     }
 
     /**
-     * @return Ob die Kamera steif ist, oder sich mit einem Fokuspunkt mitbewegt.
+     * Gibt an, ob die Kamera ein Fokus-Objekt verfolgt oder "steif" ist.
+     * @return <code>true</code>, wenn die Kamera ein Fokus-Objekt hat (und sich mit dem mitbewegt).
+     * Sonst <code>false</code>.
+     * @see #fokusSetzen(Raum)
+     * @see #fokusLoeschen()
      */
+    @API
     public boolean hatFokus() {
         return (fokus != null);
+    }
+
+    /**
+     * Setzt die Perspektive der Kamera auf einen festen Bereich auf der Zeichenebene.
+     * @param ausschnitt  Der Bereich auf der Zeichenebene, der von der Kamera vollständig möglichst groß in den
+     *                          Fokus genommen werden soll.
+     */
+    @API
+    public void blickeAuf(BoundingRechteck ausschnitt) {
+
+        kameraAuschschnitt = new BoundingRechteck(ausschnitt.x, ausschnitt.y,
+                kameraAuschschnitt.breite, kameraAuschschnitt.hoehe);
+
+        //TODO Rotation einbinden (sobald eingebaut)
     }
 }

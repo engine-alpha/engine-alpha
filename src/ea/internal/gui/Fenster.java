@@ -228,12 +228,16 @@ public class Fenster extends Frame {
 
 
 		if(vollbild) {
-				//Ugly Workaround: Fullscreen Canvas does NOT work (tested on Surface Pro 4 / Win10) unless
-				//the frame is manually set invisible and visible again
-				//Potentially other OSs are affected as well (two Linux OSs were tested and worked, more data still
-				//necessary. Still, to be safe the ugly hotfix will be applied in every single case.
-				this.setVisible(false);
-				this.setVisible(true);
+			//Ugly Workaround: Fullscreen Canvas does NOT work (tested on Surface Pro 4 / Win10) unless
+			//the frame is manually set invisible and visible again
+			//Potentially other OSs are affected as well (two Linux OSs were tested and worked, more data still
+			//necessary. Still, to be safe the ugly hotfix will be applied in every single case.
+			this.setVisible(false);
+			this.setVisible(true);
+
+
+            //Optimiere den Zoom-Wert, sodass die Cam möglichst voll den Bildschirm füllt
+            zeichner.cam().blickeAuf(new BoundingRechteck(0,0,breite,hoehe));
 		}
 
 		// ------------- UI -------------

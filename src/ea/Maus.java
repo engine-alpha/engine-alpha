@@ -435,7 +435,8 @@ public class Maus {
         if(p == null)
             return null;
         float zoom = fenster.zeichner().cam().getZoom();
-        return new Punkt(p.x/zoom, p.y/zoom);
+        return new Punkt(p.x/zoom, p.y/zoom).verschobeneInstanz(
+        		fenster.zeichner().cam().position().position().alsVektor());
 	}
 
 	/**

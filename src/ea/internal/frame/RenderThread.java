@@ -1,5 +1,6 @@
 package ea.internal.frame;
 
+import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Zeichner;
 
 import java.awt.*;
@@ -32,6 +33,7 @@ extends FrameSubthread {
      * @param zeichner  Das <code>Zeichner-Objekt</code>, dass alle relevanten Informationen für das Rendering
      *                  enthält.
      */
+    @NoExternalUse
     public RenderThread(FrameThread master, Zeichner zeichner) {
         super(master, "Rendering Thread #" + rtcnt++);
         this.setDaemon(true);
@@ -50,7 +52,7 @@ extends FrameSubthread {
         Graphics2D g = (Graphics2D)bufferStrategy.getDrawGraphics();
 
         // have to be the same @ Game.screenshot!
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        //g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
