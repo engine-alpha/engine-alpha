@@ -18,11 +18,6 @@ extends FrameSubthread {
     private static int rtcnt = 1;
 
     /**
-     * Das Graphics-Objekt, das (dauerhaft) zum Zeichnen verwendet wird.
-     */
-    private final Graphics2D graphics2D;
-
-    /**
      * Die BufferStrategy zum Canvas.
      */
     private final BufferStrategy bufferStrategy;
@@ -42,7 +37,6 @@ extends FrameSubthread {
         this.setDaemon(true);
 
         this.zeichner = zeichner;
-        graphics2D = zeichner.getG();
         bufferStrategy = zeichner.getBs();
     }
 
@@ -52,7 +46,15 @@ extends FrameSubthread {
     @Override
     public void frameLogic() {
         //System.out.println("_______________________Render");
-        zeichner.render(graphics2D);
+
+        Graphics2D g = (Graphics2D)bufferStrategy.getDrawGraphics();
+
+        // have to be the same @ Game.screenshot!
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
+        zeichner.render(g);
         //System.out.println("_______________________Rendered");
         try {
             bufferStrategy.show();

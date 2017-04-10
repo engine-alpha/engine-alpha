@@ -58,18 +58,9 @@ public class Zeichner extends Canvas {
     }
 
     /**
-     * Gibt das Graphics-Object des Zeichners aus.
-     * @return das Graphics-Objekt des Zeichners.
-     */
-    public Graphics2D getG() {
-        return g;
-    }
-
-    /**
      * Die BufferedStrategy, die hier visualisiert wird
      */
     private BufferStrategy bs;
-    private Graphics2D g;
 
     /**
 	 * Konstruktor für Objekte der Klasse Zeichner
@@ -89,17 +80,12 @@ public class Zeichner extends Canvas {
 		this.groesse = new BoundingRechteck(0, 0, x, y);
 		this.cam = c;
 
+		this.setBackground(Color.blue);
 	}
 
     public void init() {
         createBufferStrategy(2);
         bs = getBufferStrategy();
-        g = (Graphics2D) bs.getDrawGraphics();
-
-        // have to be the same @ Game.screenshot!
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
     }
 
 	/**
@@ -109,16 +95,21 @@ public class Zeichner extends Canvas {
 	 * 		Das zum Zeichnen uebergebene Graphics-Objekt
 	 */
 	public void render (Graphics2D g) {
-		// Absoluter Hintergrund
-		g.setColor(Color.red);
-		g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
+	    try{
+            // Absoluter Hintergrund
+            g.setColor(Color.black);
+            g.fillRect(0, 0, (int) groesse.breite, (int) groesse.hoehe);
 
 
-		// Die Objekte
-		cam.zeichne(g);
+            // Die Objekte
+            cam.zeichne(g);
 
-		// Die statischen Objekte
-		statNode.renderBasic(g, cam.position()); // TODO StatNode checken
+            // Die statischen Objekte
+            statNode.renderBasic(g, cam.position()); // TODO StatNode checken
+        } finally {
+            g.dispose();
+        }
+
 	}
 
 	/**
