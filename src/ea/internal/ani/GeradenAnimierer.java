@@ -61,13 +61,13 @@ public class GeradenAnimierer extends Animierer {
 	 * 		Der Manager, ueber den die Animation laufen soll.
 	 */
 	public GeradenAnimierer (Raum ziel, Punkt richtung, int geschwindigkeit, int dauer, Manager m, AnimationsEndeReagierbar listener) {
-		super(ziel, schritte, false, m, listener);
-		bewegung = new Vektor(ziel.zentrum(), richtung).teilen(AnimationsManager.intervall(geschwindigkeit / schritte));
+		super(ziel, false, m, listener);
+		bewegung = new Vektor(ziel.zentrum(), richtung).teilen(AnimationsManager.intervall(((float)geschwindigkeit) / ((float)Animierer.MILLISPERTICK)));
 		if (dauer <= 0) {
 			Logger.error("Die Dauer fuer die Geraden-Animation kann nie 0 oder negativ sein!!!");
 			ende = 0;
 		} else {
-			ende = dauer / schritte;
+			ende = dauer / Animierer.MILLISPERTICK;
 		}
 	}
 

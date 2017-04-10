@@ -185,7 +185,7 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
      */
     @API
     public void kreisAnimation (Raum ziel, Punkt zentrum, boolean loop, int umlaufzeit, boolean uhrzeigersinn) {
-        final KreisAnimierer k = new KreisAnimierer(ziel, zentrum, intervall(umlaufzeit / 200), loop, this, this, uhrzeigersinn);
+        final KreisAnimierer k = new KreisAnimierer(ziel, zentrum, (int)intervall(umlaufzeit / 200), loop, this, this, uhrzeigersinn);
 
         animierer.add(k);
         k.starten();
@@ -200,7 +200,8 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 *
 	 * @return 1, wenn <code>z < 1</code>, sonst <code>z</code>.
 	 */
-	public static int intervall (int z) { // TODO @API oder @NoExternalUse?
+	@NoExternalUse
+	public static float intervall (float z) {
 		return Math.max(z, 1);
 	}
 

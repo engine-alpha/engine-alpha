@@ -50,7 +50,7 @@ public abstract class Animierer implements Ticker {
 	/**
 	 * Intervall, in dem ein <code>animationsSchritt()</code> ausgeführt wird.
 	 */
-	protected int intervall;
+	private int intervall;
 
 	/**
 	 * Zähler für bereits ausgeführte Bewegungsschritte
@@ -92,9 +92,9 @@ public abstract class Animierer implements Ticker {
 	 * @param listener
 	 * 		Listener, der am Ende der Animation aufgerufen wird
 	 */
-	public Animierer (Raum ziel, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener) {
+	public Animierer (Raum ziel, boolean loop, Manager m, AnimationsEndeReagierbar listener) {
 		this.ziel = ziel;
-		this.intervall = intervall;
+		this.intervall = MILLISPERTICK;
 		this.loop = loop;
 		this.manager = m;
 		this.listener = listener;

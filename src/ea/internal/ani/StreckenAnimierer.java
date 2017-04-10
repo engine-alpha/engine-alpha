@@ -35,7 +35,7 @@ public class StreckenAnimierer extends Animierer {
 	private final Punkt[] punkte;
 
 	/**
-	 * Der Vektor, der die Bewegung beschreibt.
+	 * Der Vektor, der die animationsschrittweise Bewegung beschreibt.
 	 */
 	private Vektor vektor;
 
@@ -54,6 +54,11 @@ public class StreckenAnimierer extends Animierer {
 	 * Gibt an, ob gerade vorwaerts animiert wird.
 	 */
 	private boolean vorwaerts = true;
+
+	/**
+	 * Gibt die Anzahl an Tick-Schritten an, die pro Etappe nötig sind.
+	 */
+	private final int schritteProEtappe;
 
 	/**
 	 * Gibt an, ob prinzipiell im Kreis, oder strickt vorwaerts und anschliessend rueckwaerts
@@ -104,7 +109,8 @@ public class StreckenAnimierer extends Animierer {
 	 * 		Nacheinander alle Punkte, die die Animation ueberlaufen soll.
 	 */
 	public StreckenAnimierer (Raum ziel, boolean loop, boolean circuit, Manager m, int geschwindigkeit, AnimationsEndeReagierbar listener, Punkt... zielPunkte) {
-		super(ziel, (geschwindigkeit / schritte), loop, m, listener);
+		super(ziel, loop, m, listener);
+		this.schritteProEtappe = geschwindigkeit/Animierer.MILLISPERTICK;
 		this.circuit = circuit;
 		punkte = new Punkt[zielPunkte.length + 1];
 
@@ -113,8 +119,8 @@ public class StreckenAnimierer extends Animierer {
 
 		punkteCount = 1;
 		Punkt p2 = punkte[1];
-		vektor = new Vektor((p2.realX() - punkte[0].realX()) / schritte, (p2.realY() - punkte[0].realY()) / schritte);
-		modulo = new Vektor((p2.realX() - punkte[0].realX()) % schritte, (p2.realY() - punkte[0].realY()) % schritte);
+		vektor = new Vektor((p2.realX() - punkte[0].realX()) / schritteProEtappe, (p2.realY() - punkte[0].realY()) / schritteProEtappe);
+		modulo = new Vektor((p2.realX() - punkte[0].realX()) % schritteProEtappe, (p2.realY() - punkte[0].realY()) % schritteProEtappe);
 	}
 
 	/**
@@ -139,8 +145,9 @@ public class StreckenAnimierer extends Animierer {
 
 	public void animationsSchritt () {
 		ziel.bewegen(vektor);
-		if (count == schritte) {
-			ziel.bewegen(modulo);
+		if (count == schritteProEtappe) {
+			//Testweise ausgeklammert, da float-Rechnung kein Modulo braucht.
+			//ziel.bewegen(modulo);
 			Punkt p1 = punkte[punkteCount];
 			Punkt p2 = null;
 			if (punkteCount == (punkte.length - 1) && vorwaerts) {
@@ -176,8 +183,8 @@ public class StreckenAnimierer extends Animierer {
 				}
 				p2 = punkte[punkteCount];
 			}
-			vektor = new Vektor((p2.realX() - p1.realX()) / schritte, (p2.realY() - p1.realY()) / schritte);
-			modulo = new Vektor((p2.realX() - p1.realX()) % schritte, (p2.realY() - p1.realY()) % schritte);
+			vektor = new Vektor((p2.realX() - p1.realX()) / schritteProEtappe, (p2.realY() - p1.realY()) / schritteProEtappe);
+			modulo = new Vektor((p2.realX() - p1.realX()) % schritteProEtappe, (p2.realY() - p1.realY()) % schritteProEtappe);
 			count = 0;
 		}
 	}

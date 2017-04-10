@@ -74,7 +74,7 @@ public class KreisAnimierer extends Animierer {
      * @param uhrzeigersinn Ob im oder gegen Uhrzeigersinn animiert werden soll.
 	 */
 	public KreisAnimierer (Raum ziel, Punkt zentrum, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener, boolean uhrzeigersinn) {
-		super(ziel, intervall, loop, m, listener);
+		super(ziel, loop, m, listener);
 		this.zentrum = zentrum;
 		this.letzter = ziel.zentrum();
         this.uhrzeigersinn = uhrzeigersinn;

@@ -88,7 +88,7 @@ public class Manager {
 	 * spielsteurnden Klasse.
 	 */
 	public Manager () {
-		this("Tickerthread " + (cnt + 1));
+		this("Ticker " + (cnt + 1));
 	}
 
 	/**
