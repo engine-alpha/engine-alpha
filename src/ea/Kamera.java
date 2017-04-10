@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
@@ -160,13 +162,23 @@ public class Kamera {
     }
 
     /**
-     * Setzt den Zoom.
+     * Setzt den Zoom der Kamera. Der Zoom bestimmt wie "nah" die Kamera auf die Zeichenebene guckt. Die Größe eines
+     * Objektes im Fenster entspricht der Größe auf der Zeichenebene multipliziert mit dem Zoom-Faktor (Default-Wert
+     * des Zoom-Faktors ist <code>1</code>).
      *
-     * TODO Erklärung
-     *
-     * @param zoom
+     * @param zoom Der neue Zoom-Wert der Kamera. <ul>
+     *             <li><code>1</code> ist der Standard-Wert. Der Ausgangszoom.</li>
+     *             <li>Werte größer als 1 "zoomen rein". <code>2</code> macht alles <b>doppelt so groß</b>.</li>
+     *             <li>Werte zwischen 1 und 0 (jeweils exklusiv) "zoomen raus". <code>0,5</code> macht alles
+     *             <b>halb so groß</b>.</li>
+     * </ul>
      */
+    @API
     public void zoomSetzen(float zoom) {
+        if(zoom <= 0) {
+            Logger.error("Kamera", "Der Kamerazoom kann nicht kleiner oder gleich 0 sein.");
+            return;
+        }
         this.zoom = zoom;
     }
 
@@ -297,6 +309,15 @@ public class Kamera {
     }
 
     /**
+     * Gibt den aktuellen Zoom aus.
+     * @return  Der aktuelle Zoom der Kamera.
+     */
+    @NoExternalUse
+    public float getZoom() {
+        return zoom;
+    }
+
+    /**
      * Zeichnet alle Objekte neu, die sich auf der Zeichenebene und im Blickfeld der Kamera
      * befinden.
      */
@@ -313,9 +334,9 @@ public class Kamera {
 
         g.translate(bild.x, bild.y);
 
+        g.scale(zoom, zoom);
         ebene.basis().renderBasic(g, position());
 
-        g.translate(-bild.x, -bild.y);
 
         if (EngineAlpha.isDebug()) {
 
@@ -355,6 +376,10 @@ public class Kamera {
             g.setColor(Color.black);
             g.drawString(fpsMessage, 10, 30);
         }
+
+        g.scale(1/zoom, 1/zoom);
+
+        g.translate(-bild.x, -bild.y);
     }
 
     /**

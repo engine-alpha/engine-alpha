@@ -73,12 +73,6 @@ public class Fenster extends Frame {
 	private final List<TastenLosgelassenReagierbar> losListener = new ArrayList<>();
 
 	/**
-	 * Gibt an, ob die aktuelle (relative) Maus innerhalb des passablen Fensterbereiches liegt.<br
-	 * /> Gibt es keine solche ist dieser Wert irrelevant.
-	 */
-	private volatile boolean mausAusBild = false;
-
-	/**
 	 * Gibt an, ob der gerade Verarbeitete Klick mitzählt, also vom Benutzer selbst gemacht wurde.
 	 */
 	private boolean zaehlt = true;
@@ -118,6 +112,11 @@ public class Fenster extends Frame {
     public WorldHandler getWorldHandler() {
         return worldHandler;
     }
+
+    /**
+     * Gibt an, ob dieses Fenster im Vollbildmodus dargestellt wird.
+     */
+    private final boolean isFullscreen;
 
     /**
 	 * Einfacher Alternativkonstruktor.<br /> Erstellt ein normales Fenster mit der eingegeben
@@ -177,6 +176,8 @@ public class Fenster extends Frame {
 		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice[] devices = env.getScreenDevices();
 		Dimension screenSize = getToolkit().getScreenSize();
+
+        this.isFullscreen = vollbild;
 
 		if (vollbild) {
 			GraphicsDevice fullscreenDevice = devices[0];
@@ -427,10 +428,15 @@ public class Fenster extends Frame {
         //Finde Klick auf Zeichenebene.
         Point sourceklick =  e.getPoint(); //<- Die Klickposition relativ zum Ursprung des Zeichner-Canvas
 
-        Punkt sourcePos = new Punkt(sourceklick.x, sourceklick.y);
+        //Mausklick-Position muss mit Zoom-Wert verrechnet werden
+        float camzoom = getCam().getZoom();
+        Punkt sourcePos = new Punkt(sourceklick.x/camzoom, sourceklick.y/camzoom);
+
         Punkt camPos = getCam().position().position();
 
         Punkt klick = sourcePos.verschobeneInstanz(camPos.alsVektor());
+
+        //Kamera-Zoom einbeziehen
 
         //Nimm die restlichen Werte vom AWT Event
         int button = e.getButton();
@@ -627,5 +633,14 @@ public class Fenster extends Frame {
      */
     public FrameThread getFrameThread() {
         return frameThread;
+    }
+
+    /**
+     * Gibt an, ob das Fenster im Vollbildmodus dargestellt wird bzw. werden soll.
+     * @return true: Vollbild -- false: kein Vollbild
+     */
+    @NoExternalUse
+    public boolean isFullscreen() {
+        return isFullscreen;
     }
 }
