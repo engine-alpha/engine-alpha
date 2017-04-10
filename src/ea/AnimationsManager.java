@@ -185,7 +185,7 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
      */
     @API
     public void kreisAnimation (Raum ziel, Punkt zentrum, boolean loop, int umlaufzeit, boolean uhrzeigersinn) {
-        final KreisAnimierer k = new KreisAnimierer(ziel, zentrum, (int)intervall(umlaufzeit / 200), loop, this, this, uhrzeigersinn);
+        final KreisAnimierer k = new KreisAnimierer(ziel, zentrum, umlaufzeit, loop, this, this, uhrzeigersinn);
 
         animierer.add(k);
         k.starten();

@@ -31,7 +31,7 @@ public class KreisAnimierer extends Animierer {
 	/**
 	 * Der Schritt, der bei einem Aufruf gemacht wird
 	 */
-	private static final double schritt = Math.PI / 100;
+	private final double winkelProAnimationsschritt;
 
 	/**
 	 * Der Radius des Kreises, der die Bewegung beschreibt.
@@ -63,8 +63,8 @@ public class KreisAnimierer extends Animierer {
 	 *
 	 * @param ziel
 	 * 		Das zu animierende Objekt
-	 * @param intervall
-	 * 		Der TickerIntervall; fuer die tick()-Geschwindikeit.
+	 * @param umlaufzeit
+	 * 		Dauer einer 360°-Drehung in ms
 	 * @param loop
 	 * 		Ob die Animation dauerhaft wiederholt (geloopt) werden soll.
 	 * @param m
@@ -73,11 +73,12 @@ public class KreisAnimierer extends Animierer {
 	 * 		Der AnimationsEndeReagierbar-Listener, der am Ende der Animation aufgerufen wird.
      * @param uhrzeigersinn Ob im oder gegen Uhrzeigersinn animiert werden soll.
 	 */
-	public KreisAnimierer (Raum ziel, Punkt zentrum, int intervall, boolean loop, Manager m, AnimationsEndeReagierbar listener, boolean uhrzeigersinn) {
+	public KreisAnimierer (Raum ziel, Punkt zentrum, int umlaufzeit, boolean loop, Manager m, AnimationsEndeReagierbar listener, boolean uhrzeigersinn) {
 		super(ziel, loop, m, listener);
 		this.zentrum = zentrum;
 		this.letzter = ziel.zentrum();
         this.uhrzeigersinn = uhrzeigersinn;
+        this.winkelProAnimationsschritt = 2*Math.PI / (umlaufzeit / Animierer.MILLISPERTICK);
 		Punkt zielMitte = ziel.zentrum();
 		radius = zentrum.abstand(zielMitte);
 		winkel = new Gerade(zielMitte, zentrum).winkel();
@@ -90,9 +91,9 @@ public class KreisAnimierer extends Animierer {
 
 	public void animationsSchritt () {
 		if(uhrzeigersinn)
-            winkel += schritt;
+            winkel += winkelProAnimationsschritt;
         else
-            winkel -= schritt;
+            winkel -= winkelProAnimationsschritt;
 		float x, y;
 		x = (float) ((-Math.sin(winkel)) * radius) + zentrum.realX();
 		y = (float) ((Math.cos(winkel)) * radius) + zentrum.realY();
