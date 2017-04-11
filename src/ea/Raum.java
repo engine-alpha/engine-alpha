@@ -259,12 +259,13 @@ public abstract class Raum implements Comparable<Raum> {
             float rotation = physikHandler.rotation();
             Punkt position = physikHandler.position();
 
+
             // ____ Pre-Render ____
 
             AffineTransform transform = g.getTransform();
 
             g.rotate(rotation, position.x, position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
-
+            g.translate(position.x, position.y);
 
             //Opacity Update
             if (opacity != 1) {
@@ -287,7 +288,7 @@ public abstract class Raum implements Comparable<Raum> {
                 g.setComposite(composite);
             }
 
-            //2' Rotation zurücksetzen
+            //Transform zurücksetzen
             g.setTransform(transform);
 
             //System.out.println("R: " + position + " - " + rotation);

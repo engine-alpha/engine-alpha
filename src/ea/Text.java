@@ -545,20 +545,20 @@ public class Text extends Raum {
 	@Override
 	public void render(Graphics2D g) {
 
-        Punkt pos = position.get();
 
 		fontMetrics = g.getFontMetrics(font);
-		float x = pos.x, y = pos.y;
+
+		int x = 0;
 
 		if (anker == Anker.MITTE) {
-			x = pos.x - fontMetrics.stringWidth(inhalt) / 2;
+			x = - fontMetrics.stringWidth(inhalt) / 2;
 		} else if (anker == Anker.RECHTS) {
-			x = pos.x - fontMetrics.stringWidth(inhalt);
+			x = - fontMetrics.stringWidth(inhalt);
 		}
 
 		g.setColor(farbe);
 		g.setFont(font);
-		g.drawString(inhalt, (int) (x), (int) (y+ groesse));
+		g.drawString(inhalt, (int) (x), (int)groesse);
 	}
 
 	/**

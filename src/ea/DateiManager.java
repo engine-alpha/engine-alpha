@@ -395,7 +395,7 @@ public class DateiManager {
 			writer.newLine();
 			writer.write("an:" + feld.length); // Die Anzahl an PixelFeldern
 			writer.newLine();
-			writer.write("f:" + feld[0].faktor()); // Der Groessenfaktor
+			writer.write("f:" + 1); // Der Groessenfaktor
 			writer.newLine();
 			writer.write("x:" + feld[0].breiteN()); // Die X-Groesse
 			writer.newLine();
@@ -658,7 +658,7 @@ public class DateiManager {
 					Logger.error("IO", "Die Datei ist beschädigt");
 				}
 
-				ergebnis[i] = new PixelFeld(x, y, fakt);
+				ergebnis[i] = new PixelFeld(x, y);
 
 				for (int xT = 0; xT < x; xT++) { // X
 					for (int yT = 0; yT < y; yT++) { // Y

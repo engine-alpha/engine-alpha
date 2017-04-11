@@ -87,7 +87,12 @@ implements Ticker {
 	/**
 	 * Gibt an, ob die Animation der Figur gerade läuft oder nicht.
 	 */
-	private boolean animiert;
+	private boolean animiert=true;
+
+	/**
+	 * Der Faktor, um den die Figur gestreckt dargestellt wird.
+	 */
+	private float faktor=1;
 
 	/**
 	 * Package-Private Konstruktor. Wird intern um Einladen benutzt.
@@ -274,10 +279,8 @@ implements Ticker {
 	 * @param faktor
 	 * 		Der neue Größenfaktor
 	 */
-	public void faktorSetzen (int faktor) {
-		for (int i = 0; i < animation.length; i++) {
-			animation[i].faktorSetzen(faktor);
-		}
+	public void faktorSetzen (float faktor) {
+		this.faktor = faktor;
 	}
 
 	/**
@@ -304,6 +307,7 @@ implements Ticker {
 	 * @see #negativ()
 	 * @see #farbenTransformieren(int, int, int)
 	 */
+	@API
 	public void heller () {
 		for (int i = 0; i < animation.length; i++) {
 			animation[i].heller();
@@ -320,6 +324,7 @@ implements Ticker {
 	 * @see #negativ()
 	 * @see #farbenTransformieren(int, int, int)
 	 */
+	@API
 	public void dunkler () {
 		for (int i = 0; i < animation.length; i++) {
 			animation[i].dunkler();
@@ -477,7 +482,9 @@ implements Ticker {
 	 */
 	@Override
 	public void render(Graphics2D g) {
-		animation[aktuelle].zeichnen(g, 0, 0, spiegelX, spiegelY);
+		g.scale(faktor, faktor);
+		animation[aktuelle].zeichnen(g, spiegelX, spiegelY);
+		//Back-Scaling nicht notwendig, Transform wird in renderBasic() wieder zurückgesetzt.
 	}
 
     /**
@@ -485,7 +492,7 @@ implements Ticker {
      */
     @Override
     public Shape berechneShape(float pixelProMeter) {
-        return berechneBoxShape(pixelProMeter, this.animation[0].breite(), animation[0].hoehe());
+        return berechneBoxShape(pixelProMeter, this.animation[0].breite(faktor), animation[0].hoehe(faktor));
     }
 
     /**
@@ -558,6 +565,6 @@ implements Ticker {
 	public void updateWorld(WorldHandler wh) {
 		super.updateWorld(wh);
 		frameThread = wh.getWorldThread().getMaster();
-		intervallSetzen(500);
+		intervallSetzen(250);
 	}
 }
