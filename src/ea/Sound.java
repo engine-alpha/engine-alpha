@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,118 +19,131 @@
 
 package ea;
 
-import ea.internal.sound.SampledSound;
+import ea.internal.ano.API;
+import ea.internal.io.ResourceLoader;
+import ea.internal.util.Logger;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import javax.sound.sampled.*;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
+/**
+ * Diese Klasse dient zum Abspielen kurzer Sounds.
+ *
+ * @see Music Zum Abspielen längerer Sounds wie z.B. Hintergrundmusik.
+ */
+@API
 public class Sound {
-	private byte[] data;
+    private static final int BUFFER_SIZE = 8192;
+    private static Executor executor;
 
-	private SampledSound ss;
+    static {
+        executor = Executors.newCachedThreadPool();
+    }
 
-	public Sound (String datei) {
-		try {
-			data = loadFromStream(new FileInputStream(datei));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Komplette Sounddaten.
+     */
+    private final byte[] data;
 
-	public static byte[] loadFromStream (InputStream is) {
-		byte[] bytes;
+    /**
+     * Erstellt ein neues Soundobjekt. Dieses kann den gleichen Sound mehrmals abpsielen.
+     *
+     * @param filename Dateiname.
+     */
+    @API
+    public Sound(String filename) {
+        try {
+            this.data = ResourceLoader.load(filename);
+        } catch (IOException e) {
+            throw new RuntimeException("Sound-Datei wurde nicht gefunden: " + filename);
+        }
+    }
 
-		if (is == null) {
-			return null;
-		}
+    /**
+     * Spielt den Sound mit normaler Lautstärke ab.
+     *
+     * @see #play(float)
+     * @see #play(float, float)
+     */
+    @API
+    public void play() {
+        this.play(1);
+    }
 
-		try {
-			bytes = new byte[is.available()];
+    /**
+     * Spielt den Sound mit der gegebenen Lautstärke ab.
+     *
+     * @param volume Wert zwischen 0 (leise) und 1 (laut).
+     *
+     * @see #play()
+     * @see #play(float, float)
+     */
+    @API
+    public void play(float volume) {
+        this.play(volume, 0);
+    }
 
-			int off = 0;
-			int n;
+    /**
+     * Spielt den Sound mit der gegebenen Lautstärke und der gegebenen Balance ab.
+     *
+     * Spielt den Sound mehrfach zeitgleich ab, wenn diese Methode mehrmals aufgerufen wird.
+     *
+     * @param volume Wert zwischen 0 (leise) und 1 (laut).
+     * @param balance Wert zwischen -1 (nur links) und 1 (nur rechts).
+     *
+     * @see #play()
+     * @see #play(float)
+     */
+    @API
+    public void play(float volume, float balance) {
+        executor.execute(() -> {
+            try {
+                InputStream is = new ByteArrayInputStream(data);
+                AudioInputStream ais = AudioSystem.getAudioInputStream(is);
+                AudioFormat format = ais.getFormat();
 
-			while (off < bytes.length && (n = is.read(bytes, off, bytes.length - off)) >= 0) {
-				off += n;
-			}
+                AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, format.getSampleRate(), format.getSampleSizeInBits(), 2, 4, format.getFrameRate(), false);
+                AudioInputStream decodedStream = AudioSystem.getAudioInputStream(decodedFormat, ais);
 
-			is.close();
+                DataLine.Info info = new DataLine.Info(SourceDataLine.class, decodedFormat);
+                SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 
-			return bytes;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+                line.open(decodedFormat);
 
-		return null;
-	}
+                ((FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN)).setValue(20 * (float) Math.log10(volume));
+                ((FloatControl) line.getControl(FloatControl.Type.BALANCE)).setValue(balance);
 
-	public void play () {
-		if (ss != null) {
-			ss.stopSound();
+                line.start();
 
-			try {
-				ss.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+                int num = 0;
+                byte[] buffer = new byte[BUFFER_SIZE];
 
-			ss = null;
-		}
+                while (num != -1) {
+                    try {
+                        num = decodedStream.read(buffer, 0, buffer.length);
+                    } catch (IOException e) {
+                        line.drain();
+                        line.close();
 
-		if (data != null) {
-			ss = new SampledSound(data, false);
-			ss.start();
-		}
-	}
+                        return;
+                    }
 
-	public void loop () {
-		if (ss != null) {
-			ss.stopSound();
+                    if (num >= 0) {
+                        line.write(buffer, 0, num);
+                    }
+                }
 
-			try {
-				ss.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			ss = null;
-		}
-
-		if (data != null) {
-			ss = new SampledSound(data, true);
-			ss.start();
-		}
-	}
-
-	public void pause () {
-		if (ss == null) {
-			return;
-		}
-
-		ss.pauseSound(true);
-	}
-
-	public void unpause () {
-		if (ss == null) {
-			return;
-		}
-
-		ss.pauseSound(false);
-	}
-
-	public void stop () {
-		if (ss == null) {
-			return;
-		}
-
-		ss.stopSound();
-	}
+                line.drain();
+                line.close();
+            } catch (LineUnavailableException | IOException e) {
+                // ignore and skip sound
+            } catch (UnsupportedAudioFileException e) {
+                Logger.error("Sound", "Sound-Format wird nicht unterstützt: " + e.getMessage());
+            }
+        });
+    }
 }
