@@ -297,6 +297,8 @@ extends Thread {
             } else {
                 lastFrameTime = (int)deltaT;
             }
+
+            Logger.verboseInfo("Frame-System", "Frame-Ende");
         }
 
         //Thread soll aufhören: Sauber machen!
@@ -306,8 +308,6 @@ extends Thread {
         for(ProducerThread pt : producerThreads) {
             pt.anhalten();
         }
-
-        Logger.verboseInfo("Frame-System", "Frame-Ende");
 
     }
 
