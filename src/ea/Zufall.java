@@ -9,6 +9,7 @@ import java.util.Random;
  * Diese Klasse liefert Methoden, die <b>zufällig verteilte Rückgaben</b> haben
  * Created by andonie on 06.09.15.
  */
+@API
 public class Zufall {
     /**
      * Der Zufallsgenerator dieser Session.
@@ -32,7 +33,7 @@ public class Zufall {
      *      Mit 50% Wahrscheinlichkeit <code>true</code>.
      */
     @API
-    public static boolean zufallsBoolean () {
+    public static boolean zBool () {
         return random.nextBoolean();
     }
 
@@ -48,11 +49,22 @@ public class Zufall {
      *          Die Wahrscheinlichkeit für alle möglichen Rückgaben ist <i>gleich groß</i>.
      */
     @API
-    public static int zufallsInt (int obergrenze) {
+    public static int zInt (int obergrenze) {
         if (obergrenze < 0) {
             throw new IllegalArgumentException("Achtung! Für eine Zufallszahl muss die definierte Obergrenze (die " +
                     "inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!");
         }
         return random.nextInt(obergrenze + 1);
+    }
+
+    /**
+     * Gibt einen <b>zufälligen</b> <code>float</code>-Wert im Intervall <code>[0;1]</code> zurück. Die
+     * Wahrscheinlichkeit ist für alle möglichen Werte in diesem Intervall gleich groß.
+     * @return  Ein <code>float</code>Wert im Intervall <code>[0;1]</code>.
+     *          Die Wahrscheinlichkeit für alle möglichen Rückgaben ist <i>gleich groß</i>.
+     */
+    @API
+    public static float zFloat() {
+        return random.nextFloat();
     }
 }

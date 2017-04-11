@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.internal.ano.API;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
@@ -86,6 +87,17 @@ public class EngineAlpha extends Frame {
 	 * Logger ausgegeben.
 	 */
 	private static boolean debug;
+
+	/**
+	 * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
+	 * Dies betrifft unter anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
+	 * diese Variable eingeführt.
+	 * @see ea.internal.frame.FrameThread
+	 * @see ea.internal.frame.FrameSubthread
+	 * @author andonie
+	 * @version 11.04.2017
+	 */
+	private static boolean verbose;
 
 	/**
 	 * Panel, das den Fensterinhalt zeichnet.
@@ -216,12 +228,51 @@ public class EngineAlpha extends Frame {
 		return null;
 	}
 
+	/**
+	 * Gibt an, ob die Engine gerade im Debug-Modus ausgeführt wird.
+	 * @return	ist dieser Wert <code>true</code>, wird die Engine gerade im Debug-Modus ausgeführt.
+	 * 			Sonst ist der Wert <code>false</code>.
+	 * @see #setDebug(boolean)
+	 */
+	@API
 	public static boolean isDebug () {
 		return debug;
 	}
 
+	/**
+	 * Setzt, ob die Engine im Debug-Modus ausgeführt werden soll.
+	 * @param value ist dieser Wert <code>true</code>, wird die Engine ab sofort im Debug-Modus ausgeführt. Hierdurch
+	 *           werden mehr Informationen beim Ausführen der Engine angegeben, zum Beispiel ein Grafisches Raster
+	 *           und mehr Logging-Informationen. Dies ist hilfreich für Debugging am eigenen Spiel.
+	 * @see #isDebug()
+	 * @see #setVerbose(boolean)
+	 */
+	@API
 	public static void setDebug (boolean value) {
 		debug = value;
+	}
+
+	/**
+	 * Gibt an, ob die laufende Instanz der Engine gerade verbose Output gibt.
+	 * @return	ist dieser Wert <code>true</code>, werden extrem ausführliche Logging-Informationen gespeichert.
+	 * 			Sonst ist der Wert <code>false</code>.
+	 * @see #setVerbose(boolean)
+	 */
+	@API
+	public static boolean isVerbose () {
+		return verbose;
+	}
+
+	/**
+	 * Setzt, ob die aktuell laufende Instanz der Engine verbose Output geben soll.
+	 * @param value	ist dieser Wert <code>true</code>, so wird ein äußerst ausführlicher Log über die Funktionalität
+	 *              der Engine geführt. Dies ist hauptsächlich für das Debugging an der Engine selbst notwendig.
+	 * @see #isVerbose()
+	 * @see #setDebug(boolean) 
+	 */
+	@API
+	public static void setVerbose(boolean value) {
+		verbose = value;
 	}
 
 	private class EngineAlphaPromotion extends Canvas implements Runnable {

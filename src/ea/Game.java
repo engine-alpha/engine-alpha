@@ -427,6 +427,23 @@ public abstract class Game
         //LEER - kann überschrieben werden.
     }
 
+	/**
+	 * Wird aufgerufen, sobald die <b>Initialisierung des Spiels</b> starten kann. <br/>
+	 * Diese Methode wird intern <i>einmalig aufgerufen, sobald die Spielumgebung initiiert werden soll</i>.
+	 * Das bedeutet, hierin werden die Operationen angesetzt, die klassischerweise in einem <i>Konstruktor</i>
+	 * durchgeführt werden.<br/>
+	 *
+	 * Um interne Fehler zu vermeiden, sollte die <b>gesamte Initiierung hier stattfinden</b> und nicht
+	 * im Konstruktor. <br />
+	 *
+	 * Hintergrund hierfür ist, dass der Konstruktor der Klasse Spiel <b>Unabhängig vom frameweise arbeitenden
+	 * Spielprozess läuft</b>. Um Probleme mit Nebenläufigkeit, fehlenden Abhängigkeiten und Ähnliches zu verhindern,
+	 * wird die Inititialisierung des Spiel-Objektes hierdrin durchgeführt. Diese Methode wird innerhalb der frameweisen
+	 * Spiellogik ausgeführt.
+	 */
+	@API
+	public abstract void initialisieren();
+
     /**
      * Diese Methode wird von der Klasse automatisch aufgerufen, sobald eine Taste einfach gedrueckt
      * wurde.<br /> Sie wird dann erst wieder aufgerufen, wenn die Taste erst losgelassen und dann
@@ -442,21 +459,4 @@ public abstract class Game
      */
     @API
     public abstract void tasteReagieren (int code);
-
-    /**
-     * Wird aufgerufen, sobald die <b>Initialisierung des Spiels</b> starten kann. <br/>
-     * Diese Methode wird intern <i>einmalig aufgerufen, sobald die Spielumgebung initiiert werden soll</i>.
-     * Das bedeutet, hierin werden die Operationen angesetzt, die klassischerweise in einem <i>Konstruktor</i>
-     * durchgeführt werden.<br/>
-     *
-     * Um interne Fehler zu vermeiden, sollte die <b>gesamte Initiierung hier stattfinden</b> und nicht
-     * im Konstruktor. <br />
-	 *
-	 * Hintergrund hierfür ist, dass der Konstruktor der Klasse Spiel <b>Unabhängig vom frameweise arbeitenden
-	 * Spielprozess läuft</b>. Um Probleme mit Nebenläufigkeit, fehlenden Abhängigkeiten und Ähnliches zu verhindern,
-	 * wird die Inititialisierung des Spiel-Objektes hierdrin durchgeführt. Diese Methode wird innerhalb der frameweisen
-	 * Spiellogik ausgeführt.
-     */
-    @API
-    public abstract void initialisieren();
 }

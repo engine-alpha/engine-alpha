@@ -204,6 +204,9 @@ extends Thread {
         long deltaT = maxmillis; // Das tatsächliche DeltaT aus dem letzten Frame-Schritt (zu Beginn der Idealfall)
         lastFrameTime = maxmillis;
         while(sollLaufen && !interrupted()) {
+
+            Logger.verboseInfo("Frame-System", "Frame-Start");
+
             long tStart = System.currentTimeMillis();
 
             //Eigentliche Arbeit: Möglichst hoch parallelisiert
@@ -303,6 +306,8 @@ extends Thread {
         for(ProducerThread pt : producerThreads) {
             pt.anhalten();
         }
+
+        Logger.verboseInfo("Frame-System", "Frame-Ende");
 
     }
 

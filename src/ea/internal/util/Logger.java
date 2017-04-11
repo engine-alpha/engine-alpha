@@ -150,6 +150,20 @@ public class Logger {
 		write("INFO", tag, e.getFileName(), e.getLineNumber(), s);
 	}
 
+	/**
+	 * Logger-Funktion für Informationen. Wird nur tatsächlich ausgeführt wenn verbose Output in aktiviert wurde.
+	 * @param tag	Tag für den Log
+	 * @param s		Text der Information
+	 * @see ea.EngineAlpha#setVerbose(boolean)
+	 * @author andonie
+	 * @version 11.04.2017
+	 */
+	public static void verboseInfo(String tag, String s) {
+		if(ea.EngineAlpha.isVerbose()) {
+			info(tag, s);
+		}
+	}
+
     /**
      * Logger-Funktion für Debug-Informationen. Log wird nur ausgeführt, wenn <code>EngineAlpha.setDebug(true);</code>
      * ausgeführt wurde.

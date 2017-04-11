@@ -1,5 +1,7 @@
 package ea.internal.frame;
 
+import ea.internal.util.Logger;
+
 import java.io.BufferedWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -89,7 +91,10 @@ extends Thread {
 
             //System.out.println("~~~~~~~~~~~~~~Frame Start: " + getName());
 
+            Logger.verboseInfo("Frame-System","Beginne Frame-Logik für " + super.getName());
             frameLogic();
+            Logger.verboseInfo("Frame-System","Beende  Frame-Logik für " + super.getName());
+
             frameActive = false;
             //System.out.println("~~~~~~~~~~~~~~~~~~~~~~END: " + getName());
 
