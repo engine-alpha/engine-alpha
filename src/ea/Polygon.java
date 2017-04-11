@@ -10,7 +10,7 @@ import org.jbox2d.common.Vec2;
 import java.awt.*;
 
 /**
- *
+ * Beschreibt eine beliebige polygonale Geometrische Form.
  *
  * Created by Michael on 12.04.2017.
  */
@@ -58,7 +58,7 @@ extends Geometrie{
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.drawPolygon(px, py, px.length);
+        g.fillPolygon(px, py, px.length);
     }
 
     /**
@@ -69,7 +69,7 @@ extends Geometrie{
     public Shape createShape(float pixelProMeter) {
         Vec2[] vec2s = new Vec2[points.length];
         for(int i = 0; i < points.length; i++) {
-            vec2s[i] = points[i].toVec2();
+            vec2s[i] = points[i].toVec2().mul(1/pixelProMeter);
         }
         PolygonShape shape = new PolygonShape();
         shape.set(vec2s, points.length);
