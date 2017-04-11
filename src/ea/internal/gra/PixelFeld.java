@@ -20,6 +20,7 @@
 package ea.internal.gra;
 
 import ea.BoundingRechteck;
+import ea.internal.ano.NoExternalUse;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -58,12 +59,6 @@ public class PixelFeld implements java.io.Serializable {
 	private Color alternativ = null;
 
 	/**
-	 * Der Genauigkeitsfaktor.<br /> Die Groesse eines Unterquadrats ist das Multiplikationsergebnis
-	 * des Faktors mit der Pixelgroesse.<br /> Daher <b>muss</b> Der Faktor groesser als 0 sein!
-	 */
-	private int faktor;
-
-	/**
 	 * Gibt an, ob die Laenge sich seit dem letzten Wert geändert haben KÖNNTE.
 	 */
 	private boolean changed = true;
@@ -80,40 +75,11 @@ public class PixelFeld implements java.io.Serializable {
 	 * 		Die Breite der Figur in Quadraten
 	 * @param grY
 	 * 		Die Hoehe der Figur in Quadraten
-	 * @param faktor
-	 * 		Der Genauigkeitsfaktor der Figur. <b>MUSS</b> groesser als 0 zu sein !
 	 */
-	public PixelFeld (int grX, int grY, int faktor) {
+	public PixelFeld (int grX, int grY) {
 		farbe = new Color[grX][grY];
 
-		if (faktor <= 0) {
-			throw new IllegalArgumentException("Der Eingabefaktor muss größer als 0 sein. Deine Eingabe: " + faktor);
-		}
-
-		this.faktor = faktor;
 		this.cacheOutdated = true;
-	}
-
-	/**
-	 * Setzt den Groessenfaktor des Feldes.
-	 *
-	 * @param faktor
-	 * 		Der neue Groessenfaktor
-	 */
-	public void faktorSetzen (int faktor) {
-		if (faktor <= 0) {
-			throw new IllegalArgumentException("Zoomfaktor muss größer als 0 sein. Deine Eingabe: " + faktor);
-		}
-
-		this.faktor = faktor;
-		this.cacheOutdated = true;
-	}
-
-	/**
-	 * @return Größenfaktor, der dieses Bild zeichnet.
-	 */
-	public int faktor () {
-		return faktor;
 	}
 
 	/**
@@ -250,22 +216,20 @@ public class PixelFeld implements java.io.Serializable {
 	}
 
 	/**
-	 * Zeichnet das Feld mit einem bestimmten Verzug.
+	 * Zeichnet das Feld an (0|0)
 	 *
 	 * @param g
 	 * 		Das zeichnende Graphics-Objekt
-	 * @param x
-	 * 		Der Verzug in Richtung X
-	 * @param y
-	 * 		Der Verzug in Richtung Y
 	 * @param spiegelX
 	 * 		Ob dieses Pixelfeld entlang der X-Achse gespiegelt werden soll
 	 * @param spiegelY
 	 * 		Ob dieses Pixelfeld entlang der Y-Achse gespiegelt werden soll
 	 */
-	public void zeichnen (Graphics2D g, int x, int y, boolean spiegelX, boolean spiegelY) {
+	@NoExternalUse
+	public void zeichnen (Graphics2D g, boolean spiegelX, boolean spiegelY) {
 		if (cache == null || cacheOutdated) {
-			int width = farbe.length * faktor, height = farbe.length == 0 ? 0 : farbe[0].length * faktor;
+			int width = (int)(farbe.length),
+				height = (int)(farbe.length == 0 ? 0 : farbe[0].length);
 
 			cache = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D cacheGraphics = cache.createGraphics();
@@ -284,37 +248,37 @@ public class PixelFeld implements java.io.Serializable {
 						cacheGraphics.setColor(alternativ);
 					}
 
-					cacheGraphics.fillRect(i * faktor, j * faktor, faktor, faktor);
+					cacheGraphics.fillRect((int)(i), (int)(j), (int)1, (int)1);
 				}
 			}
 
 			cacheGraphics.dispose();
 		}
 
-		int w = breite(), h = hoehe();
+		int w = (int)breite(1), h = (int)hoehe(1);
 
 		if (spiegelX && spiegelY) {
-			g.drawImage(cache, x + w, y + h, x, y, 0, 0, w, h, null);
+			g.drawImage(cache, w, h, 0, 0, 0, 0, w, h, null);
 		} else if (spiegelX) {
-			g.drawImage(cache, x + w, y, x, y + h, 0, 0, w, h, null);
+			g.drawImage(cache, w, 0, 0, h, 0, 0, w, h, null);
 		} else if (spiegelY) {
-			g.drawImage(cache, x, y + h, x + w, y, 0, 0, w, h, null);
+			g.drawImage(cache, 0, h, w, 0, 0, 0, w, h, null);
 		} else {
-			g.drawImage(cache, x, y, null);
+			g.drawImage(cache, 0, 0, null);
 		}
 	}
 
 	/**
 	 * @return die Breite des Feldes in der Zeichenebene.
 	 */
-	public int breite () {
+	public float breite (float faktor) {
 		return farbe.length * faktor;
 	}
 
 	/**
 	 * @return die Hoehe des Feldes in der Zeichenebene.
 	 */
-	public int hoehe () {
+	public float hoehe (float faktor) {
 		return farbe[0].length * faktor;
 	}
 
@@ -335,7 +299,7 @@ public class PixelFeld implements java.io.Serializable {
 	 * @return Ein neues PixelFeld-Objekt mit genau demselben Zustand wie dieses.
 	 */
 	public PixelFeld erstelleKlon () {
-		PixelFeld ret = new PixelFeld(farbe.length, farbe[0].length, faktor);
+		PixelFeld ret = new PixelFeld(farbe.length, farbe[0].length);
 
 		for (int i = 0; i < farbe.length; i++) {
 			for (int j = 0; j < farbe[0].length; j++) {
@@ -372,7 +336,7 @@ public class PixelFeld implements java.io.Serializable {
 	 *
 	 * @return alle Flächen dieses Pixel-Feldes als Array aus Bounding-Rechtecken
 	 */
-	public BoundingRechteck[] flaechen (float x, float y) {
+	public BoundingRechteck[] flaechen (float x, float y, float faktor) {
 		BoundingRechteck[] ret = new BoundingRechteck[anzahlPixel()];
 
 		int cnt = 0;

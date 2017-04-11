@@ -51,6 +51,9 @@ extends FrameSubthread {
      * @param millis    Die Zeit in Millisekunden, die voraus gerechnet werden soll.
      */
     public void setDT(long millis) {
+        if(millis<=0) {
+            Logger.error("Physik", "Interner Fehler: Angegebenes Zeitintervall war negativ.");
+        }
         deltaT = ((float)millis) / 1000f;
     }
 

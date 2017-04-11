@@ -22,37 +22,47 @@ package ea;
 import ea.internal.ano.API;
 
 /**
- * Ein KollisionsReagierbar-Objekt kann auf das aufeinandertreffen zweier Raum-Objekte reagieren.<br
- * /> Bei einer komplizierteren Aufgabe sieht das ea.Anmelden bei einem <code>WorldHandler</code>-Objekt des
- * Listeners ungefaehr so aus:<br /> <br /><br /><br /><br /> <code> //Bereits Instanziiertes
- * WorldHandler-Objekt. WorldHandler physik;
- * <p/>
- * <p/>
- * </code><br />
+ * Beschreibt allgemein ein Objekt, das auf die <b>Kollision zweier Raum-Objekte</b> reagieren kann.
  *
+ * <h3>Funktionsweise</h3>
+ * <p>Eine <code>KollisionsReagierbar</code>-Instanz wird bei Kollisionen zwischen verschiedenen
+ * <code>Raum</code>-Objekten aufgerufen. Die genauen Umstände hängen von der Art der Anmeldung ab.</p>
+ * <ul>
+ *     <li>Wurde das Objekt mit einem (oder mehrmals mit verschiedenen) Ziel-Raum-Objekten angemeldet,
+ *     so wird es nur bei Kollision zwischen den spezifizierten Paaren informiert.</li>
+ *     <li>Wurde das Objekt nur mit einem einzigen Actor-Objekt angemeldet, so wird es bei jeder Kollision zwischen
+ *     dem Objekt und jedem anderen (an der Wurzel angemeldeten) <code>Raum</code>-Objekt angemeldet.</li>
+ * </ul>
+ *
+ * @see ea.Anmelden#kollisionsReagierbar(KollisionsReagierbar, Raum)
+ * @see ea.Anmelden#kollisionsReagierbar(KollisionsReagierbar, Raum, Raum)
  * @author Michael Andonie
+ * @version 11.04.17
  */
 
-public interface KollisionsReagierbar {
+public interface KollisionsReagierbar<E extends Raum> {
+
 	/**
-	 * Diese Methode wird dann aufgerufen, wenn die mit diesem Interface zusammen angemeldeten
-	 * Raum-Objekte kollidieren.
-	 *
-	 * @param code
-	 * 		Der bei der Anmeldung mit zwei Raum-Objekten mitgegebene Code zur Weiterverarbeitung bei
-	 * 		Mehrfachanmeldung dieses Interfaces.
+	 * Wird bei einer (korrekt angemeldeten) Instanz immer dann aufgerufen, wenn der hiermit angemeldete Actor mit
+	 * einem (relevanten) Raum-Objekt kollidiert.
+	 * @param colliding Ein <code>Raum</code>-Objekt, das mit dem zugehörig angemeldeten Actor-Objekt kollidiert. Je
+	 *                  nach Anmeldeart können dies nur ausgewählte Objekte sein.
+	 * @see ea.Anmelden#kollisionsReagierbar(KollisionsReagierbar, Raum)
+	 * @see ea.Anmelden#kollisionsReagierbar(KollisionsReagierbar, Raum, Raum)
 	 */
     @API
-	public abstract void kollision (int code);
+	void kollision (E colliding);
 
     /**
-     * Diese Methode wird dann aufgerufen, wenn die mit diesem Interface zusammen angemeldeten
-     * Raum-Objekte den Kollisionszustand verlassen.
-     *
-     * @param code
-     *      Der bei der Anmeldung mit zwei Raum-Objekten mitgegebene Code zur Weiterverarbeitung bei
-     * 		Mehrfachanmeldung dieses Interfaces.
-     */
+     * Wird bei einer (korrekt angemeldeten) Instanz immer dann aufgerufen, wenn die Kollision eines hiermit
+	 * angemeldeten Actors mit einem (relevanten) Raum-Objekt beendet ist.
+	 * @param colliding Ein <code>Raum</code>-Objekt, das mit dem zugehörig angemeldeten Actor-Objekt kollidiert hattte.
+	 *                  Je nach Anmeldeart können dies nur ausgewählte Objekte sein.
+	 * @see ea.Anmelden#kollisionsReagierbar(KollisionsReagierbar, Raum)
+	 * @see ea.Anmelden#kollisionsReagierbar(KollisionsReagierbar, Raum, Raum)
+	 */
     @API
-    public abstract void kollisionBeendet(int code);
+    default void kollisionBeendet(E colliding) {
+    	//Ist selten genug wichtig um zu rechtfertigen, dass eine Default-Implementierung leer ist.
+	}
 }

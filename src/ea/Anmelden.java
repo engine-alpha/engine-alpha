@@ -7,7 +7,8 @@ import ea.internal.util.Logger;
 
 /**
  * Jedes <code>Game</code> hat eine Referenz auf ein Objekt dieser Klasse. Sie verwaltet
- * hierfür <b>alle Methoden zum Anmelden von Reagierbar-Instanzen</b>.
+ * hierfür <b>alle Methoden zum "Weiterreichen" von allen Interfaces, die an die Core-Engine
+ * gereicht werden sollen.</b>.
  * Created by andonie on 06.09.15.
  */
 public class Anmelden {
@@ -88,26 +89,38 @@ public class Anmelden {
     }
 
     /**
-     * Meldet ein <code>KollisionsReagierbar</code>-Interface an. Ab sofort wird es mit dem
-     * spezifizierten <code>code</code> aufgerufen, sollten sich die <code>Raum</code>-Objekte
-     * <code>r1</code> und <code>r2</code> schneiden.
+     * Meldet ein <code>KollisionsReagierbar</code>-Interface für eine <b>spezifische Kollision zwischen
+     * zwei spezifischen Raum-Objekten</b> an.
      *
      * @param reagierbar
-     * 		Das anzumeldende <code>KollisionsReagierbar</code>-Interface, das ab sofort von Kollisionen
-     * 		von <code>r1</code> und <code>r2</code> informiert werden soll.
-     * @param r1
-     * 		Ein <code>Raum</code>-Objekt
-     * @param r2
-     * 		Ein zweites <code>Raum</code>-Objekt
-     * @param code
-     * 		Ein beliebiger <code>int</code>-Wert als Code. Dieser kann verwendet werden, um mit einem Interface mehrere
-     * 		Kollisionen <i>unterscheidbar</i> zu behandeln. Er wird im Aufruf der
-     * 		<code>kollision(int)</code>-Methode als Parameter übergeben, wenn es sich bei der
-     * 	   	Kollision um <code>r1</code> und <code>r2</code> handelt.
+     * 		Das anzumeldende <code>KollisionsReagierbar</code>-Interface, das ab sofort von
+     * 		allen Kollisionen zwischen <code>actor</code> und <code>collider</code> informiert werden soll.
+     * @param actor
+     * 		Ein <code>Raum</code>-Objekt. In der logischen "Actor-Rolle".
+     * @param collider
+     * 		Ein zweites <code>Raum</code>-Objekt. In der logischen "Collider-Rolle"
+     * @see #kollisionsReagierbar(KollisionsReagierbar, Raum)
+     * TODO: Tutorial einbinden
      */
     @API
-    public void kollisionsReagierbar (KollisionsReagierbar reagierbar, Raum r1, Raum r2, int code) {
-        WorldHandler.kollisionsReagierbarEingliedern(reagierbar, code, r1, r2);
+    public <E extends Raum> void kollisionsReagierbar (KollisionsReagierbar<E> reagierbar, Raum actor, E collider) {
+        WorldHandler.spezifischesKollisionsReagierbarEingliedern(reagierbar, actor, collider);
+    }
+
+    /**
+     * Meldet ein <code>KollisionsReagierbar</code>-Interface für eine <b>alle Kollisionen eines bestimmten
+     * <code>Raum</code>-Objektes</b> an.
+     * @param reagierbar
+     *      Das anzumeldende <code>KollisionsReagierbar</code>-Interface, das ab sofort von
+     * 		allen Kollisionen von <code>actor</code> informiert werden soll.
+     * @param actor
+     *      Ein <code>Raum</code>-Objekt. In der logischen "Actor-Rolle".
+     * @see #kollisionsReagierbar(KollisionsReagierbar, Raum, Raum)
+     * TODO: Tutorial einbinden
+     */
+    @API
+    public void kollisionsReagierbar (KollisionsReagierbar<Raum> reagierbar, Raum actor) {
+        WorldHandler.allgemeinesKollisionsReagierbarEingliedern(reagierbar, actor);
     }
 
     /**

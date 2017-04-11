@@ -22,11 +22,9 @@ package ea;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
-import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * Eine Actionfigur ist eine besondere Figur. Diese hat verschiedene <b>Zustände</b> und kann
@@ -45,34 +43,6 @@ import java.util.ArrayList;
  * @author Michael Andonie
  */
 public class ActionFigur extends Raum {
-	/**
-	 * Eine Liste mit allen Figuren (um die Animationsschritte zu machen).
-	 */
-	private static final ArrayList<ActionFigur> FIGUREN;
-
-	static {
-		FIGUREN = new ArrayList<>();
-
-		// FIXME: 1 ms ist ein zu kleines Intervall und sorgt für die Performance-Schwierigkeiten bei vielen Figuren
-		// Richtige Time nutzen? Wie schnell sind Time-Aufrufe in Java?
-
-		/*Manager.standard.tastenReagierbarAnmelden(new Ticker() {
-			int runde = 0;
-
-			public void tick () {
-				runde++;
-
-				try {
-					for (ActionFigur f : FIGUREN) {
-						f.animationsSchritt(runde);
-					}
-				} catch (Exception e) {
-					// don't care (ConcurrentModification and NullPointer)
-				}
-			}
-		}, 1);*/
-        //TODO Neue Figurenanimation
-	}
 
 	/**
 	 * Die Sammlung aller Zustände
@@ -128,7 +98,6 @@ public class ActionFigur extends Raum {
 		this.actionNames = new String[0];
 
 		neuerZustand(zustand, name);
-		FIGUREN.add(this);
 	}
 
 	/**
@@ -145,7 +114,7 @@ public class ActionFigur extends Raum {
 	 */
 	@API
 	public void neuerZustand (Figur zustand, String name) {
-		zustand.entfernen();
+		zustand.animationBeenden();
 
 		if (this.states.length > 0) {
 			zustand.position.set(aktuelleFigur().position.get());
@@ -190,7 +159,7 @@ public class ActionFigur extends Raum {
 	@API
 	@SuppressWarnings ( "unused" )
 	public void neueAktion (Figur action, String name) {
-		action.entfernen();
+		action.animationBeenden();
 		action.position.set(aktuelleFigur().position.get());
 
 		Figur[] actionsBefore = actions;
@@ -404,7 +373,6 @@ public class ActionFigur extends Raum {
 	 * @param faktor
 	 * 		Der neue Größenfaktor
 	 *
-	 * @see Figur#faktorSetzen(int)
 	 */
 	@API
 	@SuppressWarnings ( "unused" )
@@ -427,7 +395,7 @@ public class ActionFigur extends Raum {
 		if (performsAction) {
 			animationsActionSchritt(runde);
 		} else {
-			states[indexState].animationsSchritt(runde);
+			//states[indexState].animationsSchritt(runde);
 		}
 
 		Punkt pos = this.position.get();
@@ -456,7 +424,7 @@ public class ActionFigur extends Raum {
 				hatAktionSetzen(false);
 			}
 		} else {
-			actions[indexAction].animationsSchritt(runde);
+			//actions[indexAction].animationsSchritt(runde);
 		}
 	}
 
@@ -495,7 +463,7 @@ public class ActionFigur extends Raum {
      * Berechnung auf Basis des 0-Zustands.
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
-        return states[0].berechneShape(pixelProMeter);
+    public Shape createShape(float pixelProMeter) {
+        return states[0].createShape(pixelProMeter);
     }
 }

@@ -210,10 +210,10 @@ public abstract class Raum implements Comparable<Raum> {
      * (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des
      * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
      * nicht!!</b>.
+     * TODO Neuer Doc Text
      */
     @NoExternalUse
     public void loeschen () {
-        //Leer - kann von childs überschrieben werden.
         physikHandler.killBody();
         physikHandler = new NullHandler(this);
     }
@@ -259,23 +259,13 @@ public abstract class Raum implements Comparable<Raum> {
             float rotation = physikHandler.rotation();
             Punkt position = physikHandler.position();
 
-            /*Punkt mittelpunkt = physikHandler.mittelpunkt();
-
-
-
-            if(mittelpunkt == null) {
-                //Objekt gerade erst erstellt. Braucht noch einen Moment...
-                return;
-            }*/
-
-
 
             // ____ Pre-Render ____
 
             AffineTransform transform = g.getTransform();
 
             g.rotate(rotation, position.x, position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
-
+            g.translate(position.x, position.y);
 
             //Opacity Update
             if (opacity != 1) {
@@ -298,7 +288,7 @@ public abstract class Raum implements Comparable<Raum> {
                 g.setComposite(composite);
             }
 
-            //2' Rotation zurücksetzen
+            //Transform zurücksetzen
             g.setTransform(transform);
 
             //System.out.println("R: " + position + " - " + rotation);
@@ -374,7 +364,7 @@ public abstract class Raum implements Comparable<Raum> {
      *                          Die Berechnung berücksichtigt die <b>aktuelle Position</b>.PositionHandlePositionalUse
      */
     @NoExternalUse
-    public abstract Shape berechneShape(final float pixelProMeter);
+    public abstract Shape createShape(final float pixelProMeter);
 
 
 

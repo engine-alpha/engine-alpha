@@ -70,14 +70,14 @@ public class Kreis extends Geometrie {
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillOval(Math.round(position.x()), Math.round(position.y()), Math.round(durchmesser), Math.round(durchmesser));
+        g.fillOval(0, 0, Math.round(durchmesser), Math.round(durchmesser));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
+    public Shape createShape(float pixelProMeter) {
         CircleShape shape = new CircleShape();
         shape.m_radius = radius()/pixelProMeter;
         shape.m_p.set(shape.m_radius,shape.m_radius);

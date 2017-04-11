@@ -20,6 +20,8 @@
 package ea;
 
 import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
+import org.jbox2d.common.Vec2;
 
 /**
  * Ein Punkt beschreibt einen exakt bestimmten eindimensionalen Punkt auf der Zeichenebene.<br /> Er
@@ -217,4 +219,14 @@ public final class Punkt {
 	public int y () {
 		return (int) y;
 	}
+
+	/**
+	 * Konvertiert diesen Punkt zu einer Vec2-Instanz mit denselben X/Y Werten.
+	 * Wird intern verwendet, um mit der JBox2D-Physics-Engine zu kommunizieren.
+	 * @return	Ein Vec2-Vektor mit denselben X und Y Werten.
+	 */
+	@NoExternalUse
+    public Vec2 toVec2() {
+		return new Vec2(x,y);
+    }
 }

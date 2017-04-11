@@ -347,7 +347,7 @@ extends PhysikHandler {
         bodyDef.position.set(worldHandler.fromVektor(predecessor.position().alsVektor()));
 
 
-        body =  worldHandler.createBody(bodyDef);
+        body =  worldHandler.createBody(bodyDef, super.raum);
         fixture = body.createFixture(fixtureDef);
 
         bodyDef = null;

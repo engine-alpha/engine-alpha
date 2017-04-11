@@ -85,7 +85,7 @@ public class Dreieck extends Geometrie {
 	 * @param c
 	 * 		Die Farbe dieses Dreiecks, anhand der Klasse <code>Color</code>.
 	 */
-	public void setColor (Color c) {
+	public void setInternalColor(Color c) {
 		farbe = c;
 	}
 
@@ -147,7 +147,7 @@ public class Dreieck extends Geometrie {
 	}
 
     @Override
-    public Shape berechneShape(float pixelProMeter) {
+    public Shape createShape(float pixelProMeter) {
         PolygonShape shape = new PolygonShape();
         shape.set(new Vec2[] {
                 new Vec2(x[0] / pixelProMeter, y[0] / pixelProMeter),

@@ -19,9 +19,12 @@
 
 package ea;
 
+import com.sun.org.glassfish.gmbal.ParameterNames;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
+import ea.internal.frame.FrameThread;
 import ea.internal.gra.PixelFeld;
+import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
@@ -42,13 +45,8 @@ import java.util.ArrayList;
  *
  * @author Michael Andonie
  */
-public class Figur extends Raum {
-	private static final long serialVersionUID = -1063599158092163887L;
-
-	/**
-	 * Eine Liste aller Figuren.
-	 */
-	private static ArrayList<Figur> liste;
+public class Figur extends Raum
+implements Ticker {
 
 	/**
 	 * Die einzelnen Bilder der Figur.<br /> hat es mehr als eines, so wird ein periodischer Wechsel
@@ -57,19 +55,19 @@ public class Figur extends Raum {
 	protected PixelFeld[] animation;
 
 	/**
-	 * In diesem Intervall wird die Figur animiert.
-	 */
-	private int intervall = 100;
-
-	/**
 	 * Der Index des Aktuelle benutzten PixelFeldes.
 	 */
 	private int aktuelle = 0;
 
 	/**
-	 * Gibt an, ob die Figur gerade animiert werden soll.
+	 * Gibt an, ob die Figur schon als Ticker zum Animieren angemeldet wurden.
 	 */
-	private boolean laeuft;
+	private boolean angemeldet=false;
+
+	/**
+	 * Der Frame-Thread, zu dem diese Figur gehört.
+	 */
+	private FrameThread frameThread;
 
 	/**
 	 * Gibt an, ob diese Figur gerade entlang der X-Achse (waagrecht) gespiegelt wird.
@@ -81,27 +79,26 @@ public class Figur extends Raum {
 	 */
 	private boolean spiegelY = false;
 
-	static {
-		liste = new ArrayList<Figur>();
-		/*Manager.standard.tastenReagierbarAnmelden((new Ticker() {
-			int runde = 0;
+	/**
+	 * Das Intervall (in ms), in dem die Figur animiert wird.
+	 */
+	private int intervall;
 
-			@Override
-			public void tick () {
-				runde++;
-				try {
-					for (Figur f : liste) {
-						if (f.animiert()) {
-							f.animationsSchritt(runde);
-						}
-					}
-				} catch (java.util.ConcurrentModificationException e) {
-					//
-				}
-			}
-		}), 1);*/
-        //TODO effizientere Animation
-	}
+	/**
+	 * Gibt an, ob die Animation der Figur gerade läuft oder nicht.
+	 */
+	private boolean animiert=true;
+
+	/**
+	 * Der Faktor, um den die Figur gestreckt dargestellt wird.
+	 */
+	private float faktor=1;
+
+	/**
+	 * Package-Private Konstruktor. Wird intern um Einladen benutzt.
+	 */
+	@NoExternalUse
+	Figur() {}
 
 	/**
 	 * Erstellt eine Figur <b>ohne Positionsangabe</b>. Die Figur liegt an Position (0|0). Dieser
@@ -113,22 +110,9 @@ public class Figur extends Raum {
 	 *
 	 * @see ea.ActionFigur
 	 */
+	@API
 	public Figur (String verzeichnis) {
 		this(0, 0, verzeichnis);
-	}
-
-	/**
-	 * Standart-Konstruktor für Objekte der Klasse <code>Figur</code>.
-	 *
-	 * @param x
-	 * 		X-Position; die links obere Ecke
-	 * @param y
-	 * 		Y-Position; die links obere Ecke
-	 * @param verzeichnis
-	 * 		Das verzeichnis, aus dem die Figur zu laden ist.
-	 */
-	public Figur (float x, float y, String verzeichnis) {
-		this(x, y, verzeichnis, true);
 	}
 
 	/**
@@ -143,30 +127,13 @@ public class Figur extends Raum {
 	 * 		Y-Position; die links obere Ecke
 	 * @param verzeichnis
 	 * 		Das verzeichnis, aus dem die Figur zu laden ist.
-	 * @param add
-	 * 		Ob diese Figur am Animationssystem direkt teilnehmen soll. (Standard)
 	 */
-	public Figur (float x, float y, String verzeichnis, boolean add) {
+	@API
+	public Figur (float x, float y, String verzeichnis) {
 		super();
 		position.set(new Punkt(x, y));
 
 		this.animation = DateiManager.figurEinlesen(verzeichnis).animation;
-
-		if (add) {
-			liste.add(this);
-		}
-
-		laeuft = true;
-	}
-
-	/**
-	 * Der parameterlose Konstruktor.<br /> Hiebei wird nichts gesetzt, die Figur hat die Position
-	 * (0|0) sowie keine Animationen, die Referenz auf die einzelnen Pixelfelder ist
-	 * <code>null</code>.<br /> Dieser Konstruktor wird intern verwendet, um Figurdaten zu laden.<br
-	 * /> Daher ist er nicht für die direkte Verwendung in Spielen gedacht.
-	 */
-	public Figur () {
-		liste.add(this);
 	}
 
 	/**
@@ -181,10 +148,10 @@ public class Figur extends Raum {
 	 * 		Falls nur noch ein Element vorhanden war. Das letzte Element darf nicht entfernt werden!
 	 */
 	@API
-	@SuppressWarnings ( "unused" )
-	public void animationLoeschen (int index) { // TODO War das vorher buggy?
+	public void animationLoeschen (int index) {
 		if (animation.length < 2) {
-			throw new RuntimeException("Es muss mindestens ein Pixelfeld erhalten bleiben! Eine " + "weitere Löschung hätte das letzte Element entfernt.");
+			Logger.error("Figur", "Es muss mindestens ein Pixelfeld erhalten bleiben! Eine " + "weitere Löschung hätte das letzte Element entfernt.");
+			return;
 		}
 
 		PixelFeld[] neu = new PixelFeld[animation.length - 1];
@@ -252,27 +219,6 @@ public class Figur extends Raum {
 	}
 
 	/**
-	 * Ruft das naechste Bild im Animationszyklus auf.<br /> Sollte nicht von aussen aufgerufen
-	 * werden, stellt aber in keinem mathematisch greifbaren Fall ein Problem dar.
-	 *
-	 * @param runde
-	 * 		Die Runde dieses Schrittes; dieser Wert wird intern benoetigt, um zu entscheiden, ob etwas
-	 * 		passieren soll oder nicht.
-	 */
-	@NoExternalUse
-	public void animationsSchritt (int runde) {
-		if (runde % intervall != 0) {
-			return;
-		}
-
-		if (aktuelle == animation.length - 1) {
-			aktuelle = 0;
-		} else {
-			aktuelle++;
-		}
-	}
-
-	/**
 	 * Setzt eine neue Animationsreihe.
 	 *
 	 * @param a
@@ -294,20 +240,14 @@ public class Figur extends Raum {
 	}
 
 	/**
-	 * Setzt die Animationsarbeit bei dieser Figur.
+	 * Setzt, ob die Animation der Figur gerade läuft oder nicht.
 	 *
 	 * @param animiert
-	 * 		ob die Figur animiert werden soll, oder ob sie ein Standbild sein soll.
+	 * 		<code>true</code>  : Die Animation der Figur rotiert (Standard)<br />
+	 * 		<code>false</code> : Die Animation der Figur rotiert nicht (~Standbild)
 	 */
-	public void animiertSetzen (boolean animiert) {
-		this.laeuft = animiert;
-	}
-
-	/**
-	 * Gibt an, ob das Bild momentan animiert wird bzw. animiert werden soll.
-	 */
-	public boolean animiert () {
-		return laeuft;
+	public void animationAktivSetzen (boolean animiert) {
+		this.animiert = animiert;
 	}
 
 	/**
@@ -339,10 +279,8 @@ public class Figur extends Raum {
 	 * @param faktor
 	 * 		Der neue Größenfaktor
 	 */
-	public void faktorSetzen (int faktor) {
-		for (int i = 0; i < animation.length; i++) {
-			animation[i].faktorSetzen(faktor);
-		}
+	public void faktorSetzen (float faktor) {
+		this.faktor = faktor;
 	}
 
 	/**
@@ -369,6 +307,7 @@ public class Figur extends Raum {
 	 * @see #negativ()
 	 * @see #farbenTransformieren(int, int, int)
 	 */
+	@API
 	public void heller () {
 		for (int i = 0; i < animation.length; i++) {
 			animation[i].heller();
@@ -385,6 +324,7 @@ public class Figur extends Raum {
 	 * @see #negativ()
 	 * @see #farbenTransformieren(int, int, int)
 	 */
+	@API
 	public void dunkler () {
 		for (int i = 0; i < animation.length; i++) {
 			animation[i].dunkler();
@@ -425,6 +365,7 @@ public class Figur extends Raum {
 	 * @see #zurueckFaerben()
 	 * @see #einfaerben(Farbe)
 	 */
+	@API
 	public void einfaerben (String farbe) {
 		einfaerben(Farbe.vonString(farbe));
 	}
@@ -439,6 +380,7 @@ public class Figur extends Raum {
 	 * @see #zurueckFaerben()
 	 * @see #einfaerben(String)
 	 */
+	@API
 	public void einfaerben (Farbe f) {
 		for (int i = 0; i < animation.length; i++) {
 			animation[i].einfaerben(f.wert());
@@ -458,6 +400,7 @@ public class Figur extends Raum {
 	 * @see #yGespiegelt()
 	 * @see #xGespiegelt()
 	 */
+	@API
 	public void spiegelXSetzen (boolean spiegel) {
 		this.spiegelX = spiegel;
 	}
@@ -476,6 +419,7 @@ public class Figur extends Raum {
 	 * @see #yGespiegelt()
 	 * @see #xGespiegelt()
 	 */
+	@API
 	public void spiegelYSetzen (boolean spiegel) {
 		this.spiegelY = spiegel;
 	}
@@ -490,6 +434,7 @@ public class Figur extends Raum {
 	 * @see #spiegelYSetzen(boolean)
 	 * @see #yGespiegelt()
 	 */
+	@API
 	public boolean xGespiegelt () {
 		return spiegelX;
 	}
@@ -504,6 +449,7 @@ public class Figur extends Raum {
 	 * @see #spiegelYSetzen(boolean)
 	 * @see #xGespiegelt()
 	 */
+	@API
 	public boolean yGespiegelt () {
 		return spiegelY;
 	}
@@ -515,6 +461,7 @@ public class Figur extends Raum {
 	 * @see #einfaerben(Farbe)
 	 * @see #einfaerben(String)
 	 */
+	@API
 	public void zurueckFaerben () {
 		for (int i = 0; i < animation.length; i++) {
 			animation[i].zurueckFaerben();
@@ -525,8 +472,9 @@ public class Figur extends Raum {
 	 * Diese Methode wird verwendet, um die Figur vom direkten Animationssystem zu loesen. Sie ist
 	 * <i>package private</i>, da diese Einstellung nur intern vorgenommen werden soll.
 	 */
-	void entfernen () {
-		liste.remove(this);
+	void animationBeenden() {
+		frameThread.tickerAbmelden(this);
+		angemeldet=false;
 	}
 
 	/**
@@ -534,16 +482,17 @@ public class Figur extends Raum {
 	 */
 	@Override
 	public void render(Graphics2D g) {
-        Punkt pos = position.get();
-		animation[aktuelle].zeichnen(g, (int) (pos.x), (int) (pos.y), spiegelX, spiegelY);
+		g.scale(faktor, faktor);
+		animation[aktuelle].zeichnen(g, spiegelX, spiegelY);
+		//Back-Scaling nicht notwendig, Transform wird in renderBasic() wieder zurückgesetzt.
 	}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
-        return berechneBoxShape(pixelProMeter, this.animation[0].breite(), animation[0].hoehe());
+    public Shape createShape(float pixelProMeter) {
+        return berechneBoxShape(pixelProMeter, this.animation[0].breite(faktor), animation[0].hoehe(faktor));
     }
 
     /**
@@ -555,6 +504,7 @@ public class Figur extends Raum {
 	 *
 	 * @return Der Index des aktuell angezeigten Bildes
 	 */
+    @API
 	public int aktuellesBild () {
 		return aktuelle;
 	}
@@ -562,6 +512,7 @@ public class Figur extends Raum {
 	/**
 	 * @return Alle PixelFelder der Animation.
 	 */
+	@NoExternalUse
 	public PixelFeld[] animation () {
 		return animation;
 	}
@@ -572,21 +523,48 @@ public class Figur extends Raum {
 	 * @return Das Intervall dieser Figur. Dies ist die Zeit in Millisekunden, die ein
 	 * Animationsbild zu sehen bleibt
 	 *
-	 * @see #animationsGeschwindigkeitSetzen(int)
+	 * @see #intervallSetzen(int)
 	 */
+	@API
 	public int intervall () {
 		return intervall;
 	}
 
 	/**
-	 * Setzt die Geschwindigkeit der Animation, die diese Figur Figuren steuert.<br /> Jed groesser
-	 * Die Zahl ist, desto langsamer laeuft die Animation, da der Eingabeparamter die Wartezeit
-	 * zwischen der Schaltung der Animationsbilder in Millisekunden angibt!
-	 *
-	 * @param intervall
-	 * 		Die Wartezeit in Millisekunden zwischen den Bildaufrufen dieser Figur.
+	 * Setzt das Intervall, in dem diese Figur animiert wird.
+	 * @param intervallInMS	Die Dauer in Millisekunden, für die jedes Animationsbild der Figur verbleibt.
 	 */
-	public void animationsGeschwindigkeitSetzen (int intervall) {
-		this.intervall = intervall;
+	@API
+	public void intervallSetzen(int intervallInMS) {
+		if(this.angemeldet) {
+			animationBeenden();
+		}
+		frameThread.tickerAnmelden(this, this.intervall=intervallInMS);
+		angemeldet=true;
+	}
+
+	/**
+	 * Im Tick der Spielfigur wird die Animation rotiert.
+	 */
+	@NoExternalUse
+	@Override
+	public void tick() {
+		if(!animiert) return;
+		if (aktuelle == animation.length - 1) {
+			aktuelle = 0;
+		} else {
+			aktuelle++;
+		}
+	}
+
+	/**
+	 * Überschreibe die Update-World-Methode, um den Frame-Thread abzugreifen.
+	 * @param wh World-Handle der Klasse. Hierüber wird der Frame-Thread abgegriffen.
+	 */
+	@Override
+	public void updateWorld(WorldHandler wh) {
+		super.updateWorld(wh);
+		frameThread = wh.getWorldThread().getMaster();
+		intervallSetzen(250);
 	}
 }

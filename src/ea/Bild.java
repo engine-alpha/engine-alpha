@@ -295,7 +295,7 @@ public class Bild extends Raum {
      * {@inheritDoc}
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
+    public Shape createShape(float pixelProMeter) {
         return this.berechneBoxShape(pixelProMeter, breite, hoehe);
     }
 

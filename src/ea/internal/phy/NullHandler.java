@@ -3,10 +3,8 @@ package ea.internal.phy;
 import ea.*;
 import ea.Physik.Typ;
 import ea.internal.util.Logger;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 /**
@@ -264,7 +262,7 @@ public class NullHandler extends PhysikHandler {
 
 
         if(! (this.raum instanceof Knoten)) worldHandler.blockPPMChanges();
-        fixtureDef.shape = raum.berechneShape(worldHandler.getPixelProMeter());
+        fixtureDef.shape = raum.createShape(worldHandler.getPixelProMeter());
 
         raum.bodyTypeSetzen(physikTyp);
     }

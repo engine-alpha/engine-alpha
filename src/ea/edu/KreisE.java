@@ -35,7 +35,7 @@ public class KreisE extends Kreis {
 	 */
 	public KreisE () {
 		super(300, 200, 100);
-		farbeSetzen("Blau");
+		setColor("Blau");
 		FensterE.getFenster().wurzel.add(this);
 	}
 }

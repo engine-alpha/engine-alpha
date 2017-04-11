@@ -25,7 +25,6 @@
 package ea;
 
 import ea.internal.util.Logger;
-import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
@@ -117,8 +116,8 @@ public class CombiFigur extends Raum {
      * {@inheritDoc}
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
-        return figuren[0].berechneShape(pixelProMeter);
+    public Shape createShape(float pixelProMeter) {
+        return figuren[0].createShape(pixelProMeter);
     }
 
 }
