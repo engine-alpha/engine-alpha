@@ -81,11 +81,9 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
-        Logger.verboseInfo("Frame-System", "Start-Worldstep");
         synchronized (worldLock) {
-            Logger.verboseInfo("Frame-System", "Physics Entered Monitor");
+            Logger.verboseInfo("Frame-System", "Worldstep with dt="+deltaT);
             world.step(deltaT, velocityIterations, positionIterations);
         }
-        Logger.verboseInfo("Frame-System", "Stop -Worldstep");
     }
 }
