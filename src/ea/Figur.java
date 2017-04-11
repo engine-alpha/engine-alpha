@@ -19,18 +19,15 @@
 
 package ea;
 
-import com.sun.org.glassfish.gmbal.ParameterNames;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.frame.FrameThread;
 import ea.internal.gra.PixelFeld;
 import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
-import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * Eine Figur ist eine aus einer Datei geladene Sammlung von Pixeln, die orientierungsmaessig
