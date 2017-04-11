@@ -69,7 +69,8 @@ public abstract class Game
     private final Knoten superWurzel;
 
     /**
-     * Das Spielfenster
+     * Das Spielfenster. Diese Variable wird intern verwendet, um auf das tatsächliche Fenster-Objekt (nicht die
+	 * Handle-Klasse) zuzugreifen.
      */
     @NoExternalUse
     final Fenster real_fenster;
@@ -107,9 +108,8 @@ public abstract class Game
 	public final Knoten statischeWurzel;
 
 	/**
-	 * Die <code>Kamera</code> des Spiels.<br /> Dieser kann ueber <code>setzeFokus(Raum m)</code>
-	 * ein bestimmtes Raum-Objekt immer im Zentrum zeigen. Es gibt auch weitere interessante
-	 * Methoden dieser Klasse.<br /> Hierzu siehe <b>Handbuch oder Doku</b>.
+	 * Die <code>Kamera</code> des Spiels. Hiermit kann der sichtbare Ausschnitt der Zeichenebene bestimmt und
+	 * manipuliert werden.
 	 */
     @API
 	public final Kamera kamera;
@@ -164,33 +164,32 @@ public abstract class Game
     /* _______________________ CONSTRUCTOR OVERKILL _______________________ */
 
     /**
-     * Groesster Konstruktor fuer Objekte der Klasse Game.
+     * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
+	 * internen Prozesse der Engine.
      *
-     * @param x
+     * @param fensterbreite
      * 		Die Breite des Fensters
-     * @param y
+     * @param fensterhoehe
      * 		Die Hoehe des Fensters
      * @param titel
      * 		Der Titel des Spielfensters
      * @param vollbild
-     * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
-     * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
-     * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
-     * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
-     * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
+     * 		Ob das Fenster im Vollbildmodus dargestellt werden soll. In diesem Fall wird der <b>Kamera-Zoom</b> so
+	 * 	    angepasst, dass die angegebenen Fenstermaße vollständig und maximal groß dargesteltt werden.
      * @param exitOnEsc
      * 		Ist dieser Wert <code>true</code>, so wird das Spiel automatisch beendet, wenn die
      * 		"Escape"-Taste gedrueckt wurde. Dies bietet sich vor allem an, wenn das Spiel ein Vollbild
      * 		ist oder die Maus aufgrund der Verwendung einer Maus im Spiel nicht auf das "X"-Symbol des
-     * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" waere und <b>dies
-     * 		ist etwas unbeschreiblich aergerliches fuer den Spielbenutzer!!!!!!!!!!!</b>
-     * @param fensterX
-     * 		Die X-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm
-     * @param fensterY
-     * 		Die Y-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm
+     * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" wäre.
+     * @param fensterPositionX
+     * 		Die X-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm.
+     * @param fensterPositionY
+     * 		Die Y-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm.
      */
-    public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc, int fensterX, int fensterY) {
-        real_fenster = new Fenster(x, y, titel, vollbild, fensterX, fensterY);
+	@API
+    public Game (int fensterbreite, int fensterhoehe, String titel, boolean vollbild, boolean exitOnEsc,
+				 int fensterPositionX, int fensterPositionY) {
+        real_fenster = new Fenster(fensterbreite, fensterhoehe, titel, vollbild, fensterPositionX, fensterPositionY);
         this.exitOnEsc = exitOnEsc;
         this.font = new Font("SansSerif", Font.PLAIN, 16);
 
@@ -219,113 +218,98 @@ public abstract class Game
     }
 
 	/**
-	 * Erstellt ein Spiel, bei dem automatisch beim Drücken von ESC alles beendet wird und ohne
-	 * Titel.
+	 * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
+	 * internen Prozesse der Engine. Hierbei ist voreingestellt:
+	 * <ul>
+	 *     <li>Das Fenster-Objekt wird relativ nah an der linken oberen Bildschirmecke geöffnet.</li>
+	 * </ul>
 	 *
-	 * @param x
+	 * @param fensterbreite
 	 * 		Die Breite des Fensters
-	 * @param y
-	 * 		Die Hoehe des Fensters
-	 * @param vollbild
-	 * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
-	 * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
-	 * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
-	 * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
-	 * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
-	 */
-	public Game (int x, int y, boolean vollbild) {
-		this(x, y, "", vollbild, true);
-	}
-
-	/**
-	 * Konstruktor fuer Objekte der Klasse Game. Erstellt unter anderem ein Fenster, das harmonisch
-	 * im Spielbildschirm liegt.
-	 *
-	 * @param x
-	 * 		Die Breite des Fensters
-	 * @param y
+	 * @param fensterhoehe
 	 * 		Die Hoehe des Fensters
 	 * @param titel
 	 * 		Der Titel des Spielfensters
 	 * @param vollbild
-	 * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
-	 * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
-	 * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
-	 * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
-	 * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
+	 * 		Ob das Fenster im Vollbildmodus dargestellt werden soll. In diesem Fall wird der <b>Kamera-Zoom</b> so
+	 * 	    angepasst, dass die angegebenen Fenstermaße vollständig und maximal groß dargesteltt werden.
 	 * @param exitOnEsc
 	 * 		Ist dieser Wert <code>true</code>, so wird das Spiel automatisch beendet, wenn die
 	 * 		"Escape"-Taste gedrueckt wurde. Dies bietet sich vor allem an, wenn das Spiel ein Vollbild
 	 * 		ist oder die Maus aufgrund der Verwendung einer Maus im Spiel nicht auf das "X"-Symbol des
-	 * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" waere und <b>dies
-	 * 		ist etwas unbeschreiblich aergerliches fuer den Spielbenutzer!!!!!!!!!!!</b>
+	 * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" wäre.
 	 */
-	public Game (int x, int y, String titel, boolean vollbild, boolean exitOnEsc) {
-		this(x, y, titel, vollbild, exitOnEsc, -1, -1);
-	}
-	/**
-	 * Vereinfachter Konstruktor.<br /> Hierbei gilt automatisch, dass das Fenster <b>beim
-	 * Tastendruck auf "Escape" beendet wird</b>, sowie dass kein Vollbild aktiviert wird.<br /> Ist
-	 * dies nicht gewuenscht, so muss der komplexere Konstruktor aufgerufen werden. Es wird kein
-	 * Fenstertitel erstellt.
-	 *
-	 * @param x
-	 * 		Die Breite des Fensters
-	 * @param y
-	 * 		Die Hoehe des Fenstsers
-	 */
-	public Game (int x, int y) {
-		this(x, y, "");
+	@API
+	public Game (int fensterbreite, int fensterhoehe, String titel, boolean vollbild, boolean exitOnEsc) {
+		this(fensterbreite, fensterhoehe, titel, vollbild, exitOnEsc, -1, -1);
 	}
 
 	/**
-	 * Vereinfachter Konstruktor.<br /> Hierbei gilt automatisch, dass das Fenster <b>beim
-	 * Tastendruck auf "Escape" beendet wird</b>, sowie dass kein Vollbild aktiviert wird.<br /> Ist
-	 * dies nicht gewuenscht, so muss der komplexere Konstruktor aufgerufen werden.
+	 * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
+	 * internen Prozesse der Engine. Hierbei ist voreingestellt:
+	 * <ul>
+	 *     <li>Das Fenster-Objekt wird relativ nah an der linken oberen Bildschirmecke geöffnet.</li>
+	 *     <li>Das Drücken auf die "Escape"-Taste beendet das Spiel automatisch.</li>
+	 * </ul>
 	 *
-	 * @param x
+	 * @param fensterbreite
 	 * 		Die Breite des Fensters
-	 * @param y
-	 * 		Die Hoehe des Fenstsers
-	 * @param titel
-	 * 		Der Titel des Spielfensters
-	 */
-	public Game (int x, int y, String titel) {
-		this(x, y, titel, false, true);
-	}
-
-	/**
-	 * Parameterloser Alternativkonstruktor.<br /> Hierbei wird automatisch ein Spielfenster der
-	 * Groesse 500 auf 500 (kein Vollbild) erstellt, das bei Tastendruck auf "Escape" beendet wird.
-	 */
-	public Game () {
-		this(500, 500, "", false);
-	}
-
-	/**
-	 * Etwas vereinfachter Konstruktor.<br /> Hierbei gilt automatisch, dass das Fenster <b>beim
-	 * Tastendruck auf "Escape" beendet wird</b>.<br /> Ist dies nicht gewuenscht, so muss der
-	 * komplexere Konstruktor aufgerufen werden.
-	 *
-	 * @param x
-	 * 		Die Breite des Fensters
-	 * @param y
-	 * 		Die Hoehe des Fenstsers
+	 * @param fensterhoehe
+	 * 		Die Hoehe des Fensters
 	 * @param titel
 	 * 		Der Titel des Spielfensters
 	 * @param vollbild
-	 * 		Ob das Fenster ein echtes Vollbild sein soll.<br /> Manche Computer unterstuetzen kein
-	 * 		Vollbild, in diesem Fall wird ein moeglichst grosses Fenster erzeugt.<br /> Im
-	 * 		Vollbildmodus nimmt das Fenster den gesamten Bildschirm ein, die Eingabeparameter
-	 * 		<code>x</code> und <code>y</code> beschreiben dann die Masse dieses Fensters, <b>der
-	 * 		Bildschirm wird also an die gewuenschte X-Y-Groesse angepasst!!!</b>
+	 * 		Ob das Fenster im Vollbildmodus dargestellt werden soll. In diesem Fall wird der <b>Kamera-Zoom</b> so
+	 * 	    angepasst, dass die angegebenen Fenstermaße vollständig und maximal groß dargesteltt werden.
 	 */
-	public Game (int x, int y, String titel, boolean vollbild) {
-		this(x, y, titel, vollbild, true);
+	@API
+	public Game (int fensterbreite, int fensterhoehe, String titel, boolean vollbild) {
+		this(fensterbreite, fensterhoehe, titel, vollbild, true);
+	}
+
+	/**
+	 * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
+	 * internen Prozesse der Engine. Hierbei ist voreingestellt:
+	 * <ul>
+	 *     <li>Das Fenster-Objekt wird relativ nah an der linken oberen Bildschirmecke geöffnet.</li>
+	 *     <li>Das Drücken auf die "Escape"-Taste beendet das Spiel automatisch.</li>
+	 *     <li>Das Fenster wird nicht im Vollbildmodus gestartet.</li>
+	 * </ul>
+	 *
+	 * @param fensterbreite
+	 * 		Die Breite des Fensters
+	 * @param fensterhoehe
+	 * 		Die Hoehe des Fensters
+	 * @param titel
+	 * 		Der Titel des Spielfensters
+	 */
+	@API
+	public Game (int fensterbreite, int fensterhoehe, String titel) {
+		this(fensterbreite, fensterhoehe, titel, false, true);
+	}
+
+	/**
+	 * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
+	 * internen Prozesse der Engine. Hierbei ist voreingestellt:
+	 * <ul>
+	 *     <li>Das Fenster-Objekt wird relativ nah an der linken oberen Bildschirmecke geöffnet.</li>
+	 *     <li>Das Drücken auf die "Escape"-Taste beendet das Spiel automatisch.</li>
+	 *     <li>Das Fenster wird nicht im Vollbildmodus gestartet.</li>
+	 *     <li>Das Fenster trägt den Titel "Engine Alpha"</li>
+	 * </ul>
+	 *
+	 * @param fensterbreite
+	 * 		Die Breite des Fensters
+	 * @param fensterhoehe
+	 * 		Die Hoehe des Fensters
+	 */
+	@API
+	public Game (int fensterbreite, int fensterhoehe) {
+		this(fensterbreite, fensterhoehe, "Engine Alpha");
 	}
 
 
-    /* _______________________ ECHET API METHODEN _______________________ */
+    /* _______________________ ECHTE API METHODEN _______________________ */
 
 	/**
 	 * Diese Methode beendet das Spiel gaenzlich.<br /> Das heisst, dass das Fenster geschlossen,
@@ -435,6 +419,7 @@ public abstract class Game
      * @param ts    Die tatsächliche Zeit <i>in Sekunden</i>, die seit dem letzten Frame
      *              vergangen ist. Bei 60 FPS (Frames pro Sekunde) ist also ein Durchschnittswert
      *              von <code>ts = 1/60 = 0.016666f</code> zu erwarten.
+	 * @see ea.FrameUpdateReagierbar
      */
     @API
     @Override
@@ -465,7 +450,12 @@ public abstract class Game
      * durchgeführt werden.<br/>
      *
      * Um interne Fehler zu vermeiden, sollte die <b>gesamte Initiierung hier stattfinden</b> und nicht
-     * im Konstruktor.
+     * im Konstruktor. <br />
+	 *
+	 * Hintergrund hierfür ist, dass der Konstruktor der Klasse Spiel <b>Unabhängig vom frameweise arbeitenden
+	 * Spielprozess läuft</b>. Um Probleme mit Nebenläufigkeit, fehlenden Abhängigkeiten und Ähnliches zu verhindern,
+	 * wird die Inititialisierung des Spiel-Objektes hierdrin durchgeführt. Diese Methode wird innerhalb der frameweisen
+	 * Spiellogik ausgeführt.
      */
     @API
     public abstract void initialisieren();

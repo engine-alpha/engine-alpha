@@ -362,12 +362,14 @@ public class Fenster extends Frame {
 	 */
 	public void loeschen () {
 
+
+		frameThread.anhalten();
+
+		frameCount--;
+
 		this.setVisible(false);
 		this.dispose();
 
-        frameThread.anhalten();
-
-		frameCount--;
 
 		if (frameCount == 0) System.exit(0);
 	}

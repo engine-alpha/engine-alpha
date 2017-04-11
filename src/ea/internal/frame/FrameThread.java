@@ -332,6 +332,6 @@ extends Thread {
      */
     @NoExternalUse
     public void anhalten() {
-
+        sollLaufen = false;
     }
 }

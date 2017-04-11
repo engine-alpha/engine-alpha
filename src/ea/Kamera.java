@@ -241,6 +241,7 @@ public class Kamera {
      * @param y Die Y-Koordinate des Zentrums des Bildes
      * @see #zentrumSetzen(Punkt)
      */
+    @API
     public void zentrumSetzen(int x, int y) {
         this.zentrumSetzen(new Punkt(x, y));
     }
@@ -261,6 +262,7 @@ public class Kamera {
      * @param p Der Punkt der linken oberen Ecke der Kameraperspektive
      * @see #positionSetzen(float, float)
      */
+    @API
     public void positionSetzen(Punkt p) {
         positionSetzen(p.x, p.y);
     }
@@ -272,6 +274,7 @@ public class Kamera {
      * @param y Die <i>Y-Koordinate der linken oberen Ecke</i> der Kameraperspektive
      * @see #positionSetzen(Punkt)
      */
+    @API
     public void positionSetzen(float x, float y) {
         kameraAuschschnitt = kameraAuschschnitt.anPosition(x, y);
     }
@@ -288,6 +291,7 @@ public class Kamera {
      *
      * @return Das aktuelle BoundingRechteck, dass die aktuelle Fensterdarstellung beschreibt.
      */
+    @API
     public BoundingRechteck position() {
         return kameraAuschschnitt;
     }
@@ -296,6 +300,7 @@ public class Kamera {
      * @return Der Verzug in Richtung X, den die Kamera bis jetzt vom Urspruenglichen Standort (0,
      * 0) hat.
      */
+    @API
     public int getX() {
         return (int) kameraAuschschnitt.x;
     }
@@ -304,6 +309,7 @@ public class Kamera {
      * @return Der Verzug in Richtung Y, den die Kamera bis jetzt vom Urspruenglichen Standort (0,
      * 0) hat.
      */
+    @API
     public int getY() {
         return (int) kameraAuschschnitt.y;
     }
@@ -312,7 +318,7 @@ public class Kamera {
      * Gibt den aktuellen Zoom aus.
      * @return  Der aktuelle Zoom der Kamera.
      */
-    @NoExternalUse
+    @API
     public float getZoom() {
         return zoom;
     }
