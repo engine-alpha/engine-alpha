@@ -25,7 +25,6 @@ import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * Eine Actionfigur ist eine besondere Figur. Diese hat verschiedene <b>Zustände</b> und kann
@@ -374,7 +373,6 @@ public class ActionFigur extends Raum {
 	 * @param faktor
 	 * 		Der neue Größenfaktor
 	 *
-	 * @see Figur#faktorSetzen(int)
 	 */
 	@API
 	@SuppressWarnings ( "unused" )
@@ -465,7 +463,7 @@ public class ActionFigur extends Raum {
      * Berechnung auf Basis des 0-Zustands.
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
-        return states[0].berechneShape(pixelProMeter);
+    public Shape createShape(float pixelProMeter) {
+        return states[0].createShape(pixelProMeter);
     }
 }

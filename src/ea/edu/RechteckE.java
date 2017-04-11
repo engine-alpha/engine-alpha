@@ -35,7 +35,7 @@ public class RechteckE extends Rechteck {
 	 */
 	public RechteckE () {
 		super(50, 200, 200, 130);
-		farbeSetzen("Rot");
+		setColor("Rot");
 		FensterE.getFenster().wurzel.add(this);
 	}
 }

@@ -27,21 +27,6 @@ import java.util.Locale;
  * Die Klasse Farbe ermöglicht ein sehr einfaches Handling mit allen Farben. Sie basiert auf der
  * Klasse <code>java.awt.Color</code>, erweitert diese jedoch aufgrund ihrer vielen finalen
  * Eigenschaften nicht, sondern arbeitet mit einer Referenz auf ein solches Objekt.
- * <p/>
- * <b>Ein Verwendungsbeispiel:</b> <pre> // Ein Rechteck Rechteck rechteck = new Rechteck(20, 20,
- * 100, 200);
- * <p/>
- * // Die Farbe erstellen, die das Rechteck erhalten soll (ein helles Grau) Farbe farbe = new
- * Farbe(200, 200, 200);
- * <p/>
- * // Die Farbe dem Rechteck uebergeben rechteck.farbeSetzen(farbe);
- * <p/>
- * // Das Rechteck an der Wurzel (hierzu siehe Klasse Knoten und Klasse Game) der Game-Klasse
- * tastenReagierbarAnmelden, // um ihn auch im Fenster sehen zu koennen! wurzel.add(rechteck);
- * <p/>
- * // Geschachtelte Form, so empfiehlt es sich meistens eher (da platzsparender):
- * rechteck.farbeSetzen(new Farbe(200, 200, 200)); </pre>
- *
  * @author Michael Andonie
  */
 public final class Farbe implements Serializable {

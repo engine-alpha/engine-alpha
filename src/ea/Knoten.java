@@ -204,7 +204,7 @@ public class Knoten extends Raum {
      * {@inheritDoc}
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
+    public Shape createShape(float pixelProMeter) {
         return null; // Knoten hat keine Shape => Null.
     }
 

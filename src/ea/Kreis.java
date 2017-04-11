@@ -77,7 +77,7 @@ public class Kreis extends Geometrie {
      * {@inheritDoc}
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
+    public Shape createShape(float pixelProMeter) {
         CircleShape shape = new CircleShape();
         shape.m_radius = radius()/pixelProMeter;
         shape.m_p.set(shape.m_radius,shape.m_radius);

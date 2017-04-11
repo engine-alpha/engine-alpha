@@ -491,7 +491,7 @@ implements Ticker {
      * {@inheritDoc}
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
+    public Shape createShape(float pixelProMeter) {
         return berechneBoxShape(pixelProMeter, this.animation[0].breite(faktor), animation[0].hoehe(faktor));
     }
 

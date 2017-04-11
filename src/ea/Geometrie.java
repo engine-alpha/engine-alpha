@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 
 import java.awt.*;
@@ -52,8 +53,9 @@ public abstract class Geometrie extends Raum {
 	 *
 	 * @see Farbe
 	 */
-	public void farbeSetzen (Farbe f) {
-		farbeSetzen(f.wert());
+	@API
+	public void setColor(Farbe f) {
+		setColor(f.wert());
 	}
 
 	/**
@@ -63,7 +65,8 @@ public abstract class Geometrie extends Raum {
 	 * @param c
 	 * 		Die neue Farbe
 	 */
-	public void farbeSetzen (Color c) {
+	@NoExternalUse
+	public void setColor(Color c) {
 		this.color = c;
 	}
 
@@ -83,7 +86,8 @@ public abstract class Geometrie extends Raum {
 	 * @param farbe
 	 * 		Der String-Wert der Farbe. Zu der Zuordnung siehe <b>Handbuch</b>
 	 */
-	public void farbeSetzen (String farbe) {
-		farbeSetzen(Farbe.zuFarbeKonvertieren(farbe));
+	@API
+	public void setColor(String farbe) {
+		setColor(Farbe.zuFarbeKonvertieren(farbe));
 	}
 }

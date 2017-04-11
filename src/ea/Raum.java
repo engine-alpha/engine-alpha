@@ -364,7 +364,7 @@ public abstract class Raum implements Comparable<Raum> {
      *                          Die Berechnung berücksichtigt die <b>aktuelle Position</b>.PositionHandlePositionalUse
      */
     @NoExternalUse
-    public abstract Shape berechneShape(final float pixelProMeter);
+    public abstract Shape createShape(final float pixelProMeter);
 
 
 

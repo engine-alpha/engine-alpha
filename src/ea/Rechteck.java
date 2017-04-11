@@ -109,7 +109,7 @@ public class Rechteck extends Geometrie {
      * {@inheritDoc}
      */
     @Override
-    public Shape berechneShape(float pixelProMeter) {
+    public Shape createShape(float pixelProMeter) {
         return berechneBoxShape(pixelProMeter, breite, laenge);
     }
 }

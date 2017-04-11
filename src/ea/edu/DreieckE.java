@@ -36,7 +36,7 @@ public class DreieckE extends Dreieck {
 	 */
 	public DreieckE () {
 		super(new Punkt(100, 100), new Punkt(200, 100), new Punkt(150, 50));
-		farbeSetzen("Gruen");
+		setColor("Gruen");
 		FensterE.getFenster().wurzel.add(this);
 	}
 
