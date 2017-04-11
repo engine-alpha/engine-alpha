@@ -1,6 +1,7 @@
 package ea.internal.frame;
 
 import ea.internal.phy.WorldHandler;
+import ea.internal.util.Logger;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
@@ -80,11 +81,10 @@ extends FrameSubthread {
      */
     @Override
     public void frameLogic() {
-        //logger.log("1");
+        Logger.verboseInfo("Frame-System", "Start-Worldstep");
         synchronized (worldLock) {
             world.step(deltaT, velocityIterations, positionIterations);
         }
-
-        //logger.log("2");
+        Logger.verboseInfo("Frame-System", "Stop -Worldstep");
     }
 }
