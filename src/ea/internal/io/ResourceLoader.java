@@ -19,32 +19,32 @@
 
 package ea.internal.io;
 
-import ea.internal.util.Optimizer;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-public class ImageLoader {
-	private ImageLoader () {
-		// keine Objekte erlaubt!
-	}
+public class ResourceLoader {
+    private ResourceLoader() {
+        // keine Objekte erlaubt!
+    }
 
-	/**
-	 * Lädt ein Bild und optimiert es für das aktuelle System.
-	 *
-	 * @param path
-	 * 		Pfad des Bildes.
-	 *
-	 * @return geladenes Bild
-	 */
-	public static BufferedImage load(String path) {
-		try {
-			BufferedImage img = ImageIO.read(new ByteArrayInputStream(ResourceLoader.load(path)));
-			return Optimizer.toCompatibleImage(img);
-		} catch (IOException e) {
-			throw new RuntimeException("Das Bild konnte nicht geladen werden: " + path);
-		}
-	}
+    public static byte[] load(String filename) throws IOException {
+        String path = filename;
+
+        if (ResourceLoader.class.getResource(filename) != null) {
+            path = ResourceLoader.class.getResource(filename).toExternalForm();
+        }
+
+        return Files.readAllBytes(Paths.get(path));
+    }
+
+    public static InputStream loadAsStream(String filename) throws IOException {
+        if (ResourceLoader.class.getResource(filename) != null) {
+            return ResourceLoader.class.getResourceAsStream(filename);
+        }
+
+        return new FileInputStream(filename);
+    }
 }

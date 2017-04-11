@@ -20,7 +20,6 @@
 package ea;
 
 import ea.internal.io.ImageLoader;
-import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
@@ -90,7 +89,7 @@ public class Bild extends Raum {
 		this.position.set(new Punkt(x, y));
 		this.wiederholen = false;
 
-		img = ImageLoader.loadExternalImage(verzeichnis);
+		img = ImageLoader.load(verzeichnis);
 
 		urHoehe = img.getHeight();
 		urBreite = img.getWidth();
