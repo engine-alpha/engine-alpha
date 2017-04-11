@@ -210,10 +210,10 @@ public abstract class Raum implements Comparable<Raum> {
      * (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des
      * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
      * nicht!!</b>.
+     * TODO Neuer Doc Text
      */
     @NoExternalUse
     public void loeschen () {
-        //Leer - kann von childs überschrieben werden.
         physikHandler.killBody();
         physikHandler = new NullHandler(this);
     }
@@ -258,17 +258,6 @@ public abstract class Raum implements Comparable<Raum> {
             //Hole Rotation und Position absolut auf der Zeichenebene.
             float rotation = physikHandler.rotation();
             Punkt position = physikHandler.position();
-
-            /*Punkt mittelpunkt = physikHandler.mittelpunkt();
-
-
-
-            if(mittelpunkt == null) {
-                //Objekt gerade erst erstellt. Braucht noch einen Moment...
-                return;
-            }*/
-
-
 
             // ____ Pre-Render ____
 

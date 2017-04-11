@@ -45,7 +45,22 @@ implements ContactListener {
      */
     private WorldThread worldThread;
 
-    private final HashMap<Body, List<Checkup>> collisionTracker = new HashMap<>();
+    /**
+     * Hashmap, die alle spezifisch angegebenen Raum-Raum Kollisionsüberwachungen innehat.
+     */
+    private final HashMap<Body, List<Checkup>> specificCollisionListeners = new HashMap<>();
+
+    /**
+     * Hashmap, die sämtliche allgemeinen KollisionsReagierbar-Listener innehat.
+     */
+    private final HashMap<Body, List<KollisionsReagierbar<Raum>>> generalCollisonListeners = new HashMap<>();
+
+    /**
+     * Diese Hashmap enthält sämtliche Bodies, die in der World existieren und mapt diese auf die zugehörigen
+     * Raum-Objekte.
+     */
+    private final HashMap<Body, Raum> worldMap = new HashMap<>();
+
 
     @NoExternalUse
     public void setWorldThread(WorldThread worldThread) {
@@ -147,8 +162,16 @@ implements ContactListener {
         return new Vektor(x,y);
     }
 
-    public Body createBody(BodyDef bd) {
-        return worldThread.createBody(bd);
+    /**
+     * Erstellt einen Body und mappt ihn intern zum analogen Raum-Objekt.
+     * @param bd    Exakte Beschreibung des Bodies.
+     * @param raum  Raum-Objekt, das ab sofort zu dem Body gehört.
+     * @return      Der Body, der aus der BodyDef generiert wurde. Er liegt in der Game-World dieses Handlers.
+     */
+    public Body createBody(BodyDef bd, Raum raum) {
+        Body body = worldThread.createBody(bd);
+        worldMap.put(body, raum);
+        return body;
     }
 
     /**
@@ -166,10 +189,6 @@ implements ContactListener {
     private static final float degProRad = (float)((double)180/Math.PI);
 
 
-    public final void addCollisionListening(KollisionsReagierbar kr, Raum r1, Raum r2, int code) {
-
-    }
-
     /* ____________ CONTACT LISTENER INTERFACE ____________ */
 
     @Override
@@ -182,44 +201,74 @@ implements ContactListener {
         processContact(contact, false);
     }
 
+    /**
+     * Verarbeitet einen Kontakt in der Physics-Engine.
+     * @param contact   JBox2D Contact Objekt, das den Contact beschreibt.
+     * @param isBegin   true = Begin-Kontakt | false = End-Kontakt
+     */
+    @NoExternalUse
     private void processContact(Contact contact, boolean isBegin) {
-        Body b1 = contact.getFixtureA().getBody();
-        Body b2 = contact.getFixtureB().getBody();
+        final Body b1 = contact.getFixtureA().getBody();
+        final Body b2 = contact.getFixtureB().getBody();
         if(b1==b2) {
             //Gleicher Body, don't care
             Logger.error("Collision", "Inter-Body Collision!");
             return;
         }
+
+        /*
+         * ~~~~~~~~~~~~~~~~~~~~~~~ TEIL I : Spezifische Checkups ~~~~~~~~~~~~~~~~~~~~~~~
+         */
+
+        //Sortieren der Bodies.
         Body lower=null, higher=null;
         if (b1.hashCode() == b2.hashCode()) {
             //Hashes sind gleich (blöde Sache!) -> beide Varianten probieren.
-            List<Checkup> result1 = collisionTracker.get(b1);
+            List<Checkup> result1 = specificCollisionListeners.get(b1);
             if(result1 != null) {
                 for(Checkup c : result1) {
                     c.checkCollision(b2, isBegin);
                 }
             }
-            List<Checkup> result2 = collisionTracker.get(b2);
+            List<Checkup> result2 = specificCollisionListeners.get(b2);
             if(result2 != null) {
                 for(Checkup c : result2) {
                     c.checkCollision(b1, isBegin);
                 }
             }
-            return;
-        } else if(b1.hashCode() < b2.hashCode()) {
-            //b1 < b2
-            lower = b1;
-            higher = b2;
         } else {
-            //b1 > b2
-            lower = b2;
-            higher = b1;
+            if(b1.hashCode() < b2.hashCode()) {
+                //b1 < b2
+                lower = b1;
+                higher = b2;
+            } else {
+                //b1 > b2
+                lower = b2;
+                higher = b1;
+            }
+            List<Checkup> result = specificCollisionListeners.get(lower);
+            if(result != null) {
+                for(Checkup c : result) {
+                    c.checkCollision(higher, isBegin);
+                }
+            }
         }
 
-        List<Checkup> result = collisionTracker.get(lower);
-        if(result != null) {
-            for(Checkup c : result) {
-                c.checkCollision(higher, isBegin);
+
+        /*
+         * ~~~~~~~~~~~~~~~~~~~~~~~ TEIL II : Allgemeine Checkups ~~~~~~~~~~~~~~~~~~~~~~~
+         */
+        generalCheckup(b1, b2);
+        generalCheckup(b2, b1);
+    }
+
+    @NoExternalUse
+    private void generalCheckup(Body act, Body col) {
+        List<KollisionsReagierbar<Raum>> list = generalCollisonListeners.get(act);
+        if(list != null) {
+            Raum other = worldMap.get(col); // Darf (eigentlich) niemals null sein
+            for (KollisionsReagierbar<Raum> kr : list) {
+                kr.kollision(other);
             }
         }
     }
@@ -242,22 +291,22 @@ implements ContactListener {
     /**
      * Speichert ein Korrespondierendes Body-Objekt sowie
      */
-    private static class Checkup {
-        private final KollisionsReagierbar reagierbar;  //Aufzurufen
+    private static class Checkup<E extends Raum> {
+        private final KollisionsReagierbar<E> reagierbar;  //Aufzurufen
         private final Body body2;                       //Der zweite Body (erster Body ist Hashmap-Schlüssel)
-        private final int code;                         //Der Code für den Aufruf
+        private final E collider;                       //Das Raum-Objekt, das neben dem Actor angemeldet wurde
         private final FrameThread frameThread;          //Zum ea.Anmelden des Dispatches
 
         private final Dispatchable begin = new Dispatchable() {
             @Override
             public void dispatch() {
-                reagierbar.kollision(code);
+                reagierbar.kollision(collider);
             }
         };
         private final Dispatchable end = new Dispatchable() {
             @Override
             public void dispatch() {
-                reagierbar.kollisionBeendet(code);
+                reagierbar.kollisionBeendet(collider);
             }
         };
 
@@ -265,13 +314,13 @@ implements ContactListener {
          * Erstellt das Checkup-Objekt
          * @param reagierbar    Das aufzurufende KR
          * @param body2         Der zweite Body für den Checkup
-         * @param code          Der Code für den Aufruf
+         * @param collider      Der zugehörige Collider für diesen Checkup
          * @param frameThread   Der Frame-Thread, an dem der Dispatch (aktivierung des KR) angemeldet wird.
          */
-        private Checkup(KollisionsReagierbar reagierbar, Body body2, int code, FrameThread frameThread) {
+        private Checkup(KollisionsReagierbar reagierbar, Body body2, E collider, FrameThread frameThread) {
             this.reagierbar = reagierbar;
             this.body2 = body2;
-            this.code = code;
+            this.collider = collider;
             this.frameThread = frameThread;
         }
 
@@ -282,9 +331,49 @@ implements ContactListener {
         }
     }
 
-    public static void kollisionsReagierbarEingliedern(KollisionsReagierbar kr, int code, Raum r1, Raum r2) {
-        final WorldHandler wh1 = r1.getPhysikHandler().worldHandler();
-        final WorldHandler wh2 = r2.getPhysikHandler().worldHandler();
+    /**
+     * Meldet ein allgemeines KR-Interface in dieser World an.
+     * @param kr        Das anzumeldende KR Interface
+     * @param actor     Der Actor (KR Interface wird bei jeder Kollision des Actors informiert)
+     */
+    @NoExternalUse
+    public static void allgemeinesKollisionsReagierbarEingliedern(KollisionsReagierbar<Raum> kr, Raum actor) {
+        final WorldHandler worldHandler = actor.getPhysikHandler().worldHandler();
+        if(worldHandler == null) {
+            Logger.error("Kollision", "Das anzumeldende Raum-Objekt war noch nicht an der Wurzel angemeldet. "
+             + "Erst an der Wurzel anmelden, bevor Kollisionsanmeldungen durchgeführt werden.");
+            return;
+        }
+
+        Body body = actor.getPhysikHandler().getBody();
+        if (body == null) {
+            Logger.error("Kollision", "Ein Raum-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
+                    " angemeldet.");
+            return;
+        }
+
+        List<KollisionsReagierbar<Raum>> bodyList = worldHandler.generalCollisonListeners.get(body);
+        if(bodyList == null) {
+            bodyList = new CopyOnWriteArrayList<>();
+            worldHandler.generalCollisonListeners.put(body, bodyList);
+        }
+
+        bodyList.add(kr);
+
+    }
+
+    /**
+     * Meldet ein spezifisches KR-Interface in dieser World an.
+     * @param kr        Das anzumeldende KR Interface
+     * @param actor     Der Actor (Haupt-Raum-Objekt)
+     * @param collider  Der Collider (zweites Raum-Objekt)
+     * @param <E>       Der Typ des Colliders.
+     */
+    @NoExternalUse
+    public static <E extends Raum> void spezifischesKollisionsReagierbarEingliedern(
+            KollisionsReagierbar kr, Raum actor, Raum collider) {
+        final WorldHandler wh1 = actor.getPhysikHandler().worldHandler();
+        final WorldHandler wh2 = collider.getPhysikHandler().worldHandler();
         if(wh1 == null || wh2 == null || wh1 != wh2) {
             Logger.error("Kollision", "Zwei Objekte sollten zur Kollision angemeldet werden. " +
                     "Dafür müssen beide an der selben Wurzel (direkt oder indirekt) angemeldet sein.");
@@ -293,7 +382,7 @@ implements ContactListener {
 
         final WorldHandler worldHandler = wh1;
 
-        Body b1 = r1.getPhysikHandler().getBody(), b2 = r2.getPhysikHandler().getBody();
+        Body b1 = actor.getPhysikHandler().getBody(), b2 = collider.getPhysikHandler().getBody();
         if(b1 == null || b2 == null) {
             Logger.error("Kollision", "Ein Raum-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
                     " angemeldet.");
@@ -311,16 +400,18 @@ implements ContactListener {
             higher = b1;
         }
 
-        Checkup toAdd = new Checkup(kr, higher, code, worldHandler.worldThread.getMaster());
+        Checkup toAdd = new Checkup(kr, higher, collider, worldHandler.worldThread.getMaster());
 
-        List<Checkup> atKey = wh1.collisionTracker.get(lower);
+        List<Checkup> atKey = wh1.specificCollisionListeners.get(lower);
         if(atKey == null) {
             //NO LIST THERE YET: Create new Entry in Hashmap
             atKey = new CopyOnWriteArrayList<>();
             atKey.add(toAdd);
-            wh1.collisionTracker.put(lower, atKey);
+            wh1.specificCollisionListeners.put(lower, atKey);
         } else {
             atKey.add(toAdd);
         }
     }
+
+
 }

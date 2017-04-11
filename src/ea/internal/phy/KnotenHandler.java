@@ -1,6 +1,7 @@
 package ea.internal.phy;
 
 import ea.*;
+import ea.internal.util.Logger;
 import org.jbox2d.dynamics.Body;
 
 /**
@@ -81,41 +82,45 @@ extends PhysikHandler {
 
     @Override
     public void dichteSetzen(float dichte) {
-
+        Logger.error("Physik", "Ein Knoten hat keine Dichte");
     }
 
     @Override
     public float dichte() {
+        Logger.error("Physik", "Ein Knoten hat keine Dichte");
         return 0;
     }
 
     @Override
     public void reibungSetzen(float reibung) {
-
+        Logger.error("Physik", "Ein Knoten hat keine Reibung");
     }
 
     @Override
     public float reibung() {
+        Logger.error("Physik", "Ein Knoten hat keine Reibung");
         return 0;
     }
 
     @Override
     public void elastizitaetSetzen(float ela) {
-
+        Logger.error("Physik", "Ein Knoten hat keine Elastizität");
     }
 
     @Override
     public float elastizitaet() {
+        Logger.error("Physik", "Ein Knoten hat keine Elastizität");
         return 0;
     }
 
     @Override
     public void masseSetzen(float masse) {
-
+        Logger.error("Physik", "Ein Knoten hat keine Masse");
     }
 
     @Override
     public float masse() {
+        Logger.error("Physik", "Ein Knoten hat keine Masse");
         return 0;
     }
 

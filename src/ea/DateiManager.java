@@ -673,7 +673,6 @@ public class DateiManager {
 			}
 			fig.animationSetzen(ergebnis);
 			fig.position.set(px, py);
-			fig.animiertSetzen((animationsLaenge != 1));
 			f.close();
 		} catch (IOException e) {
 			Logger.error("IO", "Fehler beim Lesen der Datei. Existiert die Datei mit diesem Namen wirklich?" + bruch + verzeichnis);
