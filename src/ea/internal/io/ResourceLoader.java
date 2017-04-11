@@ -33,16 +33,16 @@ public class ResourceLoader {
     public static byte[] load(String filename) throws IOException {
         String path = filename;
 
-        if (ResourceLoader.class.getResource(filename) != null) {
-            path = ResourceLoader.class.getResource(filename).toExternalForm();
+        if (ResourceLoader.class.getResource("/" + filename) != null) {
+            path = ResourceLoader.class.getResource("/" + filename).toExternalForm();
         }
 
         return Files.readAllBytes(Paths.get(path));
     }
 
     public static InputStream loadAsStream(String filename) throws IOException {
-        if (ResourceLoader.class.getResource(filename) != null) {
-            return ResourceLoader.class.getResourceAsStream(filename);
+        if (ResourceLoader.class.getResource("/" + filename) != null) {
+            return ResourceLoader.class.getResourceAsStream("/" + filename);
         }
 
         return new FileInputStream(filename);
