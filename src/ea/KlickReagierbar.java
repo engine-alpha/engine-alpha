@@ -40,8 +40,8 @@ public interface KlickReagierbar {
 	 * dann wird dieses Interface über seine Methode <code>klick()</code> benachrichtigt, immer
 	 * wenn ein <b>Linksklick</b> mit der Maus passiert ist.
 	 *
-	 * @param punkt
-	 *			Der Punkt, der die Mausposition (Referenzpunkt: Hotspot) zum Zeitpunkt des Loslassens
+	 * @param p
+	 *			Der Punkt auf der Zeichenebene, der die Mausposition (Referenzpunkt: Hotspot) zum Zeitpunkt des Loslassens
 	 *			der Maustaste angibt.
 	 */
 	public abstract void klickReagieren (Punkt p);

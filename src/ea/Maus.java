@@ -334,6 +334,7 @@ public class Maus {
 	 *
 	 * @see ea.Maus#klick(Punkt, int, int, boolean)
 	 */
+	@API
 	public void klick (Punkt p, boolean links) {
 		this.klick(p, links ? LINKSKLICK : RECHTSKLICK, 1, false);
 	}
@@ -433,7 +434,9 @@ public class Maus {
         Point p = fenster.zeichner().getMousePosition();
         if(p == null)
             return null;
-        return new Punkt(p.x, p.y);
+        float zoom = fenster.zeichner().cam().getZoom();
+        return new Punkt(p.x/zoom, p.y/zoom).verschobeneInstanz(
+        		fenster.zeichner().cam().position().position().alsVektor());
 	}
 
 	/**
