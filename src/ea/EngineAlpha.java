@@ -44,7 +44,7 @@ import java.util.TimeZone;
  * @author Niklas Keller <me@kelunik.com>
  */
 public class EngineAlpha extends Frame {
-	
+
 	/**
 	 * Der Versionscode des aktuellen Release.<br />
 	 * Rechnung:<br/>
@@ -52,13 +52,13 @@ public class EngineAlpha extends Frame {
 	 * 10000 * major + 100 * minor + 1 * bugfix
 	 * </code>
 	 */
-	public static final int VERSION_CODE = 30100;
+	public static final int VERSION_CODE = 30200;
 
 	/**
 	 * Format: v(major).(minor).(bugfix)
 	 * Beispiel: v3.1.2
 	 */
-	public static final String VERSION_STRING = "v3.1.0";
+	public static final String VERSION_STRING = "v3.2.0";
 
 	/**
 	 * Gibt an, ob dieser Release in .jar - Form vorliegt. Ist das der Fall,
@@ -258,8 +258,6 @@ public class EngineAlpha extends Frame {
 
 		private int version_stable = -1;
 
-		private int version_dev = -1;
-
 		public EngineAlphaPromotion () {
 			EngineAlpha parent = EngineAlpha.this;
 
@@ -295,13 +293,6 @@ public class EngineAlpha extends Frame {
 						version_stable = Integer.parseInt(body);
 					} catch (Exception e) {
 						version_stable = -1;
-					}
-
-					try {
-						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT").trim();
-						version_dev = Integer.parseInt(body);
-					} catch (Exception e) {
-						version_dev = -1;
 					}
 
 					loading = false;
@@ -354,7 +345,7 @@ public class EngineAlpha extends Frame {
 				g.fillOval((int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)) - 2, (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)) - 2, 4, 4);
 				g.drawLine((int) (getWidth() / 2 + 8 * Math.cos(alpha)), (int) (getHeight() - 80 + 8 * Math.sin(alpha)), (int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)), (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)));
 			} else {
-				String message;
+				String message = "";
 				Color color = new Color(30, 30, 30);
 
 				if (version_stable == -1) {
@@ -365,14 +356,6 @@ public class EngineAlpha extends Frame {
 				} else if (VERSION_CODE < version_stable) {
 					message = "Es ist eine neue Stable-Version verfügbar!";
 					color = new Color(200, 50, 0);
-				} else if (version_dev == VERSION_CODE) {
-					message = "Dies ist die aktuelle Dev-Version.";
-					color = new Color(0, 100, 150);
-				} else if (VERSION_CODE < version_dev) {
-					message = "Es ist eine neue Dev-Version verfügbar!";
-					color = new Color(200, 50, 0);
-				} else {
-					message = "";
 				}
 
 				g.setColor(color);
