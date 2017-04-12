@@ -8,15 +8,12 @@ import org.jbox2d.dynamics.World;
 
 /**
  * Dieser Thread kümmert sich um die frameweise Weiterentwicklung der physikalischen Game-World.
- * Created by andonie on 14.02.15.
  */
-public class WorldThread
-extends FrameSubthread {
-
+public class WorldThread extends FrameSubthread {
     /**
      * globaler WT-Counter
      */
-    private static int wtcnt = 1;
+    private static int counter = 1;
 
     /**
      * Die Physik-World, die alle (komplexen) physikalischen Berechnungen wrappt.
@@ -37,13 +34,13 @@ extends FrameSubthread {
      * Die Anzahl an Iterationen für die Neuberechnung der Geschwindigkeitsvektoren.
      * Empfohlen: 6.
      */
-    private int velocityIterations = 6;
+    private final int velocityIterations = 6;
 
     /**
      * Die Anzahl an Iterationen für die Neuberechnung der Positionsvektoren.
      * Empfohlen: 3.
      */
-    private int positionIterations = 3;
+    private final int positionIterations = 3;
 
     /**
      * Setzt den DeltaT-Wert für die kommende Brechnung. Wird vom Parent-Thread aufgerufen,
@@ -58,15 +55,10 @@ extends FrameSubthread {
     }
 
     /**
-     * Ein Lock, der sicherstellt, dass nur ein Thread auf einmal die World beansprucht.
-     */
-    private Object worldLock = new Object();
-
-    /**
      * Erstellt
      */
     public WorldThread(FrameThread master, WorldHandler worldHandler) {
-        super(master, "Physics-Thread #" + wtcnt++);
+        super(master, "Physics-Thread #" + counter++);
         this.world = worldHandler.getWorld();
         worldHandler.setWorldThread(this);
         this.setPriority(Thread.MAX_PRIORITY);
@@ -74,7 +66,7 @@ extends FrameSubthread {
     }
 
     public Body createBody(BodyDef bd) {
-        synchronized (worldLock) {
+        synchronized (this) {
             return world.createBody(bd);
         }
     }
@@ -83,9 +75,8 @@ extends FrameSubthread {
      * Die Run-Methode; führt einen DeltaT-Schritt aus.
      */
     @Override
-    public void frameLogic() {
-        synchronized (worldLock) {
-            Logger.verboseInfo("Frame-System", "Worldstep with dt="+deltaT);
+    public void dispatchFrame() {
+        synchronized (this) {
             world.step(deltaT, velocityIterations, positionIterations);
         }
     }

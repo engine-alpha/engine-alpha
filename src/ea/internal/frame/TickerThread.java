@@ -3,7 +3,6 @@ package ea.internal.frame;
 import ea.Ticker;
 import ea.internal.util.Logger;
 
-import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -12,13 +11,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * die in dem respektiven Frame ausgeführt werden sollen.
  * Created by andonie on 15.02.15.
  */
-public class TickerThread
-extends ProducerThread {
-
+public class TickerThread extends ProducerThread {
     /**
      * Thread Counter für die exakte Thread-Bezeichnung
      */
-    private static int ttcnt = 1;
+    private static int counter = 1;
 
     /**
      * Die Liste mit allen Ticker-Jobs.
@@ -31,8 +28,8 @@ extends ProducerThread {
      * @param queue     Die Queue, die der Dispatcher sequentiell abarbeitet.
      */
     protected TickerThread(FrameThread master, Queue queue) {
-        super(master, "Ticker Thread #" + ttcnt++, queue);
-        tickerJobs = new CopyOnWriteArrayList<TickerJob>();
+        super(master, "Ticker Thread #" + counter++, queue);
+        tickerJobs = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -52,7 +49,7 @@ extends ProducerThread {
     }
 
     @Override
-    public void frameLogic() {
+    public void dispatchFrame() {
         int ms = master.getLastFrameTime(); // Tatsächlich vergangene Zeit seit letztem Frame
         for(TickerJob tj : tickerJobs) {
             tj.discount(ms);
@@ -63,8 +60,7 @@ extends ProducerThread {
      * Die interne TickerJob-Klasse speichert ein Ticker-Tupel (ticker|intervall) und übernimmt
      * die Abarbeitung der einzelnen Ticks.
      */
-    public class TickerJob implements Dispatchable {
-
+    private class TickerJob implements Dispatchable {
         /**
          * Der Ticker
          */
@@ -101,7 +97,8 @@ extends ProducerThread {
                 int rest = ms-countdown; //Overhead berechnen
                 countdown = intervall; //countdown zurücksetzen
                 synchronized (dispatcherQueue) {
-                    dispatcherQueue.add(TickerThread.TickerJob.this);
+                    dispatcherQueue.add(this);
+                    dispatcherQueue.notifyAll();
                 }
                 //nochmal mit overhead ausführen
                 discount(rest);

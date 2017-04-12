@@ -46,7 +46,7 @@ extends FrameSubthread {
      * Führt <i>einen einzelnen Frame-Render-Auftrag</i> aus. Danach ist der Thread fertig.
      */
     @Override
-    public void frameLogic() {
+    public void dispatchFrame() {
         //System.out.println("_______________________Render");
 
         Graphics2D g = (Graphics2D)bufferStrategy.getDrawGraphics();

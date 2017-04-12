@@ -2,22 +2,14 @@ package ea.internal.frame;
 
 import ea.FrameUpdateReagierbar;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Created by andonie on 06.09.15.
- */
-public class FrameUpdateThread
-extends ProducerThread{
-
-
+public class FrameUpdateThread extends ProducerThread {
     private static int futcnt = 1;
 
-    private class UpdateHandle
-    implements Dispatchable {
-
+    private class UpdateHandle implements Dispatchable {
         /**
          * Das FUR, um das sich dieser Helper kümmert.
          */
@@ -42,7 +34,7 @@ extends ProducerThread{
      * Die Liste aller FrameUpdate-Reagierbar, die innerhalb der Logik dieses
      * Frame Thread frameweise aufgerufen werden sollen.
      */
-    private final CopyOnWriteArrayList<UpdateHandle> toUpdate = new CopyOnWriteArrayList<>();
+    private final Collection<UpdateHandle> toUpdate = new CopyOnWriteArrayList<>();
 
     public FrameUpdateThread(FrameThread master, Queue<Dispatchable> queue) {
         super(master, "Frame-Update Thread #" + futcnt++, queue);
@@ -53,24 +45,16 @@ extends ProducerThread{
     }
 
     public void removeFrameUpdateReagierbar(FrameUpdateReagierbar reagierbar) {
-        ArrayList<UpdateHandle> toErase = new ArrayList<>();
-        for(UpdateHandle uh : toUpdate) {
-            if(uh.reagierbar == reagierbar) {
-                toErase.add(uh);
-            }
-        }
-        for(UpdateHandle eraseMe : toErase) {
-            toUpdate.remove(toErase);
-        }
+        while (toUpdate.remove(reagierbar)) ;
     }
 
     @Override
-    public void frameLogic() {
-        lastFrameSeconds = master.getLastFrameTime()/1000f;
-        for(UpdateHandle uh : toUpdate) {
-            synchronized (dispatcherQueue) {
-                dispatcherQueue.add(uh);
-            }
+    public void dispatchFrame() {
+        lastFrameSeconds = master.getLastFrameTime() / 1000f;
+
+        synchronized (dispatcherQueue) {
+            dispatcherQueue.addAll(toUpdate);
+            dispatcherQueue.notifyAll();
         }
     }
 }
