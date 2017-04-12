@@ -268,7 +268,7 @@ implements ContactListener {
         if(list != null) {
             Raum other = worldMap.get(col); // Darf (eigentlich) niemals null sein
             for (KollisionsReagierbar<Raum> kr : list) {
-                kr.kollision(other);
+                worldThread.getMaster().addInternalEvent( ()-> kr.kollision(other));
             }
         }
     }

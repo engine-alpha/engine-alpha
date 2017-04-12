@@ -273,7 +273,6 @@ public class Physik {
         return this;
     }
 
-
     /* _________________________ Physik-Typ _________________________ */
 
     /**

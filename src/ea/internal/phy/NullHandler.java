@@ -33,9 +33,11 @@ public class NullHandler extends PhysikHandler {
         super(raum, Typ.PASSIV, false);
         bodyDef = new BodyDef();
 
+
+        //Fixture Definition mit Standard-Werten
         fixtureDef = new FixtureDef();
         fixtureDef.density = 30f;
-        fixtureDef.friction = 0.3f;
+        fixtureDef.friction = 0f;
         fixtureDef.restitution = 0.5f;
 
     }

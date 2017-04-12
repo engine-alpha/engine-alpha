@@ -23,7 +23,6 @@ import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.KnotenHandler;
 import ea.internal.phy.WorldHandler;
-import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
@@ -71,7 +70,7 @@ public class Knoten extends Raum {
 	 */
 	public void leeren () {
         for(Raum m : list) {
-            m.loeschen();
+            m.kill();
         }
 		list.clear();
 	}
@@ -89,7 +88,7 @@ public class Knoten extends Raum {
     @API
 	public void entfernen (Raum m) {
 		if (list.contains(m)) {
-			m.loeschen();
+			m.kill();
 		}
 
 		// noinspection StatementWithEmptyBody

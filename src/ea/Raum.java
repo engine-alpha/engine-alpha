@@ -21,6 +21,7 @@ package ea;
 
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
+import ea.internal.phy.BodyCreateStrategy;
 import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
 import ea.internal.phy.WorldHandler;
@@ -29,6 +30,7 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.dynamics.Body;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -66,6 +68,11 @@ public abstract class Raum implements Comparable<Raum> {
 	 * Composite des Grafik-Objekts. Zwischenspeicherung des letzten Zustands
 	 */
 	private Composite composite;
+
+    /**
+     * Die Implementierung der Body-Erstellungsstrategie.
+     */
+	private BodyCreateStrategy bodyCreateStrategy;
 
     /**
      * Der JB2D-Handler für dieses spezifische Objekt.
@@ -206,7 +213,9 @@ public abstract class Raum implements Comparable<Raum> {
 
     /**
      * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
-     * Objekt, damit es problemlos geloescht werden kann.<br /> <b>Achtung:</b> zwar werden
+     * <code>Raum</code>-Objekt.
+     *
+     * <h3>Achtung: Grenzen des Löschens</h3> zwar werden
      * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
      * betrifft vor allem Animationen etc), jedoch nicht die innerhalb eines
      * <code>Knoten</code>-Objektes!!!!!!!!!<br /> Das heisst, wenn das Objekt an einem Knoten liegt
@@ -216,7 +225,7 @@ public abstract class Raum implements Comparable<Raum> {
      * TODO Neuer Doc Text
      */
     @NoExternalUse
-    public void loeschen () {
+    public void kill() {
         physikHandler.killBody();
         physikHandler = new NullHandler(this);
     }
@@ -408,5 +417,16 @@ public abstract class Raum implements Comparable<Raum> {
     public abstract Shape createShape(final float pixelProMeter);
 
 
+    /**
+     * Überschriebene <code>finalize</code>-Methode. Loggt verbose die Garbage Collection des Raum-Objekts.
+     * @throws Throwable Übernommen von Object
+     */
+    @Override
+    public void finalize()
+    throws Throwable {
+        super.finalize();
+        //Logge die Zerstörung
+        Logger.verboseInfo("Raum", "Raum-Objekt in Garbage Collection: " + toString());
+    }
 
 }
