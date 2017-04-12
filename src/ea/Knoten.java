@@ -23,7 +23,9 @@ import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.KnotenHandler;
 import ea.internal.phy.WorldHandler;
+import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.dynamics.joints.*;
 
 import java.awt.*;
 import java.util.Collections;
@@ -39,7 +41,17 @@ public class Knoten extends Raum {
 	/**
 	 * Die Liste aller Raum-Objekte, die dieser Knoten fasst.
 	 */
-	private Vector<Raum> list;
+	private final Vector<Raum> list;
+
+	/**
+	 * Die Joints, die dieser Knoten gerade innehat.
+	 */
+	private final Vector<Joint> joints;
+
+	/**
+	 * Ob der Knoten die Anmeldung neuer Raum-Objekte blockiert.
+	 */
+	private boolean lock = false;
 
     /**
      * Gibt die interne Darstellung der Child-Liste als Vector
@@ -56,6 +68,7 @@ public class Knoten extends Raum {
 	 */
 	public Knoten () {
 		list = new Vector<>();
+		joints = new Vector<>();
         super.physikHandler = new KnotenHandler(this);
 	}
 
@@ -134,13 +147,91 @@ public class Knoten extends Raum {
 	 * 		Das hinzuzufuegende Raum-Objekt
 	 */
 	public void add (Raum m) {
-
+		if(lock) {
+			Logger.error("Knoten", "Fehler: Der Knoten, an dem ein neues Objekt anzumelden war, " +
+					"ist im Lock-Zustand.");
+			return;
+		}
 		list.add(m);
 
 		Collections.sort(list);
 
         if(worldHandler != null)
             m.updateWorld(worldHandler);
+	}
+
+
+	/**
+	 * <p>Fixiert alle Elemente physikalisch aneinander. Nach dem Aufruf bleiben die Positionen aller Objekte im Knoten
+	 * relativ zueinander gleich. Kräfte, die auf ein einzelnes Element wirken, haben damit auch Einfluss auf den Rest
+	 * der Elemente.</p>
+	 * <p>Nach Aufruf dieser Funktion können <b>keine Elemente mehr an diesem Knoten eingefügt werden</b>.</p>
+	 * @see #freeAllElements()
+	 * @see #isFixated()
+	 */
+	@API
+	public void fixateAllElements() {
+		if(lock) {
+			Logger.error("Knoten", "Die Elemente dieses Knoten sind bereits fixiert.");
+			return;
+		}
+
+		lock = true; //<- Lock setzen. Der Knoten ist jetzt voll
+
+		Raum last = null;
+		for(Raum r : list) {
+			if(last == null) {
+				last = r;
+				continue;
+			}
+
+			//Joint Definieren
+			WeldJointDef weldJointDef = new WeldJointDef();
+			weldJointDef.initialize(last.getPhysikHandler().getBody(), r.getPhysikHandler().getBody(),
+					worldHandler.fromVektor(last.position.get().alsVektor()));
+
+			//Joint in die Welt setzen
+			Joint knotenJoint = worldHandler.getWorld().createJoint(weldJointDef);
+
+			//Referenz zum Joint halten
+			joints.add(knotenJoint);
+		}
+	}
+
+	/**
+	 * Löst die Fixierung der Elemente des Knotens wieder. Nach Aufruf dieser Methode bewegen sich die Elemente in
+	 * diesem Knoten wieder unabhängig voneinander.
+	 * @see #fixateAllElements()
+	 * @see #isFixated()
+	 */
+	@API
+	public void freeAllElements() {
+		if(!lock) {
+			Logger.error("Knoten", "Die Elemente dieses Knoten sind gerade nicht fixiert.");
+			return;
+		}
+
+		lock = false;
+
+		//Alle Joints aus der Welt nehmen
+		for(Joint joint : joints) {
+			worldHandler.getWorld().destroyJoint(joint);
+		}
+
+		//Liste leeren
+		joints.clear();
+	}
+
+	/**
+	 * Gibt an, ob die Elemente in diesem Knoten gerade aneinander fixiert sind oder nicht.
+	 * @return	<code>true</code>, wenn die Elemente dieses Knotens gerade alle aneinander fixiert sind. Sonst
+	 * <code>false</code>.
+	 * @see #fixateAllElements()
+	 * @see #freeAllElements()
+	 */
+	@API
+	public boolean isFixated() {
+		return lock;
 	}
 
 	/**

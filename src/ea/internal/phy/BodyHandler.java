@@ -330,6 +330,8 @@ extends PhysikHandler {
 
     @Override
     public void killBody() {
+        Logger.verboseInfo("Physics", "Entferne Raum-Objekt aus Physics-Umgebung.");
+        worldHandler.removeAllInternalReferences(body);
         worldHandler.getWorld().destroyBody(body);
     }
 

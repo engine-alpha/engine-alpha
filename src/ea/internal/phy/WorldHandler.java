@@ -175,6 +175,17 @@ implements ContactListener {
     }
 
     /**
+     * Entfernt alle internen Referenzen auf einen Body und das zugehörige Raum-Objekt.
+     * @param body der zu entfernende Body
+     */
+    @NoExternalUse
+    public void removeAllInternalReferences(Body body) {
+        specificCollisionListeners.remove(body);
+        generalCollisonListeners.remove(body);
+        worldMap.remove(body);
+    }
+
+    /**
      * Übersetzt einen Winkel in Radians in Grad.
      * @param rad Ein Winkel in Radians.
      * @return    Der analoge Winkel in Grad.
@@ -258,17 +269,23 @@ implements ContactListener {
         /*
          * ~~~~~~~~~~~~~~~~~~~~~~~ TEIL II : Allgemeine Checkups ~~~~~~~~~~~~~~~~~~~~~~~
          */
-        generalCheckup(b1, b2);
-        generalCheckup(b2, b1);
+        generalCheckup(b1, b2, isBegin);
+        generalCheckup(b2, b1, isBegin);
     }
 
     @NoExternalUse
-    private void generalCheckup(Body act, Body col) {
+    private void generalCheckup(Body act, Body col, final boolean isBegin) {
         List<KollisionsReagierbar<Raum>> list = generalCollisonListeners.get(act);
         if(list != null) {
             Raum other = worldMap.get(col); // Darf (eigentlich) niemals null sein
             for (KollisionsReagierbar<Raum> kr : list) {
-                worldThread.getMaster().addInternalEvent( ()-> kr.kollision(other));
+                worldThread.getMaster().addInternalEvent( ()-> {
+                    if(isBegin)
+                        kr.kollision(other);
+                    else
+                        kr.kollisionBeendet(other);
+                }
+                );
             }
         }
     }

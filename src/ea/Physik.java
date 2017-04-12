@@ -2,7 +2,10 @@ package ea;
 
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
+import ea.internal.util.Logger;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.joints.RevoluteJoint;
+import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 /**
  * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>physik</code> dieser Klasse.
@@ -271,6 +274,38 @@ public class Physik {
     public Physik inRuheVersetzen() {
         raum.getPhysikHandler().physicalReset();
         return this;
+    }
+
+    /* _________________________ JOINTS _________________________ */
+
+    /**
+     * Erstellt einen Revolute-Joint zwischen dem zugehörigen <code>Raum</code>-Objekt und einem weiteren.
+     *
+     * <h3>Definition Revolute-Joint</h3>
+     * <p>Verbindet zwei <code>Raum</code>-Objekte <b>untrennbar an einem Anker-Punkt</b>. Die Objekte können sich
+     * ab sofort nur noch <b>relativ zueinander drehen</b>.</p>
+     * @param other     Das zweite <code>Raum</code>-Objekt, das ab sofort mit dem zugehörigen <code>Raum</code>-Objekt
+     *                  über einen <code>RevoluteJoint</code> verbunden sein soll.
+     * @param anchor    Der Ankerpunkt <b>relativ zum <u>zugehörigen</u> <code>Raum</code>-Objekt</b>. Es wird davon
+     *                  ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
+     * @return          Ein <code>RevoluteJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     * @see org.jbox2d.dynamics.joints.RevoluteJoint
+     */
+    @API
+    public RevoluteJoint createRevoluteJoint(Raum other, Vektor anchor) {
+        if(other.physikHandler.worldHandler() != raum.physikHandler.worldHandler()) {
+            Logger.error("Physik", "Die Raum-Objekte sind nicht an der selben Wurzel angemeldet. Sie können " +
+                    "deshalb (noch) nicht physikalisch verbunden werden.");
+            return null;
+        }
+        //Definiere den Joint
+        RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
+        revoluteJointDef.initialize(raum.physikHandler.getBody(), other.physikHandler.getBody(),
+                //raum.physikHandler.worldHandler().fromVektor(raum.position.get().alsVektor().summe(anchor)));
+                raum.physikHandler.worldHandler().fromVektor(anchor));
+        revoluteJointDef.collideConnected = false;
+
+        return (RevoluteJoint) raum.physikHandler.worldHandler().getWorld().createJoint(revoluteJointDef);
     }
 
     /* _________________________ Physik-Typ _________________________ */
