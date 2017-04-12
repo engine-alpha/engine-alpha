@@ -4,7 +4,7 @@ public abstract class FrameSubthread extends Thread {
     /**
      * Gibt an, ob dieser Thread gerade für eine framespezifische Berechnung aktiv ist.
      */
-    boolean frameActive;
+    private boolean frameActive;
 
     /**
      * Referenz auf den Master-Framethread, der diesen Subthread nutzt.
