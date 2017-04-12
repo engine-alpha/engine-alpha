@@ -18,15 +18,17 @@
  */
 
 package ea;
+
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
 import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -281,6 +283,13 @@ public abstract class Raum implements Comparable<Raum> {
 
             render(g);
 
+            if(EngineAlpha.isDebug()) {
+                //Visualisiere die Shape
+                float ppm = getPhysikHandler().worldHandler().getPixelProMeter();
+                Shape shape = createShape(ppm);
+                g.setColor(Color.red);
+                renderShape(shape, g, ppm);
+            }
 
             // ____ Post-Render ____
 
@@ -295,6 +304,33 @@ public abstract class Raum implements Comparable<Raum> {
             //System.out.println("R: " + position + " - " + rotation);
         }
 
+    }
+
+    /**
+     * Rendert eine Shape von JBox2D nach den gegebenen Voreinstellungen im Graphics-Objekt.
+     * @param shape Die Shape, die zu rendern ist.
+     * @param g     Das Graphics2D-Object, das die Shape rendern soll. Farbe & Co. sollte im Vorfeld eingestellt sein.
+     *              Diese Methode übernimmt nur das direkte Rendern
+     * @param pixelPerMeter die Umrechnungsgröße, von Meter (JBox2D) auf Pixel (EA)
+     */
+    @NoExternalUse
+    public static void renderShape(Shape shape, Graphics2D g, float pixelPerMeter) {
+        if(shape instanceof PolygonShape) {
+            PolygonShape polygonShape = (PolygonShape)shape;
+            Vec2[] vec2s = polygonShape.getVertices();
+            int[] xs = new int[polygonShape.getVertexCount()],
+                  ys = new int[polygonShape.getVertexCount()];
+            for(int i = 0; i < xs.length; i++){
+                xs[i] = (int)(vec2s[i].x*pixelPerMeter);
+                ys[i] = (int)(vec2s[i].y*pixelPerMeter);
+            }
+            g.drawPolygon(xs, ys, xs.length);
+        } else if(shape instanceof CircleShape) {
+            int diameter = (int)(((CircleShape)shape).m_radius*2*pixelPerMeter);
+            g.drawOval(0,0,diameter, diameter);
+        } else {
+            Logger.error("Debug/Render", "Konnte die Shape ("+shape+") nicht rendern. Unerwartete Shape.");
+        }
     }
 
     /**
