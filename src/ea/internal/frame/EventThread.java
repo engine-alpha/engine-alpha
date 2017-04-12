@@ -30,7 +30,7 @@ public class EventThread<E extends Dispatchable>
      * @param disp  Ein dispatchable-Objekt, das in der folgenden Frame-Logik ausgeführt werden soll.
      */
     public void enqueueDispatchableForNextFrame(E disp) {
-        if(isFrameActive()) {
+        while(isFrameActive()) {
             //Gerade arbeitet dieser Thread aktiv an der Abarbeitung der Queue. Warten, bis die Queue abgearbeitet ist.
             synchronized (lastFrameDispatchables) {
                 try {
@@ -53,16 +53,16 @@ public class EventThread<E extends Dispatchable>
      */
     @Override
     public final void frameLogic() {
-        while(!lastFrameDispatchables.isEmpty()) {
-            synchronized (dispatcherQueue) {
-                dispatcherQueue.add(lastFrameDispatchables.poll());
-            }
+        synchronized (this) {
+            dispatcherQueue.addAll(lastFrameDispatchables);
+            lastFrameDispatchables.clear();
         }
 
         //Fertig mit der Übertragung: Die Queue darf wieder gefüllt werden.
         synchronized (dispatcherQueue) {
             dispatcherQueue.notifyAll();
         }
+        frameActive = false;
         synchronized (lastFrameDispatchables) {
             lastFrameDispatchables.notifyAll();
         }

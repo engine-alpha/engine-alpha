@@ -23,6 +23,7 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
 import ea.internal.phy.WorldHandler;
+import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;

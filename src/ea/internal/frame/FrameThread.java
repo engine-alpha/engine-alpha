@@ -207,7 +207,7 @@ extends Thread {
 
             Logger.verboseInfo("Frame-System", "Frame-Start");
 
-            long tStart = System.currentTimeMillis();
+            long tStart = System.nanoTime();
 
             //Eigentliche Arbeit: Möglichst hoch parallelisiert
 
@@ -282,8 +282,8 @@ extends Thread {
 
             //ENDE der eigentlichen Arbeit
 
-            long tEnd = System.currentTimeMillis();
-            deltaT = tEnd - tStart;
+            long tEnd = System.nanoTime();
+            deltaT = (tEnd - tStart)/1000000;
 
 
 

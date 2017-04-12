@@ -85,7 +85,7 @@ extends FrameSubthread {
     @Override
     public void frameLogic() {
         synchronized (worldLock) {
-            Logger.verboseInfo("Frame-System", "Worldstep with dt="+deltaT);
+            Logger.verboseInfo("Frame-System", "dt="+deltaT);
             world.step(deltaT, velocityIterations, positionIterations);
         }
     }

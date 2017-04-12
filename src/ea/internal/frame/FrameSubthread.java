@@ -43,7 +43,7 @@ extends Thread {
     /**
      * Gibt an, ob dieser Thread gerade für eine framespezifische Berechnung aktiv ist.
      */
-    private boolean frameActive;
+    boolean frameActive;
 
     /**
      * Gibt an, ob dieser Thread gerade für eine framespezifische Berechnung aktiv ist.
