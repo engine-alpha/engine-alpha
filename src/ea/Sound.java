@@ -125,7 +125,7 @@ public class Sound {
                 DataLine.Info info = new DataLine.Info(SourceDataLine.class, decodedFormat);
                 SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 
-                line.open(decodedFormat);
+                line.open(decodedFormat, BUFFER_SIZE * 4);
 
                 ((FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN)).setValue(20 * (float) Math.log10(volume));
                 ((FloatControl) line.getControl(FloatControl.Type.BALANCE)).setValue(balance);
