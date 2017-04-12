@@ -6,6 +6,8 @@ import ea.internal.util.Logger;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
+import org.jbox2d.dynamics.joints.RopeJoint;
+import org.jbox2d.dynamics.joints.RopeJointDef;
 
 /**
  * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>physik</code> dieser Klasse.
@@ -279,6 +281,22 @@ public class Physik {
     /* _________________________ JOINTS _________________________ */
 
     /**
+     * Prüft ob das zugehörige <code>Raum</code>-Objekt in der selben JB2D World liegt wie das übergebene Objekt.
+     * Diese Logik ist ausgelagert, um den Code etwas schöner zu machen.
+     * @param other ein zweites <code>Raum</code>-Objekt zum testen.
+     * @return true = beide Objekte liegen in der selben World. Sonst false.
+     */
+    @NoExternalUse
+    private boolean assertSameWorld(Raum other) {
+        if(other.physikHandler.worldHandler() != raum.physikHandler.worldHandler()) {
+            Logger.error("Physik", "Die Raum-Objekte sind nicht an der selben Wurzel angemeldet. Sie können " +
+                    "deshalb (noch) nicht physikalisch verbunden werden.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Erstellt einen Revolute-Joint zwischen dem zugehörigen <code>Raum</code>-Objekt und einem weiteren.
      *
      * <h3>Definition Revolute-Joint</h3>
@@ -286,18 +304,15 @@ public class Physik {
      * ab sofort nur noch <b>relativ zueinander drehen</b>.</p>
      * @param other     Das zweite <code>Raum</code>-Objekt, das ab sofort mit dem zugehörigen <code>Raum</code>-Objekt
      *                  über einen <code>RevoluteJoint</code> verbunden sein soll.
-     * @param anchor    Der Ankerpunkt <b>relativ zum <u>zugehörigen</u> <code>Raum</code>-Objekt</b>. Es wird davon
+     * @param anchor    Der Ankerpunkt <b>auf der Zeichenebene</b>. Es wird davon
      *                  ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
      * @return          Ein <code>RevoluteJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
     public RevoluteJoint createRevoluteJoint(Raum other, Vektor anchor) {
-        if(other.physikHandler.worldHandler() != raum.physikHandler.worldHandler()) {
-            Logger.error("Physik", "Die Raum-Objekte sind nicht an der selben Wurzel angemeldet. Sie können " +
-                    "deshalb (noch) nicht physikalisch verbunden werden.");
-            return null;
-        }
+        if(!assertSameWorld(other)) return null;
+
         //Definiere den Joint
         RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
         revoluteJointDef.initialize(raum.physikHandler.getBody(), other.physikHandler.getBody(),
@@ -306,6 +321,35 @@ public class Physik {
         revoluteJointDef.collideConnected = false;
 
         return (RevoluteJoint) raum.physikHandler.worldHandler().getWorld().createJoint(revoluteJointDef);
+    }
+
+    /**
+     * Erstellt einen Rope-Joint zwischen diesem und einem weiteren <code>Raum</code>-Objekt.
+     * @param other     Das zweite <code>Raum</code>-Objekt, das ab sofort mit dem zugehörigen <code>Raum</code>-Objekt
+     *                  über einen <code>RopeJoint</code> verbunden sein soll.
+     * @param anchorA   Der Ankerpunkt für das zugehörige <code>Raum</code>-Objekt. Der erste Befestigungspunkt
+     *                  des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
+     * @param anchorB   Der Ankerpunkt für das zweite <code>Raum</code>-Objekt, also <code>other</code>.
+     *                  Der zweite Befestigungspunkt des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
+     * @param ropeLength    Die Länge des Lassos. Dies ist ab sofort die maximale Länge, die die beiden Ankerpunkte
+     *                      der Objekte voneinader entfernt sein können.
+     * @return  Ein <code>RopeJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     * @see org.jbox2d.dynamics.joints.RopeJoint
+     */
+    @API
+    public RopeJoint createRopeJoint(Raum other, Vektor anchorA, Vektor anchorB, float ropeLength) {
+        if(!assertSameWorld(other)) return null;
+
+        RopeJointDef ropeJointDef = new RopeJointDef();
+        ropeJointDef.bodyA = raum .physikHandler.getBody();
+        ropeJointDef.bodyB = other.physikHandler.getBody();
+
+        ropeJointDef.localAnchorA.set(raum.physikHandler.worldHandler().fromVektor(anchorA));
+        ropeJointDef.localAnchorB.set(raum.physikHandler.worldHandler().fromVektor(anchorB));
+        ropeJointDef.maxLength = ropeLength;
+
+        return (RopeJoint) raum.physikHandler.worldHandler().getWorld().createJoint(ropeJointDef);
+
     }
 
     /* _________________________ Physik-Typ _________________________ */
