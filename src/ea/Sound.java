@@ -38,6 +38,7 @@ import java.util.concurrent.Executors;
 @API
 public class Sound {
     private static final int BUFFER_SIZE = 8192;
+    private static final int MAX_CONCURRENT_PLAYS = 32;
     private static Executor executor;
 
     static {
@@ -48,6 +49,11 @@ public class Sound {
      * Komplette Sounddaten.
      */
     private final byte[] data;
+
+    /**
+     * Anzahl der aktuellen Abspiel-Threads dieses Sounds.
+     */
+    private int currentPlaybackCount = 0;
 
     /**
      * Erstellt ein neues Soundobjekt. Dieses kann den gleichen Sound mehrmals abpsielen.
@@ -90,7 +96,8 @@ public class Sound {
     /**
      * Spielt den Sound mit der gegebenen Lautstärke und der gegebenen Balance ab.
      *
-     * Spielt den Sound mehrfach zeitgleich ab, wenn diese Methode mehrmals aufgerufen wird.
+     * Spielt den Sound mehrfach zeitgleich ab, wenn diese Methode mehrmals aufgerufen wird, aber
+     * maximal {@link #MAX_CONCURRENT_PLAYS} mal gleichzeitig.
      *
      * @param volume Wert zwischen 0 (leise) und 1 (laut).
      * @param balance Wert zwischen -1 (nur links) und 1 (nur rechts).
@@ -100,7 +107,13 @@ public class Sound {
      */
     @API
     public void play(float volume, float balance) {
+        if (currentPlaybackCount > MAX_CONCURRENT_PLAYS) {
+            return;
+        }
+
         executor.execute(() -> {
+            currentPlaybackCount++;
+
             try {
                 InputStream is = new ByteArrayInputStream(data);
                 AudioInputStream ais = AudioSystem.getAudioInputStream(is);
@@ -143,6 +156,8 @@ public class Sound {
                 // ignore and skip sound
             } catch (UnsupportedAudioFileException e) {
                 Logger.error("Sound", "Sound-Format wird nicht unterstützt: " + e.getMessage());
+            } finally {
+                currentPlaybackCount--;
             }
         });
     }
