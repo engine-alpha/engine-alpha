@@ -53,7 +53,7 @@ public class AnimationsManager extends Manager implements AnimationsEndeReagierb
 	 * Konstruktor. Nur Intern benutzt, da Singleton.
 	 */
 	private AnimationsManager () {
-		super("Animations-Manager");
+		super();
 	}
 
 	/**

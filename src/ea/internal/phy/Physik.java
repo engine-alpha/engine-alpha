@@ -72,7 +72,7 @@ public class Physik extends Manager implements Ticker {
 	 * Konstruktor.
 	 */
 	private Physik () {
-		super("Physik-Management");
+		super();
 		Manager.standard.anmelden(new Ticker() {
 			public void tick () {
 				for (Auftrag a : kollisionsListe) {
