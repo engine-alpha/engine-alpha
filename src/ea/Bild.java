@@ -304,14 +304,14 @@ public class Bild extends Raum {
      */
     public void render(Graphics2D g) {
         if (!wiederholen) {
-            g.drawImage(img, (int) (position.x()), (int) (position.y()), null);
+            g.drawImage(img, 0, 0, null);
         } else {
             // Texturfarbe erstellen, Anchor-Rechteck hat genau die Bildmaße
-            Paint tp = new TexturePaint(img, new Rectangle2D.Double(position.x(), position.y(), img.getWidth(), img.getHeight()));
+            Paint tp = new TexturePaint(img, new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight()));
             // Texturfarbe setzen
             g.setPaint(tp);
             // Rechteck füllen
-            g.fill(new Rectangle2D.Double(position.x(), position.y(), breite, hoehe));
+            g.fill(new Rectangle2D.Double(0, 0, breite, hoehe));
         }
     }
 }
