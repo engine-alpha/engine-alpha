@@ -26,138 +26,111 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-@API
 public class Sound {
-	private byte[] data;
+    private byte[] data;
 
-	private SampledSound ss;
+    private SampledSound ss;
 
-    @API
-	public Sound (String datei) {
-		try {
-			data = loadFromStream(new FileInputStream(datei));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static byte[] loadFromStream (InputStream is) {
-		byte[] bytes;
-
-		if (is == null) {
-			return null;
-		}
-
-		try {
-			bytes = new byte[is.available()];
-
-			int off = 0;
-			int n;
-
-			while (off < bytes.length && (n = is.read(bytes, off, bytes.length - off)) >= 0) {
-				off += n;
-			}
-
-			is.close();
-
-			return bytes;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return null;
-	}
-
-    @API
-	public void play () {
-		if (ss != null) {
-			ss.stopSound();
-
-			try {
-				ss.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			ss = null;
-		}
-
-		if (data != null) {
-			ss = new SampledSound(data, false);
-			ss.start();
-		}
-	}
-
-    @API
-	public void loop () {
-		if (ss != null) {
-			ss.stopSound();
-
-			try {
-				ss.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			ss = null;
-		}
-
-		if (data != null) {
-			ss = new SampledSound(data, true);
-			ss.start();
-		}
-	}
-
-	public void pause () {
-		if (ss == null) {
-			return;
-		}
-
-		ss.pauseSound(true);
-        clip = null;
-    }
-
-    @API
-    public void pause() {
-        if (clip == null || paused) {
-            return;
-        }
-
-        if (clip.isRunning()) {
-            paused = true;
-            clip.stop();
+    public Sound (String datei) {
+        try {
+            data = loadFromStream(new FileInputStream(datei));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
-    @API
-    public void unpause() {
-        if (clip == null || !paused) {
+    public static byte[] loadFromStream (InputStream is) {
+        byte[] bytes;
+
+        if (is == null) {
+            return null;
+        }
+
+        try {
+            bytes = new byte[is.available()];
+
+            int off = 0;
+            int n;
+
+            while (off < bytes.length && (n = is.read(bytes, off, bytes.length - off)) >= 0) {
+                off += n;
+            }
+
+            is.close();
+
+            return bytes;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+    public void play () {
+        if (ss != null) {
+            ss.stopSound();
+
+            try {
+                ss.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            ss = null;
+        }
+
+        if (data != null) {
+            ss = new SampledSound(data, false);
+            ss.start();
+        }
+    }
+
+    public void loop () {
+        if (ss != null) {
+            ss.stopSound();
+
+            try {
+                ss.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            ss = null;
+        }
+
+        if (data != null) {
+            ss = new SampledSound(data, true);
+            ss.start();
+        }
+    }
+
+    public void pause () {
+        if (ss == null) {
             return;
         }
 
-        paused = false;
-        clip.start();
-	}
+        ss.pauseSound(true);
+    }
 
-	public void unpause () {
-		if (ss == null) {
-			return;
-		}
+    public void unpause () {
+        if (ss == null) {
+            return;
+        }
 
-		ss.pauseSound(false);
-	}
+        ss.pauseSound(false);
+    }
 
-	public void stop () {
-		if (ss == null) {
-			return;
-		}
+    public void stop () {
+        if (ss == null) {
+            return;
+        }
 
-		ss.stopSound();
-	}
+        ss.stopSound();
+    }
 }
