@@ -259,9 +259,13 @@ public abstract class Raum implements Comparable<Raum> {
         if (sichtbar && this.camcheck(r)) {
 
             //Hole Rotation und Position absolut auf der Zeichenebene.
-            float rotation = physikHandler.rotation();
-            Punkt position = physikHandler.position();
+            float rotation;
+            Punkt position;
 
+            synchronized (physikHandler.getBody()) {
+                rotation = physikHandler.rotation();
+                position = physikHandler.position();
+            }
 
             // ____ Pre-Render ____
 
