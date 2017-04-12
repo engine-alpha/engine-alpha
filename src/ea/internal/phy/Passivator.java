@@ -298,7 +298,6 @@ public class Passivator extends PhysikClient {
 	 */
 	public void xVersch (float dX) {
 		int z; int max;
-		float originalX = dX;
 		dX += remainderX;
 		if (dX > 0) {
 			z = 1;

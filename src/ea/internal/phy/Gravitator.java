@@ -79,6 +79,8 @@ public class Gravitator extends PhysikClient {
 	 */
 	private int kritischeTiefe;
 
+	private float remainderX=0, remainderY=0;
+
 	/**
 	 * Konstruktor.
 	 *
@@ -387,22 +389,29 @@ public class Gravitator extends PhysikClient {
 	 */
 	public boolean xVersch (float dX) {
 		float z;
+		int max;
+		dX += remainderX;
 		if (dX > 0) {
 			z = 1;
+			max = (int) dX;
 		} else if (dX < 0) {
 			z = -1;
-			dX = -dX;
+			max = - (int)dX;
 		} else {
+			remainderX = dX;
 			return true;
 		}
+
 		Vektor v = new Vektor(z, 0);
-		for (int i = 0; i < dX; i++) {
+		for (int i = 0; i < max; i++) {
 			BoundingRechteck test = ziel.dimension().verschobeneInstanz(v);
 			if (physik.inPassivem(test)) {
 				return false;
 			}
 			ziel.verschieben(v);
+			dX = dX-z;
 		}
+		remainderX = dX;
 		return true;
 	}
 
@@ -418,16 +427,20 @@ public class Gravitator extends PhysikClient {
 	 */
 	public boolean yVersch (float dY) {
 		float z;
+		int max;
+		dY += remainderX;
 		if (dY > 0) {
 			z = 1;
+			max = (int) dY;
 		} else if (dY < 0) {
 			z = -1;
-			dY = -dY;
+			max = - (int)dY;
 		} else {
+			remainderY = dY;
 			return true;
 		}
 		Vektor v = new Vektor(0, z);
-		for (int i = 0; i < dY; i++) {
+		for (int i = 0; i < max; i++) {
 			BoundingRechteck test = ziel.dimension().verschobeneInstanz(v);
 			if (physik.inPassivem(test)) {
 				yTrend = 0;
@@ -439,7 +452,9 @@ public class Gravitator extends PhysikClient {
 			}
 			zuletztGefallen = true;
 			ziel.verschieben(v);
+			dY = dY-z;
 		}
+		remainderY = dY;
 		return true;
 	}
 }
