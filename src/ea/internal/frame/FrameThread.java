@@ -208,7 +208,7 @@ public class FrameThread
         lastFrameTime = maxmillis;
 
         while (sollLaufen && !interrupted()) {
-            long tStart = System.currentTimeMillis();
+            long tStart = System.nanoTime();
 
             // Render-Thread (läuft vollkommen parallel)
             renderThread.startFrame();
@@ -248,8 +248,8 @@ public class FrameThread
                 interrupt();
             }
 
-            long tEnd = System.currentTimeMillis();
-            deltaT = tEnd - tStart;
+            long tEnd = System.nanoTime();
+            deltaT = (tEnd - tStart)/1000000;
 
             // ggf. warten:
             if (deltaT < maxmillis) {

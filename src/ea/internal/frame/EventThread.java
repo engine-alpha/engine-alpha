@@ -47,5 +47,6 @@ public class EventThread<E extends Dispatchable> extends ProducerThread {
 
             dispatcherQueue.notifyAll();
         }
+        frameActive = false;
     }
 }

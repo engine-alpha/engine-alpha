@@ -160,7 +160,8 @@ public class Logger {
 	 */
 	public static void verboseInfo(String tag, String s) {
 		if(ea.EngineAlpha.isVerbose()) {
-			info(tag, s);
+			StackTraceElement e = Thread.currentThread().getStackTrace()[2];
+			write("VER",tag, e.getFileName(),e.getLineNumber(), s, false, false);
 		}
 	}
 
