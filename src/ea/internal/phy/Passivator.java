@@ -40,6 +40,11 @@ public class Passivator extends PhysikClient {
 	private volatile Knoten system;
 
 	/**
+	 * Speichert den Übertrag (Restbewegungen kleiner als 1 px) für das nächste Mal
+	 */
+	private float remainderX=0, remainderY=0;
+
+	/**
 	 * Konstruktor.
 	 *
 	 * @param ziel
@@ -62,8 +67,8 @@ public class Passivator extends PhysikClient {
 	 */
 	@Override
 	public boolean bewegen (Vektor v) {
-		xVersch((int) v.x);
-		yVersch((int) v.y);
+		xVersch(v.x);
+		yVersch(v.y);
 		return true;
 	}
 
@@ -291,25 +296,34 @@ public class Passivator extends PhysikClient {
 	 * @param dX
 	 * 		Die X-Aenderung
 	 */
-	public void xVersch (int dX) {
-		int z;
+	public void xVersch (float dX) {
+		int z; int max;
+		float originalX = dX;
+		dX += remainderX;
 		if (dX > 0) {
 			z = 1;
+			max = (int)dX;
 		} else if (dX < 0) {
 			z = -1;
-			dX = -dX;
+			max= (int)-dX;
 		} else {
+			remainderX = dX;
 			return;
 		}
+
+		//
+
 		Vektor v = new Vektor(z, 0);
 		Vektor testV = new Vektor(z, -1);
-		for (int i = 0; i < dX; i++) {
+		for (int i = 0; i < max; i++) {
 			system.leerenOhnePhysikAbmelden();
 			system.add(ziel);
 			BoundingRechteck test = ziel.dimension().verschErhoeht(testV, 1);
 			physik.alleAktivenTestenUndEinsetzen(system, test, v);
 			system.verschieben(v);
+			dX=dX-z;
 		}
+		remainderX = dX;
 	}
 
 	/**
@@ -318,24 +332,33 @@ public class Passivator extends PhysikClient {
 	 * @param dY
 	 * 		Die Y-Aenderung
 	 */
-	public void yVersch (int dY) {
+	public void yVersch (float dY) {
+		float originalY = dY;
+		dY += remainderY;
 		int z;
+		int max;
 		if (dY > 0) {
 			z = 1;
+			max = (int)dY;
 		} else if (dY < 0) {
 			z = -1;
-			dY = -dY;
+			max = (int) -dY;
 		} else {
+			remainderY = dY;
 			return;
 		}
+		//System.out.println("X, orig=" + originalY + " --- z="+z+" - max="+max+" - Remainder=" + remainderX);
+
 		Vektor v = new Vektor(0, z);
-		for (int i = 0; i < dY; i++) {
+		for (int i = 0; i < max; i++) {
 			system.leerenOhnePhysikAbmelden();
 			system.add(ziel);
 			BoundingRechteck test = ziel.dimension().verschErhoeht(Vektor.OBEN, 1);
 			physik.alleAktivenTestenUndEinsetzenOhne(system, test, v, this);
 			system.verschieben(v);
+			dY = dY-z;
 		}
+		remainderY = dY;
 	}
 
 	/**
