@@ -24,11 +24,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class AnimationsManagerTest {
+
+	public static final double DELTA = 1e-15;
+
 	@Test
 	public void intervall () {
-		assertEquals(AnimationsManager.intervall(-1), 1);
-		assertEquals(AnimationsManager.intervall(0), 1);
-		assertEquals(AnimationsManager.intervall(1), 1);
-		assertEquals(AnimationsManager.intervall(3), 3);
+		assertEquals(AnimationsManager.intervall(-1), 1, DELTA);
+		assertEquals(AnimationsManager.intervall(0), 1, DELTA);
+		assertEquals(AnimationsManager.intervall(1), 1, DELTA);
+		assertEquals(AnimationsManager.intervall(3), 3, DELTA);
 	}
 }
