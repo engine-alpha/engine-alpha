@@ -24,8 +24,14 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.joints.DistanceJoint;
+import org.jbox2d.dynamics.joints.Joint;
+import org.jbox2d.dynamics.joints.RevoluteJoint;
+import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -50,7 +56,7 @@ public class Kamera {
     /**
      * Die Zeichenebene, auf die sie "blickt"
      */
-    private Zeichenebene ebene;
+    private final Zeichenebene ebene;
 
     /**
      * Die aktuelle Bemessung der Kameraperspektive
@@ -339,6 +345,8 @@ public class Kamera {
             kameraAuschschnitt = kameraAuschschnitt.in(bounds);
         }
 
+        AffineTransform transform = g.getTransform();
+
         //Setze Clip mit etwas Extra-Rand (Rundungsfehler von Float zu Int)
         g.setClip(0,0, (int) (kameraAuschschnitt.breite)+4, (int) (kameraAuschschnitt.hoehe)+4);
 
@@ -371,6 +379,17 @@ public class Kamera {
                 g.drawString("" + y, tx + 10, y + 20);
             }
 
+
+
+            //Display Joints
+            Joint j = ebene.basis() .physikHandler .worldHandler() .getWorld() .getJointList();
+
+            while(j != null) {
+                renderJoint(j, g);
+                j = j.m_next;
+            }
+
+
             g.translate(tx, ty);
 
             //Display FPS
@@ -388,9 +407,34 @@ public class Kamera {
             g.drawString(fpsMessage, 10, 30);
         }
 
-        g.scale(1/zoom, 1/zoom);
+        g.setTransform(transform);
+    }
 
-        g.translate(-kameraAuschschnitt.x, -kameraAuschschnitt.y);
+    private void renderJoint(Joint j, Graphics2D g) {
+        final int CIRC_RAD=10; //(Basis-)Radius für die Visualisierung von Kreisen
+        final int RECT_SID=12; //(Basis-)Breite für die VIsualisierung von Rechtecken
+
+        Vec2 anchorA = new Vec2(), anchorB = new Vec2();
+        j.getAnchorA(anchorA);
+        j.getAnchorB(anchorB);
+
+        Vektor aOnZE =ebene.basis().physikHandler.worldHandler().fromVec2(anchorA);
+        Vektor bOnZE =ebene.basis().physikHandler.worldHandler().fromVec2(anchorB);
+
+        if(j instanceof RevoluteJoint) {
+            g.setColor(Color.blue);
+            g.drawOval((int)aOnZE.realX()-(CIRC_RAD/2), (int)aOnZE.realY()-(CIRC_RAD/2), CIRC_RAD, CIRC_RAD);
+        } else if (j instanceof RopeJoint) {
+            g.setColor(Color.cyan);
+            g.drawRect((int)aOnZE.realX()-(CIRC_RAD/2), (int)aOnZE.realY()-(CIRC_RAD/2), RECT_SID, RECT_SID);
+            g.drawRect((int)bOnZE.realX()-(CIRC_RAD/2), (int)bOnZE.realY()-(CIRC_RAD/2), RECT_SID, RECT_SID);
+            g.drawLine((int)aOnZE.realX(),(int)aOnZE.realY(),(int)bOnZE.realX(), (int)bOnZE.realY());
+        } else if (j instanceof DistanceJoint) {
+            g.setColor(Color.orange);
+            g.drawRect((int)aOnZE.realX()-(CIRC_RAD/2), (int)aOnZE.realY()-(CIRC_RAD/2), RECT_SID, RECT_SID);
+            g.drawRect((int)bOnZE.realX()-(CIRC_RAD/2), (int)bOnZE.realY()-(CIRC_RAD/2), RECT_SID, RECT_SID);
+            g.drawLine((int)aOnZE.realX(),(int)aOnZE.realY(),(int)bOnZE.realX(), (int)bOnZE.realY());
+        }
     }
 
     /**

@@ -4,10 +4,7 @@ import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.joints.RevoluteJoint;
-import org.jbox2d.dynamics.joints.RevoluteJointDef;
-import org.jbox2d.dynamics.joints.RopeJoint;
-import org.jbox2d.dynamics.joints.RopeJointDef;
+import org.jbox2d.dynamics.joints.*;
 
 /**
  * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>physik</code> dieser Klasse.
@@ -350,6 +347,32 @@ public class Physik {
 
         return (RopeJoint) raum.physikHandler.worldHandler().getWorld().createJoint(ropeJointDef);
 
+    }
+
+    /**
+     * Erstellt einen Distance-Joint zwischen diesem und einem weiteren <code>Raum</code>-Objekt.
+     * @param other     Das zweite <code>Raum</code>-Objekt, das ab sofort mit dem zugehörigen <code>Raum</code>-Objekt
+     *                  über einen <code>DistanceJoint</code> verbunden sein soll.
+     * @param anchorAAsWorldPos Der Ankerpunkt für das zugehörige <code>Raum</code>-Objekt. Der erste Befestigungspunkt
+     *                  des Joints. Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
+     * @param anchorBAsWorldPos Der Ankerpunkt für das zweite <code>Raum</code>-Objekt, also <code>other</code>.
+     *                  Der zweite Befestigungspunkt des Joints.
+     *                  Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
+     * @return          Ein <code>DistanceJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     * @see org.jbox2d.dynamics.joints.DistanceJoint
+     */
+    @API
+    public DistanceJoint createDistanceJoint(Raum other, Vektor anchorAAsWorldPos, Vektor anchorBAsWorldPos) {
+        if(!assertSameWorld(other)) return null;
+
+        DistanceJointDef distanceJointDef = new DistanceJointDef();
+        distanceJointDef.initialize(
+                raum.physikHandler.getBody(),
+                other.physikHandler.getBody(),
+                raum.physikHandler.worldHandler().fromVektor(anchorAAsWorldPos),
+                raum.physikHandler.worldHandler().fromVektor(anchorBAsWorldPos));
+
+        return (DistanceJoint) raum.physikHandler.worldHandler().getWorld().createJoint(distanceJointDef);
     }
 
     /* _________________________ Physik-Typ _________________________ */

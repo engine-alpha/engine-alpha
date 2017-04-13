@@ -45,34 +45,34 @@ import java.awt.geom.AffineTransform;
  */
 public abstract class Raum implements Comparable<Raum> {
 
-	/**
-	 * Gibt an, ob das Objekt zur Zeit ueberhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall,
-	 * so wird die Zeichenroutine direkt uebergangen.
-	 */
-	private boolean sichtbar = true;
+    /**
+     * Gibt an, ob das Objekt zur Zeit ueberhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall,
+     * so wird die Zeichenroutine direkt uebergangen.
+     */
+    private boolean sichtbar = true;
 
-	/**
-	 * Z-Index des Raumes, je höher, desto weiter oben wird der Raum gezeichnet
-	 */
-	private int zIndex = 1;
+    /**
+     * Z-Index des Raumes, je höher, desto weiter oben wird der Raum gezeichnet
+     */
+    private int zIndex = 1;
 
-	/**
-	 * Opacity = Durchsichtigkeit des Raumes
-	 * <p/>
-	 * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Bild.</li>
-	 * <li><code>1.0f</code> entspricht einem undurchsichtigem Bild.</li></ul>
-	 */
-	private float opacity = 1;
+    /**
+     * Opacity = Durchsichtigkeit des Raumes
+     * <p/>
+     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Bild.</li>
+     * <li><code>1.0f</code> entspricht einem undurchsichtigem Bild.</li></ul>
+     */
+    private float opacity = 1;
 
-	/**
-	 * Composite des Grafik-Objekts. Zwischenspeicherung des letzten Zustands
-	 */
-	private Composite composite;
+    /**
+     * Composite des Grafik-Objekts. Zwischenspeicherung des letzten Zustands
+     */
+    private Composite composite;
 
     /**
      * Die Implementierung der Body-Erstellungsstrategie.
      */
-	private BodyCreateStrategy bodyCreateStrategy;
+    private BodyCreateStrategy bodyCreateStrategy;
 
     /**
      * Der JB2D-Handler für dieses spezifische Objekt.
@@ -230,26 +230,26 @@ public abstract class Raum implements Comparable<Raum> {
         physikHandler = new NullHandler(this);
     }
 
-	/**
-	 * Hilfsmethode für die Sortierung der Räume nach dem Z-Index. <b><i>Diese Methode sollte nicht
-	 * außerhalb der Engine verwendet werden.</i></b>
-	 *
-	 * @see #zIndex
-	 * @see #zIndexSetzen(int)
-	 */
-	@Override
-	@NoExternalUse
-	public int compareTo (Raum r) {
-		if (zIndex < r.zIndex) {
-			return 1;
-		}
+    /**
+     * Hilfsmethode für die Sortierung der Räume nach dem Z-Index. <b><i>Diese Methode sollte nicht
+     * außerhalb der Engine verwendet werden.</i></b>
+     *
+     * @see #zIndex
+     * @see #zIndexSetzen(int)
+     */
+    @Override
+    @NoExternalUse
+    public int compareTo (Raum r) {
+        if (zIndex < r.zIndex) {
+            return 1;
+        }
 
-		if (zIndex > r.zIndex) {
-			return -1;
-		}
+        if (zIndex > r.zIndex) {
+            return -1;
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
     /**
      * Die Basiszeichenmethode.<br /> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese
@@ -332,7 +332,7 @@ public abstract class Raum implements Comparable<Raum> {
             PolygonShape polygonShape = (PolygonShape)shape;
             Vec2[] vec2s = polygonShape.getVertices();
             int[] xs = new int[polygonShape.getVertexCount()],
-                  ys = new int[polygonShape.getVertexCount()];
+                    ys = new int[polygonShape.getVertexCount()];
             for(int i = 0; i < xs.length; i++){
                 xs[i] = (int)(vec2s[i].x*pixelPerMeter);
                 ys[i] = (int)(vec2s[i].y*pixelPerMeter);
@@ -423,7 +423,7 @@ public abstract class Raum implements Comparable<Raum> {
      */
     @Override
     public void finalize()
-    throws Throwable {
+            throws Throwable {
         super.finalize();
         //Logge die Zerstörung
         Logger.verboseInfo("Raum", "Raum-Objekt in Garbage Collection: " + toString());

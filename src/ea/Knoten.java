@@ -314,4 +314,9 @@ public class Knoten extends Raum {
             // Wahrscheinlich wurde die Liste geleert.
         }
     }
+
+    @NoExternalUse
+	public WorldHandler getWorldHandler() {
+		return worldHandler;
+	}
 }

@@ -31,7 +31,7 @@ public class Zeichenebene {
 	/**
 	 * Der absolute Basisknoten.<br /> Hieran
 	 */
-	private Knoten basis = new Knoten();
+	private final Knoten basis = new Knoten();
 
 	/**
 	 * Konstruktor für Objekte der Klasse Zeichenebene
