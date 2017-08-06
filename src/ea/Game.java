@@ -116,16 +116,6 @@ public abstract class Game
     @API
 	public final Kamera kamera;
 
-	/**
-	 * Dieser String ist <b>immer das korrekte, Systemabhaengige Pfadtrenner</b>-Literal, das ganz
-	 * einfach bei Pfadangaben verwendet werden kann:<br /> <br /> <code> String verzeichnis =
-	 * "meinOrdner" + "meinDarinLiegenderUnterordner" + "meineDatei.eaf"; </code>
-	 */
-    @API
-	public final String pfadtrenner = DateiManager.sep;
-
-
-
     // ~~~~~ Handles ~~~~~
 
     /**

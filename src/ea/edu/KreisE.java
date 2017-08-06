@@ -21,6 +21,8 @@ package ea.edu;
 
 import ea.raum.Kreis;
 
+import java.awt.*;
+
 /**
  * Ein einfacher "edu"-Dummie-Kreis.
  *
@@ -35,7 +37,7 @@ public class KreisE extends Kreis {
 	 */
 	public KreisE () {
 		super(300, 200, 100);
-		setColor("Blau");
+		setColor(Color.blue);
 		FensterE.getFenster().wurzel.add(this);
 	}
 }

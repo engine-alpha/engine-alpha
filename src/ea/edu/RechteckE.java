@@ -21,6 +21,8 @@ package ea.edu;
 
 import ea.raum.Rechteck;
 
+import java.awt.*;
+
 /**
  * Ein einfaches "edu"-Dummmie-Rechteck.
  *
@@ -35,7 +37,7 @@ public class RechteckE extends Rechteck {
 	 */
 	public RechteckE () {
 		super(50, 200, 200, 130);
-		setColor("Rot");
+		setColor(Color.red);
 		FensterE.getFenster().wurzel.add(this);
 	}
 }

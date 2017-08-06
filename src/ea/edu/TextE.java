@@ -21,6 +21,8 @@ package ea.edu;
 
 import ea.raum.Text;
 
+import java.awt.*;
+
 public class TextE extends Text {
 	/**
 	 * Konstruktor erstellt einen fertig sichtbaren Text. Seine Position lässt sich leicht über die
@@ -31,7 +33,7 @@ public class TextE extends Text {
 	 */
 	public TextE (String content) {
 		super(content, 100, 140);
-		farbeSetzen("Gruen");
+		setColor(Color.green);
 		FensterE.getFenster().wurzel.add(this);
 	}
 }
