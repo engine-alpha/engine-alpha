@@ -28,6 +28,5 @@ public interface Ticker {
     /**
      * TODO 4.0 Dokui
      */
-    public abstract void tick();
+    void tick();
 }
-
