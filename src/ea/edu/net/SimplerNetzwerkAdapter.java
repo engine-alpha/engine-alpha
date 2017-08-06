@@ -19,7 +19,7 @@
 
 package ea.edu.net;
 
-import ea.Empfaenger;
+import ea.network.Empfaenger;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 

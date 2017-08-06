@@ -1,6 +1,6 @@
 package ea.internal.phy;
 
-import ea.Raum;
+import ea.raum.Raum;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 

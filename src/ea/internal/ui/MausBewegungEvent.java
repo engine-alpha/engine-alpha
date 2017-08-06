@@ -1,10 +1,9 @@
 package ea.internal.ui;
 
-import ea.MausBewegungReagierbar;
+import ea.mouse.MausBewegungReagierbar;
 import ea.Vektor;
 import ea.internal.gui.Fenster;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

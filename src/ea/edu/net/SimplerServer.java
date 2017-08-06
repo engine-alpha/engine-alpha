@@ -19,7 +19,7 @@
 
 package ea.edu.net;
 
-import ea.Server;
+import ea.network.Server;
 
 /**
  * Ein <code>SimplerServer</code> ist die vereinfachte Version der Serverseite

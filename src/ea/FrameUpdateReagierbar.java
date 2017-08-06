@@ -1,11 +1,12 @@
 package ea;
 
+import ea.handle.Anmelden;
 import ea.internal.ano.API;
 
 /**
  * Beschreibt ein Objekt, dass auf jedes Frame-Update reagieren kann.
  *
- * @see ea.Anmelden
+ * @see Anmelden
  *
  * Created by andonie on 06.09.15.
  */
@@ -17,7 +18,7 @@ public interface FrameUpdateReagierbar {
      * erneut aufgerufen.
      * @param ts    Die Zeit <b>in Sekunden</b>, die seit dem letzten
      *              Update vergangen ist.
-     * @see   ea.Anmelden#frameUpdateReagierbar(ea.FrameUpdateReagierbar)
+     * @see   Anmelden#frameUpdateReagierbar(ea.FrameUpdateReagierbar)
      */
     @API
     public abstract void frameUpdate(float ts);

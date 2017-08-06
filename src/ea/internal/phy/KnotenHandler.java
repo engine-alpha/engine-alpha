@@ -1,7 +1,10 @@
 package ea.internal.phy;
 
 import ea.*;
+import ea.handle.Physik;
 import ea.internal.util.Logger;
+import ea.raum.Knoten;
+import ea.raum.Raum;
 import org.jbox2d.dynamics.Body;
 
 /**

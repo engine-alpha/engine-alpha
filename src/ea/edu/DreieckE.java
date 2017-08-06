@@ -19,7 +19,7 @@
 
 package ea.edu;
 
-import ea.Dreieck;
+import ea.raum.Dreieck;
 import ea.Punkt;
 
 /**

@@ -19,7 +19,7 @@
 
 package ea.edu.net;
 
-import ea.Client;
+import ea.network.Client;
 
 /**
  * Ein <code>SimpleClient</code> ist die vereinfachte Version der Clientseite

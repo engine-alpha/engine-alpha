@@ -19,7 +19,7 @@
 
 package ea.edu;
 
-import ea.Bild;
+import ea.raum.Bild;
 
 /**
  * Diese Klasse wrapt die Funktionen der Klasse <code>Bild</code> und stellt sie für die lokale

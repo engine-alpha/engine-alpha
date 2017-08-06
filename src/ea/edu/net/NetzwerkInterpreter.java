@@ -19,9 +19,9 @@
 
 package ea.edu.net;
 
-import ea.Empfaenger;
-import ea.NetzwerkVerbindung;
-import ea.Server;
+import ea.network.Empfaenger;
+import ea.network.NetzwerkVerbindung;
+import ea.network.Server;
 import ea.internal.frame.FrameThread;
 import ea.internal.util.Logger;
 import ea.internal.frame.Dispatchable;

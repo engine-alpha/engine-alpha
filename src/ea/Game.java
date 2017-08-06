@@ -19,17 +19,19 @@
 
 package ea;
 
+import ea.handle.Anmelden;
+import ea.handle.FensterHandle;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gui.*;
 import ea.internal.util.Logger;
+import ea.keyboard.Taste;
+import ea.keyboard.TastenReagierbar;
+import ea.mouse.Maus;
+import ea.raum.Knoten;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,7 +75,7 @@ public abstract class Game
 	 * Handle-Klasse) zuzugreifen.
      */
     @NoExternalUse
-    final Fenster real_fenster;
+    public final Fenster real_fenster;
 
     /**
      * Gibt an, ob bei Escape-Druck das Spiel beendet werden soll.
@@ -154,7 +156,7 @@ public abstract class Game
      * </ul>
      */
     @API
-    public final FensterHelper fenster;
+    public final FensterHandle fenster;
 
 
 
@@ -213,7 +215,7 @@ public abstract class Game
 
         // ------------- Die Handles -------------
         this.anmelden = new Anmelden(this);
-        this.fenster = new FensterHelper(this);
+        this.fenster = new FensterHandle(this);
         this.maus = real_fenster.getMaus();
     }
 
@@ -377,7 +379,7 @@ public abstract class Game
      * @return  der Font, der für Dialogfenster genutzt werden soll.
      */
     @NoExternalUse
-    Font getFont() {
+    public Font getFont() {
         return font;
     }
 
@@ -386,7 +388,7 @@ public abstract class Game
      * @param font  Der Font für Dialogfenster.
      */
     @NoExternalUse
-    void fontSetzen(Font font) {
+    public void fontSetzen(Font font) {
         this.font = font;
     }
 
@@ -398,7 +400,7 @@ public abstract class Game
      * 		Der Code dieser Taste zu den Codes:<br /> Siehe http://engine-alpha.org/wiki/Tastaturtabelle
      * 		für eine vollständige Tabelle
      *
-     * @see ea.Taste
+     * @see Taste
      */
     @NoExternalUse
     @Override
@@ -455,7 +457,7 @@ public abstract class Game
      * 		Code der gedrückten Taste<br />Siehe http://engine-alpha.org/wiki/Tastaturtabelle für eine
      * 		vollständige Tabelle
      *
-     * @see ea.TastenReagierbar
+     * @see TastenReagierbar
      */
     @API
     public abstract void tasteReagieren (int code);

@@ -19,7 +19,7 @@
 
 package ea.edu;
 
-import ea.Kreis;
+import ea.raum.Kreis;
 
 /**
  * Ein einfacher "edu"-Dummie-Kreis.

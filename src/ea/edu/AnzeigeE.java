@@ -21,6 +21,11 @@ package ea.edu;
 
 import ea.*;
 import ea.internal.util.Logger;
+import ea.keyboard.TastenReagierbar;
+import ea.mouse.KlickReagierbar;
+import ea.mouse.Maus;
+import ea.mouse.RechtsKlickReagierbar;
+import ea.raum.Text;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -254,7 +259,7 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 	 * @param o
 	 * 		Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Tastendruck informiert.
 	 *
-	 * @see ea.TastenReagierbar
+	 * @see TastenReagierbar
 	 */
 	public void tastenReagierbarAnmelden (Object o) {
 		Class<?> klasse = o.getClass();
@@ -345,7 +350,7 @@ public class AnzeigeE implements Ticker, TastenReagierbar, KlickReagierbar, Rech
 	 * @param code
 	 * 		Der Tastaturcode des Tastendrucks
 	 *
-	 * @see ea.TastenReagierbar
+	 * @see TastenReagierbar
 	 */
 	@Override
 	public void reagieren (int code) {

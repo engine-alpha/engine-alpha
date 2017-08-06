@@ -2,11 +2,13 @@ package ea.internal.phy;
 
 import ea.*;
 
+import ea.collision.KollisionsReagierbar;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.frame.FrameThread;
 import ea.internal.frame.WorldThread;
 import ea.internal.frame.Dispatchable;
 import ea.internal.util.Logger;
+import ea.raum.Raum;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -312,7 +314,7 @@ implements ContactListener {
         private final KollisionsReagierbar<E> reagierbar;  //Aufzurufen
         private final Body body2;                       //Der zweite Body (erster Body ist Hashmap-Schlüssel)
         private final E collider;                       //Das Raum-Objekt, das neben dem Actor angemeldet wurde
-        private final FrameThread frameThread;          //Zum ea.Anmelden des Dispatches
+        private final FrameThread frameThread;          //Zum ea.handle.Anmelden des Dispatches
 
         private final Dispatchable begin = new Dispatchable() {
             @Override

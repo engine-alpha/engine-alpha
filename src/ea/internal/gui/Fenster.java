@@ -28,10 +28,14 @@ import ea.internal.phy.WorldHandler;
 import ea.internal.ui.KeyUIEvent;
 import ea.internal.ui.KlickEvent;
 import ea.internal.util.Logger;
+import ea.keyboard.Taste;
+import ea.keyboard.TastenLosgelassenReagierbar;
+import ea.keyboard.TastenReagierbar;
+import ea.mouse.Maus;
+import ea.raum.Knoten;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 

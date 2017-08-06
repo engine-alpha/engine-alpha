@@ -24,6 +24,8 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Zeichenebene;
 import ea.internal.gui.Fenster;
 import ea.internal.util.Logger;
+import ea.raum.Knoten;
+import ea.raum.Raum;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.DistanceJoint;
 import org.jbox2d.dynamics.joints.Joint;
@@ -382,7 +384,7 @@ public class Kamera {
 
 
             //Display Joints
-            Joint j = ebene.basis() .physikHandler .worldHandler() .getWorld() .getJointList();
+            Joint j = ebene.basis() .getPhysikHandler() .worldHandler() .getWorld() .getJointList();
 
             while(j != null) {
                 renderJoint(j, g);
@@ -418,8 +420,8 @@ public class Kamera {
         j.getAnchorA(anchorA);
         j.getAnchorB(anchorB);
 
-        Vektor aOnZE =ebene.basis().physikHandler.worldHandler().fromVec2(anchorA);
-        Vektor bOnZE =ebene.basis().physikHandler.worldHandler().fromVec2(anchorB);
+        Vektor aOnZE =ebene.basis().getPhysikHandler().worldHandler().fromVec2(anchorA);
+        Vektor bOnZE =ebene.basis().getPhysikHandler().worldHandler().fromVec2(anchorB);
 
         if(j instanceof RevoluteJoint) {
             g.setColor(Color.blue);

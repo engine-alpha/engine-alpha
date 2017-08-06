@@ -19,7 +19,7 @@
 
 package ea.internal.gra;
 
-import ea.Knoten;
+import ea.raum.Knoten;
 
 /**
  * Die Zeichenebene ist die Sammlung aller zu malenden Objekte.<br /> Aufgrund ihrer Einfachheit hat

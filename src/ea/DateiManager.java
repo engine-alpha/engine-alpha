@@ -23,6 +23,7 @@ import ea.compat.CompatDateiManager;
 import ea.internal.ano.API;
 import ea.internal.gra.PixelFeld;
 import ea.internal.util.Logger;
+import ea.raum.Figur;
 
 import javax.xml.bind.DatatypeConverter;
 import java.awt.*;

@@ -19,7 +19,7 @@
 
 package ea.internal.net;
 
-import ea.ServerGefundenReagierbar;
+import ea.network.ServerGefundenReagierbar;
 
 import java.io.IOException;
 import java.net.*;

@@ -1,5 +1,7 @@
 package ea;
 
+import ea.raum.Knoten;
+import ea.raum.Rechteck;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

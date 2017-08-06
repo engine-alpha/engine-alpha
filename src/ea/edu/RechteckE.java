@@ -19,7 +19,7 @@
 
 package ea.edu;
 
-import ea.Rechteck;
+import ea.raum.Rechteck;
 
 /**
  * Ein einfaches "edu"-Dummmie-Rechteck.

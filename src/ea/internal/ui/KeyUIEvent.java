@@ -1,8 +1,7 @@
 package ea.internal.ui;
 
-import ea.TastenLosgelassenReagierbar;
-import ea.TastenReagierbar;
-import ea.edu.FensterE;
+import ea.keyboard.TastenLosgelassenReagierbar;
+import ea.keyboard.TastenReagierbar;
 import ea.internal.gui.Fenster;
 
 import java.util.List;

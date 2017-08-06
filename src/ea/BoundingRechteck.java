@@ -19,6 +19,8 @@
 
 package ea;
 
+import ea.raum.Rechteck;
+
 import java.io.Serializable;
 
 /**
@@ -255,17 +257,6 @@ public final class BoundingRechteck implements Serializable {
 	 */
 	public BoundingRechteck anPosition (float realX, float realY) {
 		return new BoundingRechteck(realX, realY, breite, hoehe);
-	}
-
-	/**
-	 * Gibt einen <code>BoundingKreis</code> aus, der das Rechteck minimal, aber voll umschließt.
-	 *
-	 * @return der <code>BoundingKreis</code> aus, der das Rechteck minimal, aber voll umschließt.
-	 * Die Ecken des Rechtecks liegen alle auf dem Kreis.
-	 */
-	public KreisCollider umschliessenderKreis () {
-		Punkt z = this.zentrum();
-		return new KreisCollider(z, z.abstand(new Punkt(x, y)));
 	}
 
 	/**

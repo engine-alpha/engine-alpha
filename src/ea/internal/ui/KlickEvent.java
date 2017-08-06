@@ -1,11 +1,13 @@
 package ea.internal.ui;
 
 import ea.*;
-import ea.internal.frame.Dispatchable;
 import ea.internal.gui.Fenster;
+import ea.mouse.KlickReagierbar;
+import ea.mouse.Maus;
+import ea.mouse.MausLosgelassenReagierbar;
+import ea.mouse.RechtsKlickReagierbar;
 
 import java.util.ArrayList;
-import java.util.Queue;
 
 /**
  * Ein Mausklick <b>auf der Zeichenebene</b>
@@ -23,7 +25,7 @@ extends FensterEvent {
 
     /**
      * Der Button, der geklickt wurde.
-     * @see ea.Maus
+     * @see Maus
      */
     private final int klickButton;
 

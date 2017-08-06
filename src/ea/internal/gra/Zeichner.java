@@ -20,6 +20,7 @@
 package ea.internal.gra;
 
 import ea.*;
+import ea.raum.Knoten;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;

@@ -1,13 +1,11 @@
 package ea.internal.phy;
 
-import ea.Physik;
+import ea.handle.Physik;
 import ea.Punkt;
-import ea.Raum;
+import ea.raum.Raum;
 import ea.Vektor;
 import ea.internal.ano.NoExternalUse;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
 
 /**
  * Beschreibt allgemein ein Objekt, dass die physikalischen Eigenschaften eines Raum-Objektes kontrollieren kann.
