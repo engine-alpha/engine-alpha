@@ -46,7 +46,6 @@ import java.awt.geom.AffineTransform;
  * @author Michael Andonie, Niklas Keller
  */
 public abstract class Raum implements Comparable<Raum> {
-
     /**
      * Gibt an, ob das Objekt zur Zeit ueberhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall,
      * so wird die Zeichenroutine direkt uebergangen.
@@ -418,7 +417,6 @@ public abstract class Raum implements Comparable<Raum> {
     @NoExternalUse
     public abstract Shape createShape(final float pixelProMeter);
 
-
     /**
      * Überschriebene <code>finalize</code>-Methode. Loggt verbose die Garbage Collection des Raum-Objekts.
      * @throws Throwable Übernommen von Object
@@ -430,5 +428,4 @@ public abstract class Raum implements Comparable<Raum> {
         //Logge die Zerstörung
         Logger.verboseInfo("Raum", "Raum-Objekt in Garbage Collection: " + toString());
     }
-
 }

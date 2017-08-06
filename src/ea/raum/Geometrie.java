@@ -19,77 +19,46 @@
 
 package ea.raum;
 
-import ea.Farbe;
 import ea.Punkt;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
 
 import java.awt.*;
 
 /**
- * Ein Objekt, das aus n primitiven Geometrischen Formen - <b>Dreiecken</b> - besteht
+ * Ein Objekt, das aus n primitiven Geometrischen Formen - <b>Dreiecken</b> - besteht.
  *
  * @author Michael Andonie
  */
 public abstract class Geometrie extends Raum {
-
     /**
      * Die Farbe dieses Geometrie-Objekts.
      */
     private Color color;
 
-	/**
-	 * Konstruktor.
-	 *
-	 * @param position  Die Ausgangsposition dieses Geometrie-Objekts.
-	 */
-	public Geometrie (Punkt position) {
+    /**
+     * Konstruktor.
+     *
+     * @param position Die Ausgangsposition dieses Geometrie-Objekts.
+     */
+    public Geometrie(Punkt position) {
         this.position.set(position);
-	}
-
-	/**
-	 * Setzt ganzheitlich die Farbe der gesamten geometrischen Figur auf eine Farbe.
-	 *
-	 * @param f
-	 * 		Die Farbe, die das Objekt haben soll.
-	 *
-	 * @see Farbe
-	 */
-	@API
-	public void setColor(Farbe f) {
-		setColor(f.wert());
-	}
-
-	/**
-	 * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br /> Dadurch faerbt sich
-	 * im Endeffekt das ganze Objekt neu ein.
-	 *
-	 * @param c
-	 * 		Die neue Farbe
-	 */
-	@NoExternalUse
-	public void setColor(Color c) {
-		this.color = c;
-	}
+    }
 
     /**
-     * Gibt die AWT-Farbe aus.
-     * @return  Das AWT-Color-Objekt.
+     * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br /> Dadurch färbt
+     * sich im Endeffekt das ganze Objekt neu ein.
+     *
+     * @param color Die neue Farbe.
      */
-    @NoExternalUse
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    /**
+     * Gibt die Farbe aus.
+     *
+     * @return Die Farbe des Objekts.
+     */
     public Color getColor() {
         return color;
     }
-
-	/**
-	 * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br /> Dadurch faerbt sich
-	 * im Endeffekt das ganze Objekt neu ein.
-	 *
-	 * @param farbe
-	 * 		Der String-Wert der Farbe. Zu der Zuordnung siehe <b>Handbuch</b>
-	 */
-	@API
-	public void setColor(String farbe) {
-		setColor(Farbe.zuFarbeKonvertieren(farbe));
-	}
 }

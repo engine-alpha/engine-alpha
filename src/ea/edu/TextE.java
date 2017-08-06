@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.edu;
 
-import ea.edu.FensterE;
 import ea.raum.Text;
 
 public class TextE extends Text {
-
 	/**
 	 * Konstruktor erstellt einen fertig sichtbaren Text. Seine Position lässt sich leicht über die
 	 * geerbten Methoden ändern.
