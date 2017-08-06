@@ -25,6 +25,10 @@ import ea.Maus;
 import ea.Punkt;
 import ea.internal.util.Logger;
 
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 /**
  * Die Klasse SPIEL ist ein Template, das so wie es ist an Schueler ausgegeben werden kann. (Einzige
  * Voraussetzung ist, dass die engine-alpha-Bibliothek im Suchpfad erreichbar ist.) Es startet alles
@@ -106,6 +110,34 @@ public class SPIEL {
 		// Maus ggf. aktivieren
 		if (maus) {
 			anzeige.klickReagierbarAnmelden(this, true);
+			FensterE.getFenster().getFensterInternal().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			FensterE.getFenster().getFensterInternal().zeichner().addMouseListener(new MouseListener() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					klickReagieren(e.getX()+FensterE.getFenster().cam.getX(),
+							e.getY()+FensterE.getFenster().cam.getY());
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+
+				}
+			});
 		}
 
 		// Tastatur
@@ -220,7 +252,7 @@ public class SPIEL {
 	@API
 	@SuppressWarnings ( "unused" )
 	public void mausIconSetzen (String pfad, int hotspotX, int hotspotY) {
-		ea.edu.FensterE.getFenster().mausAnmelden(new Maus(new Bild(0, 0, pfad), new Punkt(hotspotX, hotspotY)), true);
+		Logger.error("Nicht mehr unterstützt. Wenn gewünscht, bitte Feature anfragen.");
 	}
 
 	/**

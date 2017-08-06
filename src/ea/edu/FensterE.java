@@ -20,6 +20,7 @@
 package ea.edu;
 
 import ea.Game;
+import ea.internal.gui.Fenster;
 
 /**
  * Das Standard-Spielfenster für den Unterricht. Bei diesem "<code>Game</code>-Objekt" wie auch beim
@@ -54,6 +55,8 @@ public class FensterE extends Game {
 	 */
 	private FensterE (int breite, int hoehe, String titel) {
 		super(breite, hoehe, titel);
+		Fenster fenster = super.getFensterInternal();
+		fenster.setLocation(10,10);
 	}
 
 	/**

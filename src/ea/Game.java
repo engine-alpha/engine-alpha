@@ -819,6 +819,15 @@ public abstract class Game implements TastenReagierbar {
 	}
 
 	/**
+	 * Getter-Methode für das Interne Fenster
+	 * @return
+	 */
+	@NoExternalUse
+	public Fenster getFensterInternal() {
+		return fenster;
+	}
+
+	/**
 	 * Macht einen Screenshot von einem bestimmten Bildbereich und speichert diesen ab,
 	 *
 	 * @param pfad
