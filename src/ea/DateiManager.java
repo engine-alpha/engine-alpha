@@ -19,7 +19,6 @@
 
 package ea;
 
-import ea.compat.CompatDateiManager;
 import ea.internal.ano.API;
 import ea.internal.gra.PixelFeld;
 import ea.internal.util.Logger;
@@ -180,10 +179,6 @@ public class DateiManager {
 			reader = new BufferedReader(new FileReader(pfad));
 			line = reader.readLine();
 
-			if (line.equals("typ:String")) {
-				return CompatDateiManager.stringArrayEinlesen(pfad);
-			}
-
 			String[] metaInfos = line.split(",");
 			Map<String, String> meta = new HashMap<>();
 
@@ -297,10 +292,6 @@ public class DateiManager {
 
 			BufferedReader reader = new BufferedReader(new FileReader(pfad));
 			line = reader.readLine();
-
-			if (line.compareTo("typ:String") == 0) {
-				return CompatDateiManager.integerArrayEinlesen(pfad);
-			}
 
 			String[] metaInfos = line.split(",");
 			Map<String, String> meta = new HashMap<>();
