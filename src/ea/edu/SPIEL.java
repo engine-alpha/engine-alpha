@@ -43,6 +43,7 @@ import java.awt.event.MouseListener;
  * @author Michael Andonie (nach Idee von Bendikt Lindemann und Mike Ganshorn), Niklas Keller
  */
 public class SPIEL {
+
 	/**
 	 * Die Anzeige des Spiels.
 	 */
@@ -109,8 +110,9 @@ public class SPIEL {
 
 		// Maus ggf. aktivieren
 		if (maus) {
-			anzeige.klickReagierbarAnmelden(this, true);
+			//anzeige.klickReagierbarAnmelden(this, true);
 			FensterE.getFenster().getFensterInternal().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			FensterE.getFenster().getFensterInternal().removeMouseListener();
 			FensterE.getFenster().getFensterInternal().zeichner().addMouseListener(new MouseListener() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -119,6 +121,7 @@ public class SPIEL {
 
 				@Override
 				public void mousePressed(MouseEvent e) {
+					if(e.getButton()==MouseEvent.BUTTON1)
 					klickReagieren(e.getX()+FensterE.getFenster().cam.getX(),
 							e.getY()+FensterE.getFenster().cam.getY());
 				}

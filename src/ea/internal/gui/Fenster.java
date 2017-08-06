@@ -108,6 +108,11 @@ public class Fenster extends Frame {
 	private Point lastMousePosition;
 
 	/**
+	 * Referenz auf den intern verwendeten MouseListener
+	 */
+	private MouseListener mouselistener_internal;
+
+	/**
 	 * Einfacher Alternativkonstruktor.<br /> Erstellt ein normales Fenster mit der eingegeben
 	 * Groesse.
 	 *
@@ -327,7 +332,7 @@ public class Fenster extends Frame {
 	}
 
 	private void addMouseListener () {
-		zeichner.addMouseListener(new MouseListener() {
+		zeichner.addMouseListener(mouselistener_internal= new MouseListener() {
 			@Override
 			public void mouseClicked (MouseEvent e) {
 
@@ -364,6 +369,11 @@ public class Fenster extends Frame {
 			public void mouseExited (MouseEvent e) {
 			}
 		});
+	}
+
+	@NoExternalUse
+	public void removeMouseListener() {
+		zeichner().removeMouseListener(mouselistener_internal);
 	}
 
 	private void addMouseMotionListener () {
