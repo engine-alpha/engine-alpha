@@ -121,6 +121,7 @@ public class Animation extends Raum {
         return new Animation(frames.toArray(new Frame[frames.size()]));
     }
 
+    @API
     public static Animation createFromImages(int frameDuration, String... filepaths) {
         if (frameDuration < 1) {
             throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");

@@ -19,32 +19,70 @@
 
 package ea.internal.io;
 
+import ea.internal.ano.API;
 import ea.internal.util.Optimizer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Lädt Bilder vom Dateisystem und optimiert diese direkt für die Anzeige.
+ */
 public class ImageLoader {
-	private ImageLoader () {
-		// keine Objekte erlaubt!
-	}
+    /**
+     * Cache, damit viele gleiche Bilder nicht jedes Mal neu geladen werden müssen.
+     */
+    private static final Map<String, BufferedImage> cache = new HashMap<>();
 
-	/**
-	 * Lädt ein Bild und optimiert es für das aktuelle System.
-	 *
-	 * @param path
-	 * 		Pfad des Bildes.
-	 *
-	 * @return geladenes Bild
-	 */
-	public static BufferedImage load(String path) {
-		try {
-			BufferedImage img = ImageIO.read(new ByteArrayInputStream(ResourceLoader.load(path)));
-			return Optimizer.toCompatibleImage(img);
-		} catch (IOException e) {
-			throw new RuntimeException("Das Bild konnte nicht geladen werden: " + path);
-		}
-	}
+    private ImageLoader() {
+        // keine Objekte erlaubt!
+    }
+
+    /**
+     * Lädt ein Bild und optimiert es für das aktuelle System.
+     *
+     * @param path Pfad des Bildes.
+     *
+     * @return geladenes Bild
+     */
+    public static BufferedImage load(String path) {
+        if (cache.containsKey(path)) {
+            return cache.get(path);
+        }
+
+        try {
+            BufferedImage img = Optimizer.toCompatibleImage(
+                    ImageIO.read(new ByteArrayInputStream(ResourceLoader.load(path)))
+            );
+
+            cache.put(path, img);
+
+            return img;
+        } catch (IOException e) {
+            throw new RuntimeException("Das Bild konnte nicht geladen werden: " + path);
+        }
+    }
+
+    /**
+     * Leert den Cache und lädt Bilder beim nächsten Laden erneut vom Dateisystem.
+     */
+    @API
+    public static void clearCache() {
+        cache.clear();
+    }
+
+    /**
+     * Leert einen bestimmten Cache-Eintrag und lädt den Eintrag bei der nächsten Verwendung erneut
+     * vom Dateisystem.
+     *
+     * @param path Pfad des Bildes.
+     */
+    @API
+    public static void clearCache(String path) {
+        cache.remove(path);
+    }
 }

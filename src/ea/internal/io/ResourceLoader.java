@@ -22,7 +22,9 @@ package ea.internal.io;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ResourceLoader {
@@ -31,13 +33,17 @@ public class ResourceLoader {
     }
 
     public static byte[] load(String filename) throws IOException {
-        String path = filename;
+        Path path = Paths.get(filename);
 
         if (ResourceLoader.class.getResource("/" + filename) != null) {
-            path = ResourceLoader.class.getResource("/" + filename).toExternalForm();
+            try {
+                path = Paths.get(ResourceLoader.class.getResource("/" + filename).toURI());
+            } catch (URISyntaxException e) {
+                throw new IOException("Could not convert URL to URI", e);
+            }
         }
 
-        return Files.readAllBytes(Paths.get(path));
+        return Files.readAllBytes(path);
     }
 
     public static InputStream loadAsStream(String filename) throws IOException {
