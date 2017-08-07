@@ -52,6 +52,11 @@ public class Bild extends Raum {
         return new Dimension(this.image.getWidth(), this.image.getHeight());
     }
 
+    @API
+    public BufferedImage getImage() {
+        return this.image;
+    }
+
     /**
      * {@inheritDoc}
      */

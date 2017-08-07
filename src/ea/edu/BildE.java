@@ -28,10 +28,11 @@ import ea.raum.Bild;
  * @author Michael Andonie
  */
 public class BildE extends Bild {
-	private static final long serialVersionUID = -3131852267825713616L;
+    private static final long serialVersionUID = -3131852267825713616L;
 
-	public BildE (int x, int y, String pfad) {
-		super(x, y, pfad);
-		FensterE.getFenster().wurzel.add(this);
-	}
+    public BildE(int x, int y, String pfad) {
+        super(pfad);
+        this.position.set(x, y);
+        FensterE.getFenster().wurzel.add(this);
+    }
 }

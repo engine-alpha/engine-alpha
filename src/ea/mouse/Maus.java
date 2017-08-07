@@ -206,7 +206,7 @@ public class Maus {
      */
     public void customCursorSetzen(Bild cursorBild, Punkt hotSpot) {
         if(!fixed) {
-            fenster.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursorBild.bild(), new Point((int) hotSpot.x, (int) hotSpot.y), cursorBild.toString()));
+            fenster.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursorBild.getImage(), new Point((int) hotSpot.x, (int) hotSpot.y), cursorBild.toString()));
         } else {
             throw new UnsupportedOperationException("Implementierung des fixed Cursor steht aus");
         }

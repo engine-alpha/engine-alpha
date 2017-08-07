@@ -51,7 +51,7 @@ public class FensterHandle {
      */
     @API
     public void iconSetzen (Bild icon) {
-        game.real_fenster.setIconImage(icon.bild());
+        game.real_fenster.setIconImage(icon.getImage());
     }
 
     /**
