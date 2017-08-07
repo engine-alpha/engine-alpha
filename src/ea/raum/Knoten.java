@@ -153,12 +153,14 @@ public class Knoten extends Raum {
 					"ist im Lock-Zustand.");
 			return;
 		}
-		list.add(m);
 
-		Collections.sort(list);
 
         if(worldHandler != null)
             m.updateWorld(worldHandler);
+
+		list.add(m);
+
+		Collections.sort(list);
 	}
 
 
