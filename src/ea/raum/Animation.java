@@ -92,7 +92,11 @@ public class Animation extends Raum {
     }
 
     @API
-    public static Animation createFromSpritesheet(String filepath, int x, int y, int frameDuration) {
+    public static Animation createFromSpritesheet(int frameDuration, String filepath, int x, int y) {
+        if (frameDuration < 1) {
+            throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
+        }
+
         BufferedImage image = ImageLoader.load(filepath);
 
         if (image.getWidth() % x != 0) {
@@ -112,6 +116,20 @@ public class Animation extends Raum {
             for (int i = 0; i < x; i++) {
                 frames.add(new Frame(image.getSubimage(i * width, j * height, width, height), frameDuration));
             }
+        }
+
+        return new Animation(frames.toArray(new Frame[frames.size()]));
+    }
+
+    public static Animation createFromImages(int frameDuration, String... filepaths) {
+        if (frameDuration < 1) {
+            throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
+        }
+
+        java.util.List<Frame> frames = new LinkedList<>();
+
+        for (String filepath : filepaths) {
+            frames.add(new Frame(ImageLoader.load(filepath), frameDuration));
         }
 
         return new Animation(frames.toArray(new Frame[frames.size()]));
