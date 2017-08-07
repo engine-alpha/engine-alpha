@@ -29,35 +29,33 @@ import java.awt.image.ColorModel;
  * @author Niklas Keller <me@kelunik.com>
  */
 public class Optimizer {
-	private Optimizer () {
-		// keine Objekte erlaubt!
-	}
+    private static final GraphicsConfiguration graphicsConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
-	/**
-	 * Optimiert ein Bild für das Rendering, abhänig vom Bildschirm des Anwenders.
-	 *
-	 * @param img
-	 * 		Bild, das optimiert werden soll
-	 *
-	 * @return optimiertes Bild
-	 */
-	public static BufferedImage toCompatibleImage (BufferedImage img) {
-		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsConfiguration gc = env.getDefaultScreenDevice().getDefaultConfiguration();
+    private Optimizer() {
+        // keine Objekte erlaubt!
+    }
 
-		ColorModel a = img.getColorModel();
-		ColorModel b = gc.getColorModel(a.getTransparency());
+    /**
+     * Optimiert ein Bild für das Rendering, abhänig vom Bildschirm des Anwenders.
+     *
+     * @param img Bild, das optimiert werden soll
+     *
+     * @return optimiertes Bild
+     */
+    public static BufferedImage toCompatibleImage(BufferedImage img) {
+        ColorModel a = img.getColorModel();
+        ColorModel b = graphicsConfig.getColorModel(a.getTransparency());
 
-		if (a.equals(b)) {
-			return img;
-		}
+        if (a.equals(b)) {
+            return img;
+        }
 
-		BufferedImage compat = gc.createCompatibleImage(img.getWidth(), img.getHeight(), img.getTransparency());
+        BufferedImage compat = graphicsConfig.createCompatibleImage(img.getWidth(), img.getHeight(), img.getTransparency());
 
-		Graphics2D g = (Graphics2D) compat.getGraphics();
-		g.drawImage(img, 0, 0, null);
-		g.dispose();
+        Graphics2D g = (Graphics2D) compat.getGraphics();
+        g.drawImage(img, 0, 0, null);
+        g.dispose();
 
-		return compat;
-	}
+        return compat;
+    }
 }
