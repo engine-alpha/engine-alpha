@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 package ea.raum;
 
 import ea.Punkt;
-import ea.edu.FarbeE;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.Shape;
 
@@ -35,6 +34,8 @@ import java.util.ArrayList;
  * Zur Darstellung von Texten im Programmbildschirm.
  * <p/>
  * TODO: Review der ganzen Klasse (v.a. der Dokumentation)
+ * <p>
+ * TODO: Allow Custom Colors
  *
  * @author Michael Andonie
  */
@@ -159,7 +160,7 @@ public class Text extends Raum {
      * @param schriftGroesse Die Groesse, in der die Schrift dargestellt werden soll
      */
     public Text(String inhalt, float x, float y, String fontName, int schriftGroesse) {
-        this(inhalt, x, y, fontName, schriftGroesse, 0, "Weiss");
+        this(inhalt, x, y, fontName, schriftGroesse, 0);
     }
 
     /**
@@ -179,13 +180,11 @@ public class Text extends Raum {
      * @param schriftart     Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br
      *                       /> 0: Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett &
      *                       Kursiv <br /> <br /> Alles andere sorgt nur fuer einen normalen Text.
-     * @param farbe          Die FarbeE, die für den Text benutzt werden soll.
      */
-    public Text(String inhalt, float x, float y, String fontName, int schriftGroesse, int schriftart, String farbe) {
+    public Text(String inhalt, float x, float y, String fontName, int schriftGroesse, int schriftart) {
         this.inhalt = inhalt;
         this.position.set(new Punkt(x, y));
         this.groesse = schriftGroesse;
-        this.color = FarbeE.zuFarbeKonvertieren(farbe);
 
         if (schriftart >= 0 && schriftart <= 3) {
             this.schriftart = schriftart;
@@ -247,7 +246,7 @@ public class Text extends Raum {
      * @param schriftGroesse Die Groesse, in der die Schrift dargestellt werden soll
      */
     public Text(String inhalt, float x, float y, int schriftGroesse) {
-        this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
+        this(inhalt, x, y, "SansSerif", schriftGroesse, 0);
     }
 
     /**
@@ -259,7 +258,7 @@ public class Text extends Raum {
      * @param y      Y-Koordinate
      */
     public Text(String inhalt, float x, float y) {
-        this(inhalt, x, y, "SansSerif", 24, 0, "Weiss");
+        this(inhalt, x, y, "SansSerif", 24, 0);
     }
 
     /**
@@ -273,22 +272,8 @@ public class Text extends Raum {
      * @param y      Y-Koordinate
      */
     public Text(float x, float y, String inhalt) {
-        this(inhalt, x, y, "SansSerif", 24, 0, "Weiss");
+        this(inhalt, x, y, "SansSerif", 24, 0);
     }
-
-    /**
-     * Ein vereinfachter parallerer Konstruktor.<br /> Diesen gibt es inhaltlich genauso bereits,
-     * jedoch sind hier die Argumente vertauscht; dies dient der Praevention undgewollter falscher
-     * Konstruktorenaufrufe. Hierbei wird eine Standartschriftart und die FarbeE weiss gewaehlt.
-     *
-     * @param inhalt         Der Inhalt des Textes
-     * @param x              X-Koordinate
-     * @param y              Y-Koordinate
-     * @param schriftGroesse Die Schriftgroesse, die der Text haben soll
-     */
-    public Text(int x, int y, int schriftGroesse, String inhalt) {
-        this(inhalt, x, y, "SansSerif", schriftGroesse, 0, "Weiss");
-    } // TODO: Mehr Verwirrung als Hilfe?
 
     private static void fontsEinbauen(final ArrayList<File> liste, File akt) {
         File[] files = akt.listFiles();
@@ -514,9 +499,9 @@ public class Text extends Raum {
     @Override
     public Shape createShape(float pixelProMeter) {
         if (fontMetrics == null) {
-            fontMetrics = super.getPhysikHandler().worldHandler().getWorldThread().getMaster().getGame().real_fenster.getFontMetrics(font);
-            //throw new IllegalStateException("Text wurde nach Shape gefragt, bevor die Metrik bekannt war.");
+            fontMetrics = ea.util.FontMetrics.get(font);
         }
+
         return berechneBoxShape(pixelProMeter, fontMetrics.stringWidth(inhalt), fontMetrics.getHeight());
     }
 

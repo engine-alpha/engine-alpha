@@ -17,21 +17,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.mouse;
+
+import ea.Vektor;
 
 /**
- * FallReagierbar kann darauf onKeyDown, das das mit ihr angemeldete Raum-Objekt ueber
- * <code>WorldHandler</code> faellt und einen gewissen Maximalwert erreicht. Dann wird ihre Methode
- * <code>fallReagieren()</code> aufgerufen.<br />
+ * Sorgt dafür, dass auf Mausbewegungen reagiert werden kann.
  *
- * @author Michael Andonie
+ * @author Niklas Keller
  */
-public interface FallReagierbar {
-	/**
-	 * Diese Methode wird aufgerufen, <b>solange</b> das fallende Raum-Objekt unter der mit diesem
-	 * Listener angemeldeten mindesthoehe faellt.<br /> Das heisst, wird das Fallen im
-	 * problematischen bereich hierin <b>nicht behoben</b>, so wird diese Methode wieder und wieder
-	 * aufgerufen, bis das Objekt nicht mehr im gefaehrlichen Bereich ist.
-	 */
-	public abstract void fallReagieren ();
+public interface MouseMoveListener {
+    /**
+     * Wird immer aufgerufen, wenn die Maus bewegt wurde.
+     *
+     * @param position Neue Position der Maus.
+     */
+    void onMouseMove(Vektor position);
 }

@@ -1,12 +1,17 @@
 package ea.internal.frame;
 
+import ea.Punkt;
+import ea.collision.CollisionListener;
+import ea.mouse.MouseButton;
+import ea.mouse.MouseClickListener;
+
 /**
  * Dieses Interface beschreibt ein <b>Event</b>, das vom Dispatcher-Thread als Auftrag ausgeführt
  * werden kann. Dispatchbare Aufträge sind z.B. <ul> <li>Einen Tick (zum passenden Zeitpunkt)
- * aufrufen</li> <li>Durch den Aufruf von <code>klickReagieren(x,y)</code> dem API-Nutzer die
- * Möglichkeit geben, auf einen User-Klick an der Stelle (x|y) zu geben.</li> <li>Durch den Aufruf
- * von <code>kollisionReagieren(code)</code> dem API-Nutzer die Möglichkeit geben, die Kollision mit
- * der ID <code>code</code> geben.</li> </ul>
+ * aufrufen</li> <li>Durch den Aufruf von {@link MouseClickListener#onMouseDown(Punkt,
+ * MouseButton)} dem API-Nutzer die Möglichkeit geben, auf einen User-Klick zu geben.</li>
+ * <li>Durch den Aufruf von {@link CollisionListener} dem API-Nutzer die Möglichkeit
+ * geben auf Kollisionen zu reagieren.</li> </ul>
  */
 public interface Dispatchable {
     /**

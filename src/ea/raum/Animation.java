@@ -19,6 +19,7 @@
 
 package ea.raum;
 
+import ea.FrameUpdateListener;
 import ea.internal.ano.API;
 import ea.internal.io.ImageLoader;
 import ea.internal.phy.WorldHandler;
@@ -29,7 +30,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 @API
-public class Animation extends Raum {
+public class Animation extends Raum implements FrameUpdateListener {
     private Frame[] frames;
 
     private int width;
@@ -61,19 +62,8 @@ public class Animation extends Raum {
     }
 
     @Override
-    public void updateWorld(WorldHandler worldHandler) {
-        super.updateWorld(worldHandler);
-
-        this.worldHandler = worldHandler;
-    }
-
-    @Override
-    public void render(Graphics2D g) {
-        if (worldHandler == null) {
-            throw new RuntimeException("Eine Animation kann nicht gezeichnet werden, bevor sie an der Wurzel angemeldet wurde.");
-        }
-
-        this.currentTime += worldHandler.getWorldThread().getMaster().getLastFrameTime();
+    public void onFrameUpdate(int frameDuration) {
+        this.currentTime += frameDuration;
 
         Frame currentFrame = this.frames[currentIndex];
 
@@ -82,7 +72,10 @@ public class Animation extends Raum {
             this.currentIndex = (this.currentIndex + 1) % this.frames.length;
             currentFrame = this.frames[this.currentIndex];
         }
+    }
 
+    @Override
+    public void render(Graphics2D g) {
         g.drawImage(this.frames[currentIndex].getImage(), 0, 0, null);
     }
 

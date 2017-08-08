@@ -169,7 +169,7 @@ extends PhysikHandler {
 
     @Override
     public WorldHandler worldHandler() {
-        return knoten.getWorldHandler();
+        return knoten.getScene().getWorldHandler();
     }
 
     @Override

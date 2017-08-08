@@ -6,25 +6,20 @@ public abstract class FrameSubthread extends Thread {
      */
     private boolean frameActive;
 
-    /**
-     * Referenz auf den Master-Framethread, der diesen Subthread nutzt.
-     */
-    protected final FrameThread master;
+    protected FrameSubthread(String name) {
+        super(name);
 
-    protected FrameSubthread(FrameThread master, String threadname) {
-        super(threadname);
-        super.setDaemon(true);
-        this.master = master;
+        this.setDaemon(true);
     }
 
     /**
-     * Run-Methode: Implementiert die frameweise Synchronisation mit dem Master-Thread. Auf Signal
-     * von Diesem wird die <code>dispatchFrame()</code>-Routine des Threads ausgeführt.
+     * Implementiert die frameweise Synchronisation mit dem Master-Thread. Auf Signal von diesem
+     * wird die {@link #dispatchFrame()}-Routine des Threads ausgeführt.
      */
     @Override
     public final void run() {
-        while (!isInterrupted()) {
-            // Warte auf Okay von Master
+        while (!interrupted()) {
+            // Warte auf Signal von Master
             try {
                 synchronized (this) {
                     while (!frameActive) {
@@ -32,11 +27,6 @@ public abstract class FrameSubthread extends Thread {
                     }
                 }
             } catch (InterruptedException e) {
-                interrupt();
-            }
-
-            // Soll der Thread aufhören?
-            if (isInterrupted()) {
                 break;
             }
 
@@ -55,9 +45,8 @@ public abstract class FrameSubthread extends Thread {
      * nächste <code>dispatchFrame</code>-Routine starten.
      */
     public final void startFrame() {
-        frameActive = true;
-
         synchronized (this) {
+            this.frameActive = true;
             this.notifyAll();
         }
     }
@@ -65,29 +54,16 @@ public abstract class FrameSubthread extends Thread {
     /**
      * Ein Semi-Join. Ein noromaler join endet, sobald der Thread beendet ist. Da dieser Thread
      * frameweise "fertig" ist, aber nicht terminieren soll (da er im folgenden Frame wieder
-     * gebraucht wird), blockiert diese Methode - vergleichbar mit einem "frameweisen join" -
+     * gebraucht wird), blockiert diee Methode - vergleichbar mit einem "frameweisen join" -
      * solange, bis der aktuelle Frame abgearbeitet ist (ist der Frame schon fertig, so terminiert
      * die Methode direkt).
      */
     public final void joinFrame() throws InterruptedException {
-        try {
-            synchronized (this) {
-                while (frameActive) {
-                    this.wait();
-                }
+        synchronized (this) {
+            while (frameActive) {
+                this.wait();
             }
-        } catch (InterruptedException e) {
-            interrupt();
         }
-    }
-
-    /**
-     * Gibt den Frame-Thread aus, zu dem dieser Sub-Thread gehört.
-     *
-     * @return der Frame-Thread, zu dem dieser Sub-Thread gehört.
-     */
-    public FrameThread getMaster() {
-        return master;
     }
 
     /**
