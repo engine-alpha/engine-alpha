@@ -70,7 +70,7 @@ public class Game {
     /**
      * Gibt an, ob bei Escape-Druck das Spiel beendet werden soll.
      */
-    private static boolean exitOnEsc;
+    private static boolean exitOnEsc = true;
 
     /**
      * Aktuelle Szene des Spiels.
@@ -95,7 +95,7 @@ public class Game {
     /**
      * Letzte Mausposition.
      */
-    private static Point lastMousePosition;
+    private static Point mousePosition;
 
     private static int frameDuration;
 
@@ -144,7 +144,7 @@ public class Game {
 
                 g.setClip(0, 0, width, height);
                 g.scale(camera.getZoom(), camera.getZoom());
-                g.translate(position.x, position.y);
+                g.translate(position.x + width / 2, position.y + height / 2);
 
                 int size = Math.max(width, height);
                 Game.scene.render(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
@@ -188,7 +188,7 @@ public class Game {
         renderPanel.addKeyListener(keyListener);
         renderPanel.setFocusable(true);
 
-        renderPanel.addMouseListener(new MouseAdapter() {
+        MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 enqueueMouseEvent(e, MouseAction.DOWN);
@@ -198,7 +198,25 @@ public class Game {
             public void mouseReleased(MouseEvent e) {
                 enqueueMouseEvent(e, MouseAction.UP);
             }
-        });
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+            }
+        };
+
+        renderPanel.addMouseMotionListener(mouseAdapter);
+        renderPanel.addMouseListener(mouseAdapter);
 
         try {
             frame.setIconImage(ImageLoader.load("assets/favicon.png"));
@@ -229,6 +247,8 @@ public class Game {
                 }
             }
         };
+
+        mousePosition = new Point(width / 2, height / 2);
 
         mainThread = new Thread(Game::run);
         mainThread.start();
@@ -331,11 +351,14 @@ public class Game {
 
         // Mausklick-Position muss mit Zoom-Wert verrechnet werden
         float cameraZoom = scene.getCamera().getZoom();
-        Punkt sourcePosition = new Punkt(sourceClick.x / cameraZoom, sourceClick.y / cameraZoom);
+        Punkt sourcePosition = new Punkt(sourceClick.x + width / 2, sourceClick.y + width / 2);
 
         // Kamera-Zoom einbeziehen
         Punkt cameraPosition = scene.getCamera().getPosition();
-        Punkt click = sourcePosition.verschobeneInstanz(cameraPosition.alsVektor()).verschobeneInstanz(new Vektor(width / 2, height / 2));
+        Punkt click = new Punkt(
+                (sourcePosition.x + cameraPosition.x) / cameraZoom,
+                (sourcePosition.y + cameraPosition.y) / cameraZoom
+        );
 
         MouseButton button;
 
@@ -372,11 +395,21 @@ public class Game {
      */
     @API
     public static void exit() {
+        if (mainThread == null) {
+            System.exit(0);
+
+            return;
+        }
+
         mainThread.interrupt();
     }
 
     @API
     public static float getCurrentFps() {
         return 1000 / frameDuration;
+    }
+
+    public static Point getMousePosition() {
+        return mousePosition;
     }
 }

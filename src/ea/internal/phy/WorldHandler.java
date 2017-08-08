@@ -114,7 +114,7 @@ public class WorldHandler implements ContactListener {
 
     public void step(float frameDuration) {
         synchronized (this.world) {
-            this.world.step(frameDuration, 6, 3);
+            this.world.step(frameDuration / 1000, 6, 3);
         }
     }
 

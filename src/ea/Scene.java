@@ -35,7 +35,6 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -77,19 +76,16 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
      */
     private final WorldHandler worldHandler;
 
+    /**
+     * Aktuelle Position der Maus im Fenster.
+     */
+    private Point mousePosition;
+
     public Scene() {
         this.root = new Knoten();
         this.camera = new Camera();
         this.worldHandler = new WorldHandler();
         this.root.onAttach(this);
-    }
-
-    public Set<KeyListener> getKeyListeners() {
-        return Collections.unmodifiableSet(keyListeners);
-    }
-
-    public Set<MouseClickListener> getMouseClickListeners() {
-        return Collections.unmodifiableSet(mouseClickListeners);
     }
 
     public void render(Graphics2D g, BoundingRechteck bounds) {
@@ -183,10 +179,6 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         return worldHandler;
     }
 
-    public Set<PeriodicTask> getTickers() {
-        return Collections.unmodifiableSet(this.tickers);
-    }
-
     @Override
     public void onFrameUpdate(int frameDuration) {
         this.worldHandler.step(frameDuration);
@@ -251,5 +243,13 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseUp(position, button);
         }
+    }
+
+    @API
+    public Punkt getMousePosition() {
+        return new Punkt(
+                (Game.getMousePosition().x + this.camera.getPosition().x) / this.camera.getZoom(),
+                (Game.getMousePosition().y + this.camera.getPosition().y) / this.camera.getZoom()
+        );
     }
 }
