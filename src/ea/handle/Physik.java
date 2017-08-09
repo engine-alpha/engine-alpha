@@ -66,7 +66,7 @@ public class Physik {
      * werden. Der folgende Code ist immer wirksam, unabhängig davon, ob die Rotation
      * im Rahmen der physikalischen Simulation blockiert ist:<br />
      * <code>
-     *     raum.position.rotieren(4.31f);
+     *     raum.getPosition.rotieren(4.31f);
      * </code>
      * @param rotationBlockiert
      *                  Ist dieser Wert <code>true</code>, rotiert sich dieses
@@ -316,7 +316,7 @@ public class Physik {
         //Definiere den Joint
         RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
         revoluteJointDef.initialize(raum.getPhysikHandler().getBody(), other.getPhysikHandler().getBody(),
-                //raum.physikHandler.worldHandler().fromVektor(raum.position.get().alsVektor().summe(anchor)));
+                //raum.physikHandler.worldHandler().fromVektor(raum.getPosition.get().alsVektor().summe(anchor)));
                 raum.getPhysikHandler().worldHandler().fromVektor(anchor));
         revoluteJointDef.collideConnected = false;
 
@@ -426,7 +426,7 @@ public class Physik {
      *     <li>
      *         <b>Kinematische</b> Objekte:
      *         <ul>
-     *             <li>Können eine Geschwindigkeit haben, aber reagieren nicht auf Kräfte.</li>
+     *             <li>Können eine Geschwindigkeit haben, aber onKeyDown nicht auf Kräfte.</li>
      *             <li>Kollidieren (im Sinne der Physik) nur mit dynamischen Objekten.</li>
      *         </ul>
      *         Doese Eigenschaft gehört zum Beispiel zu <i>beweglichen Plattformen</i>.

@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea;
+package ea.mouse;
 
-/**
- * TODO 4.0 Doku
- *
- * @author Michael Andonie
- */
-public interface Ticker {
-    /**
-     * TODO 4.0 Dokui
-     */
-    void tick();
+import ea.internal.ano.API;
+
+@API
+public enum MouseButton {
+    @API
+    LEFT,
+
+    @API
+    RIGHT
 }

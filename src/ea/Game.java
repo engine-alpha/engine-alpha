@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,436 +19,397 @@
 
 package ea;
 
-import ea.handle.Anmelden;
-import ea.handle.FensterHandle;
 import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
-import ea.internal.gui.*;
+import ea.internal.frame.Dispatchable;
+import ea.internal.frame.FrameSubthread;
+import ea.internal.gra.RenderPanel;
+import ea.internal.io.ImageLoader;
 import ea.internal.util.Logger;
-import ea.keyboard.Taste;
-import ea.keyboard.TastenReagierbar;
-import ea.mouse.Maus;
-import ea.raum.Knoten;
+import ea.keyboard.Key;
+import ea.keyboard.KeyAction;
+import ea.mouse.MouseAction;
+import ea.mouse.MouseButton;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Diese Klasse ist für die sofortige, einfache Verwendung der Engine verantwortlich.<br /> Aus ihr
- * sollte die Klasse abgleitet werden, die die Spielorganisation beinhaltet.
+ * Diese Klasse gibt Zugriff auf das aktuelle Spiel.
  *
  * @author Michael Andonie
+ * @author Niklas Keller
  */
-public abstract class Game
-        implements TastenReagierbar, FrameUpdateReagierbar {
-
-    /* _______________________ STATIC STUFF _______________________ */
-
-	static {
-		System.setProperty("sun.java2d.opengl", "true"); // ok
-		System.setProperty("sun.java2d.d3d", "false"); // ok
-		System.setProperty("sun.java2d.noddraw", "true"); // set false if possible, linux
-		System.setProperty("sun.java2d.pmoffscreen", "false"); // set true if possible, linux
-		System.setProperty("sun.java2d.ddoffscreen", "true"); // ok, windows
-		System.setProperty("sun.java2d.ddscale", "true"); // ok, hardware accelerated image scaling on windows
-	}
-
-
-    /* _______________________ FIELDS _______________________ */
-
-
-    // ~~~~~ Internal Stuff ~~~~~
+public class Game {
+    static {
+        System.setProperty("sun.java2d.opengl", "true"); // ok
+        System.setProperty("sun.java2d.d3d", "false"); // ok
+        System.setProperty("sun.java2d.noddraw", "true"); // set false if possible, linux
+        System.setProperty("sun.java2d.pmoffscreen", "false"); // set true if possible, linux
+        System.setProperty("sun.java2d.ddoffscreen", "true"); // ok, windows
+        System.setProperty("sun.java2d.ddscale", "true"); // ok, hardware accelerated image scaling on windows
+    }
 
     /**
-     * An diesem Knoten angelegte Objekte werden immer im Vordergrund sein.<br /> Dies wird zB fuer
-     * einen Abblendbildschirm verwendet.
+     * Breite der Zeichenebene.
      */
-    @NoExternalUse
-    private final Knoten superWurzel;
+    private static int width;
 
     /**
-     * Das Spielfenster. Diese Variable wird intern verwendet, um auf das tatsächliche Fenster-Objekt (nicht die
-	 * Handle-Klasse) zuzugreifen.
+     * Höhe der Zeichenebene.
      */
-    @NoExternalUse
-    public final Fenster real_fenster;
+    private static int height;
+
+    /**
+     * Eigentliches Fenster des Spiels.
+     */
+    private static final Frame frame = new Frame("Engine Alpha");
 
     /**
      * Gibt an, ob bei Escape-Druck das Spiel beendet werden soll.
      */
-    @NoExternalUse
-    private final boolean exitOnEsc;
+    private static boolean exitOnEsc = true;
 
     /**
-     * Der Font für die Fenstertexte
+     * Aktuelle Szene des Spiels.
      */
-    @NoExternalUse
-    private Font font;
+    private static Scene scene;
 
+    private static FrameSubthread renderThread;
 
-    // ~~~~~ Basic API References ~~~~~
-
-	/**
-	 * Der Wurzel-Knoten. An ihm muessen direkt oder indirekt (ueber weitere Knoten) alle
-	 * <code>Raum</code>-Objekte angemeldet werden, die auch (normal) gezeichnet werden sollen.
-	 */
-    @API
-	public final Knoten wurzel;
-
-	/**
-	 * Die statische Wurzel.<br /> Objekte, die an diesem Knoten angemeldet werden, werden ebenfalls
-	 * gezeichnet, jedoch mit einem essentiellen Unterschied bei Verschiebung der
-	 * <code>Kamera</code> werden diese nicht verschoben gezeichnet, sondern bleiben weiter
-	 * (<b>statisch</b>) auf ihrer festen Position. Dies bietet sich zum Beispiel fuer eine
-	 * Punkte-Anzeige etc an.
-	 */
-    @API
-	public final Knoten statischeWurzel;
-
-	/**
-	 * Die <code>Kamera</code> des Spiels. Hiermit kann der sichtbare Ausschnitt der Zeichenebene bestimmt und
-	 * manipuliert werden.
-	 */
-    @API
-	public final Kamera kamera;
-
-    // ~~~~~ Handles ~~~~~
+    private static Thread mainThread;
 
     /**
-     * Über diese Referenz kann die Maus des Spiels beeinflusst werden.
+     * Queue aller Dispatchables, die im nächsten Frame ausgeführt werden.
      */
-    @API
-    public final Maus maus;
+    private static volatile Queue<Dispatchable> dispatchableQueue = new ConcurrentLinkedQueue<>();
 
     /**
-     * Über dieses Objekt können alle Anmelde-Methoden aufgerufen werden. Zum Beispiel für:
-     * <ul>
-     *     <li>Tastendruck</li>
-     *     <li>Mausklick / -bewegung</li>
-     *     <li>Ticker</li>
-     * </ul>
+     * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die
+     * entsprechende Taste gedrückt, sonst ist der Wert <code>false</code>.
      */
-    @API
-    public final Anmelden anmelden;
+    private static volatile boolean[] keys = new boolean[45];
 
     /**
-     * Über dieses Objekt können alle Fenster-Funktionalitäten genutzt werden. Zum Beispiel:
-     * <ul>
-     *     <li>Eine Dialogfenster öffnen</li>
-     *     <li>Eine Nutzereingabe in einem neuen Fenster anfordern</li>
-     *     <li>Ein Highscore-Fenster anzeigen</li>
-     *     <li>Das Spielfenster-Icon einstellen</li>
-     *     <li>Das Spielfenster minimieren / wiederherstellen</li>
-     * </ul>
+     * Letzte Mausposition.
      */
-    @API
-    public final FensterHandle fenster;
+    private static Point mousePosition;
 
-
-
-
-
-
-    /* _______________________ CONSTRUCTOR OVERKILL _______________________ */
+    private static int frameDuration;
 
     /**
-     * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
-	 * internen Prozesse der Engine.
+     * Setzt den Titel des Spielfensters.
      *
-     * @param fensterbreite
-     * 		Die Breite des Fensters
-     * @param fensterhoehe
-     * 		Die Hoehe des Fensters
-     * @param titel
-     * 		Der Titel des Spielfensters
-     * @param vollbild
-     * 		Ob das Fenster im Vollbildmodus dargestellt werden soll. In diesem Fall wird der <b>Kamera-Zoom</b> so
-	 * 	    angepasst, dass die angegebenen Fenstermaße vollständig und maximal groß dargesteltt werden.
-     * @param exitOnEsc
-     * 		Ist dieser Wert <code>true</code>, so wird das Spiel automatisch beendet, wenn die
-     * 		"Escape"-Taste gedrueckt wurde. Dies bietet sich vor allem an, wenn das Spiel ein Vollbild
-     * 		ist oder die Maus aufgrund der Verwendung einer Maus im Spiel nicht auf das "X"-Symbol des
-     * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" wäre.
-     * @param fensterPositionX
-     * 		Die X-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm.
-     * @param fensterPositionY
-     * 		Die Y-Koordinate der linken oberen Ecke des Fensters auf dem Computerbildschirm.
+     * @param title Titel des Spielfensters.
      */
-	@API
-    public Game (int fensterbreite, int fensterhoehe, String titel, boolean vollbild, boolean exitOnEsc,
-				 int fensterPositionX, int fensterPositionY) {
-        real_fenster = new Fenster(fensterbreite, fensterhoehe, titel, vollbild, fensterPositionX, fensterPositionY);
-        this.exitOnEsc = exitOnEsc;
-        this.font = new Font("SansSerif", Font.PLAIN, 16);
+    @API
+    public static void setTitle(String title) {
+        frame.setTitle(title);
+    }
 
-        // ------------- Die Helper-Referenzen -------------
-        kamera = real_fenster.getCam();
-        kamera.wurzel().add(wurzel = new Knoten(), superWurzel = new Knoten());
+    /**
+     * Setzt, ob beim Drücken von Escape das Spiel beendet werden soll.
+     *
+     * @param value <code>true</code>, falls ja, sonst <code>false</code>.
+     */
+    @API
+    public static void setExitOnEsc(boolean value) {
+        exitOnEsc = value;
+    }
 
-        statischeWurzel = real_fenster.getStatNode();
+    /**
+     * Dies startet das Fenster und beginnt sämtliche internen Prozesse der Engine.
+     *
+     * @param width  Die Breite des Zeichenbereichs.
+     * @param height Die Höhe des Zeichenbereichs.
+     * @param scene  Szene, mit der das Spiel gestartet wird, z.B. das Menü.
+     */
+    @API
+    public static void start(int width, int height, Scene scene) {
+        Game.width = width;
+        Game.height = height;
+        Game.scene = scene;
 
-        real_fenster.tastenReagierbarAnmelden(this);
+        RenderPanel renderPanel = new RenderPanel(width, height) {
+            public void render(Graphics2D g) {
+                // Absoluter Hintergrund
+                g.setColor(Color.black);
+                g.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+                AffineTransform transform = g.getTransform();
+                Camera camera = scene.getCamera();
+                Punkt position = camera.getPosition();
+
+                g.setClip(0, 0, width, height);
+                g.scale(camera.getZoom(), camera.getZoom());
+                g.translate(position.x + width / 2, position.y + height / 2);
+
+                int size = Math.max(width, height);
+                Game.scene.render(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
+
+                g.setTransform(transform);
+            }
+        };
+
+        frame.setResizable(false);
+        frame.add(renderPanel);
+        frame.pack();
+
+        // Center frame on screen - https://stackoverflow.com/a/144893/2373138
+        frame.setLocationRelativeTo(null);
+
+        renderPanel.initialize();
+
+        // pack() already allows to create the buffer strategy for rendering
+        frame.setVisible(true);
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Game.exit();
+            }
+        });
+
+        KeyListener keyListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                enqueueKeyEvent(e, KeyAction.DOWN);
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                enqueueKeyEvent(e, KeyAction.UP);
+            }
+        };
+
+        frame.addKeyListener(keyListener);
+        renderPanel.addKeyListener(keyListener);
+        renderPanel.setFocusable(true);
+
+        MouseAdapter mouseAdapter = new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                enqueueMouseEvent(e, MouseAction.DOWN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                enqueueMouseEvent(e, MouseAction.UP);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+            }
+        };
+
+        renderPanel.addMouseMotionListener(mouseAdapter);
+        renderPanel.addMouseListener(mouseAdapter);
 
         try {
-            real_fenster.setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
+            frame.setIconImage(ImageLoader.load("assets/favicon.png"));
         } catch (Exception e) {
             Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
         }
 
+        renderThread = new FrameSubthread("Rendering") {
+            @Override
+            public void dispatchFrame() {
+                Graphics2D g = (Graphics2D) renderPanel.getBufferStrategy().getDrawGraphics();
 
+                // have to be the same @ Game.screenshot!
+                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-        real_fenster.getFrameThread().gameHandshake(this);
+                try {
+                    renderPanel.render(g);
+                } finally {
+                    g.dispose();
+                }
 
-        // ------------- Die Handles -------------
-        this.anmelden = new Anmelden(this);
-        this.fenster = new FensterHandle(this);
-        this.maus = real_fenster.getMaus();
+                try {
+                    renderPanel.getBufferStrategy().show();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                    Game.exit();
+                }
+            }
+        };
+
+        mousePosition = new Point(width / 2, height / 2);
+
+        mainThread = new Thread(Game::run);
+        mainThread.start();
     }
 
-	/**
-	 * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
-	 * internen Prozesse der Engine. Hierbei ist voreingestellt:
-	 * <ul>
-	 *     <li>Das Fenster-Objekt wird relativ nah an der linken oberen Bildschirmecke geöffnet.</li>
-	 * </ul>
-	 *
-	 * @param fensterbreite
-	 * 		Die Breite des Fensters
-	 * @param fensterhoehe
-	 * 		Die Hoehe des Fensters
-	 * @param titel
-	 * 		Der Titel des Spielfensters
-	 * @param vollbild
-	 * 		Ob das Fenster im Vollbildmodus dargestellt werden soll. In diesem Fall wird der <b>Kamera-Zoom</b> so
-	 * 	    angepasst, dass die angegebenen Fenstermaße vollständig und maximal groß dargesteltt werden.
-	 * @param exitOnEsc
-	 * 		Ist dieser Wert <code>true</code>, so wird das Spiel automatisch beendet, wenn die
-	 * 		"Escape"-Taste gedrueckt wurde. Dies bietet sich vor allem an, wenn das Spiel ein Vollbild
-	 * 		ist oder die Maus aufgrund der Verwendung einer Maus im Spiel nicht auf das "X"-Symbol des
-	 * 		Fensters geklickt werden kann, wodurch der Benutzer im Spiel "gefangen" wäre.
-	 */
-	@API
-	public Game (int fensterbreite, int fensterhoehe, String titel, boolean vollbild, boolean exitOnEsc) {
-		this(fensterbreite, fensterhoehe, titel, vollbild, exitOnEsc, -1, -1);
-	}
+    private static void run() {
+        renderThread.start();
 
-	/**
-	 * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
-	 * internen Prozesse der Engine. Hierbei ist voreingestellt:
-	 * <ul>
-	 *     <li>Das Fenster-Objekt wird relativ nah an der linken oberen Bildschirmecke geöffnet.</li>
-	 *     <li>Das Drücken auf die "Escape"-Taste beendet das Spiel automatisch.</li>
-	 * </ul>
-	 *
-	 * @param fensterbreite
-	 * 		Die Breite des Fensters
-	 * @param fensterhoehe
-	 * 		Die Hoehe des Fensters
-	 * @param titel
-	 * 		Der Titel des Spielfensters
-	 * @param vollbild
-	 * 		Ob das Fenster im Vollbildmodus dargestellt werden soll. In diesem Fall wird der <b>Kamera-Zoom</b> so
-	 * 	    angepasst, dass die angegebenen Fenstermaße vollständig und maximal groß dargesteltt werden.
-	 */
-	@API
-	public Game (int fensterbreite, int fensterhoehe, String titel, boolean vollbild) {
-		this(fensterbreite, fensterhoehe, titel, vollbild, true);
-	}
+        frameDuration = 16; // TODO: Readd FPS setting (maxmillis)
 
-	/**
-	 * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
-	 * internen Prozesse der Engine. Hierbei ist voreingestellt:
-	 * <ul>
-	 *     <li>Das Fenster-Objekt wird relativ nah an der linken oberen Bildschirmecke geöffnet.</li>
-	 *     <li>Das Drücken auf die "Escape"-Taste beendet das Spiel automatisch.</li>
-	 *     <li>Das Fenster wird nicht im Vollbildmodus gestartet.</li>
-	 * </ul>
-	 *
-	 * @param fensterbreite
-	 * 		Die Breite des Fensters
-	 * @param fensterhoehe
-	 * 		Die Hoehe des Fensters
-	 * @param titel
-	 * 		Der Titel des Spielfensters
-	 */
-	@API
-	public Game (int fensterbreite, int fensterhoehe, String titel) {
-		this(fensterbreite, fensterhoehe, titel, false, true);
-	}
+        while (!Thread.interrupted()) {
+            long frameStart = System.nanoTime();
 
-	/**
-	 * Erstellt ein spielsteuerndes <code>Game</code>-Objekt. Dies startet das Fenster und beginnt sämtliche
-	 * internen Prozesse der Engine. Hierbei ist voreingestellt:
-	 * <ul>
-	 *     <li>Das Fenster-Objekt wird relativ nah an der linken oberen Bildschirmecke geöffnet.</li>
-	 *     <li>Das Drücken auf die "Escape"-Taste beendet das Spiel automatisch.</li>
-	 *     <li>Das Fenster wird nicht im Vollbildmodus gestartet.</li>
-	 *     <li>Das Fenster trägt den Titel "Engine Alpha"</li>
-	 * </ul>
-	 *
-	 * @param fensterbreite
-	 * 		Die Breite des Fensters
-	 * @param fensterhoehe
-	 * 		Die Hoehe des Fensters
-	 */
-	@API
-	public Game (int fensterbreite, int fensterhoehe) {
-		this(fensterbreite, fensterhoehe, "Engine Alpha");
-	}
+            // Render-Thread (läuft vollkommen parallel)
+            renderThread.startFrame();
 
+            scene.onFrameUpdate(frameDuration);
 
-    /* _______________________ ECHTE API METHODEN _______________________ */
+            while (!dispatchableQueue.isEmpty()) {
+                Dispatchable dispatchable = dispatchableQueue.poll();
+                dispatchable.dispatch();
+            }
 
-	/**
-	 * Diese Methode beendet das Spiel gaenzlich.<br /> Das heisst, dass das Fenster geschlossen,
-	 * alle belegten Ressourcen freigegeben und auch die virtuelle Maschine von JAVA beendet
-	 * wird (sollten keine weiteren Fenster/Spiel-Instanzen existieren.
-	 */
-    @API
-	public void beenden () {
-		real_fenster.loeschen();
-	}
+            try {
+                renderThread.joinFrame();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
 
-	/**
-	 * Prüft, ob eine bestimmte Taste gerade jetzt heruntergedrückt wird.
-	 *
-	 * @param code
-	 * 		der Code der zu prüfenden Taste.
-	 *
-	 * @return <code>true</code>, falls die gewählte Taste gerade jetzt heruntergedrückt wird. Sonst
-	 * <code>false</code>.
-	 */
-    @API
-	public boolean tasteGedrueckt (int code) {
-		return real_fenster.istGedrueckt(code);
-	}
+            frameDuration = (int) (System.nanoTime() - frameStart) / 1000000;
 
-	/**
-	 * Diese Methode kopiert eine beliebige Datei von einem Pfad in einen neuen.
-	 *
-	 * @param von
-	 * 		Das Verzeichnis der Datei, die kopiert werden soll
-	 * @param nach
-	 * 		Das Verzeichnis, in das die Datei kopiert werden soll
-	 * @param nameNeu
-	 * 		Der Name der neuen Datei, die entstehen soll (z.B. "neuedatei.pdf")
-	 *
-	 * @return <code>true</code>, wenn das kopieren vollends erfolgreich war, sonst
-	 * <code>false</code>.
-	 */
-    @API
-	public boolean kopieren (String von, String nach, String nameNeu) {
-		try {
-			Files.copy(Paths.get(von), Paths.get(nach, nameNeu));
-		} catch (FileNotFoundException e) {
-			Logger.error("IO", "Die Datei konnte nicht gefunden werden!");
-			return false;
-		} catch (IOException e) {
-			Logger.error("IO", "Fehler beim Lesen!");
-			e.printStackTrace();
-			return false;
-		}
+            if (frameDuration < 16) {
+                try {
+                    Thread.sleep(16 - frameDuration);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
 
-		return true;
-	}
-
-    public void ppmSetzen(float pixelprometer) {
-        real_fenster.getWorldHandler().setPixelProMeter(pixelprometer);
-    }
-
-
-
-    /* _______________________ INTERNE METHODEN _______________________ */
-
-    /**
-     * Gibt den Font aus, der für Dialogfenster genutzt werden soll.
-     * @return  der Font, der für Dialogfenster genutzt werden soll.
-     */
-    @NoExternalUse
-    public Font getFont() {
-        return font;
-    }
-
-    /**
-     * Setzt den Font für Dialogfenster neu.
-     * @param font  Der Font für Dialogfenster.
-     */
-    @NoExternalUse
-    public void fontSetzen(Font font) {
-        this.font = font;
-    }
-
-    /**
-     * Die aus <code>TastenReagierbar</code> implemetierte Methode zum Reagieren auf einen
-     * einfachen, einmaligen Tastendruck.
-     *
-     * @param code
-     * 		Der Code dieser Taste zu den Codes:<br /> Siehe http://engine-alpha.org/wiki/Tastaturtabelle
-     * 		für eine vollständige Tabelle
-     *
-     * @see Taste
-     */
-    @NoExternalUse
-    @Override
-    public final void reagieren (int code) {
-        if (exitOnEsc && code == Taste.ESCAPE) {
-            beenden();
+                // Recalculate, to have exact frame duration after sleep
+                frameDuration = (int) ((System.nanoTime() - frameStart) / 1000000);
+            }
         }
 
-        tasteReagieren(code);
+        // Thread soll aufhören: Sauber machen!
+        renderThread.interrupt();
+
+        try {
+            renderThread.join();
+        } catch (InterruptedException e) {
+            // Ignore here
+        }
+
+        frame.setVisible(false);
+        frame.dispose();
+
+        System.exit(0);
     }
 
-    /* _______________________ Kontrakt: Abstrakte und Überschreibbare Methoden _______________________ */
-
     /**
-     * Diese Methode kann von der erbenden Klasse <i>überschrieben werden</i>. <br />
-     * Diese Methode wird <i>in jedem Frame aufgerufen</i>. Möchte man <i>kontinuierlich wirkende
-     * Änderungen</i> im Spiel implementieren, ist diese Methode der beste Ort dafür.
-     * @param ts    Die tatsächliche Zeit <i>in Sekunden</i>, die seit dem letzten Frame
-     *              vergangen ist. Bei 60 FPS (Frames pro Sekunde) ist also ein Durchschnittswert
-     *              von <code>ts = 1/60 = 0.016666f</code> zu erwarten.
-	 * @see ea.FrameUpdateReagierbar
+     * Diese Methode wird immer dann ausgeführt, wenn eine Taste gedrückt oder losgelassen wurde.
+     *
+     * @param e      Das KeyEvent.
+     * @param action Drücken oder Loslassen?
      */
-    @API
-    @Override
-    public void frameUpdate(float ts) {
-        //LEER - kann überschrieben werden.
+    private static void enqueueKeyEvent(KeyEvent e, KeyAction action) {
+        int z = Key.vonJava(e.getKeyCode());
+
+        if (z == -1) {
+            return;
+        }
+
+        if (action == KeyAction.DOWN) {
+            if (keys[z]) {
+                return; // Ignore duplicate presses, because they're system dependent
+            }
+
+            keys[z] = true;
+        } else {
+            keys[z] = false;
+        }
+
+        enqueueDispatchable(() -> {
+            if (action == KeyAction.DOWN) {
+                scene.onKeyDown(z);
+            } else {
+                scene.onKeyUp(z);
+            }
+        });
     }
 
-	/**
-	 * Wird aufgerufen, sobald die <b>Initialisierung des Spiels</b> starten kann. <br/>
-	 * Diese Methode wird intern <i>einmalig aufgerufen, sobald die Spielumgebung initiiert werden soll</i>.
-	 * Das bedeutet, hierin werden die Operationen angesetzt, die klassischerweise in einem <i>Konstruktor</i>
-	 * durchgeführt werden.<br/>
-	 *
-	 * Um interne Fehler zu vermeiden, sollte die <b>gesamte Initiierung hier stattfinden</b> und nicht
-	 * im Konstruktor. <br />
-	 *
-	 * Hintergrund hierfür ist, dass der Konstruktor der Klasse Spiel <b>Unabhängig vom frameweise arbeitenden
-	 * Spielprozess läuft</b>. Um Probleme mit Nebenläufigkeit, fehlenden Abhängigkeiten und Ähnliches zu verhindern,
-	 * wird die Inititialisierung des Spiel-Objektes hierdrin durchgeführt. Diese Methode wird innerhalb der frameweisen
-	 * Spiellogik ausgeführt.
-	 */
-	@API
-	public abstract void initialisieren();
+    /**
+     * Diese Methode wird immer dann ausgeführt, wenn ein einfacher Klick der Maus ausgeführt wird.
+     *
+     * @param e      Das MouseEvent.
+     * @param action Drücken oder Loslassen?
+     */
+    private static void enqueueMouseEvent(MouseEvent e, MouseAction action) {
+        // Finde Klick auf Zeichenebene, die Position relativ zum Ursprung des RenderPanel-Canvas.
+        Point sourceClick = e.getPoint();
+
+        // Mausklick-Position muss mit Zoom-Wert verrechnet werden
+        float cameraZoom = scene.getCamera().getZoom();
+        Punkt sourcePosition = new Punkt(sourceClick.x + width / 2, sourceClick.y + width / 2);
+
+        // Kamera-Zoom einbeziehen
+        Punkt cameraPosition = scene.getCamera().getPosition();
+        Punkt click = new Punkt(
+                (sourcePosition.x + cameraPosition.x) / cameraZoom,
+                (sourcePosition.y + cameraPosition.y) / cameraZoom
+        );
+
+        MouseButton button;
+
+        switch (e.getButton()) {
+            case MouseEvent.BUTTON1:
+                button = MouseButton.LEFT;
+                break;
+
+            case MouseEvent.BUTTON3:
+                button = MouseButton.RIGHT;
+                break;
+
+            default:
+                // Ignore event
+                return;
+        }
+
+        enqueueDispatchable(() -> {
+            if (action == MouseAction.DOWN) {
+                scene.onMouseDown(click, button);
+            } else {
+                scene.onMouseUp(click, button);
+            }
+        });
+    }
+
+    public static void enqueueDispatchable(Dispatchable dispatchable) {
+        dispatchableQueue.add(dispatchable);
+    }
 
     /**
-     * Diese Methode wird von der Klasse automatisch aufgerufen, sobald eine Taste einfach gedrueckt
-     * wurde.<br /> Sie wird dann erst wieder aufgerufen, wenn die Taste erst losgelassen und dann
-     * wieder gedreuckt wurde.<br /> Sollte allerdings eine Methode vonnoeten sein, die immer wieder
-     * in Regelmaessigen abstaenden aufgerufen wird, solange die Taste <b>heruntergedrueckt ist, so
-     * bietet sich dies im Interface <code>TasteGedruecktReagierbar</code> an</b>.
-     *
-     * @param code
-     * 		Code der gedrückten Taste<br />Siehe http://engine-alpha.org/wiki/Tastaturtabelle für eine
-     * 		vollständige Tabelle
-     *
-     * @see TastenReagierbar
+     * Diese Methode beendet das Spiel.<br /> Das heißt, dass das Fenster geschlossen, alle belegten
+     * Ressourcen freigegeben und auch die virtuelle Maschine von Java beendet wird.
      */
     @API
-    public abstract void tasteReagieren (int code);
+    public static void exit() {
+        if (mainThread == null) {
+            System.exit(0);
+
+            return;
+        }
+
+        mainThread.interrupt();
+    }
+
+    @API
+    public static float getCurrentFps() {
+        return 1000 / frameDuration;
+    }
+
+    public static Point getMousePosition() {
+        return mousePosition;
+    }
 }

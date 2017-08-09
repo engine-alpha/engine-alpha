@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,13 @@
 
 package ea.mouse;
 
-/**
- * MausReagierbar ist ein Interface, das die Reaktionsmoeglichkeit auf einen Mausklick auf ein
- * bestimmtes Objekt darstellt.
- *
- * @author Michael Andonie
- */
+import ea.internal.ano.API;
 
-public interface MausReagierbar {
-	/**
-	 * Die Reaktion auf ein bestimmtes angeklicktes Element.
-	 *
-	 * @param code
-	 * 		Der der Maus bei der Anmeldung vorgegebene Code, der fuer ein bestimmtes angeklicktes
-	 * 		Objekt steht.<br /> Demnach muss also bei der Maus ein Reagierbar mitsamt dem zu
-	 * 		Ueberwachenden Raum-Objekt und dem Code, der dann in dieser Methode als Argument mitgegeben
-	 * 		wird angemeldet werden.
-	 */
-	public abstract void mausReagieren (int code);
+@API
+public enum MouseAction {
+    @API
+    DOWN,
+
+    @API
+    UP
 }

@@ -20,7 +20,7 @@
 package ea;
 
 /**
- * FallReagierbar kann darauf reagieren, das das mit ihr angemeldete Raum-Objekt ueber
+ * FallReagierbar kann darauf onKeyDown, das das mit ihr angemeldete Raum-Objekt ueber
  * <code>WorldHandler</code> faellt und einen gewissen Maximalwert erreicht. Dann wird ihre Methode
  * <code>fallReagieren()</code> aufgerufen.<br />
  *

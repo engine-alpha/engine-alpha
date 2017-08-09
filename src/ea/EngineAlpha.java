@@ -45,7 +45,7 @@ import java.util.TimeZone;
  * @author Niklas Keller <me@kelunik.com>
  */
 public class EngineAlpha extends Frame {
-	
+
 	/**
 	 * Der Versionscode des aktuellen Release.<br />
 	 * Rechnung:<br/>
@@ -128,7 +128,7 @@ public class EngineAlpha extends Frame {
 	}
 
 	/**
-	 * Main-Methode der Engine Alpha. Diese öffnet ein Fenster, das einen Versionsabgleich der
+	 * Main-Methode der Engine Alpha. Diese öffnet ein Window, das einen Versionsabgleich der
 	 * aktuellen Version mit der aktuell verfügbaren Version macht.
 	 */
 	public static void main (String[] args) {
@@ -268,7 +268,7 @@ public class EngineAlpha extends Frame {
 	 * @param value	ist dieser Wert <code>true</code>, so wird ein äußerst ausführlicher Log über die Funktionalität
 	 *              der Engine geführt. Dies ist hauptsächlich für das Debugging an der Engine selbst notwendig.
 	 * @see #isVerbose()
-	 * @see #setDebug(boolean) 
+	 * @see #setDebug(boolean)
 	 */
 	@API
 	public static void setVerbose(boolean value) {

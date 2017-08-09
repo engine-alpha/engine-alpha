@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.mouse;
+package ea.keyboard;
 
-import ea.Vektor;
+import ea.internal.ano.API;
 
-/**
- * Sorgt dafür, dass auf Mausbewegungen reagiert werden kann.
- *
- * @author Niklas Keller <me@kelunik.com>
- */
-public interface MausBewegungReagierbar {
-	/**
-	 * Wird immer aufgerufen, wenn die Maus bewegungSimulieren wurde.
-	 *
-	 * @param bewegung ein Vektor, der die Bewegung der Maus beschreibt.
-	 */
-	public void mausBewegt (Vektor bewegung);
+@API
+public enum KeyAction {
+    @API
+    DOWN,
+
+    @API
+    UP
 }

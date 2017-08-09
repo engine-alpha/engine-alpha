@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,22 +17,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.edu;
+package ea.util;
 
-import ea.raum.Bild;
+import java.awt.*;
 
-/**
- * Diese Klasse wrapt die Funktionen der Klasse <code>Bild</code> und stellt sie für die lokale
- * BlueJ-API mieglichst klar bereit.
- *
- * @author Michael Andonie
- */
-public class BildE extends Bild {
-    private static final long serialVersionUID = -3131852267825713616L;
+public class FontMetrics {
+    private static Canvas canvas = new Canvas();
 
-    public BildE(int x, int y, String pfad) {
-        super(pfad);
-        this.position.set(x, y);
-        FensterE.getFenster().wurzel.add(this);
+    public static java.awt.FontMetrics get(Font font) {
+        return canvas.getFontMetrics(font);
     }
 }

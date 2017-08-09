@@ -27,16 +27,16 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.BodyCreateStrategy;
 import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
-import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
+import ea.keyboard.KeyListener;
+import ea.mouse.MouseClickListener;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-
 
 /**
  * Raum bezeichnet alles, was sich auf der Zeichenebene befindet.<br /> Dies ist die absolute
@@ -46,6 +46,8 @@ import java.awt.geom.AffineTransform;
  * @author Michael Andonie, Niklas Keller
  */
 public abstract class Raum implements Comparable<Raum> {
+    private Scene scene;
+
     /**
      * Gibt an, ob das Objekt zur Zeit ueberhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall,
      * so wird die Zeichenroutine direkt uebergangen.
@@ -83,39 +85,53 @@ public abstract class Raum implements Comparable<Raum> {
     /* _________________________ Die Handler _________________________ */
 
     /**
-     * Über das <code>position</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt
-     * die Position dieses <code>Raum</code>-Objekts betreffen. Dazu gehört:
-     * <ul>
-     *     <li>Das Abfragen der aktuellen Position.</li>
-     *     <li>Das Setzen einer Position das verschieben.</li>
-     *     <li>Das Rotieren um einen Winkel.</li>
-     * </ul>
-     *
+     * Über das <code>position</code>-Objekt lassen sich alle Operationen und Abfragen ausführen,
+     * die direkt die Position dieses <code>Raum</code>-Objekts betreffen. Dazu gehört: <ul> <li>Das
+     * Abfragen der aktuellen Position.</li> <li>Das Setzen einer Position das verschieben.</li>
+     * <li>Das Rotieren um einen Winkel.</li> </ul>
+     * <p>
      * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
      *
      * @see Position
      */
     public final Position position = new Position(this);
 
-
     /**
-     * Über das <code>physik</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt
-     * die physikalischen Eigenschaften und Ümstände dieses <code>Raum</code>-Objekts betreffen. Dazu gehört:
-     * <ul>
-     *     <li>Das Abfragen und Setzen von physikalischen Eigenschaften des Objekt, wie zum Beispiel
-     *     der <i>Masse</i> oder der <i>Elastizität</i>.</li>
-     *     <li>Das Anwenden von physikalischen Effekten (z.B. <i>Kräfte</i> oder <i>Impulse</i>) auf das
-     *     Objekt.</li>
-     *     <li>Das Ändern des <i>physikalischen Verhaltens</i> des Objekts.</li>
-     * </ul>
-     *
+     * Über das <code>physik</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die
+     * direkt die physikalischen Eigenschaften und Ümstände dieses <code>Raum</code>-Objekts
+     * betreffen. Dazu gehört: <ul> <li>Das Abfragen und Setzen von physikalischen Eigenschaften des
+     * Objekt, wie zum Beispiel der <i>Masse</i> oder der <i>Elastizität</i>.</li> <li>Das Anwenden
+     * von physikalischen Effekten (z.B. <i>Kräfte</i> oder <i>Impulse</i>) auf das Objekt.</li>
+     * <li>Das Ändern des <i>physikalischen Verhaltens</i> des Objekts.</li> </ul>
+     * <p>
      * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
      *
      * @see Position
      */
     public final Physik physik = new Physik(this);
 
+    /**
+     * Diese Methode wird aufgerufen, sobald ein Raumobjekt zu einer Szene hinzugefügt wird, also am
+     * Wurzelknoten der Szene direkt oder indirekt angemeldet wurde.
+     *
+     * @param scene Szene, an der das Raumobjekt angemeldet wurde.
+     */
+    public void onAttach(Scene scene) {
+        this.scene = scene;
+        this.physikHandler.update(scene.getWorldHandler());
 
+        if (this instanceof MouseClickListener) {
+            scene.addMouseClickListener((MouseClickListener) this);
+        }
+
+        if (this instanceof KeyListener) {
+            scene.addKeyListener((KeyListener) this);
+        }
+
+        if (this instanceof FrameUpdateListener) {
+            scene.addFrameUpdateListener((FrameUpdateListener) this);
+        }
+    }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
 
@@ -124,25 +140,23 @@ public abstract class Raum implements Comparable<Raum> {
      * <b>Diese Methode muss ausgeführt werden, bevor der Raum zu einem Knoten hinzugefügt
      * wird.</b>
      *
-     * @param z
-     * 		zu setzender Index
+     * @param z zu setzender Index
      */
     @API
-    public void zIndexSetzen (int z) {
+    public void zIndexSetzen(int z) {
         zIndex = z;
     }
 
     /**
      * Setzt die Sichtbarkeit des Objektes.
      *
-     * @param sichtbar
-     * 		Ob das Objekt sichtbar sein soll oder nicht.<br /> Ist dieser Wert <code>false</code>, so
-     * 		wird es nicht im Fenster gezeichnet.<br />
+     * @param sichtbar Ob das Objekt sichtbar sein soll oder nicht.<br /> Ist dieser Wert
+     *                 <code>false</code>, so wird es nicht im Window gezeichnet.<br />
      *
      * @see #sichtbar()
      */
     @API
-    public final void sichtbarSetzen (boolean sichtbar) {
+    public final void sichtbarSetzen(boolean sichtbar) {
         this.sichtbar = sichtbar;
     }
 
@@ -154,7 +168,7 @@ public abstract class Raum implements Comparable<Raum> {
      * @see #sichtbarSetzen(boolean)
      */
     @API
-    public final boolean sichtbar () {
+    public final boolean sichtbar() {
         return this.sichtbar;
     }
 
@@ -165,7 +179,7 @@ public abstract class Raum implements Comparable<Raum> {
      */
     @API
     @SuppressWarnings ( "unused" )
-    public float getOpacity () {
+    public float getOpacity() {
         return opacity;
     }
 
@@ -177,7 +191,7 @@ public abstract class Raum implements Comparable<Raum> {
      */
     @API
     @SuppressWarnings ( "unused" )
-    public void setOpacity (float opacity) {
+    public void setOpacity(float opacity) {
         this.opacity = opacity;
     }
 
@@ -186,26 +200,16 @@ public abstract class Raum implements Comparable<Raum> {
     /**
      * Prueft, ob ein bestimmter Punkt innerhalb des Raum-Objekts liegt.
      *
-     * @param p
-     * 		Der Punkt, der auf Inhalt im Objekt getestet werden soll.
+     * @param p Der Punkt, der auf Inhalt im Objekt getestet werden soll.
      *
      * @return TRUE, wenn der Punkt innerhalb des Objekts liegt.
      */
     @API
-    public final boolean beinhaltet (Punkt p) {
+    public final boolean beinhaltet(Punkt p) {
         return physikHandler.beinhaltet(p);
     }
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
-
-    /**
-     * Diese Methode wird aufgerufen, wenn die Knotenstruktur um dieses <code>Raum</code>-Objekt verändert wird.
-     * @param worldHandler  Die neue Physik-World, in der das <code>Raum</code>-Objekt liegen soll.
-     */
-    @NoExternalUse
-    public void updateWorld(WorldHandler worldHandler) {
-        physikHandler.update(worldHandler);
-    }
 
     @NoExternalUse
     public void bodyTypeSetzen(Physik.Typ typ) {
@@ -215,7 +219,7 @@ public abstract class Raum implements Comparable<Raum> {
     /**
      * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
      * <code>Raum</code>-Objekt.
-     *
+     * <p>
      * <h3>Achtung: Grenzen des Löschens</h3> zwar werden
      * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
      * betrifft vor allem Animationen etc), jedoch nicht die innerhalb eines
@@ -240,7 +244,7 @@ public abstract class Raum implements Comparable<Raum> {
      */
     @Override
     @NoExternalUse
-    public int compareTo (Raum r) {
+    public int compareTo(Raum r) {
         if (zIndex < r.zIndex) {
             return 1;
         }
@@ -256,13 +260,10 @@ public abstract class Raum implements Comparable<Raum> {
      * Die Basiszeichenmethode.<br /> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese
      * Methode wird bei den einzelnen Gliedern eines Knotens aufgerufen.
      *
-     * @param g
-     * 		Das zeichnende Graphics-Objekt
-     * @param r
-     * 		Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-     * 		zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-     * 		gezeichnet werden.
-     *
+     * @param g Das zeichnende Graphics-Objekt
+     * @param r Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
+     *          zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
+     *          gezeichnet werden.
      */
     @NoExternalUse
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
@@ -292,12 +293,11 @@ public abstract class Raum implements Comparable<Raum> {
                 composite = null;
             }
 
-
             // ____ Render ____
 
             render(g);
 
-            if(EngineAlpha.isDebug()) {
+            if (EngineAlpha.isDebug()) {
                 //Visualisiere die Shape
                 float ppm = getPhysikHandler().worldHandler().getPixelProMeter();
                 Shape shape = createShape(ppm);
@@ -315,43 +315,47 @@ public abstract class Raum implements Comparable<Raum> {
             //Transform zurücksetzen
             g.setTransform(transform);
 
-            //System.out.println("R: " + position + " - " + rotation);
+            //System.out.println("R: " + getPosition + " - " + rotation);
         }
-
     }
 
     /**
      * Rendert eine Shape von JBox2D nach den gegebenen Voreinstellungen im Graphics-Objekt.
-     * @param shape Die Shape, die zu rendern ist.
-     * @param g     Das Graphics2D-Object, das die Shape rendern soll. Farbe & Co. sollte im Vorfeld eingestellt sein.
-     *              Diese Methode übernimmt nur das direkte Rendern
+     *
+     * @param shape         Die Shape, die zu rendern ist.
+     * @param g             Das Graphics2D-Object, das die Shape rendern soll. Farbe & Co. sollte im
+     *                      Vorfeld eingestellt sein. Diese Methode übernimmt nur das direkte
+     *                      Rendern
      * @param pixelPerMeter die Umrechnungsgröße, von Meter (JBox2D) auf Pixel (EA)
      */
     @NoExternalUse
     public static void renderShape(Shape shape, Graphics2D g, float pixelPerMeter) {
-        if(shape instanceof PolygonShape) {
-            PolygonShape polygonShape = (PolygonShape)shape;
+        if (shape instanceof PolygonShape) {
+            PolygonShape polygonShape = (PolygonShape) shape;
             Vec2[] vec2s = polygonShape.getVertices();
             int[] xs = new int[polygonShape.getVertexCount()],
                     ys = new int[polygonShape.getVertexCount()];
-            for(int i = 0; i < xs.length; i++){
-                xs[i] = (int)(vec2s[i].x*pixelPerMeter);
-                ys[i] = (int)(vec2s[i].y*pixelPerMeter);
+            for (int i = 0; i < xs.length; i++) {
+                xs[i] = (int) (vec2s[i].x * pixelPerMeter);
+                ys[i] = (int) (vec2s[i].y * pixelPerMeter);
             }
             g.drawPolygon(xs, ys, xs.length);
-        } else if(shape instanceof CircleShape) {
-            int diameter = (int)(((CircleShape)shape).m_radius*2*pixelPerMeter);
-            g.drawOval(0,0,diameter, diameter);
+        } else if (shape instanceof CircleShape) {
+            int diameter = (int) (((CircleShape) shape).m_radius * 2 * pixelPerMeter);
+            g.drawOval(0, 0, diameter, diameter);
         } else {
-            Logger.error("Debug/Render", "Konnte die Shape ("+shape+") nicht rendern. Unerwartete Shape.");
+            Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");
         }
     }
 
     /**
-     * Interne Methode. Prüft, ob das anliegende Objekt (teilweise) innerhalb des sichtbaren Bereichs liegt.
+     * Interne Methode. Prüft, ob das anliegende Objekt (teilweise) innerhalb des sichtbaren
+     * Bereichs liegt.
+     *
      * @param r Die Bounds der Kamera.
-     * @return  <code>true</code>, wenn das Objekt (teilweise) innerhalb des derzeit sichtbaren Breichs liegt, sonst
-     *          <code>false</code>.
+     *
+     * @return <code>true</code>, wenn das Objekt (teilweise) innerhalb des derzeit sichtbaren
+     * Breichs liegt, sonst <code>false</code>.
      */
     @NoExternalUse
     private boolean camcheck(BoundingRechteck r) {
@@ -362,6 +366,7 @@ public abstract class Raum implements Comparable<Raum> {
 
     /**
      * Gibt den aktuellen, internen Physik-Handler aus.
+     *
      * @return der aktuellen, internen WorldHandler-Handler aus.
      */
     @NoExternalUse
@@ -370,21 +375,23 @@ public abstract class Raum implements Comparable<Raum> {
     }
 
     /**
-     * Berechnet eine boxartige Shape. Alle Seiten sind parallel zu den Achsen, die linke obere Ecke liegt auf
-     * (0|0).
+     * Berechnet eine boxartige Shape. Alle Seiten sind parallel zu den Achsen, die linke obere Ecke
+     * liegt auf (0|0).
+     *
      * @param pixelProMeter PPM-Umrechnungskonstante.
      * @param breite        Die <b>Breite in Pixel</b> der Box.
      * @param laenge        Die <b>Laenge in Pixel</b> der Box.
-     * @return              Eine Polygon-Shape, die die oben beschriebenen Eigenschaften erfüllt.
+     *
+     * @return Eine Polygon-Shape, die die oben beschriebenen Eigenschaften erfüllt.
      */
     @NoExternalUse
     protected Shape berechneBoxShape(float pixelProMeter, float breite, float laenge) {
         PolygonShape shape = new PolygonShape();
-        float breiteInM = breite /pixelProMeter;
+        float breiteInM = breite / pixelProMeter;
         float laengeInM = laenge / pixelProMeter;
-        Vec2 relativeCenter = new Vec2(breiteInM/2, laengeInM/2);
+        Vec2 relativeCenter = new Vec2(breiteInM / 2, laengeInM / 2);
         shape.set(new Vec2[] {
-                new Vec2(0,0),
+                new Vec2(0, 0),
                 new Vec2(0, laengeInM),
                 new Vec2(breiteInM, laengeInM),
                 new Vec2(breiteInM, 0)
@@ -398,27 +405,31 @@ public abstract class Raum implements Comparable<Raum> {
     /**
      * Rendert das Objekt am Ursprung.
      * <ul>
-     *     <li>Die Position ist (0|0).</li>
-     *     <li>Die Roation ist 0.</li>
+     * <li>Die Position ist (0|0).</li>
+     * <li>Die Roation ist 0.</li>
      * </ul>
      *
-     * @param g
-     * 		Das zeichnende Graphics-Objekt
+     * @param g Das zeichnende Graphics-Objekt
      */
     @NoExternalUse
-    public abstract void render (Graphics2D g);
+    public abstract void render(Graphics2D g);
 
     /**
-     * Berechnet eine Form, die für die Kollisionsberechnungen dieses <code>Raum</code>-Objekts verwendet werden.
-     * @param   pixelProMeter   Die [px/m]-Konstante für die Umrechnung.
-     * @return                  Die zu dem Objekt zugehörige Shape in <b>[m]-Einheit, nicht in [px]</b>.
-     *                          Die Berechnung berücksichtigt die <b>aktuelle Position</b>.PositionHandlePositionalUse
+     * Berechnet eine Form, die für die Kollisionsberechnungen dieses <code>Raum</code>-Objekts
+     * verwendet werden.
+     *
+     * @param pixelProMeter Die [px/m]-Konstante für die Umrechnung.
+     *
+     * @return Die zu dem Objekt zugehörige Shape in <b>[m]-Einheit, nicht in [px]</b>. Die
+     * Berechnung berücksichtigt die <b>aktuelle Position</b>.PositionHandlePositionalUse
      */
     @NoExternalUse
     public abstract Shape createShape(final float pixelProMeter);
 
     /**
-     * Überschriebene <code>finalize</code>-Methode. Loggt verbose die Garbage Collection des Raum-Objekts.
+     * Überschriebene <code>finalize</code>-Methode. Loggt verbose die Garbage Collection des
+     * Raum-Objekts.
+     *
      * @throws Throwable Übernommen von Object
      */
     @Override
@@ -427,5 +438,9 @@ public abstract class Raum implements Comparable<Raum> {
         super.finalize();
         //Logge die Zerstörung
         Logger.verboseInfo("Raum", "Raum-Objekt in Garbage Collection: " + toString());
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 }

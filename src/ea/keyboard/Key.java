@@ -22,11 +22,11 @@ package ea.keyboard;
 import java.awt.event.KeyEvent;
 
 /**
- * Konstanten für die Tastatur-Codes
+ * Konstanten für die Tastatur-Codes.
  *
- * @author Niklas Keller <me@kelunik.com>
+ * @author Niklas Keller
  */
-public class Taste {
+public class Key {
 	public static final int INVALID = -1;
 
 	public static final int A = 0;
@@ -120,7 +120,7 @@ public class Taste {
 	public static final int MINUS = 44;
 
 	/**
-	 * Gibt den Namen der Konstante für eine bestimmte Taste aus.
+	 * Gibt den Namen der Konstante für eine bestimmte Key aus.
 	 *
 	 * @param code
 	 * 		Ein Tastencode.
