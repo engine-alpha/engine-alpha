@@ -33,6 +33,7 @@ import ea.mouse.MouseButton;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -155,10 +156,29 @@ public class Game {
                 g.rotate(rotation, 0, 0);
                 g.translate(-position.x, -position.y);
 
+                // TODO: Calculate optimal bounds
                 int size = Math.max(width, height);
                 Game.scene.render(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
 
                 g.setTransform(transform);
+
+                if (EngineAlpha.isDebug()) {
+                    // Display FPS
+                    String fpsMessage = "FPS: " + (1000 / frameDuration);
+                    Font displayFont = new Font("Monospaced", Font.PLAIN, 12);
+                    FontMetrics fm = g.getFontMetrics(displayFont);
+
+                    Rectangle2D r2d = fm.getStringBounds(fpsMessage, g);
+
+                    g.setColor(new Color(0, 106, 214));
+                    g.fillRect(10, 10, (int) r2d.getWidth() + 20, (int) r2d.getHeight() + 16);
+                    g.setColor(new Color(255, 255, 255, 50));
+                    g.drawRect(10, 10, (int) r2d.getWidth() + 19, (int) r2d.getHeight() + 15);
+
+                    g.setColor(Color.white);
+                    g.setFont(displayFont);
+                    g.drawString(fpsMessage, 20, 18 + fm.getHeight() - fm.getDescent());
+                }
             }
         };
 
@@ -278,6 +298,7 @@ public class Game {
             // Render-Thread (läuft vollkommen parallel)
             renderThread.startFrame();
 
+            scene.getWorldHandler().step(frameDuration);
             scene.onFrameUpdate(frameDuration);
 
             while (!dispatchableQueue.isEmpty()) {
@@ -331,6 +352,10 @@ public class Game {
      * @param action Drücken oder Loslassen?
      */
     private static void enqueueKeyEvent(KeyEvent e, KeyAction action) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && exitOnEsc) {
+            Game.exit();
+        }
+
         int z = Key.vonJava(e.getKeyCode());
 
         if (z == -1) {
@@ -424,11 +449,6 @@ public class Game {
         }
 
         mainThread.interrupt();
-    }
-
-    @API
-    public static float getCurrentFps() {
-        return 1000 / frameDuration;
     }
 
     public static Point getMousePosition() {

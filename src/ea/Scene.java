@@ -34,7 +34,6 @@ import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -81,6 +80,7 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         this.camera = new Camera();
         this.worldHandler = new WorldHandler();
         this.root.onAttach(this);
+        this.addFrameUpdateListener(this.camera);
     }
 
     public void render(Graphics2D g, BoundingRechteck bounds) {
@@ -93,20 +93,6 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
 
     private void renderDebug(Graphics2D g) {
         this.renderDebugGrid(g);
-
-        // Display FPS
-        g.setColor(new Color(200, 200, 200, 150));
-
-        String fpsMessage = " FPS: " + Game.getCurrentFps();
-        Font displayFont = new Font("Monospaced", Font.PLAIN, 12);
-        FontMetrics fm = g.getFontMetrics(displayFont);
-
-        Rectangle2D r2d = fm.getStringBounds(fpsMessage, g);
-
-        g.fillRect(10, 20, (int) r2d.getWidth(), (int) r2d.getHeight());
-
-        g.setColor(Color.black);
-        g.drawString(fpsMessage, 10, 30);
     }
 
     public Camera getCamera() {
@@ -176,8 +162,6 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
 
     @Override
     public void onFrameUpdate(int frameDuration) {
-        this.worldHandler.step(frameDuration);
-
         for (FrameUpdateListener listener : this.frameUpdateListeners) {
             listener.onFrameUpdate(frameDuration);
         }
