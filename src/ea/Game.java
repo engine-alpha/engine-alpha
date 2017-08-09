@@ -77,6 +77,11 @@ public class Game {
      */
     private static Scene scene;
 
+    /**
+     * Falls gesetzt, wird im nächsten Frame zu dieser Szene gewechselt.
+     */
+    private static Scene nextScene;
+
     private static FrameSubthread renderThread;
 
     private static Thread mainThread;
@@ -139,7 +144,7 @@ public class Game {
                 g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
                 AffineTransform transform = g.getTransform();
-                Camera camera = scene.getCamera();
+                Camera camera = Game.scene.getCamera();
                 Punkt position = camera.getPosition();
                 float rotation = -camera.getRotation();
 
@@ -262,9 +267,13 @@ public class Game {
         renderThread.start();
 
         frameDuration = 16; // TODO: Readd FPS setting (maxmillis)
+        long currentTime = System.nanoTime();
 
         while (!Thread.interrupted()) {
-            long frameStart = System.nanoTime();
+            if (nextScene != null) {
+                scene = nextScene;
+                nextScene = null;
+            }
 
             // Render-Thread (läuft vollkommen parallel)
             renderThread.startFrame();
@@ -282,7 +291,8 @@ public class Game {
                 Thread.currentThread().interrupt();
             }
 
-            frameDuration = (int) (System.nanoTime() - frameStart) / 1000000;
+            long frameEnd = System.nanoTime();
+            frameDuration = (int) (frameEnd - currentTime) / 1000000;
 
             if (frameDuration < 16) {
                 try {
@@ -292,8 +302,11 @@ public class Game {
                 }
 
                 // Recalculate, to have exact frame duration after sleep
-                frameDuration = (int) ((System.nanoTime() - frameStart) / 1000000);
+                frameEnd = System.nanoTime();
+                frameDuration = (int) ((frameEnd - currentTime) / 1000000);
             }
+
+            currentTime = frameEnd;
         }
 
         // Thread soll aufhören: Sauber machen!
@@ -388,8 +401,14 @@ public class Game {
         });
     }
 
+    @API
     public static void enqueueDispatchable(Dispatchable dispatchable) {
         dispatchableQueue.add(dispatchable);
+    }
+
+    @API
+    public static void transitionToScene(Scene scene) {
+        enqueueDispatchable(() -> nextScene = scene);
     }
 
     /**
