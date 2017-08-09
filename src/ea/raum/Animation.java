@@ -32,8 +32,8 @@ import java.util.LinkedList;
 public class Animation extends Raum {
     private Frame[] frames;
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
     private int currentTime;
     private int currentIndex;
@@ -59,6 +59,27 @@ public class Animation extends Raum {
         this.currentTime = 0;
         this.currentIndex = 0;
     }
+
+    /**
+     * Gibt die Breite der Animation in Pixel aus.
+     * @return  Die Breite der Animation in Pixel.
+     * @see #getImageHeight()
+     */
+    @API
+    public int getImageWidth() {
+        return width;
+    }
+
+    /**
+     * Gibt die Höhe der Animation in Pixel aus.
+     * @return  Die Höhe der Animation in Pixel
+     * @see #getImageWidth()
+     */
+    @API
+    public int getImageHeight() {
+        return height;
+    }
+
 
     @Override
     public void updateWorld(WorldHandler worldHandler) {
