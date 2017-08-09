@@ -141,10 +141,14 @@ public class Game {
                 AffineTransform transform = g.getTransform();
                 Camera camera = scene.getCamera();
                 Punkt position = camera.getPosition();
+                float rotation = -camera.getRotation();
 
                 g.setClip(0, 0, width, height);
+                g.translate(width / 2, height / 2);
+
                 g.scale(camera.getZoom(), camera.getZoom());
-                g.translate(position.x + width / 2, position.y + height / 2);
+                g.rotate(rotation, 0, 0);
+                g.translate(-position.x, -position.y);
 
                 int size = Math.max(width, height);
                 Game.scene.render(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
@@ -201,17 +205,17 @@ public class Game {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+                mousePosition = new Point(e.getX() - width / 2, e.getY() - height / 2);
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+                mousePosition = new Point(e.getX() - width / 2, e.getY() - height / 2);
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                mousePosition = new Point(e.getX() + width / 2, e.getY() + height / 2);
+                mousePosition = new Point(e.getX() - width / 2, e.getY() - height / 2);
             }
         };
 
@@ -350,14 +354,13 @@ public class Game {
         Point sourceClick = e.getPoint();
 
         // Mausklick-Position muss mit Zoom-Wert verrechnet werden
-        float cameraZoom = scene.getCamera().getZoom();
-        Punkt sourcePosition = new Punkt(sourceClick.x + width / 2, sourceClick.y + width / 2);
+        float zoom = scene.getCamera().getZoom();
+        float rotation = scene.getCamera().getRotation();
+        Punkt position = scene.getCamera().getPosition();
 
-        // Kamera-Zoom einbeziehen
-        Punkt cameraPosition = scene.getCamera().getPosition();
-        Punkt click = new Punkt(
-                (sourcePosition.x + cameraPosition.x) / cameraZoom,
-                (sourcePosition.y + cameraPosition.y) / cameraZoom
+        Punkt sourcePosition = new Punkt(
+                position.x + (((float) Math.cos(rotation) * (sourceClick.x - width / 2) - (float) Math.sin(rotation) * (sourceClick.y - height / 2))) / zoom,
+                position.y + (((float) Math.sin(rotation) * (sourceClick.x - width / 2) + (float) Math.cos(rotation) * (sourceClick.y - height / 2))) / zoom
         );
 
         MouseButton button;
@@ -378,9 +381,9 @@ public class Game {
 
         enqueueDispatchable(() -> {
             if (action == MouseAction.DOWN) {
-                scene.onMouseDown(click, button);
+                scene.onMouseDown(sourcePosition, button);
             } else {
-                scene.onMouseUp(click, button);
+                scene.onMouseUp(sourcePosition, button);
             }
         });
     }

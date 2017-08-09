@@ -76,11 +76,6 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
      */
     private final WorldHandler worldHandler;
 
-    /**
-     * Aktuelle Position der Maus im Fenster.
-     */
-    private Point mousePosition;
-
     public Scene() {
         this.root = new Knoten();
         this.camera = new Camera();
@@ -247,9 +242,17 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
 
     @API
     public Punkt getMousePosition() {
+        Point mouse = Game.getMousePosition();
+        Punkt position = camera.getPosition();
+
+        float rotation = camera.getRotation();
+
+        float mx = mouse.x;
+        float my = mouse.y;
+
         return new Punkt(
-                (Game.getMousePosition().x + this.camera.getPosition().x) / this.camera.getZoom(),
-                (Game.getMousePosition().y + this.camera.getPosition().y) / this.camera.getZoom()
+                position.x + (((float) Math.cos(rotation) * mx - (float) Math.sin(rotation) * my)) / camera.getZoom(),
+                position.y + (((float) Math.sin(rotation) * mx + (float) Math.cos(rotation) * my)) / camera.getZoom()
         );
     }
 }

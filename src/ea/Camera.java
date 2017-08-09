@@ -67,6 +67,11 @@ public class Camera implements FrameUpdateListener {
     private float zoom = 1;
 
     /**
+     * Die aktuelle Drehung in Radians.
+     */
+    private float rotation = 0;
+
+    /**
      * Konstruktor erstellt eine neue Kamera mit Fokus auf <code>(0, 0)</code>.
      */
     public Camera() {
@@ -190,6 +195,16 @@ public class Camera implements FrameUpdateListener {
         this.position = new Punkt(x, y);
     }
 
+    @API
+    public void rotate(float radians) {
+        this.rotation += radians;
+    }
+
+    @API
+    public void rotateTo(float radians) {
+        this.rotation = radians;
+    }
+
     /**
      * Die aktuelle Position der Kamera.
      *
@@ -214,5 +229,9 @@ public class Camera implements FrameUpdateListener {
 
             this.position = new Punkt(x, y);
         }
+    }
+
+    public float getRotation() {
+        return rotation;
     }
 }
