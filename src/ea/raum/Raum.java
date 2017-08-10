@@ -129,9 +129,7 @@ public abstract class Raum implements Comparable<Raum> {
             throw new IllegalStateException("Ein Raumobjekt kann nur einmal einer Szene hinzugefügt werden. Um ein Objekt temporär auszublenden, kann sein Typ auf passiv gestellt werden und das Objekt unsichtbar gemacht werden.");
         }
 
-        this.attached = true;
         this.scene = scene;
-
         this.physikHandler.update(scene.getWorldHandler());
 
         if (this instanceof MouseClickListener) {
@@ -145,6 +143,8 @@ public abstract class Raum implements Comparable<Raum> {
         if (this instanceof FrameUpdateListener) {
             scene.addFrameUpdateListener((FrameUpdateListener) this);
         }
+
+        this.attached = true; // Set this after everything is done
     }
 
     /**

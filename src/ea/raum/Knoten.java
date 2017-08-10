@@ -116,12 +116,13 @@ public class Knoten extends Raum {
             return;
         }
 
+        // noinspection StatementWithEmptyBody
+        while (list.remove(m)) ;
+
+        // Always detach _after_ removing from the list, otherwise Rendering might result in a NPE.
         if (this.getScene() != null) {
             m.onDetach();
         }
-
-        // noinspection StatementWithEmptyBody
-        while (list.remove(m)) ;
     }
 
     /**
@@ -167,12 +168,14 @@ public class Knoten extends Raum {
             return;
         }
 
-        list.add(m);
-        Collections.sort(list);
-
         if (this.getScene() != null) {
             m.onAttach(this.getScene());
         }
+
+        // Add to list _after_ calling onAttach, otherwise rendering might ask for position with
+        // a NullHandler being set for physics.
+        list.add(m);
+        Collections.sort(list);
     }
 
     /**
