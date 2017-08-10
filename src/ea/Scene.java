@@ -91,35 +91,11 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         }
     }
 
-    private void renderDebug(Graphics2D g) {
-        this.renderDebugGrid(g);
-    }
-
     public Camera getCamera() {
         return this.camera;
     }
 
-    private void renderDebugGrid(Graphics2D g) {
-        int tx = (int) camera.getPosition().x;
-        int ty = (int) camera.getPosition().y;
-        int gridSize = 50;
-
-        g.translate(-tx, -ty);
-        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-        g.setColor(new Color(255, 255, 255, 100));
-
-        // TODO: Remove 500px values and replace with correct solution that uses the Window size.
-
-        for (int x = tx / gridSize * gridSize; x < tx + 500; x += gridSize) {
-            g.drawLine(x, ty, x, ty + (int) 500);
-            g.drawString("" + x, x + 10, ty + 20);
-        }
-
-        for (int y = ty / gridSize * gridSize; y < ty + 500; y += gridSize) {
-            g.drawLine(tx, y, tx + (int) 500, y);
-            g.drawString("" + y, tx + 10, y + 20);
-        }
-
+    private void renderDebug(Graphics2D g) {
         // Display Joints
         Joint j = root.getPhysikHandler().worldHandler().getWorld().getJointList();
 
@@ -170,7 +146,12 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
     public void add(Raum... rooms) {
         for (Raum room : rooms) {
             this.root.add(room);
-            room.onAttach(this);
+        }
+    }
+
+    public void remove(Raum... rooms) {
+        for (Raum room : rooms) {
+            this.root.entfernen(room);
         }
     }
 
@@ -178,12 +159,24 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         this.mouseClickListeners.add(mouseClickListener);
     }
 
+    public void removeMouseClickListener(MouseClickListener mouseClickListener) {
+        this.mouseClickListeners.remove(mouseClickListener);
+    }
+
     public void addKeyListener(KeyListener keyListener) {
         this.keyListeners.add(keyListener);
     }
 
+    public void removeKeyListener(KeyListener keyListener) {
+        this.keyListeners.remove(keyListener);
+    }
+
     public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
         this.frameUpdateListeners.add(frameUpdateListener);
+    }
+
+    public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        this.frameUpdateListeners.remove(frameUpdateListener);
     }
 
     @API

@@ -46,7 +46,15 @@ import java.awt.geom.AffineTransform;
  * @author Michael Andonie, Niklas Keller
  */
 public abstract class Raum implements Comparable<Raum> {
+    /**
+     * Szene, zu der der Raum gehört.
+     */
     private Scene scene;
+
+    /**
+     * Zum Überprüfen, dass ein Raum nur einmal zu einer Szene hinzugefügt wird.
+     */
+    private boolean attached = false;
 
     /**
      * Gibt an, ob das Objekt zur Zeit ueberhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall,
@@ -117,7 +125,13 @@ public abstract class Raum implements Comparable<Raum> {
      * @param scene Szene, an der das Raumobjekt angemeldet wurde.
      */
     public void onAttach(Scene scene) {
+        if (this.attached) {
+            throw new IllegalStateException("Ein Raumobjekt kann nur einmal einer Szene hinzugefügt werden. Um ein Objekt temporär auszublenden, kann sein Typ auf passiv gestellt werden und das Objekt unsichtbar gemacht werden.");
+        }
+
+        this.attached = true;
         this.scene = scene;
+
         this.physikHandler.update(scene.getWorldHandler());
 
         if (this instanceof MouseClickListener) {
@@ -131,6 +145,33 @@ public abstract class Raum implements Comparable<Raum> {
         if (this instanceof FrameUpdateListener) {
             scene.addFrameUpdateListener((FrameUpdateListener) this);
         }
+    }
+
+    /**
+     * Diese Methode wird aufgerufen, sobald ein Raumobjekt von einer Szene entfernt wird, also am
+     * Wurzelknoten der Szene direkt oder indirekt abgemeldet wurde.
+     */
+    public void onDetach() {
+        if (!this.attached) {
+            throw new IllegalStateException("Das Raumobjekt war bei keiner Szene angemeldet, wurde nun aber von einer entfernt?!");
+        }
+
+        this.physikHandler.killBody();
+        this.physikHandler = new NullHandler(this);
+
+        if (this instanceof MouseClickListener) {
+            this.scene.removeMouseClickListener((MouseClickListener) this);
+        }
+
+        if (this instanceof KeyListener) {
+            this.scene.removeKeyListener((KeyListener) this);
+        }
+
+        if (this instanceof FrameUpdateListener) {
+            this.scene.removeFrameUpdateListener((FrameUpdateListener) this);
+        }
+
+        this.scene = null;
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
@@ -214,25 +255,6 @@ public abstract class Raum implements Comparable<Raum> {
     @NoExternalUse
     public void bodyTypeSetzen(Physik.Typ typ) {
         this.physikHandler = physikHandler.typ(typ);
-    }
-
-    /**
-     * Diese Methode loescht alle eventuell vorhandenen Referenzen innerhalb der Engine auf dieses
-     * <code>Raum</code>-Objekt.
-     * <p>
-     * <h3>Achtung: Grenzen des Löschens</h3> zwar werden
-     * hierdurch alle Referenzen geloescht, die <b>nur innerhalb</b> der Engine liegen (dies
-     * betrifft vor allem Animationen etc), jedoch nicht die innerhalb eines
-     * <code>Knoten</code>-Objektes!!!!!!!!!<br /> Das heisst, wenn das Objekt an einem Knoten liegt
-     * (was <b>immer der Fall ist, wenn es auch gezeichnet wird (siehe die Wurzel des
-     * Fensters)</b>), muss es trotzdem selbst geloescht werden, <b>dies erledigt diese Methode
-     * nicht!!</b>.
-     * TODO Neuer Doc Text
-     */
-    @NoExternalUse
-    public void kill() {
-        physikHandler.killBody();
-        physikHandler = new NullHandler(this);
     }
 
     /**
@@ -403,11 +425,8 @@ public abstract class Raum implements Comparable<Raum> {
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Raum-Objekts _________________________ */
 
     /**
-     * Rendert das Objekt am Ursprung.
-     * <ul>
-     * <li>Die Position ist (0|0).</li>
-     * <li>Die Roation ist 0.</li>
-     * </ul>
+     * Rendert das Objekt am Ursprung. <ul> <li>Die Position ist (0|0).</li> <li>Die Roation ist
+     * 0.</li> </ul>
      *
      * @param g Das zeichnende Graphics-Objekt
      */

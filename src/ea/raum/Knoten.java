@@ -84,14 +84,22 @@ public class Knoten extends Raum {
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        for (Raum room : this.list) {
+            room.onDetach();
+        }
+    }
+
     /**
-     * Loescht alle Raum-Objekte, die an diesem Knoten gelagert sind.
+     * Löscht alle Raum-Objekte, die an diesem Knoten gelagert sind.
      */
     public void leeren() {
-        for (Raum m : list) {
-            m.kill();
+        for (Raum room : this.list) {
+            entfernen(room);
         }
-        list.clear();
     }
 
     /**
@@ -104,8 +112,12 @@ public class Knoten extends Raum {
      */
     @API
     public void entfernen(Raum m) {
-        if (list.contains(m)) {
-            m.kill();
+        if (!list.contains(m)) {
+            return;
+        }
+
+        if (this.getScene() != null) {
+            m.onDetach();
         }
 
         // noinspection StatementWithEmptyBody

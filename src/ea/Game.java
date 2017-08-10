@@ -163,21 +163,7 @@ public class Game {
                 g.setTransform(transform);
 
                 if (EngineAlpha.isDebug()) {
-                    // Display FPS
-                    String fpsMessage = "FPS: " + (1000 / frameDuration);
-                    Font displayFont = new Font("Monospaced", Font.PLAIN, 12);
-                    FontMetrics fm = g.getFontMetrics(displayFont);
-
-                    Rectangle2D r2d = fm.getStringBounds(fpsMessage, g);
-
-                    g.setColor(new Color(0, 106, 214));
-                    g.fillRect(10, 10, (int) r2d.getWidth() + 20, (int) r2d.getHeight() + 16);
-                    g.setColor(new Color(255, 255, 255, 50));
-                    g.drawRect(10, 10, (int) r2d.getWidth() + 19, (int) r2d.getHeight() + 15);
-
-                    g.setColor(Color.white);
-                    g.setFont(displayFont);
-                    g.drawString(fpsMessage, 20, 18 + fm.getHeight() - fm.getDescent());
+                    renderDebug(g);
                 }
             }
         };
@@ -283,6 +269,86 @@ public class Game {
         mainThread.start();
     }
 
+    private static void renderDebug(Graphics2D g) {
+        AffineTransform transform = g.getTransform();
+        Camera camera = Game.scene.getCamera();
+        Punkt position = camera.getPosition();
+        float rotation = -camera.getRotation();
+
+        g.setClip(0, 0, width, height);
+        g.translate(width / 2, height / 2);
+
+        g.scale(camera.getZoom(), camera.getZoom());
+        g.rotate(rotation, 0, 0);
+        g.translate(-position.x, -position.y);
+
+        int gridSize = 100;
+        int windowSize = Math.max(width, height);
+
+        // TODO: Optimize to draw only the required grid cells on rotation
+        // Without rotation: - width / 2, - height / 2
+        int tx = (int) position.x - windowSize;
+        int ty = (int) position.y - windowSize;
+
+        tx -= tx % gridSize;
+        ty -= ty % gridSize;
+
+        g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
+        g.setColor(new Color(255, 255, 255, 100));
+
+        for (int x = tx; x < tx + 2 * windowSize + gridSize; x += gridSize) {
+            g.drawLine(x, ty - gridSize, x, ty + windowSize * 2 + gridSize);
+        }
+
+        for (int y = ty; y < ty + 2 * windowSize + gridSize; y += gridSize) {
+            g.drawLine(tx - gridSize, y, tx + windowSize * 2 + gridSize, y);
+        }
+
+        for (int x = tx; x < tx + 2 * windowSize + gridSize; x += gridSize) {
+            for (int y = ty; y < ty + 2 * windowSize + gridSize; y += gridSize) {
+                g.drawString(x + " / " + y, x + 10, y + 20);
+            }
+        }
+
+        g.setTransform(transform);
+
+        renderInfo(g);
+    }
+
+    private static void renderInfo(Graphics2D g) {
+        Font displayFont = new Font("Monospaced", Font.PLAIN, 12);
+        FontMetrics fm = g.getFontMetrics(displayFont);
+        Rectangle2D bounds;
+        int y = 10;
+
+        // Prevent java.lang.ArithmeticException: / by zero
+        String fpsMessage = "FPS: " + (1000 / Math.max(frameDuration, 1));
+        bounds = fm.getStringBounds(fpsMessage, g);
+
+        g.setColor(new Color(0, 106, 214));
+        g.fillRect(10, y, (int) bounds.getWidth() + 20, (int) bounds.getHeight() + 16);
+        g.setColor(new Color(255, 255, 255, 50));
+        g.drawRect(10, y, (int) bounds.getWidth() + 19, (int) bounds.getHeight() + 15);
+
+        g.setColor(Color.white);
+        g.setFont(displayFont);
+        g.drawString(fpsMessage, 20, y + 8 + fm.getHeight() - fm.getDescent());
+
+        y += fm.getHeight() + 20;
+
+        String bodyMessage = "Bodies: " + scene.getWorldHandler().getWorld().getBodyCount();
+        bounds = fm.getStringBounds(bodyMessage, g);
+
+        g.setColor(new Color(0, 214, 84));
+        g.fillRect(10, y, (int) bounds.getWidth() + 20, (int) bounds.getHeight() + 16);
+        g.setColor(new Color(255, 255, 255, 50));
+        g.drawRect(10, y, (int) bounds.getWidth() + 19, (int) bounds.getHeight() + 15);
+
+        g.setColor(Color.white);
+        g.setFont(displayFont);
+        g.drawString(bodyMessage, 20, y + 8 + fm.getHeight() - fm.getDescent());
+    }
+
     private static void run() {
         renderThread.start();
 
@@ -334,7 +400,8 @@ public class Game {
         renderThread.interrupt();
 
         try {
-            renderThread.join();
+            // TODO: Sometimes join doesn't work and a second exit is required
+            renderThread.join(250);
         } catch (InterruptedException e) {
             // Ignore here
         }
