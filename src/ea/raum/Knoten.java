@@ -30,25 +30,28 @@ import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.WeldJointDef;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Vector;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Ein Knoten ist eine Sammlung vielen Raum-Objekten, die hierdurch einheitlich bewegungSimulieren,
  * und einheitlich behandelt werden koennen.
  *
- * @author Michael Andonie, Niklas Keller <me@kelunik.com>
+ * @author Michael Andonie
+ * @author Niklas Keller
  */
 public class Knoten extends Raum {
     /**
      * Die Liste aller Raum-Objekte, die dieser Knoten fasst.
      */
-    private final Vector<Raum> list;
+    private final List<Raum> list;
 
     /**
      * Die Joints, die dieser Knoten gerade innehat.
      */
-    private final Vector<Joint> joints;
+    private final List<Joint> joints;
 
     /**
      * Ob der Knoten die Anmeldung neuer Raum-Objekte blockiert.
@@ -56,22 +59,23 @@ public class Knoten extends Raum {
     private boolean lock = false;
 
     /**
-     * Gibt die interne Darstellung der Child-Liste als Vector
-     * aus.
-     *
-     * @return die interne Darstellung der Child-Liste als Vector
+     * Führt die angegebene Funktion für jedes Element am Knoten aus.
      */
     @NoExternalUse
-    public Vector<Raum> getList() {
-        return list;
+    public void forEach(Consumer<Raum> functor) {
+        synchronized (this.list) {
+            for (Raum room : this.list) {
+                functor.accept(room);
+            }
+        }
     }
 
     /**
      * Konstruktor für Objekte der Klasse Knoten
      */
     public Knoten() {
-        list = new Vector<>();
-        joints = new Vector<>();
+        list = new ArrayList<>();
+        joints = new ArrayList<>();
         super.physikHandler = new KnotenHandler(this);
     }
 
@@ -86,11 +90,11 @@ public class Knoten extends Raum {
 
     @Override
     public void onDetach() {
-        super.onDetach();
-
         for (Raum room : this.list) {
             room.onDetach();
         }
+
+        super.onDetach();
     }
 
     /**
@@ -112,12 +116,14 @@ public class Knoten extends Raum {
      */
     @API
     public void entfernen(Raum m) {
-        if (!list.contains(m)) {
-            return;
-        }
+        synchronized (this.list) {
+            if (!list.contains(m)) {
+                return;
+            }
 
-        // noinspection StatementWithEmptyBody
-        while (list.remove(m)) ;
+            // noinspection StatementWithEmptyBody
+            while (list.remove(m)) ;
+        }
 
         // Always detach _after_ removing from the list, otherwise Rendering might result in a NPE.
         if (this.getScene() != null) {
@@ -172,10 +178,12 @@ public class Knoten extends Raum {
             m.onAttach(this.getScene());
         }
 
-        // Add to list _after_ calling onAttach, otherwise rendering might ask for position with
-        // a NullHandler being set for physics.
-        list.add(m);
-        Collections.sort(list);
+        synchronized (this.list) {
+            // Add to list _after_ calling onAttach, otherwise rendering might ask for position with
+            // a NullHandler being set for physics.
+            list.add(m);
+            Collections.sort(list);
+        }
     }
 
     /**
@@ -244,8 +252,9 @@ public class Knoten extends Raum {
     /**
      * Gibt an, ob die Elemente in diesem Knoten gerade aneinander fixiert sind oder nicht.
      *
-     * @return    <code>true</code>, wenn die Elemente dieses Knotens gerade alle aneinander fixiert
+     * @return <code>true</code>, wenn die Elemente dieses Knotens gerade alle aneinander fixiert
      * sind. Sonst <code>false</code>.
+     *
      * @see #fixateAllElements()
      * @see #freeAllElements()
      */
@@ -266,22 +275,22 @@ public class Knoten extends Raum {
     /**
      * {@inheritDoc}
      * <p>
-     * Überspringt das Pre-Rendering und gibt nur den
-     * Befehl zu zeichnen weiter, um mehrfache Einrechnung der Rotation zu
-     * verhindern.
+     * Überspringt das Pre-Rendering und gibt nur den Befehl zu zeichnen weiter, um mehrfache
+     * Einrechnung der Rotation zu verhindern.
      */
     @Override
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
         if (sichtbar()) {
-            for (int i = list.size() - 1; i >= 0; i--) {
-                list.get(i).renderBasic(g, r);
+            synchronized (this.list) {
+                for (Raum room : this.list) {
+                    room.renderBasic(g, r);
+                }
             }
         }
     }
 
     /**
-     * {@inheritDoc}
-     * Der Zeichnen-Befehl wird an die Unterobjekte weitergetragen.<br />
+     * {@inheritDoc} Der Zeichnen-Befehl wird an die Unterobjekte weitergetragen.<br />
      *
      * @param g Das Grafik-Objekt
      */

@@ -35,7 +35,9 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Queue;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CyclicBarrier;
 
 /**
  * Diese Klasse gibt Zugriff auf das aktuelle Spiel.
@@ -82,6 +84,8 @@ public class Game {
      * Falls gesetzt, wird im nächsten Frame zu dieser Szene gewechselt.
      */
     private static Scene nextScene;
+
+    private static CyclicBarrier frameBarrier;
 
     private static FrameSubthread renderThread;
 
@@ -239,34 +243,41 @@ public class Game {
             Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
         }
 
-        renderThread = new FrameSubthread("Rendering") {
+        frameBarrier = new CyclicBarrier(2);
+
+        renderThread = new FrameSubthread("Rendering", frameBarrier) {
             @Override
             public void dispatchFrame() {
-                Graphics2D g = (Graphics2D) renderPanel.getBufferStrategy().getDrawGraphics();
-
-                // have to be the same @ Game.screenshot!
-                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
                 try {
-                    renderPanel.render(g);
-                } finally {
-                    g.dispose();
-                }
+                    do {
+                        do {
+                            Graphics2D g = (Graphics2D) renderPanel.getBufferStrategy().getDrawGraphics();
 
-                try {
-                    renderPanel.getBufferStrategy().show();
+                            // have to be the same @ Game.screenshot!
+                            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
+                            renderPanel.render(g);
+
+                            g.dispose();
+                        } while (renderPanel.getBufferStrategy().contentsRestored());
+
+                        renderPanel.getBufferStrategy().show();
+                    } while (renderPanel.getBufferStrategy().contentsLost());
                 } catch (IllegalStateException e) {
-                    e.printStackTrace();
+                    Logger.error("Rendering", e.getMessage());
                     Game.exit();
                 }
             }
         };
 
+        renderThread.setPriority(Thread.MAX_PRIORITY);
+
         mousePosition = new Point(width / 2, height / 2);
 
         mainThread = new Thread(Game::run);
         mainThread.start();
+        mainThread.setPriority(Thread.MAX_PRIORITY);
     }
 
     private static void renderDebug(Graphics2D g) {
@@ -353,7 +364,7 @@ public class Game {
         renderThread.start();
 
         frameDuration = 16; // TODO: Readd FPS setting (maxmillis)
-        long currentTime = System.nanoTime();
+        long frameStart = System.nanoTime();
 
         while (!Thread.interrupted()) {
             if (nextScene != null) {
@@ -361,47 +372,41 @@ public class Game {
                 nextScene = null;
             }
 
-            // Render-Thread (läuft vollkommen parallel)
-            renderThread.startFrame();
+            try {
+                frameBarrier.await();
+            } catch (BrokenBarrierException | InterruptedException e) {
+                break;
+            }
 
             scene.getWorldHandler().step(frameDuration);
             scene.onFrameUpdate(frameDuration);
 
             while (!dispatchableQueue.isEmpty()) {
-                Dispatchable dispatchable = dispatchableQueue.poll();
-                dispatchable.dispatch();
-            }
-
-            try {
-                renderThread.joinFrame();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                dispatchableQueue.poll().dispatch();
             }
 
             long frameEnd = System.nanoTime();
-            frameDuration = (int) (frameEnd - currentTime) / 1000000;
+            int duration = (int) (frameEnd - frameStart) / 1000000;
 
-            if (frameDuration < 16) {
+            if (duration < 16) {
                 try {
-                    Thread.sleep(16 - frameDuration);
+                    Thread.sleep(16 - duration);
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    break;
                 }
-
-                // Recalculate, to have exact frame duration after sleep
-                frameEnd = System.nanoTime();
-                frameDuration = (int) ((frameEnd - currentTime) / 1000000);
             }
 
-            currentTime = frameEnd;
+            frameEnd = System.nanoTime();
+            frameDuration = (int) ((frameEnd - frameStart) / 1000000);
+
+            frameStart = frameEnd;
         }
 
         // Thread soll aufhören: Sauber machen!
         renderThread.interrupt();
 
         try {
-            // TODO: Sometimes join doesn't work and a second exit is required
-            renderThread.join(250);
+            renderThread.join();
         } catch (InterruptedException e) {
             // Ignore here
         }

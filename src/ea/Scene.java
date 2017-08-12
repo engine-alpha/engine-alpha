@@ -34,8 +34,10 @@ import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class Scene implements FrameUpdateListener, MouseClickListener, KeyListener {
     /**
@@ -47,17 +49,17 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
     /**
      * Die Liste aller angemeldeten KeyListener.
      */
-    private final Set<KeyListener> keyListeners = new HashSet<>();
+    private final Collection<KeyListener> keyListeners = new CopyOnWriteArraySet<>();
 
     /**
      * Die Liste aller angemeldeten MouseClickListener.
      */
-    private final Set<MouseClickListener> mouseClickListeners = new HashSet<>();
+    private final Collection<MouseClickListener> mouseClickListeners = new CopyOnWriteArraySet<>();
 
     /**
      * Die Liste aller angemeldeten FrameUpdateListener.
      */
-    private Set<FrameUpdateListener> frameUpdateListeners = new HashSet<>();
+    private final Collection<FrameUpdateListener> frameUpdateListeners = new CopyOnWriteArraySet<>();
 
     /**
      * Die Liste aller angemeldeten PeriodicTask.

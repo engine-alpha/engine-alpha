@@ -1,14 +1,15 @@
 package ea.internal.frame;
 
-public abstract class FrameSubthread extends Thread {
-    /**
-     * Gibt an, ob dieser Thread gerade für eine framespezifische Berechnung aktiv ist.
-     */
-    private boolean frameActive;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
-    protected FrameSubthread(String name) {
+public abstract class FrameSubthread extends Thread {
+    private CyclicBarrier frameBarrier;
+
+    protected FrameSubthread(String name, CyclicBarrier frameBarrier) {
         super(name);
 
+        this.frameBarrier = frameBarrier;
         this.setDaemon(true);
     }
 
@@ -19,50 +20,13 @@ public abstract class FrameSubthread extends Thread {
     @Override
     public final void run() {
         while (!interrupted()) {
-            // Warte auf Signal von Master
             try {
-                synchronized (this) {
-                    while (!frameActive) {
-                        this.wait();
-                    }
-                }
-            } catch (InterruptedException e) {
+                frameBarrier.await();
+            } catch (BrokenBarrierException | InterruptedException e) {
                 break;
             }
 
             dispatchFrame();
-
-            synchronized (this) {
-                frameActive = false;
-                this.notifyAll();
-            }
-        }
-    }
-
-    /**
-     * Ein Semi-Start. Ein normaler Start startet den Thread von Beginn an. Da dies nicht mehrfach
-     * möglich ist, aber frameweise neu gestartet werden soll, ermöglicht der Semi-Start, die
-     * nächste <code>dispatchFrame</code>-Routine starten.
-     */
-    public final void startFrame() {
-        synchronized (this) {
-            this.frameActive = true;
-            this.notifyAll();
-        }
-    }
-
-    /**
-     * Ein Semi-Join. Ein noromaler join endet, sobald der Thread beendet ist. Da dieser Thread
-     * frameweise "fertig" ist, aber nicht terminieren soll (da er im folgenden Frame wieder
-     * gebraucht wird), blockiert diee Methode - vergleichbar mit einem "frameweisen join" -
-     * solange, bis der aktuelle Frame abgearbeitet ist (ist der Frame schon fertig, so terminiert
-     * die Methode direkt).
-     */
-    public final void joinFrame() throws InterruptedException {
-        synchronized (this) {
-            while (frameActive) {
-                this.wait();
-            }
         }
     }
 

@@ -1,19 +1,18 @@
 package ea.internal.phy;
 
-import ea.*;
+import ea.Punkt;
+import ea.Vektor;
 import ea.handle.Physik;
 import ea.internal.util.Logger;
 import ea.raum.Knoten;
-import ea.raum.Raum;
 import org.jbox2d.dynamics.Body;
 
 /**
  * Spezieller Physik-Handler für Knoten.
- * Created by andonie on 05.09.15.
+ *
+ * @author Michael Andonie
  */
-public class KnotenHandler
-extends PhysikHandler {
-
+public class KnotenHandler extends PhysikHandler {
     private final Knoten knoten;
 
     /**
@@ -29,7 +28,7 @@ extends PhysikHandler {
     /**
      * Initialisiert den Physik-Handler.
      *
-     * @param raum      Der Knoten, um den sich dieser Handler kümmert.
+     * @param raum Der Knoten, um den sich dieser Handler kümmert.
      */
     public KnotenHandler(Knoten raum) {
         super(raum, Physik.Typ.PASSIV, false);
@@ -50,9 +49,7 @@ extends PhysikHandler {
     @Override
     public void verschieben(Vektor v) {
         position = position.verschobeneInstanz(v);
-        for(Raum m : knoten.getList()) {
-            m.position.verschieben(v);
-        }
+        knoten.forEach(r -> r.position.verschieben(v));
     }
 
     @Override
@@ -78,9 +75,7 @@ extends PhysikHandler {
     @Override
     public void rotieren(float radians) {
         rotation += radians;
-        for(Raum m : knoten.getList()) {
-            m.position.rotieren(radians);
-        }
+        knoten.forEach(r -> r.position.rotation(radians));
     }
 
     @Override
@@ -179,9 +174,7 @@ extends PhysikHandler {
 
     @Override
     public void physicalReset() {
-        for(Raum m : knoten.getList()) {
-            m.physik.inRuheVersetzen();
-        }
+        knoten.forEach(r -> r.physik.inRuheVersetzen());
     }
 
     @Override

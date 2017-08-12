@@ -104,21 +104,6 @@ public class Text extends Raum {
     protected Color color;
 
     /**
-     * Referenz auf die Farbe, die vor dem leuchten da war (zum Wiederherstellen)
-     */
-    private Color alte;
-
-    /**
-     * Gibt an, ob dieser Text gerade leuchtet
-     */
-    private boolean leuchtet = false;
-
-    /**
-     * Der Zaehler fuer die Leuchtanimation
-     */
-    private int leuchtzaehler;
-
-    /**
      * Textanker: links, mittig oder rechts
      */
     private Anker anker = Anker.LINKS;
@@ -192,6 +177,7 @@ public class Text extends Raum {
             this.schriftart = 0;
         }
 
+        //TODO auskommentieren rückgängig machen
         setzeFont(fontName);
     }
 
