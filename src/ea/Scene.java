@@ -192,10 +192,12 @@ public class Scene {
 
     public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
         this.frameUpdateListeners.add(frameUpdateListener);
+        frameUpdateListener.onAttach(this);
     }
 
     public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
         this.frameUpdateListeners.remove(frameUpdateListener);
+        frameUpdateListener.onDetach(this);
     }
 
     @API

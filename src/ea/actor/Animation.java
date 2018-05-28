@@ -22,7 +22,6 @@ package ea.actor;
 import ea.FrameUpdateListener;
 import ea.internal.ano.API;
 import ea.internal.io.ImageLoader;
-import ea.internal.phy.WorldHandler;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
@@ -39,11 +38,9 @@ public class Animation extends Actor implements FrameUpdateListener {
     private int currentTime;
     private int currentIndex;
 
-    private WorldHandler worldHandler;
-
     private Animation(Frame[] frames) {
         if (frames.length < 1) {
-            throw new RuntimeException("Eine Animation kann nicht mit einem removeAll Frames-Array initialisiert werden.");
+            throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
         }
 
         for (Frame frame : frames) {

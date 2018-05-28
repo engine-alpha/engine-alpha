@@ -21,7 +21,7 @@ public class ActorGroupTest {
 
 		// TODO: Für Schüler evtl. unerwartetes Verhalten - Exception?
 		k.add(r, r);
-		assertEquals(2, k.getAllMembers().length);
+		assertEquals(2, k.getMembers().length);
 
 		k.position.move(new Vector(10, 10));
 		assertEquals(new Point(120, 120), r.position.get());
@@ -30,6 +30,6 @@ public class ActorGroupTest {
 		assertEquals(new Point(130, 130), r.position.get());
 
 		k.remove(r);
-		assertEquals(0, k.getAllMembers().length);
+		assertEquals(0, k.getMembers().length);
 	}
 }
