@@ -35,6 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferStrategy;
 import java.util.Queue;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -251,8 +252,10 @@ public class Game {
             public void dispatchFrame() {
                 try {
                     do {
+                        BufferStrategy bufferStrategy = renderPanel.getBufferStrategy();
+
                         do {
-                            Graphics2D g = (Graphics2D) renderPanel.getBufferStrategy().getDrawGraphics();
+                            Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
 
                             // have to be the same @ Game.screenshot!
                             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -261,9 +264,13 @@ public class Game {
                             renderPanel.render(g);
 
                             g.dispose();
-                        } while (renderPanel.getBufferStrategy().contentsRestored());
+                        } while (bufferStrategy.contentsRestored());
 
-                        renderPanel.getBufferStrategy().show();
+                        if (!bufferStrategy.contentsLost()) {
+                            bufferStrategy.show();
+                        }
+
+                        Toolkit.getDefaultToolkit().sync();
                     } while (renderPanel.getBufferStrategy().contentsLost());
                 } catch (IllegalStateException e) {
                     Logger.error("Rendering", e.getMessage());
