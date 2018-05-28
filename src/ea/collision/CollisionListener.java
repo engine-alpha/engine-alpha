@@ -41,23 +41,22 @@ public interface CollisionListener<E extends Actor> {
      * Wird bei einer (korrekt angemeldeten) Instanz immer dann aufgerufen, wenn der hiermit
      * angemeldete Actor mit einem (relevanten) Actor-Objekt kollidiert.
      *
-     * @param colliding Ein <code>Actor</code>-Objekt, das mit dem zugehörig angemeldeten
-     *                  Actor-Objekt kollidiert. Je vectorFromThisTo Anmeldeart können dies nur ausgewählte
-     *                  Objekte sein.
+     * @param collisionEvent Ein {@link CollisionEvent}-Objekt, dass alle Informationen der
+     *                       Kollision beschreibt.
+     * @see CollisionEvent
      */
     @API
-    void onCollision(E colliding);
+    void onCollision(CollisionEvent<E> collisionEvent);
 
     /**
      * Wird bei einer (korrekt angemeldeten) Instanz immer dann aufgerufen, wenn die Kollision eines
      * hiermit angemeldeten Actors mit einem (relevanten) Actor-Objekt beendet ist.
      *
-     * @param colliding Ein <code>Actor</code>-Objekt, das mit dem zugehörig angemeldeten
-     *                  Actor-Objekt kollidiert hattte. Je vectorFromThisTo Anmeldeart können dies nur
-     *                  ausgewählte Objekte sein.
+     * @param collisionEvent Ein {@link CollisionEvent}-Objekt, dass alle Informationen der
+     *                       Kollision beschreibt.
      */
     @API
-    default void onCollisionEnd(E colliding) {
+    default void onCollisionEnd(CollisionEvent<E> collisionEvent) {
         // Ist selten genug wichtig um zu rechtfertigen, dass eine Default-Implementierung leer ist.
     }
 }

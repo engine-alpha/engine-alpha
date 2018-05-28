@@ -22,14 +22,27 @@ package ea.actor;
 import ea.FrameUpdateListener;
 import ea.internal.ano.API;
 import ea.internal.io.ImageLoader;
+import ea.internal.io.ResourceLoader;
 import org.jbox2d.collision.shapes.Shape;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 @API
 public class Animation extends Actor implements FrameUpdateListener {
+
     private Frame[] frames;
 
     private final int width;
@@ -145,6 +158,60 @@ public class Animation extends Actor implements FrameUpdateListener {
         }
 
         return new Animation(frames.toArray(new Frame[frames.size()]));
+    }
+
+    public static Animation createFromAnimatedGif(int frameDuration, String filepath) {
+        //Code happily adapted from StackExchange:
+        //https://stackoverflow.com/questions/8933893/convert-each-animated-gif-frame-to-a-separate-bufferedimage?
+        //utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+        try {
+            String[] imageatt = new String[]{
+                    "imageLeftPosition",
+                    "imageTopPosition",
+                    "imageWidth",
+                    "imageHeight"
+            };
+
+            ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
+            ImageInputStream ciis = ImageIO.createImageInputStream(ResourceLoader.loadAsStream(filepath));
+            reader.setInput(ciis, false);
+
+            int numImages = reader.getNumImages(true);
+            BufferedImage master = null;
+
+            Frame[] frames = new Frame[numImages];
+
+            for (int i = 0; i < numImages; i++) {
+                BufferedImage image = reader.read(i);
+                IIOMetadata metadata = reader.getImageMetadata(i);
+
+                Node tree = metadata.getAsTree("javax_imageio_gif_image_1.0");
+                NodeList children = tree.getChildNodes();
+
+                for (int j = 0; j < children.getLength(); j++) {
+                    Node nodeItem = children.item(j);
+
+                    if(nodeItem.getNodeName().equals("ImageDescriptor")){
+                        Map<String, Integer> imageAttr = new HashMap<>();
+
+                        for (int k = 0; k < imageatt.length; k++) {
+                            NamedNodeMap attr = nodeItem.getAttributes();
+                            Node attnode = attr.getNamedItem(imageatt[k]);
+                            imageAttr.put(imageatt[k], Integer.valueOf(attnode.getNodeValue()));
+                        }
+                        if(i==0){
+                            master = new BufferedImage(imageAttr.get("imageWidth"), imageAttr.get("imageHeight"), BufferedImage.TYPE_INT_ARGB);
+                        }
+                        master.getGraphics().drawImage(image, imageAttr.get("imageLeftPosition"), imageAttr.get("imageTopPosition"), null);
+                    }
+                }
+                frames[i] = new Frame(master, frameDuration);
+            }
+            return new Animation(frames);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static class Frame {

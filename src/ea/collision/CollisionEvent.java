@@ -1,0 +1,64 @@
+package ea.collision;
+
+import ea.actor.Actor;
+import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
+import org.jbox2d.dynamics.contacts.Contact;
+
+/**
+ * Ein Objekt der Klasse <code>CollisionEvent</code> repräsentiert eine <b>Kollision zwischen zwei Actor-Objekten</b>.
+ * Nur Actor-Objekte, mit denen ein CollisionListener verkmnüpft ist, generieren <code>CollisionEvent</code>s.
+ *
+ * Das CollisionEvent wird verwendet als
+ * <ul>
+ *     <li>
+ *         <b>Angabe des Kollisionspartners</b>: In der Engine ist eines der beiden Actor-Objekte des Aufpralls
+ *         implizit bestimmt dadurch, dass der <code>CollisionListener</code> an dem entsprechenden Actor-Objekt
+ *         <b>angemeldet</b> werden musste. Das hiermit kollidierende Objekt ist im Event angegeben.
+ *     </li>
+ *     <li>
+ *         <b>Ausführliche Informationsquelle</b>: Hierüber sind Informationen zur Kollision erhältlich, z.B. über
+ *         die Härte des Aufpralls.
+ *     </li>
+ *     <li>
+ *         <b>Kontrolle der Kollisionsauflösung</b>: Der Nutzer kann entscheiden, ob die Kollision aufgelöst werden soll
+ *         oder ignoriert werden soll. Hiermit lassen sich zum Beispiel einseitige Sperren/Wände umsetzen.
+ *     </li>
+ * </ul>
+ * @see CollisionListener
+ */
+public class CollisionEvent<E extends Actor> {
+    /**
+     * Der JBox2D-Contact. Zur Manipulation der Kollision und zur Abfrage.
+     */
+    private final Contact contact;
+
+    /**
+     * Das kollidierende Actor-Objekt.
+     */
+    private final E colliding;
+
+    /**
+     * Konstruktor. Erstellt ein Collision-Event.
+     * @param contact   Das JBox2D-Contact-Objekt zur direkten Manipulation der Kollisionsauflösung (und zur Abfrage von
+     *                  Informationen).
+     * @param colliding Das kollidierende Actor-Objekt. Das zweite Objekt der Kollision ist implizit durch die
+     *                  Anmeldung am entsprechenden Actor gegeben.
+     */
+    @NoExternalUse
+    public CollisionEvent(Contact contact, E colliding) {
+        this.contact = contact;
+        this.colliding = colliding;
+    }
+
+    /**
+     * Gibt das <code>Actor</code>-Objekt aus, dass mit dem <code>Actor</code> kollidiert,
+     * an dem der Listener angemeldet wurde.
+     * @return Das kollidierende Actor-Objekt. Das zweite Objekt der Kollision ist implizit durch die
+     *         Anmeldung am entsprechenden Actor gegeben.
+     */
+    @API
+    public E getColliding() {
+        return colliding;
+    }
+}

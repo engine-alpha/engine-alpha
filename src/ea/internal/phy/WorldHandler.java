@@ -3,6 +3,7 @@ package ea.internal.phy;
 import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
+import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.frame.Dispatchable;
@@ -216,7 +217,7 @@ public class WorldHandler implements ContactListener {
      * @param isBegin true = Begin-Kontakt | false = End-Kontakt
      */
     @NoExternalUse
-    private void processContact(Contact contact, boolean isBegin) {
+    private void processContact(final Contact contact, boolean isBegin) {
         final Body b1 = contact.getFixtureA().getBody();
         final Body b2 = contact.getFixtureB().getBody();
         if (b1 == b2) {
@@ -236,13 +237,13 @@ public class WorldHandler implements ContactListener {
             List<Checkup> result1 = specificCollisionListeners.get(b1);
             if (result1 != null) {
                 for (Checkup c : result1) {
-                    c.checkCollision(b2, isBegin);
+                    c.checkCollision(b2, contact, isBegin);
                 }
             }
             List<Checkup> result2 = specificCollisionListeners.get(b2);
             if (result2 != null) {
                 for (Checkup c : result2) {
-                    c.checkCollision(b1, isBegin);
+                    c.checkCollision(b1, contact, isBegin);
                 }
             }
         } else {
@@ -258,30 +259,30 @@ public class WorldHandler implements ContactListener {
             List<Checkup> result = specificCollisionListeners.get(lower);
             if (result != null) {
                 for (Checkup c : result) {
-                    c.checkCollision(higher, isBegin);
+                    c.checkCollision(higher, contact, isBegin);
                 }
             }
         }
 
-
         /*
          * ~~~~~~~~~~~~~~~~~~~~~~~ TEIL II : Allgemeine Checkups ~~~~~~~~~~~~~~~~~~~~~~~
          */
-        generalCheckup(b1, b2, isBegin);
-        generalCheckup(b2, b1, isBegin);
+        generalCheckup(b1, b2, contact, isBegin);
+        generalCheckup(b2, b1, contact, isBegin);
     }
 
     @NoExternalUse
-    private void generalCheckup(Body act, Body col, final boolean isBegin) {
+    private void generalCheckup(Body act, Body col, Contact contact, final boolean isBegin) {
         List<CollisionListener<Actor>> list = generalCollisonListeners.get(act);
         if (list != null) {
             Actor other = worldMap.get(col); // Darf (eigentlich) niemals null sein
+            CollisionEvent<Actor> collisionEvent = new CollisionEvent<>(contact, other);
             for (CollisionListener<Actor> kr : list) {
                 Game.enqueueDispatchable(() -> {
                     if (isBegin) {
-                        kr.onCollision(other);
+                        kr.onCollision(collisionEvent);
                     } else {
-                        kr.onCollisionEnd(other);
+                        kr.onCollisionEnd(collisionEvent);
                     }
                 });
             }
@@ -309,37 +310,27 @@ public class WorldHandler implements ContactListener {
     private static class Checkup<E extends Actor> {
         private final CollisionListener<E> reagierbar;  //Aufzurufen
         private final Body body2;                       //Der zweite Body (erster Body ist Hashmap-Schlüssel)
-        private final E collider;                       //Das Actor-Objekt, das neben dem Actor angemeldet wurde
-
-        private final Dispatchable begin = new Dispatchable() {
-            @Override
-            public void dispatch() {
-                reagierbar.onCollision(collider);
-            }
-        };
-        private final Dispatchable end = new Dispatchable() {
-            @Override
-            public void dispatch() {
-                reagierbar.onCollisionEnd(collider);
-            }
-        };
+        private final E collidingActor;                       //Das Actor-Objekt, das neben dem Actor angemeldet wurde
 
         /**
          * Erstellt das Checkup-Objekt
          *
          * @param reagierbar Das aufzurufende KR
          * @param body2      Der zweite Body für den Checkup
-         * @param collider   Der zugehörige Collider für diesen Checkup
+         * @param collidingActor   Der zugehörige Collider für diesen Checkup
          */
-        private Checkup(CollisionListener<E> reagierbar, Body body2, E collider) {
+        private Checkup(CollisionListener<E> reagierbar, Body body2, E collidingActor) {
             this.reagierbar = reagierbar;
             this.body2 = body2;
-            this.collider = collider;
+            this.collidingActor = collidingActor;
         }
 
-        public void checkCollision(Body secondBodyOfActualCollision, boolean isBegin) {
+        public void checkCollision(Body secondBodyOfActualCollision, Contact contact, boolean isBegin) {
             if (body2 == secondBodyOfActualCollision) {
-                Game.enqueueDispatchable(isBegin ? begin : end);
+                CollisionEvent<E> collisionEvent = new CollisionEvent<>(contact, collidingActor);
+                Game.enqueueDispatchable(isBegin ?
+                        () -> reagierbar.onCollision(collisionEvent) :
+                        () -> reagierbar.onCollisionEnd(collisionEvent));
             }
         }
     }
