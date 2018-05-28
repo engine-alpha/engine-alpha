@@ -44,17 +44,13 @@ public class Rectangle extends Geometry {
 	/**
 	 * Konstruktor fuer Objekte der Klasse Rectangle
 	 *
-	 * @param x
-	 * 		Die X Position (Koordinate der linken oberen Ecke) des Rechtecks
-	 * @param y
-	 * 		Die X Position (Koordinate der linken oberen Ecke) des Rechtecks
 	 * @param width
 	 * 		Die Breite des Rechtecks
 	 * @param height
 	 * 		Die hoehe des Rechtecks
 	 */
-	public Rectangle(float x, float y, float width, float height) {
-		super(new Point(x,y));
+	public Rectangle(float width, float height) {
+		super();
         setDimension(width, height);
 	}
 

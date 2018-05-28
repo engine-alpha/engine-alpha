@@ -476,7 +476,7 @@ public final class Vector implements Cloneable {
      *                  Ist zwischen 0 und 180 Grad.
      */
     @API
-    public float getDegree(Vector other) {
+    public float getAngle(Vector other) {
         //System.out.println("Acos of " + this.scalarProduct(anderer) / this.getLength() * anderer.getLength() + " is "
         //+ (float)Math.acos((double)(this.scalarProduct(anderer) / ((this.getLength() * anderer.getLength())))));
         return (float)Math.acos((double)(this.scalarProduct(other) / (this.getLength() * other.getLength())));

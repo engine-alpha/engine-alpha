@@ -37,10 +37,8 @@ public abstract class Geometry extends Actor {
     /**
      * Konstruktor.
      *
-     * @param position Die Ausgangsposition dieses Geometry-Objekts.
      */
-    public Geometry(Point position) {
-        this.position.set(position);
+    public Geometry() {
     }
 
     /**

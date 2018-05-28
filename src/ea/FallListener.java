@@ -22,7 +22,7 @@ package ea;
 import ea.internal.ano.API;
 
 /**
- * FallListener kann darauf onKeyDown, das das mit ihr angemeldete Actor-Objekt ueber
+ * FallListener kann darauf onKeyDownInternal, das das mit ihr angemeldete Actor-Objekt ueber
  * <code>WorldHandler</code> faellt und einen gewissen Maximalwert erreicht. Dann wird ihre Methode
  * <code>onFall()</code> aufgerufen.<br />
  *

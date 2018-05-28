@@ -30,6 +30,7 @@ import ea.keyboard.Key;
 import ea.keyboard.KeyAction;
 import ea.mouse.MouseAction;
 import ea.mouse.MouseButton;
+import ea.mouse.MouseWheelAction;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -238,6 +239,15 @@ public class Game {
         renderPanel.addMouseMotionListener(mouseAdapter);
         renderPanel.addMouseListener(mouseAdapter);
 
+        MouseWheelListener mouseWheelListener = new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                enqueueMouseWheelEvent(e);
+            }
+        };
+
+        renderPanel.addMouseWheelListener(mouseWheelListener);
+
         try {
             frame.setIconImage(ImageLoader.load("assets/favicon.png"));
         } catch (Exception e) {
@@ -389,7 +399,7 @@ public class Game {
             }
 
             scene.getWorldHandler().step(frameDuration);
-            scene.onFrameUpdate(frameDuration);
+            scene.onFrameUpdateInternal(frameDuration);
 
             while (!dispatchableQueue.isEmpty()) {
                 dispatchableQueue.poll().dispatch();
@@ -456,9 +466,9 @@ public class Game {
 
         enqueueDispatchable(() -> {
             if (action == KeyAction.DOWN) {
-                scene.onKeyDown(z);
+                scene.onKeyDownInternal(z);
             } else {
-                scene.onKeyUp(z);
+                scene.onKeyUpInternal(z);
             }
         });
     }
@@ -501,10 +511,22 @@ public class Game {
 
         enqueueDispatchable(() -> {
             if (action == MouseAction.DOWN) {
-                scene.onMouseDown(sourcePosition, button);
+                scene.onMouseDownInternal(sourcePosition, button);
             } else {
-                scene.onMouseUp(sourcePosition, button);
+                scene.onMouseUpInternal(sourcePosition, button);
             }
+        });
+    }
+
+    /**
+     * Diese Methode wird immer dann ausgeführt, wenn das Mausrad bewegt wurde und ein MouseWheelEvent
+     * registriert wurde.
+     * @param mouseWheelEvent das Event.
+     */
+    private static void enqueueMouseWheelEvent(MouseWheelEvent mouseWheelEvent) {
+        MouseWheelAction mouseWheelAction = new MouseWheelAction((float)mouseWheelEvent.getPreciseWheelRotation());
+        enqueueDispatchable(()-> {
+            scene.onMouseWheelMoveInternal(mouseWheelAction);
         });
     }
 
@@ -513,9 +535,24 @@ public class Game {
         dispatchableQueue.add(dispatchable);
     }
 
+    /**
+     * TODO : Dokumentation!
+     * @param scene
+     */
     @API
     public static void transitionToScene(Scene scene) {
         enqueueDispatchable(() -> nextScene = scene);
+    }
+
+    /**
+     * Gibt an, ob eine bestimmte Taste derzeit heruntergedrückt ist.
+     * @param key   Die zu testende Taste als Key-Code (also z.B. <code>Key.W</code>).
+     * @return      <code>true</code>, wenn die zu testende Taste gerade heruntergedrückt ist. Sonst <code>false</code>.
+     * @see ea.keyboard.Key
+     */
+    @API
+    public static boolean isKeyPressed(int key) {
+        return keys[key];
     }
 
     /**
@@ -533,7 +570,8 @@ public class Game {
         mainThread.interrupt();
     }
 
-    public static java.awt.Point getMousePosition() {
+    @NoExternalUse
+    public static java.awt.Point getMousePositionInFrame() {
         return mousePosition;
     }
 }

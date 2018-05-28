@@ -55,7 +55,6 @@ public class Triangle extends Geometry {
      * @param y Alle Y-Koordinaten als Feld
      */
     public Triangle(float[] x, float[] y) {
-        super(Point.CENTRE);
 
         if (x.length != 3 || y.length != 3) {
             throw new IllegalArgumentException("Es müssen genau je drei Werte für getX- und getY-Werte übergeben werden.");

@@ -31,6 +31,7 @@ import ea.internal.phy.PhysikHandler;
 import ea.internal.util.Logger;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseClickListener;
+import ea.mouse.MouseWheelListener;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -128,6 +129,8 @@ public abstract class Actor implements Comparable<Actor> {
      * @param scene Szene, an der das Raumobjekt angemeldet wurde.
      */
     @API
+    //TODO Dokumentation/Wiki für onAttach --> Objekt wird automatisch als Listener angemeldet, wenn es einer Scene
+    //angefügt wird. Sollte dem API-Nutzer bewusst bleiben.
     public void onAttach(Scene scene) {
         if (this.attached) {
             throw new IllegalStateException("Ein Raumobjekt kann nur einmal einer Szene hinzugefügt werden. Um ein Objekt temporär auszublenden, kann sein Type auf passiv gestellt werden und das Objekt unsichtbar gemacht werden.");
@@ -146,6 +149,10 @@ public abstract class Actor implements Comparable<Actor> {
 
         if (this instanceof FrameUpdateListener) {
             scene.addFrameUpdateListener((FrameUpdateListener) this);
+        }
+
+        if (this instanceof MouseWheelListener) {
+            scene.addMouseWheelListener((MouseWheelListener) this);
         }
 
         this.attached = true; // Set this after everything is done
@@ -174,6 +181,10 @@ public abstract class Actor implements Comparable<Actor> {
 
         if (this instanceof FrameUpdateListener) {
             this.scene.removeFrameUpdateListener((FrameUpdateListener) this);
+        }
+
+        if (this instanceof MouseWheelListener) {
+            this.scene.removeMouseWheelListener((MouseWheelListener) this);
         }
 
         this.scene = null;

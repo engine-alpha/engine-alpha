@@ -31,7 +31,7 @@ public class KnotenHandler extends PhysikHandler {
      * @param raum Der ActorGroup, um den sich dieser Handler kümmert.
      */
     public KnotenHandler(ActorGroup raum) {
-        super(raum, Physics.Type.PASSIV, false);
+        super(raum, Physics.Type.PASSIVE, false);
         actorGroup = raum;
     }
 

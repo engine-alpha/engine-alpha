@@ -71,7 +71,9 @@ public final class BoundingRechteck {
      * @return Ein neues Rectangle-Objekt, das genau dieses BoundingRechteck abdeckt
      */
     public Rectangle ausDiesem() {
-        return new Rectangle(x, y, width, height);
+        Rectangle rectangle = new Rectangle(width, height);
+        rectangle.position.set(x,y);
+        return rectangle;
     }
 
     /**

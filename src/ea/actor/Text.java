@@ -103,7 +103,7 @@ public class Text extends Actor {
     /**
      * Die Farbe, in der der Text dargestellt wird.
      */
-    protected Color color;
+    protected Color color = Color.WHITE;
 
     /**
      * Textanker: links, mittig oder rechts
@@ -117,49 +117,11 @@ public class Text extends Actor {
     private FontMetrics fontMetrics;
 
     /**
-     * Ebenefalls ein vereinfachter Konstruktor. Hierbei ist die FarbeE "Weiss" und der Text weder
-     * kursiv noch fett; weiterhin ist die Schriftgroesse automatisch 24.
-     *
-     * @param content   Die Zeichenkette, die dargestellt werden soll
-     * @param x        Die X-Koordinate des Anfangs
-     * @param y        Die Y-Koordinate des Anfangs
-     * @param fontName Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet,
-     *                 der in dem Projektordner vorhanden sein soll, <b>und dies ist immer und in
-     *                 jedem Fall zu empfehlen</b>, muss der Name der Schriftart hier ebenfalls
-     *                 einfach nur eingegeben werden, <b>nicht der Name der
-     *                 schriftart-Datei!!!!!!!!!!!!!!!!!!!!!!!!</b>
-     */
-    @API
-    public Text(String content, float x, float y, String fontName) {
-        this(content, x, y, fontName, 24);
-    }
-
-    /**
-     * Konstruktor ohne Farb- und sonderartseingabezwang. In diesem Fall ist die FarbeE "Weiss" und
-     * der Text weder kursiv noch fett.
-     *
-     * @param content         Die Zeichenkette, die dargestellt werden soll
-     * @param x              Die X-Koordinate des Anfangs
-     * @param y              Die Y-Koordinate des Anfangs
-     * @param fontName       Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font
-     *                       verwendet, der in dem Projektordner vorhanden sein soll, <b>und dies
-     *                       ist immer und in jedem Fall zu empfehlen</b>, muss der Name der
-     *                       Schriftart hier ebenfalls einfach nur eingegeben werden.
-     * @param size Die Groesse, in der die Schrift dargestellt werden soll
-     */
-    @API
-    public Text(String content, float x, float y, String fontName, int size) {
-        this(content, x, y, fontName, size, 0);
-    }
-
-    /**
      * Konstruktor für Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im
      * Projektordner sind. Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur
      * Verfügung.
      *
      * @param content         Die Zeichenkette, die dargestellt werden soll
-     * @param x              Die X-Koordinate des Anfangs
-     * @param y              Die Y-Koordinate des Anfangs
      * @param fontName       Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font
      *                       verwendet, der in dem Projektordner vorhanden sein soll, <b>und dies
      *                       ist immer und in jedem Fall zu empfehlen</b>, muss der Name der
@@ -171,9 +133,8 @@ public class Text extends Actor {
      *                       Kursiv <br /> <br /> Alles andere sorgt nur fuer einen normalen Text.
      */
     @API
-    public Text(String content, float x, float y, String fontName, int size, int type) {
+    public Text(String content, String fontName, int size, int type) {
         this.inhalt = content;
-        this.position.set(new Point(x, y));
         this.groesse = size;
 
         if (type >= 0 && type <= 3) {
@@ -184,6 +145,38 @@ public class Text extends Actor {
 
         //TODO auskommentieren rückgängig machen
         setFont(fontName);
+    }
+
+    /**
+     * Erstellt einen Text mit spezifischem Inhalt und Font.
+     * Der Text ist in Schriftgröße 12, nicht fett, nicht kursiv.
+     * @param content       Der Inhalt, der dargestellt wird
+     * @param fontName      Der Font, in dem der Text dargestellt werden soll.
+     */
+    @API
+    public Text(String content, String fontName) {
+        this(content, fontName, 12, 0);
+    }
+
+    /**
+     * Erstellt einen Text mit spezifischem Inhalt und spezifischer Größe.
+     * Die Schriftart ist ein Standard-Font (Serifenfrei), nicht fett, nicht kursiv.
+     * @param content       Der Inhalt, der dargestellt wird
+     * @param size          Die Schriftgröße
+     */
+    @API
+    public Text(String content, int size) {
+        this(content, "SansSerif", size, 0);
+    }
+
+    /**
+     * Erstellt einen Text mit spezifischem Inhalt und spezifischer Größe.
+     * Die Schriftart ist ein Standard-Font (Serifenfrei), Größe 12, nicht fett, nicht kursiv.
+     * @param content       Der Inhalt, der dargestellt wird
+     */
+    @API
+    public Text(String content) {
+        this(content, 12);
     }
 
     /**
@@ -227,48 +220,6 @@ public class Text extends Actor {
             }
             this.font = new Font(fontName, schriftart, groesse);
         }
-    }
-
-    /**
-     * Einfacherer Konstruktor.<br /> Hierbei wird automatisch die Schriftart auf eine
-     * Standartmaessige gesetzt
-     *
-     * @param content         Die Zeichenkette, die dargestellt werden soll
-     * @param x              Die X-Koordinate des Anfangs
-     * @param y              Die Y-Koordinate des Anfangs
-     * @param size Die Groesse, in der die Schrift dargestellt werden soll
-     */
-    @API
-    public Text(String content, float x, float y, int size) {
-        this(content, x, y, "SansSerif", size, 0);
-    }
-
-    /**
-     * Ein vereinfachter Konstruktor.<br /> Hierbei wird eine Standartschriftart, die FarbeE weiss
-     * und eine Groesse von 24 gewaehlt.
-     *
-     * @param content Der Inhalt des Textes
-     * @param x      X-Koordinate
-     * @param y      Y-Koordinate
-     */
-    @API
-    public Text(String content, float x, float y) {
-        this(content, x, y, "SansSerif", 24, 0);
-    }
-
-    /**
-     * Ein vereinfachter parallerer Konstruktor.<br /> Diesen gibt es inhaltlich genauso bereits,
-     * jedoch sind hier die Argumente vertauscht; dies dient der Praevention undgewollter falscher
-     * Konstruktorenaufrufe. Hierbei wird eine Standartschriftart, die FarbeE weiss und eine Groesse
-     * von 24 gewaehlt.
-     *
-     * @param content Der Inhalt des Textes
-     * @param x      X-Koordinate
-     * @param y      Y-Koordinate
-     */
-    @API
-    public Text(float x, float y, String content) {
-        this(content, x, y, "SansSerif", 24, 0);
     }
 
     private static void fontsEinbauen(final ArrayList<File> liste, File akt) {

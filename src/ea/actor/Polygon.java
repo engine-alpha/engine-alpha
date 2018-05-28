@@ -34,7 +34,6 @@ extends Geometry {
      */
     @API
     public Polygon(Point... points) {
-        super(Point.CENTRE);
         this.points = points;
         if(points.length < 3) {
             Logger.error("Geometry", "Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein " +

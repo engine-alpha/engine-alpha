@@ -22,7 +22,7 @@ package ea.keyboard;
 import ea.internal.ano.API;
 
 /**
- * Dieses Interface wird implementiert, um auf gedrückte Tasten onKeyDown zu können.
+ * Dieses Interface wird implementiert, um auf gedrückte Tasten onKeyDownInternal zu können.
  *
  * @author Niklas Keller
  */

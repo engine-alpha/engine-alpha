@@ -40,18 +40,10 @@ public class Circle extends Geometry {
 
 	/**
 	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
-	 *
-	 * @param x
-	 * 		Die X-Koordinate der Linken oberen Ecke des den Circle umschreibenden Rechtecks, <b>nicht
-	 * 		die des Mittelpunktes</b>
-	 * @param y
-	 * 		Die Y-Koordinate der Linken oberen Ecke des den Circle umschreibenden Rechtecks, <b>nicht
-	 * 		die des Mittelpunktes</b>
 	 * @param diameter
 	 * 		Der Durchmesser des Kreises
 	 */
-	public Circle(float x, float y, float diameter) {
-		super(new Point(x,y));
+	public Circle(float diameter) {
         this.durchmesser = diameter;
 	}
 

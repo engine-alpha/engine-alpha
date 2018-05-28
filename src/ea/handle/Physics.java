@@ -427,7 +427,7 @@ public class Physics {
      *     <li>
      *         <b>Kinematische</b> Objekte:
      *         <ul>
-     *             <li>Können eine Geschwindigkeit haben, aber onKeyDown nicht auf Kräfte.</li>
+     *             <li>Können eine Geschwindigkeit haben, aber onKeyDownInternal nicht auf Kräfte.</li>
      *             <li>Kollidieren (im Sinne der Physics) nur mit dynamischen Objekten.</li>
      *         </ul>
      *         Doese Eigenschaft gehört zum Beispiel zu <i>beweglichen Plattformen</i>.
@@ -446,7 +446,7 @@ public class Physics {
      */
     @API
     public enum Type {
-        STATISCH, DYNAMISCH, KINEMATISCH, PASSIV;
+        STATIC, DYNAMIC, KINEMATIC, PASSIVE;
 
         /**
          * Konvertierungsmethode zwischen Engine-Physiktyp und JB2D-Physiktyp.
@@ -455,12 +455,12 @@ public class Physics {
         @NoExternalUse
         public BodyType convert() {
             switch (this) {
-                case STATISCH:
+                case STATIC:
                     return BodyType.STATIC;
-                case DYNAMISCH:
-                case PASSIV:
+                case DYNAMIC:
+                case PASSIVE:
                     return BodyType.DYNAMIC;
-                case KINEMATISCH:
+                case KINEMATIC:
                     return BodyType.KINEMATIC;
             }
             return null;

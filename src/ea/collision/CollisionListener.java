@@ -23,7 +23,7 @@ import ea.actor.Actor;
 import ea.internal.ano.API;
 
 /**
- * Beschreibt allgemein ein Objekt, das auf die <b>Kollision zweier Actor-Objekte</b> onKeyDown
+ * Beschreibt allgemein ein Objekt, das auf die <b>Kollision zweier Actor-Objekte</b> onKeyDownInternal
  * kann.
  * <p>
  * <h3>Funktionsweise</h3> <p>Eine <code>KollisionsReagierbar</code>-Instanz wird bei Kollisionen

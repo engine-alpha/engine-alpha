@@ -32,7 +32,7 @@ public class NullHandler extends PhysikHandler {
     private WorldHandler worldHandler;
 
     public NullHandler(Actor actor) {
-        super(actor, Physics.Type.PASSIV, false);
+        super(actor, Physics.Type.PASSIVE, false);
         bodyDef = new BodyDef();
 
 
@@ -242,10 +242,10 @@ public class NullHandler extends PhysikHandler {
 
 
         bodyDef.active = true;
-        fixtureDef.isSensor = type == Physics.Type.PASSIV;// && isSensor;
+        fixtureDef.isSensor = type == Physics.Type.PASSIVE;// && isSensor;
 
         bodyDef.position.set(worldHandler.fromVektor(position.asVector()));
-        bodyDef.gravityScale = type == Physics.Type.PASSIV ? 0 : 1;
+        bodyDef.gravityScale = type == Physics.Type.PASSIVE ? 0 : 1;
 
         return new BodyHandler(actor, worldHandler, bodyDef, fixtureDef, physikType, isSensor, this);
 

@@ -116,7 +116,7 @@ extends PhysikHandler {
 
     @Override
     public Point mittelpunkt() {
-        if(physikType == Physics.Type.DYNAMISCH) {
+        if(physikType == Physics.Type.DYNAMIC) {
             Vec2 wc = body.getWorldCenter();
             return worldHandler.fromVec2(wc).asPoint();
         } else {
@@ -129,6 +129,13 @@ extends PhysikHandler {
 
     @Override
     public boolean beinhaltet(Point p) {
+        Fixture toTest=fixture;
+        //Iterate through all fixtures and check individually
+        while(toTest != null) {
+            if(toTest.testPoint(worldHandler.fromVektor(p.asVector())))
+                return true;
+            toTest = toTest.m_next;
+        }
         return false;
     }
 
@@ -266,11 +273,11 @@ extends PhysikHandler {
 
         //System.out.println("I have a fixture: " + body.getFixtureList());
 
-        //body.setActive(setType != Physics.Type.PASSIV);
+        //body.setActive(setType != Physics.Type.PASSIVE);
         //System.out.println("Set active!");
         body.setActive(true);
-        fixture.setSensor(type == Physics.Type.PASSIV);// && isSensor);
-        body.setGravityScale(type == Physics.Type.PASSIV ? 0 : 1);
+        fixture.setSensor(type == Physics.Type.PASSIVE);// && isSensor);
+        body.setGravityScale(type == Physics.Type.PASSIVE ? 0 : 1);
 
         //System.out.println("Ph-Update: Sensor=" + body.getFixtureList().isSensor() + " - " + body.isActive());
 

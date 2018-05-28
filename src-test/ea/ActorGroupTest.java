@@ -9,7 +9,8 @@ import static org.junit.Assert.*;
 public class ActorGroupTest {
 	@Test
 	public void basic () {
-		Rectangle r = new Rectangle(100, 100, 100, 100);
+		Rectangle r = new Rectangle(100, 100);
+		r.position.set(100,100);
 		ActorGroup k = new ActorGroup();
 
 		k.add(r);

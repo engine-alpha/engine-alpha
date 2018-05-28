@@ -331,7 +331,7 @@ public class WorldHandler implements ContactListener {
          * @param body2      Der zweite Body für den Checkup
          * @param collider   Der zugehörige Collider für diesen Checkup
          */
-        private Checkup(CollisionListener reagierbar, Body body2, E collider) {
+        private Checkup(CollisionListener<E> reagierbar, Body body2, E collider) {
             this.reagierbar = reagierbar;
             this.body2 = body2;
             this.collider = collider;
@@ -385,7 +385,7 @@ public class WorldHandler implements ContactListener {
      */
     @NoExternalUse
     public static <E extends Actor> void spezifischesKollisionsReagierbarEingliedern(
-            CollisionListener kr, Actor actor, Actor collider) {
+            CollisionListener<E> kr, Actor actor, E collider) {
         final WorldHandler wh1 = actor.getPhysicsHandler().worldHandler();
         final WorldHandler wh2 = collider.getPhysicsHandler().worldHandler();
         if (wh1 == null || wh2 == null || wh1 != wh2) {
@@ -414,7 +414,7 @@ public class WorldHandler implements ContactListener {
             higher = b1;
         }
 
-        Checkup toAdd = new Checkup(kr, higher, collider);
+        Checkup<E> toAdd = new Checkup<E>(kr, higher, collider);
 
         List<Checkup> atKey = wh1.specificCollisionListeners.get(lower);
         if (atKey == null) {

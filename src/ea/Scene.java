@@ -28,6 +28,8 @@ import ea.keyboard.KeyListener;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
 import ea.actor.ActorGroup;
+import ea.mouse.MouseWheelAction;
+import ea.mouse.MouseWheelListener;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.DistanceJoint;
 import org.jbox2d.dynamics.joints.Joint;
@@ -40,7 +42,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class Scene implements FrameUpdateListener, MouseClickListener, KeyListener {
+public class Scene {
     /**
      * Die Kamera des Spiels. Hiermit kann der sichtbare Ausschnitt der Zeichenebene
      * bestimmt und manipuliert werden.
@@ -56,6 +58,11 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
      * Die Liste aller angemeldeten MouseClickListener.
      */
     private final Collection<MouseClickListener> mouseClickListeners = new CopyOnWriteArraySet<>();
+
+    /**
+     * Die Liste aller angemeldeten MouseWheelListener.
+     */
+    private final Collection<MouseWheelListener> mouseWheelListeners = new CopyOnWriteArraySet<>();
 
     /**
      * Die Liste aller angemeldeten FrameUpdateListener.
@@ -143,13 +150,6 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         return worldHandler;
     }
 
-    @Override
-    public void onFrameUpdate(int frameDuration) {
-        for (FrameUpdateListener listener : this.frameUpdateListeners) {
-            listener.onFrameUpdate(frameDuration);
-        }
-    }
-
     @API
     public void add(Actor... rooms) {
         for (Actor room : rooms) {
@@ -164,12 +164,22 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         }
     }
 
+    //TODO : Dokumentation für alle ADD-Methoden
+
     public void addMouseClickListener(MouseClickListener mouseClickListener) {
         this.mouseClickListeners.add(mouseClickListener);
     }
 
     public void removeMouseClickListener(MouseClickListener mouseClickListener) {
         this.mouseClickListeners.remove(mouseClickListener);
+    }
+
+    public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        this.mouseWheelListeners.add(mouseWheelListener);
+    }
+
+    public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        this.mouseWheelListeners.remove(mouseWheelListener);
     }
 
     public void addKeyListener(KeyListener keyListener) {
@@ -198,37 +208,46 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         WorldHandler.allgemeinesKollisionsReagierbarEingliedern(listener, actor);
     }
 
-    @Override
-    public void onKeyDown(int key) {
+
+    public final void onFrameUpdateInternal(int frameDuration) {
+        for (FrameUpdateListener listener : this.frameUpdateListeners) {
+            listener.onFrameUpdate(frameDuration);
+        }
+    }
+
+    public void onKeyDownInternal(int key) {
         for (KeyListener listener : keyListeners) {
             listener.onKeyDown(key);
         }
     }
 
-    @Override
-    public void onKeyUp(int key) {
+    public void onKeyUpInternal(int key) {
         for (KeyListener listener : keyListeners) {
             listener.onKeyUp(key);
         }
     }
 
-    @Override
-    public void onMouseDown(Point position, MouseButton button) {
+    public void onMouseDownInternal(Point position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseDown(position, button);
         }
     }
 
-    @Override
-    public void onMouseUp(Point position, MouseButton button) {
+    public void onMouseUpInternal(Point position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseUp(position, button);
         }
     }
 
+    public void onMouseWheelMoveInternal(MouseWheelAction mouseWheelAction) {
+        for(MouseWheelListener listener : mouseWheelListeners) {
+            listener.onMouseWheelMove(mouseWheelAction);
+        }
+    }
+
     @API
     public Point getMousePosition() {
-        java.awt.Point mouse = Game.getMousePosition();
+        java.awt.Point mouse = Game.getMousePositionInFrame();
         Point position = camera.getPosition();
 
         float rotation = camera.getRotation();
