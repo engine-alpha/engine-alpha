@@ -24,14 +24,12 @@ import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.KnotenHandler;
-import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.WeldJointDef;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -44,9 +42,9 @@ import java.util.function.Consumer;
  */
 public class ActorGroup extends Actor {
     /**
-     * Die Liste aller Actor-Objekte, die diese ActorGroup fasst.
+     * Alle Actor-Objekte der Gruppe.
      */
-    private final List<Actor> list;
+    private final SortedSet<Actor> actors;
 
     /**
      * Die Joints, die diese ActorGroup gerade innehat.
@@ -59,39 +57,43 @@ public class ActorGroup extends Actor {
     private boolean lock = false;
 
     /**
+     * Konstruktor für Objekte der Klasse ActorGroup
+     */
+    public ActorGroup() {
+        actors = new TreeSet<>();
+        joints = new ArrayList<>();
+        super.physicsHandler = new KnotenHandler(this);
+    }
+
+    /**
      * Führt die angegebene Funktion für jedes Element am ActorGroup aus.
      */
     @NoExternalUse
     public void forEach(Consumer<Actor> functor) {
-        synchronized (this.list) {
-            for (Actor room : this.list) {
+        synchronized (this.actors) {
+            for (Actor room : this.actors) {
                 functor.accept(room);
             }
         }
-    }
-
-    /**
-     * Konstruktor für Objekte der Klasse ActorGroup
-     */
-    public ActorGroup() {
-        list = new ArrayList<>();
-        joints = new ArrayList<>();
-        super.physicsHandler = new KnotenHandler(this);
     }
 
     @Override
     public void onAttach(Scene scene) {
         super.onAttach(scene);
 
-        for (Actor room : this.list) {
-            room.onAttach(scene);
+        synchronized (this.actors) {
+            for (Actor room : this.actors) {
+                room.onAttach(scene);
+            }
         }
     }
 
     @Override
     public void onDetach() {
-        for (Actor room : this.list) {
-            room.onDetach();
+        synchronized (this.actors) {
+            for (Actor room : this.actors) {
+                room.onDetach();
+            }
         }
 
         super.onDetach();
@@ -100,9 +102,18 @@ public class ActorGroup extends Actor {
     /**
      * Löscht alle Actor-Objekte, die an diesem ActorGroup gelagert sind.
      */
-    public void removeAll() {
-        for (Actor room : this.list) {
-            remove(room);
+    public void clear() {
+        synchronized (this.actors) {
+            Set<Actor> actors = this.actors;
+            this.actors.clear();
+
+            // Always detach _after_ removing from the actors,
+            // otherwise rendering might result in a NPE.
+            for (Actor room : actors) {
+                if (this.getScene() != null) {
+                    room.onDetach();
+                }
+            }
         }
     }
 
@@ -116,33 +127,31 @@ public class ActorGroup extends Actor {
      */
     @API
     public void remove(Actor m) {
-        synchronized (this.list) {
-            if (!list.contains(m)) {
+        synchronized (this.actors) {
+            if (!this.actors.remove(m)) {
                 return;
             }
-
-            // noinspection StatementWithEmptyBody
-            while (list.remove(m)) ;
         }
 
-        // Always detach _after_ removing from the list, otherwise Rendering might result in a NPE.
+        // Always detach _after_ removing from the actors,
+        // otherwise rendering might result in a NPE.
         if (this.getScene() != null) {
             m.onDetach();
         }
     }
 
     /**
-     * Prueft, ob ein bestimmtes Actor-Objekt in diesem ActorGroup gelagert ist.<br /> <br />
-     * <b>ACHTUNG</b><br /> Diese Methode prueft nicht eventuelle Unterknoten, ob diese vielleiht
-     * das Actor-Objekt beinhalten, sondern nur den eigenen Inhalt!
+     * Prüft, ob ein bestimmtes Actor-Objekt in dieser ActorGroup gelagert ist.<br /> <br />
+     * <b>ACHTUNG</b><br /> Diese Methode prüft nicht für eventuelle Unterknoten, ob diese
+     * vielleicht das Actor-Objekt beinhalten, sondern nur den eigenen Inhalt!
      *
-     * @param m Das Actor-Objekt, das auf Vorkommen in diesem ActorGroup ueberprueft werden soll
+     * @param m Das Actor-Objekt, das auf Vorkommen in diesem ActorGroup überprueft werden soll
      *
-     * @return <code>true</code>, wenn das Actor-Objekt <b>ein- oder auch mehrmals</b> an diesem
-     * ActorGroup liegt
+     * @return <code>true</code>, wenn das Actor-Objekt <b>ein- oder auch mehrmals</b> in dieser
+     * ActorGroup vorkommt
      */
     public boolean contains(Actor m) {
-        return list.contains(m);
+        return this.actors.contains(m);
     }
 
     /**
@@ -157,7 +166,7 @@ public class ActorGroup extends Actor {
      */
     public void add(Actor... m) {
         for (Actor n : m) {
-            add(n);
+            this.add(n);
         }
     }
 
@@ -169,20 +178,17 @@ public class ActorGroup extends Actor {
      */
     public void add(Actor m) {
         if (lock) {
-            Logger.error("ActorGroup", "Fehler: Der ActorGroup, an dem ein neues Objekt anzumelden war, " +
-                    "ist im Lock-Zustand.");
-            return;
+            throw new IllegalStateException("Die ActorGroup ist bereits fixiert und kann nicht mehr geändert werden.");
         }
 
         if (this.getScene() != null) {
             m.onAttach(this.getScene());
         }
 
-        synchronized (this.list) {
-            // Add to list _after_ calling onAttach, otherwise rendering might ask for position with
-            // a NullHandler being set for physics.
-            list.add(m);
-            Collections.sort(list);
+        synchronized (this.actors) {
+            // Add to actors _after_ calling onAttach,
+            // otherwise rendering might ask for position with a NullHandler being set for physics.
+            actors.add(m);
         }
     }
 
@@ -192,35 +198,34 @@ public class ActorGroup extends Actor {
      * wirken, haben damit auch Einfluss auf den Rest der Elemente.</p> <p>Nach Aufruf dieser
      * Funktion können <b>keine Elemente mehr an diesem ActorGroup eingefügt werden</b>.</p>
      *
-     * @see #freeAllElements()
+     * @see #freeFixation()
      * @see #isFixated()
      */
     @API
-    public void fixateAllElements() {
+    public void fixate() {
         if (lock) {
-            Logger.error("ActorGroup", "Die Elemente dieses ActorGroup sind bereits fixiert.");
-            return;
+            throw new IllegalStateException("Die ActorGroup ist bereits fixiert und kann nicht mehr geändert werden.");
         }
 
         lock = true; //<- Lock setzen. Der ActorGroup ist jetzt voll
 
-        Actor last = null;
-        for (Actor r : list) {
-            if (last == null) {
-                last = r;
+        Actor first = null;
+        for (Actor actor : actors) {
+            if (first == null) {
+                first = actor;
                 continue;
             }
 
-            //Joint Definieren
+            // Joint Definieren
             WeldJointDef weldJointDef = new WeldJointDef();
-            weldJointDef.initialize(last.getPhysicsHandler().getBody(), r.getPhysicsHandler().getBody(),
-                    getScene().getWorldHandler().fromVektor(last.position.get().asVector()));
+            weldJointDef.initialize(
+                    first.getPhysicsHandler().getBody(),
+                    actor.getPhysicsHandler().getBody(),
+                    getScene().getWorldHandler().fromVektor(first.position.get().asVector())
+            );
 
-            //Joint in die Welt setzen
-            Joint knotenJoint = getScene().getWorldHandler().getWorld().createJoint(weldJointDef);
-
-            //Referenz zum Joint halten
-            joints.add(knotenJoint);
+            // Joint erstellen und Referenz zum Joint halten
+            this.joints.add(getScene().getWorldHandler().getWorld().createJoint(weldJointDef));
         }
     }
 
@@ -228,24 +233,23 @@ public class ActorGroup extends Actor {
      * Löst die Fixierung der Elemente des Knotens wieder. Nach Aufruf dieser Methode bewegen sich
      * die Elemente in diesem ActorGroup wieder unabhängig voneinander.
      *
-     * @see #fixateAllElements()
+     * @see #fixate()
      * @see #isFixated()
      */
     @API
-    public void freeAllElements() {
+    public void freeFixation() {
         if (!lock) {
-            Logger.error("ActorGroup", "Die Elemente dieses ActorGroup sind gerade nicht fixiert.");
-            return;
+            throw new IllegalStateException("Die ActorGroup ist nicht fixiert.");
         }
 
         lock = false;
 
-        //Alle Joints aus der Welt nehmen
+        // Alle Joints aus der Welt nehmen
         for (Joint joint : joints) {
             getScene().getWorldHandler().getWorld().destroyJoint(joint);
         }
 
-        //Liste removeAll
+        // Liste clear
         joints.clear();
     }
 
@@ -255,8 +259,8 @@ public class ActorGroup extends Actor {
      * @return <code>true</code>, wenn die Elemente dieses Knotens gerade alle aneinander fixiert
      * sind. Sonst <code>false</code>.
      *
-     * @see #fixateAllElements()
-     * @see #freeAllElements()
+     * @see #fixate()
+     * @see #freeFixation()
      */
     @API
     public boolean isFixated() {
@@ -268,8 +272,8 @@ public class ActorGroup extends Actor {
      *
      * @return Alle Elemente als vollstaendig gefuelltes <code>Actor</code>-Objekt-Aray.
      */
-    public Actor[] getAllMembers() {
-        return list.toArray(new Actor[list.size()]);
+    public Actor[] getMembers() {
+        return actors.toArray(new Actor[actors.size()]);
     }
 
     /**
@@ -281,9 +285,9 @@ public class ActorGroup extends Actor {
     @Override
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
         if (isVisible()) {
-            synchronized (this.list) {
-                for (Actor room : this.list) {
-                    room.renderBasic(g, r);
+            synchronized (this.actors) {
+                for (Actor actor : this.actors) {
+                    actor.renderBasic(g, r);
                 }
             }
         }
@@ -297,8 +301,7 @@ public class ActorGroup extends Actor {
     @Override
     @NoExternalUse
     public void render(Graphics2D g) {
-        throw new IllegalStateException("Die Render-Routine eines Knotens wurde aufgerufen. " +
-                "Dies sollte nicht passieren.");
+        throw new RuntimeException("Bug! Eine ActorGroup kann nicht gerendert werden.");
     }
 
     /**
@@ -317,12 +320,6 @@ public class ActorGroup extends Actor {
     @Override
     @API
     public void setOpacity(float opacity) {
-        try {
-            for (int i = list.size() - 1; i >= 0; i--) {
-                list.get(i).setOpacity(opacity);
-            }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            // Wahrscheinlich wurde die Liste geleert.
-        }
+        forEach((actor) -> actor.setOpacity(opacity));
     }
 }

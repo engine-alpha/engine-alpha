@@ -44,7 +44,8 @@ import java.awt.geom.AffineTransform;
  * Superklasse aller grafischen Objekte. Umgekehrt kann somit jedes grafische Objekt die folgenden
  * Methoden nutzen.
  *
- * @author Michael Andonie, Niklas Keller
+ * @author Michael Andonie
+ * @author Niklas Keller
  */
 public abstract class Actor implements Comparable<Actor> {
     /**
@@ -61,7 +62,7 @@ public abstract class Actor implements Comparable<Actor> {
      * Gibt an, ob das Objekt zur Zeit ueberhaupt isVisible sein soll.<br /> Ist dies nicht der Fall,
      * so wird die Zeichenroutine direkt uebergangen.
      */
-    private boolean sichtbar = true;
+    private boolean visible = true;
 
     /**
      * Z-Index des Raumes, je höher, desto weiter oben wird der Actor gezeichnet
@@ -203,7 +204,7 @@ public abstract class Actor implements Comparable<Actor> {
      */
     @API
     public final void setVisible(boolean visible) {
-        this.sichtbar = visible;
+        this.visible = visible;
     }
 
     /**
@@ -215,7 +216,7 @@ public abstract class Actor implements Comparable<Actor> {
      */
     @API
     public final boolean isVisible() {
-        return this.sichtbar;
+        return this.visible;
     }
 
     /**
@@ -272,15 +273,7 @@ public abstract class Actor implements Comparable<Actor> {
     @Override
     @NoExternalUse
     public int compareTo(Actor r) {
-        if (zIndex < r.zIndex) {
-            return 1;
-        }
-
-        if (zIndex > r.zIndex) {
-            return -1;
-        }
-
-        return 0;
+        return Integer.compare(r.zIndex, zIndex);
     }
 
     /**
@@ -294,7 +287,7 @@ public abstract class Actor implements Comparable<Actor> {
      */
     @NoExternalUse
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
-        if (sichtbar && this.camcheck(r)) {
+        if (visible && this.camcheck(r)) {
 
             //Hole Rotation und Position absolut auf der Zeichenebene.
             float rotation;
@@ -457,11 +450,11 @@ public abstract class Actor implements Comparable<Actor> {
      * @throws Throwable Übernommen von Object
      */
     @Override
-    public void finalize()
-            throws Throwable {
-        super.finalize();
-        //Logge die Zerstörung
+    public void finalize() throws Throwable {
+        // Logge die Zerstörung
         Logger.verboseInfo("Actor", "Actor-Objekt in Garbage Collection: " + toString());
+
+        super.finalize();
     }
 
     /**
