@@ -28,7 +28,7 @@ import java.awt.image.ColorModel;
  *
  * @author Niklas Keller <me@kelunik.com>
  */
-public class Optimizer {
+final public class Optimizer {
     private static final GraphicsConfiguration graphicsConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
     private Optimizer() {

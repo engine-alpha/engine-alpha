@@ -27,7 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ResourceLoader {
+final public class ResourceLoader {
     private ResourceLoader() {
         // keine Objekte erlaubt!
     }

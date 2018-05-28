@@ -182,7 +182,7 @@ public class Game {
         // Center frame on screen - https://stackoverflow.com/a/144893/2373138
         frame.setLocationRelativeTo(null);
 
-        renderPanel.initialize();
+        renderPanel.allocateBuffers();
 
         // pack() already allows to create the buffer strategy for rendering
         frame.setVisible(true);

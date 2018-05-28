@@ -31,13 +31,14 @@ import java.util.Date;
  * Logger für die Engine Alpha, damit Probleme bei Anwendern auch von Entwicklern nachvollzogen
  * werden können.
  *
- * @author Julien Gelmar <master@nownewstart.net>, Niklas Keller <me@kelunik.com>
+ * @author Julien Gelmar <master@nownewstart.net>
+ * @author Niklas Keller <me@kelunik.com>
  */
-public class Logger {
+final public class Logger {
     private static BufferedWriter writer;
 
     private Logger() {
-
+        // keine Objekte erlaubt!
     }
 
     static {
