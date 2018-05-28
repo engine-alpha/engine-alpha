@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.actor;
 
 import ea.BoundingRechteck;
 import ea.Scene;
@@ -36,61 +36,61 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Ein Knoten ist eine Sammlung vielen Raum-Objekten, die hierdurch einheitlich bewegungSimulieren,
+ * Ein ActorGroup ist eine Sammlung vielen Actor-Objekten, die hierdurch einheitlich bewegungSimulieren,
  * und einheitlich behandelt werden koennen.
  *
  * @author Michael Andonie
  * @author Niklas Keller
  */
-public class Knoten extends Raum {
+public class ActorGroup extends Actor {
     /**
-     * Die Liste aller Raum-Objekte, die dieser Knoten fasst.
+     * Die Liste aller Actor-Objekte, die diese ActorGroup fasst.
      */
-    private final List<Raum> list;
+    private final List<Actor> list;
 
     /**
-     * Die Joints, die dieser Knoten gerade innehat.
+     * Die Joints, die diese ActorGroup gerade innehat.
      */
     private final List<Joint> joints;
 
     /**
-     * Ob der Knoten die Anmeldung neuer Raum-Objekte blockiert.
+     * Ob der ActorGroup die Anmeldung neuer Actor-Objekte blockiert.
      */
     private boolean lock = false;
 
     /**
-     * Führt die angegebene Funktion für jedes Element am Knoten aus.
+     * Führt die angegebene Funktion für jedes Element am ActorGroup aus.
      */
     @NoExternalUse
-    public void forEach(Consumer<Raum> functor) {
+    public void forEach(Consumer<Actor> functor) {
         synchronized (this.list) {
-            for (Raum room : this.list) {
+            for (Actor room : this.list) {
                 functor.accept(room);
             }
         }
     }
 
     /**
-     * Konstruktor für Objekte der Klasse Knoten
+     * Konstruktor für Objekte der Klasse ActorGroup
      */
-    public Knoten() {
+    public ActorGroup() {
         list = new ArrayList<>();
         joints = new ArrayList<>();
-        super.physikHandler = new KnotenHandler(this);
+        super.physicsHandler = new KnotenHandler(this);
     }
 
     @Override
     public void onAttach(Scene scene) {
         super.onAttach(scene);
 
-        for (Raum room : this.list) {
+        for (Actor room : this.list) {
             room.onAttach(scene);
         }
     }
 
     @Override
     public void onDetach() {
-        for (Raum room : this.list) {
+        for (Actor room : this.list) {
             room.onDetach();
         }
 
@@ -98,24 +98,24 @@ public class Knoten extends Raum {
     }
 
     /**
-     * Löscht alle Raum-Objekte, die an diesem Knoten gelagert sind.
+     * Löscht alle Actor-Objekte, die an diesem ActorGroup gelagert sind.
      */
-    public void leeren() {
-        for (Raum room : this.list) {
-            entfernen(room);
+    public void removeAll() {
+        for (Actor room : this.list) {
+            remove(room);
         }
     }
 
     /**
-     * Entfernt ein Raum-Objekt von diesem Knoten.<br /> War es mehrfach angesteckt, so werden alle
+     * Entfernt ein Actor-Objekt von diesem ActorGroup.<br /> War es mehrfach angesteckt, so werden alle
      * Verbindungen geloescht, war es niemals angemeldet, so passiert <b>gar nichts</b>.<br /> <br
-     * /> <b>Achtung!!</b><br /> Sollte <i>Physik</i> benutzt werden:<br /> Diese Methode macht alle
-     * abgemeldeten <code>Raum</code>-Objekt fuer die Physik neutral!!!
+     * /> <b>Achtung!!</b><br /> Sollte <i>Physics</i> benutzt werden:<br /> Diese Methode macht alle
+     * abgemeldeten <code>Actor</code>-Objekt fuer die Physics neutral!!!
      *
-     * @param m Das von diesem Knoten zu entfernende Raum-Objekt
+     * @param m Das von diesem ActorGroup zu entfernende Actor-Objekt
      */
     @API
-    public void entfernen(Raum m) {
+    public void remove(Actor m) {
         synchronized (this.list) {
             if (!list.contains(m)) {
                 return;
@@ -132,44 +132,44 @@ public class Knoten extends Raum {
     }
 
     /**
-     * Prueft, ob ein bestimmtes Raum-Objekt in diesem Knoten gelagert ist.<br /> <br />
+     * Prueft, ob ein bestimmtes Actor-Objekt in diesem ActorGroup gelagert ist.<br /> <br />
      * <b>ACHTUNG</b><br /> Diese Methode prueft nicht eventuelle Unterknoten, ob diese vielleiht
-     * das Raum-Objekt beinhalten, sondern nur den eigenen Inhalt!
+     * das Actor-Objekt beinhalten, sondern nur den eigenen Inhalt!
      *
-     * @param m Das Raum-Objekt, das auf Vorkommen in diesem Knoten ueberprueft werden soll
+     * @param m Das Actor-Objekt, das auf Vorkommen in diesem ActorGroup ueberprueft werden soll
      *
-     * @return <code>true</code>, wenn das Raum-Objekt <b>ein- oder auch mehrmals</b> an diesem
-     * Knoten liegt
+     * @return <code>true</code>, wenn das Actor-Objekt <b>ein- oder auch mehrmals</b> an diesem
+     * ActorGroup liegt
      */
-    public boolean besitzt(Raum m) {
+    public boolean contains(Actor m) {
         return list.contains(m);
     }
 
     /**
-     * Kombinationsmethode. Hiermit kann man so viele Raum-Objekte gleichzeitig an den Knoten
+     * Kombinationsmethode. Hiermit kann man so viele Actor-Objekte gleichzeitig an den ActorGroup
      * tastenReagierbarAnmelden, wie man will.<br /> <b>Beispiel:</b><br /> <br /> <code> //Der
-     * Knoten, um alle Objekte zu sammeln<br /> Knoten knoten = new Knoten();<br /> <br /> //Lauter
-     * gebastelte Raum-Objekte<br /> Raum r1<br /> Raum r2;<br /> Raum r3;<br /> Raum r4;<br /> Raum
-     * r5<br /> Raum r6;<br /> Raum r7;<br /> Raum r8;<br /> Raum r9<br /> Raum r10;<br /> Raum
-     * r11;<br /> Raum r12;<br /> <br /> //Eine Methode, um alle anzumelden:<br /> knoten.add(r1,
+     * ActorGroup, um alle Objekte zu sammeln<br /> ActorGroup knoten = new ActorGroup();<br /> <br /> //Lauter
+     * gebastelte Actor-Objekte<br /> Actor r1<br /> Actor r2;<br /> Actor r3;<br /> Actor r4;<br /> Actor
+     * r5<br /> Actor r6;<br /> Actor r7;<br /> Actor r8;<br /> Actor r9<br /> Actor r10;<br /> Actor
+     * r11;<br /> Actor r12;<br /> <br /> //Eine Methode, um alle anzumelden:<br /> knoten.add(r1,
      * r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12);<br /> </code><br /> Das Ergebnis: 11 Zeilen
      * Programmcode gespart.
      */
-    public void add(Raum... m) {
-        for (Raum n : m) {
+    public void add(Actor... m) {
+        for (Actor n : m) {
             add(n);
         }
     }
 
     /**
-     * Fuegt ein Raum-Objekt diesem Knoten hinzu.<br /> Das zugefuegte Objekt wird ab dann in alle
-     * Methoden des Knotens (<code>verschieben(), dimension()</code> etc.) mit eingebunden.
+     * Fuegt ein Actor-Objekt diesem ActorGroup hinzu.<br /> Das zugefuegte Objekt wird ab dann in alle
+     * Methoden des Knotens (<code>move(), dimension()</code> etc.) mit eingebunden.
      *
-     * @param m Das hinzuzufuegende Raum-Objekt
+     * @param m Das hinzuzufuegende Actor-Objekt
      */
-    public void add(Raum m) {
+    public void add(Actor m) {
         if (lock) {
-            Logger.error("Knoten", "Fehler: Der Knoten, an dem ein neues Objekt anzumelden war, " +
+            Logger.error("ActorGroup", "Fehler: Der ActorGroup, an dem ein neues Objekt anzumelden war, " +
                     "ist im Lock-Zustand.");
             return;
         }
@@ -188,9 +188,9 @@ public class Knoten extends Raum {
 
     /**
      * <p>Fixiert alle Elemente physikalisch aneinander. Nach dem Aufruf bleiben die Positionen
-     * aller Objekte im Knoten relativ zueinander gleich. Kräfte, die auf ein einzelnes Element
+     * aller Objekte im ActorGroup relativ zueinander gleich. Kräfte, die auf ein einzelnes Element
      * wirken, haben damit auch Einfluss auf den Rest der Elemente.</p> <p>Nach Aufruf dieser
-     * Funktion können <b>keine Elemente mehr an diesem Knoten eingefügt werden</b>.</p>
+     * Funktion können <b>keine Elemente mehr an diesem ActorGroup eingefügt werden</b>.</p>
      *
      * @see #freeAllElements()
      * @see #isFixated()
@@ -198,14 +198,14 @@ public class Knoten extends Raum {
     @API
     public void fixateAllElements() {
         if (lock) {
-            Logger.error("Knoten", "Die Elemente dieses Knoten sind bereits fixiert.");
+            Logger.error("ActorGroup", "Die Elemente dieses ActorGroup sind bereits fixiert.");
             return;
         }
 
-        lock = true; //<- Lock setzen. Der Knoten ist jetzt voll
+        lock = true; //<- Lock setzen. Der ActorGroup ist jetzt voll
 
-        Raum last = null;
-        for (Raum r : list) {
+        Actor last = null;
+        for (Actor r : list) {
             if (last == null) {
                 last = r;
                 continue;
@@ -213,8 +213,8 @@ public class Knoten extends Raum {
 
             //Joint Definieren
             WeldJointDef weldJointDef = new WeldJointDef();
-            weldJointDef.initialize(last.getPhysikHandler().getBody(), r.getPhysikHandler().getBody(),
-                    getScene().getWorldHandler().fromVektor(last.position.get().alsVektor()));
+            weldJointDef.initialize(last.getPhysicsHandler().getBody(), r.getPhysicsHandler().getBody(),
+                    getScene().getWorldHandler().fromVektor(last.position.get().asVector()));
 
             //Joint in die Welt setzen
             Joint knotenJoint = getScene().getWorldHandler().getWorld().createJoint(weldJointDef);
@@ -226,7 +226,7 @@ public class Knoten extends Raum {
 
     /**
      * Löst die Fixierung der Elemente des Knotens wieder. Nach Aufruf dieser Methode bewegen sich
-     * die Elemente in diesem Knoten wieder unabhängig voneinander.
+     * die Elemente in diesem ActorGroup wieder unabhängig voneinander.
      *
      * @see #fixateAllElements()
      * @see #isFixated()
@@ -234,7 +234,7 @@ public class Knoten extends Raum {
     @API
     public void freeAllElements() {
         if (!lock) {
-            Logger.error("Knoten", "Die Elemente dieses Knoten sind gerade nicht fixiert.");
+            Logger.error("ActorGroup", "Die Elemente dieses ActorGroup sind gerade nicht fixiert.");
             return;
         }
 
@@ -245,12 +245,12 @@ public class Knoten extends Raum {
             getScene().getWorldHandler().getWorld().destroyJoint(joint);
         }
 
-        //Liste leeren
+        //Liste removeAll
         joints.clear();
     }
 
     /**
-     * Gibt an, ob die Elemente in diesem Knoten gerade aneinander fixiert sind oder nicht.
+     * Gibt an, ob die Elemente in diesem ActorGroup gerade aneinander fixiert sind oder nicht.
      *
      * @return <code>true</code>, wenn die Elemente dieses Knotens gerade alle aneinander fixiert
      * sind. Sonst <code>false</code>.
@@ -264,12 +264,12 @@ public class Knoten extends Raum {
     }
 
     /**
-     * Gibt alle Elemente des Knotens in Form eines <code>Raum</code>-Objekt-Arays aus.
+     * Gibt alle Elemente des Knotens in Form eines <code>Actor</code>-Objekt-Arays aus.
      *
-     * @return Alle Elemente als vollstaendig gefuelltes <code>Raum</code>-Objekt-Aray.
+     * @return Alle Elemente als vollstaendig gefuelltes <code>Actor</code>-Objekt-Aray.
      */
-    public Raum[] alleElemente() {
-        return list.toArray(new Raum[list.size()]);
+    public Actor[] getAllMembers() {
+        return list.toArray(new Actor[list.size()]);
     }
 
     /**
@@ -280,9 +280,9 @@ public class Knoten extends Raum {
      */
     @Override
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
-        if (sichtbar()) {
+        if (isVisible()) {
             synchronized (this.list) {
-                for (Raum room : this.list) {
+                for (Actor room : this.list) {
                     room.renderBasic(g, r);
                 }
             }
@@ -306,7 +306,7 @@ public class Knoten extends Raum {
      */
     @Override
     public Shape createShape(float pixelProMeter) {
-        return null; // Knoten hat keine Shape => Null.
+        return null; // ActorGroup hat keine Shape => Null.
     }
 
     /**

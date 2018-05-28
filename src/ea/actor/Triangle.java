@@ -17,9 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.actor;
 
-import ea.Punkt;
+import ea.Point;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
@@ -27,12 +27,12 @@ import org.jbox2d.common.Vec2;
 import java.awt.*;
 
 /**
- * Das Dreieck ist die Basiszeichenklasse.<br /> Jeder Koerper laesst sich aus solchen
+ * Das Triangle ist die Basiszeichenklasse.<br /> Jeder Koerper laesst sich aus solchen
  * darstellen.<br /> Daher ist dies die <b>einzige</b> Klasse, die in sich eine Zeichenroutine hat.
  *
  * @author Michael Andonie
  */
-public class Dreieck extends Geometrie {
+public class Triangle extends Geometry {
     /**
      * Die X-Koordinaten der Punkte.
      */
@@ -54,18 +54,18 @@ public class Dreieck extends Geometrie {
      * @param x Alle X-Koordinaten als Feld
      * @param y Alle Y-Koordinaten als Feld
      */
-    public Dreieck(float[] x, float[] y) {
-        super(Punkt.ZENTRUM);
+    public Triangle(float[] x, float[] y) {
+        super(Point.CENTRE);
 
         if (x.length != 3 || y.length != 3) {
-            throw new IllegalArgumentException("Es müssen genau je drei Werte für x- und y-Werte übergeben werden.");
+            throw new IllegalArgumentException("Es müssen genau je drei Werte für getX- und getY-Werte übergeben werden.");
         }
 
         this.x = x.clone();
         this.y = y.clone();
     }
 
-    public Dreieck(Punkt p1, Punkt p2, Punkt p3) {
+    public Triangle(Point p1, Point p2, Point p3) {
         this(new float[] {p1.x, p2.x, p3.x}, new float[] {p1.y, p2.y, p3.y});
     }
 
@@ -79,13 +79,13 @@ public class Dreieck extends Geometrie {
     /**
      * Setzt die drei Punkte dieses Dreiecks neu.
      *
-     * @param p1 Der 1. neue Punkt des Dreiecks
-     * @param p2 Der 2. neue Punkt des Dreiecks
-     * @param p3 Der 3. neue Punkt des Dreiecks
+     * @param p1 Der 1. neue Point des Dreiecks
+     * @param p2 Der 2. neue Point des Dreiecks
+     * @param p3 Der 3. neue Point des Dreiecks
      *
-     * @see #punkteSetzen(float[], float[])
+     * @see #setPoints(float[], float[])
      */
-    public void punkteSetzen(Punkt p1, Punkt p2, Punkt p3) {
+    public void setPoints(Point p1, Point p2, Point p3) {
         x[0] = p1.x;
         x[1] = p2.x;
         x[2] = p3.x;
@@ -97,12 +97,12 @@ public class Dreieck extends Geometrie {
     /**
      * Setzt die drei Punkte dieses Dreiecks neu.
      *
-     * @param x Die Koordinaten aller X-Punkte. Der Index gibt den Punkt an (x[0] und y[0] bilden
-     *          einen Punkt)
-     * @param y Die Koordinaten aller Y-Punkte. Der Index gibt den Punkt an (x[0] und y[0] bilden
-     *          einen Punkt)
+     * @param x Die Koordinaten aller X-Punkte. Der Index gibt den Point an (getX[0] und getY[0] bilden
+     *          einen Point)
+     * @param y Die Koordinaten aller Y-Punkte. Der Index gibt den Point an (getX[0] und getY[0] bilden
+     *          einen Point)
      */
-    public void punkteSetzen(float[] x, float[] y) {
+    public void setPoints(float[] x, float[] y) {
         this.x = x.clone();
         this.y = y.clone();
     }
@@ -112,7 +112,7 @@ public class Dreieck extends Geometrie {
      */
     @Override
     public void render(Graphics2D g) {
-        Punkt pos = position.get();
+        Point pos = position.get();
 
         int[] x = {(int) this.x[0], (int) this.x[1], (int) this.x[2]};
         int[] y = {(int) this.y[0], (int) this.y[1], (int) this.y[2]};

@@ -1,9 +1,9 @@
 package ea.internal.phy;
 
-import ea.handle.Physik;
-import ea.Punkt;
-import ea.raum.Raum;
-import ea.Vektor;
+import ea.Vector;
+import ea.actor.Actor;
+import ea.handle.Physics;
+import ea.Point;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.MassData;
@@ -11,11 +11,11 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
 /**
- * Ein <code>Body-Handler</code> kümmert sich um die <i>physikalische Darstellung</i> eines <code>Raum</code>-Objekts.<br />
+ * Ein <code>Body-Handler</code> kümmert sich um die <i>physikalische Darstellung</i> eines <code>Actor</code>-Objekts.<br />
  * Er übernimmt zwei wesentliche Aufgaben:
  * <ul>
- *     <li>Die Kontrolle und Steuerung innerhalb der <b>Physik-Engine</b> aus Sicht des respektiven Raum Objekts.</li>
- *     <li>Die Speicherung der <i>räumlichen Eigenschaften</i> (Position und Rotation) des respektiven Raum-Objekts.</li>
+ *     <li>Die Kontrolle und Steuerung innerhalb der <b>Physics-Engine</b> aus Sicht des respektiven Actor Objekts.</li>
+ *     <li>Die Speicherung der <i>räumlichen Eigenschaften</i> (Position und Rotation) des respektiven Actor-Objekts.</li>
  * </ul>
  * Created by andonie on 15.02.15.
  */
@@ -55,7 +55,7 @@ extends PhysikHandler {
     private Fixture fixture;
 
     /**
-     * Der Body als die physische Repräsentation des analogen Raum-Objekts in der Physics-Engine.
+     * Der Body als die physische Repräsentation des analogen Actor-Objekts in der Physics-Engine.
      */
     private Body body;
 
@@ -67,11 +67,11 @@ extends PhysikHandler {
 
     /**
      * Erstellt einen neuen Body-Handler
-     * @param raum
+     * @param actor
      */
     @NoExternalUse
-    public BodyHandler(Raum raum, WorldHandler worldHandler, BodyDef bd, FixtureDef fixtureDef, Physik.Typ physikTyp, boolean isSensor, NullHandler predecessor) {
-        super(raum, physikTyp, isSensor);
+    public BodyHandler(Actor actor, WorldHandler worldHandler, BodyDef bd, FixtureDef fixtureDef, Physics.Type physikType, boolean isSensor, NullHandler predecessor) {
+        super(actor, physikType, isSensor);
         this.worldHandler = worldHandler;
         this.fixtureDef = fixtureDef;
         this.bodyDef = bd;
@@ -91,12 +91,12 @@ extends PhysikHandler {
     @Override
     public void update(WorldHandler worldHandler) throws IllegalStateException {
         if(worldHandler != this.worldHandler) {
-            throw new IllegalStateException("Ein Raum-Objekt darf nicht zwischen Wurzeln wechseln.");
+            throw new IllegalStateException("Ein Actor-Objekt darf nicht zwischen Wurzeln wechseln.");
         }
     }
 
     @Override
-    public void verschieben(Vektor v) {
+    public void verschieben(Vector v) {
         if(body == null) {
             predecessor.verschieben(v);
             return;
@@ -115,29 +115,29 @@ extends PhysikHandler {
     }
 
     @Override
-    public Punkt mittelpunkt() {
-        if(physikTyp== Physik.Typ.DYNAMISCH) {
+    public Point mittelpunkt() {
+        if(physikType == Physics.Type.DYNAMISCH) {
             Vec2 wc = body.getWorldCenter();
-            return worldHandler.fromVec2(wc).alsPunkt();
+            return worldHandler.fromVec2(wc).asPoint();
         } else {
             throw new RuntimeException("Mittelpunktabfrage von nichtdynamischem Körper.");
-            //Logger.error("Physik", "Mittelpunkt ist nur für Dynamische Objekte implementiert.");
-            //return worldHandler.fromVec2(body.getPosition()).alsPunkt();
+            //Logger.error("Physics", "Mittelpunkt ist nur für Dynamische Objekte implementiert.");
+            //return worldHandler.fromVec2(body.getPosition()).asPoint();
         }
 
     }
 
     @Override
-    public boolean beinhaltet(Punkt p) {
+    public boolean beinhaltet(Point p) {
         return false;
     }
 
     @Override
-    public Punkt position() {
+    public Point position() {
         if(body == null) {
             return predecessor.position();
         }
-        return worldHandler.fromVec2(body.getPosition()).alsPunkt();
+        return worldHandler.fromVec2(body.getPosition()).asPoint();
     }
 
     @Override
@@ -226,7 +226,7 @@ extends PhysikHandler {
     }
 
     @Override
-    public void kraftWirken(Vektor kraft) {
+    public void kraftWirken(Vector kraft) {
         if(physikBodyCheck())
             body.applyForceToCenter(new Vec2(kraft.x, kraft.y));
     }
@@ -246,7 +246,7 @@ extends PhysikHandler {
     }
 
     @Override
-    public void schwerkraftSetzen(Vektor schwerkraftInN) {
+    public void schwerkraftSetzen(Vector schwerkraftInN) {
         worldHandler.getWorld().setGravity(new Vec2(schwerkraftInN.x, schwerkraftInN.y));
         if(physikBodyCheck()) {
             body.setAwake(true);
@@ -254,23 +254,23 @@ extends PhysikHandler {
     }
 
     @Override
-    public PhysikHandler typ(Physik.Typ typ) {
+    public PhysikHandler typ(Physics.Type type) {
         //bodyGate();
-        if(typ == physikTyp) {
+        if(type == physikType) {
             return this; //kein Update nötig.
         }
-        this.physikTyp = typ;
-        BodyType newType = typ.convert();
+        this.physikType = type;
+        BodyType newType = type.convert();
         body.setType(newType);
         //isSensor = true; //TODO Delete again.
 
         //System.out.println("I have a fixture: " + body.getFixtureList());
 
-        //body.setActive(typ != Physik.Typ.PASSIV);
+        //body.setActive(setType != Physics.Type.PASSIV);
         //System.out.println("Set active!");
         body.setActive(true);
-        fixture.setSensor(typ == Physik.Typ.PASSIV);// && isSensor);
-        body.setGravityScale(typ == Physik.Typ.PASSIV ? 0 : 1);
+        fixture.setSensor(type == Physics.Type.PASSIV);// && isSensor);
+        body.setGravityScale(type == Physics.Type.PASSIV ? 0 : 1);
 
         //System.out.println("Ph-Update: Sensor=" + body.getFixtureList().isSensor() + " - " + body.isActive());
 
@@ -279,16 +279,16 @@ extends PhysikHandler {
 
 
     @Override
-    public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
+    public void kraftWirken(Vector kraftInN, Point globalerOrt) {
         if(physikBodyCheck()) {
-            body.applyForce(new Vec2(kraftInN.x, kraftInN.y), worldHandler.fromVektor(globalerOrt.alsVektor()));
+            body.applyForce(new Vec2(kraftInN.x, kraftInN.y), worldHandler.fromVektor(globalerOrt.asVector()));
         }
     }
 
     @Override
-    public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
+    public void impulsWirken(Vector impulsInNS, Point globalerOrt) {
         if(physikBodyCheck()) {
-            body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), worldHandler.fromVektor(globalerOrt.alsVektor()));
+            body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), worldHandler.fromVektor(globalerOrt.asVector()));
         }
     }
 
@@ -301,14 +301,14 @@ extends PhysikHandler {
     }
 
     @Override
-    public void geschwindigkeitSetzen(Vektor geschwindigkeitInMProS) {
+    public void geschwindigkeitSetzen(Vector geschwindigkeitInMProS) {
         if(physikBodyCheck()) {
             body.setLinearVelocity(new Vec2(geschwindigkeitInMProS.x, geschwindigkeitInMProS.y));
         }
     }
 
     @Override
-    public Vektor geschwindigkeit() {
+    public Vector geschwindigkeit() {
         if(physikBodyCheck()) {
             return worldHandler.fromVec2(body.getLinearVelocity());
         } return null;
@@ -330,7 +330,7 @@ extends PhysikHandler {
 
     @Override
     public void killBody() {
-        Logger.verboseInfo("Physics", "Entferne Raum-Objekt aus Physics-Umgebung.");
+        Logger.verboseInfo("Physics", "Entferne Actor-Objekt aus Physics-Umgebung.");
         worldHandler.removeAllInternalReferences(body);
         worldHandler.getWorld().destroyBody(body);
     }
@@ -346,10 +346,10 @@ extends PhysikHandler {
     @NoExternalUse
     public void createBodyAndFixture() {
 
-        bodyDef.position.set(worldHandler.fromVektor(predecessor.position().alsVektor()));
+        bodyDef.position.set(worldHandler.fromVektor(predecessor.position().asVector()));
 
 
-        body =  worldHandler.createBody(bodyDef, super.raum);
+        body =  worldHandler.createBody(bodyDef, super.actor);
         fixture = body.createFixture(fixtureDef);
 
         bodyDef = null;
@@ -365,7 +365,7 @@ extends PhysikHandler {
      */
     private boolean physikBodyCheck() {
         if(body == null) {
-            Logger.error("Physik", "Bevor das Raum-Objekt an einer Physik-Umgebung (~Wurzel) angemeldet war, " +
+            Logger.error("Physics", "Bevor das Actor-Objekt an einer Physics-Umgebung (~Wurzel) angemeldet war, " +
                     "wurde versucht, eine physikalische Operation daran auszuführen.");
             return false;
         } else return true;

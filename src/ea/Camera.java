@@ -20,7 +20,8 @@
 package ea;
 
 import ea.internal.ano.API;
-import ea.raum.Raum;
+import ea.actor.Actor;
+import ea.internal.ano.NoExternalUse;
 
 /**
  * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene;
@@ -44,7 +45,7 @@ public class Camera implements FrameUpdateListener {
     /**
      * Aktuelle Position des Mittelpunkts der Kamera.
      */
-    private Punkt position;
+    private Point position;
 
     /**
      * Die Bounds der Kamera (sofern vorhanden), die sie in der Bewegung einschränken.
@@ -54,12 +55,12 @@ public class Camera implements FrameUpdateListener {
     /**
      * Der eventuelle Fokus der Kamera.
      */
-    private Raum focus = null;
+    private Actor focus = null;
 
     /**
      * Der Kameraverzug.
      */
-    private Vektor offset = Vektor.NULLVEKTOR;
+    private Vector offset = Vector.NULLVECTOR;
 
     /**
      * Der aktuelle Kamerazoom.
@@ -74,22 +75,23 @@ public class Camera implements FrameUpdateListener {
     /**
      * Konstruktor erstellt eine neue Kamera mit Fokus auf <code>(0, 0)</code>.
      */
+    @NoExternalUse
     public Camera() {
-        this.position = new Punkt(0, 0);
+        this.position = new Point(0, 0);
     }
 
     /**
      * Setzt den Fokus der Kamera auf ein Objekt.
      * <p>
      * Dieses Objekt ist ab dann im 'Zentrum' der Kamera. Die Art des Fokus (rechts, links, oben,
-     * unten, mittig, etc.) kann über die Methode {@link #setOffset(Vektor)} geändert
+     * unten, mittig, etc.) kann über die Methode {@link #setOffset(Vector)} geändert
      * werden. Soll das Fokusverhalten beendet werden, kann einfach {@code null} übergeben werden,
      * dann bleibt die Kamera bis auf Weiteres in der aktuellen Position.
      *
      * @param focus Der Fokus.
      */
     @API
-    public void setFocus(Raum focus) {
+    public void setFocus(Actor focus) {
         this.focus = focus;
     }
 
@@ -98,7 +100,7 @@ public class Camera implements FrameUpdateListener {
      *
      * @return <code>true</code>, wenn die Kamera ein Fokus-Objekt hat, sonst <code>false</code>.
      *
-     * @see #setFocus(Raum)
+     * @see #setFocus(Actor)
      */
     @API
     public boolean hasFocus() {
@@ -108,24 +110,24 @@ public class Camera implements FrameUpdateListener {
     /**
      * Setzt einen Kameraverzug. Der Standardwert hierfür ist <code>(0, 0)</code>.
      * <p>
-     * Der Verzug ist ein Vektor, um den das Bild, das den Fokus exakt im Zentrum hat,
+     * Der Verzug ist ein Vector, um den das Image, das den Fokus exakt im Zentrum hat,
      * verschoben wird. Das heißt, dass eine Figur im Fokus um 100 Pixel tiefer als im
      * absoluten Bildzentrum liegt, wenn der Fokusverzug mit folgender Methode gesetzt wurde:
-     * <code>camera.setOffset(new Vektor(0, -100));</code>
+     * <code>camera.setOffset(new Vector(0, -100));</code>
      *
-     * @param offset Der Vektor, um den ab sofort die Kamera vom Zentrum des Fokus verschoben wird.
+     * @param offset Der Vector, um den ab sofort die Kamera vom Zentrum des Fokus verschoben wird.
      */
     @API
-    public void setOffset(Vektor offset) {
+    public void setOffset(Vector offset) {
         this.offset = offset;
     }
 
     /**
      * Mit dieser Methode kann die Kamerabewegung eingeschränkt werden.
      * <p>
-     * Ein Rechteck gibt die Begrenzung an, die die Kameraperspektive niemals übertreten wird.
+     * Ein Rectangle gibt die Begrenzung an, die die Kameraperspektive niemals übertreten wird.
      *
-     * @param bounds Das Rechteck, das die Grenzen der Kamera angibt.
+     * @param bounds Das Rectangle, das die Grenzen der Kamera angibt.
      */
     @API
     public void setBounds(BoundingRechteck bounds) {
@@ -172,27 +174,27 @@ public class Camera implements FrameUpdateListener {
     }
 
     /**
-     * Verschiebt die Kamera um einen bestimmten Wert in <code>x</code>- und
-     * <code>y</code>-Richtung (relativ).
+     * Verschiebt die Kamera um einen bestimmten Wert in <code>getX</code>- und
+     * <code>getY</code>-Richtung (relativ).
      *
-     * @param x Die Verschiebung in <code>x</code>-Richtung.
-     * @param y Die Verschiebung in <code>y</code>-Richtung.
+     * @param x Die Verschiebung in <code>getX</code>-Richtung.
+     * @param y Die Verschiebung in <code>getY</code>-Richtung.
      */
     @API
     public void move(float x, float y) {
-        this.position = this.position.verschobeneInstanz(new Vektor(x, y));
+        this.position = this.position.verschobeneInstanz(new Vector(x, y));
     }
 
     /**
      * Verschiebt das Zentrum der Kamera zur angegebenen Position (absolute Verschiebung). Von nun
-     * an ist der Punkt mit den eingegebenen Koordinaten im Zentrum des Bildes.
+     * an ist der Point mit den eingegebenen Koordinaten im Zentrum des Bildes.
      *
-     * @param x Die <code>x</code>-Koordinate des Zentrums des Bildes.
-     * @param y Die <code>y</code>-Koordinate des Zentrums des Bildes.
+     * @param x Die <code>getX</code>-Koordinate des Zentrums des Bildes.
+     * @param y Die <code>getY</code>-Koordinate des Zentrums des Bildes.
      */
     @API
     public void moveTo(int x, int y) {
-        this.position = new Punkt(x, y);
+        this.position = new Point(x, y);
     }
 
     @API
@@ -211,23 +213,23 @@ public class Camera implements FrameUpdateListener {
      * @return Die aktuelle Position der Kamera.
      */
     @API
-    public Punkt getPosition() {
+    public Point getPosition() {
         return this.position;
     }
 
     @Override
     public void onFrameUpdate(int frameDuration) {
         if (this.hasFocus()) {
-            this.position = focus.position.mittelPunkt();
+            this.position = focus.position.getCenter();
         }
 
         this.position = this.position.verschobeneInstanz(this.offset);
 
         if (this.hasBounds()) {
-            float x = Math.max(this.bounds.getRealX(), Math.min(this.position.x(), this.bounds.getRealX() + this.bounds.getRealBreite()));
-            float y = Math.max(this.bounds.getRealX(), Math.min(this.position.x(), this.bounds.getRealX() + this.bounds.getRealBreite()));
+            float x = Math.max(this.bounds.getRealX(), Math.min(this.position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
+            float y = Math.max(this.bounds.getRealX(), Math.min(this.position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
 
-            this.position = new Punkt(x, y);
+            this.position = new Point(x, y);
         }
     }
 

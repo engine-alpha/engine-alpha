@@ -19,19 +19,22 @@
 
 package ea;
 
+import ea.internal.ano.API;
+
 /**
- * FallReagierbar kann darauf onKeyDown, das das mit ihr angemeldete Raum-Objekt ueber
+ * FallListener kann darauf onKeyDown, das das mit ihr angemeldete Actor-Objekt ueber
  * <code>WorldHandler</code> faellt und einen gewissen Maximalwert erreicht. Dann wird ihre Methode
- * <code>fallReagieren()</code> aufgerufen.<br />
+ * <code>onFall()</code> aufgerufen.<br />
  *
  * @author Michael Andonie
  */
-public interface FallReagierbar {
+public interface FallListener {
 	/**
-	 * Diese Methode wird aufgerufen, <b>solange</b> das fallende Raum-Objekt unter der mit diesem
+	 * Diese Methode wird aufgerufen, <b>solange</b> das fallende Actor-Objekt unter der mit diesem
 	 * Listener angemeldeten mindesthoehe faellt.<br /> Das heisst, wird das Fallen im
 	 * problematischen bereich hierin <b>nicht behoben</b>, so wird diese Methode wieder und wieder
 	 * aufgerufen, bis das Objekt nicht mehr im gefaehrlichen Bereich ist.
 	 */
-	public abstract void fallReagieren ();
+	@API
+	void onFall();
 }

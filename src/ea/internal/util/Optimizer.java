@@ -36,11 +36,11 @@ public class Optimizer {
     }
 
     /**
-     * Optimiert ein Bild für das Rendering, abhänig vom Bildschirm des Anwenders.
+     * Optimiert ein Image für das Rendering, abhänig vom Bildschirm des Anwenders.
      *
-     * @param img Bild, das optimiert werden soll
+     * @param img Image, das optimiert werden soll
      *
-     * @return optimiertes Bild
+     * @return optimiertes Image
      */
     public static BufferedImage toCompatibleImage(BufferedImage img) {
         ColorModel a = img.getColorModel();

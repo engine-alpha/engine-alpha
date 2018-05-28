@@ -1,12 +1,12 @@
 package ea.internal.phy;
 
 import ea.Game;
-import ea.Vektor;
+import ea.Vector;
+import ea.actor.Actor;
 import ea.collision.CollisionListener;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.frame.Dispatchable;
 import ea.internal.util.Logger;
-import ea.raum.Raum;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -33,23 +33,23 @@ public class WorldHandler implements ContactListener {
     private final World world;
 
     /**
-     * Hashmap, die alle spezifisch angegebenen Raum-Raum Kollisionsüberwachungen innehat.
+     * Hashmap, die alle spezifisch angegebenen Actor-Actor Kollisionsüberwachungen innehat.
      */
     private final HashMap<Body, List<Checkup>> specificCollisionListeners = new HashMap<>();
 
     /**
      * Hashmap, die sämtliche allgemeinen CollisionListener-Listener innehat.
      */
-    private final HashMap<Body, List<CollisionListener<Raum>>> generalCollisonListeners = new HashMap<>();
+    private final HashMap<Body, List<CollisionListener<Actor>>> generalCollisonListeners = new HashMap<>();
 
     /**
      * Diese Hashmap enthält sämtliche Bodies, die in der World existieren und mapt diese auf die
-     * zugehörigen Raum-Objekte.
+     * zugehörigen Actor-Objekte.
      */
-    private final HashMap<Body, Raum> worldMap = new HashMap<>();
+    private final HashMap<Body, Actor> worldMap = new HashMap<>();
 
     /**
-     * Umrechnungsgröße zwischen Größen der Physik-Engine und der Zeichenebene der EA.
+     * Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA.
      * Gibt an, wie viele Pixel genau einen Meter ausmachen.<br/>
      * <p>
      * <b>Einheit: [px/m]</b>
@@ -62,7 +62,7 @@ public class WorldHandler implements ContactListener {
     private boolean ppmRequested = false;
 
     /**
-     * Gibt die Umrechnungsgröße zwischen Größen der Physik-Engine und der Zeichenebene der EA an.
+     * Gibt die Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA an.
      *
      * @return Gibt an, wie viele Pixel genau einen Meter ausmachen.<br /> <b>Einheit: [px/m]</b>
      */
@@ -79,22 +79,22 @@ public class WorldHandler implements ContactListener {
     }
 
     /**
-     * Setzt die Umrechnungsgröße zwischen Größen der Physik-Engine und der Zeichenebene der EA.
+     * Setzt die Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA.
      *
      * @param pixelProMeter Die Anzahl an Pixeln, die genau einen Meter ausmachen.<br /> <i>Die
      *                      Größe ist unabhängig vom Kamerazoom.</i>< br/> <b>Einheit: [px/m]</b>
      */
     public void setPixelProMeter(float pixelProMeter) {
         if (ppmRequested) {
-            throw new IllegalStateException("Die Pixel-Pro-Meter Umrechnungszahl darf nach Arbeit mit den Raum-Objekten" +
+            throw new IllegalStateException("Die Pixel-Pro-Meter Umrechnungszahl darf vectorFromThisTo Arbeit mit den Actor-Objekten" +
                     " der entsprechenden WorldHandler-Umgebung nicht geändert werden. Das Setzen der Konstante vor" +
-                    " die Arbeit mit den Raum-Objekten verschieben.");
+                    " die Arbeit mit den Actor-Objekten move.");
         }
         this.pixelProMeter = pixelProMeter;
     }
 
     /**
-     * Erstellt eine neue standardisierte Physik (Schwerkraft senkrecht nach unten, 9,81 m/s^2)
+     * Erstellt eine neue standardisierte Physics (Schwerkraft senkrecht vectorFromThisTo unten, 9,81 m/s^2)
      */
     @NoExternalUse
     public WorldHandler() {
@@ -103,7 +103,7 @@ public class WorldHandler implements ContactListener {
     }
 
     /**
-     * Gibt den World-Parameter der Physik aus.
+     * Gibt den World-Parameter der Physics aus.
      *
      * @return Der JB2D-World-Parameter der Welt.
      */
@@ -119,57 +119,57 @@ public class WorldHandler implements ContactListener {
     }
 
     /**
-     * Übersetzt einen EA-Vektor in einen JB2D-Vektor auf Basis des gesetzten
+     * Übersetzt einen EA-Vector in einen JB2D-Vector auf Basis des gesetzten
      * Pixel/Meter-Verhältnisses.
      *
-     * @param eaV Ein EA-Vektor.
+     * @param eaV Ein EA-Vector.
      *
-     * @return Der analoge Vektor in der JB2D-Engine.
+     * @return Der analoge Vector in der JB2D-Engine.
      */
     @NoExternalUse
-    public Vec2 fromVektor(Vektor eaV) {
+    public Vec2 fromVektor(Vector eaV) {
         float x = eaV.x / pixelProMeter;
         float y = eaV.y / pixelProMeter;
         return new Vec2(x, y);
     }
 
     /**
-     * Übersetzt einen JB2D-Vektor in einen EA-Vektor auf Basis des gesetzten
+     * Übersetzt einen JB2D-Vector in einen EA-Vector auf Basis des gesetzten
      * Pixel/Meter-Verhältnisses.
      *
-     * @param jb2dV Ein JB2D-Vektor.
+     * @param jb2dV Ein JB2D-Vector.
      *
-     * @return Der analoge Vektor im EA-Format auf der Zeichenebene.
+     * @return Der analoge Vector im EA-Format auf der Zeichenebene.
      */
     @NoExternalUse
-    public Vektor fromVec2(Vec2 jb2dV) {
+    public Vector fromVec2(Vec2 jb2dV) {
         float x = jb2dV.x * pixelProMeter;
         float y = jb2dV.y * pixelProMeter;
-        return new Vektor(x, y);
+        return new Vector(x, y);
     }
 
     /**
-     * Erstellt einen Body und mappt ihn intern zum analogen Raum-Objekt.
+     * Erstellt einen Body und mappt ihn intern zum analogen Actor-Objekt.
      *
      * @param bd   Exakte Beschreibung des Bodies.
-     * @param raum Raum-Objekt, das ab sofort zu dem Body gehört.
+     * @param actor Actor-Objekt, das ab sofort zu dem Body gehört.
      *
      * @return Der Body, der aus der BodyDef generiert wurde. Er liegt in der Game-World dieses
      * Handlers.
      */
-    public Body createBody(BodyDef bd, Raum raum) {
+    public Body createBody(BodyDef bd, Actor actor) {
         Body body;
 
         synchronized (world) {
             body = world.createBody(bd);
-            worldMap.put(body, raum);
+            worldMap.put(body, actor);
         }
 
         return body;
     }
 
     /**
-     * Entfernt alle internen Referenzen auf einen Body und das zugehörige Raum-Objekt.
+     * Entfernt alle internen Referenzen auf einen Body und das zugehörige Actor-Objekt.
      *
      * @param body der zu entfernende Body
      */
@@ -273,10 +273,10 @@ public class WorldHandler implements ContactListener {
 
     @NoExternalUse
     private void generalCheckup(Body act, Body col, final boolean isBegin) {
-        List<CollisionListener<Raum>> list = generalCollisonListeners.get(act);
+        List<CollisionListener<Actor>> list = generalCollisonListeners.get(act);
         if (list != null) {
-            Raum other = worldMap.get(col); // Darf (eigentlich) niemals null sein
-            for (CollisionListener<Raum> kr : list) {
+            Actor other = worldMap.get(col); // Darf (eigentlich) niemals null sein
+            for (CollisionListener<Actor> kr : list) {
                 Game.enqueueDispatchable(() -> {
                     if (isBegin) {
                         kr.onCollision(other);
@@ -306,10 +306,10 @@ public class WorldHandler implements ContactListener {
     /**
      * Speichert ein Korrespondierendes Body-Objekt sowie
      */
-    private static class Checkup<E extends Raum> {
+    private static class Checkup<E extends Actor> {
         private final CollisionListener<E> reagierbar;  //Aufzurufen
         private final Body body2;                       //Der zweite Body (erster Body ist Hashmap-Schlüssel)
-        private final E collider;                       //Das Raum-Objekt, das neben dem Actor angemeldet wurde
+        private final E collider;                       //Das Actor-Objekt, das neben dem Actor angemeldet wurde
 
         private final Dispatchable begin = new Dispatchable() {
             @Override
@@ -351,22 +351,22 @@ public class WorldHandler implements ContactListener {
      * @param actor Der Actor (KR Interface wird bei jeder Kollision des Actors informiert)
      */
     @NoExternalUse
-    public static void allgemeinesKollisionsReagierbarEingliedern(CollisionListener<Raum> kr, Raum actor) {
-        final WorldHandler worldHandler = actor.getPhysikHandler().worldHandler();
+    public static void allgemeinesKollisionsReagierbarEingliedern(CollisionListener<Actor> kr, Actor actor) {
+        final WorldHandler worldHandler = actor.getPhysicsHandler().worldHandler();
         if (worldHandler == null) {
-            Logger.error("Kollision", "Das anzumeldende Raum-Objekt war noch nicht an der Wurzel angemeldet. "
+            Logger.error("Kollision", "Das anzumeldende Actor-Objekt war noch nicht an der Wurzel angemeldet. "
                     + "Erst an der Wurzel anmelden, bevor Kollisionsanmeldungen durchgeführt werden.");
             return;
         }
 
-        Body body = actor.getPhysikHandler().getBody();
+        Body body = actor.getPhysicsHandler().getBody();
         if (body == null) {
-            Logger.error("Kollision", "Ein Raum-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
+            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
                     " angemeldet.");
             return;
         }
 
-        List<CollisionListener<Raum>> bodyList = worldHandler.generalCollisonListeners.get(body);
+        List<CollisionListener<Actor>> bodyList = worldHandler.generalCollisonListeners.get(body);
         if (bodyList == null) {
             bodyList = new CopyOnWriteArrayList<>();
             worldHandler.generalCollisonListeners.put(body, bodyList);
@@ -379,15 +379,15 @@ public class WorldHandler implements ContactListener {
      * Meldet ein spezifisches KR-Interface in dieser World an.
      *
      * @param kr       Das anzumeldende KR Interface
-     * @param actor    Der Actor (Haupt-Raum-Objekt)
-     * @param collider Der Collider (zweites Raum-Objekt)
-     * @param <E>      Der Typ des Colliders.
+     * @param actor    Der Actor (Haupt-Actor-Objekt)
+     * @param collider Der Collider (zweites Actor-Objekt)
+     * @param <E>      Der Type des Colliders.
      */
     @NoExternalUse
-    public static <E extends Raum> void spezifischesKollisionsReagierbarEingliedern(
-            CollisionListener kr, Raum actor, Raum collider) {
-        final WorldHandler wh1 = actor.getPhysikHandler().worldHandler();
-        final WorldHandler wh2 = collider.getPhysikHandler().worldHandler();
+    public static <E extends Actor> void spezifischesKollisionsReagierbarEingliedern(
+            CollisionListener kr, Actor actor, Actor collider) {
+        final WorldHandler wh1 = actor.getPhysicsHandler().worldHandler();
+        final WorldHandler wh2 = collider.getPhysicsHandler().worldHandler();
         if (wh1 == null || wh2 == null || wh1 != wh2) {
             Logger.error("Kollision", "Zwei Objekte sollten zur Kollision angemeldet werden. " +
                     "Dafür müssen beide an der selben Wurzel (direkt oder indirekt) angemeldet sein.");
@@ -396,9 +396,9 @@ public class WorldHandler implements ContactListener {
 
         final WorldHandler worldHandler = wh1;
 
-        Body b1 = actor.getPhysikHandler().getBody(), b2 = collider.getPhysikHandler().getBody();
+        Body b1 = actor.getPhysicsHandler().getBody(), b2 = collider.getPhysicsHandler().getBody();
         if (b1 == null || b2 == null) {
-            Logger.error("Kollision", "Ein Raum-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
+            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
                     " angemeldet.");
             return;
         }

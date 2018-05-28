@@ -1,10 +1,10 @@
 package ea.internal.phy;
 
 import ea.*;
-import ea.handle.Physik.Typ;
+import ea.handle.Physics;
 import ea.internal.util.Logger;
-import ea.raum.Knoten;
-import ea.raum.Raum;
+import ea.actor.ActorGroup;
+import ea.actor.Actor;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.FixtureDef;
@@ -31,8 +31,8 @@ public class NullHandler extends PhysikHandler {
      */
     private WorldHandler worldHandler;
 
-    public NullHandler(Raum raum) {
-        super(raum, Typ.PASSIV, false);
+    public NullHandler(Actor actor) {
+        super(actor, Physics.Type.PASSIV, false);
         bodyDef = new BodyDef();
 
 
@@ -47,7 +47,7 @@ public class NullHandler extends PhysikHandler {
     /**
      * Speichert die Position des Objekts. Ist zu Beginn immer der Ursprung.
      */
-    private Punkt position = Punkt.ZENTRUM;
+    private Point position = Point.CENTRE;
 
     /**
      * Speichert die aktuelle Rotation in Radians. Ist zu Beginn stets 0.
@@ -61,23 +61,23 @@ public class NullHandler extends PhysikHandler {
     private final BodyDef bodyDef;
 
     @Override
-    public void verschieben(Vektor v) {
+    public void verschieben(Vector v) {
         position = position.verschobeneInstanz(v);
     }
 
     @Override
-    public Punkt mittelpunkt() {
+    public Point mittelpunkt() {
         System.out.println("Nullhandler Mittelpunkt");
         return null;
     }
 
     @Override
-    public boolean beinhaltet(Punkt p) {
+    public boolean beinhaltet(Point p) {
         return false;
     }
 
     @Override
-    public Punkt position() {
+    public Point position() {
         return position;
     }
 
@@ -134,57 +134,57 @@ public class NullHandler extends PhysikHandler {
     }
 
     @Override
-    public void kraftWirken(Vektor kraft) {
-        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+    public void kraftWirken(Vector kraft) {
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                 "sein.");
     }
 
     @Override
     public void drehMomentWirken(float drehmoment) {
-        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                 "sein.");
     }
 
     @Override
     public void drehImpulsWirken(float drehimpuls) {
-        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                 "sein.");
     }
 
     @Override
-    public void schwerkraftSetzen(Vektor schwerkraftInN) {
-        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+    public void schwerkraftSetzen(Vector schwerkraftInN) {
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                 "sein.");
     }
 
     @Override
-    public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
-            Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+    public void kraftWirken(Vector kraftInN, Point globalerOrt) {
+            Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                     "sein.");
     }
 
     @Override
-    public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
-            Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+    public void impulsWirken(Vector impulsInNS, Point globalerOrt) {
+            Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                     "sein.");
     }
 
     @Override
     public void killBody() {
-        Logger.warning("Physik/INTERNAL WARNING", "Kill Body wurde an einem Null-Handler aufgerufen.");
+        Logger.warning("Physics/INTERNAL WARNING", "Kill Body wurde an einem Null-Handler aufgerufen.");
     }
 
     @Override
     public WorldHandler worldHandler() {
         if(worldHandler == null) {
-            Logger.error("Physik", "Ein Objekt wurde physikalisch angefragt, bevor es an einer Wurzel war.");
+            Logger.error("Physics", "Ein Objekt wurde physikalisch angefragt, bevor es an einer Wurzel war.");
             return null;
         } return worldHandler;
     }
 
     @Override
     public Body getBody() {
-        Logger.warning("Physik/Internal", "getBody()-Ausgabe wurde an Null-Handler aufgegeben.");
+        Logger.warning("Physics/Internal", "getBody()-Ausgabe wurde an Null-Handler aufgegeben.");
         return null;
     }
 
@@ -194,60 +194,60 @@ public class NullHandler extends PhysikHandler {
     }
 
     @Override
-    public void geschwindigkeitSetzen(Vektor geschwindigkeitInMProS) {
-        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+    public void geschwindigkeitSetzen(Vector geschwindigkeitInMProS) {
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                 "sein.");
     }
 
     @Override
-    public Vektor geschwindigkeit() {
-        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+    public Vector geschwindigkeit() {
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                 "sein.");
         return null;
     }
 
     @Override
     public void rotationBlockiertSetzen(boolean block) {
-        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                 "sein.");
     }
 
     @Override
     public boolean rotationBlockiert() {
-        Logger.error("Physik", "Bevor Physik genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
                 "sein.");
         return false;
     }
 
     /**
      *
-     * @param typ   Der neue Typ.
+     * @param type   Der neue Type.
      * @return
      */
     @Override
-    public PhysikHandler typ(Typ typ) {
+    public PhysikHandler typ(Physics.Type type) {
 
-        //System.out.println("TYPE " + typ + " at " + this);
+        //System.out.println("TYPE " + setType + " at " + this);
 
-        if(typ == null) {
-            Logger.error("Physik", "Physik-Typ wurde nicht spezifiziert.");
+        if(type == null) {
+            Logger.error("Physics", "Physics-Type wurde nicht spezifiziert.");
             return this;
         }
-        bodyDef.type = typ.convert();
+        bodyDef.type = type.convert();
 
         if(fixtureDef.shape == null) {
-            //Das Objekt hat keine Shape (ist Knoten oder nicht an einem Knoten angemeldet)
+            //Das Objekt hat keine Shape (ist ActorGroup oder nicht an einem ActorGroup angemeldet)
             return this;
         }
 
 
         bodyDef.active = true;
-        fixtureDef.isSensor = typ == Typ.PASSIV;// && isSensor;
+        fixtureDef.isSensor = type == Physics.Type.PASSIV;// && isSensor;
 
-        bodyDef.position.set(worldHandler.fromVektor(position.alsVektor()));
-        bodyDef.gravityScale = typ == Typ.PASSIV ? 0 : 1;
+        bodyDef.position.set(worldHandler.fromVektor(position.asVector()));
+        bodyDef.gravityScale = type == Physics.Type.PASSIV ? 0 : 1;
 
-        return new BodyHandler(raum, worldHandler, bodyDef, fixtureDef, physikTyp, isSensor, this);
+        return new BodyHandler(actor, worldHandler, bodyDef, fixtureDef, physikType, isSensor, this);
 
     }
 
@@ -265,9 +265,9 @@ public class NullHandler extends PhysikHandler {
         this.worldHandler = worldHandler;
 
 
-        if(! (this.raum instanceof Knoten)) worldHandler.blockPPMChanges();
-        fixtureDef.shape = raum.createShape(worldHandler.getPixelProMeter());
+        if(! (this.actor instanceof ActorGroup)) worldHandler.blockPPMChanges();
+        fixtureDef.shape = actor.createShape(worldHandler.getPixelProMeter());
 
-        raum.bodyTypeSetzen(physikTyp);
+        actor.setBodyType(physikType);
     }
 }

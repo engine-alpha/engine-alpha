@@ -17,9 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.actor;
 
-import ea.Punkt;
+import ea.Point;
 
 import java.awt.*;
 
@@ -28,18 +28,18 @@ import java.awt.*;
  *
  * @author Michael Andonie
  */
-public abstract class Geometrie extends Raum {
+public abstract class Geometry extends Actor {
     /**
-     * Die Farbe dieses Geometrie-Objekts.
+     * Die Farbe dieses Geometry-Objekts.
      */
     private Color color;
 
     /**
      * Konstruktor.
      *
-     * @param position Die Ausgangsposition dieses Geometrie-Objekts.
+     * @param position Die Ausgangsposition dieses Geometry-Objekts.
      */
-    public Geometrie(Punkt position) {
+    public Geometry(Point position) {
         this.position.set(position);
     }
 

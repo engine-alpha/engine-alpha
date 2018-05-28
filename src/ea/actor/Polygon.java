@@ -1,10 +1,9 @@
-package ea.raum;
+package ea.actor;
 
-import ea.Punkt;
+import ea.Point;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
-import ea.raum.Geometrie;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
@@ -17,12 +16,12 @@ import java.awt.*;
  * Created by Michael on 12.04.2017.
  */
 public class Polygon
-extends Geometrie {
+extends Geometry {
 
     /**
      * Die Punkte
      */
-    private final Punkt[] points;
+    private final Point[] points;
 
     /**
      * Die Punkte, die das Polygon beschreiben
@@ -34,8 +33,8 @@ extends Geometrie {
      * @param points    Der Streckenzug an Punkten, der das Polygon beschreibt. Alle
      */
     @API
-    public Polygon(Punkt... points) {
-        super(Punkt.ZENTRUM);
+    public Polygon(Point... points) {
+        super(Point.CENTRE);
         this.points = points;
         if(points.length < 3) {
             Logger.error("Geometry", "Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein " +
@@ -48,8 +47,8 @@ extends Geometrie {
         py=new int[points.length];
 
         for(int i = 0; i < points.length; i++) {
-            px[i] = (int)points[i].realX();
-            py[i] = (int)points[i].realY();
+            px[i] = (int)points[i].getRealX();
+            py[i] = (int)points[i].getRealY();
         }
     }
 

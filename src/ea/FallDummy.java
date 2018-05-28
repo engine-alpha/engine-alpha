@@ -21,11 +21,11 @@ package ea;
 
 /**
  * Ein FallDummy ist das <i>Null-Objekt</i> fuer einen Gravitator-Listener und wird intern solange
- * gehalten, bis ein eigenes FallReagierbar-Interface genutz wird.
+ * gehalten, bis ein eigenes FallListener-Interface genutz wird.
  *
  * @author Michael Andonie
  */
-public class FallDummy implements FallReagierbar {
+public class FallDummy implements FallListener {
 
 	/**
 	 * <i>Singleton</i>-Referenz auf die eine Instanz.
@@ -37,7 +37,7 @@ public class FallDummy implements FallReagierbar {
 	 *
 	 * @return Die eine existente Instanz des <code>FallDummy</code>-Objekts.
 	 */
-	public static FallReagierbar getDummy () {
+	public static FallListener getDummy () {
 		return instance == null ? instance = new FallDummy() : instance;
 	}
 
@@ -45,7 +45,7 @@ public class FallDummy implements FallReagierbar {
 	 * Ueberschrieben Reaktionsmethode. Hierin passiert GAR NICHTS.
 	 */
 	@Override
-	public void fallReagieren () {
+	public void onFall() {
 		//Nichts tun
 	}
 }

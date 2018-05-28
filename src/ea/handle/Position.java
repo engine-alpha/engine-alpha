@@ -1,29 +1,29 @@
 package ea.handle;
 
-import ea.Punkt;
-import ea.Vektor;
+import ea.Point;
+import ea.Vector;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.raum.Raum;
+import ea.actor.Actor;
 
 /**
- * Jedes <code>Raum</code>-Objekt hat ein öffentlich erreichbares Objekt <code>position</code>.
+ * Jedes <code>Actor</code>-Objekt hat ein öffentlich erreichbares Objekt <code>position</code>.
  * Dieses Objekt bietet eine umfangreiches Set an <i>Methoden</i>, die die Position des entsprechenden
- * <code>Raum</code>-Objekts betreffen.<br /><br />
+ * <code>Actor</code>-Objekts betreffen.<br /><br />
  *
  * Alle Methoden, die keine "richtige" Rückgabe hätten (also <code>void</code>-Methoden), sind mit <b>Chaining</b>
- * versehen. Das bedeutet, dass statt bei jeder Methode, die eigentlich vom <code>void</code>-Typ wäre,
+ * versehen. Das bedeutet, dass statt bei jeder Methode, die eigentlich vom <code>void</code>-Type wäre,
  * der Rückgabetyp <code>Position</code> ist und die Rückgabe das Objekt, das die Methode ausgeführt hat. Das ermöglicht
  * übersichtlichere Codes:<br />
  * <code>
- *     raum.position.verschieben(10, 10); //Verschiebe das Objekt um (10|10) <br />
- *     raum.position.drehen(-90);         //Drehe das Objekt 90° im Uhrzeigersinn. <br />
+ *     actor.position.move(10, 10); //Verschiebe das Objekt um (10|10) <br />
+ *     actor.position.drehen(-90);         //Drehe das Objekt 90° im Uhrzeigersinn. <br />
  * </code>
  * <br />
  * <b> ... kann so verkürzt werden zu ... </b> <br /> <br />
  *
  * <code>
- *     raum.position.verschieben(10, 10).drehen(-90); <br />
+ *     actor.position.move(10, 10).drehen(-90); <br />
  * </code>
  *
  * So lassen sich beliebig viele "eigentlich-void-Operationen" hintereinander ausführen.
@@ -33,10 +33,10 @@ public class Position {
     private static final float DEG_PRO_RADIAN = (float) (180f/Math.PI);
 
     /**
-     * Das Raum-Objekt, zu dem dieses Objekt eine Schnittstelle darstellt.
+     * Das Actor-Objekt, zu dem dieses Objekt eine Schnittstelle darstellt.
      */
     @NoExternalUse
-    private final Raum raum;
+    private final Actor actor;
 
     /**
      * ToString-Methode.
@@ -44,40 +44,40 @@ public class Position {
      */
     @Override
     public String toString() {
-        return "Position: (" + x() + " | " + y() + ") - Rotation: TODO";
+        return "Position: (" + getX() + " | " + getY() + ") - Rotation: TODO";
     }
 
     /**
      * Erstellt einen Position-Handler. Kann nicht von außerhalb der Engine aufgerufen werden.
-     * @param raum  Das Raum-Objekt, dass zu diesem Objekt gehört.
+     * @param actor  Das Actor-Objekt, dass zu diesem Objekt gehört.
      */
     @NoExternalUse
-    public Position(Raum raum) {
-        this.raum = raum;
+    public Position(Actor actor) {
+        this.actor = actor;
     }
 
 
     /**
-     * Setzt die Position des <code>Raum</code>-Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
+     * Setzt die Position des <code>Actor</code>-Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
      * gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param x
-     * 		neue <code>x</code>-Koordinate
+     * 		neue <code>getX</code>-Koordinate
      * @param y
-     * 		neue <code>y</code>-Koordinate
+     * 		neue <code>getY</code>-Koordinate
      * @return
      *      das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      *      Dokumentation der Klasse).
      *
      *
-     * @see #set(Punkt)
-     * @see #mittelpunktSetzen(float, float)
-     * @see #x(float)
-     * @see #y(float)
+     * @see #set(Point)
+     * @see #setCenter(float, float)
+     * @see #setX(float)
+     * @see #setY(float)
      */
     @API
     public Position set(float x, float y) {
-        this.set(new Punkt(x, y));
+        this.set(new Point(x, y));
         return this;
     }
 
@@ -91,13 +91,13 @@ public class Position {
      *      Dokumentation der Klasse).
      *
      * @see #set(float, float)
-     * @see #mittelpunktSetzen(float, float)
-     * @see #x(float)
-     * @see #y(float)
+     * @see #setCenter(float, float)
+     * @see #setX(float)
+     * @see #setY(float)
      */
     @API
-    public Position set(Punkt p) {
-        this.verschieben(new Vektor(p.x - this.x(), p.y - this.y()));
+    public Position set(Point p) {
+        this.move(new Vector(p.x - this.getX(), p.y - this.getY()));
         return this;
     }
 
@@ -106,163 +106,163 @@ public class Position {
      * Methode zum
      *
      * @param v
-     * 		Der Vektor, der die Verschiebung des Objekts angibt.
+     * 		Der Vector, der die Verschiebung des Objekts angibt.
      * @return
      *      das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      *      Dokumentation der Klasse).
      *
-     * @see Vektor
-     * @see #verschieben(float, float)
+     * @see Vector
+     * @see #move(float, float)
      */
     @API
-    public Position verschieben (Vektor v) {
-        raum.getPhysikHandler().verschieben(v);
+    public Position move(Vector v) {
+        actor.getPhysicsHandler().verschieben(v);
         return this;
     }
 
     /**
-     * Verschiebt die Raum-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
+     * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
      * <p/>
-     * Diese Methode arbeitet nach dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
+     * Diese Methode arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
      * durch den Aufruf der Methode <code>zentrum()</code>. Daher ist diese Methode in der Anwendung
-     * auf ein Knoten-Objekt nicht unbedingt sinnvoll.
+     * auf ein ActorGroup-Objekt nicht unbedingt sinnvoll.
      *
      * @param x
-     * 		Die <code>x</code>-Koordinate des neuen Mittelpunktes des Objektes
+     * 		Die <code>getX</code>-Koordinate des neuen Mittelpunktes des Objektes
      * @param y
-     * 		Die <code>y</code>-Koordinate des neuen Mittelpunktes des Objektes
+     * 		Die <code>getY</code>-Koordinate des neuen Mittelpunktes des Objektes
      * @return
      *      das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      *      Dokumentation der Klasse).
      *
      *
-     * @see #mittelpunktSetzen(Punkt)
-     * @see #verschieben(Vektor)
+     * @see #setCenter(Point)
+     * @see #move(Vector)
      * @see #set(float, float)
-     * @see #mittelPunkt()
+     * @see #getCenter()
      */
     @API
-    public Position mittelpunktSetzen (float x, float y) {
-        this.mittelpunktSetzen(new Punkt(x, y));
+    public Position setCenter(float x, float y) {
+        this.setCenter(new Point(x, y));
         return this;
     }
 
     /**
-     * Verschiebt die Raum-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.<br />
-     * Diese Methode Arbeitet nach dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
+     * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.<br />
+     * Diese Methode Arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
      * durch den Aufruf der Methode <code>zentrum()</code>. Daher ist diese Methode im Anwand auf
-     * ein Knoten-Objekt nicht unbedingt sinnvoll.<br /> Macht dasselbe wie
-     * <code>mittelPunktSetzen(p.x, p.y)</code>.
+     * ein ActorGroup-Objekt nicht unbedingt sinnvoll.<br /> Macht dasselbe wie
+     * <code>mittelPunktSetzen(p.getX, p.getY)</code>.
      *
      * @param p
-     * 		Der neue Mittelpunkt des Raum-Objekts
+     * 		Der neue Mittelpunkt des Actor-Objekts
      * @return
      *      das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      *      Dokumentation der Klasse).
      *
-     * @see #mittelpunktSetzen(float, float)
-     * @see #verschieben(Vektor)
+     * @see #setCenter(float, float)
+     * @see #move(Vector)
      * @see #set(float, float)
-     * @see #mittelPunkt()
+     * @see #getCenter()
      */
     @API
-    public Position mittelpunktSetzen (Punkt p) {
-        this.verschieben(this.mittelPunkt().nach(p));
+    public Position setCenter(Point p) {
+        this.move(this.getCenter().vectorFromThisTo(p));
         return this;
     }
 
     /**
-     * Gibt die x-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+     * Gibt die getX-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
      * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
      * <p/>
      * TODO: Deprecate positionX() in favor of this new method?
      *
-     * @return <code>x</code>-Koordinate
+     * @return <code>getX</code>-Koordinate
      *
-     * @see #y()
+     * @see #getY()
      * @see #get()
      */
     @API
-    public float x() {
+    public float getX() {
         return this.get().x;
     }
 
     /**
-     * Setzt die x-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
+     * Setzt die getX-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
      * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param x
-     * 		neue <code>x</code>-Koordinate
+     * 		neue <code>getX</code>-Koordinate
      * @return
      *      das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      *      Dokumentation der Klasse).
      *
      * @see #set(float, float)
-     * @see #mittelpunktSetzen(float, float)
-     * @see #y(float)
+     * @see #setCenter(float, float)
+     * @see #setY(float)
      */
     @API
-    public Position x(float x) {
-        this.verschieben(x - x(), 0);
+    public Position setX(float x) {
+        this.move(x - getX(), 0);
         return this;
     }
 
     /**
-     * Gibt die y-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+     * Gibt die getY-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
      * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
      * <p/>
      * TODO: Deprecate positionX() in favor of this new method?
      *
-     * @return <code>y</code>-Koordinate
+     * @return <code>getY</code>-Koordinate
      *
-     * @see #x()
+     * @see #getX()
      * @see #get()
      */
     @API
-    public float y() {
+    public float getY() {
         return this.get().y;
     }
 
     /**
-     * Setzt die y-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
+     * Setzt die getY-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
      * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br
      * /><br /> <b>Achtung!</b><br /> Bei <b>allen</b> Objekten ist die eingegebene Position die
      * linke, obere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
      * Kreisen z.B. <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
-     * <code>mittelpunktSetzen(int x, int y)</code>.
+     * <code>setCenter(int getX, int getY)</code>.
      *
      * @param y
-     * 		neue <code>y</code>-Koordinate
+     * 		neue <code>getY</code>-Koordinate
      * @return
      *      das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      *      Dokumentation der Klasse).
      *
      * @see #set(float, float)
-     * @see #mittelpunktSetzen(float, float)
-     * @see #x(float)
+     * @see #setCenter(float, float)
+     * @see #setX(float)
      */
     @API
-    public Position y(float y) {
-        this.verschieben(0, y - y());
+    public Position setY(float y) {
+        this.move(0, y - getY());
         return this;
     }
 
     /**
-     * Methode zum schnellen Herausfinden des Mittelpunktes des Raum-Objektes.
+     * Gibt den Mittelpunkt des Objektes in der Scene aus.
      *
      * @return Die Koordinaten des Mittelpunktes des Objektes
      *
      * @see #get()
      */
     @API
-    public Punkt mittelPunkt () {
-        return raum.getPhysikHandler().mittelpunkt();
+    public Point getCenter() {
+        return actor.getPhysicsHandler().mittelpunkt();
     }
 
     /**
-     * Verschiebt das Objekt.<br /> Hierbei wird nichts anderes gemacht, als <code>verschieben(new
-     * Vektor(dX, dY))</code> auszufuehren. Insofern ist diese Methode dafuer gut, sich nicht mit
-     * der Klasse Vektor auseinandersetzen zu muessen.
+     * Verschiebt das Objekt.<br /> Hierbei wird nichts anderes gemacht, als <code>move(new
+     * Vector(getDX, getDY))</code> auszufuehren. Insofern ist diese Methode dafuer gut, sich nicht mit
+     * der Klasse Vector auseinandersetzen zu muessen.
      *
      * @param dX
      * 		Die Verschiebung in Richtung X
@@ -272,21 +272,21 @@ public class Position {
      *      das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      *      Dokumentation der Klasse).
      *
-     * @see #verschieben(Vektor)
+     * @see #move(Vector)
      */
     @API
-    public Position verschieben (float dX, float dY) {
-        this.verschieben(new Vektor(dX, dY));
+    public Position move(float dX, float dY) {
+        this.move(new Vector(dX, dY));
         return this;
     }
 
     /**
-     * Gibt die Position dieses Raum-Objekts aus.
-     * @return die aktuelle Position dieses <code>Raum</code>-Objekts.
+     * Gibt die Position dieses Actor-Objekts aus.
+     * @return die aktuelle Position dieses <code>Actor</code>-Objekts.
      */
     @API
-    public Punkt get() {
-        return raum.getPhysikHandler().position();
+    public Point get() {
+        return actor.getPhysicsHandler().position();
     }
 
 
@@ -295,17 +295,39 @@ public class Position {
     /* __________________________ Rotation __________________________ */
 
 
-    public Position rotieren(float radians) {
-        raum.getPhysikHandler().rotieren(radians);
+    /**
+     * Rotiert das Objekt.
+     * @param radians   Der Winkel (in <b>Bogenmaß</b>), um den das Objekt rotiert werden soll.
+     * @return Das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
+     *         Dokumentation der Klasse).
+     */
+    @API
+    public Position rotate(float radians) {
+        actor.getPhysicsHandler().rotieren(radians);
         return this;
     }
 
-    public float rotation() {
-        return raum.getPhysikHandler().rotation();
+    /**
+     * Gibt den Winkel aus, um den das Objekt derzeit rotiert ist.
+     * @return  Der Winkel (in <b>Bogenmaß</b>), um den das Objekt derzeit rotiert ist. Jedes Objekt ist bei
+     *          Initialisierung nicht rotiert (<code>getRotation()</code> gibt direkt vectorFromThisTo Initialisierung
+     *          <code>0</code> zurück).
+     */
+    @API
+    public float getRotation() {
+        return actor.getPhysicsHandler().rotation();
     }
 
-    public Position rotation(float winkelInRad) {
-        raum.getPhysikHandler().rotieren(winkelInRad - rotation());
+    /**
+     * Setzt den Rotationswert des Objekts.
+     * @param degreeInRad   Der Winkel (in <b>Bogenmaß</b>), um den das Objekt <b>von seiner Ausgangsposition bei
+     *                      Initialisierung</b> rotiert werden soll.
+     * @return Das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
+     *         Dokumentation der Klasse).
+     */
+    @API
+    public Position setRotation(float degreeInRad) {
+        actor.getPhysicsHandler().rotieren(degreeInRad - getRotation());
         return this;
     }
 }

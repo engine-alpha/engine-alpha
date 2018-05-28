@@ -19,21 +19,23 @@
 
 package ea;
 
-import ea.raum.Rechteck;
+import ea.actor.Rectangle;
+import ea.internal.ano.NoExternalUse;
 
 /**
- * Ein nicht-grafisches Rechteck auf der Zeichenebene, das eine allgemeine Fläche beschreibt.
+ * Ein nicht-grafisches Rectangle auf der Zeichenebene, das eine allgemeine Fläche beschreibt.
  *
  * @author Michael Andonie
  */
+@NoExternalUse
 public final class BoundingRechteck {
     /**
-     * <b>Reelle</b> <code>x</code>-Position des Rechtecks
+     * <b>Reelle</b> <code>getX</code>-Position des Rechtecks
      */
     public final float x;
 
     /**
-     * <b>Reelle</b> <code>y</code>-Position des Rechtecks
+     * <b>Reelle</b> <code>getY</code>-Position des Rechtecks
      */
     public final float y;
 
@@ -50,8 +52,8 @@ public final class BoundingRechteck {
     /**
      * Konstruktor mit <b>reellen</b> Werten.
      *
-     * @param x  Die <code>x</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
-     * @param y  Die <code>y</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
+     * @param x  Die <code>getX</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
+     * @param y  Die <code>getY</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
      * @param dX Die Breite des Bounding-Rechtecks
      * @param dY Die Höhe des Bounding-Rechtecks
      */
@@ -63,13 +65,13 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Berechnet aus diesem rein aus Zahlen bestehenden Rahmen ein Rechteck, das in der Zeichenebene
+     * Berechnet aus diesem rein aus Zahlen bestehenden Rahmen ein Rectangle, das in der Zeichenebene
      * darstellbar ist.
      *
-     * @return Ein neues Rechteck-Objekt, das genau dieses BoundingRechteck abdeckt
+     * @return Ein neues Rectangle-Objekt, das genau dieses BoundingRechteck abdeckt
      */
-    public Rechteck ausDiesem() {
-        return new Rechteck(x, y, width, height);
+    public Rectangle ausDiesem() {
+        return new Rectangle(x, y, width, height);
     }
 
     /**
@@ -83,38 +85,38 @@ public final class BoundingRechteck {
 
     /**
      * Gibt ein neues BoundingRechteck mit der selben Höhe und Breite zurück,
-     * das seinen Punkt genau im angegebenen Zentrum hat.
+     * das seinen Point genau im angegebenen Zentrum hat.
      *
      * @param p Das Zentrum des zurückzugebenden BoundingRechtecks.
      *
      * @return Ein BoundingRechteck mit der gleichen Höhe und Breite wie dieses, jedoch so
      * verschoben, dass es mit seiner Mitte im angegebenen Zentrum liegt.
      */
-    public BoundingRechteck mittenAngleichInstanz(Punkt p) {
-        Punkt z = this.zentrum();
-        return this.verschobeneInstanz(new Vektor(p.realX() - z.realX(), p.realY() - z.realY()));
+    public BoundingRechteck mittenAngleichInstanz(Point p) {
+        Point z = this.zentrum();
+        return this.verschobeneInstanz(new Vector(p.getRealX() - z.getRealX(), p.getRealY() - z.getRealY()));
     }
 
     /**
      * Berechnet den Mittelpunkt dieses BoundingRechtecks in der Zeichenebene.
      *
-     * @return Der Punkt mit den Koordinaten, der im Zentrum des Rechtecks liegt (bei ungeraden
+     * @return Der Point mit den Koordinaten, der im Zentrum des Rechtecks liegt (bei ungeraden
      * Koordinaten mit Abrundung)
      */
-    public Punkt zentrum() {
-        return new Punkt(x + ((width) / 2), y + ((height) / 2));
+    public Point zentrum() {
+        return new Point(x + ((width) / 2), y + ((height) / 2));
     }
 
     /**
      * Berechnet ein neues BoundingRechteck mit denselben Maßen wie dieses, jedoch um einen
-     * bestimmten Vektor verschoben.
+     * bestimmten Vector verschoben.
      *
-     * @param v Der Vektor, der die Verschiebung des neuen Objektes von diesem beschreibt.
+     * @param v Der Vector, der die Verschiebung des neuen Objektes von diesem beschreibt.
      *
      * @return Ein neues <code>BoundingRechteck</code>-Objekt, das die selbe Maße wie dieses hat,
      * jedoch um die entsprechende Verschiebung verschoben ist.
      */
-    public BoundingRechteck verschobeneInstanz(Vektor v) {
+    public BoundingRechteck verschobeneInstanz(Vector v) {
         return new BoundingRechteck(x + v.x, y + v.y, width, height);
     }
 
@@ -122,7 +124,7 @@ public final class BoundingRechteck {
      * Berechnet aus diesem und einem weiteren BoundingRechteck ein neues, dass die beiden genau
      * fasst.
      *
-     * @param r Das zweite Rechteck fuer die Berechnung
+     * @param r Das zweite Rectangle fuer die Berechnung
      *
      * @return Ein neues BoundingRechteck, dass die beiden Rechtecke genau umfasst.
      */
@@ -157,7 +159,7 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Berechnet, ob dieses Rechteck über einer Grenze liegt und wenn <b>nicht</b>, dann berechnet
+     * Berechnet, ob dieses Rectangle über einer Grenze liegt und wenn <b>nicht</b>, dann berechnet
      * es eines, das gerade so an der Untergrenze liegt.
      *
      * @param untergrenze Die Grenze, auf der das Ergebnis maximal liegen darf.
@@ -174,7 +176,7 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Berechnet, ob dieses Rechteck unter einer Grenze liegt, und wenn <b>nicht</b>, dann berechnet
+     * Berechnet, ob dieses Rectangle unter einer Grenze liegt, und wenn <b>nicht</b>, dann berechnet
      * es eines, das gerade so an der Obergrenze liegt.
      *
      * @param obergrenze Die Grenze, auf der das Ergebnis maximal liegen darf.
@@ -191,7 +193,7 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Berechnet, ob dieses Rechteck rechts von einer bestimmten Grenze liegt, und wenn
+     * Berechnet, ob dieses Rectangle rechts von einer bestimmten Grenze liegt, und wenn
      * <b>nicht</b>, dann berechnet es eines, das gerade so an der linken Extremgrenze liegt.
      *
      * @param grenzeLinks Der Wert, den das Ergebnisrechteck maximal links sein darf
@@ -209,7 +211,7 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Berechnet, ob dieses Rechteck links von einer bestimmten Grenze liegt, und wenn <b>nicht</b>,
+     * Berechnet, ob dieses Rectangle links von einer bestimmten Grenze liegt, und wenn <b>nicht</b>,
      * dann berechnet es eines, das gerade so an der rechten Extremgrenze liegt.
      *
      * @param grenzeRechts Der Wert, den das Ergebnisrechteck maximal rechts sein darf
@@ -242,14 +244,14 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Testet, ob ein Punkt sich in dem BoundingRechteck befindet.
+     * Testet, ob ein Point sich in dem BoundingRechteck befindet.
      *
-     * @param p Der Punkt, der getestet werden soll
+     * @param p Der Point, der getestet werden soll
      *
-     * @return true, wenn der Punkt in dem BoundingRechteck ist
+     * @return true, wenn der Point in dem BoundingRechteck ist
      */
-    public boolean istIn(Punkt p) {
-        return (p.realX() >= this.x && p.realY() >= this.y && p.realX() <= (x + width) && p.realY() <= (y + height));
+    public boolean istIn(Point p) {
+        return (p.getRealX() >= this.x && p.getRealY() >= this.y && p.getRealX() <= (x + width) && p.getRealY() <= (y + height));
     }
 
     /**
@@ -257,18 +259,18 @@ public final class BoundingRechteck {
      *
      * @return Array mit den vier Eckpunkten des umfassenden {@link ea.BoundingRechteck}s
      */
-    public Punkt[] punkte() {
-        return new Punkt[] {new Punkt(x, y), new Punkt(x + width, y), new Punkt(x, y + height), new Punkt(x + width, y + height)};
+    public Point[] punkte() {
+        return new Point[] {new Point(x, y), new Point(x + width, y), new Point(x, y + height), new Point(x + width, y + height)};
     }
 
     /**
-     * Diese Methoden prüft, ob dieses Bounding-Rechteck ein zweites vollkommen umschliesst.<br />
+     * Diese Methoden prüft, ob dieses Bounding-Rectangle ein zweites vollkommen umschliesst.<br />
      * <i>Gemeinsame Ränder zählen <b>AUCH</b> als umschliessen!</i>
      *
-     * @param innen Das Innere Bounding-Rechteck. Es soll geprüft werden, ob dieses Vollkommen von
-     *              dem die Methode ausführenden Rechteck umschlossen wird.
+     * @param innen Das Innere Bounding-Rectangle. Es soll geprüft werden, ob dieses Vollkommen von
+     *              dem die Methode ausführenden Rectangle umschlossen wird.
      *
-     * @return <code>true</code>, wenn das <b>ausfuehrende Bounding-Rechteck das als Argument
+     * @return <code>true</code>, wenn das <b>ausfuehrende Bounding-Rectangle das als Argument
      * übergebene BoundingRechteck voll umschliesst</b>, sonst <code>false</code>.
      */
     public boolean umschliesst(BoundingRechteck innen) {
@@ -290,12 +292,12 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Berechnet, wie weit man waagrecht ein BoundingRechteck verschieben müsste, damit es dieses
+     * Berechnet, wie weit man waagrecht ein BoundingRechteck move müsste, damit es dieses
      * nicht mehr berührt.
      *
      * @param r Das BoundingRechteck, das eventuell verschoben werden müsste.
      *
-     * @return Die Zahl, die angibt, wie weit man es verschieben muesste, oder 0 wenn sich die
+     * @return Die Zahl, die angibt, wie weit man es move muesste, oder 0 wenn sich die
      * beiden nicht berühren.
      */
     public float verschiebenX(BoundingRechteck r) {
@@ -311,7 +313,7 @@ public final class BoundingRechteck {
 
     /**
      * Testet, ob ein anderes BoundingRechteck dieses schneidet.<br /> Schneiden bedeutet folgendes
-     * im Sinne der Engine Alpha:<br /> <i>Beide Rechtecke teilen sich mindestens einen (aber
+     * im Sinne der Engine Alpha:<br /> <i>Beide Rechtecke divide sich mindestens einen (aber
      * meistens mehrere) Punkte auf der Zeichenebene</i>.
      *
      * @param fig Das zweite zu testende BoundingRechteck
@@ -330,9 +332,9 @@ public final class BoundingRechteck {
     /**
      * Berechnet, ob dieses BoundingRechteck links von einem zweiten ist
      *
-     * @param r Das Rechteck, bei dem dies getestet werden soll
+     * @param r Das Rectangle, bei dem dies getestet werden soll
      *
-     * @return <code>true</code>, wenn dieses Rechteck rechts von dem anderen ist, sonst
+     * @return <code>true</code>, wenn dieses Rectangle rechts von dem anderen ist, sonst
      * <code>false</code>.
      */
     public boolean linksVon(BoundingRechteck r) {
@@ -340,12 +342,12 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Berechnet, wie weit man senkrecht ein BoundingRechteck verschieben müsste, damit es dieses
+     * Berechnet, wie weit man senkrecht ein BoundingRechteck move müsste, damit es dieses
      * nicht mehr berührt.
      *
      * @param r Das BoundingRechteck, das eventuell verschoben werden müsste.
      *
-     * @return Die Zahl, die angibt, wie weit man es verschieben müsste, oder 0 wenn sich die beiden
+     * @return Die Zahl, die angibt, wie weit man es move müsste, oder 0 wenn sich die beiden
      * nicht berühren.
      */
     public float verschiebenY(BoundingRechteck r) {
@@ -362,9 +364,9 @@ public final class BoundingRechteck {
     /**
      * Berechnet, ob dieses BoundingRechteck ueber einem zweiten ist
      *
-     * @param r Das Rechteck, bei dem dies getestet werden soll
+     * @param r Das Rectangle, bei dem dies getestet werden soll
      *
-     * @return <code>true</code>, wenn dieses Rechteck rechts von dem anderen ist, sonst
+     * @return <code>true</code>, wenn dieses Rectangle rechts von dem anderen ist, sonst
      * <code>false</code>.
      */
     public boolean ueber(BoundingRechteck r) {
@@ -384,39 +386,39 @@ public final class BoundingRechteck {
         if (this.schneidetBasic(r)) {
             return 0;
         }
-        if (this.y < r.y) { // Dieses Rechteck ist das Hoehere!!
+        if (this.y < r.y) { // Dieses Rectangle ist das Hoehere!!
             return r.y - (this.y + this.height);
-        } else { // Das andere Rechteck ist realHoeher!!
+        } else { // Das andere Rectangle ist realHoeher!!
             return this.y - (r.y + r.height);
         }
     }
 
     /**
-     * Transformiert dieses Boudning-Rechteck auf 2 Weisen: Einmal in der Postion und zusätzlich in
+     * Transformiert dieses Boudning-Rectangle auf 2 Weisen: Einmal in der Postion und zusätzlich in
      * seiner Höhe.
      *
-     * @param v      Der Vektor, der die Verschiebung beschreibt.
+     * @param v      Der Vector, der die Verschiebung beschreibt.
      * @param dHoehe Die Höhen<b>änderung</b>.
      *
      * @return Ein neues BoundingRechteck, das verschoben und in seiner Höhe geändert ist.
      */
-    public BoundingRechteck verschErhoeht(Vektor v, int dHoehe) {
+    public BoundingRechteck verschErhoeht(Vector v, int dHoehe) {
         return new BoundingRechteck(x + v.x, y + v.y, width, height + dHoehe);
     }
 
     /**
-     * Sollte dieses Bounding-Rechteck nicht voll innerhalb eines bestimmten anderen, äußeren
-     * Rechtecks liegen, so wird versucht, dieses Bounding-Rechteck <i>in das andere mit möglichst
+     * Sollte dieses Bounding-Rectangle nicht voll innerhalb eines bestimmten anderen, äußeren
+     * Rechtecks liegen, so wird versucht, dieses Bounding-Rectangle <i>in das andere mit möglichst
      * wenig Verschiebung</i> zu bringen. Diese Methode wird intern für die Beschränkung des
      * Kamera-Bereiches genutzt.
      * <p/>
      * <div class='hinweisProbleme'><b>Achtung</b>: Voraussetzung dafuer, dass dieser Algorithmus
-     * Sinn macht ist, dass das äußere Rechteck ausreichend größer als dieses ist!</div>
+     * Sinn macht ist, dass das äußere Rectangle ausreichend größer als dieses ist!</div>
      *
-     * @param aussen Das äußere Rechteck, innerhalb dessen sich das Ergebnis-Rechteck befinden wird
+     * @param aussen Das äußere Rectangle, innerhalb dessen sich das Ergebnis-Rectangle befinden wird
      *               (sollte das äußere ausreichend groß sein).
      *
-     * @return Das Ergebnis-Rechteck, das sich im äußeren Rechteck befinden wird.
+     * @return Das Ergebnis-Rectangle, das sich im äußeren Rectangle befinden wird.
      */
     public BoundingRechteck in(BoundingRechteck aussen) {
         float realX = this.x, realY = this.y;
@@ -453,12 +455,12 @@ public final class BoundingRechteck {
      * Gibt eine String-Repräsentation dieses Objektes aus.
      *
      * @return Die String-Repräsentation dieses Objektes. Hierin wird Auskunft über alle 4
-     * ausschlaggebenden Zahlen (<code>x</code>, <code>y</code>, <code>dX</code> und <code>dY</code>
+     * ausschlaggebenden Zahlen (<code>getX</code>, <code>getY</code>, <code>getDX</code> und <code>getDY</code>
      * gemacht)
      */
     @Override
     public String toString() {
-        return "Bounding-Rechteck: x:" + x + " y: " + y + " dX: " + width + " dY: " + height;
+        return "Bounding-Rectangle: getX:" + x + " getY: " + y + " getDX: " + width + " getDY: " + height;
     }
 
     /**
@@ -517,10 +519,10 @@ public final class BoundingRechteck {
      * Gibt die exakte Position der linken oberen Ecke dieses Bounding-Rechtecks
      * aus.
      *
-     * @return die Position des BoundingRechtecks, beschrieben durch den Punkt der linken oberen
+     * @return die Position des BoundingRechtecks, beschrieben durch den Point der linken oberen
      * Ecke dieses Objekts.
      */
-    public Punkt getPosition() {
-        return new Punkt(x, y);
+    public Point getPosition() {
+        return new Point(x, y);
     }
 }

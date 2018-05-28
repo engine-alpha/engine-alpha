@@ -17,10 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.actor;
 
 import ea.*;
-import ea.handle.Physik;
+import ea.Point;
+import ea.handle.Physics;
 import ea.handle.Position;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
@@ -39,39 +40,39 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * Raum bezeichnet alles, was sich auf der Zeichenebene befindet.<br /> Dies ist die absolute
+ * Actor bezeichnet alles, was sich auf der Zeichenebene befindet.<br /> Dies ist die absolute
  * Superklasse aller grafischen Objekte. Umgekehrt kann somit jedes grafische Objekt die folgenden
  * Methoden nutzen.
  *
  * @author Michael Andonie, Niklas Keller
  */
-public abstract class Raum implements Comparable<Raum> {
+public abstract class Actor implements Comparable<Actor> {
     /**
-     * Szene, zu der der Raum gehört.
+     * Szene, zu der der Actor gehört.
      */
     private Scene scene;
 
     /**
-     * Zum Überprüfen, dass ein Raum nur einmal zu einer Szene hinzugefügt wird.
+     * Zum Überprüfen, dass ein Actor nur einmal zu einer Szene hinzugefügt wird.
      */
     private boolean attached = false;
 
     /**
-     * Gibt an, ob das Objekt zur Zeit ueberhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall,
+     * Gibt an, ob das Objekt zur Zeit ueberhaupt isVisible sein soll.<br /> Ist dies nicht der Fall,
      * so wird die Zeichenroutine direkt uebergangen.
      */
     private boolean sichtbar = true;
 
     /**
-     * Z-Index des Raumes, je höher, desto weiter oben wird der Raum gezeichnet
+     * Z-Index des Raumes, je höher, desto weiter oben wird der Actor gezeichnet
      */
     private int zIndex = 1;
 
     /**
      * Opacity = Durchsichtigkeit des Raumes
      * <p/>
-     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Bild.</li>
-     * <li><code>1.0f</code> entspricht einem undurchsichtigem Bild.</li></ul>
+     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Image.</li>
+     * <li><code>1.0f</code> entspricht einem undurchsichtigem Image.</li></ul>
      */
     private float opacity = 1;
 
@@ -88,25 +89,26 @@ public abstract class Raum implements Comparable<Raum> {
     /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
-    protected PhysikHandler physikHandler = new NullHandler(this);
+    protected PhysikHandler physicsHandler = new NullHandler(this);
 
     /* _________________________ Die Handler _________________________ */
 
     /**
      * Über das <code>position</code>-Objekt lassen sich alle Operationen und Abfragen ausführen,
-     * die direkt die Position dieses <code>Raum</code>-Objekts betreffen. Dazu gehört: <ul> <li>Das
-     * Abfragen der aktuellen Position.</li> <li>Das Setzen einer Position das verschieben.</li>
+     * die direkt die Position dieses <code>Actor</code>-Objekts betreffen. Dazu gehört: <ul> <li>Das
+     * Abfragen der aktuellen Position.</li> <li>Das Setzen einer Position das move.</li>
      * <li>Das Rotieren um einen Winkel.</li> </ul>
      * <p>
      * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
      *
      * @see Position
      */
+    @API
     public final Position position = new Position(this);
 
     /**
-     * Über das <code>physik</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die
-     * direkt die physikalischen Eigenschaften und Ümstände dieses <code>Raum</code>-Objekts
+     * Über das <code>physics</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die
+     * direkt die physikalischen Eigenschaften und Ümstände dieses <code>Actor</code>-Objekts
      * betreffen. Dazu gehört: <ul> <li>Das Abfragen und Setzen von physikalischen Eigenschaften des
      * Objekt, wie zum Beispiel der <i>Masse</i> oder der <i>Elastizität</i>.</li> <li>Das Anwenden
      * von physikalischen Effekten (z.B. <i>Kräfte</i> oder <i>Impulse</i>) auf das Objekt.</li>
@@ -116,7 +118,8 @@ public abstract class Raum implements Comparable<Raum> {
      *
      * @see Position
      */
-    public final Physik physik = new Physik(this);
+    @API
+    public final Physics physics = new Physics(this);
 
     /**
      * Diese Methode wird aufgerufen, sobald ein Raumobjekt zu einer Szene hinzugefügt wird, also am
@@ -124,13 +127,14 @@ public abstract class Raum implements Comparable<Raum> {
      *
      * @param scene Szene, an der das Raumobjekt angemeldet wurde.
      */
+    @API
     public void onAttach(Scene scene) {
         if (this.attached) {
-            throw new IllegalStateException("Ein Raumobjekt kann nur einmal einer Szene hinzugefügt werden. Um ein Objekt temporär auszublenden, kann sein Typ auf passiv gestellt werden und das Objekt unsichtbar gemacht werden.");
+            throw new IllegalStateException("Ein Raumobjekt kann nur einmal einer Szene hinzugefügt werden. Um ein Objekt temporär auszublenden, kann sein Type auf passiv gestellt werden und das Objekt unsichtbar gemacht werden.");
         }
 
         this.scene = scene;
-        this.physikHandler.update(scene.getWorldHandler());
+        this.physicsHandler.update(scene.getWorldHandler());
 
         if (this instanceof MouseClickListener) {
             scene.addMouseClickListener((MouseClickListener) this);
@@ -151,13 +155,14 @@ public abstract class Raum implements Comparable<Raum> {
      * Diese Methode wird aufgerufen, sobald ein Raumobjekt von einer Szene entfernt wird, also am
      * Wurzelknoten der Szene direkt oder indirekt abgemeldet wurde.
      */
+    @API
     public void onDetach() {
         if (!this.attached) {
             throw new IllegalStateException("Das Raumobjekt war bei keiner Szene angemeldet, wurde nun aber von einer entfernt?!");
         }
 
-        this.physikHandler.killBody();
-        this.physikHandler = new NullHandler(this);
+        this.physicsHandler.killBody();
+        this.physicsHandler = new NullHandler(this);
 
         if (this instanceof MouseClickListener) {
             this.scene.removeMouseClickListener((MouseClickListener) this);
@@ -177,39 +182,39 @@ public abstract class Raum implements Comparable<Raum> {
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
 
     /**
-     * Setzt den Z-Index dieses Raumes. Je größer, desto weiter vorne wird ein Raum gezeichnet.
-     * <b>Diese Methode muss ausgeführt werden, bevor der Raum zu einem Knoten hinzugefügt
+     * Setzt den Z-Index dieses Raumes. Je größer, desto weiter vorne wird ein Actor gezeichnet.
+     * <b>Diese Methode muss ausgeführt werden, bevor der Actor zu einem ActorGroup hinzugefügt
      * wird.</b>
      *
      * @param z zu setzender Index
      */
     @API
-    public void zIndexSetzen(int z) {
+    public void setZIndex(int z) {
         zIndex = z;
     }
 
     /**
      * Setzt die Sichtbarkeit des Objektes.
      *
-     * @param sichtbar Ob das Objekt sichtbar sein soll oder nicht.<br /> Ist dieser Wert
+     * @param visible Ob das Objekt isVisible sein soll oder nicht.<br /> Ist dieser Wert
      *                 <code>false</code>, so wird es nicht im Window gezeichnet.<br />
      *
-     * @see #sichtbar()
+     * @see #isVisible()
      */
     @API
-    public final void sichtbarSetzen(boolean sichtbar) {
-        this.sichtbar = sichtbar;
+    public final void setVisible(boolean visible) {
+        this.sichtbar = visible;
     }
 
     /**
-     * Gibt an, ob das Raum-Objekt sichtbar ist.
+     * Gibt an, ob das Actor-Objekt isVisible ist.
      *
-     * @return Ist <code>true</code>, wenn das Raum-Objekt zur Zeit sichtbar ist.
+     * @return Ist <code>true</code>, wenn das Actor-Objekt zur Zeit isVisible ist.
      *
-     * @see #sichtbarSetzen(boolean)
+     * @see #setVisible(boolean)
      */
     @API
-    public final boolean sichtbar() {
+    public final boolean isVisible() {
         return this.sichtbar;
     }
 
@@ -227,8 +232,8 @@ public abstract class Raum implements Comparable<Raum> {
     /**
      * Setzt die Opacity des Raumes.
      * <p/>
-     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Raum.</li>
-     * <li><code>1.0f</code> entspricht einem undurchsichtigem Raum.</li></ul>
+     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Actor.</li>
+     * <li><code>1.0f</code> entspricht einem undurchsichtigem Actor.</li></ul>
      */
     @API
     @SuppressWarnings ( "unused" )
@@ -239,34 +244,34 @@ public abstract class Raum implements Comparable<Raum> {
     /* _________________________ API-Methoden in der Klasse direkt _________________________ */
 
     /**
-     * Prueft, ob ein bestimmter Punkt innerhalb des Raum-Objekts liegt.
+     * Prueft, ob ein bestimmter Point innerhalb des Actor-Objekts liegt.
      *
-     * @param p Der Punkt, der auf Inhalt im Objekt getestet werden soll.
+     * @param p Der Point, der auf Inhalt im Objekt getestet werden soll.
      *
-     * @return TRUE, wenn der Punkt innerhalb des Objekts liegt.
+     * @return TRUE, wenn der Point innerhalb des Objekts liegt.
      */
     @API
-    public final boolean beinhaltet(Punkt p) {
-        return physikHandler.beinhaltet(p);
+    public final boolean contains(Point p) {
+        return physicsHandler.beinhaltet(p);
     }
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
 
     @NoExternalUse
-    public void bodyTypeSetzen(Physik.Typ typ) {
-        this.physikHandler = physikHandler.typ(typ);
+    public void setBodyType(Physics.Type type) {
+        this.physicsHandler = physicsHandler.typ(type);
     }
 
     /**
-     * Hilfsmethode für die Sortierung der Räume nach dem Z-Index. <b><i>Diese Methode sollte nicht
+     * Hilfsmethode für die Sortierung der Räume vectorFromThisTo dem Z-Index. <b><i>Diese Methode sollte nicht
      * außerhalb der Engine verwendet werden.</i></b>
      *
      * @see #zIndex
-     * @see #zIndexSetzen(int)
+     * @see #setZIndex(int)
      */
     @Override
     @NoExternalUse
-    public int compareTo(Raum r) {
+    public int compareTo(Actor r) {
         if (zIndex < r.zIndex) {
             return 1;
         }
@@ -293,11 +298,11 @@ public abstract class Raum implements Comparable<Raum> {
 
             //Hole Rotation und Position absolut auf der Zeichenebene.
             float rotation;
-            Punkt position;
+            Point position;
 
-            synchronized (physikHandler.getBody()) {
-                rotation = physikHandler.rotation();
-                position = physikHandler.position();
+            synchronized (physicsHandler.getBody()) {
+                rotation = physicsHandler.rotation();
+                position = physicsHandler.position();
             }
 
             // ____ Pre-Render ____
@@ -321,7 +326,7 @@ public abstract class Raum implements Comparable<Raum> {
 
             if (EngineAlpha.isDebug()) {
                 //Visualisiere die Shape
-                float ppm = getPhysikHandler().worldHandler().getPixelProMeter();
+                float ppm = getPhysicsHandler().worldHandler().getPixelProMeter();
                 Shape shape = createShape(ppm);
                 g.setColor(Color.red);
                 renderShape(shape, g, ppm);
@@ -337,12 +342,12 @@ public abstract class Raum implements Comparable<Raum> {
             //Transform zurücksetzen
             g.setTransform(transform);
 
-            //System.out.println("R: " + getPosition + " - " + rotation);
+            //System.out.println("R: " + getPosition + " - " + getRotation);
         }
     }
 
     /**
-     * Rendert eine Shape von JBox2D nach den gegebenen Voreinstellungen im Graphics-Objekt.
+     * Rendert eine Shape von JBox2D vectorFromThisTo den gegebenen Voreinstellungen im Graphics-Objekt.
      *
      * @param shape         Die Shape, die zu rendern ist.
      * @param g             Das Graphics2D-Object, das die Shape rendern soll. Farbe & Co. sollte im
@@ -387,13 +392,13 @@ public abstract class Raum implements Comparable<Raum> {
     }
 
     /**
-     * Gibt den aktuellen, internen Physik-Handler aus.
+     * Gibt den aktuellen, internen Physics-Handler aus.
      *
      * @return der aktuellen, internen WorldHandler-Handler aus.
      */
     @NoExternalUse
-    public PhysikHandler getPhysikHandler() {
-        return physikHandler;
+    public PhysikHandler getPhysicsHandler() {
+        return physicsHandler;
     }
 
     /**
@@ -422,7 +427,7 @@ public abstract class Raum implements Comparable<Raum> {
         return shape;
     }
 
-    /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Raum-Objekts _________________________ */
+    /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
 
     /**
      * Rendert das Objekt am Ursprung. <ul> <li>Die Position ist (0|0).</li> <li>Die Roation ist
@@ -434,7 +439,7 @@ public abstract class Raum implements Comparable<Raum> {
     public abstract void render(Graphics2D g);
 
     /**
-     * Berechnet eine Form, die für die Kollisionsberechnungen dieses <code>Raum</code>-Objekts
+     * Berechnet eine Form, die für die Kollisionsberechnungen dieses <code>Actor</code>-Objekts
      * verwendet werden.
      *
      * @param pixelProMeter Die [px/m]-Konstante für die Umrechnung.
@@ -447,7 +452,7 @@ public abstract class Raum implements Comparable<Raum> {
 
     /**
      * Überschriebene <code>finalize</code>-Methode. Loggt verbose die Garbage Collection des
-     * Raum-Objekts.
+     * Actor-Objekts.
      *
      * @throws Throwable Übernommen von Object
      */
@@ -456,9 +461,13 @@ public abstract class Raum implements Comparable<Raum> {
             throws Throwable {
         super.finalize();
         //Logge die Zerstörung
-        Logger.verboseInfo("Raum", "Raum-Objekt in Garbage Collection: " + toString());
+        Logger.verboseInfo("Actor", "Actor-Objekt in Garbage Collection: " + toString());
     }
 
+    /**
+     * Gibt die Scene aus, zu der dieser Actor gehört.
+     * @return  Das Scene-Objekt, zu dem dieser Actor gehört.
+     */
     public Scene getScene() {
         return scene;
     }

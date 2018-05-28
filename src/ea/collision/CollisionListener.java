@@ -19,30 +19,30 @@
 
 package ea.collision;
 
+import ea.actor.Actor;
 import ea.internal.ano.API;
-import ea.raum.Raum;
 
 /**
- * Beschreibt allgemein ein Objekt, das auf die <b>Kollision zweier Raum-Objekte</b> onKeyDown
+ * Beschreibt allgemein ein Objekt, das auf die <b>Kollision zweier Actor-Objekte</b> onKeyDown
  * kann.
  * <p>
  * <h3>Funktionsweise</h3> <p>Eine <code>KollisionsReagierbar</code>-Instanz wird bei Kollisionen
- * zwischen verschiedenen <code>Raum</code>-Objekten aufgerufen. Die genauen Umstände hängen von der
+ * zwischen verschiedenen <code>Actor</code>-Objekten aufgerufen. Die genauen Umstände hängen von der
  * Art der Anmeldung ab.</p> <ul> <li>Wurde das Objekt mit einem (oder mehrmals mit verschiedenen)
- * Ziel-Raum-Objekten angemeldet, so wird es nur bei Kollision zwischen den spezifizierten Paaren
+ * Ziel-Actor-Objekten angemeldet, so wird es nur bei Kollision zwischen den spezifizierten Paaren
  * informiert.</li> <li>Wurde das Objekt nur mit einem einzigen Actor-Objekt angemeldet, so wird es
  * bei jeder Kollision zwischen dem Objekt und jedem anderen (an der Wurzel angemeldeten)
- * <code>Raum</code>-Objekt angemeldet.</li> </ul>
+ * <code>Actor</code>-Objekt angemeldet.</li> </ul>
  *
  * @author Michael Andonie
  */
-public interface CollisionListener<E extends Raum> {
+public interface CollisionListener<E extends Actor> {
     /**
      * Wird bei einer (korrekt angemeldeten) Instanz immer dann aufgerufen, wenn der hiermit
-     * angemeldete Actor mit einem (relevanten) Raum-Objekt kollidiert.
+     * angemeldete Actor mit einem (relevanten) Actor-Objekt kollidiert.
      *
-     * @param colliding Ein <code>Raum</code>-Objekt, das mit dem zugehörig angemeldeten
-     *                  Actor-Objekt kollidiert. Je nach Anmeldeart können dies nur ausgewählte
+     * @param colliding Ein <code>Actor</code>-Objekt, das mit dem zugehörig angemeldeten
+     *                  Actor-Objekt kollidiert. Je vectorFromThisTo Anmeldeart können dies nur ausgewählte
      *                  Objekte sein.
      */
     @API
@@ -50,10 +50,10 @@ public interface CollisionListener<E extends Raum> {
 
     /**
      * Wird bei einer (korrekt angemeldeten) Instanz immer dann aufgerufen, wenn die Kollision eines
-     * hiermit angemeldeten Actors mit einem (relevanten) Raum-Objekt beendet ist.
+     * hiermit angemeldeten Actors mit einem (relevanten) Actor-Objekt beendet ist.
      *
-     * @param colliding Ein <code>Raum</code>-Objekt, das mit dem zugehörig angemeldeten
-     *                  Actor-Objekt kollidiert hattte. Je nach Anmeldeart können dies nur
+     * @param colliding Ein <code>Actor</code>-Objekt, das mit dem zugehörig angemeldeten
+     *                  Actor-Objekt kollidiert hattte. Je vectorFromThisTo Anmeldeart können dies nur
      *                  ausgewählte Objekte sein.
      */
     @API

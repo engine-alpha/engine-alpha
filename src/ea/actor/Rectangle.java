@@ -17,21 +17,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.actor;
 
-import ea.Punkt;
-import ea.raum.Geometrie;
+import ea.Point;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 
 /**
- * Beschreiben Sie hier die Klasse Rechteck.
+ * Beschreiben Sie hier die Klasse Rectangle.
  *
  * @author Michael Andonie
  */
 @SuppressWarnings ( "serial" )
-public class Rechteck extends Geometrie {
+public class Rectangle extends Geometry {
 	/**
 	 * Die Laenge
 	 */
@@ -43,57 +42,57 @@ public class Rechteck extends Geometrie {
 	private float breite;
 
 	/**
-	 * Konstruktor fuer Objekte der Klasse Rechteck
+	 * Konstruktor fuer Objekte der Klasse Rectangle
 	 *
 	 * @param x
 	 * 		Die X Position (Koordinate der linken oberen Ecke) des Rechtecks
 	 * @param y
 	 * 		Die X Position (Koordinate der linken oberen Ecke) des Rechtecks
-	 * @param breite
+	 * @param width
 	 * 		Die Breite des Rechtecks
-	 * @param hoehe
+	 * @param height
 	 * 		Die hoehe des Rechtecks
 	 */
-	public Rechteck (float x, float y, float breite, float hoehe) {
-		super(new Punkt(x,y));
-        masseSetzen(breite, hoehe);
+	public Rectangle(float x, float y, float width, float height) {
+		super(new Point(x,y));
+        setDimension(width, height);
 	}
 
 	/**
-	 * Setzt beide Masse feur dieses Rechteck neu.
+	 * Setzt beide Masse feur dieses Rectangle neu.
 	 *
-	 * @param breite
+	 * @param width
 	 * 		Die neue Breite des Rechtecks
-	 * @param hoehe
+	 * @param height
 	 * 		Die neue Hoehe des Rechtecks
 	 */
-	public void masseSetzen (float breite, float hoehe) {
-		breiteSetzen(breite);
-        hoeheSetzen(hoehe);
+	public void setDimension(float width, float height) {
+		setWidth(width);
+        setHeight(height);
 	}
 
 	/**
-	 * Setzt die Breite fuer dieses Rechteck neu.
+	 * Setzt die Breite fuer dieses Rectangle neu.
 	 *
-	 * @param breite
+	 * @param width
 	 * 		Die neue Breite des Rechtecks
 	 *
-	 * @see #hoeheSetzen(float)
+	 * @see #setHeight(float)
 	 */
-	public void breiteSetzen (float breite) {
-        this.breite = breite;
+	public void setWidth(float width) {
+        this.breite = width;
 	}
 
 	/**
-	 * Setzt die Hoehe fuer dieses Rechteck neu.
+	 * Setzt die Hoehe fuer dieses Rectangle neu.
 	 *
-	 * @param hoehe
+	 * @param height
 	 * 		Die neue Hoehe des Rechtecks
 	 *
-	 * @see #breiteSetzen(float)
+	 * @see #setWidth(float)
 	 */
-	public void hoeheSetzen (float hoehe) {
-		this.laenge = hoehe;
+	public void setHeight(float height) {
+		this.laenge = height;
 	}
 
 	/**

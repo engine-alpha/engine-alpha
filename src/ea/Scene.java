@@ -19,14 +19,15 @@
 
 package ea;
 
+import ea.actor.Actor;
 import ea.collision.CollisionListener;
 import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.WorldHandler;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
-import ea.raum.Knoten;
-import ea.raum.Raum;
+import ea.actor.ActorGroup;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.DistanceJoint;
 import org.jbox2d.dynamics.joints.Joint;
@@ -67,24 +68,25 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
     private final Set<PeriodicTask> tickers = new HashSet<>();
 
     /**
-     * Der Wurzel-Knoten. An ihm müssen direkt oder indirekt (über weitere Knoten) alle
-     * <code>Raum</code>-Objekte angemeldet werden, die gezeichnet werden sollen.
+     * Der Wurzel-ActorGroup. An ihm müssen direkt oder indirekt (über weitere ActorGroup) alle
+     * <code>Actor</code>-Objekte angemeldet werden, die gezeichnet werden sollen.
      */
-    private final Knoten root;
+    private final ActorGroup root;
 
     /**
-     * Die Physik der Szene.
+     * Die Physics der Szene.
      */
     private final WorldHandler worldHandler;
 
     public Scene() {
-        this.root = new Knoten();
+        this.root = new ActorGroup();
         this.camera = new Camera();
         this.worldHandler = new WorldHandler();
         this.root.onAttach(this);
         this.addFrameUpdateListener(this.camera);
     }
 
+    @NoExternalUse
     public void render(Graphics2D g, BoundingRechteck bounds) {
         this.root.renderBasic(g, bounds);
 
@@ -93,13 +95,15 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         }
     }
 
+    @API
     public Camera getCamera() {
         return this.camera;
     }
 
+    @NoExternalUse
     private void renderDebug(Graphics2D g) {
         // Display Joints
-        Joint j = root.getPhysikHandler().worldHandler().getWorld().getJointList();
+        Joint j = root.getPhysicsHandler().worldHandler().getWorld().getJointList();
 
         while (j != null) {
             renderJoint(j, g);
@@ -107,6 +111,7 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         }
     }
 
+    @NoExternalUse
     private void renderJoint(Joint j, Graphics2D g) {
         final int CIRC_RAD = 10; // (Basis-)Radius für die Visualisierung von Kreisen
         final int RECT_SID = 12; // (Basis-)Breite für die Visualisierung von Rechtecken
@@ -115,22 +120,22 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         j.getAnchorA(anchorA);
         j.getAnchorB(anchorB);
 
-        Vektor aOnZE = root.getPhysikHandler().worldHandler().fromVec2(anchorA);
-        Vektor bOnZE = root.getPhysikHandler().worldHandler().fromVec2(anchorB);
+        Vector aOnZE = root.getPhysicsHandler().worldHandler().fromVec2(anchorA);
+        Vector bOnZE = root.getPhysicsHandler().worldHandler().fromVec2(anchorB);
 
         if (j instanceof RevoluteJoint) {
             g.setColor(Color.blue);
-            g.drawOval((int) aOnZE.realX() - (CIRC_RAD / 2), (int) aOnZE.realY() - (CIRC_RAD / 2), CIRC_RAD, CIRC_RAD);
+            g.drawOval((int) aOnZE.getRealX() - (CIRC_RAD / 2), (int) aOnZE.getRealY() - (CIRC_RAD / 2), CIRC_RAD, CIRC_RAD);
         } else if (j instanceof RopeJoint) {
             g.setColor(Color.cyan);
-            g.drawRect((int) aOnZE.realX() - (CIRC_RAD / 2), (int) aOnZE.realY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawRect((int) bOnZE.realX() - (CIRC_RAD / 2), (int) bOnZE.realY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawLine((int) aOnZE.realX(), (int) aOnZE.realY(), (int) bOnZE.realX(), (int) bOnZE.realY());
+            g.drawRect((int) aOnZE.getRealX() - (CIRC_RAD / 2), (int) aOnZE.getRealY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawRect((int) bOnZE.getRealX() - (CIRC_RAD / 2), (int) bOnZE.getRealY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawLine((int) aOnZE.getRealX(), (int) aOnZE.getRealY(), (int) bOnZE.getRealX(), (int) bOnZE.getRealY());
         } else if (j instanceof DistanceJoint) {
             g.setColor(Color.orange);
-            g.drawRect((int) aOnZE.realX() - (CIRC_RAD / 2), (int) aOnZE.realY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawRect((int) bOnZE.realX() - (CIRC_RAD / 2), (int) bOnZE.realY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawLine((int) aOnZE.realX(), (int) aOnZE.realY(), (int) bOnZE.realX(), (int) bOnZE.realY());
+            g.drawRect((int) aOnZE.getRealX() - (CIRC_RAD / 2), (int) aOnZE.getRealY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawRect((int) bOnZE.getRealX() - (CIRC_RAD / 2), (int) bOnZE.getRealY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawLine((int) aOnZE.getRealX(), (int) aOnZE.getRealY(), (int) bOnZE.getRealX(), (int) bOnZE.getRealY());
         }
     }
 
@@ -145,15 +150,17 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
         }
     }
 
-    public void add(Raum... rooms) {
-        for (Raum room : rooms) {
+    @API
+    public void add(Actor... rooms) {
+        for (Actor room : rooms) {
             this.root.add(room);
         }
     }
 
-    public void remove(Raum... rooms) {
-        for (Raum room : rooms) {
-            this.root.entfernen(room);
+    @API
+    public void remove(Actor... rooms) {
+        for (Actor room : rooms) {
+            this.root.remove(room);
         }
     }
 
@@ -182,12 +189,12 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
     }
 
     @API
-    public <E extends Raum> void addCollisionListener(CollisionListener<E> listener, Raum actor, E collider) {
+    public <E extends Actor> void addCollisionListener(CollisionListener<E> listener, Actor actor, E collider) {
         WorldHandler.spezifischesKollisionsReagierbarEingliedern(listener, actor, collider);
     }
 
     @API
-    public void addCollisionListener(CollisionListener<Raum> listener, Raum actor) {
+    public void addCollisionListener(CollisionListener<Actor> listener, Actor actor) {
         WorldHandler.allgemeinesKollisionsReagierbarEingliedern(listener, actor);
     }
 
@@ -206,30 +213,30 @@ public class Scene implements FrameUpdateListener, MouseClickListener, KeyListen
     }
 
     @Override
-    public void onMouseDown(Punkt position, MouseButton button) {
+    public void onMouseDown(Point position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseDown(position, button);
         }
     }
 
     @Override
-    public void onMouseUp(Punkt position, MouseButton button) {
+    public void onMouseUp(Point position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseUp(position, button);
         }
     }
 
     @API
-    public Punkt getMousePosition() {
-        Point mouse = Game.getMousePosition();
-        Punkt position = camera.getPosition();
+    public Point getMousePosition() {
+        java.awt.Point mouse = Game.getMousePosition();
+        Point position = camera.getPosition();
 
         float rotation = camera.getRotation();
 
         float mx = mouse.x;
         float my = mouse.y;
 
-        return new Punkt(
+        return new Point(
                 position.x + (((float) Math.cos(rotation) * mx - (float) Math.sin(rotation) * my)) / camera.getZoom(),
                 position.y + (((float) Math.sin(rotation) * mx + (float) Math.cos(rotation) * my)) / camera.getZoom()
         );

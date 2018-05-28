@@ -31,8 +31,8 @@ public abstract class RenderPanel extends Canvas {
     /**
      * Konstruktor für Objekte der Klasse RenderPanel
      *
-     * @param width  Die Größe des Einflussbereichs des Panels in Richtung <code>x</code>.
-     * @param height Die Größe des Einflussbereichs des Panels in Richtung <code>y</code>.
+     * @param width  Die Größe des Einflussbereichs des Panels in Richtung <code>getX</code>.
+     * @param height Die Größe des Einflussbereichs des Panels in Richtung <code>getY</code>.
      */
     public RenderPanel(int width, int height) {
         this.setSize(width, height);
@@ -40,7 +40,7 @@ public abstract class RenderPanel extends Canvas {
     }
 
     /**
-     * Muss aufgerufen werden, nachdem das Fenster sichtbar ist, um die BufferStrategy zu erzeugen.
+     * Muss aufgerufen werden, nachdem das Fenster isVisible ist, um die BufferStrategy zu erzeugen.
      */
     public void initialize() {
         createBufferStrategy(2);

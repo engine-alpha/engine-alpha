@@ -19,7 +19,7 @@
 
 package ea.mouse;
 
-import ea.Punkt;
+import ea.Point;
 import ea.internal.ano.API;
 
 /**
@@ -36,11 +36,11 @@ public interface MouseClickListener {
      * <p>
      * Natürlick muss dafür erst der {@link MouseClickListener} angemeldet werden.
      *
-     * @param position Der Punkt auf der Zeichenebene.
+     * @param position Der Point auf der Zeichenebene.
      * @param button   Die Maustaste, die gedrückt wurde.
      */
     @API
-    void onMouseDown(Punkt position, MouseButton button);
+    void onMouseDown(Point position, MouseButton button);
 
     /**
      * Diese Methode wird bei jedem <b>Loslassen</b> einer Maustaste aufgerufen, unabhängig davon
@@ -48,9 +48,9 @@ public interface MouseClickListener {
      * <p>
      * Natürlick muss dafür erst der {@link MouseClickListener} angemeldet werden.
      *
-     * @param position Der Punkt auf der Zeichenebene.
+     * @param position Der Point auf der Zeichenebene.
      * @param button   Die Maustaste, die gedrückt wurde.
      */
     @API
-    void onMouseUp(Punkt position, MouseButton button);
+    void onMouseUp(Point position, MouseButton button);
 }

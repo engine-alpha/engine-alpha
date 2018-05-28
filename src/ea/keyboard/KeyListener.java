@@ -34,6 +34,7 @@ public interface KeyListener {
      *
      * @param key Zahlencode zur Taste, die gedrückt wurde. {@link Key} stellt eine Konstante für
      *            jede berücksichtigte Taste zur Verfügung.
+     * @see ea.keyboard.Key
      */
     @API
     void onKeyDown(int key);
@@ -44,6 +45,7 @@ public interface KeyListener {
      *
      * @param code Zahlencode zur Taste, die losgelassen wurde. {@link Key} stellt eine Konstante
      *             für jede berücksichtigte Taste zur Verfügung.
+     * @see ea.keyboard.Key
      */
     @API
     void onKeyUp(int code);

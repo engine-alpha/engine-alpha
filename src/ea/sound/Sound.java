@@ -31,7 +31,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
- * Diese Klasse dient zum Abspielen kurzer Sounds.
+ * Diese Klasse dient zum Abspielen kurzer Sounds, wie zum Beispiel Sound-Effekte.
  *
  * @see Music Zum Abspielen längerer Sounds wie z.B. Hintergrundmusik.
  */

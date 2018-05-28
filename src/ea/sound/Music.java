@@ -32,7 +32,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
- * Diese Klasse dient zum Abspielen längerer Sounds wie Musik.
+ * Diese Klasse dient zum Abspielen längerer Sounds wie (Hintergrund-)Musik.
  *
  * @see Sound Zum Abspielen kurzer Sounds wie z.B. Kollisionstöne.
  */
@@ -125,6 +125,7 @@ public class Music {
 
     /**
      * Pausiert die aktuelle Wiedergabe oder tut nichts, wenn gerade nicht abgespielt wird.
+     * @see #resume()
      */
     @API
     public synchronized void pause() {
@@ -134,8 +135,9 @@ public class Music {
     }
 
     /**
-     * Startet die aktuelle Wiedergabe nach einem {@link #pause()}. Tut nichts, wenn nicht
+     * Startet die aktuelle Wiedergabe vectorFromThisTo einem {@link #pause()}. Tut nichts, wenn nicht
      * abgespielt wird.
+     * @see #pause()
      */
     @API
     public synchronized void resume() {
@@ -177,7 +179,7 @@ public class Music {
     }
 
     /**
-     * Playback-Typ.
+     * Playback-Type.
      */
     private enum PlaybackType {
         ONCE, LOOP
@@ -194,7 +196,7 @@ public class Music {
         /**
          * Erstellt ein neues Objekt.
          *
-         * @param type Typ der Wiedergabe.
+         * @param type Type der Wiedergabe.
          */
         public Playback(PlaybackType type) {
             assert type != null;

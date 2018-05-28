@@ -1,19 +1,19 @@
 package ea.internal.phy;
 
-import ea.handle.Physik;
-import ea.Punkt;
-import ea.raum.Raum;
-import ea.Vektor;
+import ea.Point;
+import ea.Vector;
+import ea.actor.Actor;
+import ea.handle.Physics;
 import ea.internal.ano.NoExternalUse;
 import org.jbox2d.dynamics.Body;
 
 /**
- * Beschreibt allgemein ein Objekt, dass die physikalischen Eigenschaften eines Raum-Objektes kontrollieren kann.
+ * Beschreibt allgemein ein Objekt, dass die physikalischen Eigenschaften eines Actor-Objektes kontrollieren kann.
  * Dazu gehört:
  * <ul>
- *     <li>Das <code>Raum</code>-Objekt <b>bewegen</b>.</li>
+ *     <li>Das <code>Actor</code>-Objekt <b>bewegen</b>.</li>
  *     <li><b>Physikalische Eigenschaften</b> des Objektes verändern (wie Masse, Reibungskoeffizient etc.)</li>
- *     <li><b>Einflüsse</b> auf das <code>Raum</code>-Objekt ausüben (wie anwenden von Impulsen / Kräften)</li>
+ *     <li><b>Einflüsse</b> auf das <code>Actor</code>-Objekt ausüben (wie anwenden von Impulsen / Kräften)</li>
  * </ul>
  * Created by andonie on 16.02.15.
  */
@@ -22,29 +22,29 @@ public abstract class PhysikHandler {
 
 
     /**
-     * Das eine Raum-Objekt, das dieser Handler kontrolliert.
+     * Das eine Actor-Objekt, das dieser Handler kontrolliert.
      */
-    protected final Raum raum;
+    protected final Actor actor;
 
     /**
-     * Der physikalische Typ, den der Klient gerade fährt.
+     * Der physikalische Type, den der Klient gerade fährt.
      */
-    protected Physik.Typ physikTyp;
+    protected Physics.Type physikType;
 
     /**
      * Diese Variable speichert die Sensor-Flag des Klienten.
-     * Die Sensor-Flag is true, wenn ein passives Objekt (= keine Physik) trotzdem
+     * Die Sensor-Flag is true, wenn ein passives Objekt (= keine Physics) trotzdem
      * an Kollisionstests teilnehmen soll.
      */
     protected boolean isSensor;
 
     /**
-     * Initialisiert den Physik-Handler.
-     * @param raum  Das eine Raum-Objekt, das dieser Handler kontrolliert.
+     * Initialisiert den Physics-Handler.
+     * @param actor  Das eine Actor-Objekt, das dieser Handler kontrolliert.
      */
-    protected PhysikHandler(Raum raum, Physik.Typ physikTyp, boolean isSensor) {
-        this.raum = raum;
-        this.physikTyp = physikTyp;
+    protected PhysikHandler(Actor actor, Physics.Type physikType, boolean isSensor) {
+        this.actor = actor;
+        this.physikType = physikType;
         this.isSensor = isSensor;
     }
 
@@ -53,7 +53,7 @@ public abstract class PhysikHandler {
         return isSensor;
     }
 
-    /* __________________________ Kontrakt: Abstrakte Methoden/Funktionen der Physik __________________________ */
+    /* __________________________ Kontrakt: Abstrakte Methoden/Funktionen der Physics __________________________ */
 
     /**
      * Setzt, ob das Klient-Objekt Sensorstatus haben soll oder nicht.
@@ -62,48 +62,48 @@ public abstract class PhysikHandler {
     public abstract void setSensor(boolean isSensor);
 
     /**
-     * Informiert diesen Handler, wenn es ein Update in der Baumstruktur um das Raum-Objekt gab. Die neue Physik (falls vorhanden)
-     * wird so an alle Raum-Objekte weitergegeben.
-     * @param worldHandler      Die neue Physik-Umgebung.
-     * @throws java.lang.IllegalStateException  Falls ein Raum-Objekt nach dem tastenReagierbarAnmelden an einer Wurzel auf die Wurzel eines anderen Fensters
+     * Informiert diesen Handler, wenn es ein Update in der Baumstruktur um das Actor-Objekt gab. Die neue Physics (falls vorhanden)
+     * wird so an alle Actor-Objekte weitergegeben.
+     * @param worldHandler      Die neue Physics-Umgebung.
+     * @throws java.lang.IllegalStateException  Falls ein Actor-Objekt vectorFromThisTo dem tastenReagierbarAnmelden an einer Wurzel auf die Wurzel eines anderen Fensters
      *                                          verschoben wird.
      */
     public abstract void update(WorldHandler worldHandler) throws IllegalStateException;
 
     /**
      * Verschiebt das Ziel-Objekt um einen spezifischen Wert auf der Zeichenebene. Die Ausführung hat <b>erst (ggf.) im
-     * kommenden Frame</b> einfluss auf die Physik und <b>ändert keine physikalischen Eigenschaften</b> des Ziel-Objekts
+     * kommenden Frame</b> einfluss auf die Physics und <b>ändert keine physikalischen Eigenschaften</b> des Ziel-Objekts
      * (außer dessen Ort).
-     * @param v     Ein Vektor, um den das Ziel-Objekt verschoben werden soll. Dies ändert seine Position, jedoch sonst
+     * @param v     Ein Vector, um den das Ziel-Objekt verschoben werden soll. Dies ändert seine Position, jedoch sonst
      *              keine weiteren Eigenschaften.
      */
-    public abstract void verschieben(Vektor v);
+    public abstract void verschieben(Vector v);
 
     /**
-     * Gibt den <b>Gewichtsmittelpunkt</b> dieses <code>Raum</code>-Objekts aus.
-     * @return  der aktuelle <b>Gewichtsmittelpunkt</b> des Ziel-Objekts als <i>Punkt auf der Zeichenebene</i>.
+     * Gibt den <b>Gewichtsmittelpunkt</b> dieses <code>Actor</code>-Objekts aus.
+     * @return  der aktuelle <b>Gewichtsmittelpunkt</b> des Ziel-Objekts als <i>Point auf der Zeichenebene</i>.
      */
-    public abstract Punkt mittelpunkt();
+    public abstract Point mittelpunkt();
 
     /**
-     * Gibt an, ob ein bestimmter Punkt auf der Zeichenebene innerhalb des Ziel-Objekts liegt.
-     * @param p Ein Punkt auf der Zeichenebene.
-     * @return  <code>true</code>, wenn der übergebene Punkt innerhalb des Ziel-Objekts liegt, sonst <code>false</code>.
+     * Gibt an, ob ein bestimmter Point auf der Zeichenebene innerhalb des Ziel-Objekts liegt.
+     * @param p Ein Point auf der Zeichenebene.
+     * @return  <code>true</code>, wenn der übergebene Point innerhalb des Ziel-Objekts liegt, sonst <code>false</code>.
      *          Das Ergebnis kann (abhängig von der implementierenden Klasse) verschieden sicher richtige Ergebnisse
      *          liefern.
      */
-    public abstract boolean beinhaltet(Punkt p);
+    public abstract boolean beinhaltet(Point p);
 
     /**
      * Gibt die aktuelle Position des Ziel-Objekts an.
      * @return  Die aktuelle Position des Ziel-Objekts. Diese ist bei Erstellung des Objekts zunächst immer
      *          <code>(0|0)</code> und wird mit Rotation und Verschiebung verändert.
      */
-    public abstract Punkt position();
+    public abstract Point position();
 
     /**
      * Gibt die aktuelle Rotation des Ziel-Objekts in <i>Radians</i> an. Bei Erstellung eines
-     * <code>Raum</code>-Objekts ist seine Rotation stets 0.
+     * <code>Actor</code>-Objekts ist seine Rotation stets 0.
      * @return  die aktuelle Rotation des Ziel-Objekts in <i>Radians</i>.
      */
     public abstract float rotation();
@@ -147,7 +147,7 @@ public abstract class PhysikHandler {
      * @param kraft Die Kraft, die auf den Massenschwerpunkt angewandt werden soll. <b>Nicht in [px]</b>, sondern in
      *              [N] = [m / s^2].
      */
-    public abstract void kraftWirken(Vektor kraft);
+    public abstract void kraftWirken(Vector kraft);
 
     /**
      * Wirkt einen Drehmoment auf das Ziel-Objekt.
@@ -163,30 +163,30 @@ public abstract class PhysikHandler {
     public abstract void drehImpulsWirken(float drehimpuls);
 
     /**
-     * Setzt global für die Physik-Umgebung, in der sich das Zielobjekt befindet, die Schwerkraft neu.
-     * @param schwerkraftInN    die neue Schwerkraft als Vektor. in [N].
+     * Setzt global für die Physics-Umgebung, in der sich das Zielobjekt befindet, die Schwerkraft neu.
+     * @param schwerkraftInN    die neue Schwerkraft als Vector. in [N].
      */
-    public abstract void schwerkraftSetzen(Vektor schwerkraftInN);
+    public abstract void schwerkraftSetzen(Vector schwerkraftInN);
 
     /**
-     * Macht ein Typ-Update für diesen Handler.
-     * @param typ   Der neue Typ.
-     * @return      Ein Handler, der diesen Typ behandelt (ggf. this).
+     * Macht ein Type-Update für diesen Handler.
+     * @param type   Der neue Type.
+     * @return      Ein Handler, der diesen Type behandelt (ggf. this).
      */
-    public abstract PhysikHandler typ(Physik.Typ typ);
+    public abstract PhysikHandler typ(Physics.Type type);
 
-    public Physik.Typ typ() {
-        return physikTyp;
+    public Physics.Type typ() {
+        return physikType;
     }
 
-    public abstract void kraftWirken(Vektor kraftInN, Punkt globalerOrt);
+    public abstract void kraftWirken(Vector kraftInN, Point globalerOrt);
 
     /**
-     * Wirkt einen Impuls auf einem Welt-Punkt.
+     * Wirkt einen Impuls auf einem Welt-Point.
      * @param impulsInNS        Ein Impuls (in [Ns]).
      * @param globalerOrt       Der
      */
-    public abstract void impulsWirken(Vektor impulsInNS, Punkt globalerOrt);
+    public abstract void impulsWirken(Vector impulsInNS, Point globalerOrt);
 
     /**
      * Entfernt den Körper von diesem Handler.
@@ -197,7 +197,7 @@ public abstract class PhysikHandler {
     /**
      * Gibt den WorldHandler aus, der die Welt handelt, in der sich der Klient
      * befindet.
-     * @return  Der World-Handler, der zu diesem Physik-Handler gehört.
+     * @return  Der World-Handler, der zu diesem Physics-Handler gehört.
      */
     public abstract WorldHandler worldHandler();
 
@@ -220,14 +220,14 @@ public abstract class PhysikHandler {
      * @param geschwindigkeitInMProS    Setzt die Geschwindigkeit, mit der sich das Zielobjekt bewegen soll.
      */
     @NoExternalUse
-    public abstract void geschwindigkeitSetzen(Vektor geschwindigkeitInMProS);
+    public abstract void geschwindigkeitSetzen(Vector geschwindigkeitInMProS);
 
     /**
      * Gibt die aktuelle Geschwindigkeit aus.
      * @return  Die aktuelle Geschwindigkeit.
      */
     @NoExternalUse
-    public abstract Vektor geschwindigkeit();
+    public abstract Vector geschwindigkeit();
 
     /**
      * Setzt, ob die Rotation blockiert sein soll.

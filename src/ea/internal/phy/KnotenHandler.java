@@ -1,24 +1,24 @@
 package ea.internal.phy;
 
-import ea.Punkt;
-import ea.Vektor;
-import ea.handle.Physik;
+import ea.Point;
+import ea.Vector;
+import ea.handle.Physics;
 import ea.internal.util.Logger;
-import ea.raum.Knoten;
+import ea.actor.ActorGroup;
 import org.jbox2d.dynamics.Body;
 
 /**
- * Spezieller Physik-Handler für Knoten.
+ * Spezieller Physics-Handler für ActorGroup.
  *
  * @author Michael Andonie
  */
 public class KnotenHandler extends PhysikHandler {
-    private final Knoten knoten;
+    private final ActorGroup actorGroup;
 
     /**
      * Symbolische Position des Knotens.
      */
-    private Punkt position = Punkt.ZENTRUM;
+    private Point position = Point.CENTRE;
 
     /**
      * Symbolische Rotation des Knotens
@@ -26,13 +26,13 @@ public class KnotenHandler extends PhysikHandler {
     private float rotation = 0f;
 
     /**
-     * Initialisiert den Physik-Handler.
+     * Initialisiert den Physics-Handler.
      *
-     * @param raum Der Knoten, um den sich dieser Handler kümmert.
+     * @param raum Der ActorGroup, um den sich dieser Handler kümmert.
      */
-    public KnotenHandler(Knoten raum) {
-        super(raum, Physik.Typ.PASSIV, false);
-        knoten = raum;
+    public KnotenHandler(ActorGroup raum) {
+        super(raum, Physics.Type.PASSIV, false);
+        actorGroup = raum;
     }
 
     @Override
@@ -43,27 +43,27 @@ public class KnotenHandler extends PhysikHandler {
     @Override
     public void update(WorldHandler worldHandler) throws IllegalStateException {
         //NICHTS ZU TUN
-        // (die Weitergabe wurde bereits im Knoten implementiert)
+        // (die Weitergabe wurde bereits im ActorGroup implementiert)
     }
 
     @Override
-    public void verschieben(Vektor v) {
+    public void verschieben(Vector v) {
         position = position.verschobeneInstanz(v);
-        knoten.forEach(r -> r.position.verschieben(v));
+        actorGroup.forEach(r -> r.position.move(v));
     }
 
     @Override
-    public Punkt mittelpunkt() {
+    public Point mittelpunkt() {
         return null;
     }
 
     @Override
-    public boolean beinhaltet(Punkt p) {
+    public boolean beinhaltet(Point p) {
         return false;
     }
 
     @Override
-    public Punkt position() {
+    public Point position() {
         return position;
     }
 
@@ -75,55 +75,55 @@ public class KnotenHandler extends PhysikHandler {
     @Override
     public void rotieren(float radians) {
         rotation += radians;
-        knoten.forEach(r -> r.position.rotation(radians));
+        actorGroup.forEach(r -> r.position.setRotation(radians));
     }
 
     @Override
     public void dichteSetzen(float dichte) {
-        Logger.error("Physik", "Ein Knoten hat keine Dichte");
+        Logger.error("Physics", "Ein ActorGroup hat keine Dichte");
     }
 
     @Override
     public float dichte() {
-        Logger.error("Physik", "Ein Knoten hat keine Dichte");
+        Logger.error("Physics", "Ein ActorGroup hat keine Dichte");
         return 0;
     }
 
     @Override
     public void reibungSetzen(float reibung) {
-        Logger.error("Physik", "Ein Knoten hat keine Reibung");
+        Logger.error("Physics", "Ein ActorGroup hat keine Reibung");
     }
 
     @Override
     public float reibung() {
-        Logger.error("Physik", "Ein Knoten hat keine Reibung");
+        Logger.error("Physics", "Ein ActorGroup hat keine Reibung");
         return 0;
     }
 
     @Override
     public void elastizitaetSetzen(float ela) {
-        Logger.error("Physik", "Ein Knoten hat keine Elastizität");
+        Logger.error("Physics", "Ein ActorGroup hat keine Elastizität");
     }
 
     @Override
     public float elastizitaet() {
-        Logger.error("Physik", "Ein Knoten hat keine Elastizität");
+        Logger.error("Physics", "Ein ActorGroup hat keine Elastizität");
         return 0;
     }
 
     @Override
     public void masseSetzen(float masse) {
-        Logger.error("Physik", "Ein Knoten hat keine Masse");
+        Logger.error("Physics", "Ein ActorGroup hat keine Masse");
     }
 
     @Override
     public float masse() {
-        Logger.error("Physik", "Ein Knoten hat keine Masse");
+        Logger.error("Physics", "Ein ActorGroup hat keine Masse");
         return 0;
     }
 
     @Override
-    public void kraftWirken(Vektor kraft) {
+    public void kraftWirken(Vector kraft) {
 
     }
 
@@ -138,22 +138,22 @@ public class KnotenHandler extends PhysikHandler {
     }
 
     @Override
-    public void schwerkraftSetzen(Vektor schwerkraftInN) {
+    public void schwerkraftSetzen(Vector schwerkraftInN) {
 
     }
 
     @Override
-    public PhysikHandler typ(Physik.Typ typ) {
+    public PhysikHandler typ(Physics.Type type) {
         return null;
     }
 
     @Override
-    public void kraftWirken(Vektor kraftInN, Punkt globalerOrt) {
+    public void kraftWirken(Vector kraftInN, Point globalerOrt) {
 
     }
 
     @Override
-    public void impulsWirken(Vektor impulsInNS, Punkt globalerOrt) {
+    public void impulsWirken(Vector impulsInNS, Point globalerOrt) {
 
     }
 
@@ -164,7 +164,7 @@ public class KnotenHandler extends PhysikHandler {
 
     @Override
     public WorldHandler worldHandler() {
-        return knoten.getScene().getWorldHandler();
+        return actorGroup.getScene().getWorldHandler();
     }
 
     @Override
@@ -174,16 +174,16 @@ public class KnotenHandler extends PhysikHandler {
 
     @Override
     public void physicalReset() {
-        knoten.forEach(r -> r.physik.inRuheVersetzen());
+        actorGroup.forEach(r -> r.physics.cancelAll());
     }
 
     @Override
-    public void geschwindigkeitSetzen(Vektor geschwindigkeitInMProS) {
+    public void geschwindigkeitSetzen(Vector geschwindigkeitInMProS) {
 
     }
 
     @Override
-    public Vektor geschwindigkeit() {
+    public Vector geschwindigkeit() {
         return null;
     }
 

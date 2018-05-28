@@ -20,6 +20,7 @@
 package ea;
 
 import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
@@ -44,6 +45,7 @@ import java.util.TimeZone;
  *
  * @author Niklas Keller <me@kelunik.com>
  */
+@NoExternalUse
 public class EngineAlpha extends Frame {
 
 	/**
@@ -92,7 +94,6 @@ public class EngineAlpha extends Frame {
 	 * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
 	 * Dies betrifft unter anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
 	 * diese Variable eingeführt.
-	 * @see ea.internal.frame.FrameThread
 	 * @see ea.internal.frame.FrameSubthread
 	 * @author andonie
 	 * @version 11.04.2017

@@ -20,6 +20,7 @@
 package ea;
 
 import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.frame.Dispatchable;
 import ea.internal.frame.FrameSubthread;
 import ea.internal.gra.RenderPanel;
@@ -56,12 +57,12 @@ public class Game {
     }
 
     /**
-     * Breite der Zeichenebene.
+     * Breite des Fensters.
      */
     private static int width;
 
     /**
-     * Höhe der Zeichenebene.
+     * Höhe des Fensters.
      */
     private static int height;
 
@@ -105,7 +106,7 @@ public class Game {
     /**
      * Letzte Mausposition.
      */
-    private static Point mousePosition;
+    private static java.awt.Point mousePosition;
 
     private static int frameDuration;
 
@@ -150,7 +151,7 @@ public class Game {
 
                 AffineTransform transform = g.getTransform();
                 Camera camera = Game.scene.getCamera();
-                Punkt position = camera.getPosition();
+                Point position = camera.getPosition();
                 float rotation = -camera.getRotation();
 
                 g.setClip(0, 0, width, height);
@@ -220,17 +221,17 @@ public class Game {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                mousePosition = new Point(e.getX() - width / 2, e.getY() - height / 2);
+                mousePosition = new java.awt.Point(e.getX() - width / 2, e.getY() - height / 2);
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                mousePosition = new Point(e.getX() - width / 2, e.getY() - height / 2);
+                mousePosition = new java.awt.Point(e.getX() - width / 2, e.getY() - height / 2);
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                mousePosition = new Point(e.getX() - width / 2, e.getY() - height / 2);
+                mousePosition = new java.awt.Point(e.getX() - width / 2, e.getY() - height / 2);
             }
         };
 
@@ -273,17 +274,22 @@ public class Game {
 
         renderThread.setPriority(Thread.MAX_PRIORITY);
 
-        mousePosition = new Point(width / 2, height / 2);
+        mousePosition = new java.awt.Point(width / 2, height / 2);
 
         mainThread = new Thread(Game::run);
         mainThread.start();
         mainThread.setPriority(Thread.MAX_PRIORITY);
     }
 
+    /**
+     * Rendert Debug-Informationen auf dem Bildschirm.
+     * @param g Das Graphics-Objekt zum zeichnen.
+     */
+    @NoExternalUse
     private static void renderDebug(Graphics2D g) {
         AffineTransform transform = g.getTransform();
         Camera camera = Game.scene.getCamera();
-        Punkt position = camera.getPosition();
+        Point position = camera.getPosition();
         float rotation = -camera.getRotation();
 
         g.setClip(0, 0, width, height);
@@ -296,8 +302,8 @@ public class Game {
         int gridSize = 100;
         int windowSize = Math.max(width, height);
 
-        // TODO: Optimize to draw only the required grid cells on rotation
-        // Without rotation: - width / 2, - height / 2
+        // TODO: Optimize to draw only the required grid cells on getRotation
+        // Without getRotation: - width / 2, - height / 2
         int tx = (int) position.x - windowSize;
         int ty = (int) position.y - windowSize;
 
@@ -326,6 +332,10 @@ public class Game {
         renderInfo(g);
     }
 
+    /**
+     * Rendert zusätzliche Debug-Infos auf dem Bildschirm.
+     * @param g Das Graphics-Objekt zum zeichnen.
+     */
     private static void renderInfo(Graphics2D g) {
         Font displayFont = new Font("Monospaced", Font.PLAIN, 12);
         FontMetrics fm = g.getFontMetrics(displayFont);
@@ -454,21 +464,21 @@ public class Game {
     }
 
     /**
-     * Diese Methode wird immer dann ausgeführt, wenn ein einfacher Klick der Maus ausgeführt wird.
+     * Diese Methode wird immer dann ausgeführt, wenn ein simplifiedDirection Klick der Maus ausgeführt wird.
      *
      * @param e      Das MouseEvent.
      * @param action Drücken oder Loslassen?
      */
     private static void enqueueMouseEvent(MouseEvent e, MouseAction action) {
         // Finde Klick auf Zeichenebene, die Position relativ zum Ursprung des RenderPanel-Canvas.
-        Point sourceClick = e.getPoint();
+        java.awt.Point sourceClick = e.getPoint();
 
         // Mausklick-Position muss mit Zoom-Wert verrechnet werden
         float zoom = scene.getCamera().getZoom();
         float rotation = scene.getCamera().getRotation();
-        Punkt position = scene.getCamera().getPosition();
+        Point position = scene.getCamera().getPosition();
 
-        Punkt sourcePosition = new Punkt(
+        Point sourcePosition = new Point(
                 position.x + (((float) Math.cos(rotation) * (sourceClick.x - width / 2) - (float) Math.sin(rotation) * (sourceClick.y - height / 2))) / zoom,
                 position.y + (((float) Math.sin(rotation) * (sourceClick.x - width / 2) + (float) Math.cos(rotation) * (sourceClick.y - height / 2))) / zoom
         );
@@ -523,7 +533,7 @@ public class Game {
         mainThread.interrupt();
     }
 
-    public static Point getMousePosition() {
+    public static java.awt.Point getMousePosition() {
         return mousePosition;
     }
 }

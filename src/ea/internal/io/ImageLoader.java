@@ -43,11 +43,11 @@ public class ImageLoader {
     }
 
     /**
-     * Lädt ein Bild und optimiert es für das aktuelle System.
+     * Lädt ein Image und optimiert es für das aktuelle System.
      *
      * @param path Pfad des Bildes.
      *
-     * @return geladenes Bild
+     * @return geladenes Image
      */
     public static BufferedImage load(String path) {
         if (cache.containsKey(path)) {
@@ -63,7 +63,7 @@ public class ImageLoader {
 
             return img;
         } catch (IOException e) {
-            throw new RuntimeException("Das Bild konnte nicht geladen werden: " + path);
+            throw new RuntimeException("Das Image konnte nicht geladen werden: " + path);
         }
     }
 

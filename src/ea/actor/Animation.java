@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.internal.ano.API;
@@ -30,7 +30,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 @API
-public class Animation extends Raum implements FrameUpdateListener {
+public class Animation extends Actor implements FrameUpdateListener {
     private Frame[] frames;
 
     private final int width;
@@ -43,7 +43,7 @@ public class Animation extends Raum implements FrameUpdateListener {
 
     private Animation(Frame[] frames) {
         if (frames.length < 1) {
-            throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
+            throw new RuntimeException("Eine Animation kann nicht mit einem removeAll Frames-Array initialisiert werden.");
         }
 
         for (Frame frame : frames) {
@@ -114,11 +114,11 @@ public class Animation extends Raum implements FrameUpdateListener {
         BufferedImage image = ImageLoader.load(filepath);
 
         if (image.getWidth() % x != 0) {
-            throw new RuntimeException(String.format("Spritesheet hat nicht die richtigen Maße (Breite: %d) um es auf %d Elemente in x-Richtung aufzuteilen.", image.getWidth(), x));
+            throw new RuntimeException(String.format("Spritesheet hat nicht die richtigen Maße (Breite: %d) um es auf %d Elemente in getX-Richtung aufzuteilen.", image.getWidth(), x));
         }
 
         if (image.getHeight() % y != 0) {
-            throw new RuntimeException(String.format("Spritesheet hat nicht die richtigen Maße (Höhe: %d) um es auf %d Elemente in y-Richtung aufzuteilen.", image.getHeight(), y));
+            throw new RuntimeException(String.format("Spritesheet hat nicht die richtigen Maße (Höhe: %d) um es auf %d Elemente in getY-Richtung aufzuteilen.", image.getHeight(), y));
         }
 
         int width = image.getWidth() / x;

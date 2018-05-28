@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.actor;
 
 import ea.internal.ano.API;
 import ea.internal.io.ImageLoader;
@@ -27,23 +27,23 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Ein Bild als grafische Repräsentation einer Bilddatei, die gezeichnet werden kann.
+ * Ein Image als grafische Repräsentation einer Bilddatei, die gezeichnet werden kann.
  *
  * @author Michael Andonie
  */
-public class Bild extends Raum {
+public class Image extends Actor {
     /**
-     * Das BufferedImage, das dieses Bild darstellt.
+     * Das BufferedImage, das dieses Image darstellt.
      */
     private final BufferedImage image;
 
     /**
-     * Der Konstruktor lädt das Bild und erlaubt die Nutung von Spritesheets.
+     * Der Konstruktor lädt das Image und erlaubt die Nutung von Spritesheets.
      *
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
     @API
-    public Bild(String filepath) {
+    public Image(String filepath) {
         this.image = ImageLoader.load(filepath);
     }
 

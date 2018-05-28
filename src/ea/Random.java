@@ -40,7 +40,7 @@ public class Random {
      *
      * @param upperLimit Die höchste Zahl, die im Ergebnis vorkommen kann.
      *
-     * @return Eine Zahl <code>x</code>, wobei <code>0 <= x <= upperLimit</code> gilt. Die
+     * @return Eine Zahl <code>getX</code>, wobei <code>0 <= getX <= upperLimit</code> gilt. Die
      * Wahrscheinlichkeit für alle möglichen Rückgaben ist <i>gleich groß</i>.
      */
     @API

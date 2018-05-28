@@ -17,25 +17,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.raum;
+package ea.actor;
 
-import ea.Punkt;
-import ea.raum.Geometrie;
+import ea.Point;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 
 /**
- * Ein Kreis ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br /> Dies ist mit
- * einem Computer nicht moeglich, daher wird fuer einen Kreis eine ausrechend grosse Anzahl an Ecken
+ * Ein Circle ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br /> Dies ist mit
+ * einem Computer nicht moeglich, daher wird fuer einen Circle eine ausrechend grosse Anzahl an Ecken
  * gewaehlt. Diese ist ueber die Genauigkeit im Konstruktor mitzugeben oder im vereinfachten
  * konstruktor bereits voreingestellt.
  *
  * @author Michael Andonie
  */
 @SuppressWarnings ("serial")
-public class Kreis extends Geometrie {
+public class Circle extends Geometry {
 
     private float durchmesser;
 
@@ -43,17 +42,17 @@ public class Kreis extends Geometrie {
 	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
 	 *
 	 * @param x
-	 * 		Die X-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
+	 * 		Die X-Koordinate der Linken oberen Ecke des den Circle umschreibenden Rechtecks, <b>nicht
 	 * 		die des Mittelpunktes</b>
 	 * @param y
-	 * 		Die Y-Koordinate der Linken oberen Ecke des den Kreis umschreibenden Rechtecks, <b>nicht
+	 * 		Die Y-Koordinate der Linken oberen Ecke des den Circle umschreibenden Rechtecks, <b>nicht
 	 * 		die des Mittelpunktes</b>
-	 * @param durchmesser
+	 * @param diameter
 	 * 		Der Durchmesser des Kreises
 	 */
-	public Kreis (float x, float y, float durchmesser) {
-		super(new Punkt(x,y));
-        this.durchmesser = durchmesser;
+	public Circle(float x, float y, float diameter) {
+		super(new Point(x,y));
+        this.durchmesser = diameter;
 	}
 
 	/**
@@ -61,7 +60,7 @@ public class Kreis extends Geometrie {
 	 *
 	 * @return Der Radius des Kreises
 	 */
-	public float radius () {
+	public float getRadius() {
 		return durchmesser/2;
 	}
 
@@ -80,7 +79,7 @@ public class Kreis extends Geometrie {
     @Override
     public Shape createShape(float pixelProMeter) {
         CircleShape shape = new CircleShape();
-        shape.m_radius = radius()/pixelProMeter;
+        shape.m_radius = getRadius()/pixelProMeter;
         shape.m_p.set(shape.m_radius,shape.m_radius);
         return shape;
     }
