@@ -22,6 +22,8 @@ package ea.example.particles;
 import ea.*;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
+import ea.animation.ValueAnimator;
+import ea.animation.interpolation.ReverseEaseFloat;
 import ea.handle.Physics;
 import ea.keyboard.Key;
 import ea.particle.ParticleEmitter;
@@ -113,6 +115,15 @@ public class Particles extends ea.Scene {
         r4.physics.setType(Physics.Type.STATISCH);
 
         addCollisionListener(this::remove, r3);
+
+        this.animateCamera();
+        this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), ValueAnimator.Mode.REPEATED));
+    }
+
+    private void animateCamera() {
+        this.addFrameUpdateListener(new ValueAnimator<>(400, getCamera()::rotateTo, new ReverseEaseFloat(0, .02f + (float) Math.random() * 0.05f)).onComplete(
+                (value) -> this.addFrameUpdateListener(new ValueAnimator<>(350, getCamera()::rotateTo, new ReverseEaseFloat(0, -.02f + (float) Math.random() * -0.05f)).onComplete((dummy) -> this.animateCamera()))
+        ));
     }
 
     /**
@@ -150,11 +161,11 @@ public class Particles extends ea.Scene {
                 break;
 
             case Key._1: // Zoom Out
-                getCamera().setZoom(getCamera().getZoom() - 0.1f);
+                getCamera().setZoom(getCamera().getZoom() * .9f);
                 break;
 
             case Key._2: // Zoom In
-                getCamera().setZoom(getCamera().getZoom() + 0.1f);
+                getCamera().setZoom(getCamera().getZoom() * 1.1f);
                 break;
         }
     }
