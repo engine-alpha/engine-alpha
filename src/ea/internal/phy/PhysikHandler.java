@@ -240,4 +240,15 @@ public abstract class PhysikHandler {
      */
     @NoExternalUse
     public abstract boolean rotationBlockiert();
+
+    /**
+     * Testet, ob das Objekt unter sich festen Boden hat. Dies ist der Fall, wenn direkt unter dem Objekt ein
+     * passives Objekt liegt.<br />
+     * Diese Methode geht bei <b>unten</b> explizit von "unterhalb der Y-Achse" aus. Ein Objekt hat also Boden sich,
+     * wenn am "unteren" Ende seines Bodies (=höchster Y-Wert) in unmittelbarer Nähe (heuristisch getestet) ein passives
+     * Objekt anliegt.
+     * @return  <code>true</code>, wenn direkt unter dem Objekt ein passives Objekt ist. Sonst <code>false</code>.
+     */
+    @NoExternalUse
+    public abstract boolean testIfGrounded();
 }

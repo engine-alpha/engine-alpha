@@ -10,13 +10,18 @@ import ea.internal.frame.Dispatchable;
 import ea.internal.util.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Manifold;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -170,6 +175,21 @@ public class WorldHandler implements ContactListener {
     }
 
     /**
+     * Überprüft, welcher Actor mit einem bestimmten Body in der World verknüpft ist.
+     * @param body  Der zu testende Body.
+     * @return      Der Actor, zu dem der zu testende Body gehört.
+     * @throws RuntimeException Falls der body nicht zur World gehört.
+     */
+    @NoExternalUse
+    public Actor bodyLookup(Body body) {
+        Actor result = worldMap.get(body);
+        if(result == null) {
+            throw new RuntimeException("Der zu testende Body war nicht Teil der World.");
+        }
+        return result;
+    }
+
+    /**
      * Entfernt alle internen Referenzen auf einen Body und das zugehörige Actor-Objekt.
      *
      * @param body der zu entfernende Body
@@ -299,6 +319,16 @@ public class WorldHandler implements ContactListener {
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
         //Ignore that shit.
         //System.out.println("POST");
+    }
+
+
+    /* On-Request Collision Checkups */
+
+    @NoExternalUse
+    public Fixture[] aabbQuery(AABB aabb) {
+        ArrayList<Fixture> fixtures = new ArrayList<>();
+        world.queryAABB(fixture -> fixtures.add(fixture),aabb);
+        return fixtures.toArray(new Fixture[fixtures.size()]);
     }
 
 

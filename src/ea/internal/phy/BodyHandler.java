@@ -6,6 +6,7 @@ import ea.handle.Physics;
 import ea.Point;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
+import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.MassData;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
@@ -333,6 +334,44 @@ extends PhysikHandler {
         if(physikBodyCheck()) {
             return body.isFixedRotation();
         } return false;
+    }
+
+    private AABB calculateBodyAABB() {
+        AABB bodyBounds = new AABB();
+        bodyBounds.lowerBound.x = bodyBounds.lowerBound.y =  Float.MAX_VALUE;
+        bodyBounds.upperBound.x = bodyBounds.upperBound.y = -Float.MAX_VALUE;
+        Fixture nextFixture = body.m_fixtureList;
+
+        while (nextFixture != null) {
+            //TODO Include chain shapes (more than one child)
+            bodyBounds.combine(bodyBounds, nextFixture.getAABB(0));
+            nextFixture = nextFixture.m_next;
+        }
+        return bodyBounds;
+    }
+
+    @Override
+    public boolean testIfGrounded() {
+        if(this.typ() != Physics.Type.DYNAMIC) {
+            Logger.error("Phyiscs", "Der Steh-Test ist nur definiert für dynamische Objekte.");
+            return false;
+        }
+        AABB bodyBounds = calculateBodyAABB();
+
+        //Test-AABB: Should be a minimal space centered right below the Body
+        AABB testAABB = new AABB();
+        testAABB.upperBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2,
+                bodyBounds.upperBound.y + 0.0001f);
+
+
+
+        Fixture[] groundCandidates = worldHandler.aabbQuery(testAABB);
+        for(Fixture fixture : groundCandidates) {
+            Actor corresponding = worldHandler.bodyLookup(fixture.m_body);
+            if(corresponding.physics.getType() == Physics.Type.STATIC)
+                return true;
+        }
+        return false;
     }
 
     @Override

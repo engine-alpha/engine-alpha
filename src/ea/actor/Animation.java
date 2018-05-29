@@ -21,31 +21,24 @@ package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
+import ea.internal.gra.Frame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 import org.jbox2d.collision.shapes.Shape;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 @API
 public class Animation extends Actor implements FrameUpdateListener {
 
-    private Frame[] frames;
+    private ea.internal.gra.Frame[] frames;
 
     private final int width;
     private final int height;
@@ -53,12 +46,12 @@ public class Animation extends Actor implements FrameUpdateListener {
     private int currentTime;
     private int currentIndex;
 
-    private Animation(Frame[] frames) {
+    private Animation(ea.internal.gra.Frame[] frames) {
         if (frames.length < 1) {
             throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
         }
 
-        for (Frame frame : frames) {
+        for (ea.internal.gra.Frame frame : frames) {
             if (frame.getDuration() < 1) {
                 throw new RuntimeException("Ein Frame muss mindestens eine Millisekunde lang sein.");
             }
@@ -71,6 +64,15 @@ public class Animation extends Actor implements FrameUpdateListener {
 
         this.currentTime = 0;
         this.currentIndex = 0;
+    }
+
+    /**
+     * Gibt die Frames dieser Animation aus.
+     * @return  Die Frames dieser Animation.
+     */
+    @NoExternalUse
+    Frame[] getFrames() {
+        return frames;
     }
 
     /**
@@ -98,7 +100,7 @@ public class Animation extends Actor implements FrameUpdateListener {
     public void onFrameUpdate(int frameDuration) {
         this.currentTime += frameDuration;
 
-        Frame currentFrame = this.frames[currentIndex];
+        ea.internal.gra.Frame currentFrame = this.frames[currentIndex];
 
         while (this.currentTime > currentFrame.getDuration()) {
             this.currentTime -= currentFrame.getDuration();
@@ -109,7 +111,7 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     @Override
     public void render(Graphics2D g) {
-        g.drawImage(this.frames[currentIndex].getImage(), 0, 0, null);
+        this.frames[currentIndex].render(g);
     }
 
     @Override
@@ -136,15 +138,15 @@ public class Animation extends Actor implements FrameUpdateListener {
         int width = image.getWidth() / x;
         int height = image.getHeight() / y;
 
-        java.util.List<Frame> frames = new LinkedList<>();
+        java.util.List<ea.internal.gra.Frame> frames = new LinkedList<>();
 
         for (int j = 0; j < y; j++) {
             for (int i = 0; i < x; i++) {
-                frames.add(new Frame(image.getSubimage(i * width, j * height, width, height), frameDuration));
+                frames.add(new ea.internal.gra.Frame(image.getSubimage(i * width, j * height, width, height), frameDuration));
             }
         }
 
-        return new Animation(frames.toArray(new Frame[frames.size()]));
+        return new Animation(frames.toArray(new ea.internal.gra.Frame[frames.size()]));
     }
 
     @API
@@ -153,13 +155,13 @@ public class Animation extends Actor implements FrameUpdateListener {
             throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
         }
 
-        java.util.List<Frame> frames = new LinkedList<>();
+        java.util.List<ea.internal.gra.Frame> frames = new LinkedList<>();
 
         for (String filepath : filepaths) {
-            frames.add(new Frame(ImageLoader.load(filepath), frameDuration));
+            frames.add(new ea.internal.gra.Frame(ImageLoader.load(filepath), frameDuration));
         }
 
-        return new Animation(frames.toArray(new Frame[frames.size()]));
+        return new Animation(frames.toArray(new ea.internal.gra.Frame[frames.size()]));
     }
 
     @API
@@ -167,31 +169,13 @@ public class Animation extends Actor implements FrameUpdateListener {
         GifDecoder gd = new GifDecoder();
         gd.read(filepath);
         int frameCount = gd.getFrameCount();
-        Frame[] frames = new Frame[frameCount];
+        ea.internal.gra.Frame[] frames = new ea.internal.gra.Frame[frameCount];
         for (int i = 0; i < frameCount; i++) {
             BufferedImage frame = gd.getFrame(i);  // frame i
             int t = gd.getDelay(i);  // display duration of frame in milliseconds
             frames[i] = new Frame(frame, t*1);
         }
         return new Animation(frames);
-    }
-
-    private static class Frame {
-        private BufferedImage image;
-        private int duration;
-
-        public Frame(BufferedImage image, int duration) {
-            this.image = image;
-            this.duration = duration;
-        }
-
-        public BufferedImage getImage() {
-            return image;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
     }
 
     /**

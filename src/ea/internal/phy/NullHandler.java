@@ -219,6 +219,13 @@ public class NullHandler extends PhysikHandler {
         return false;
     }
 
+    @Override
+    public boolean testIfGrounded() {
+        Logger.error("Physics", "Bevor Physics genutzt wird, muss das Objekt (direkt oder indirekt) mit einer Wurzel verbunden " +
+                "sein.");
+        return false;
+    }
+
     /**
      *
      * @param type   Der neue Type.

@@ -196,4 +196,9 @@ public class KnotenHandler extends PhysikHandler {
     public boolean rotationBlockiert() {
         return false;
     }
+
+    @Override
+    public boolean testIfGrounded() {
+        return false;
+    }
 }

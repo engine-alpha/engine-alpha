@@ -7,6 +7,7 @@ import ea.Scene;
 import ea.actor.ActorGroup;
 import ea.actor.Rectangle;
 import ea.actor.Text;
+import ea.example.showcase.jump.DinglyJump;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
 
