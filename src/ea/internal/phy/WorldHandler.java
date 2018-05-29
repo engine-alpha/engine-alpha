@@ -6,13 +6,11 @@ import ea.actor.Actor;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.frame.Dispatchable;
 import ea.internal.util.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -20,7 +18,6 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +50,11 @@ public class WorldHandler implements ContactListener {
      * zugehörigen Actor-Objekte.
      */
     private final HashMap<Body, Actor> worldMap = new HashMap<>();
+
+    /**
+     * Diese Liste enthält die (noch nicht beendeten) Kontakte, die nicht aufgelöst werden sollen.
+     */
+    private final ArrayList<FixturePair> contactsToIgnore = new ArrayList<>();
 
     /**
      * Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA.
@@ -184,7 +186,7 @@ public class WorldHandler implements ContactListener {
     public Actor bodyLookup(Body body) {
         Actor result = worldMap.get(body);
         if(result == null) {
-            throw new RuntimeException("Der zu testende Body war nicht Teil der World.");
+            //throw new RuntimeException("Der zu testende Body war nicht Teil der World.");
         }
         return result;
     }
@@ -217,6 +219,15 @@ public class WorldHandler implements ContactListener {
      */
     private static final float degProRad = (float) ((double) 180 / Math.PI);
 
+
+    /**
+     * Fügt einen Contact der Blacklist hinzu. Kontakte in der Blacklist werden bis zur Trennung nicht aufgelöst.
+     * Der Kontakt wird nach endContact wieder entfernt.
+     */
+    @NoExternalUse
+    public void addContactToBlacklist(Contact contact) {
+        contactsToIgnore.add(new FixturePair(contact.m_fixtureA, contact.m_fixtureB));
+    }
 
     /* ____________ CONTACT LISTENER INTERFACE ____________ */
 
@@ -268,11 +279,11 @@ public class WorldHandler implements ContactListener {
             }
         } else {
             if (b1.hashCode() < b2.hashCode()) {
-                //b1 < b2
+                //f1 < f2
                 lower = b1;
                 higher = b2;
             } else {
-                //b1 > b2
+                //f1 > f2
                 lower = b2;
                 higher = b1;
             }
@@ -289,6 +300,28 @@ public class WorldHandler implements ContactListener {
          */
         generalCheckup(b1, b2, contact, isBegin);
         generalCheckup(b2, b1, contact, isBegin);
+
+        if(!isBegin) {
+            //Contact ist beendet -> Set Enabled and remove from blacklist
+            contact.setEnabled(true);
+            //System.out.println("REMOVE");
+            removeFromBlacklist(contact);
+        }
+    }
+
+    private void removeFromBlacklist(Contact contact) {
+        FixturePair fixturePair = null;
+        for(FixturePair fp : contactsToIgnore) {
+            if (fp.validate(contact.m_fixtureA, contact.m_fixtureB)) {
+                //MATCH
+                fixturePair = fp;
+                break;
+            }
+        }
+        if(fixturePair != null) {
+            contactsToIgnore.remove(fixturePair);
+            //System.out.println("REAL REMOVE");
+        }
     }
 
     @NoExternalUse
@@ -298,31 +331,40 @@ public class WorldHandler implements ContactListener {
             Actor other = worldMap.get(col); // Darf (eigentlich) niemals null sein
             CollisionEvent<Actor> collisionEvent = new CollisionEvent<>(contact, other);
             for (CollisionListener<Actor> kr : list) {
-                Game.enqueueDispatchable(() -> {
-                    if (isBegin) {
-                        kr.onCollision(collisionEvent);
-                    } else {
-                        kr.onCollisionEnd(collisionEvent);
-                    }
-                });
+                if (isBegin) kr.onCollision(collisionEvent);
+                else kr.onCollisionEnd(collisionEvent);
             }
         }
     }
 
     @Override
     public void preSolve(Contact contact, Manifold manifold) {
-        //Ignore that shit.
+        //contact.setEnabled(false);
+        //System.out.println("Blacklist Size: " + contactsToIgnore.size());
+        //System.out.println("Pre-Solve");
+        //if("Ground".equals(contact.m_fixtureA.m_userData) || "Ground".equals(contact.m_fixtureB.m_userData)) {
+        //    System.out.println("GROUND");
+        //    return;
+        //}
+        for(FixturePair bP : contactsToIgnore) {
+
+            if(bP.validate(contact.m_fixtureA, contact.m_fixtureB)) {
+                //MATCH
+                //System.out.println("MATCH");
+                contact.setEnabled(false);
+            }
+        }
+        //System.out.println("Contact is enabled: "+ contact.isEnabled());
         //System.out.println("PRE");
     }
 
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
         //Ignore that shit.
-        //System.out.println("POST");
     }
 
 
-    /* On-Request Collision Checkups */
+    /* ____________ On-Request Collision Checkups ____________ */
 
     @NoExternalUse
     public Fixture[] aabbQuery(AABB aabb) {
@@ -358,9 +400,8 @@ public class WorldHandler implements ContactListener {
         public void checkCollision(Body secondBodyOfActualCollision, Contact contact, boolean isBegin) {
             if (body2 == secondBodyOfActualCollision) {
                 CollisionEvent<E> collisionEvent = new CollisionEvent<>(contact, collidingActor);
-                Game.enqueueDispatchable(isBegin ?
-                        () -> reagierbar.onCollision(collisionEvent) :
-                        () -> reagierbar.onCollisionEnd(collisionEvent));
+                if (isBegin) reagierbar.onCollision(collisionEvent);
+                else reagierbar.onCollisionEnd(collisionEvent);
             }
         }
     }
@@ -426,11 +467,11 @@ public class WorldHandler implements ContactListener {
 
         Body lower, higher;
         if (b1.hashCode() < b2.hashCode()) {
-            //b1 < b2
+            //f1 < f2
             lower = b1;
             higher = b2;
         } else {
-            //b1 > b2
+            //f1 > f2
             lower = b2;
             higher = b1;
         }
@@ -445,6 +486,26 @@ public class WorldHandler implements ContactListener {
             wh1.specificCollisionListeners.put(lower, atKey);
         } else {
             atKey.add(toAdd);
+        }
+    }
+
+    private class FixturePair {
+        private final Fixture f1;
+        private final Fixture f2;
+
+        public FixturePair(Fixture b1, Fixture b2) {
+            this.f1 = b1;
+            this.f2 = b2;
+        }
+
+        /**
+         * Prüft dieses Body-Tupel auf Referenzgleichheit mit einem weiteren.
+         * @param bA    Body A
+         * @param bB    Body B
+         * @return      this == (A|B)
+         */
+        public boolean validate(Fixture bA, Fixture bB) {
+            return (f1 == bA && f2 == bB) || (f1 == bB && f2 == bA);
         }
     }
 }

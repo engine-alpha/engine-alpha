@@ -43,7 +43,7 @@ extends Scene {
                         Game.transitionToScene(parent);
                         break;
                     case Key.D: //Toggle Debug
-                        if(debuggingEnabled) EngineAlpha.setDebug(!EngineAlpha.isDebug());
+                        if(debuggingEnabled) toggleDebug();
                         break;
                 }
             }
@@ -90,6 +90,10 @@ extends Scene {
 
     public void setCameraControlEnabled(boolean cameraControlEnabled) {
         this.cameraControlEnabled = cameraControlEnabled;
+    }
+
+    protected void toggleDebug() {
+        EngineAlpha.setDebug(!EngineAlpha.isDebug());
     }
 
     public void setDebuggingEnabled(boolean debuggingEnabled) {

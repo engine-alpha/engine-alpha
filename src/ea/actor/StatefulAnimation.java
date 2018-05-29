@@ -48,6 +48,9 @@ implements FrameUpdateListener {
 
     private int width=-1, height=-1;
 
+    private boolean flipHorizontal=false;
+    private boolean flipVertical=false;
+
     /**
      * Fügt dieser Animation einen neuen Zustand zu hinzu.
      *
@@ -80,7 +83,8 @@ implements FrameUpdateListener {
 
     /**
      * Setzt den Zustand der Animation. Die Animation des neuen Zustands beginnt in jedem Fall von vorne.
-     * @param stateName Der Name des Zustands, der gesetzt
+     * @param stateName Der Name des Zustands, der gesetzt werden soll.
+     * @see #changeState(String)
      */
     @API
     public void setState(String stateName) {
@@ -94,6 +98,17 @@ implements FrameUpdateListener {
     }
 
     /**
+     * Ändert den Zustand der Animation. Die Animation des neuen Zustands beginnt nur von vorne, wenn der gesetzte
+     * Zustand <b>nicht derselbe ist, wie der aktuelle Zustand</b>.
+     * @param stateName Der Name des Zustands, der gesetzt werden soll.
+     * @see #setState(String)
+     */
+    @API
+    public void changeState(String stateName) {
+        if(!stateName.equals(currentState)) setState(stateName);
+    }
+
+    /**
      * Gibt den aktuellen Zustand der Animation aus.
      * @return  Der aktuelle Zustand der Animation. Dies ist der {@link String}, der beim Hinzufügen der aktuell
      *          aktiven Animation als State-Name angegeben wurde. Ist <code>null</code>, wenn die Animation noch
@@ -101,6 +116,45 @@ implements FrameUpdateListener {
      */
     public String getCurrentState() {
         return currentState;
+    }
+
+    /**
+     * Setzt, ob alle Animationen horizontal gespiegelt dargestellt werden sollen.
+     * Hiermit lassen sich zum Beispiel Bewegungsrichtungen (links/rechts) einfach umsetzen.
+     * @param flipHorizontal    Ob die Animation horizontal geflippt dargestellt werden soll.
+     * @see #setFlipVertical(boolean)
+     */
+    @API
+    public void setFlipHorizontal(boolean flipHorizontal) {
+        this.flipHorizontal = flipHorizontal;
+    }
+
+    /**
+     * Setzt, ob alle Animationen vertikal gespiegelt dargestellt werden sollen.
+     * @param flipVertical    Ob die Animation horizontal geflippt dargestellt werden soll.
+     * @see #setFlipVertical(boolean)
+     */
+    @API
+    public void setFlipVertical(boolean flipVertical) {
+        this.flipVertical = flipVertical;
+    }
+
+    /**
+     * Gibt an, ob das Objekt horizontal gespiegelt ist.
+     * @return  <code>true</code>, wenn das Objekt gerade horizontal gespiegelt ist. Sonst <code>false</code>.
+     */
+    @API
+    public boolean isFlipHorizontal() {
+        return flipHorizontal;
+    }
+
+    /**
+     * Gibt an, ob das Objekt vertikal gespiegelt ist.
+     * @return  <code>true</code>, wenn das Objekt gerade vertikal gespiegelt ist. Sonst <code>false</code>.
+     */
+    @API
+    public boolean isFlipVertical() {
+        return flipVertical;
     }
 
     /**
@@ -158,7 +212,7 @@ implements FrameUpdateListener {
     @NoExternalUse
     @Override
     public void render(Graphics2D g) {
-        currentAnimation[currentIndex].render(g);
+        currentAnimation[currentIndex].render(g, flipHorizontal, flipVertical);
     }
 
     @NoExternalUse

@@ -360,15 +360,17 @@ extends PhysikHandler {
 
         //Test-AABB: Should be a minimal space centered right below the Body
         AABB testAABB = new AABB();
-        testAABB.upperBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2,
-                bodyBounds.upperBound.y + 0.0001f);
+        final float epsilon = 0.0001f;
+        testAABB.lowerBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2-epsilon,bodyBounds.upperBound.y);
+        testAABB.upperBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2+epsilon,
+                bodyBounds.upperBound.y + 2*epsilon);
 
 
 
         Fixture[] groundCandidates = worldHandler.aabbQuery(testAABB);
         for(Fixture fixture : groundCandidates) {
             Actor corresponding = worldHandler.bodyLookup(fixture.m_body);
-            if(corresponding.physics.getType() == Physics.Type.STATIC)
+            if(corresponding != null && corresponding.physics.getType() == Physics.Type.STATIC)
                 return true;
         }
         return false;

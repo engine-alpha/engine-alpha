@@ -61,4 +61,21 @@ public class CollisionEvent<E extends Actor> {
     public E getColliding() {
         return colliding;
     }
+
+    /**
+     * Wenn diese Methode aufgerufen wird, wird diese Kollision <b>nicht von der Physics-Engine</b> aufgelöst, sondern
+     * ignoriert. <br />
+     * Dies lässt sich Nutzen zum Beispiel für:
+     * <ul>
+     *     <li>Feste Plattformen, durch die man von unten "durchspringen" kann, um so von unten auf sie drauf zu
+     *     springen.</li>
+     *     <li>Einbahn-Sperren, die nur auf einer Seite durchlässig sind.</li>
+     *     <li>Gegner, die nicht miteinander kollidieren sollen, sondern nur mit dem Spielcharakter.</li>
+     * </ul>
+     */
+    @API
+    public void ignoreCollision() {
+        contact.setEnabled(false);
+        colliding.getPhysicsHandler().worldHandler().addContactToBlacklist(contact);
+    }
 }

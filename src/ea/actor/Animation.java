@@ -22,6 +22,7 @@ package ea.actor;
 import ea.FrameUpdateListener;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
+import ea.internal.frame.Dispatchable;
 import ea.internal.gra.Frame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
@@ -45,6 +46,14 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     private int currentTime;
     private int currentIndex;
+
+    private boolean flipHorizontal=false;
+    private boolean flipVertical=false;
+
+    /**
+     * Liste aller Dispatchables, die beim Abschließen des Loops ausgeführt werden.
+     */
+    private ArrayList<Runnable> onCompleteListeners = new ArrayList<>();
 
     private Animation(ea.internal.gra.Frame[] frames) {
         if (frames.length < 1) {
@@ -95,7 +104,32 @@ public class Animation extends Actor implements FrameUpdateListener {
         return height;
     }
 
+    /**
+     * Fügt einen Listener hinzu. Die <code>run()</code>-Methode wird immer wieder ausgeführt, sobald der
+     * <b>letzte Zustand der Animation abgeschlossen wurde</b>.
+     * @param listener  Ein Runnable, dessen run-Methode ausgeführt werden soll, sobald die Animation abgeschlossen ist
+     *                  (wird ausgeführt, bevor der Loop von Vorne beginnt).
+     */
+    @API
+    public void addOnCompleteListener(Runnable listener) {
+        onCompleteListeners.add(listener);
+    }
 
+    /**
+     * Wenn diese Methode ausgeführt wird, wird die Animation nach sich selbstständig nach einmaligem Durchlaufen
+     * von der Scene abmelden.
+     */
+    @API
+    public void setOneTimeOnly() {
+        addOnCompleteListener(new Runnable() {
+            @Override
+            public void run() {
+                getScene().remove(Animation.this);
+            }
+        });
+    }
+
+    @NoExternalUse
     @Override
     public void onFrameUpdate(int frameDuration) {
         this.currentTime += frameDuration;
@@ -104,14 +138,21 @@ public class Animation extends Actor implements FrameUpdateListener {
 
         while (this.currentTime > currentFrame.getDuration()) {
             this.currentTime -= currentFrame.getDuration();
-            this.currentIndex = (this.currentIndex + 1) % this.frames.length;
-            currentFrame = this.frames[this.currentIndex];
+            if(this.currentIndex+1 == this.frames.length) {
+                //Round finished --> Inform Listeners
+                for(Runnable listener : onCompleteListeners) {
+                    listener.run();
+                }
+                this.currentIndex = 0;
+            } else {
+                this.currentIndex = this.currentIndex + 1;
+            }
         }
     }
 
     @Override
     public void render(Graphics2D g) {
-        this.frames[currentIndex].render(g);
+        this.frames[currentIndex].render(g, flipHorizontal, flipVertical);
     }
 
     @Override

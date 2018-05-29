@@ -8,9 +8,33 @@ import ea.actor.StatefulAnimation;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 
+
 public class PlayerCharacter
 extends StatefulAnimation
 implements CollisionListener<Actor> {
+
+    private static final float MAX_SPEED = 5000;
+
+    /**
+     * Beschreibt die drei Zustände, die ein Character bezüglich seiner horizontalen Bewegung haben kann.
+     */
+    public enum MovementState {
+        LEFT, RIGHT, IDLE;
+
+        public float getTargetXVelocity() {
+            switch (this) {
+                case LEFT:
+                    return -MAX_SPEED;
+                case RIGHT:
+                    return MAX_SPEED;
+                case IDLE:
+                    return 0;
+            }
+            return Float.NaN;
+        }
+    }
+
+    private MovementState movementState=MovementState.IDLE;
 
     public PlayerCharacter(Scene parent) {
         //Load all Animations in
@@ -35,9 +59,10 @@ implements CollisionListener<Actor> {
         physics.setFriction(0);
         physics.setElasticity(0);
 
-
         parent.add(this);
+        physics.setMass(65);
         addCollisionListener(this);
+
     }
 
     /**
@@ -46,9 +71,17 @@ implements CollisionListener<Actor> {
     public void tryJumping() {
         if(physics.testStanding()) {
             //Figur steht -> Jump
-            physics.applyImpulse(new Vector(0, -1500));
+            physics.applyImpulse(new Vector(0, -2000));
             setState("jumpingUp");
         }
+    }
+
+    public void setMovementState(MovementState state) {
+        this.movementState = state;
+    }
+
+    public MovementState getMovementState() {
+        return this.movementState;
     }
 
     /**
@@ -56,15 +89,46 @@ implements CollisionListener<Actor> {
      */
     public void framewiseUpdate(int frameDuration) {
         Vector velocity = physics.getVelocity();
-        if(getCurrentState().equals("jumpingUp") && velocity.y > 0) {
-            //I begin to fall!
-            setState("midair");
+        //boolean standing = physics.testStanding();
+
+        //kümmere dich um die Horizontale Bewegung
+        float desiredVelocity = movementState.getTargetXVelocity();
+        float velocityChange = desiredVelocity - velocity.x;
+        float impulse = velocityChange;
+        physics.applyForce(new Vector(impulse, 0));
+
+        switch(getCurrentState()) {
+            case "jumpingUp":
+                if ( velocity.y > 0) setState("midair");
+                break;
+            case "idle":
+            case "running":
+            case "walking":
+                //if(standing) {
+                    if ( velocity.y > 0.1f) setState("midair");
+                    else if(Math.abs(velocity.x) > 550f) changeState("running");
+                    else if(Math.abs(velocity.x) > 10f) changeState("walking");
+                    else changeState("idle");
+                //}
+                break;
         }
+
+
+        if(velocity.x > 0) {
+            setFlipHorizontal(false);
+            //if(standing && !getCurrentState().equals("running")) setState("running");
+        } else if (velocity.x < 0) {
+            setFlipHorizontal(true);
+            //if(standing && !getCurrentState().equals("running")) setState("running");
+        }
+
+
     }
 
     @Override
     public void onCollision(CollisionEvent<Actor> collisionEvent) {
-        if(physics.testStanding()) {
+        if(collisionEvent.getColliding() instanceof Enemy) return;
+        if(getCurrentState().equals("falling") && physics.testStanding()) {
             setState("landing");
         }
     }
