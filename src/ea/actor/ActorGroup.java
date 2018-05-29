@@ -44,7 +44,7 @@ public class ActorGroup extends Actor {
     /**
      * Alle Actor-Objekte der Gruppe.
      */
-    private final SortedSet<Actor> actors;
+    private final List<Actor> actors;
 
     /**
      * Die Joints, die diese ActorGroup gerade innehat.
@@ -60,7 +60,7 @@ public class ActorGroup extends Actor {
      * Konstruktor für Objekte der Klasse ActorGroup
      */
     public ActorGroup() {
-        actors = new TreeSet<>();
+        actors =  new ArrayList<>();
         joints = new ArrayList<>();
         super.physicsHandler = new KnotenHandler(this);
     }
@@ -81,18 +81,22 @@ public class ActorGroup extends Actor {
     public void onAttach(Scene scene) {
         super.onAttach(scene);
 
-        synchronized (this.actors) {
-            for (Actor room : this.actors) {
-                room.onAttach(scene);
+        if (this.getScene() != null) {
+            synchronized (this.actors) {
+                for (Actor room : this.actors) {
+                    this.getScene().attach(room);
+                }
             }
         }
     }
 
     @Override
     public void onDetach() {
-        synchronized (this.actors) {
-            for (Actor room : this.actors) {
-                room.onDetach();
+        if (this.getScene() != null) {
+            synchronized (this.actors) {
+                for (Actor room : this.actors) {
+                    this.getScene().detach(room);
+                }
             }
         }
 
@@ -104,14 +108,14 @@ public class ActorGroup extends Actor {
      */
     public void clear() {
         synchronized (this.actors) {
-            Set<Actor> actors = this.actors;
+            Actor[] actors = this.actors.toArray(new Actor[this.actors.size()]);
             this.actors.clear();
 
             // Always detach _after_ removing from the actors,
             // otherwise rendering might result in a NPE.
             for (Actor room : actors) {
                 if (this.getScene() != null) {
-                    room.onDetach();
+                    this.getScene().detach(room);
                 }
             }
         }
@@ -136,7 +140,7 @@ public class ActorGroup extends Actor {
         // Always detach _after_ removing from the actors,
         // otherwise rendering might result in a NPE.
         if (this.getScene() != null) {
-            m.onDetach();
+            this.getScene().detach(m);
         }
     }
 
@@ -182,13 +186,14 @@ public class ActorGroup extends Actor {
         }
 
         if (this.getScene() != null) {
-            m.onAttach(this.getScene());
+            this.getScene().attach(m);
         }
 
         synchronized (this.actors) {
             // Add to actors _after_ calling onAttach,
             // otherwise rendering might ask for position with a NullHandler being set for physics.
             actors.add(m);
+            actors.sort(Comparator.comparingInt(Actor::getZIndex).reversed());
         }
     }
 

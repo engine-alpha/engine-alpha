@@ -48,7 +48,7 @@ import java.awt.geom.AffineTransform;
  * @author Michael Andonie
  * @author Niklas Keller
  */
-public abstract class Actor implements Comparable<Actor> {
+public abstract class Actor implements Attachable {
     /**
      * Szene, zu der der Actor gehört.
      */
@@ -206,6 +206,16 @@ public abstract class Actor implements Comparable<Actor> {
     }
 
     /**
+     * Gibt den Z-Index zurück.
+     *
+     * @return Z-Index des Actors.
+     */
+    @API
+    public int getZIndex() {
+        return this.zIndex;
+    }
+
+    /**
      * Setzt die Sichtbarkeit des Objektes.
      *
      * @param visible Ob das Objekt isVisible sein soll oder nicht.<br /> Ist dieser Wert
@@ -272,19 +282,6 @@ public abstract class Actor implements Comparable<Actor> {
     @NoExternalUse
     public void setBodyType(Physics.Type type) {
         this.physicsHandler = physicsHandler.typ(type);
-    }
-
-    /**
-     * Hilfsmethode für die Sortierung der Räume vectorFromThisTo dem Z-Index. <b><i>Diese Methode sollte nicht
-     * außerhalb der Engine verwendet werden.</i></b>
-     *
-     * @see #zIndex
-     * @see #setZIndex(int)
-     */
-    @Override
-    @NoExternalUse
-    public int compareTo(Actor r) {
-        return Integer.compare(r.zIndex, zIndex);
     }
 
     /**

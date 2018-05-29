@@ -38,7 +38,10 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
 import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scene {
     /**
@@ -66,6 +69,11 @@ public class Scene {
      * Die Liste aller angemeldeten FrameUpdateListener.
      */
     private final Collection<FrameUpdateListener> frameUpdateListeners = new CopyOnWriteArraySet<>();
+
+    /**
+     * Die Liste aller angemeldeten Attachables.
+     */
+    private final Map<Attachable, AtomicInteger> attachables = new ConcurrentHashMap<>();
 
     /**
      * Der Wurzel-ActorGroup. An ihm müssen direkt oder indirekt (über weitere ActorGroup) alle
@@ -159,46 +167,85 @@ public class Scene {
 
     // TODO : Dokumentation für alle ADD-Methoden
 
+    public void attach(Object object) {
+        if (object instanceof Attachable) {
+            if (!attachables.containsKey(object)) {
+                Attachable attachable = (Attachable) object;
+                attachables.put(attachable, new AtomicInteger(1));
+                attachable.onAttach(this);
+            } else {
+                attachables.get(object).incrementAndGet();
+            }
+        }
+    }
+
+    public void detach(Object object) {
+        if (!(object instanceof Attachable) || !attachables.containsKey(object)) {
+            return;
+        }
+
+        int count = attachables.get(object).decrementAndGet();
+
+        if (count == 0) {
+            attachables.remove(object);
+            ((Attachable) object).onDetach(this);
+        }
+    }
+
     @API
     public void addMouseClickListener(MouseClickListener mouseClickListener) {
-        this.mouseClickListeners.add(mouseClickListener);
+        if (this.mouseClickListeners.add(mouseClickListener)) {
+            this.attach(mouseClickListener);
+        }
     }
 
     @API
     public void removeMouseClickListener(MouseClickListener mouseClickListener) {
-        this.mouseClickListeners.remove(mouseClickListener);
+        if (this.mouseClickListeners.remove(mouseClickListener)) {
+            this.detach(mouseClickListener);
+        }
     }
 
     @API
     public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        this.mouseWheelListeners.add(mouseWheelListener);
+        if (this.mouseWheelListeners.add(mouseWheelListener)) {
+            this.attach(mouseWheelListener);
+        }
     }
 
     @API
     public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        this.mouseWheelListeners.remove(mouseWheelListener);
+        if (this.mouseWheelListeners.remove(mouseWheelListener)) {
+            this.detach(mouseWheelListener);
+        }
     }
 
     @API
     public void addKeyListener(KeyListener keyListener) {
-        this.keyListeners.add(keyListener);
+        if (this.keyListeners.add(keyListener)) {
+            this.attach(keyListener);
+        }
     }
 
     @API
     public void removeKeyListener(KeyListener keyListener) {
-        this.keyListeners.remove(keyListener);
+        if (this.keyListeners.remove(keyListener)) {
+            this.detach(keyListener);
+        }
     }
 
     @API
     public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        this.frameUpdateListeners.add(frameUpdateListener);
-        frameUpdateListener.onAttach(this);
+        if (this.frameUpdateListeners.add(frameUpdateListener)) {
+            this.attach(frameUpdateListener);
+        }
     }
 
     @API
     public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        this.frameUpdateListeners.remove(frameUpdateListener);
-        frameUpdateListener.onDetach(this);
+        if (this.frameUpdateListeners.remove(frameUpdateListener)) {
+            this.detach(frameUpdateListener);
+        }
     }
 
     @API
@@ -248,7 +295,7 @@ public class Scene {
 
     @NoExternalUse
     public void onMouseWheelMoveInternal(MouseWheelAction mouseWheelAction) {
-        for(MouseWheelListener listener : mouseWheelListeners) {
+        for (MouseWheelListener listener : mouseWheelListeners) {
             listener.onMouseWheelMove(mouseWheelAction);
         }
     }

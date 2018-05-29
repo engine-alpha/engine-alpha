@@ -25,7 +25,7 @@ import org.jbox2d.collision.shapes.Shape;
 import java.awt.*;
 
 /**
- * Beschreibt ein Rechteck.
+ * Beschreibt ein RechteckTreeSet.
  *
  * @author Michael Andonie
  * @author Niklas Keller
@@ -89,6 +89,6 @@ public class Rectangle extends Geometry {
      */
     @Override
     public Shape createShape(float pixelProMeter) {
-        return berechneBoxShape(pixelProMeter, height, width);
+        return berechneBoxShape(pixelProMeter, width, height);
     }
 }

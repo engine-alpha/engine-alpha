@@ -216,9 +216,9 @@ public class Key {
 			case UNTEN:
 				return "UNTEN";
 			case LINKS:
-				return "LINKS";
+				return "LEFT";
 			case RECHTS:
-				return "RECHTS";
+				return "RIGHT";
 			default:
 				return "INVALID";
 		}
