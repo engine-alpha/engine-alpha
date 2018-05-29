@@ -163,8 +163,9 @@ public abstract class Actor implements Attachable {
      * Diese Methode wird aufgerufen, sobald ein Raumobjekt von einer Szene entfernt wird, also am
      * Wurzelknoten der Szene direkt oder indirekt abgemeldet wurde.
      */
-    @API
-    public void onDetach() {
+    @NoExternalUse
+    @Override
+    public void onDetach(Scene scene) {
         if (!this.attached) {
             throw new IllegalStateException("Das Raumobjekt war bei keiner Szene angemeldet, wurde nun aber von einer entfernt?!");
         }

@@ -91,7 +91,7 @@ public class ActorGroup extends Actor {
     }
 
     @Override
-    public void onDetach() {
+    public void onDetach(Scene scene) {
         if (this.getScene() != null) {
             synchronized (this.actors) {
                 for (Actor room : this.actors) {
@@ -100,7 +100,7 @@ public class ActorGroup extends Actor {
             }
         }
 
-        super.onDetach();
+        super.onDetach(scene);
     }
 
     /**
