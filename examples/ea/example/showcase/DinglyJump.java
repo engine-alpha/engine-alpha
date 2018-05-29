@@ -17,8 +17,8 @@ public class DinglyJump extends ShowcaseDemo {
     public DinglyJump(Scene parent, int width, int height) {
         super(parent);
 
-        Animation test1 = Animation.createFromAnimatedGif(500,
-                "game-assets\\spr_m_traveler_jump_1up_anim.gif");
+        Animation test1 = Animation.createFromAnimatedGif(
+                "game-assets\\spr_m_traveler_run_anim.gif");
         add(test1);
     }
 
