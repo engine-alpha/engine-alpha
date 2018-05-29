@@ -31,9 +31,6 @@ import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
 import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
-import ea.keyboard.KeyListener;
-import ea.mouse.MouseClickListener;
-import ea.mouse.MouseWheelListener;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -142,22 +139,6 @@ public abstract class Actor implements Attachable {
         this.scene = scene;
         this.physicsHandler.update(scene.getWorldHandler());
 
-        if (this instanceof MouseClickListener) {
-            scene.addMouseClickListener((MouseClickListener) this);
-        }
-
-        if (this instanceof KeyListener) {
-            scene.addKeyListener((KeyListener) this);
-        }
-
-        if (this instanceof FrameUpdateListener) {
-            scene.addFrameUpdateListener((FrameUpdateListener) this);
-        }
-
-        if (this instanceof MouseWheelListener) {
-            scene.addMouseWheelListener((MouseWheelListener) this);
-        }
-
         this.attached = true; // Set this after everything is done
     }
 
@@ -174,22 +155,6 @@ public abstract class Actor implements Attachable {
 
         this.physicsHandler.killBody();
         this.physicsHandler = new NullHandler(this);
-
-        if (this instanceof MouseClickListener) {
-            this.scene.removeMouseClickListener((MouseClickListener) this);
-        }
-
-        if (this instanceof KeyListener) {
-            this.scene.removeKeyListener((KeyListener) this);
-        }
-
-        if (this instanceof FrameUpdateListener) {
-            this.scene.removeFrameUpdateListener((FrameUpdateListener) this);
-        }
-
-        if (this instanceof MouseWheelListener) {
-            this.scene.removeMouseWheelListener((MouseWheelListener) this);
-        }
 
         this.scene = null;
     }

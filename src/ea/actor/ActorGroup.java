@@ -20,16 +20,21 @@
 package ea.actor;
 
 import ea.BoundingRechteck;
+import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.KnotenHandler;
+import ea.keyboard.KeyListener;
+import ea.mouse.MouseClickListener;
+import ea.mouse.MouseWheelListener;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.WeldJointDef;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -83,8 +88,9 @@ public class ActorGroup extends Actor {
 
         if (this.getScene() != null) {
             synchronized (this.actors) {
-                for (Actor room : this.actors) {
-                    this.getScene().attach(room);
+                for (Actor actor : this.actors) {
+                    this.getScene().attach(actor);
+                    this.attachListeners(actor);
                 }
             }
         }
@@ -94,8 +100,9 @@ public class ActorGroup extends Actor {
     public void onDetach(Scene scene) {
         if (this.getScene() != null) {
             synchronized (this.actors) {
-                for (Actor room : this.actors) {
-                    this.getScene().detach(room);
+                for (Actor actor : this.actors) {
+                    this.getScene().detach(actor);
+                    this.detachListeners(actor);
                 }
             }
         }
@@ -106,6 +113,7 @@ public class ActorGroup extends Actor {
     /**
      * Löscht alle Actor-Objekte, die an diesem ActorGroup gelagert sind.
      */
+    @API
     public void clear() {
         synchronized (this.actors) {
             Actor[] actors = this.actors.toArray(new Actor[this.actors.size()]);
@@ -113,9 +121,10 @@ public class ActorGroup extends Actor {
 
             // Always detach _after_ removing from the actors,
             // otherwise rendering might result in a NPE.
-            for (Actor room : actors) {
+            for (Actor actor : actors) {
                 if (this.getScene() != null) {
-                    this.getScene().detach(room);
+                    this.getScene().detach(actor);
+                    this.detachListeners(actor);
                 }
             }
         }
@@ -127,12 +136,12 @@ public class ActorGroup extends Actor {
      * /> <b>Achtung!!</b><br /> Sollte <i>Physics</i> benutzt werden:<br /> Diese Methode macht alle
      * abgemeldeten <code>Actor</code>-Objekt fuer die Physics neutral!!!
      *
-     * @param m Das von diesem ActorGroup zu entfernende Actor-Objekt
+     * @param actor Das von diesem ActorGroup zu entfernende Actor-Objekt
      */
     @API
-    public void remove(Actor m) {
+    public void remove(Actor actor) {
         synchronized (this.actors) {
-            if (!this.actors.remove(m)) {
+            if (!this.actors.remove(actor)) {
                 return;
             }
         }
@@ -140,7 +149,8 @@ public class ActorGroup extends Actor {
         // Always detach _after_ removing from the actors,
         // otherwise rendering might result in a NPE.
         if (this.getScene() != null) {
-            this.getScene().detach(m);
+            this.getScene().detach(actor);
+            this.detachListeners(actor);
         }
     }
 
@@ -187,6 +197,7 @@ public class ActorGroup extends Actor {
 
         if (this.getScene() != null) {
             this.getScene().attach(m);
+            this.attachListeners(m);
         }
 
         synchronized (this.actors) {
@@ -194,6 +205,42 @@ public class ActorGroup extends Actor {
             // otherwise rendering might ask for position with a NullHandler being set for physics.
             actors.add(m);
             actors.sort(Comparator.comparingInt(Actor::getZIndex).reversed());
+        }
+    }
+
+    private void attachListeners(Actor actor) {
+        if (actor instanceof MouseClickListener) {
+            this.getScene().addMouseClickListener((MouseClickListener) actor);
+        }
+
+        if (actor instanceof KeyListener) {
+            this.getScene().addKeyListener((KeyListener) actor);
+        }
+
+        if (actor instanceof FrameUpdateListener) {
+            this.getScene().addFrameUpdateListener((FrameUpdateListener) actor);
+        }
+
+        if (actor instanceof MouseWheelListener) {
+            this.getScene().addMouseWheelListener((MouseWheelListener) actor);
+        }
+    }
+
+    private void detachListeners(Actor actor) {
+        if (actor instanceof MouseClickListener) {
+            this.getScene().removeMouseClickListener((MouseClickListener) actor);
+        }
+
+        if (actor instanceof KeyListener) {
+            this.getScene().removeKeyListener((KeyListener) actor);
+        }
+
+        if (actor instanceof FrameUpdateListener) {
+            this.getScene().removeFrameUpdateListener((FrameUpdateListener) actor);
+        }
+
+        if (actor instanceof MouseWheelListener) {
+            this.getScene().removeMouseWheelListener((MouseWheelListener) actor);
         }
     }
 
