@@ -148,7 +148,7 @@ public class ForceKlickEnvironment
 
         //Maus erstellen, Listener Anmelden.
         addMouseClickListener(this);
-        addCollisionListener(this, attack);
+        attack.addCollisionListener(this);
 
         addFrameUpdateListener(this);
         addKeyListener(new KeyListener() {

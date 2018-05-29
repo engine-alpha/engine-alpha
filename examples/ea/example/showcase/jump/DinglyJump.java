@@ -26,8 +26,7 @@ implements KeyListener, FrameUpdateListener {
     public DinglyJump(Scene parent, int width, int height) {
         super(parent);
 
-        pc = new PlayerCharacter();
-        add(pc);
+        pc = new PlayerCharacter(this);
         pc.physics.setType(Physics.Type.DYNAMIC);
         pc.physics.setRotationLocked(true);
 
@@ -42,6 +41,8 @@ implements KeyListener, FrameUpdateListener {
 
         addKeyListener(this);
         addFrameUpdateListener(this);
+
+        setDebuggingEnabled(false);
     }
 
 

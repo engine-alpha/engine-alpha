@@ -106,7 +106,7 @@ implements CollisionListener<Actor>, KeyListener {
         boden.physics.setType(Physics.Type.STATIC);
 
         //Kollision zwischen Ball und Boden beobachten (Code ist uns egal, wir kennen nur einen Kollisionsfall)
-        addCollisionListener(this, ball, boden);
+        ball.addCollisionListener(this, boden);
     }
 
     /**

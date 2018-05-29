@@ -252,7 +252,7 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
                     isInAttackRange[key] = false;
                 }
             };
-            addCollisionListener(kr, attack, testObjects[i]);
+            attack.addCollisionListener(kr, testObjects[i]);
         }
 
         //Alle Listener-Funktionen aktivieren.

@@ -22,6 +22,8 @@ extends Scene {
     private boolean zoomEnabled = true;
     //Ob Kamerasteuerung per Pfeiltasten aktiviert ist.
     private boolean cameraControlEnabled = true;
+    //Ob Debug-Toggling enabled ist
+    private boolean debuggingEnabled = true;
 
     /**
      * Die Scene, zu der man zurückkehrt.
@@ -41,7 +43,7 @@ extends Scene {
                         Game.transitionToScene(parent);
                         break;
                     case Key.D: //Toggle Debug
-                        EngineAlpha.setDebug(!EngineAlpha.isDebug());
+                        if(debuggingEnabled) EngineAlpha.setDebug(!EngineAlpha.isDebug());
                         break;
                 }
             }
@@ -88,5 +90,9 @@ extends Scene {
 
     public void setCameraControlEnabled(boolean cameraControlEnabled) {
         this.cameraControlEnabled = cameraControlEnabled;
+    }
+
+    public void setDebuggingEnabled(boolean debuggingEnabled) {
+        this.debuggingEnabled = debuggingEnabled;
     }
 }

@@ -248,15 +248,7 @@ public class Scene {
         }
     }
 
-    @API
-    public <E extends Actor> void addCollisionListener(CollisionListener<E> listener, Actor actor, E collider) {
-        WorldHandler.spezifischesKollisionsReagierbarEingliedern(listener, actor, collider);
-    }
 
-    @API
-    public void addCollisionListener(CollisionListener<Actor> listener, Actor actor) {
-        WorldHandler.allgemeinesKollisionsReagierbarEingliedern(listener, actor);
-    }
 
     @NoExternalUse
     public final void onFrameUpdateInternal(int frameDuration) {

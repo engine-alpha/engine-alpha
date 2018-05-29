@@ -94,6 +94,16 @@ implements FrameUpdateListener {
     }
 
     /**
+     * Gibt den aktuellen Zustand der Animation aus.
+     * @return  Der aktuelle Zustand der Animation. Dies ist der {@link String}, der beim Hinzufügen der aktuell
+     *          aktiven Animation als State-Name angegeben wurde. Ist <code>null</code>, wenn die Animation noch
+     *          keine Zustände hat.
+     */
+    public String getCurrentState() {
+        return currentState;
+    }
+
+    /**
      * Setzt eine neue Übergangsregel für die Zustände der Animation.<br />
      * Jedes Mal, wenn die Animation vom <b>Von-Zustand</b> einmal durchlaufen wurde, geht die Animation automatisch
      * in den <b>Ziel-Zustand</b> über. <br />

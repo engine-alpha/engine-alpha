@@ -21,6 +21,7 @@ package ea.actor;
 
 import ea.*;
 import ea.Point;
+import ea.collision.CollisionListener;
 import ea.handle.Physics;
 import ea.handle.Position;
 import ea.internal.ano.API;
@@ -28,6 +29,7 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.BodyCreateStrategy;
 import ea.internal.phy.NullHandler;
 import ea.internal.phy.PhysikHandler;
+import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseClickListener;
@@ -427,6 +429,36 @@ public abstract class Actor implements Attachable {
         }, 4);
         shape.m_centroid.set(relativeCenter);
         return shape;
+    }
+
+    /* _________________________ Listeners _________________________ */
+
+    /**
+     * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen zwischen diesem Actor und dem
+     * Actor <code>collider</code> reagiert.
+     * @param listener  Der Listener, der bei Kollisionen zwischen dem <b>ausführenden Actor</b> und
+     *                  <code>collider</code> informiert werden soll.
+     * @param collider  Ein weiteres Actor-Objekt.
+     * @param <E>       Typ-Parameter. SOllte im Regelfall exakt die Klasse von <code>collider</code> sein.
+     *                  Dies ermöglicht die Nutzung von spezifischen Methoden aus spezialisierteren Klassen
+     *                  der Actor-Hierarchie.
+     * @see #addCollisionListener(CollisionListener)
+     */
+    @API
+    public <E extends Actor> void addCollisionListener(CollisionListener<E> listener, E collider) {
+        WorldHandler.spezifischesKollisionsReagierbarEingliedern(listener, this, collider);
+    }
+
+    /**
+     * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen reagiert, die dieser Actor mit
+     * seiner Umwelt erlebt.
+     * @param listener  Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b>
+     *                  mit allen anderen Objekten der Scene erlebt.
+     * @see #addCollisionListener(CollisionListener, Actor)
+     */
+    @API
+    public void addCollisionListener(CollisionListener<Actor> listener) {
+        WorldHandler.allgemeinesKollisionsReagierbarEingliedern(listener, this);
     }
 
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
