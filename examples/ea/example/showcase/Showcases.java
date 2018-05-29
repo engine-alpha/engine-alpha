@@ -197,6 +197,12 @@ extends Scene {
                 return new MarbleDemo(mainscene, WIDTH, HEIGHT);
             }
         }, "Murmel-Demo");
+        mainscene.addScene(new SceneCreator(){
+            @Override
+            public Scene createScene() {
+                return new DinglyJump(mainscene, WIDTH, HEIGHT);
+            }
+        }, "Dingly Jump");
 
         Game.setExitOnEsc(false);
         Game.start(WIDTH, HEIGHT, mainscene);

@@ -144,6 +144,7 @@ public class Text extends Actor {
     @API
     public void setFont(String fontName) {
         this.font = FontLoader.loadByName(fontName);
+        aktualisieren();
     }
 
     /**
@@ -230,7 +231,7 @@ public class Text extends Actor {
 
         g.setColor(color);
         g.setFont(font);
-        g.drawString(content, (int) (x), (int) size);
+        g.drawString(content, x, size);
     }
 
     /**

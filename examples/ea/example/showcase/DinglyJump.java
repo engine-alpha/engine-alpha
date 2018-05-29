@@ -2,6 +2,7 @@ package ea.example.showcase;
 
 
 import ea.Scene;
+import ea.actor.Animation;
 
 /**
  * Ein einfaches Demo-Spiel zur Demonstration der Engine 4.0: Ein <i>Doodle Jump</i>-Klon.
@@ -13,8 +14,12 @@ public class DinglyJump extends ShowcaseDemo {
 
 
 
-    public DinglyJump(Scene parent) {
+    public DinglyJump(Scene parent, int width, int height) {
         super(parent);
+
+        Animation test1 = Animation.createFromAnimatedGif(500,
+                "game-assets\\spr_m_traveler_jump_1up_anim.gif");
+        add(test1);
     }
 
 
