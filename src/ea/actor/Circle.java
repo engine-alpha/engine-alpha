@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,60 +19,65 @@
 
 package ea.actor;
 
-import ea.Point;
-import org.jbox2d.collision.shapes.*;
+import ea.internal.ano.API;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 
 /**
- * Ein Circle ist ein regelmaessiges n-Eck, dessen Eckenzahl gegen unendlich geht.<br /> Dies ist mit
- * einem Computer nicht moeglich, daher wird fuer einen Circle eine ausrechend grosse Anzahl an Ecken
- * gewaehlt. Diese ist ueber die Genauigkeit im Konstruktor mitzugeben oder im vereinfachten
- * konstruktor bereits voreingestellt.
+ * Beschreibt einen Kreis.
  *
  * @author Michael Andonie
+ * @author Niklas Keller
  */
-@SuppressWarnings ("serial")
+@SuppressWarnings ( "serial" )
 public class Circle extends Geometry {
-
-    private float durchmesser;
-
-	/**
-	 * Alternativkonstruktor mit vorgefertigter Genauigkeit
-	 * @param diameter
-	 * 		Der Durchmesser des Kreises
-	 */
-	public Circle(float diameter) {
-        this.durchmesser = diameter;
-	}
-
-	/**
-	 * Gibt den Radius des Kreises aus
-	 *
-	 * @return Der Radius des Kreises
-	 */
-	public float getRadius() {
-		return durchmesser/2;
-	}
+    private float diameter;
+    private int diameterInt;
 
     /**
-     * {@inheritDoc}
+     * Konstruktor.
+     *
+     * @param diameter Durchmesser des Kreises
      */
-    @Override
-    public void render(Graphics2D g) {
-        g.setColor(getColor());
-        g.fillOval(0, 0, Math.round(durchmesser), Math.round(durchmesser));
+    public Circle(float diameter) {
+        this.diameter = diameter;
+        this.diameterInt = Math.round(diameter);
     }
 
     /**
-     * {@inheritDoc}
+     * Gibt den Durchmesser des Kreises aus.
+     *
+     * @return Durchmesser des Kreises.
      */
+    @API
+    public float getDiameter() {
+        return diameter;
+    }
+
+    /**
+     * Gibt den Radius des Kreises aus.
+     *
+     * @return Radius des Kreises.
+     */
+    @API
+    public float getRadius() {
+        return diameter / 2;
+    }
+
     @Override
-    public Shape createShape(float pixelProMeter) {
+    public void render(Graphics2D g) {
+        g.setColor(getColor());
+        g.fillOval(0, 0, this.diameterInt, this.diameterInt);
+    }
+
+    @Override
+    public Shape createShape(float pixelPerMeter) {
         CircleShape shape = new CircleShape();
-        shape.m_radius = getRadius()/pixelProMeter;
-        shape.m_p.set(shape.m_radius,shape.m_radius);
+        shape.m_radius = getRadius() / pixelPerMeter;
+        shape.m_p.set(shape.m_radius, shape.m_radius);
+
         return shape;
     }
 }

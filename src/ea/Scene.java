@@ -20,6 +20,7 @@
 package ea;
 
 import ea.actor.Actor;
+import ea.actor.ActorGroup;
 import ea.collision.CollisionListener;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
@@ -27,7 +28,6 @@ import ea.internal.phy.WorldHandler;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
-import ea.actor.ActorGroup;
 import ea.mouse.MouseWheelAction;
 import ea.mouse.MouseWheelListener;
 import org.jbox2d.common.Vec2;
@@ -38,9 +38,10 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scene {
     /**
@@ -70,9 +71,9 @@ public class Scene {
     private final Collection<FrameUpdateListener> frameUpdateListeners = new CopyOnWriteArraySet<>();
 
     /**
-     * Die Liste aller angemeldeten PeriodicTask.
+     * Die Liste aller angemeldeten Attachables.
      */
-    private final Set<PeriodicTask> tickers = new HashSet<>();
+    private final Map<Attachable, AtomicInteger> attachables = new ConcurrentHashMap<>();
 
     /**
      * Der Wurzel-ActorGroup. An ihm müssen direkt oder indirekt (über weitere ActorGroup) alle
@@ -164,40 +165,87 @@ public class Scene {
         }
     }
 
-    //TODO : Dokumentation für alle ADD-Methoden
+    // TODO : Dokumentation für alle ADD-Methoden
 
+    public void attach(Object object) {
+        if (object instanceof Attachable) {
+            if (!attachables.containsKey(object)) {
+                Attachable attachable = (Attachable) object;
+                attachables.put(attachable, new AtomicInteger(1));
+                attachable.onAttach(this);
+            } else {
+                attachables.get(object).incrementAndGet();
+            }
+        }
+    }
+
+    public void detach(Object object) {
+        if (!(object instanceof Attachable) || !attachables.containsKey(object)) {
+            return;
+        }
+
+        int count = attachables.get(object).decrementAndGet();
+
+        if (count == 0) {
+            attachables.remove(object);
+            ((Attachable) object).onDetach(this);
+        }
+    }
+
+    @API
     public void addMouseClickListener(MouseClickListener mouseClickListener) {
-        this.mouseClickListeners.add(mouseClickListener);
+        if (this.mouseClickListeners.add(mouseClickListener)) {
+            this.attach(mouseClickListener);
+        }
     }
 
+    @API
     public void removeMouseClickListener(MouseClickListener mouseClickListener) {
-        this.mouseClickListeners.remove(mouseClickListener);
+        if (this.mouseClickListeners.remove(mouseClickListener)) {
+            this.detach(mouseClickListener);
+        }
     }
 
+    @API
     public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        this.mouseWheelListeners.add(mouseWheelListener);
+        if (this.mouseWheelListeners.add(mouseWheelListener)) {
+            this.attach(mouseWheelListener);
+        }
     }
 
+    @API
     public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        this.mouseWheelListeners.remove(mouseWheelListener);
+        if (this.mouseWheelListeners.remove(mouseWheelListener)) {
+            this.detach(mouseWheelListener);
+        }
     }
 
+    @API
     public void addKeyListener(KeyListener keyListener) {
-        this.keyListeners.add(keyListener);
+        if (this.keyListeners.add(keyListener)) {
+            this.attach(keyListener);
+        }
     }
 
+    @API
     public void removeKeyListener(KeyListener keyListener) {
-        this.keyListeners.remove(keyListener);
+        if (this.keyListeners.remove(keyListener)) {
+            this.detach(keyListener);
+        }
     }
 
+    @API
     public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        this.frameUpdateListeners.add(frameUpdateListener);
-        frameUpdateListener.onAttach(this);
+        if (this.frameUpdateListeners.add(frameUpdateListener)) {
+            this.attach(frameUpdateListener);
+        }
     }
 
+    @API
     public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        this.frameUpdateListeners.remove(frameUpdateListener);
-        frameUpdateListener.onDetach(this);
+        if (this.frameUpdateListeners.remove(frameUpdateListener)) {
+            this.detach(frameUpdateListener);
+        }
     }
 
     @API
@@ -210,39 +258,44 @@ public class Scene {
         WorldHandler.allgemeinesKollisionsReagierbarEingliedern(listener, actor);
     }
 
-
+    @NoExternalUse
     public final void onFrameUpdateInternal(int frameDuration) {
         for (FrameUpdateListener listener : this.frameUpdateListeners) {
             listener.onFrameUpdate(frameDuration);
         }
     }
 
+    @NoExternalUse
     public void onKeyDownInternal(int key) {
         for (KeyListener listener : keyListeners) {
             listener.onKeyDown(key);
         }
     }
 
+    @NoExternalUse
     public void onKeyUpInternal(int key) {
         for (KeyListener listener : keyListeners) {
             listener.onKeyUp(key);
         }
     }
 
+    @NoExternalUse
     public void onMouseDownInternal(Point position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseDown(position, button);
         }
     }
 
+    @NoExternalUse
     public void onMouseUpInternal(Point position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseUp(position, button);
         }
     }
 
+    @NoExternalUse
     public void onMouseWheelMoveInternal(MouseWheelAction mouseWheelAction) {
-        for(MouseWheelListener listener : mouseWheelListeners) {
+        for (MouseWheelListener listener : mouseWheelListeners) {
             listener.onMouseWheelMove(mouseWheelAction);
         }
     }
@@ -257,9 +310,12 @@ public class Scene {
         float mx = mouse.x;
         float my = mouse.y;
 
+        float sin = (float) Math.sin(rotation);
+        float cos = (float) Math.cos(rotation);
+
         return new Point(
-                position.x + (((float) Math.cos(rotation) * mx - (float) Math.sin(rotation) * my)) / camera.getZoom(),
-                position.y + (((float) Math.sin(rotation) * mx + (float) Math.cos(rotation) * my)) / camera.getZoom()
+                position.x + ((cos * mx - sin * my)) / camera.getZoom(),
+                position.y + ((sin * mx + cos * my)) / camera.getZoom()
         );
     }
 }

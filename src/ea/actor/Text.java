@@ -19,18 +19,12 @@
 
 package ea.actor;
 
-import ea.Point;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.util.Logger;
+import ea.internal.io.FontLoader;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
@@ -40,60 +34,24 @@ import java.util.ArrayList;
  * TODO: Allow Custom Colors
  *
  * @author Michael Andonie
+ * @author Niklas Keller
  */
 public class Text extends Actor {
     /**
-     * Alle möglichen Fontnamen des Systems, auf dem man sich gerade befindet.<br /> Hiernach werden
-     * Überprüfungen gemacht, ob die gewünschte Schriftart auch auf dem hiesigen System vorhanden
-     * ist.
-     */
-    public static final String[] fontNamen;
-
-    /**
-     * Ein Feld aller existenten Fonts, die im Hauptprojektordner gespeichert sind.<br /> Macht das
-     * interne verwenden dieser Fonts moeglich, ohne das Vorhandensein der Fonts in den
-     * Computerressourcen selber zur Voraussetzung zu haben.
-     */
-    private static Font[] eigene;
-
-    static {
-        ArrayList<File> alleFonts = new ArrayList<>();
-        fontsEinbauen(alleFonts, new File(System.getProperty("user.dir")));
-        File[] unter = alleFonts.toArray(new File[alleFonts.size()]);
-        eigene = new Font[unter.length];
-
-        for (int i = 0; i < unter.length; i++) {
-            try {
-                FileInputStream s = new FileInputStream(unter[i]);
-                eigene[i] = Font.createFont(Font.TRUETYPE_FONT, s);
-                s.close();
-            } catch (FileNotFoundException e) {
-                Logger.error("Text/Fonts", "Interner Lesefehler. Dies hätte unter keinen Umständen passieren dürfen.");
-            } catch (FontFormatException e) {
-                Logger.error("Text/Fonts", "Das TrueType-Font-Format einer Datei (" + unter[i].getPath() + ") war nicht einlesbar!");
-            } catch (IOException e) {
-                Logger.error("Text/Fonts", "Lesefehler beim Laden der eigenen Fonts! Zugriffsrechte überprüfen.");
-            }
-        }
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        fontNamen = ge.getAvailableFontFamilyNames();
-    }
-
-    /**
      * Die Schriftgröße des Textes
      */
-    protected int groesse;
+    protected int size;
 
     /**
      * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br /> Dies wird dargestellt als
      * int.Wert:<br /> 0: Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv
      */
-    protected int schriftart;
+    protected int fontStyle;
 
     /**
-     * Der Wert des Textes.
+     * Der Wert des Textes
      */
-    protected String inhalt;
+    protected String content;
 
     /**
      * Der Font der Darstellung
@@ -108,7 +66,7 @@ public class Text extends Actor {
     /**
      * Textanker: links, mittig oder rechts
      */
-    private Anchor anchor = Anchor.LINKS;
+    private Anchor anchor = Anchor.LEFT;
 
     /**
      * Referenz auf die jüngsten Font-Metriken, die für die Berechnung der Textmaße verwendet
@@ -134,16 +92,15 @@ public class Text extends Actor {
      */
     @API
     public Text(String content, String fontName, int size, int type) {
-        this.inhalt = content;
-        this.groesse = size;
+        this.content = content;
+        this.size = size;
 
         if (type >= 0 && type <= 3) {
-            this.schriftart = type;
+            this.fontStyle = type;
         } else {
-            this.schriftart = 0;
+            this.fontStyle = 0;
         }
 
-        //TODO auskommentieren rückgängig machen
         setFont(fontName);
     }
 
@@ -166,7 +123,7 @@ public class Text extends Actor {
      */
     @API
     public Text(String content, int size) {
-        this(content, "SansSerif", size, 0);
+        this(content, Font.SANS_SERIF, size, 0);
     }
 
     /**
@@ -180,112 +137,13 @@ public class Text extends Actor {
     }
 
     /**
-     * Prüft, ob ein Font auf diesem Computer existiert.
+     * Setzt einen neuen Font für den Text.
      *
-     * @param fontName Der Name des zu ueberpruefenden Fonts
-     *
-     * @return <code>true</code>, falls der Font auf dem System existiert, sonst <code>false</code>
-     */
-    @API
-    public static boolean fontExists(String fontName) {
-        for (String s : fontNamen) {
-            if (s.equals(fontName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Setzt einen neuen Font fuer den Text
-     *
-     * @param fontName Der Name des neuen Fonts fuer den Text
+     * @param fontName Name des neuen Fonts für den Text
      */
     @API
     public void setFont(String fontName) {
-        Font base = null;
-        for (int i = 0; i < eigene.length; i++) {
-            if (eigene[i].getName().equals(fontName)) {
-                base = eigene[i];
-                break;
-            }
-        }
-        if (base != null) {
-            this.font = base.deriveFont(schriftart, groesse);
-        } else {
-            if (!fontExists(fontName)) {
-                fontName = "SansSerif";
-                Logger.error("Text/Fonts", "Achtung! Die gewuenschte Schriftart existiert nicht im Font-Verzeichnis dieses PC! " + "Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
-            }
-            this.font = new Font(fontName, schriftart, groesse);
-        }
-    }
-
-    private static void fontsEinbauen(final ArrayList<File> liste, File akt) {
-        File[] files = akt.listFiles();
-
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].equals(akt)) {
-                    Logger.error("Text/Fonts", "Das Sub-Directory war das Directory selbst. Das darf nicht passieren!");
-                    continue;
-                }
-                if (files[i].isDirectory()) {
-                    fontsEinbauen(liste, files[i]);
-                }
-                if (files[i].getName().toLowerCase().endsWith(".ttf")) {
-                    liste.add(files[i]);
-                }
-            }
-        }
-    }
-
-    /**
-     * TODO: Dokumentation
-     */
-    public static Font holeFont(String fontName) {
-        Font base = null;
-        for (int i = 0; i < eigene.length; i++) {
-            if (eigene[i].getName().equals(fontName)) {
-                base = eigene[i];
-                break;
-            }
-        }
-        if (base != null) {
-            return base;
-        } else {
-            if (!fontExists(fontName)) {
-                fontName = "SansSerif";
-                Logger.error("Text/Fonts", "Achtung! Die gewuenschte Schriftart existiert weder als geladene Sonderdatei" +
-                        " noch im Font-Verzeichnis dieses PC! Wurde der Name falsch geschrieben? Oder existiert der Font nicht?");
-            }
-            return new Font(fontName, 0, 12);
-        }
-    }
-
-    /**
-     * Sehr wichtige Methode!<br /> Diese Methode liefert als Protokoll an die Konsole alle Namen,
-     * mit denen die aus dem Projektordner geladenen ".ttf"-Fontdateien gewaehlt werden koennen.<br
-     * /> Diese Namen werden als <code>String</code>-Argument erwartet, wenn die eigens eingebauten
-     * Fontarten verwendet werden sollen.<br /> Der Aufruf dieser Methode wird <b>UMGEHEND</b>
-     * empfohlen, vectorFromThisTo dem alle zu verwendenden Arten im Projektordner liegen, denn nur unter dem an
-     * die Konsole projezierten Namen <b>koennen diese ueberhaupt verwendet werden</b>!!<br /> Daher
-     * dient diese Methode der Praevention von Verwirrung, wegen "nicht darstellbarer" Fonts.
-     */
-    public static void geladeneSchriftartenAusgeben() {
-        Logger.info("Text/Fonts", "Protokoll aller aus dem Projektordner geladener Fontdateien");
-
-        if (eigene.length == 0) {
-            Logger.info("Text/Fonts", "Es wurden keine \".ttf\"-Dateien im Projektordner gefunden");
-        } else {
-            Logger.info("Text/Fonts", "Es wurden " + eigene.length + " \".ttf\"-Dateien im Projektordner gefunden.");
-            Logger.info("Text/Fonts", "Diese sind unter folgenden Namen abrufbar:");
-
-            for (Font font : eigene) {
-                Logger.info("Text/Fonts", font.getName());
-            }
-        }
+        this.font = FontLoader.loadByName(fontName);
     }
 
     /**
@@ -295,7 +153,7 @@ public class Text extends Actor {
      */
     @API
     public void setContent(String content) {
-        this.inhalt = content;
+        this.content = content;
     }
 
     /**
@@ -307,7 +165,7 @@ public class Text extends Actor {
      */
     public void setStyle(int style) {
         if (style >= 0 && style <= 3) {
-            schriftart = style;
+            fontStyle = style;
             aktualisieren();
         }
     }
@@ -317,7 +175,7 @@ public class Text extends Actor {
      */
     @NoExternalUse
     private void aktualisieren() {
-        this.font = this.font.deriveFont(schriftart, groesse);
+        this.font = this.font.deriveFont(fontStyle, size);
     }
 
     /**
@@ -337,7 +195,7 @@ public class Text extends Actor {
      */
     @API
     public void setSize(int size) {
-        this.groesse = size;
+        this.size = size;
         aktualisieren();
     }
 
@@ -350,7 +208,7 @@ public class Text extends Actor {
      */
     @API
     public int getSize() {
-        return groesse;
+        return size;
     }
 
     /**
@@ -364,15 +222,15 @@ public class Text extends Actor {
 
         int x = 0;
 
-        if (anchor == Anchor.MITTE) {
-            x = -fontMetrics.stringWidth(inhalt) / 2;
-        } else if (anchor == Anchor.RECHTS) {
-            x = -fontMetrics.stringWidth(inhalt);
+        if (anchor == Anchor.CENTER) {
+            x = -fontMetrics.stringWidth(content) / 2;
+        } else if (anchor == Anchor.RIGHT) {
+            x = -fontMetrics.stringWidth(content);
         }
 
         g.setColor(color);
         g.setFont(font);
-        g.drawString(inhalt, (int) (x), (int) groesse);
+        g.drawString(content, (int) (x), (int) size);
     }
 
     /**
@@ -390,9 +248,9 @@ public class Text extends Actor {
 
     /**
      * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur getX-Koordinate befindet.
-     * Möglich sind: <li>{@code Text.Anchor.LINKS},</li> <li>{@code Text.Anchor.MITTE},</li>
-     * <li>{@code Text.Anchor.RECHTS}.</li> <br> <b>Hinweis</b>: {@code null} wird wie {@code
-     * Anchor.LINKS} behandelt!
+     * Möglich sind: <li>{@code Text.Anchor.LEFT},</li> <li>{@code Text.Anchor.CENTER},</li>
+     * <li>{@code Text.Anchor.RIGHT}.</li> <br> <b>Hinweis</b>: {@code null} wird wie {@code
+     * Anchor.LEFT} behandelt!
      *
      * @param anchor neuer Anchor
      *
@@ -411,18 +269,18 @@ public class Text extends Actor {
             fontMetrics = ea.util.FontMetrics.get(font);
         }
 
-        return berechneBoxShape(pixelProMeter, fontMetrics.stringWidth(inhalt), fontMetrics.getHeight());
+        return berechneBoxShape(pixelProMeter, fontMetrics.stringWidth(content), fontMetrics.getHeight());
     }
 
     /**
      * Ein Textanker beschreibt, wo sich der Text relativ zu seiner getX-Koordinate befindet. Möglich
-     * sind: <li>{@code Anchor.LINKS},</li> <li>{@code Anchor.MITTE},</li> <li>{@code
-     * Anchor.RECHTS}.</li>
+     * sind: <li>{@code Anchor.LEFT},</li> <li>{@code Anchor.CENTER},</li> <li>{@code
+     * Anchor.RIGHT}.</li>
      *
      * @see #setAnchor(Anchor)
      * @see #getAnchor()
      */
     public enum Anchor {
-        LINKS, MITTE, RECHTS
+        LEFT, CENTER, RIGHT
     }
 }

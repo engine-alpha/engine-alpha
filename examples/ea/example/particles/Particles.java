@@ -26,11 +26,12 @@ import ea.animation.ValueAnimator;
 import ea.animation.interpolation.ReverseEaseFloat;
 import ea.handle.Physics;
 import ea.keyboard.Key;
+import ea.keyboard.KeyListener;
 import ea.particle.ParticleEmitter;
 
 import java.awt.*;
 
-public class Particles extends ea.Scene {
+public class Particles extends ea.Scene implements KeyListener {
     public static final int WIDTH = 800, HEIGHT = 600;
 
     public static void main(String[] args) {
@@ -44,22 +45,26 @@ public class Particles extends ea.Scene {
     private Particles() {
         Game.setTitle("Marbles");
 
-        Rectangle left = new Rectangle(-WIDTH / 6 - 50, 50, 200, 10);
+        Rectangle left = new Rectangle(200, 10);
+        left.position.set(-WIDTH / 6 - 50, 50);
         add(left);
 
         left.setColor(Color.white);
-        left.position.setRotation((float) Math.toRadians(21));
+        left.position.rotate((float) Math.toRadians(21));
 
-        Rectangle right = new Rectangle(+WIDTH / 6, 0, 200, 10);
+        Rectangle right = new Rectangle(200, 10);
+        right.position.set(+WIDTH / 6, 0);
         add(right);
 
         right.setColor(Color.white);
-        right.position.setRotation((float) Math.toRadians(-45));
+        right.position.rotate((float) Math.toRadians(-45));
+
+        this.addKeyListener(this);
 
         addFrameUpdateListener(new PeriodicTask(1000) {
             @Override
             public void dispatch() {
-                Circle k = new Circle(getMousePosition().x, getMousePosition().y, 6) {
+                Circle k = new Circle(6) {
                     private ParticleEmitter particles = new ParticleEmitter();
                     private boolean registered = false;
 
@@ -85,34 +90,43 @@ public class Particles extends ea.Scene {
                     }
                 };
 
+                k.position.set(getMousePosition());
                 k.setColor(Color.white);
                 add(k);
 
-                k.physics.setType(Physics.Type.DYNAMISCH);
+                k.physics.setType(Physics.Type.DYNAMIC);
                 k.physics.setGravity(new Vector(0, 10));
             }
         });
 
-        left.physics.setType(Physics.Type.STATISCH);
-        right.physics.setType(Physics.Type.STATISCH);
+        left.physics.setType(Physics.Type.STATIC);
+        right.physics.setType(Physics.Type.STATIC);
         left.physics.setElasticity(.9f);
         right.physics.setElasticity(.9f);
 
-        Rectangle r1 = new Rectangle(-WIDTH / 2, -HEIGHT / 2, WIDTH, 10);
-        Rectangle r2 = new Rectangle(-WIDTH / 2, -HEIGHT / 2, 10, HEIGHT);
-        Rectangle r3 = new Rectangle(-WIDTH / 2, HEIGHT / 2 - 10, WIDTH, 10);
-        Rectangle r4 = new Rectangle(WIDTH / 2 - 10, -HEIGHT / 2, 10, HEIGHT);
+        Rectangle r1 = new Rectangle(WIDTH, 10);
+        r1.position.set(-WIDTH / 2, -HEIGHT / 2);
+
+        Rectangle r2 = new Rectangle(10, HEIGHT);
+        r2.position.set(-WIDTH / 2, -HEIGHT / 2);
+
+        Rectangle r3 = new Rectangle(WIDTH, 10);
+        r3.position.set(-WIDTH / 2, HEIGHT / 2 - 10);
+
+        Rectangle r4 = new Rectangle(10, HEIGHT);
+        r4.position.set(WIDTH / 2 - 10, -HEIGHT / 2);
+
         add(r1, r2, r3, r4);
+
+        r1.physics.setType(Physics.Type.STATIC);
+        r2.physics.setType(Physics.Type.STATIC);
+        r3.physics.setType(Physics.Type.STATIC);
+        r4.physics.setType(Physics.Type.STATIC);
 
         r1.setColor(Color.yellow);
         r2.setColor(Color.yellow);
         r3.setColor(Color.yellow);
         r4.setColor(Color.yellow);
-
-        r1.physics.setType(Physics.Type.STATISCH);
-        r2.physics.setType(Physics.Type.STATISCH);
-        r3.physics.setType(Physics.Type.STATISCH);
-        r4.physics.setType(Physics.Type.STATISCH);
 
         addCollisionListener(this::remove, r3);
 
@@ -121,20 +135,13 @@ public class Particles extends ea.Scene {
     }
 
     private void animateCamera() {
-        this.addFrameUpdateListener(new ValueAnimator<>(400, getCamera()::rotateTo, new ReverseEaseFloat(0, .02f + (float) Math.random() * 0.05f)).onComplete(
-                (value) -> this.addFrameUpdateListener(new ValueAnimator<>(350, getCamera()::rotateTo, new ReverseEaseFloat(0, -.02f + (float) Math.random() * -0.05f)).onComplete((dummy) -> this.animateCamera()))
+        this.addFrameUpdateListener(new ValueAnimator<>(400, getCamera()::rotateTo, new ReverseEaseFloat(0, .002f + (float) Math.random() * 0.002f)).onComplete(
+                (value) -> this.addFrameUpdateListener(new ValueAnimator<>(350, getCamera()::rotateTo, new ReverseEaseFloat(0, -.002f + (float) Math.random() * -0.002f)).onComplete((dummy) -> this.animateCamera()))
         ));
     }
 
-    /**
-     * Wird bei jedem Tastendruck aufgerufen.
-     *
-     * @param code Der Code der gedrückten Key.
-     */
     @Override
     public void onKeyDown(int code) {
-        super.onKeyDown(code);
-
         switch (code) {
             case Key.LINKS:
                 getCamera().move(-30, 0);
@@ -168,5 +175,10 @@ public class Particles extends ea.Scene {
                 getCamera().setZoom(getCamera().getZoom() * 1.1f);
                 break;
         }
+    }
+
+    @Override
+    public void onKeyUp(int code) {
+        // do nothing
     }
 }

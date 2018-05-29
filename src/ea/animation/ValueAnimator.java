@@ -19,6 +19,7 @@
 
 package ea.animation;
 
+import ea.Attachable;
 import ea.FrameUpdateListener;
 import ea.Scene;
 
@@ -26,7 +27,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-public class ValueAnimator<V> implements FrameUpdateListener {
+public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
     private Scene scene;
     private Consumer<V> consumer;
     private Interpolator<V> interpolator;

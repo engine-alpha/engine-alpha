@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,92 +19,76 @@
 
 package ea.actor;
 
-import ea.Point;
+import ea.internal.ano.API;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 
 /**
- * Beschreiben Sie hier die Klasse Rectangle.
+ * Beschreibt ein RechteckTreeSet.
  *
  * @author Michael Andonie
+ * @author Niklas Keller
  */
 @SuppressWarnings ( "serial" )
 public class Rectangle extends Geometry {
-	/**
-	 * Die Laenge
-	 */
-	private float laenge;
+    /**
+     * Die Breite
+     */
+    private float width;
 
-	/**
-	 * Die Breite
-	 */
-	private float breite;
+    /**
+     * Die Breite als Integer gerundet
+     */
+    private int widthInt;
 
-	/**
-	 * Konstruktor fuer Objekte der Klasse Rectangle
-	 *
-	 * @param width
-	 * 		Die Breite des Rechtecks
-	 * @param height
-	 * 		Die hoehe des Rechtecks
-	 */
-	public Rectangle(float width, float height) {
-		super();
-        setDimension(width, height);
-	}
+    /**
+     * Die Höhe
+     */
+    private float height;
 
-	/**
-	 * Setzt beide Masse feur dieses Rectangle neu.
-	 *
-	 * @param width
-	 * 		Die neue Breite des Rechtecks
-	 * @param height
-	 * 		Die neue Hoehe des Rechtecks
-	 */
-	public void setDimension(float width, float height) {
-		setWidth(width);
-        setHeight(height);
-	}
+    /**
+     * Die Höhe als Integer gerundet
+     */
+    private int heightInt;
 
-	/**
-	 * Setzt die Breite fuer dieses Rectangle neu.
-	 *
-	 * @param width
-	 * 		Die neue Breite des Rechtecks
-	 *
-	 * @see #setHeight(float)
-	 */
-	public void setWidth(float width) {
-        this.breite = width;
-	}
+    /**
+     * Konstruktor.
+     *
+     * @param width  Die Breite des Rechtecks
+     * @param height Die Höhe des Rechtecks
+     */
+    public Rectangle(float width, float height) {
+        this.width = width;
+        this.height = height;
+        this.widthInt = Math.round(width);
+        this.heightInt = Math.round(height);
+    }
 
-	/**
-	 * Setzt die Hoehe fuer dieses Rectangle neu.
-	 *
-	 * @param height
-	 * 		Die neue Hoehe des Rechtecks
-	 *
-	 * @see #setWidth(float)
-	 */
-	public void setHeight(float height) {
-		this.laenge = height;
-	}
+    @API
+    public float getWidth() {
+        return width;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void render(Graphics2D g) {
+    @API
+    public float getHeight() {
+        return height;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void render(Graphics2D g) {
         g.setColor(getColor());
-		g.fillRect(0, 0, (int) breite, (int) laenge);
-	}
+        g.fillRect(0, 0, widthInt, heightInt);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Shape createShape(float pixelProMeter) {
-        return berechneBoxShape(pixelProMeter, breite, laenge);
+        return berechneBoxShape(pixelProMeter, width, height);
     }
 }

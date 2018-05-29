@@ -42,7 +42,7 @@ public abstract class RenderPanel extends Canvas {
     /**
      * Muss aufgerufen werden, nachdem das Fenster isVisible ist, um die BufferStrategy zu erzeugen.
      */
-    public void initialize() {
+    final public void allocateBuffers() {
         createBufferStrategy(2);
     }
 

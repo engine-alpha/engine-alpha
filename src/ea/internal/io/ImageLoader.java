@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Lädt Bilder vom Dateisystem und optimiert diese direkt für die Anzeige.
  */
-public class ImageLoader {
+final public class ImageLoader {
     /**
      * Cache, damit viele gleiche Bilder nicht jedes Mal neu geladen werden müssen.
      */
