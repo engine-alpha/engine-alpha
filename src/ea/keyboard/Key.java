@@ -82,14 +82,19 @@ public class Key {
 	public static final int Z = 25;
 
 	public static final int OBEN = 26;
+	public static final int UP   = 26;
 
 	public static final int RECHTS = 27;
+	public static final int RIGHT  = 27;
 
 	public static final int UNTEN = 28;
+	public static final int DOWN  = 28;
 
 	public static final int LINKS = 29;
+	public static final int LEFT  = 29;
 
 	public static final int LEERTASTE = 30;
+	public static final int SPACE     = 30;
 
 	public static final int ENTER = 31;
 
