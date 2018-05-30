@@ -423,6 +423,7 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
             Point pos = stange.position.get();
             remove(stange);
             stange = new Rectangle(lastAttack.distanceTo(pointer), 5);
+            System.out.println("new Rectangle: " + stange);
             stange.setColor(new Color(200, 50, 50));
             stange.setZIndex(-10);
             stange.position.set(pos);

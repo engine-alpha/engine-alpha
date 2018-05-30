@@ -3,7 +3,11 @@ package ea.example.showcase.jump;
 
 import ea.*;
 import ea.actor.Animation;
+import ea.actor.Circle;
 import ea.actor.Rectangle;
+import ea.animation.ValueAnimator;
+import ea.animation.interpolation.LinearFloat;
+import ea.animation.interpolation.ReverseEaseFloat;
 import ea.example.showcase.ShowcaseDemo;
 import ea.handle.Physics;
 import ea.internal.phy.BodyHandler;
@@ -48,6 +52,14 @@ implements KeyListener, FrameUpdateListener {
         addFrameUpdateListener(this);
 
         setDebuggingEnabled(false);
+
+        Circle circleToAnimate = new Circle(250);
+        add(circleToAnimate);
+        circleToAnimate.setColor(Color.YELLOW);
+
+        addFrameUpdateListener(new ValueAnimator<>(5000,
+                circleToAnimate.position::setY,
+                new ReverseEaseFloat(500, 1000), ValueAnimator.Mode.REPEATED));
 
 
         createPlatforms();
@@ -106,7 +118,7 @@ implements KeyListener, FrameUpdateListener {
                 spawnEnemy();
                 break;
             case Key.C:
-
+                //
                 break;
         }
     }
@@ -125,7 +137,7 @@ implements KeyListener, FrameUpdateListener {
     }
 
     private void spawnEnemy() {
-        Enemy enemy = new Enemy(this, pc, new Vector(5, 0));
+        Enemy enemy = new Enemy(this, pc, new Vector(-5, 0));
         enemy.position.set(0,200);
     }
 

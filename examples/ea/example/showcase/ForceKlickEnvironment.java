@@ -237,13 +237,7 @@ public class ForceKlickEnvironment
             Point pointer = getMousePosition();
             if(pointer==null || lastAttack == null)
                 return;
-            Point pos = stange.position.get();
-            remove(stange);
-            stange = new Rectangle(lastAttack.distanceTo(pointer), 5);
-            stange.setColor(new Color(200, 50, 50));
-            stange.setZIndex(-10);
-            stange.position.set(pos);
-            add(stange);
+            stange.setWidth(lastAttack.distanceTo(pointer));
             float rot = Vector.RECHTS.getAngle(lastAttack.vectorFromThisTo(pointer));
             if(Float.isNaN(rot))
                 return;

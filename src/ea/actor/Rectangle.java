@@ -75,6 +75,16 @@ public class Rectangle extends Geometry {
         return height;
     }
 
+    public void setWidth(float width) {
+        this.width = width;
+        this.widthInt = (int)width;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+        this.heightInt = (int) height;
+    }
+
     /**
      * {@inheritDoc}
      */

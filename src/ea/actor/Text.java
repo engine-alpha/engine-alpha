@@ -196,6 +196,9 @@ public class Text extends Actor {
      */
     @API
     public void setSize(int size) {
+        if(size <= 0) {
+            throw new RuntimeException("Die Schriftgröße muss größer als 0 sein. Sie war " + size + ".");
+        }
         this.size = size;
         aktualisieren();
     }

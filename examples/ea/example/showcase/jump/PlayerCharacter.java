@@ -44,14 +44,14 @@ implements CollisionListener<Actor> {
 
 
         Animation idle = Animation.createFromAnimatedGif(pathbase+"idle_anim.gif");
-        addState(idle, "idle");
+        addState("idle", idle);
 
-        addState(Animation.createFromAnimatedGif(pathbase+"walk_anim.gif"), "walking");
-        addState(Animation.createFromAnimatedGif(pathbase+"run_anim.gif"), "running");
-        addState(Animation.createFromAnimatedGif(pathbase+"jump_1up_anim.gif"), "jumpingUp");
-        addState(Animation.createFromAnimatedGif(pathbase+"jump_2midair_anim.gif"), "midair");
-        addState(Animation.createFromAnimatedGif(pathbase+"jump_3down_anim.gif"), "falling");
-        addState(Animation.createFromAnimatedGif(pathbase+"jump_4land_anim.gif"), "landing");
+        addState("walking", Animation.createFromAnimatedGif(pathbase+"walk_anim.gif"));
+        addState("running", Animation.createFromAnimatedGif(pathbase+"run_anim.gif"));
+        addState("jumpingUp", Animation.createFromAnimatedGif(pathbase+"jump_1up_anim.gif"));
+        addState("midair", Animation.createFromAnimatedGif(pathbase+"jump_2midair_anim.gif"));
+        addState("falling", Animation.createFromAnimatedGif(pathbase+"jump_3down_anim.gif"));
+        addState("landing", Animation.createFromAnimatedGif(pathbase+"jump_4land_anim.gif"));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -121,8 +121,6 @@ implements CollisionListener<Actor> {
             setFlipHorizontal(true);
             //if(standing && !getCurrentState().equals("running")) setState("running");
         }
-
-
     }
 
     @Override

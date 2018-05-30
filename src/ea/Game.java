@@ -73,6 +73,8 @@ public class Game {
      */
     private static final Frame frame = new Frame("Engine Alpha");
 
+    private static RenderPanel renderPanel;
+
     /**
      * Gibt an, ob bei Escape-Druck das Spiel beendet werden soll.
      */
@@ -141,11 +143,15 @@ public class Game {
      */
     @API
     public static void start(int width, int height, Scene scene) {
+        if(renderPanel != null) {
+            //Start wurde schon ausgeführt.
+            throw new RuntimeException("Game.start wurde bereits ausgeführt.");
+        }
         Game.width = width;
         Game.height = height;
         Game.scene = scene;
 
-        RenderPanel renderPanel = new RenderPanel(width, height) {
+        renderPanel = new RenderPanel(width, height) {
             public void render(Graphics2D g) {
                 // Absoluter Hintergrund
                 g.setColor(Color.black);
@@ -561,6 +567,25 @@ public class Game {
     @API
     public static boolean isKeyPressed(int key) {
         return keys[key];
+    }
+
+    /**
+     * Setzt die Größe des Engine-Fensters.
+     * @param width     Die neue Breite des Engine-Fensters.
+     * @param height    Die neue Höhe des Engine-Fensters.
+     */
+    @API
+    public static void setFrameSize(int width, int height) {
+        if(width <= 0 || height <= 0) {
+            throw new RuntimeException("Die Fenstergröße kann nicht kleiner/gleich 0 sein. "
+                    + "Eingabe war: " + width + " - " + height + ".");
+        }
+        if(renderPanel == null) {
+            throw new RuntimeException("Fenster-Resizing ist erst möglich, nachdem Game.start ausgeführt wurde.");
+        }
+        renderPanel.setSize(width, height);
+        renderPanel.setPreferredSize(new Dimension(width, height));
+        frame.pack();
     }
 
     /**

@@ -8,7 +8,6 @@ import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.internal.gra.Frame;
 
 public class Enemy
 extends StatefulAnimation
@@ -25,7 +24,7 @@ implements CollisionListener<PlayerCharacter> {
 
     public Enemy(Scene parent, PlayerCharacter pc, Vector velocity) {
         Animation flying = Animation.createFromAnimatedGif("game-assets\\jump\\spr_toucan_fly_anim.gif");
-        addState(flying, "flying");
+        addState("flying", flying);
 
         this.parent = parent;
         this.velocity = velocity;

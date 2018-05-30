@@ -54,14 +54,14 @@ implements FrameUpdateListener {
     /**
      * Fügt dieser Animation einen neuen Zustand zu hinzu.
      *
-     * @param stateAnimation    Die Animation für diesen Zustand. Kann normal eingeladen werden, allerdings sollte das
-     *                          übergebene Objekt <b>nicht selbst in einer Scene angemeldet sein</b>.
      * @param stateName         Der Name für den neu hinzuzufügenden State. Unter diesem Namen wird er ab sofort
      *                          in der Figur beschrieben.
+     * @param stateAnimation    Die Animation für diesen Zustand. Kann normal eingeladen werden, allerdings sollte das
+     *                          übergebene Objekt <b>nicht selbst in einer Scene angemeldet sein</b>.
      * @see Animation
      */
     @API
-    public void addState(Animation stateAnimation, String stateName) {
+    public void addState(String stateName, Animation stateAnimation) {
         //if() TODO Check if stateAnimation is already attached to a scene -> if so, throw exception / error log
         if(states.containsKey(stateName)) {
             throw new RuntimeException("Zustandsname wird bereits in diesem Objekt genutzt: " + stateName);
