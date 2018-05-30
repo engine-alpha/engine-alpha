@@ -121,7 +121,8 @@ extends PhysikHandler {
             Vec2 wc = body.getWorldCenter();
             return worldHandler.fromVec2(wc).asPoint();
         } else {
-            throw new RuntimeException("Mittelpunktabfrage von nichtdynamischem Körper.");
+            AABB bodyAABB = calculateBodyAABB();
+            return worldHandler.fromVec2(bodyAABB.getCenter()).asPoint();
             //Logger.error("Physics", "Mittelpunkt ist nur für Dynamische Objekte implementiert.");
             //return worldHandler.fromVec2(body.getPosition()).asPoint();
         }

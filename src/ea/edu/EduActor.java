@@ -56,4 +56,8 @@ public interface EduActor {
     default Point zentrum() {
         return mittelPunkt();
     }
+
+    default boolean schneidet(Actor actor) {
+        return actor.overlaps(actor);
+    }
 }

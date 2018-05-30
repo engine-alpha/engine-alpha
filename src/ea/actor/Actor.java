@@ -35,6 +35,8 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -243,6 +245,26 @@ public abstract class Actor implements Attachable {
     @API
     public final boolean contains(Point p) {
         return physicsHandler.beinhaltet(p);
+    }
+
+    /**
+     * Prueft, ob dieser Actor sich mit einem weiteren Actor schneidet.<br />
+     * Für die Überprüfung des Überlappens werden die internen <b>Collider</b> genutzt. Je nach Genauigkeit der Collider
+     * kann die Überprüfung unterschiedlich befriedigend ausfallen. Die Collider können im <b>Debug-Modus</b> der
+     * Engine eingesehen werden.
+     * @param another   Ein weiteres Actor-Objekt.
+     * @return          <code>true</code>, wenn dieses Actor-Objekt sich mit <code>another</code> schneidet. Sonst
+     *                  <code>false</code>.
+     * @see ea.EngineAlpha#setDebug(boolean)
+     */
+    @API
+    public final boolean overlaps(Actor another) {
+        Body myBody = physicsHandler.getBody();
+        Body otherBody = physicsHandler.getBody();
+        for(ContactEdge ce = myBody.getContactList(); ce != null; ce = ce.next) {
+            if(ce.other == otherBody && ce.contact.isTouching()) return true;
+        }
+        return false;
     }
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
