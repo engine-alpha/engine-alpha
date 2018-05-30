@@ -10,11 +10,14 @@ implements EduActor {
     /**
      * Der Konstruktor lädt das Image und erlaubt die Nutung von Spritesheets.
      *
+     * @param x         X-Koordinate (linke obere Ecke des Bildes)
+     * @param y         Y-Koordinate (linke obere Ecke des Bildes)
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
-    public Bild(String filepath) {
+    public Bild(float x, float y, String filepath) {
         super(filepath);
         eduSetup();
+        position.set(x,y);
     }
 
     @Override

@@ -157,7 +157,7 @@ public class Music {
     public synchronized void setVolume(float volume) {
         this.volume = volume;
 
-        if (playback != null) {
+            if (playback != null) {
             playback.setVolume(volume);
         }
     }

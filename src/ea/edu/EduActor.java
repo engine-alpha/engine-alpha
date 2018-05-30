@@ -48,4 +48,12 @@ public interface EduActor {
     default boolean beinhaltetPunkt(float pX, float pY) {
         return getActor().contains(new Point(pX, pY));
     }
+
+    default Point mittelPunkt() {
+        return getActor().position.getCenter();
+    }
+
+    default Point zentrum() {
+        return mittelPunkt();
+    }
 }

@@ -44,6 +44,12 @@ implements KeyListener, MouseClickListener, FrameUpdateListener {
         return sceneName;
     }
 
+    public EduScene() {
+        super.addFrameUpdateListener(this);
+        super.addKeyListener(this);
+        super.addMouseClickListener(this);
+    }
+
     /* Listener Addition */
 
     public void addEduClickListener (Object client, boolean linksklick) {
