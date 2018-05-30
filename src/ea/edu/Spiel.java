@@ -118,6 +118,7 @@ public class Spiel {
     static EduScene getActiveScene() {
         if(activeScene == null) {
             activeScene = new EduScene();
+            Game.start(800, 600, activeScene);
         }
         return activeScene;
     }
