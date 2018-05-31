@@ -5,6 +5,11 @@ import ea.example.showcase.ShowcaseDemo;
 import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 
+/**
+ * Eine kleine Spieldemo.
+ *
+ * Vielen Dank an <a href="https://rvros.itch.io/animated-pixel-hero">rvros</a>
+ */
 public class Swordplay
 extends ShowcaseDemo
 implements KeyListener {

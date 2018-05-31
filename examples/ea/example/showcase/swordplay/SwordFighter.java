@@ -3,6 +3,7 @@ package ea.example.showcase.swordplay;
 import ea.Scene;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
+import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 
 public class SwordFighter
@@ -48,10 +49,21 @@ implements KeyListener {
         addState(stateName, Animation.createFromImagesPrefix(75, directory, sPrefix+stateName));
     }
 
+    private void attack() {
+
+    }
+
 
     @Override
     public void onKeyDown(int key) {
-
+        switch(key) {
+            case Key.SPACE: //Sprung
+                //
+                break;
+            case Key.J: //Attack 1
+                attack();
+                break;
+        }
     }
 
     @Override

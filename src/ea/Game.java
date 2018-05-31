@@ -570,6 +570,17 @@ public class Game {
     }
 
     /**
+     * Gibt an, ob gerade die Engine läuft. Die Engine läuft, sobald es ein sichtbares Fenster gibt. Dieses läuft,
+     * sobald {@link #start(int, int, Scene)} ausgeführt wurde.
+     * @return  <code>true</code>, wenn das Spiel läuft, sonst <code>false</code>.
+     * @see #start(int, int, Scene)
+     */
+    @API
+    public static boolean isRunning() {
+        return frame.isVisible();
+    }
+
+    /**
      * Setzt die Größe des Engine-Fensters.
      * @param width     Die neue Breite des Engine-Fensters.
      * @param height    Die neue Höhe des Engine-Fensters.

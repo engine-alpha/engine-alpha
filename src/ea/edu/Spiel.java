@@ -99,6 +99,7 @@ public class Spiel {
      */
     @API
     public static void setzeFensterGroesse(int breite, int hoehe) {
+        getActiveScene(); //<- Stellt sicher, dass ein Fenster zum Resizen existiert.
         Game.setFrameSize(breite, hoehe);
     }
 
@@ -135,7 +136,7 @@ public class Spiel {
      * @param name Der Name für die Szene.
      * @see #szeneSetzen(String)
      */
-    public static void szeneBennen(String name) {
+    public static void szeneBenennen(String name) {
         if(getActiveScene().getSceneName() != null) {
             Logger.error("EDU", "Die Szene hat bereits einen Namen: " + getActiveScene().getSceneName());
             return;
@@ -161,7 +162,7 @@ public class Spiel {
      * Setzt die aktive Szene. Wurde eine Szene benannt, so bleibt sie gespeichert und kann wieder aktiv gesetzt
      * werden.
      * @param szenenName    der Name der aktiv zu setzenden Szene.
-     * @see #szeneBennen(String)
+     * @see #szeneBenennen(String)
      */
     public static void szeneSetzen(String szenenName) {
         EduScene scene = sceneMap.get(szenenName);
