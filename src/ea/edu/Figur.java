@@ -13,21 +13,27 @@ public class Figur
 extends StatefulAnimation
 implements EduActor {
 
+
     /**
-     * Standard-Konstruktor. Erstellt eine "leere" Figur <b>ohne Zustände</b>.
+     * Einführungskonstruktor. Erstellt eine Figur mit einem ersten Zustand.
+     * @param zustandsName  Der Name für den ersten Zustand.
+     * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>.
      */
-    public Figur() {
+    public Figur(String zustandsName, String gifBildPfad) {
+        zustandHinzufuegenVonGIF(zustandsName, gifBildPfad);
         eduSetup();
     }
 
     /**
      * Einführungskonstruktor. Erstellt eine Figur mit einem ersten Zustand.
-     * Der Zustand hat den Namen "zustand_0" und muss eine GIF-Animation sein.
-     * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>. Andere Formate funktionieren nicht.
+     * @param zustandsName  Der Name für den ersten Zustand.
+     * @param spriteSheetPfad   Pfad zu einem <b>Spritesheet</b>.
+     * @param anzahlX       Anzahl der Spritesheet-Kacheln in die X-Richtung.
+     * @param anzahlY       Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
-    public Figur(String gifBildPfad) {
-        this();
-        zustandHinzufuegenVonGIF("zustand_0", gifBildPfad);
+    public Figur(String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        zustandHinzufuegenVonSpritesheet(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
+        eduSetup();
     }
 
     /**

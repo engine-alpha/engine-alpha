@@ -85,6 +85,14 @@ implements KeyListener, MouseClickListener, FrameUpdateListener {
         }
     }
 
+    public void removeEduTicker(Object o) {
+        ArrayList<TickerAuftrag> toRemove = new ArrayList<>();
+        for(TickerAuftrag ta : aufgabenT) {
+            if(ta.client.equals(o)) toRemove.add(ta);
+        }
+        for(TickerAuftrag tr : toRemove) aufgabenT.remove(tr);
+    }
+
     /* EA Listener Implementation */
 
     @Override

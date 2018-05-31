@@ -11,12 +11,14 @@ import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Manifold;
+import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
+import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -371,6 +373,12 @@ public class WorldHandler implements ContactListener {
         ArrayList<Fixture> fixtures = new ArrayList<>();
         world.queryAABB(fixture -> fixtures.add(fixture),aabb);
         return fixtures.toArray(new Fixture[fixtures.size()]);
+    }
+
+
+    public static boolean hardcodedBodyCollisionCheckup(Body b1, Body b2) {
+        //PolygonShape s1 =
+        return false;
     }
 
 

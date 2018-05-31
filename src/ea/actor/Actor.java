@@ -259,12 +259,8 @@ public abstract class Actor implements Attachable {
      */
     @API
     public final boolean overlaps(Actor another) {
-        Body myBody = physicsHandler.getBody();
-        Body otherBody = physicsHandler.getBody();
-        for(ContactEdge ce = myBody.getContactList(); ce != null; ce = ce.next) {
-            if(ce.other == otherBody && ce.contact.isTouching()) return true;
-        }
-        return false;
+        return WorldHandler.hardcodedBodyCollisionCheckup(physicsHandler.getBody(),
+                another.getPhysicsHandler().getBody());
     }
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */

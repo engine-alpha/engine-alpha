@@ -217,4 +217,16 @@ public class Spiel {
     public void tickerAnmelden (Object o, int intervall) {
         getActiveScene().addEduTicker(o, intervall);
     }
+
+    /**
+     * Meldet einen "Ticker" ab.
+     *
+     * @param o
+     * 		Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
+     *
+     * @see #tickerAnmelden(Object, int)
+     */
+    public void tickerAbmelden (Object o) {
+        getActiveScene().removeEduTicker(o);
+    }
 }

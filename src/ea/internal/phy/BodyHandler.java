@@ -273,7 +273,7 @@ extends PhysikHandler {
         body.setType(newType);
         //isSensor = true; //TODO Delete again.
 
-        //System.out.println("I have a fixture: " + body.getFixtureList());
+        //System.out.println("I have a fixture:" + body.getFixtureList());
 
         //body.setActive(setType != Physics.Type.PASSIVE);
         //System.out.println("Set active!");
