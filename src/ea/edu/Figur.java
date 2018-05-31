@@ -37,6 +37,18 @@ implements EduActor {
     }
 
     /**
+     * Erstellt eine Figur mit einem ersten Zustand. Lädt dazu alle Bilder in einem Verzeichnis ein, die zu einem
+     * bestimmten Präfix passen.
+     * @param zustandName       Name für den ersten Zustand.
+     * @param verzeichnisPfad   Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
+     * @param praefix           Das Präfix, das alle einzuladenden Bilder haben müssen.
+     */
+    public Figur(String zustandName, String verzeichnisPfad, String praefix) {
+        zustandHinzufuegenNachPraefix(zustandName, verzeichnisPfad, praefix);
+        eduSetup();
+    }
+
+    /**
      * Fügt einen Zustand mit GIF-Visualisierung ein.
      * @param zustandsName  Name des Zustands.
      * @param bildpfad      Pfad zum GIF, das zu diesem Zustand animiert wird.
@@ -71,6 +83,18 @@ implements EduActor {
     public void zustandHinzufuegenVonBildern(String zustandsName, String... bildpfade) {
         Animation animation = Animation.createFromImages(250, bildpfade);
         super.addState(zustandsName, animation);
+    }
+
+    /**
+     * Fügt einen Zustand hinzu. Lädt dazu alle Bilder in einem Verzeichnis ein, die zu einem
+     * bestimmten Präfix passen.
+     * @param zustandName       Name für den ersten Zustand.
+     * @param verzeichnisPfad   Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
+     * @param praefix           Das Präfix, das alle einzuladenden Bilder haben müssen.
+     */
+    public void zustandHinzufuegenNachPraefix(String zustandName, String verzeichnisPfad, String praefix) {
+        Animation animation = Animation.createFromImagesPrefix(250, verzeichnisPfad, praefix);
+        super.addState(zustandName, animation);
     }
 
     /**

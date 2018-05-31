@@ -19,10 +19,14 @@
 
 package ea.internal.io;
 
+import ea.internal.util.Logger;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,5 +56,18 @@ final public class ResourceLoader {
         }
 
         return new FileInputStream(filename);
+    }
+
+    public static File loadAsFile(String filename) throws IOException {
+        if (ResourceLoader.class.getResource("/" + filename) != null) {
+            URL url = ResourceLoader.class.getResource("/" + filename);
+            if(url != null)
+                try {
+                    return new File(url.toURI());
+                } catch (URISyntaxException e) {
+                    Logger.error("IO", e.getMessage());
+                }
+        }
+        return new File(filename);
     }
 }

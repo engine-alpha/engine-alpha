@@ -9,12 +9,33 @@ extends StatefulAnimation {
 
     public SwordFighter(Scene parent) {
 
-        //Alle Bilder teilen den Anfang des Pfades
-        final String path="game-assets\\sword\\adventurer-";
+
         //Die Frame-Duration
         final int fd = 250;
 
-        addState("attack1", Animation.createFromImages(fd, path+"attack1"));
+        addQualifiedState("attack1");
+        addQualifiedState("attack2");
+        addQualifiedState("attack3");
+        addQualifiedState("idle");
+        addQualifiedState("hurt");
+        addQualifiedState("jump");
+        addQualifiedState("ladder-climb");
+        addQualifiedState("run");
+        addQualifiedState("slide");
+        addQualifiedState("smrslt");
+        addQualifiedState("stand");
+        addQualifiedState("swim");
+        addQualifiedState("jump");
+
+        parent.add(this);
+    }
+
+    private void addQualifiedState(String stateName) {
+        //Alle Bilder teilen den Anfang des Pfades
+        final String directory="game-assets\\sword";
+        //Standard-Prefix
+        final String sPrefix="adventurer-";
+        addState(stateName, Animation.createFromImagesPrefix(75, directory, sPrefix+stateName));
     }
 
 }

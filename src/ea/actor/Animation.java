@@ -34,6 +34,7 @@ import java.awt.image.DataBufferInt;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 @API
@@ -206,16 +207,40 @@ public class Animation extends Actor implements FrameUpdateListener {
     }
 
     /**
+     * Lädt alle Bilddateien mit einem bestimmten Präfix in einem bestimmten Verzeichnis in eine Animation.
      *
      * @param frameDuration Die Dauer (ms), die ein Frame aktiv bleibt.
-     * @param pathPrefix    Das Pfad-Präfix. Diese Funktion sucht <a>alle Dateien mit dem gegebenen Präfix</a> (im
+     * @param directoryPath Der Pfad zum Verzeichnis, in dem die einzuladenden Bilder liegen.
+     * @param prefix        Das Pfad-Präfix. Diese Funktion sucht <a>alle Dateien mit dem gegebenen Präfix</a> (im
      *                      angebenenen Ordner) und fügt sie in aufsteigender Reihenfolge der Animation hinzu.
      * @return              Eine Animation aus allen Dateien, die mit dem Pfadpräfix beginnen.
      * @author              Michael Andonie
      */
     @API
-    public static Animation createFromImagesPrefix(int frameDuration, String pathPrefix) {
-        throw new UnsupportedOperationException("Noch nicht implementiert");
+    public static Animation createFromImagesPrefix(int frameDuration, String directoryPath, String prefix) {
+        //Liste mit den Pfaden aller qualifizierten Dateien
+        ArrayList<String> allPaths = new ArrayList<>();
+
+
+        File directory;
+        try {
+            directory = ResourceLoader.loadAsFile(directoryPath);
+        } catch (IOException e) {
+            throw new RuntimeException("Fehler beim Einladen des Verzeichnisses: " + e.getMessage());
+        }
+        if(!directory.isDirectory()) {
+            throw new RuntimeException("Der angegebene Pfad war kein Verzeichnis: " + directoryPath);
+        }
+        File[] childs = directory.listFiles();
+        for(File file : childs) {
+            if(!file.isDirectory() && file.getName().startsWith(prefix)) allPaths.add(file.getAbsolutePath());
+        }
+
+        allPaths.sort(Comparator.naturalOrder());
+
+        if(allPaths.isEmpty()) throw new RuntimeException("Konnte keine Bilder mit Präfix \"" + prefix
+                + "\" im Verzeichnis \"" + directoryPath + "\" finden.");
+        return createFromImages(frameDuration, allPaths.toArray(new String[allPaths.size()]));
     }
 
     @API
