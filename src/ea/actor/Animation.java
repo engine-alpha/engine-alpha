@@ -81,7 +81,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @return  Die Frames dieser Animation.
      */
     @NoExternalUse
-    Frame[] getFrames() {
+    public Frame[] getFrames() {
         return frames;
     }
 

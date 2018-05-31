@@ -66,18 +66,23 @@ implements FrameUpdateListener {
         if(states.containsKey(stateName)) {
             throw new RuntimeException("Zustandsname wird bereits in diesem Objekt genutzt: " + stateName);
         }
+        addStateRaw(stateName, stateAnimation.getFrames());
+    }
+
+    @NoExternalUse
+    protected void addStateRaw(String stateName, Frame[] frames) {
         //Add Name->Animation pairing
-        states.put(stateName, stateAnimation.getFrames());
+        states.put(stateName, frames);
         //Add loop transition rule for state (default)
         stateTransitions.put(stateName, stateName);
         if(currentState==null) {
             //No state set yet --> Make first state default state
             currentState=stateName;
-            currentAnimation=stateAnimation.getFrames();
+            currentAnimation=frames;
 
             //While we're at it, take over width&height
-            this.width = stateAnimation.getFrames()[0].getImage().getWidth();
-            this.height = stateAnimation.getFrames()[0].getImage().getHeight();
+            this.width = frames[0].getImage().getWidth();
+            this.height = frames[0].getImage().getHeight();
         }
     }
 

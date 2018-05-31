@@ -4,8 +4,10 @@ import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.internal.ano.NoExternalUse;
+import ea.internal.gra.Frame;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * EDU-Variante der {@link StatefulAnimation}.
@@ -15,15 +17,21 @@ public class Figur
 extends StatefulAnimation
 implements EduActor {
 
+    private final float scale;
 
     /**
      * Einführungskonstruktor. Erstellt eine Figur mit einem ersten Zustand.
      * @param zustandsName  Der Name für den ersten Zustand.
      * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>.
      */
-    public Figur(String zustandsName, String gifBildPfad) {
+    public Figur(float scale, String zustandsName, String gifBildPfad) {
+        this.scale = scale;
         zustandHinzufuegenVonGIF(zustandsName, gifBildPfad);
         eduSetup();
+    }
+
+    public Figur(String zustandsName, String gifBildPfad) {
+        this(1f, zustandsName, gifBildPfad);
     }
 
     /**
@@ -33,9 +41,14 @@ implements EduActor {
      * @param anzahlX       Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY       Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
-    public Figur(String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+    public Figur(float scale, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        this.scale = scale;
         zustandHinzufuegenVonSpritesheet(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
         eduSetup();
+    }
+
+    public Figur(String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        this(1f, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
     }
 
     /**
@@ -45,9 +58,14 @@ implements EduActor {
      * @param verzeichnisPfad   Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
      * @param praefix           Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
-    public Figur(String zustandName, String verzeichnisPfad, String praefix) {
+    public Figur(float scale, String zustandName, String verzeichnisPfad, String praefix) {
+        this.scale = scale;
         zustandHinzufuegenNachPraefix(zustandName, verzeichnisPfad, praefix);
         eduSetup();
+    }
+
+    public Figur(String zustandName, String verzeichnisPfad, String praefix) {
+        this(1f, zustandName, verzeichnisPfad, praefix);
     }
 
     /**
@@ -136,8 +154,34 @@ implements EduActor {
         return this;
     }
 
-    @Override
-    public void render(Graphics2D g) {
+    private void addStateWithScaling(String stateName, Animation animation) {
+        if(scale != 1f) {
+            Frame[] standardFrames = animation.getFrames();
+            Frame[] resizedFrames = new Frame[standardFrames.length];
+            for(int i = 0; i < standardFrames.length; i++) {
+                resizedFrames[i] = new Frame(
+                        getScaledImage(standardFrames[i].getImage(), scale),
+                        standardFrames[i].getDuration());
+            }
+            super.addStateRaw(stateName, resizedFrames);
+        } else {
+            super.addState(stateName, animation);
+        }
+    }
 
+    /**
+     * Resizes an image using a Graphics2D object backed by a BufferedImage.
+     * @param srcImg - source image to scale
+     * @param scale     scaling factor
+     * @return - the new resized image
+     */
+    private static BufferedImage getScaledImage(BufferedImage srcImg, float scale){
+        int w = (int) (srcImg.getWidth()*scale), h = (int) (srcImg.getHeight()*scale);
+        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
+        Graphics2D g2 = resizedImg.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, w, h, null);
+        g2.dispose();
+        return resizedImg;
     }
 }
