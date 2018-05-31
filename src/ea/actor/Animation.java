@@ -205,6 +205,19 @@ public class Animation extends Actor implements FrameUpdateListener {
         return new Animation(frames.toArray(new ea.internal.gra.Frame[frames.size()]));
     }
 
+    /**
+     *
+     * @param frameDuration Die Dauer (ms), die ein Frame aktiv bleibt.
+     * @param pathPrefix    Das Pfad-Präfix. Diese Funktion sucht <a>alle Dateien mit dem gegebenen Präfix</a> (im
+     *                      angebenenen Ordner) und fügt sie in aufsteigender Reihenfolge der Animation hinzu.
+     * @return              Eine Animation aus allen Dateien, die mit dem Pfadpräfix beginnen.
+     * @author              Michael Andonie
+     */
+    @API
+    public static Animation createFromImagesPrefix(int frameDuration, String pathPrefix) {
+        throw new UnsupportedOperationException("Noch nicht implementiert");
+    }
+
     @API
     public static Animation createFromAnimatedGif(String filepath) {
         GifDecoder gd = new GifDecoder();

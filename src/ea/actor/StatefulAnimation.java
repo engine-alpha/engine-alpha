@@ -181,6 +181,25 @@ implements FrameUpdateListener {
         stateTransitions.put(stateFrom, stateTo);
     }
 
+    /**
+     * Setzt die Dauer, die ein Frame einer bestimmten Animation verweilt.
+     * @param stateName     Der State, für den die Frame-Dauer neu gesetzt werden soll.
+     * @param frameDuration Die Zeit (in Millisekunden), die jeder einzelne Frame der Animation des entsprechenden
+     *                      States verweilen soll, bis der Frame gewechselt wird.
+     */
+    @API
+    public void setFrameDurationsOf(String stateName, int frameDuration) {
+        if(!states.containsKey(stateName)) {
+            throw new RuntimeException("Der Zustand ist nicht bekannt: " + stateName);
+        }
+        Frame[] frames = states.get(stateName);
+        for(Frame frame : frames) {
+            frame.setDuration(frameDuration);
+        }
+    }
+
+    /* ~~ Internal Functions ~~ */
+
     @NoExternalUse
     @Override
     public final void onFrameUpdate(int frameDuration) {

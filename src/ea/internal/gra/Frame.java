@@ -19,7 +19,7 @@ public class Frame {
     /**
      * Die Dauer (in ms), die dieser Frame aktiv bleibt.
      */
-    private final int duration;
+    private int duration;
 
     /**
      * Erstellt einen Frame.
@@ -29,6 +29,11 @@ public class Frame {
     @NoExternalUse
     public Frame(BufferedImage image, int duration) {
         this.image = image;
+        this.duration = duration;
+    }
+
+    @NoExternalUse
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 

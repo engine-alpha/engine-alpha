@@ -8,6 +8,7 @@ import ea.actor.ActorGroup;
 import ea.actor.Rectangle;
 import ea.actor.Text;
 import ea.example.showcase.jump.DinglyJump;
+import ea.example.showcase.swordplay.Swordplay;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
 
@@ -204,6 +205,12 @@ extends Scene {
                 return new DinglyJump(mainscene, WIDTH, HEIGHT);
             }
         }, "Dingly Jump");
+        mainscene.addScene(new SceneCreator(){
+            @Override
+            public Scene createScene() {
+                return new Swordplay(mainscene, WIDTH, HEIGHT);
+            }
+        }, "Swordplay");
 
         Game.setExitOnEsc(false);
         Game.start(WIDTH, HEIGHT, mainscene);

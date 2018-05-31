@@ -100,6 +100,10 @@ implements EduActor {
         return super.getCurrentState();
     }
 
+    public void setzeAnimationsGeschwindigkeitVon(String zustandName, int frameDauerInMS) {
+        super.setFrameDurationsOf(zustandName, frameDauerInMS);
+    }
+
     @NoExternalUse
     @Override
     public Actor getActor() {
