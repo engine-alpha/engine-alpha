@@ -25,6 +25,7 @@ implements EduActor {
      * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>.
      */
     public Figur(float scale, String zustandsName, String gifBildPfad) {
+        if(scale <= 0) throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
         this.scale = scale;
         zustandHinzufuegenVonGIF(zustandsName, gifBildPfad);
         eduSetup();
@@ -42,6 +43,7 @@ implements EduActor {
      * @param anzahlY       Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
     public Figur(float scale, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        if(scale <= 0) throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
         this.scale = scale;
         zustandHinzufuegenVonSpritesheet(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
         eduSetup();
@@ -59,6 +61,7 @@ implements EduActor {
      * @param praefix           Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
     public Figur(float scale, String zustandName, String verzeichnisPfad, String praefix) {
+        if(scale <= 0) throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
         this.scale = scale;
         zustandHinzufuegenNachPraefix(zustandName, verzeichnisPfad, praefix);
         eduSetup();
