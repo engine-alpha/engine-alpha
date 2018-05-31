@@ -79,7 +79,7 @@ implements EduActor {
                     + "Der angegebene Bildpfad war " + bildpfad);
         }
         Animation animation = Animation.createFromAnimatedGif(bildpfad);
-        super.addState(zustandsName, animation);
+        addStateWithScaling(zustandsName, animation);
     }
 
     /**
@@ -92,7 +92,7 @@ implements EduActor {
      */
     public void zustandHinzufuegenVonSpritesheet(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
         Animation animation = Animation.createFromSpritesheet(250, bildpfad, anzahlX, anzahlY);
-        super.addState(zustandsName, animation);
+        addStateWithScaling(zustandsName, animation);
     }
 
     /**
@@ -102,7 +102,7 @@ implements EduActor {
      */
     public void zustandHinzufuegenVonBildern(String zustandsName, String... bildpfade) {
         Animation animation = Animation.createFromImages(250, bildpfade);
-        super.addState(zustandsName, animation);
+        addStateWithScaling(zustandsName, animation);
     }
 
     /**
