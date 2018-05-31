@@ -3,16 +3,15 @@ package ea.example.showcase.swordplay;
 import ea.Scene;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
+import ea.keyboard.KeyListener;
 
 public class SwordFighter
-extends StatefulAnimation {
+extends StatefulAnimation
+implements KeyListener {
 
     public SwordFighter(Scene parent) {
 
-
-        //Die Frame-Duration
-        final int fd = 250;
-
+        //Erstellen aller States
         addQualifiedState("attack1");
         addQualifiedState("attack2");
         addQualifiedState("attack3");
@@ -25,11 +24,22 @@ extends StatefulAnimation {
         addQualifiedState("smrslt");
         addQualifiedState("stand");
         addQualifiedState("swim");
-        addQualifiedState("jump");
+        addQualifiedState("fall");
+        addQualifiedState("die");
+
+        //Erstellen der automatischen State-Transitions
+        setStateTransition("attack1", "idle");
+        setStateTransition("attack2", "idle");
+        setStateTransition("attack3", "idle");
 
         parent.add(this);
     }
 
+    /**
+     * Interne Utility-Methode. Durch die einheitliche Naming-Convention im Ordner lassen sich die Statenamen als
+     * Präfix in den Dateien wiederfinden. So lässt sich das Einladen vom Code her einfach umsetzen.
+     * @param stateName Der State-Name. Korrespondiert mit dem Naming in den Dateien.
+     */
     private void addQualifiedState(String stateName) {
         //Alle Bilder teilen den Anfang des Pfades
         final String directory="game-assets\\sword";
@@ -38,4 +48,14 @@ extends StatefulAnimation {
         addState(stateName, Animation.createFromImagesPrefix(75, directory, sPrefix+stateName));
     }
 
+
+    @Override
+    public void onKeyDown(int key) {
+
+    }
+
+    @Override
+    public void onKeyUp(int code) {
+
+    }
 }

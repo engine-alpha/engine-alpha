@@ -5,6 +5,8 @@ import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.internal.ano.NoExternalUse;
 
+import java.awt.*;
+
 /**
  * EDU-Variante der {@link StatefulAnimation}.
  * @author Michael Andonie
@@ -132,5 +134,10 @@ implements EduActor {
     @Override
     public Actor getActor() {
         return this;
+    }
+
+    @Override
+    public void render(Graphics2D g) {
+
     }
 }

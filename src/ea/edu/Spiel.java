@@ -2,6 +2,7 @@ package ea.edu;
 
 import ea.EngineAlpha;
 import ea.Game;
+import ea.actor.Actor;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
@@ -169,6 +170,32 @@ public class Spiel {
             return;
         }
         setActiveScene(scene);
+    }
+
+    /* ~~~ CAMERA CONTROL ~~~ */
+
+    public void verschiebeKamera(float dX, float dY) {
+        getActiveScene().getCamera().move(dX, dY);
+    }
+
+    public void setzeKameraZoom(float zoom) {
+        getActiveScene().getCamera().setZoom(zoom);
+    }
+
+    public float nenneKameraZoom() {
+        return getActiveScene().getCamera().getZoom();
+    }
+
+    public void setzeKameraFokus(Actor focus) {
+        getActiveScene().getCamera().setFocus(focus);
+    }
+
+    public void rotiereKamera(float winkelInBogenmass) {
+        getActiveScene().getCamera().rotate(winkelInBogenmass);
+    }
+
+    public void setzeKameraRotation(float winkelInBogenmass) {
+        getActiveScene().getCamera().rotateTo(winkelInBogenmass);
     }
 
     /* ~~~ Listener Addition ~~~ */
