@@ -12,6 +12,7 @@ implements EduGeometrie {
     @API
     public Dreieck(float ax, float ay, float bx, float by, float cx, float cy) {
         super(new Point(ax, ay), new Point(bx, by), new Point(cx, cy));
+        eduSetup();
     }
 
     @Override
