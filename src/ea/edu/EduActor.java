@@ -21,6 +21,10 @@ public interface EduActor {
         Spiel.getActiveScene().add(getActor());
     }
 
+    default void entfernen() {
+        Spiel.getActiveScene().remove(getActor());
+    }
+
     default void verschieben(float dX, float dY) {
         getActor().position.move(dX, dY);
     }

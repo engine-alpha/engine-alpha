@@ -37,6 +37,17 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 
+/**
+ * Eine Animation ein Actor-Objekt, das aus mehreren
+ * <a href="https://de.wikipedia.org/wiki/Einzelbild_(Film)">Frames</a> Frames besteht. Frames können auf verschiedene
+ * Arten aus Bilddateien eingeladen werden:
+ * <ul>
+ *     <li>Animierte GIFs</li>
+ *     <li><a href="https://de.wikipedia.org/wiki/Sprite_(Computergrafik)">Spritesheets</a></li>
+ *     <li>Einzelne Bilddateien</li>
+ * </ul>
+ * @author Michael Andonie
+ */
 @API
 public class Animation extends Actor implements FrameUpdateListener {
 

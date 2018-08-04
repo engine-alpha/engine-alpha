@@ -1,6 +1,7 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
+import ea.Scene;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Frame;
 import ea.internal.ano.API;
@@ -25,8 +26,7 @@ import java.util.HashMap;
  * @see Animation
  */
 public class StatefulAnimation
-extends Actor
-implements FrameUpdateListener {
+extends Actor {
 
     /**
      * Speichert die Frames (= "Animation") zu jedem State
@@ -205,9 +205,26 @@ implements FrameUpdateListener {
 
     /* ~~ Internal Functions ~~ */
 
-    @NoExternalUse
+    private final FrameUpdateListener frameUpdateListener= (l)->internalOnFrameUpdate(l);
+
     @Override
-    public final void onFrameUpdate(int frameDuration) {
+    public final void onAttach(Scene scene) {
+        super.onAttach(scene);
+        scene.addFrameUpdateListener(frameUpdateListener);
+    }
+
+    @Override
+    public final void onDetach(Scene scene) {
+        super.onDetach(scene);
+        scene.removeFrameUpdateListener(frameUpdateListener);
+    }
+
+    /**
+     * Methode wird frameweise über einen anononymen Listener aufgerufen.
+     * @param frameDuration
+     */
+    @NoExternalUse
+    private void internalOnFrameUpdate(int frameDuration) {
         currentTime += frameDuration;
 
         Frame currentFrame = currentAnimation[currentIndex];

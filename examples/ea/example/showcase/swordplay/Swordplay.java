@@ -18,8 +18,11 @@ implements KeyListener {
 
     public Swordplay(Scene parent, int widht, int height) {
         super(parent);
+        super.setDebuggingEnabled(false);
 
         player = new SwordFighter(this);
+        new Platform(this, 7).position.set(-300,  100);
+
         addKeyListener(this);
     }
 
@@ -31,6 +34,9 @@ implements KeyListener {
                 break;
             case Key.I:
                 player.setState("idle");
+                break;
+            case Key.T: //Toggle Debg
+                super.toggleDebug();
                 break;
         }
     }
