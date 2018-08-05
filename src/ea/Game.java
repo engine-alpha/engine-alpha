@@ -32,6 +32,7 @@ import ea.mouse.MouseAction;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseWheelAction;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -624,6 +625,67 @@ public class Game {
         }
 
         mainThread.interrupt();
+    }
+
+    /**
+     * Gibt einen Nachricht in einem modalen Dialogfenster aus.
+     * Der Dialog ist über {@link javax.swing.JOptionPane} implementiert.
+     * @param message   Der Inhalt der Botschaft im Dialogfenster.
+     * @param title     Der Titel des Dialogfensters.
+     */
+    @API
+    public static void showMessage(String message, String title) {
+        JOptionPane.showMessageDialog(frame, message, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Öffnet ein modales Dialogfenster, in dem der Nutzer zur Eingabe von Text in einer
+     * Zeile aufgerufen wird.
+     * Der Dialog ist über {@link javax.swing.JOptionPane} implementiert.
+     * @param message   Der Inhalt der Botschaft im Dialogfenster.
+     * @param title     Der Titel des Dialogfensters.
+     * @return          Die Eingabe des Nutzers. Ist <code>null</code>, wenn der Nutzer
+     *                  den Dialog abgebrochen hat.
+     */
+    @API
+    public static String requestStringInput(String message, String title) {
+        return JOptionPane.showInputDialog(frame, message, title, JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
+     * Öffnet ein modales Dialogfenster mit Ja/Nein-Buttons.
+     * Der Dialog ist über {@link javax.swing.JOptionPane} implementiert.
+     * @param message   Der Inhalt der Botschaft im Dialogfenster.
+     * @param title     Der Titel des Dialogfensters.
+     * @return          Die Eingabe des Nutzers:
+     *                  <ul>
+     *                      <li>Ja -> <code>true</code></li>
+     *                      <li>Nein -> <code>false</code></li>
+     *                      <li>Abbruch (= Dialog manuell schließen) -> <code>false</code></li>
+     *                  </ul>
+     */
+    @API
+    public static boolean requestYesNo(String message, String title) {
+        return JOptionPane.showConfirmDialog(frame, message, title,
+                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION;
+    }
+
+    /**
+     * Öffnet ein modales Dialogfenster mit OK/Abbrechen-Buttons.
+     * Der Dialog ist über {@link javax.swing.JOptionPane} implementiert.
+     * @param message   Der Inhalt der Botschaft im Dialogfenster.
+     * @param title     Der Titel des Dialogfensters.
+     * @return          Die Eingabe des Nutzers:
+     *                  <ul>
+     *                      <li>OK -> <code>true</code></li>
+     *                      <li>Abbrechen -> <code>false</code></li>
+     *                      <li>Abbruch (= Dialog manuell schließen) -> <code>false</code></li>
+     *                  </ul>
+     */
+    @API
+    public static boolean requestOkCancel(String message, String title) {
+        return JOptionPane.showConfirmDialog(frame, message, title,
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
     }
 
     @NoExternalUse

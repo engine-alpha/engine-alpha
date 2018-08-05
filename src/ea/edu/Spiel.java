@@ -7,6 +7,7 @@ import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
 
+import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,6 +28,8 @@ public class Spiel {
     private static final HashMap<Color, String> colorToString = new HashMap<>();
 
     private static final HashMap<String, EduScene> sceneMap = new HashMap<>();
+
+    public static final String DEFAULT_EDU_DIALOG_TITLE = "Engine Alpha - EDU Version";
 
     /* ~~~ EDU-UTILITY ~~~*/
 
@@ -197,6 +200,24 @@ public class Spiel {
 
     public void setzeKameraRotation(float winkelInBogenmass) {
         getActiveScene().getCamera().rotateTo(winkelInBogenmass);
+    }
+
+    /* ~~~ Dialogues ~~~ */
+
+    public void nachricht(String nachricht) {
+        Game.showMessage(nachricht, DEFAULT_EDU_DIALOG_TITLE);
+    }
+
+    public boolean frageJaNein(String frage) {
+        return Game.requestYesNo(frage, DEFAULT_EDU_DIALOG_TITLE);
+    }
+
+    public boolean nachrichtOkAbbrechen(String frage) {
+        return Game.requestOkCancel(frage, DEFAULT_EDU_DIALOG_TITLE);
+    }
+
+    public String eingabe(String nachricht) {
+        return Game.requestStringInput(nachricht, DEFAULT_EDU_DIALOG_TITLE);
     }
 
     /* ~~~ Listener Addition ~~~ */
