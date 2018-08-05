@@ -62,6 +62,6 @@ public interface EduActor {
     }
 
     default boolean schneidet(Actor actor) {
-        return actor.overlaps(actor);
+        return getActor().overlaps(actor);
     }
 }
