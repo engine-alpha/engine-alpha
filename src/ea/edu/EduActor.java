@@ -151,11 +151,11 @@ public interface EduActor {
         ValueAnimator<Float> aX = new ValueAnimator<>(ms,
                 x->getActor().position.setCenter(getActor().position.getCenter().moveInstanceBy(new Vector(x, 0))),
                 new LinearFloat(center.getRealX(), zX),
-                loop ? ValueAnimator.Mode.REPEATED : ValueAnimator.Mode.SINGLE);
+                loop ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
         ValueAnimator<Float> aY = new ValueAnimator<>(ms,
                 y->getActor().position.setCenter(getActor().position.getCenter().moveInstanceBy(new Vector(0, y))),
                 new LinearFloat(center.getRealX(), zX),
-                loop ? ValueAnimator.Mode.REPEATED : ValueAnimator.Mode.SINGLE);
+                loop ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
         Spiel.getActiveScene().addFrameUpdateListener(aX);
         Spiel.getActiveScene().addFrameUpdateListener(aY);
     }

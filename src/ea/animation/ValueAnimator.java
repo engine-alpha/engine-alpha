@@ -35,6 +35,13 @@ public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
     private int currentTime = 0;
     private int duration;
     private boolean complete = false;
+
+    /**
+     * Hilfsvariable für PINGPONG-Mode.
+     * @author Michael Andonie
+     */
+    private boolean goingBackwards = false;
+
     private Collection<Consumer<V>> completionListeners = new ConcurrentLinkedQueue<>();
 
     public ValueAnimator(int duration, Consumer<V> consumer, Interpolator<V> interpolator, Mode mode) {
@@ -50,23 +57,51 @@ public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
 
     @Override
     public void onFrameUpdate(int frameDuration) {
-        this.currentTime += frameDuration;
+        float progress;
+        if(!goingBackwards) {
+            this.currentTime += frameDuration;
+            if (this.currentTime > this.duration) {
 
-        if (this.currentTime > this.duration) {
+                switch(this.mode) {
+                    case REPEATED:
+                        this.currentTime %= this.duration;
+                        progress = (float) this.currentTime / this.duration;
+                        break;
+                    case SINGLE:
+                        this.currentTime = this.duration;
+                        this.scene.removeFrameUpdateListener(this);
 
-            if (this.mode == Mode.REPEATED) {
-                this.currentTime %= this.duration;
-            } else {
-                this.currentTime = this.duration;
-                this.scene.removeFrameUpdateListener(this);
-
-                for (Consumer<V> listener : completionListeners) {
-                    listener.accept(this.interpolator.interpolate(1));
+                        for (Consumer<V> listener : completionListeners) {
+                            listener.accept(this.interpolator.interpolate(1));
+                        }
+                        progress = 1;
+                        break;
+                    case PINGPONG:
+                        //Ging bisher vorwärts -> Jetzt Rückwärts
+                        goingBackwards = true;
+                        progress = 1;
+                        break;
+                    default:
+                        progress = -1;
+                        break;
                 }
+            } else {
+                progress = (float) this.currentTime / this.duration;
+            }
+        } else {
+            //Ping-Pong-Backwards Strategy
+            this.currentTime -= frameDuration;
+            if(this.currentTime < 0) {
+                //PINGPONG backwards ist fertig -> Jetzt wieder vorwärts
+                goingBackwards = false;
+                progress = 0;
+            } else {
+                progress = (float) this.currentTime / this.duration;
             }
         }
 
-        this.consumer.accept(interpolator.interpolate((float) this.currentTime / this.duration));
+
+        this.consumer.accept(interpolator.interpolate(progress));
     }
 
     @Override
@@ -85,6 +120,6 @@ public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
     }
 
     public enum Mode {
-        SINGLE, REPEATED
+        SINGLE, REPEATED, PINGPONG
     }
 }
