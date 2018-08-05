@@ -131,7 +131,8 @@ public interface EduActor {
     }
 
     default void sprung(float staerke) {
-        getActor().physics.applyImpulse(new Vector(0, staerke*1000));
+        if(steht())
+            getActor().physics.applyImpulse(new Vector(0, staerke*1000));
     }
 
     /**
