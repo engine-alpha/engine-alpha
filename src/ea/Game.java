@@ -52,7 +52,7 @@ import java.util.concurrent.CyclicBarrier;
 public class Game {
     static {
         System.setProperty("sun.java2d.opengl", "true"); // ok
-        System.setProperty("sun.java2d.d3d", "false"); // ok
+        System.setProperty("sun.java2d.d3d", "true"); // ok
         System.setProperty("sun.java2d.noddraw", "false"); // set false if possible, linux
         System.setProperty("sun.java2d.pmoffscreen", "true"); // set true if possible, linux
         System.setProperty("sun.java2d.ddoffscreen", "true"); // ok, windows
