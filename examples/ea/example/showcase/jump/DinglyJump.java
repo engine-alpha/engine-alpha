@@ -39,7 +39,6 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
         platform.getPhysicsHandler().getBody().m_userData = "Ground";
 
         getCamera().setFocus(character);
-        getCamera().setOffset(new Vector(0, +200));
 
         addKeyListener(this);
         addFrameUpdateListener(this);
