@@ -136,7 +136,7 @@ public class Spiel {
      * @param name Der Name für die Szene.
      * @see #setzeSzene(String)
      */
-    public static void benenneSzene(String name) {
+    public void benenneSzene(String name) {
         if(getActiveScene().getSceneName() != null) {
             Logger.error("EDU", "Die Szene hat bereits einen Namen: " + getActiveScene().getSceneName());
             return;
@@ -154,7 +154,7 @@ public class Spiel {
      *     <li>Werden alle grafischen Objekte, die ab sofort erstellt werden, in der neuen Szene eingesetzt.</li>
      * </ul>
      */
-    public static void neueSzene() {
+    public void neueSzene() {
         setActiveScene(new EduScene());
     }
 
@@ -164,7 +164,7 @@ public class Spiel {
      * @param szenenName    der Name der aktiv zu setzenden Szene.
      * @see #benenneSzene(String)
      */
-    public static void setzeSzene(String szenenName) {
+    public void setzeSzene(String szenenName) {
         EduScene scene = sceneMap.get(szenenName);
         if(scene == null) {
             Logger.error("EDU", "Konnte keine Szene mit dem Namen " + szenenName + " finden.");
