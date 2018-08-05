@@ -52,8 +52,8 @@ public class Game {
     static {
         System.setProperty("sun.java2d.opengl", "true"); // ok
         System.setProperty("sun.java2d.d3d", "false"); // ok
-        System.setProperty("sun.java2d.noddraw", "true"); // set false if possible, linux
-        System.setProperty("sun.java2d.pmoffscreen", "false"); // set true if possible, linux
+        System.setProperty("sun.java2d.noddraw", "false"); // set false if possible, linux
+        System.setProperty("sun.java2d.pmoffscreen", "true"); // set true if possible, linux
         System.setProperty("sun.java2d.ddoffscreen", "true"); // ok, windows
         System.setProperty("sun.java2d.ddscale", "true"); // ok, hardware accelerated image scaling on windows
     }
@@ -270,7 +270,7 @@ public class Game {
 
                             // have to be the same @ Game.screenshot!
                             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
                             renderPanel.render(g);
@@ -295,7 +295,7 @@ public class Game {
 
         mousePosition = new java.awt.Point(width / 2, height / 2);
 
-        mainThread = new Thread(Game::run);
+        mainThread = new Thread(Game::run, "Main Game");
         mainThread.start();
         mainThread.setPriority(Thread.MAX_PRIORITY);
     }
