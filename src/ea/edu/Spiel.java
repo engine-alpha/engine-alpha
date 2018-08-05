@@ -6,6 +6,7 @@ import ea.actor.Actor;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
+import org.jbox2d.common.Vec2;
 
 import javax.swing.*;
 import java.awt.*;
@@ -200,6 +201,12 @@ public class Spiel {
 
     public void setzeKameraRotation(float winkelInBogenmass) {
         getActiveScene().getCamera().rotateTo(winkelInBogenmass);
+    }
+
+    /* ~~~ GLOBAL WORLD PHYICS ~~~ */
+
+    public void setzeSchwerkraft(float schwerkraft) {
+        getActiveScene().getWorldHandler().getWorld().setGravity(new Vec2(0, -schwerkraft));
     }
 
     /* ~~~ Dialogues ~~~ */
