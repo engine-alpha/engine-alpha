@@ -9,20 +9,27 @@ import ea.handle.Physics;
  * Art 2D</a> für die kostenfreien Tiles.
  */
 public class Platform extends TileContainer {
+    private static final int TILE_SIZE = 128;
 
-    public Platform(Scene parent, int numX) {
-        super(numX, 1, 128);
-        if (numX < 2) throw new IllegalArgumentException("Platform zu klein!");
+    public Platform(Scene parent, int tileCount) {
+        super(tileCount, 1, TILE_SIZE);
 
-        String pathToTiles = "game-assets/sword/tiles/";
+        if (tileCount < 2) {
+            throw new IllegalArgumentException("Number of tiles must be at least 2");
+        }
 
-        //Tile für das linke Ende
-        setTileAt(0, 0, pathToTiles + "platform_l.png");
-        //Tile für alle mittleren Stücke
-        for (int x = 1; x < numX - 1; x++)
-            setTileAt(x, 0, pathToTiles + "platform_m.png");
-        //Tile für das rechte Ende
-        setTileAt(numX - 1, 0, pathToTiles + "platform_r.png");
+        String basePath = "game-assets/sword/tiles/";
+
+        // Tile für das linke Ende
+        setTileAt(0, 0, basePath + "platform_l.png");
+
+        for (int x = 1; x < tileCount - 1; x++) {
+            // Tile für alle mittleren Stücke
+            setTileAt(x, 0, basePath + "platform_m.png");
+        }
+
+        // Tile für das rechte Ende
+        setTileAt(tileCount - 1, 0, basePath + "platform_r.png");
 
         parent.add(this);
 

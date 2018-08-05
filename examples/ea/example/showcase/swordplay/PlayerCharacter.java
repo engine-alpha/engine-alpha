@@ -16,11 +16,14 @@ import ea.example.showcase.jump.Enemy;
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener {
 
     private static final float MAX_SPEED = 5000;
+    public static final int JUMP_FORCE = +2000;
+    public static final int SMASH_FORCE = -15000;
+    public static final int BOTTOM_OUT = -500;
 
     /**
      * Beschreibt die drei Zustände, die ein Character bezüglich seiner horizontalen Bewegung haben kann.
      */
-    public enum MovementState {
+    public enum HorizontalMovement {
         LEFT, RIGHT, IDLE;
 
         public float getTargetXVelocity() {
@@ -31,13 +34,13 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                     return MAX_SPEED;
                 case IDLE:
                     return 0;
+                default:
+                    throw new IllegalStateException("Illegal enum state");
             }
-
-            return Float.NaN;
         }
     }
 
-    private MovementState movementState = MovementState.IDLE;
+    private HorizontalMovement horizontalMovement = HorizontalMovement.IDLE;
     private Vector smashForce = Vector.NULLVECTOR;
     private Scene parent;
 
@@ -45,16 +48,16 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         this.parent = parent;
 
         // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
-        String pathbase = "game-assets/jump/spr_m_traveler_";
+        String basePath = "game-assets/jump/spr_m_traveler_";
 
-        addState("idle", Animation.createFromAnimatedGif(pathbase + "idle_anim.gif"));
-        addState("walking", Animation.createFromAnimatedGif(pathbase + "walk_anim.gif"));
-        addState("running", Animation.createFromAnimatedGif(pathbase + "run_anim.gif"));
-        addState("jumpingUp", Animation.createFromAnimatedGif(pathbase + "jump_1up_anim.gif"));
-        addState("midair", Animation.createFromAnimatedGif(pathbase + "jump_2midair_anim.gif"));
-        addState("falling", Animation.createFromAnimatedGif(pathbase + "jump_3down_anim.gif"));
-        addState("landing", Animation.createFromAnimatedGif(pathbase + "jump_4land_anim.gif"));
-        addState("smashing", Animation.createFromAnimatedGif(pathbase + "jump_4land_anim.gif"));
+        addState("idle", Animation.createFromAnimatedGif(basePath + "idle_anim.gif"));
+        addState("walking", Animation.createFromAnimatedGif(basePath + "walk_anim.gif"));
+        addState("running", Animation.createFromAnimatedGif(basePath + "run_anim.gif"));
+        addState("jumpingUp", Animation.createFromAnimatedGif(basePath + "jump_1up_anim.gif"));
+        addState("midair", Animation.createFromAnimatedGif(basePath + "jump_2midair_anim.gif"));
+        addState("falling", Animation.createFromAnimatedGif(basePath + "jump_3down_anim.gif"));
+        addState("landing", Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif"));
+        addState("smashing", Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif"));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -68,28 +71,27 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     }
 
     /**
-     * Wird ausgeführt, wenn ein Sprungbefehl (Leertaste) angekommen ist.
+     * Wird ausgeführt, wenn ein Sprungbefehl (W) angekommen ist.
      */
     public void tryJumping() {
         if (physics.testStanding()) {
-            // Figur steht -> Jump
-            physics.applyImpulse(new Vector(0, +2000));
+            physics.applyImpulse(new Vector(0, JUMP_FORCE));
             setState("jumpingUp");
         }
     }
 
-    public void setMovementState(MovementState state) {
-        this.movementState = state;
+    public void setHorizontalMovement(HorizontalMovement state) {
+        this.horizontalMovement = state;
     }
 
-    public MovementState getMovementState() {
-        return this.movementState;
+    public HorizontalMovement getHorizontalMovement() {
+        return this.horizontalMovement;
     }
 
     public void smash() {
         if (getCurrentState().equals("falling")) {
             setState("smashing");
-            smashForce = new Vector(0, -15000);
+            smashForce = new Vector(0, SMASH_FORCE);
         }
     }
 
@@ -99,10 +101,9 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     @Override
     public void onFrameUpdate(int frameDuration) {
         Vector velocity = physics.getVelocity();
-        //boolean standing = physics.testStanding();
 
-        //kümmere dich um die Horizontale Bewegung
-        float desiredVelocity = movementState.getTargetXVelocity();
+        // kümmere dich um die horizontale Bewegung
+        float desiredVelocity = horizontalMovement.getTargetXVelocity();
         float impulse = desiredVelocity - velocity.x;
         physics.applyForce(new Vector(impulse, 0));
 
@@ -129,13 +130,17 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         if (velocity.x > 0) {
             setFlipHorizontal(false);
-            //if(standing && !getCurrentState().equals("running")) setState("running");
         } else if (velocity.x < 0) {
             setFlipHorizontal(true);
-            //if(standing && !getCurrentState().equals("running")) setState("running");
         }
 
         physics.applyForce(smashForce);
+
+        if (position.getY() < BOTTOM_OUT) {
+            position.set(0, 0);
+            physics.setVelocity(Vector.NULLVECTOR);
+            setState("falling");
+        }
     }
 
     @Override
@@ -152,7 +157,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             smashForce = Vector.NULLVECTOR;
 
             if (smashing) {
-                Interpolator<Float> interpolator = new ReverseEaseFloat(0, 10);
+                Interpolator<Float> interpolator = new ReverseEaseFloat(0, -0.01f * physics.getVelocity().y);
                 FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> parent.getCamera().setOffset(new Vector(0, y)), interpolator);
                 getScene().addFrameUpdateListener(valueAnimator);
             }

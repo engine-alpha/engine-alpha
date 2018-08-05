@@ -1,6 +1,5 @@
 package ea.internal.phy;
 
-import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.collision.CollisionEvent;
@@ -11,7 +10,6 @@ import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -475,8 +473,6 @@ public class WorldHandler implements ContactListener {
             return;
         }
 
-        final WorldHandler worldHandler = wh1;
-
         Body b1 = actor.getPhysicsHandler().getBody(), b2 = collider.getPhysicsHandler().getBody();
         if (b1 == null || b2 == null) {
             Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
@@ -495,7 +491,7 @@ public class WorldHandler implements ContactListener {
             higher = b1;
         }
 
-        Checkup<E> toAdd = new Checkup<E>(kr, higher, collider);
+        Checkup<E> toAdd = new Checkup<>(kr, higher, collider);
 
         List<Checkup> atKey = wh1.specificCollisionListeners.get(lower);
         if (atKey == null) {
