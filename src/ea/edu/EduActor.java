@@ -154,7 +154,7 @@ public interface EduActor {
                 loop ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
         ValueAnimator<Float> aY = new ValueAnimator<>(ms,
                 y->getActor().position.setCenter(getActor().position.getCenter().getRealX(), y),
-                new LinearFloat(center.getRealX(), zX),
+                new LinearFloat(center.getRealY(), zY),
                 loop ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
         Spiel.getActiveScene().addFrameUpdateListener(aX);
         Spiel.getActiveScene().addFrameUpdateListener(aY);
