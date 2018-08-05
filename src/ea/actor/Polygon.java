@@ -44,7 +44,7 @@ public class Polygon extends Geometry {
 
         for (int i = 0; i < points.length; i++) {
             px[i] = Math.round(points[i].getRealX());
-            py[i] = Math.round(points[i].getRealY());
+            py[i] = -1 * Math.round(points[i].getRealY());
         }
     }
 
@@ -55,7 +55,7 @@ public class Polygon extends Geometry {
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillPolygon(px, py, px.length);
+        g.fillPolygon(px, py, px.length); // TODO Draw at -height
     }
 
     /**

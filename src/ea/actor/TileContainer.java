@@ -161,7 +161,7 @@ extends Actor{
         @Override
         @NoExternalUse
         void render(Graphics2D g, int dX, int dY) {
-            g.drawImage(bufferedImage, null, dX,dY);
+            g.drawImage(bufferedImage, null, dX, dY);
         }
 
         @Override

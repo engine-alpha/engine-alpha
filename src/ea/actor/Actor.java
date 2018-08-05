@@ -294,8 +294,8 @@ public abstract class Actor implements Attachable {
 
             AffineTransform transform = g.getTransform();
 
-            g.rotate(rotation, position.x, position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
-            g.translate(position.x, position.y);
+            g.rotate(rotation, position.x, -position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
+            g.translate(position.x, -position.y);
 
             //Opacity Update
             if (opacity != 1) {
@@ -349,12 +349,12 @@ public abstract class Actor implements Attachable {
                     ys = new int[polygonShape.getVertexCount()];
             for (int i = 0; i < xs.length; i++) {
                 xs[i] = (int) (vec2s[i].x * pixelPerMeter);
-                ys[i] = (int) (vec2s[i].y * pixelPerMeter);
+                ys[i] = (-1) * (int) (vec2s[i].y * pixelPerMeter);
             }
             g.drawPolygon(xs, ys, xs.length);
         } else if (shape instanceof CircleShape) {
             int diameter = (int) (((CircleShape) shape).m_radius * 2 * pixelPerMeter);
-            g.drawOval(0, 0, diameter, diameter);
+            g.drawOval(0, 0, diameter, -diameter);
         } else {
             Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");
         }

@@ -21,7 +21,6 @@ package ea;
 
 import ea.actor.Actor;
 import ea.actor.ActorGroup;
-import ea.collision.CollisionListener;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.WorldHandler;
@@ -294,20 +293,6 @@ public class Scene {
 
     @API
     public Point getMousePosition() {
-        java.awt.Point mouse = Game.getMousePositionInFrame();
-        Point position = camera.getPosition();
-
-        float rotation = camera.getRotation();
-
-        float mx = mouse.x;
-        float my = mouse.y;
-
-        float sin = (float) Math.sin(rotation);
-        float cos = (float) Math.cos(rotation);
-
-        return new Point(
-                position.x + ((cos * mx - sin * my)) / camera.getZoom(),
-                position.y + ((sin * mx + cos * my)) / camera.getZoom()
-        );
+        return Game.convertMousePosition(this, Game.getMousePositionInFrame());
     }
 }

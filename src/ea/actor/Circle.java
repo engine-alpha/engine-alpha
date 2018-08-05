@@ -69,7 +69,7 @@ public class Circle extends Geometry {
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillOval(0, 0, this.diameterInt, this.diameterInt);
+        g.fillOval(0, -this.diameterInt, this.diameterInt, this.diameterInt);
     }
 
     @Override

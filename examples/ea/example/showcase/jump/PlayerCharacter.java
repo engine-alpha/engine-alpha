@@ -8,10 +8,7 @@ import ea.actor.StatefulAnimation;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 
-
-public class PlayerCharacter
-extends StatefulAnimation
-implements CollisionListener<Actor> {
+public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor> {
 
     private static final float MAX_SPEED = 5000;
 
@@ -34,7 +31,7 @@ implements CollisionListener<Actor> {
         }
     }
 
-    private MovementState movementState=MovementState.IDLE;
+    private MovementState movementState = MovementState.IDLE;
 
     public PlayerCharacter(Scene parent) {
         //Load all Animations in
@@ -42,16 +39,15 @@ implements CollisionListener<Actor> {
         //Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         final String pathbase = "game-assets\\jump\\spr_m_traveler_";
 
-
-        Animation idle = Animation.createFromAnimatedGif(pathbase+"idle_anim.gif");
+        Animation idle = Animation.createFromAnimatedGif(pathbase + "idle_anim.gif");
         addState("idle", idle);
 
-        addState("walking", Animation.createFromAnimatedGif(pathbase+"walk_anim.gif"));
-        addState("running", Animation.createFromAnimatedGif(pathbase+"run_anim.gif"));
-        addState("jumpingUp", Animation.createFromAnimatedGif(pathbase+"jump_1up_anim.gif"));
-        addState("midair", Animation.createFromAnimatedGif(pathbase+"jump_2midair_anim.gif"));
-        addState("falling", Animation.createFromAnimatedGif(pathbase+"jump_3down_anim.gif"));
-        addState("landing", Animation.createFromAnimatedGif(pathbase+"jump_4land_anim.gif"));
+        addState("walking", Animation.createFromAnimatedGif(pathbase + "walk_anim.gif"));
+        addState("running", Animation.createFromAnimatedGif(pathbase + "run_anim.gif"));
+        addState("jumpingUp", Animation.createFromAnimatedGif(pathbase + "jump_1up_anim.gif"));
+        addState("midair", Animation.createFromAnimatedGif(pathbase + "jump_2midair_anim.gif"));
+        addState("falling", Animation.createFromAnimatedGif(pathbase + "jump_3down_anim.gif"));
+        addState("landing", Animation.createFromAnimatedGif(pathbase + "jump_4land_anim.gif"));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -62,16 +58,15 @@ implements CollisionListener<Actor> {
         parent.add(this);
         physics.setMass(65);
         addCollisionListener(this);
-
     }
 
     /**
      * Wird ausgeführt, wenn ein Sprungbefehl (Leertaste) angekommen ist.
      */
     public void tryJumping() {
-        if(physics.testStanding()) {
+        if (physics.testStanding()) {
             //Figur steht -> Jump
-            physics.applyImpulse(new Vector(0, -2000));
+            physics.applyImpulse(new Vector(0, +2000));
             setState("jumpingUp");
         }
     }
@@ -97,24 +92,28 @@ implements CollisionListener<Actor> {
         float impulse = velocityChange;
         physics.applyForce(new Vector(impulse, 0));
 
-        switch(getCurrentState()) {
+        switch (getCurrentState()) {
             case "jumpingUp":
-                if ( velocity.y > 0) setState("midair");
+                if (velocity.y > 0) setState("midair");
                 break;
             case "idle":
             case "running":
             case "walking":
                 //if(standing) {
-                    if ( velocity.y > 0.1f) setState("midair");
-                    else if(Math.abs(velocity.x) > 550f) changeState("running");
-                    else if(Math.abs(velocity.x) > 10f) changeState("walking");
-                    else changeState("idle");
+                if (velocity.y > 0.1f) {
+                    setState("midair");
+                } else if (Math.abs(velocity.x) > 550f) {
+                    changeState("running");
+                } else if (Math.abs(velocity.x) > 10f) {
+                    changeState("walking");
+                } else {
+                    changeState("idle");
+                }
                 //}
                 break;
         }
 
-
-        if(velocity.x > 0) {
+        if (velocity.x > 0) {
             setFlipHorizontal(false);
             //if(standing && !getCurrentState().equals("running")) setState("running");
         } else if (velocity.x < 0) {
@@ -125,8 +124,8 @@ implements CollisionListener<Actor> {
 
     @Override
     public void onCollision(CollisionEvent<Actor> collisionEvent) {
-        if(collisionEvent.getColliding() instanceof Enemy) return;
-        if(getCurrentState().equals("falling") && physics.testStanding()) {
+        if (collisionEvent.getColliding() instanceof Enemy) return;
+        if (getCurrentState().equals("falling") && physics.testStanding()) {
             setState("landing");
         }
     }

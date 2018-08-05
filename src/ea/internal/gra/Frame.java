@@ -55,7 +55,7 @@ public class Frame {
     public void render(Graphics2D g2d, boolean flipHorizontal, boolean flipVertical) {
         g2d.drawImage(image,
                 flipHorizontal ? image.getWidth() : 0,
-                flipVertical ? image.getHeight() : 0,
+                -image.getHeight() + (flipVertical ? image.getHeight() : 0),
                 (flipHorizontal ? -1 : 1)*image.getWidth(),
                 (flipVertical ? -1 : 1)*image.getHeight(),
                 null);

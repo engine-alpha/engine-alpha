@@ -91,7 +91,7 @@ public class Rectangle extends Geometry {
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillRect(0, 0, widthInt, heightInt);
+        g.fillRect(0, -heightInt, widthInt, heightInt);
     }
 
     /**

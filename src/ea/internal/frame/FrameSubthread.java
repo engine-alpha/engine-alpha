@@ -4,12 +4,14 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 public abstract class FrameSubthread extends Thread {
-    private CyclicBarrier frameBarrier;
+    private CyclicBarrier frameBarrierStart;
+    private CyclicBarrier frameBarrierEnd;
 
-    protected FrameSubthread(String name, CyclicBarrier frameBarrier) {
+    protected FrameSubthread(String name, CyclicBarrier frameBarrierStart, CyclicBarrier frameBarrierEnd) {
         super(name);
 
-        this.frameBarrier = frameBarrier;
+        this.frameBarrierStart = frameBarrierStart;
+        this.frameBarrierEnd = frameBarrierEnd;
         this.setDaemon(true);
     }
 
@@ -21,12 +23,18 @@ public abstract class FrameSubthread extends Thread {
     public final void run() {
         while (!interrupted()) {
             try {
-                frameBarrier.await();
+                frameBarrierStart.await();
             } catch (BrokenBarrierException | InterruptedException e) {
                 break;
             }
 
             dispatchFrame();
+
+            try {
+                frameBarrierEnd.await();
+            } catch (BrokenBarrierException | InterruptedException e) {
+                break;
+            }
         }
     }
 

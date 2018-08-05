@@ -362,9 +362,9 @@ extends PhysikHandler {
         //Test-AABB: Should be a minimal space centered right below the Body
         AABB testAABB = new AABB();
         final float epsilon = 0.0001f;
-        testAABB.lowerBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2-epsilon,bodyBounds.upperBound.y);
+        testAABB.lowerBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2-epsilon,bodyBounds.lowerBound.y);
         testAABB.upperBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2+epsilon,
-                bodyBounds.upperBound.y + 2*epsilon);
+                bodyBounds.lowerBound.y + 2*epsilon);
 
 
 

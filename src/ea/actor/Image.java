@@ -70,6 +70,6 @@ public class Image extends Actor {
      */
     @Override
     public void render(Graphics2D g) {
-        g.drawImage(this.image, 0, 0, null);
+        g.drawImage(this.image, 0, -this.image.getHeight(), null);
     }
 }

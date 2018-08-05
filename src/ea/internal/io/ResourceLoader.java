@@ -37,11 +37,13 @@ final public class ResourceLoader {
     }
 
     public static byte[] load(String filename) throws IOException {
-        Path path = Paths.get(filename);
+        String normalizedFilename = normalizePath(filename);
+        Path path = Paths.get(normalizedFilename);
 
-        if (ResourceLoader.class.getResource("/" + filename) != null) {
+        URL url = ResourceLoader.class.getResource("/" + normalizedFilename);
+        if (url != null) {
             try {
-                path = Paths.get(ResourceLoader.class.getResource("/" + filename).toURI());
+                path = Paths.get(url.toURI());
             } catch (URISyntaxException e) {
                 throw new IOException("Could not convert URL to URI", e);
             }
@@ -51,23 +53,31 @@ final public class ResourceLoader {
     }
 
     public static InputStream loadAsStream(String filename) throws IOException {
-        if (ResourceLoader.class.getResource("/" + filename) != null) {
-            return ResourceLoader.class.getResourceAsStream("/" + filename);
+        String normalizedFilename = normalizePath(filename);
+
+        if (ResourceLoader.class.getResource("/" + normalizedFilename) != null) {
+            return ResourceLoader.class.getResourceAsStream("/" + normalizedFilename);
         }
 
-        return new FileInputStream(filename);
+        return new FileInputStream(normalizePath(normalizedFilename));
     }
 
     public static File loadAsFile(String filename) throws IOException {
-        if (ResourceLoader.class.getResource("/" + filename) != null) {
-            URL url = ResourceLoader.class.getResource("/" + filename);
-            if(url != null)
-                try {
-                    return new File(url.toURI());
-                } catch (URISyntaxException e) {
-                    Logger.error("IO", e.getMessage());
-                }
+        String normalizedFilename = normalizePath(filename);
+
+        URL url = ResourceLoader.class.getResource("/" + normalizedFilename);
+        if (url != null) {
+            try {
+                return new File(url.toURI());
+            } catch (URISyntaxException e) {
+                Logger.error("IO", e.getMessage());
+            }
         }
-        return new File(filename);
+
+        return new File(normalizePath(normalizedFilename));
+    }
+
+    private static String normalizePath(String path) {
+        return path.replace("\\", File.separator).replace("/", File.separator);
     }
 }

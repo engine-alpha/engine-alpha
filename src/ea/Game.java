@@ -90,7 +90,9 @@ public class Game {
      */
     private static Scene nextScene;
 
-    private static CyclicBarrier frameBarrier;
+    private static CyclicBarrier frameBarrierStart;
+
+    private static CyclicBarrier frameBarrierEnd;
 
     private static FrameSubthread renderThread;
 
@@ -102,8 +104,8 @@ public class Game {
     private static volatile Queue<Dispatchable> dispatchableQueue = new ConcurrentLinkedQueue<>();
 
     /**
-     * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die
-     * entsprechende Taste gedrückt, sonst ist der Wert <code>false</code>.
+     * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die entsprechende Taste
+     * gedrückt, sonst ist der Wert <code>false</code>.
      */
     private static volatile boolean[] keys = new boolean[45];
 
@@ -143,7 +145,7 @@ public class Game {
      */
     @API
     public static void start(int width, int height, Scene scene) {
-        if(renderPanel != null) {
+        if (renderPanel != null) {
             //Start wurde schon ausgeführt.
             throw new RuntimeException("Game.start wurde bereits ausgeführt.");
         }
@@ -167,7 +169,7 @@ public class Game {
 
                 g.scale(camera.getZoom(), camera.getZoom());
                 g.rotate(rotation, 0, 0);
-                g.translate(-position.x, -position.y);
+                g.translate(-position.x, position.y);
 
                 // TODO: Calculate optimal bounds
                 int size = Math.max(width, height);
@@ -229,31 +231,23 @@ public class Game {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                mousePosition = new java.awt.Point(e.getX() - width / 2, e.getY() - height / 2);
+                mousePosition = e.getPoint();
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                mousePosition = new java.awt.Point(e.getX() - width / 2, e.getY() - height / 2);
+                mousePosition = e.getPoint();
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                mousePosition = new java.awt.Point(e.getX() - width / 2, e.getY() - height / 2);
+                mousePosition = e.getPoint();
             }
         };
 
         renderPanel.addMouseMotionListener(mouseAdapter);
         renderPanel.addMouseListener(mouseAdapter);
-
-        MouseWheelListener mouseWheelListener = new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                enqueueMouseWheelEvent(e);
-            }
-        };
-
-        renderPanel.addMouseWheelListener(mouseWheelListener);
+        renderPanel.addMouseWheelListener(Game::enqueueMouseWheelEvent);
 
         try {
             frame.setIconImage(ImageLoader.load("assets/favicon.png"));
@@ -261,9 +255,10 @@ public class Game {
             Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
         }
 
-        frameBarrier = new CyclicBarrier(2);
+        frameBarrierStart = new CyclicBarrier(2);
+        frameBarrierEnd = new CyclicBarrier(2);
 
-        renderThread = new FrameSubthread("Rendering", frameBarrier) {
+        renderThread = new FrameSubthread("Rendering", frameBarrierStart, frameBarrierEnd) {
             @Override
             public void dispatchFrame() {
                 try {
@@ -275,7 +270,7 @@ public class Game {
 
                             // have to be the same @ Game.screenshot!
                             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
                             renderPanel.render(g);
@@ -307,6 +302,7 @@ public class Game {
 
     /**
      * Rendert Debug-Informationen auf dem Bildschirm.
+     *
      * @param g Das Graphics-Objekt zum zeichnen.
      */
     @NoExternalUse
@@ -321,7 +317,7 @@ public class Game {
 
         g.scale(camera.getZoom(), camera.getZoom());
         g.rotate(rotation, 0, 0);
-        g.translate(-position.x, -position.y);
+        g.translate(-position.x, position.y);
 
         int gridSize = 100;
         int windowSize = Math.max(width, height);
@@ -329,7 +325,7 @@ public class Game {
         // TODO: Optimize to draw only the required grid cells on getRotation
         // Without getRotation: - width / 2, - height / 2
         int tx = (int) position.x - windowSize;
-        int ty = (int) position.y - windowSize;
+        int ty = (int) (-1 * position.y) - windowSize;
 
         tx -= tx % gridSize;
         ty -= ty % gridSize;
@@ -347,7 +343,7 @@ public class Game {
 
         for (int x = tx; x < tx + 2 * windowSize + gridSize; x += gridSize) {
             for (int y = ty; y < ty + 2 * windowSize + gridSize; y += gridSize) {
-                g.drawString(x + " / " + y, x + 10, y + 20);
+                g.drawString(x + " / " + (-y), x + 10, y + 20);
             }
         }
 
@@ -358,6 +354,7 @@ public class Game {
 
     /**
      * Rendert zusätzliche Debug-Infos auf dem Bildschirm.
+     *
      * @param g Das Graphics-Objekt zum zeichnen.
      */
     private static void renderInfo(Graphics2D g) {
@@ -406,17 +403,24 @@ public class Game {
                 nextScene = null;
             }
 
+            scene.getWorldHandler().step(frameDuration);
+
             try {
-                frameBarrier.await();
+                frameBarrierStart.await();
             } catch (BrokenBarrierException | InterruptedException e) {
                 break;
             }
 
-            scene.getWorldHandler().step(frameDuration);
             scene.onFrameUpdateInternal(frameDuration);
 
             while (!dispatchableQueue.isEmpty()) {
                 dispatchableQueue.poll().dispatch();
+            }
+
+            try {
+                frameBarrierEnd.await();
+            } catch (BrokenBarrierException | InterruptedException e) {
+                break;
             }
 
             long frameEnd = System.nanoTime();
@@ -494,19 +498,7 @@ public class Game {
      * @param action Drücken oder Loslassen?
      */
     private static void enqueueMouseEvent(MouseEvent e, MouseAction action) {
-        // Finde Klick auf Zeichenebene, die Position relativ zum Ursprung des RenderPanel-Canvas.
-        java.awt.Point sourceClick = e.getPoint();
-
-        // Mausklick-Position muss mit Zoom-Wert verrechnet werden
-        float zoom = scene.getCamera().getZoom();
-        float rotation = scene.getCamera().getRotation();
-        Point position = scene.getCamera().getPosition();
-
-        Point sourcePosition = new Point(
-                position.x + (((float) Math.cos(rotation) * (sourceClick.x - width / 2) - (float) Math.sin(rotation) * (sourceClick.y - height / 2))) / zoom,
-                position.y + (((float) Math.sin(rotation) * (sourceClick.x - width / 2) + (float) Math.cos(rotation) * (sourceClick.y - height / 2))) / zoom
-        );
-
+        Point sourcePosition = convertMousePosition(scene, e.getPoint());
         MouseButton button;
 
         switch (e.getButton()) {
@@ -532,14 +524,29 @@ public class Game {
         });
     }
 
+    @NoExternalUse
+    public static Point convertMousePosition(Scene scene, java.awt.Point mousePosition) {
+        // Finde Klick auf Zeichenebene, die Position relativ zum Ursprung des RenderPanel-Canvas.
+        // Mausklick-Position muss mit Zoom-Wert verrechnet werden
+        float zoom = scene.getCamera().getZoom();
+        float rotation = scene.getCamera().getRotation();
+        Point position = scene.getCamera().getPosition();
+
+        return new Point(
+                position.x + (((float) Math.cos(rotation) * (mousePosition.x - width / 2f) + (float) Math.sin(rotation) * (mousePosition.y - height / 2f))) / zoom,
+                (-1) * position.y + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom
+        );
+    }
+
     /**
-     * Diese Methode wird immer dann ausgeführt, wenn das Mausrad bewegt wurde und ein MouseWheelEvent
-     * registriert wurde.
+     * Diese Methode wird immer dann ausgeführt, wenn das Mausrad bewegt wurde und ein MouseWheelEvent registriert
+     * wurde.
+     *
      * @param mouseWheelEvent das Event.
      */
     private static void enqueueMouseWheelEvent(MouseWheelEvent mouseWheelEvent) {
-        MouseWheelAction mouseWheelAction = new MouseWheelAction((float)mouseWheelEvent.getPreciseWheelRotation());
-        enqueueDispatchable(()-> {
+        MouseWheelAction mouseWheelAction = new MouseWheelAction((float) mouseWheelEvent.getPreciseWheelRotation());
+        enqueueDispatchable(() -> {
             scene.onMouseWheelMoveInternal(mouseWheelAction);
         });
     }
@@ -551,7 +558,6 @@ public class Game {
 
     /**
      * TODO : Dokumentation!
-     * @param scene
      */
     @API
     public static void transitionToScene(Scene scene) {
@@ -560,8 +566,11 @@ public class Game {
 
     /**
      * Gibt an, ob eine bestimmte Taste derzeit heruntergedrückt ist.
-     * @param key   Die zu testende Taste als Key-Code (also z.B. <code>Key.W</code>).
-     * @return      <code>true</code>, wenn die zu testende Taste gerade heruntergedrückt ist. Sonst <code>false</code>.
+     *
+     * @param key Die zu testende Taste als Key-Code (also z.B. <code>Key.W</code>).
+     *
+     * @return <code>true</code>, wenn die zu testende Taste gerade heruntergedrückt ist. Sonst <code>false</code>.
+     *
      * @see ea.keyboard.Key
      */
     @API
@@ -572,7 +581,9 @@ public class Game {
     /**
      * Gibt an, ob gerade die Engine läuft. Die Engine läuft, sobald es ein sichtbares Fenster gibt. Dieses läuft,
      * sobald {@link #start(int, int, Scene)} ausgeführt wurde.
-     * @return  <code>true</code>, wenn das Spiel läuft, sonst <code>false</code>.
+     *
+     * @return <code>true</code>, wenn das Spiel läuft, sonst <code>false</code>.
+     *
      * @see #start(int, int, Scene)
      */
     @API
@@ -582,16 +593,17 @@ public class Game {
 
     /**
      * Setzt die Größe des Engine-Fensters.
-     * @param width     Die neue Breite des Engine-Fensters.
-     * @param height    Die neue Höhe des Engine-Fensters.
+     *
+     * @param width  Die neue Breite des Engine-Fensters.
+     * @param height Die neue Höhe des Engine-Fensters.
      */
     @API
     public static void setFrameSize(int width, int height) {
-        if(width <= 0 || height <= 0) {
+        if (width <= 0 || height <= 0) {
             throw new RuntimeException("Die Fenstergröße kann nicht kleiner/gleich 0 sein. "
                     + "Eingabe war: " + width + " - " + height + ".");
         }
-        if(renderPanel == null) {
+        if (renderPanel == null) {
             throw new RuntimeException("Fenster-Resizing ist erst möglich, nachdem Game.start ausgeführt wurde.");
         }
         renderPanel.setSize(width, height);
@@ -600,8 +612,8 @@ public class Game {
     }
 
     /**
-     * Diese Methode beendet das Spiel.<br /> Das heißt, dass das Fenster geschlossen, alle belegten
-     * Ressourcen freigegeben und auch die virtuelle Maschine von Java beendet wird.
+     * Diese Methode beendet das Spiel.<br /> Das heißt, dass das Fenster geschlossen, alle belegten Ressourcen
+     * freigegeben und auch die virtuelle Maschine von Java beendet wird.
      */
     @API
     public static void exit() {

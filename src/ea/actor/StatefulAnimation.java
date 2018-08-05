@@ -25,8 +25,7 @@ import java.util.HashMap;
  * @author Michael Andonie
  * @see Animation
  */
-public class StatefulAnimation
-extends Actor {
+public class StatefulAnimation extends Actor {
 
     /**
      * Speichert die Frames (= "Animation") zu jedem State
