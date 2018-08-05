@@ -48,7 +48,7 @@ implements KeyListener, FrameUpdateListener, CollisionListener<Actor> {
 
         parent.add(this);
 
-        physics.setGravity(new Vector(0, 9.81f));
+        physics.setGravity(new Vector(0, -9.81f));
 
         physics.setType(Physics.Type.DYNAMIC);
         physics.setMass(75);

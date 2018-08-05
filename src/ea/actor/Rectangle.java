@@ -53,6 +53,11 @@ public class Rectangle extends Geometry {
     private int heightInt;
 
     /**
+     * Für abgerundete Ecken
+     */
+    private int borderRadius;
+
+    /**
      * Konstruktor.
      *
      * @param width  Die Breite des Rechtecks
@@ -85,13 +90,28 @@ public class Rectangle extends Geometry {
         this.heightInt = (int) height;
     }
 
+    @API
+    public int getBorderRadius() {
+        return borderRadius;
+    }
+
+    @API
+    public void setBorderRadius(int borderRadius) {
+        this.borderRadius = borderRadius;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillRect(0, -heightInt, widthInt, heightInt);
+
+        if (borderRadius == 0) {
+            g.fillRect(0, -heightInt, widthInt, heightInt);
+        } else {
+            g.fillRoundRect(0, -heightInt, widthInt, heightInt, borderRadius, borderRadius);
+        }
     }
 
     /**
