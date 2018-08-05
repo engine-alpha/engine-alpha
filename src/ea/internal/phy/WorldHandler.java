@@ -376,7 +376,18 @@ public class WorldHandler implements ContactListener {
     }
 
 
-    public static boolean hardcodedBodyCollisionCheckup(Body b1, Body b2) {
+    @NoExternalUse
+    public static boolean bodyCollisionCheckup(Body b1, Body b2) {
+        ContactEdge b1Contacts = b1.getContactList();
+        for(ContactEdge ce = b1Contacts; ce != null; ce = ce.next) {
+            if(ce.other == b2) {
+                //Contact exists with other Body. Next, check if they are actually touching
+                if(ce.contact.isTouching()) {
+                    //TOUCHING!
+                    return true;
+                }
+            }
+        }
         //PolygonShape s1 =
         return false;
     }

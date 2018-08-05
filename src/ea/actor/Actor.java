@@ -35,8 +35,6 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -259,7 +257,7 @@ public abstract class Actor implements Attachable {
      */
     @API
     public final boolean overlaps(Actor another) {
-        return WorldHandler.hardcodedBodyCollisionCheckup(physicsHandler.getBody(),
+        return WorldHandler.bodyCollisionCheckup(physicsHandler.getBody(),
                 another.getPhysicsHandler().getBody());
     }
 
