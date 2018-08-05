@@ -45,6 +45,10 @@ public interface EduActor {
         getActor().setVisible(sichtbar);
     }
 
+    default boolean nenneSichtbar() {
+        return getActor().isVisible();
+    }
+
     default float nenneMx() {
         return getActor().position.getCenter().x;
     }
