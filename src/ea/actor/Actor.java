@@ -294,7 +294,7 @@ public abstract class Actor implements Attachable {
 
             AffineTransform transform = g.getTransform();
 
-            g.rotate(rotation, position.x, -position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
+            g.rotate(-rotation, position.x, -position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
             g.translate(position.x, -position.y);
 
             //Opacity Update
