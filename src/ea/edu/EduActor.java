@@ -214,6 +214,9 @@ public interface EduActor {
         aX.setProgress(actualProgress);
         aY.setProgress(actualProgress);
 
+        Spiel.getActiveScene().addFrameUpdateListener(aX);
+        Spiel.getActiveScene().addFrameUpdateListener(aY);
+
         if(rotation) {
             float rotationAngle = uhrzeigersinn ? angle : -angle;
             ValueAnimator<Float> aR = new ValueAnimator<>(ms,
@@ -221,6 +224,7 @@ public interface EduActor {
                     new LinearFloat(-angle, -angle + ((float)(Math.PI*2) * (uhrzeigersinn ? -1 : 1))),
                     loop ? ValueAnimator.Mode.REPEATED : ValueAnimator.Mode.SINGLE);
             aR.setProgress(actualProgress);
+            Spiel.getActiveScene().addFrameUpdateListener(aR);
         }
     }
 }
