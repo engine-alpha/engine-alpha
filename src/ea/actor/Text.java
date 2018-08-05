@@ -234,7 +234,7 @@ public class Text extends Actor {
 
         g.setColor(color);
         g.setFont(font);
-        g.drawString(content, x, -size);
+        g.drawString(content, x, -fontMetrics.getHeight() + size);
     }
 
     /**

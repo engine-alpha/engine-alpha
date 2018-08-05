@@ -38,11 +38,11 @@ public class Showcases extends Scene {
         }
     }
 
-    private static final Color BOX_NORMAL = new Color(50, 50, 255, 100);
-    private static final Color BOX_HOVER = new Color(255, 50, 50, 100);
-    private static final Color BOX_PRESSED = new Color(50, 255, 50, 100);
-    private static final int BOX_WIDTH = 450;
-    private static final int BOX_HEIGHT = 60;
+    private static final Color BOX_NORMAL = new Color(111, 119, 130);
+    private static final Color BOX_HOVER = new Color(167, 173, 200);
+    private static final Color BOX_PRESSED = new Color(251, 248, 255);
+    private static final int BOX_WIDTH = 300;
+    private static final int BOX_HEIGHT = 48;
 
     /**
      * Textbox-Element. Besteht aus einem Text mit Hintergrund-Box. Beim Mausklick auf die Box wird die zugewiesene
@@ -61,10 +61,13 @@ public class Showcases extends Scene {
 
         public TextBox(String content, Supplier<Scene> sceneCreator) {
             box = new Rectangle(BOX_WIDTH, BOX_HEIGHT);
-            text = new Text(content, 30);
+            box.setBorderRadius(6);
+            text = new Text(content, 24);
+            text.setStyle(Font.BOLD);
+            text.setColor(Color.BLACK);
             box.setZIndex(0);
             text.setZIndex(1);
-            text.position.move(10, -10);
+            text.position.move(20, 10);
             add(box, text);
 
             this.sceneCreator = sceneCreator;
@@ -123,13 +126,13 @@ public class Showcases extends Scene {
     private int buttonCount = 0;
 
     public Showcases() {
-        Text title = new Text("Engine Alpha: 4.0 Feature Showcase", 60);
+        Text title = new Text("Engine Alpha: 4.0 Feature Showcase", 48);
         title.setColor(Color.WHITE);
-        Text subtitle = new Text("Knopfdruck startet Demo. Escape-Taste bringt dich ins Menü zurück", 30);
-        subtitle.setColor(Color.RED);
+        Text subtitle = new Text("Knopfdruck startet Demo. Escape-Taste bringt dich ins Menü zurück", 24);
+        subtitle.setColor(Color.GRAY);
 
-        title.position.set(10, 10);
-        subtitle.position.set(15, 100);
+        title.position.set(-500, 100);
+        subtitle.position.set(-500, 50);
 
         add(title, subtitle);
     }
@@ -148,7 +151,7 @@ public class Showcases extends Scene {
         int row = (buttonCount - 1) / 2;
 
         TextBox button = new TextBox(title, sceneSupplier);
-        button.position.set(left ? -30 - BOX_WIDTH : 30, -1 * row * (BOX_HEIGHT + 5));
+        button.position.set(left ? -500 : -150, -60 + -1 * row * (BOX_HEIGHT + 5));
         add(button);
     }
 
@@ -165,7 +168,7 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new JointDemo(mainscene, WIDTH, HEIGHT), "Joints in der Engine");
         mainscene.addScene(() -> new MarbleDemo(mainscene, WIDTH, HEIGHT), "Murmel-Demo");
         mainscene.addScene(() -> new DinglyJump(mainscene), "Dingly Jump");
-        mainscene.addScene(() -> new Swordplay(mainscene, WIDTH, HEIGHT), "Swordplay");
+        mainscene.addScene(() -> new Swordplay(mainscene), "Swordplay");
 
         EngineAlpha.setDebug(true);
 

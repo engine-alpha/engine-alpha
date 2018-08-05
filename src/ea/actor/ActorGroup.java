@@ -204,7 +204,7 @@ public class ActorGroup extends Actor {
             // Add to actors _after_ calling onAttach,
             // otherwise rendering might ask for position with a NullHandler being set for physics.
             actors.add(m);
-            actors.sort(Comparator.comparingInt(Actor::getZIndex).reversed());
+            actors.sort(Comparator.comparingInt(Actor::getZIndex));
         }
     }
 

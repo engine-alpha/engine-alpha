@@ -7,21 +7,19 @@ import ea.keyboard.KeyListener;
 
 /**
  * Eine kleine Spieldemo.
- *
+ * <p>
  * Vielen Dank an <a href="https://rvros.itch.io/animated-pixel-hero">rvros</a>
  */
-public class Swordplay
-extends ShowcaseDemo
-implements KeyListener {
+public class Swordplay extends ShowcaseDemo implements KeyListener {
 
     private SwordFighter player;
 
-    public Swordplay(Scene parent, int widht, int height) {
+    public Swordplay(Scene parent) {
         super(parent);
         super.setDebuggingEnabled(false);
 
         player = new SwordFighter(this);
-        new Platform(this, 7).position.set(-300,  100);
+        new Platform(this, 7).position.set(-450, -200);
 
         addKeyListener(this);
     }
