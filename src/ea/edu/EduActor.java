@@ -207,7 +207,7 @@ public interface EduActor {
         if(uhrzeigersinn && currentActorCenter.getRealY() > rotationCenter.getRealY()
             || !uhrzeigersinn && currentActorCenter.getRealY() < rotationCenter.getRealY()) {
             //Gedrehter Winkel ist bereits über die Hälfte
-            angle += Math.PI;
+            angle = (float)(2*Math.PI-angle);
         }
 
         float actualProgress = (float) (angle/(Math.PI*2));
