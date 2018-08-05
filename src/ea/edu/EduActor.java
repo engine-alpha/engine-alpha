@@ -3,6 +3,8 @@ package ea.edu;
 import ea.Point;
 import ea.Vector;
 import ea.actor.Actor;
+import ea.animation.ValueAnimator;
+import ea.animation.interpolation.LinearFloat;
 import ea.handle.Physics;
 import ea.internal.ano.NoExternalUse;
 
@@ -130,5 +132,45 @@ public interface EduActor {
 
     default void sprung(float staerke) {
         getActor().physics.applyImpulse(new Vector(0, staerke*1000));
+    }
+
+    /**
+     * Bewegt den Actor anhand einer Gerade.
+     * @param zX    X-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
+     * @param zY    Y-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
+     * @param ms    Zeit in Millisekunden, die der Actor von Beginn der Animation benötigt, bis er am angegebenen
+     *              Endpunkt angekommen ist.
+     * @param loop  <code>true</code>: Der Actor "ping pongt" zwischen dem impliziten Startpunkt und dem angegebenen
+     *              Endpunkt hin und her. Die Strecke in eine Richtung benötigt jeweils <code>ms</code> Millisekunden
+     *              Zeit. <br/>
+     *              <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal) erreicht
+     *              wurde.
+     */
+    default void geradenAnimation(float zX, float zY, int ms, boolean loop) {
+        Point center = getActor().position.getCenter();
+        ValueAnimator<Float> aX = new ValueAnimator<>(ms,
+                x->getActor().position.setCenter(getActor().position.getCenter().moveInstanceBy(new Vector(x, 0))),
+                new LinearFloat(center.getRealX(), zX),
+                loop ? ValueAnimator.Mode.REPEATED : ValueAnimator.Mode.SINGLE);
+        ValueAnimator<Float> aY = new ValueAnimator<>(ms,
+                y->getActor().position.setCenter(getActor().position.getCenter().moveInstanceBy(new Vector(0, y))),
+                new LinearFloat(center.getRealX(), zX),
+                loop ? ValueAnimator.Mode.REPEATED : ValueAnimator.Mode.SINGLE);
+        Spiel.getActiveScene().addFrameUpdateListener(aX);
+        Spiel.getActiveScene().addFrameUpdateListener(aY);
+    }
+
+    /**
+     * Bewegt den Actor in einem Kreis um einen Angegebenen Mittelpunkt.
+     * @param mX    X-Koordinate des Mittelpunkts der Revolution.
+     * @param mY    Y-Koordinate des Mittelpunkts der Revolution.
+     * @param ms    Dauer in Millisekunden, die eine komplette Umdrehung benötigt.
+     * @param urzeigersinn  <code>true</code>= Drehung findet im Uhrzeigersinn statt. <code>false</code>: Gegen den
+     *                      Uhrzeigersinn
+     * @param loop          <code>true</code>=Die Umdrehung wird wiederholt. <code>false</code>: Die Umdrehung endet
+     *                      nach der ersten kompletten Drehung.
+     */
+    default void kreisAnimation(float mX, float mY, int ms, boolean urzeigersinn, boolean loop) {
+
     }
 }
