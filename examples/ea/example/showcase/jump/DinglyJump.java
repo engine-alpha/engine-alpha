@@ -159,6 +159,6 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
     @Override
     public void onFrameUpdate(int frameDuration) {
-        character.framewiseUpdate(frameDuration);
+        character.onFrameUpdate(frameDuration);
     }
 }

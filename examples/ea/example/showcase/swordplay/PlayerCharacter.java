@@ -1,4 +1,4 @@
-package ea.example.showcase.jump;
+package ea.example.showcase.swordplay;
 
 import ea.FrameUpdateListener;
 import ea.Scene;
@@ -6,8 +6,12 @@ import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
+import ea.animation.Interpolator;
+import ea.animation.ValueAnimator;
+import ea.animation.interpolation.ReverseEaseFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
+import ea.example.showcase.jump.Enemy;
 
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener {
 
@@ -34,22 +38,23 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     }
 
     private MovementState movementState = MovementState.IDLE;
+    private Vector smashForce = Vector.NULLVECTOR;
+    private Scene parent;
 
     public PlayerCharacter(Scene parent) {
-        //Load all Animations in
+        this.parent = parent;
 
-        //Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
-        final String pathbase = "game-assets\\jump\\spr_m_traveler_";
+        // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
+        String pathbase = "game-assets/jump/spr_m_traveler_";
 
-        Animation idle = Animation.createFromAnimatedGif(pathbase + "idle_anim.gif");
-        addState("idle", idle);
-
+        addState("idle", Animation.createFromAnimatedGif(pathbase + "idle_anim.gif"));
         addState("walking", Animation.createFromAnimatedGif(pathbase + "walk_anim.gif"));
         addState("running", Animation.createFromAnimatedGif(pathbase + "run_anim.gif"));
         addState("jumpingUp", Animation.createFromAnimatedGif(pathbase + "jump_1up_anim.gif"));
         addState("midair", Animation.createFromAnimatedGif(pathbase + "jump_2midair_anim.gif"));
         addState("falling", Animation.createFromAnimatedGif(pathbase + "jump_3down_anim.gif"));
         addState("landing", Animation.createFromAnimatedGif(pathbase + "jump_4land_anim.gif"));
+        addState("smashing", Animation.createFromAnimatedGif(pathbase + "jump_4land_anim.gif"));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -79,6 +84,13 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
     public MovementState getMovementState() {
         return this.movementState;
+    }
+
+    public void smash() {
+        if (getCurrentState().equals("falling")) {
+            setState("smashing");
+            smashForce = new Vector(0, -15000);
+        }
     }
 
     /**
@@ -122,13 +134,28 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             setFlipHorizontal(true);
             //if(standing && !getCurrentState().equals("running")) setState("running");
         }
+
+        physics.applyForce(smashForce);
     }
 
     @Override
     public void onCollision(CollisionEvent<Actor> collisionEvent) {
-        if (collisionEvent.getColliding() instanceof Enemy) return;
-        if (getCurrentState().equals("falling") && physics.testStanding()) {
+        if (collisionEvent.getColliding() instanceof Enemy) {
+            return;
+        }
+
+        boolean falling = getCurrentState().equals("falling");
+        boolean smashing = getCurrentState().equals("smashing");
+
+        if ((falling || smashing) && physics.testStanding()) {
             setState("landing");
+            smashForce = Vector.NULLVECTOR;
+
+            if (smashing) {
+                Interpolator<Float> interpolator = new ReverseEaseFloat(0, 10);
+                FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> parent.getCamera().setOffset(new Vector(0, y)), interpolator);
+                getScene().addFrameUpdateListener(valueAnimator);
+            }
         }
     }
 }
