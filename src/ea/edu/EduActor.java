@@ -33,6 +33,10 @@ public interface EduActor {
         getActor().position.rotate(drehwinkelInWinkelgrad);
     }
 
+    default float nenneWinkel() {
+        return getActor().position.getRotation();
+    }
+
     default void setzeMittelpunkt(float mX, float mY) {
         getActor().position.setCenter(mX, mY);
     }
