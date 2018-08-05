@@ -473,7 +473,7 @@ public final class Vector implements Cloneable {
      * </ul>
      * @param other   Ein zweiter Vector.
      * @return          Der Winkel zwischen diesem Vector und dem zweiten.
-     *                  Ist zwischen 0 und 180 Grad.
+     *                  Ist zwischen 0 und PI.
      */
     @API
     public float getAngle(Vector other) {

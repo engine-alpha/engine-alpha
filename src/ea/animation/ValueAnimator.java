@@ -22,6 +22,7 @@ package ea.animation;
 import ea.Attachable;
 import ea.FrameUpdateListener;
 import ea.Scene;
+import ea.internal.ano.API;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -53,6 +54,22 @@ public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
 
     public ValueAnimator(int duration, Consumer<V> consumer, Interpolator<V> interpolator) {
         this(duration, consumer, interpolator, Mode.SINGLE);
+    }
+
+    /**
+     * Setzt den aktuellen Fortschritt des Animators händisch.
+     * @param progress  Der Fortschritt, zu dem der Animator gesetzt werden soll. <code>0</code> ist <b>Anfang der
+     *                  Animation</b>, <code>1</code> ist <b>Ende der Animation</b>. Werte kleiner 0 bzw. größer als 1
+     *                  sind nicht erlaubt.
+     */
+    @API
+    public void setProgress(float progress) {
+        if(progress < 0 || progress > 1) {
+            throw new IllegalArgumentException("Der eingegebene Progess muss zwischen 0 und 1 liegen. War " + progress);
+        }
+        this.currentTime = (int) (duration*progress);
+        goingBackwards = false;
+        this.interpolator.interpolate(progress);
     }
 
     @Override
