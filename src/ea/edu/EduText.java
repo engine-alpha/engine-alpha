@@ -10,6 +10,7 @@ implements EduActor{
 
     public EduText(String content) {
         super(content);
+        eduSetup();
     }
 
     public void setzeInhalt(String inhalt) {
