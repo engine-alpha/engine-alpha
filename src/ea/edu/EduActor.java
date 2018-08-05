@@ -149,11 +149,11 @@ public interface EduActor {
     default void geradenAnimation(float zX, float zY, int ms, boolean loop) {
         Point center = getActor().position.getCenter();
         ValueAnimator<Float> aX = new ValueAnimator<>(ms,
-                x->getActor().position.setCenter(getActor().position.getCenter().moveInstanceBy(new Vector(x, 0))),
+                x->getActor().position.setCenter(x, getActor().position.getCenter().getRealY()),
                 new LinearFloat(center.getRealX(), zX),
                 loop ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
         ValueAnimator<Float> aY = new ValueAnimator<>(ms,
-                y->getActor().position.setCenter(getActor().position.getCenter().moveInstanceBy(new Vector(0, y))),
+                y->getActor().position.setCenter(getActor().position.getCenter().getRealX(), y),
                 new LinearFloat(center.getRealX(), zX),
                 loop ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
         Spiel.getActiveScene().addFrameUpdateListener(aX);
