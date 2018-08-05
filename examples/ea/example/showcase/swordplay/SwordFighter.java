@@ -4,15 +4,18 @@ import ea.FrameUpdateListener;
 import ea.Game;
 import ea.Scene;
 import ea.Vector;
+import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
+import ea.collision.CollisionEvent;
+import ea.collision.CollisionListener;
 import ea.handle.Physics;
 import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 
 public class SwordFighter
 extends StatefulAnimation
-implements KeyListener, FrameUpdateListener {
+implements KeyListener, FrameUpdateListener, CollisionListener<Actor> {
 
     private final Vector MOVE_MID = new Vector(0.005f,0);
 
@@ -68,14 +71,15 @@ implements KeyListener, FrameUpdateListener {
     }
 
     private void attack1() {
-        setState("attack3");
+        setState("attack1");
     }
 
     private void attack2() {
-
+        setState("attack2");
     }
 
     private void attack3() {
+        setState("attack3");
     }
 
     private void jump() {
@@ -112,6 +116,8 @@ implements KeyListener, FrameUpdateListener {
 
     }
 
+
+
     @Override
     public void onFrameUpdate(int frameDuration) {
         //Richtung setzen
@@ -138,6 +144,15 @@ implements KeyListener, FrameUpdateListener {
         //physics.setVelocity(new Vector(MOVE_MID.multiply(horizontalMoveLevel).x, physics.getVelocity().y));
 
         //Standing-> Walking?
-        if(physics.getVelocity().getRealX()>0.05f && getCurrentState().equals("idle")) setState("run");
+        if(Math.abs(physics.getVelocity().getRealX())>0.05f && getCurrentState().equals("idle")) setState("run");
+    }
+
+    @Override
+    public void onCollision(CollisionEvent<Actor> collisionEvent) {
+        //Collision -> Bin ich gelandet?
+        if(getCurrentState().equals("fall") && physics.testStanding()) {
+            //Ich bin gelandet
+            setState("stand");
+        }
     }
 }

@@ -107,7 +107,7 @@ implements KeyListener {
         ky.setColor(Color.GREEN);
         ky.physics.setType(Physics.Type.DYNAMIC);
 
-        knoten.position.move(500,500);
+        knoten.position.move(-20,500);
 
 
         kx.physics.createRopeJoint(ky,

@@ -213,6 +213,7 @@ extends Scene {
         }, "Swordplay");
 
         Game.setExitOnEsc(false);
+        Game.setTitle("Engine Alpha: Feature Showcase");
         Game.start(WIDTH, HEIGHT, mainscene);
     }
 
