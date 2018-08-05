@@ -214,7 +214,16 @@ public class Camera implements FrameUpdateListener {
      */
     @API
     public Point getPosition() {
-        return this.position;
+        Point position = this.position.verschobeneInstanz(this.offset);
+
+        if (this.hasBounds()) {
+            float x = Math.max(this.bounds.getRealX(), Math.min(position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
+            float y = Math.max(this.bounds.getRealX(), Math.min(position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
+
+            position = new Point(x, y);
+        }
+
+        return position;
     }
 
     @Override
@@ -222,8 +231,6 @@ public class Camera implements FrameUpdateListener {
         if (this.hasFocus()) {
             this.position = focus.position.getCenter();
         }
-
-        this.position = this.position.verschobeneInstanz(this.offset);
 
         if (this.hasBounds()) {
             float x = Math.max(this.bounds.getRealX(), Math.min(this.position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
