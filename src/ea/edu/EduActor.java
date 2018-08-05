@@ -30,7 +30,7 @@ public interface EduActor {
     }
 
     default void drehen(float drehwinkelInWinkelgrad) {
-        throw new UnsupportedOperationException("Drehen um ist noch nicht implementiert. :(");
+        getActor().position.rotate(drehwinkelInWinkelgrad);
     }
 
     default void setzeMittelpunkt(float mX, float mY) {
