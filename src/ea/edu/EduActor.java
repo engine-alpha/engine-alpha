@@ -1,7 +1,9 @@
 package ea.edu;
 
 import ea.Point;
+import ea.Vector;
 import ea.actor.Actor;
+import ea.handle.Physics;
 import ea.internal.ano.NoExternalUse;
 
 public interface EduActor {
@@ -19,6 +21,11 @@ public interface EduActor {
     @NoExternalUse
     default void eduSetup() {
         Spiel.getActiveScene().add(getActor());
+
+        //Default Physics Setup für EDU Objekte
+        getActor().physics.setRotationLocked(true);
+        getActor().physics.setElasticity(0);
+        getActor().physics.setGravity(new Vector(0, -1));
     }
 
     default void entfernen() {
@@ -71,5 +78,57 @@ public interface EduActor {
 
     default boolean schneidet(Actor actor) {
         return getActor().overlaps(actor);
+    }
+
+    /* ~~~ PHYSICS ~~~ */
+
+    default void setzeRotationBlockiert(boolean blockiert) {
+        getActor().physics.setRotationLocked(blockiert);
+    }
+
+    default void wirkeImpuls(float iX, float iY) {
+        getActor().physics.applyImpulse(new Vector(iX, iY));
+    }
+
+    default void setzeReibung(float reibungsKoeffizient) {
+        getActor().physics.setFriction(reibungsKoeffizient);
+    }
+
+    default void setzeElastizitaet(float elastizitaetsKoeffizient) {
+        getActor().physics.setElasticity(elastizitaetsKoeffizient);
+    }
+
+    default void setzeSchwerkraft(float schwerkraft) {
+        getActor().physics.setGravity(new Vector(0, -schwerkraft));
+    }
+
+    default void setzeMasse(float masse) {
+        getActor().physics.setMass(masse);
+    }
+
+    /* ~~~ JUMP N RUN WRAPPER ~~~ */
+
+    default boolean steht() {
+        return getActor().physics.testStanding();
+    }
+
+    default boolean stehtAuf(Actor actor) {
+        return getActor().overlaps(actor) && getActor().physics.testStanding();
+    }
+
+    default void macheAktiv() {
+        getActor().physics.setType(Physics.Type.DYNAMIC);
+    }
+
+    default void machePassiv() {
+        getActor().physics.setType(Physics.Type.STATIC);
+    }
+
+    default void macheNeutral() {
+        getActor().physics.setType(Physics.Type.PASSIVE);
+    }
+
+    default void sprung(float staerke) {
+        getActor().physics.applyImpulse(new Vector(0, staerke*1000));
     }
 }
