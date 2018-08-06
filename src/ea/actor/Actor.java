@@ -265,7 +265,7 @@ public abstract class Actor {
      * @return <code>true</code>, wenn dieses Actor-Objekt sich mit <code>another</code> schneidet. Sonst
      * <code>false</code>.
      *
-     * @see ea.EngineAlpha#setDebug(boolean)
+     * @see ea.Game#setDebug(boolean)
      */
     @API
     public final boolean overlaps(Actor another) {

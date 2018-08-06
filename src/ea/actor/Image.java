@@ -20,10 +20,9 @@
 package ea.actor;
 
 import ea.Scene;
+import ea.internal.ShapeHelper;
 import ea.internal.ano.API;
 import ea.internal.io.ImageLoader;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -48,22 +47,11 @@ public class Image extends Actor {
     public Image(Scene scene, String filepath) {
         super(scene, () -> {
             BufferedImage image = ImageLoader.load(filepath);
-            PolygonShape shape = new PolygonShape();
 
-            float breiteInM = image.getWidth() / scene.getWorldHandler().getPixelProMeter();
-            float laengeInM = image.getHeight() / scene.getWorldHandler().getPixelProMeter();
-
-            Vec2 relativeCenter = new Vec2(breiteInM / 2, laengeInM / 2);
-            shape.set(new Vec2[] {
-                    new Vec2(0, 0),
-                    new Vec2(0, laengeInM),
-                    new Vec2(breiteInM, laengeInM),
-                    new Vec2(breiteInM, 0)
-            }, 4);
-
-            shape.m_centroid.set(relativeCenter);
-
-            return shape;
+            return ShapeHelper.createRectangularShape(
+                    image.getWidth() / scene.getWorldHandler().getPixelProMeter(),
+                    image.getHeight() / scene.getWorldHandler().getPixelProMeter()
+            );
         });
 
         this.image = ImageLoader.load(filepath);

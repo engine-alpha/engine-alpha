@@ -2,11 +2,10 @@ package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.Scene;
+import ea.internal.ShapeHelper;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Frame;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -50,24 +49,10 @@ public class StatefulAnimation extends Actor {
     private boolean flipVertical = false;
 
     public StatefulAnimation(Scene scene, int width, int height) {
-        super(scene, () -> {
-            PolygonShape shape = new PolygonShape();
-
-            float widthInMeters = width / scene.getWorldHandler().getPixelProMeter();
-            float heightInMeters = height / scene.getWorldHandler().getPixelProMeter();
-
-            Vec2 relativeCenter = new Vec2(widthInMeters / 2, heightInMeters / 2);
-            shape.set(new Vec2[] {
-                    new Vec2(0, 0),
-                    new Vec2(0, heightInMeters),
-                    new Vec2(widthInMeters, heightInMeters),
-                    new Vec2(widthInMeters, 0)
-            }, 4);
-
-            shape.m_centroid.set(relativeCenter);
-
-            return shape;
-        });
+        super(scene, () -> ShapeHelper.createRectangularShape(
+                width / scene.getWorldHandler().getPixelProMeter(),
+                height / scene.getWorldHandler().getPixelProMeter()
+        ));
 
         this.width = width;
         this.height = height;

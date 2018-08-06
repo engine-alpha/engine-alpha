@@ -20,9 +20,8 @@
 package ea.actor;
 
 import ea.Scene;
+import ea.internal.ShapeHelper;
 import ea.internal.ano.API;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 
@@ -66,24 +65,10 @@ public class Rectangle extends Geometry {
      * @param height Die Höhe des Rechtecks
      */
     public Rectangle(Scene scene, float width, float height) {
-        super(scene, () -> {
-            PolygonShape shape = new PolygonShape();
-
-            float widthInMeters = width / scene.getWorldHandler().getPixelProMeter();
-            float heightInMeters = height / scene.getWorldHandler().getPixelProMeter();
-
-            Vec2 relativeCenter = new Vec2(widthInMeters / 2, heightInMeters / 2);
-            shape.set(new Vec2[] {
-                    new Vec2(0, 0),
-                    new Vec2(0, heightInMeters),
-                    new Vec2(widthInMeters, heightInMeters),
-                    new Vec2(widthInMeters, 0)
-            }, 4);
-
-            shape.m_centroid.set(relativeCenter);
-
-            return shape;
-        });
+        super(scene, () -> ShapeHelper.createRectangularShape(
+                width / scene.getWorldHandler().getPixelProMeter(),
+                height / scene.getWorldHandler().getPixelProMeter()
+        ));
 
         this.width = width;
         this.height = height;
@@ -103,7 +88,7 @@ public class Rectangle extends Geometry {
 
     public void setWidth(float width) {
         this.width = width;
-        this.widthInt = (int)width;
+        this.widthInt = (int) width;
     }
 
     public void setHeight(float height) {

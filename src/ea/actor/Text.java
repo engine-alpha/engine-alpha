@@ -20,11 +20,10 @@
 package ea.actor;
 
 import ea.Scene;
+import ea.internal.ShapeHelper;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.io.FontLoader;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 
@@ -39,41 +38,38 @@ import java.awt.*;
  * @author Niklas Keller
  */
 public class Text extends Actor {
+    private static final int DEFAULT_SIZE = 12;
+
     /**
      * Die Schriftgröße des Textes
      */
-    protected int size;
+    private int size;
 
     /**
      * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br /> Dies wird dargestellt als int.Wert:<br /> 0:
      * Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv
      */
-    protected int fontStyle;
+    private int fontStyle;
 
     /**
      * Der Wert des Textes
      */
-    protected String content;
+    private String content;
 
     /**
      * Der Font der Darstellung
      */
-    protected Font font;
+    private Font font;
 
     /**
      * Die Farbe, in der der Text dargestellt wird.
      */
-    protected Color color = Color.WHITE;
+    private Color color = Color.WHITE;
 
     /**
      * Textanker: links, mittig oder rechts
      */
     private Anchor anchor = Anchor.LEFT;
-
-    /**
-     * Referenz auf die jüngsten Font-Metriken, die für die Berechnung der Textmaße verwendet wurden.
-     */
-    private FontMetrics fontMetrics;
 
     /**
      * Konstruktor für Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im Projektordner sind.
@@ -95,22 +91,10 @@ public class Text extends Actor {
             Font font = FontLoader.loadByName(fontName).deriveFont(type, size);
             FontMetrics fontMetrics = ea.util.FontMetrics.get(font);
 
-            PolygonShape shape = new PolygonShape();
-
-            float widthInMeters = fontMetrics.stringWidth(content) / scene.getWorldHandler().getPixelProMeter();
-            float heightInMeters = fontMetrics.getHeight() / scene.getWorldHandler().getPixelProMeter();
-
-            Vec2 relativeCenter = new Vec2(widthInMeters / 2, heightInMeters / 2);
-            shape.set(new Vec2[] {
-                    new Vec2(0, 0),
-                    new Vec2(0, heightInMeters),
-                    new Vec2(widthInMeters, heightInMeters),
-                    new Vec2(widthInMeters, 0)
-            }, 4);
-
-            shape.m_centroid.set(relativeCenter);
-
-            return shape;
+            return ShapeHelper.createRectangularShape(
+                    fontMetrics.stringWidth(content) / scene.getWorldHandler().getPixelProMeter(),
+                    fontMetrics.getHeight() / scene.getWorldHandler().getPixelProMeter()
+            );
         });
 
         this.content = content;
@@ -133,7 +117,7 @@ public class Text extends Actor {
      */
     @API
     public Text(Scene scene, String content, String fontName) {
-        this(scene, content, fontName, 12, 0);
+        this(scene, content, fontName, DEFAULT_SIZE, 0);
     }
 
     /**
@@ -156,7 +140,7 @@ public class Text extends Actor {
      */
     @API
     public Text(Scene scene, String content) {
-        this(scene, content, 12);
+        this(scene, content, DEFAULT_SIZE);
     }
 
     /**
@@ -244,8 +228,7 @@ public class Text extends Actor {
     @Override
     @NoExternalUse
     public void render(Graphics2D g) {
-
-        fontMetrics = g.getFontMetrics(font);
+        FontMetrics fontMetrics = g.getFontMetrics(font);
 
         int x = 0;
 

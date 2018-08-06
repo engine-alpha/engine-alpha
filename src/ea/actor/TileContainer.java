@@ -1,11 +1,10 @@
 package ea.actor;
 
 import ea.Scene;
+import ea.internal.ShapeHelper;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.io.ImageLoader;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -42,24 +41,10 @@ public class TileContainer extends Actor {
      */
     @API
     public TileContainer(Scene scene, int numX, int numY, int tileSize) {
-        super(scene, () -> {
-            PolygonShape shape = new PolygonShape();
-
-            float widthInMeters = tileSize * numX / scene.getWorldHandler().getPixelProMeter();
-            float heightInMeters = tileSize * numY / scene.getWorldHandler().getPixelProMeter();
-
-            Vec2 relativeCenter = new Vec2(widthInMeters / 2, heightInMeters / 2);
-            shape.set(new Vec2[] {
-                    new Vec2(0, 0),
-                    new Vec2(0, heightInMeters),
-                    new Vec2(widthInMeters, heightInMeters),
-                    new Vec2(widthInMeters, 0)
-            }, 4);
-
-            shape.m_centroid.set(relativeCenter);
-
-            return shape;
-        });
+        super(scene, () -> ShapeHelper.createRectangularShape(
+                tileSize * numX / scene.getWorldHandler().getPixelProMeter(),
+                tileSize * numY / scene.getWorldHandler().getPixelProMeter()
+        ));
 
         if (numX <= 0 || numY <= 0) {
             throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");
@@ -113,13 +98,12 @@ public class TileContainer extends Actor {
 
         Tile newTile;
 
-        //Check if Tile exists in TileAtlas
+        // Check if Tile exists in TileAtlas
         if (!tileAtlas.containsKey(tileKey)) {
-            //Load in new Tile in Atlas (issues like non-existent files are thrown as RuntimeException)
-            BufferedImage baseImage = ImageLoader.load(imagePath);
-            BufferedImage tileImage = baseImage.getSubimage(
+            // Load in new Tile in Atlas (issues like non-existent files are thrown as RuntimeException)
+            BufferedImage tileImage = ImageLoader.load(imagePath).getSubimage(
                     imageIndexX * tileSize, imageIndexY * tileSize, tileSize, tileSize);
-            tileAtlas.put(tileKey, new BufferedImageTile(baseImage));
+            tileAtlas.put(tileKey, new BufferedImageTile(tileImage));
         }
         newTile = tileAtlas.get(tileKey);
         if (newTile.getSize() != tileSize) {

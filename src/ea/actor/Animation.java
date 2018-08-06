@@ -21,13 +21,12 @@ package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.Scene;
+import ea.internal.ShapeHelper;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Frame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -47,10 +46,11 @@ import java.util.LinkedList;
  * <a href="https://de.wikipedia.org/wiki/Einzelbild_(Film)">Frames</a> Frames besteht. Frames können auf verschiedene
  * Arten aus Bilddateien eingeladen werden:
  * <ul>
- *     <li>Animierte GIFs</li>
- *     <li><a href="https://de.wikipedia.org/wiki/Sprite_(Computergrafik)">Spritesheets</a></li>
- *     <li>Einzelne Bilddateien</li>
+ * <li>Animierte GIFs</li>
+ * <li><a href="https://de.wikipedia.org/wiki/Sprite_(Computergrafik)">Spritesheets</a></li>
+ * <li>Einzelne Bilddateien</li>
  * </ul>
+ *
  * @author Michael Andonie
  */
 @API
@@ -64,8 +64,8 @@ public class Animation extends Actor implements FrameUpdateListener {
     private int currentTime;
     private int currentIndex;
 
-    private boolean flipHorizontal=false;
-    private boolean flipVertical=false;
+    private boolean flipHorizontal = false;
+    private boolean flipVertical = false;
 
     /**
      * Liste aller Dispatchables, die beim Abschließen des Loops ausgeführt werden.
@@ -78,22 +78,10 @@ public class Animation extends Actor implements FrameUpdateListener {
                 throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
             }
 
-            PolygonShape shape = new PolygonShape();
-
-            float breiteInM = frames[0].getImage().getWidth() / scene.getWorldHandler().getPixelProMeter();
-            float laengeInM = frames[0].getImage().getHeight() / scene.getWorldHandler().getPixelProMeter();
-
-            Vec2 relativeCenter = new Vec2(breiteInM / 2, laengeInM / 2);
-            shape.set(new Vec2[] {
-                    new Vec2(0, 0),
-                    new Vec2(0, laengeInM),
-                    new Vec2(breiteInM, laengeInM),
-                    new Vec2(breiteInM, 0)
-            }, 4);
-
-            shape.m_centroid.set(relativeCenter);
-
-            return shape;
+            return ShapeHelper.createRectangularShape(
+                    frames[0].getImage().getWidth() / scene.getWorldHandler().getPixelProMeter(),
+                    frames[0].getImage().getHeight() / scene.getWorldHandler().getPixelProMeter()
+            );
         });
 
         for (ea.internal.gra.Frame frame : frames) {
@@ -122,7 +110,8 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     /**
      * Gibt die Frames dieser Animation aus.
-     * @return  Die Frames dieser Animation.
+     *
+     * @return Die Frames dieser Animation.
      */
     @NoExternalUse
     public Frame[] getFrames() {
@@ -131,7 +120,9 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     /**
      * Gibt die Breite der Animation in Pixel aus.
-     * @return  Die Breite der Animation in Pixel.
+     *
+     * @return Die Breite der Animation in Pixel.
+     *
      * @see #getImageHeight()
      */
     @API
@@ -141,7 +132,9 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     /**
      * Gibt die Höhe der Animation in Pixel aus.
-     * @return  Die Höhe der Animation in Pixel
+     *
+     * @return Die Höhe der Animation in Pixel
+     *
      * @see #getImageWidth()
      */
     @API
@@ -152,8 +145,9 @@ public class Animation extends Actor implements FrameUpdateListener {
     /**
      * Fügt einen Listener hinzu. Die <code>run()</code>-Methode wird immer wieder ausgeführt, sobald der
      * <b>letzte Zustand der Animation abgeschlossen wurde</b>.
-     * @param listener  Ein Runnable, dessen run-Methode ausgeführt werden soll, sobald die Animation abgeschlossen ist
-     *                  (wird ausgeführt, bevor der Loop von Vorne beginnt).
+     *
+     * @param listener Ein Runnable, dessen run-Methode ausgeführt werden soll, sobald die Animation abgeschlossen ist
+     *                 (wird ausgeführt, bevor der Loop von Vorne beginnt).
      */
     @API
     public void addOnCompleteListener(Runnable listener) {
@@ -161,8 +155,8 @@ public class Animation extends Actor implements FrameUpdateListener {
     }
 
     /**
-     * Wenn diese Methode ausgeführt wird, wird die Animation nach sich selbstständig nach einmaligem Durchlaufen
-     * von der Scene abmelden.
+     * Wenn diese Methode ausgeführt wird, wird die Animation nach sich selbstständig nach einmaligem Durchlaufen von
+     * der Scene abmelden.
      */
     @API
     public void setOneTimeOnly() {
@@ -178,9 +172,9 @@ public class Animation extends Actor implements FrameUpdateListener {
 
         while (this.currentTime > currentFrame.getDuration()) {
             this.currentTime -= currentFrame.getDuration();
-            if(this.currentIndex+1 == this.frames.length) {
+            if (this.currentIndex + 1 == this.frames.length) {
                 //Round finished --> Inform Listeners
-                for(Runnable listener : onCompleteListeners) {
+                for (Runnable listener : onCompleteListeners) {
                     listener.run();
                 }
                 this.currentIndex = 0;
@@ -247,14 +241,15 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @param directoryPath Der Pfad zum Verzeichnis, in dem die einzuladenden Bilder liegen.
      * @param prefix        Das Pfad-Präfix. Diese Funktion sucht <a>alle Dateien mit dem gegebenen Präfix</a> (im
      *                      angebenenen Ordner) und fügt sie in aufsteigender Reihenfolge der Animation hinzu.
-     * @return              Eine Animation aus allen Dateien, die mit dem Pfadpräfix beginnen.
-     * @author              Michael Andonie
+     *
+     * @return Eine Animation aus allen Dateien, die mit dem Pfadpräfix beginnen.
+     *
+     * @author Michael Andonie
      */
     @API
     public static Animation createFromImagesPrefix(Scene scene, int frameDuration, String directoryPath, String prefix) {
         //Liste mit den Pfaden aller qualifizierten Dateien
         ArrayList<String> allPaths = new ArrayList<>();
-
 
         File directory;
         try {
@@ -262,18 +257,20 @@ public class Animation extends Actor implements FrameUpdateListener {
         } catch (IOException e) {
             throw new RuntimeException("Fehler beim Einladen des Verzeichnisses: " + e.getMessage());
         }
-        if(!directory.isDirectory()) {
+        if (!directory.isDirectory()) {
             throw new RuntimeException("Der angegebene Pfad war kein Verzeichnis: " + directoryPath);
         }
         File[] childs = directory.listFiles();
-        for(File file : childs) {
-            if(!file.isDirectory() && file.getName().startsWith(prefix)) allPaths.add(file.getAbsolutePath());
+        for (File file : childs) {
+            if (!file.isDirectory() && file.getName().startsWith(prefix)) allPaths.add(file.getAbsolutePath());
         }
 
         allPaths.sort(Comparator.naturalOrder());
 
-        if(allPaths.isEmpty()) throw new RuntimeException("Konnte keine Bilder mit Präfix \"" + prefix
-                + "\" im Verzeichnis \"" + directoryPath + "\" finden.");
+        if (allPaths.isEmpty()) {
+            throw new RuntimeException("Konnte keine Bilder mit Präfix \"" + prefix
+                    + "\" im Verzeichnis \"" + directoryPath + "\" finden.");
+        }
         return createFromImages(scene, frameDuration, allPaths.toArray(new String[0]));
     }
 
@@ -286,15 +283,14 @@ public class Animation extends Actor implements FrameUpdateListener {
         for (int i = 0; i < frameCount; i++) {
             BufferedImage frame = gd.getFrame(i);  // frame i
             int t = gd.getDelay(i);  // display duration of frame in milliseconds
-            frames[i] = new Frame(frame, t*1);
+            frames[i] = new Frame(frame, t * 1);
         }
         return new Animation(scene, frames);
     }
 
     /**
      * GIF Decoder <a href="http://www.java2s.com/Code/Java/2D-Graphics-GUI/DecodesaGIFfileintooneormoreframes.htm">
-     * quelloffen übernommen</a>.
-     * Class GifDecoder - Decodes a GIF file into one or more frames.
+     * quelloffen übernommen</a>. Class GifDecoder - Decodes a GIF file into one or more frames.
      * <br><pre>
      * Example:
      *    GifDecoder d = new GifDecoder();
@@ -306,13 +302,11 @@ public class Animation extends Actor implements FrameUpdateListener {
      *       // do something with frame
      *    }
      * </pre>
-     * No copyright asserted on the source code of this class.  May be used for
-     * any purpose, however, refer to the Unisys LZW patent for any additional
-     * restrictions.  Please forward any corrections to kweiner@fmsware.com.
+     * No copyright asserted on the source code of this class.  May be used for any purpose, however, refer to the
+     * Unisys LZW patent for any additional restrictions.  Please forward any corrections to kweiner@fmsware.com.
      *
      * @author Kevin Weiner, FM Software; LZW decoder adapted from John Cristy's ImageMagick.
      * @version 1.03 November 2003
-     *
      */
     private static class GifDecoder {
 
@@ -386,6 +380,7 @@ public class Animation extends Actor implements FrameUpdateListener {
                 image = im;
                 delay = del;
             }
+
             public BufferedImage image;
             public int delay;
         }
@@ -394,6 +389,7 @@ public class Animation extends Actor implements FrameUpdateListener {
          * Gets display duration for specified frame.
          *
          * @param n int index of frame
+         *
          * @return delay in milliseconds
          */
         public int getDelay(int n) {
@@ -407,6 +403,7 @@ public class Animation extends Actor implements FrameUpdateListener {
 
         /**
          * Gets the number of frames read from file.
+         *
          * @return frame count
          */
         public int getFrameCount() {
@@ -423,8 +420,7 @@ public class Animation extends Actor implements FrameUpdateListener {
         }
 
         /**
-         * Gets the "Netscape" iteration count, if any.
-         * A count of 0 means repeat indefinitiely.
+         * Gets the "Netscape" iteration count, if any. A count of 0 means repeat indefinitiely.
          *
          * @return iteration count if one was specified, else 1.
          */
@@ -433,8 +429,7 @@ public class Animation extends Actor implements FrameUpdateListener {
         }
 
         /**
-         * Creates new frame image from current data (and previous
-         * frames as specified by their disposition codes).
+         * Creates new frame image from current data (and previous frames as specified by their disposition codes).
          */
         protected void setPixels() {
             // expose destination image's pixels as int array
@@ -486,14 +481,14 @@ public class Animation extends Actor implements FrameUpdateListener {
                     if (iline >= ih) {
                         pass++;
                         switch (pass) {
-                            case 2 :
+                            case 2:
                                 iline = 4;
                                 break;
-                            case 3 :
+                            case 3:
                                 iline = 2;
                                 inc = 4;
                                 break;
-                            case 4 :
+                            case 4:
                                 iline = 1;
                                 inc = 2;
                         }
@@ -549,6 +544,7 @@ public class Animation extends Actor implements FrameUpdateListener {
          * Reads GIF image from stream
          *
          * @param is containing GIF file.
+         *
          * @return read status code (0 = no errors)
          */
         public int read(BufferedInputStream is) {
@@ -576,13 +572,15 @@ public class Animation extends Actor implements FrameUpdateListener {
          * Reads GIF image from stream
          *
          * @param is containing GIF file.
+         *
          * @return read status code (0 = no errors)
          */
         public int read(InputStream is) {
             init();
             if (is != null) {
-                if (!(is instanceof BufferedInputStream))
+                if (!(is instanceof BufferedInputStream)) {
                     is = new BufferedInputStream(is);
+                }
                 in = (BufferedInputStream) is;
                 readHeader();
                 if (!err()) {
@@ -602,10 +600,10 @@ public class Animation extends Actor implements FrameUpdateListener {
         }
 
         /**
-         * Reads GIF file from specified file/URL source
-         * (URL assumed if name contains ":/" or "file:")
+         * Reads GIF file from specified file/URL source (URL assumed if name contains ":/" or "file:")
          *
          * @param name String containing source
+         *
          * @return read status code (0 = no errors)
          */
         public int read(String name) {
@@ -628,8 +626,7 @@ public class Animation extends Actor implements FrameUpdateListener {
         }
 
         /**
-         * Decodes LZW image data into pixel array.
-         * Adapted from John Cristy's ImageMagick.
+         * Decodes LZW image data into pixel array. Adapted from John Cristy's ImageMagick.
          */
         protected void decodeImageData() {
             int NullCode = -1;
@@ -677,15 +674,16 @@ public class Animation extends Actor implements FrameUpdateListener {
 
             datum = bits = count = first = top = pi = bi = 0;
 
-            for (i = 0; i < npix;) {
+            for (i = 0; i < npix; ) {
                 if (top == 0) {
                     if (bits < code_size) {
                         //  Load bytes until there are enough bits for a code.
                         if (count == 0) {
                             // Read a new data block.
                             count = readBlock();
-                            if (count <= 0)
+                            if (count <= 0) {
                                 break;
+                            }
                             bi = 0;
                         }
                         datum += (((int) block[bi]) & 0xff) << bits;
@@ -703,8 +701,9 @@ public class Animation extends Actor implements FrameUpdateListener {
 
                     //  Interpret the code
 
-                    if ((code > available) || (code == end_of_information))
+                    if ((code > available) || (code == end_of_information)) {
                         break;
+                    }
                     if (code == clear) {
                         //  Reset decoder.
                         code_size = data_size + 1;
@@ -732,8 +731,9 @@ public class Animation extends Actor implements FrameUpdateListener {
 
                     //  Add a new string to the string table,
 
-                    if (available >= MaxStackSize)
+                    if (available >= MaxStackSize) {
                         break;
+                    }
                     pixelStack[top++] = (byte) first;
                     prefix[available] = (short) old_code;
                     suffix[available] = (byte) first;
@@ -756,7 +756,6 @@ public class Animation extends Actor implements FrameUpdateListener {
             for (i = pi; i < npix; i++) {
                 pixels[i] = 0; // clear missing pixels
             }
-
         }
 
         /**
@@ -803,8 +802,9 @@ public class Animation extends Actor implements FrameUpdateListener {
                     int count = 0;
                     while (n < blockSize) {
                         count = in.read(block, n, blockSize - n);
-                        if (count == -1)
+                        if (count == -1) {
                             break;
+                        }
                         n += count;
                     }
                 } catch (IOException e) {
@@ -821,6 +821,7 @@ public class Animation extends Actor implements FrameUpdateListener {
          * Reads color table as 256 RGB integer values
          *
          * @param ncolors int number of colors to read
+         *
          * @return int array containing 256 colors (packed ARGB with full alpha)
          */
         protected int[] readColorTable(int ncolors) {
@@ -858,18 +859,18 @@ public class Animation extends Actor implements FrameUpdateListener {
                 int code = read();
                 switch (code) {
 
-                    case 0x2C : // image separator
+                    case 0x2C: // image separator
                         readImage();
                         break;
 
-                    case 0x21 : // extension
+                    case 0x21: // extension
                         code = read();
                         switch (code) {
-                            case 0xf9 : // graphics control extension
+                            case 0xf9: // graphics control extension
                                 readGraphicControlExt();
                                 break;
 
-                            case 0xff : // application extension
+                            case 0xff: // application extension
                                 readBlock();
                                 String app = "";
                                 for (int i = 0; i < 11; i++) {
@@ -877,24 +878,24 @@ public class Animation extends Actor implements FrameUpdateListener {
                                 }
                                 if (app.equals("NETSCAPE2.0")) {
                                     readNetscapeExt();
-                                }
-                                else
+                                } else {
                                     skip(); // don't care
+                                }
                                 break;
 
-                            default : // uninteresting extension
+                            default: // uninteresting extension
                                 skip();
                         }
                         break;
 
-                    case 0x3b : // terminator
+                    case 0x3b: // terminator
                         done = true;
                         break;
 
-                    case 0x00 : // bad byte, but keep going and see what happens
+                    case 0x00: // bad byte, but keep going and see what happens
                         break;
 
-                    default :
+                    default:
                         status = STATUS_FORMAT_ERROR;
                 }
             }
@@ -957,8 +958,9 @@ public class Animation extends Actor implements FrameUpdateListener {
                 act = lct; // make local table active
             } else {
                 act = gct; // make global table active
-                if (bgIndex == transIndex)
+                if (bgIndex == transIndex) {
                     bgColor = 0;
+                }
             }
             int save = 0;
             if (transparency) {
@@ -991,7 +993,6 @@ public class Animation extends Actor implements FrameUpdateListener {
                 act[transIndex] = save;
             }
             resetFrame();
-
         }
 
         /**
@@ -1052,8 +1053,7 @@ public class Animation extends Actor implements FrameUpdateListener {
         }
 
         /**
-         * Skips variable length blocks up to and including
-         * next zero length block.
+         * Skips variable length blocks up to and including next zero length block.
          */
         protected void skip() {
             do {
