@@ -164,7 +164,7 @@ public class Particles extends ea.Scene implements KeyListener {
                 break;
 
             case Key.D: // Toggle Debug
-                EngineAlpha.setDebug(!EngineAlpha.isDebug());
+                Game.setDebug(!Game.isDebug());
                 break;
 
             case Key._1: // Zoom Out

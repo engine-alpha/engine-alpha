@@ -319,7 +319,7 @@ public abstract class Actor {
 
             render(g);
 
-            if (EngineAlpha.isDebug()) {
+            if (Game.isDebug()) {
                 // Visualisiere die Shape
                 float ppm = getPhysicsHandler().worldHandler().getPixelProMeter();
                 g.setColor(Color.red);

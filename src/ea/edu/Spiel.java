@@ -1,6 +1,5 @@
 package ea.edu;
 
-import ea.EngineAlpha;
 import ea.Game;
 import ea.actor.Actor;
 import ea.internal.ano.API;
@@ -8,12 +7,8 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
 import org.jbox2d.common.Vec2;
 
-import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * Diese Klasse steuert die EDU-Version. Sie ist Schnittstelle für:
@@ -114,7 +109,7 @@ public class Spiel {
      */
     @API
     public void rasterSichtbarSetzen(boolean sichtbar) {
-        EngineAlpha.setDebug(sichtbar);
+        Game.setDebug(sichtbar);
     }
 
     /* ~~ Scene Transitions ~~ */

@@ -85,12 +85,6 @@ public class EngineAlpha extends Frame {
 	}
 
 	/**
-	 * Wird debug auf <code>true</code> gesetzt, so werden ausführliche Informationen zu Tickern im
-	 * Logger ausgegeben.
-	 */
-	private static boolean debug;
-
-	/**
 	 * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
 	 * Dies betrifft unter anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
 	 * diese Variable eingeführt.
@@ -227,30 +221,6 @@ public class EngineAlpha extends Frame {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Gibt an, ob die Engine gerade im Debug-Modus ausgeführt wird.
-	 * @return	ist dieser Wert <code>true</code>, wird die Engine gerade im Debug-Modus ausgeführt.
-	 * 			Sonst ist der Wert <code>false</code>.
-	 * @see #setDebug(boolean)
-	 */
-	@API
-	public static boolean isDebug () {
-		return debug;
-	}
-
-	/**
-	 * Setzt, ob die Engine im Debug-Modus ausgeführt werden soll.
-	 * @param value ist dieser Wert <code>true</code>, wird die Engine ab sofort im Debug-Modus ausgeführt. Hierdurch
-	 *           werden mehr Informationen beim Ausführen der Engine angegeben, zum Beispiel ein Grafisches Raster
-	 *           und mehr Logging-Informationen. Dies ist hilfreich für Debugging am eigenen Spiel.
-	 * @see #isDebug()
-	 * @see #setVerbose(boolean)
-	 */
-	@API
-	public static void setDebug (boolean value) {
-		debug = value;
 	}
 
 	/**

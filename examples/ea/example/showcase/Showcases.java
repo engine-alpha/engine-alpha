@@ -172,8 +172,7 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new DinglyJump(mainscene), "Dingly Jump");
         mainscene.addScene(() -> new Swordplay(mainscene), "Swordplay");
 
-        EngineAlpha.setDebug(true);
-
+        Game.setDebug(false);
         Game.setExitOnEsc(false);
         Game.setTitle("Engine Alpha: Feature Showcase");
         Game.start(WIDTH, HEIGHT, mainscene);

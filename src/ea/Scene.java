@@ -88,7 +88,7 @@ public class Scene {
     public void render(Graphics2D g, BoundingRechteck bounds) {
         this.root.renderBasic(g, bounds);
 
-        if (EngineAlpha.isDebug()) {
+        if (Game.isDebug()) {
             this.renderDebug(g);
         }
     }

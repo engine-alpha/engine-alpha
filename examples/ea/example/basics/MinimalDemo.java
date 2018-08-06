@@ -1,6 +1,5 @@
 package ea.example.basics;
 
-import ea.EngineAlpha;
 import ea.FrameUpdateListener;
 import ea.Game;
 import ea.Scene;
@@ -25,8 +24,7 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
      * @param args command-line params (irrelevant)
      */
     public static void main(String[] args) {
-        EngineAlpha.setDebug(true);
-
+        Game.setDebug(true);
         Game.start(WIDTH, HEIGHT, new MinimalDemo());
         Game.setTitle("Minimale Demo");
     }

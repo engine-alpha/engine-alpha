@@ -1,13 +1,12 @@
 package ea.internal.frame;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Phaser;
 
 public abstract class FrameSubthread extends Thread {
-    private CyclicBarrier frameBarrierStart;
-    private CyclicBarrier frameBarrierEnd;
+    private Phaser frameBarrierStart;
+    private Phaser frameBarrierEnd;
 
-    protected FrameSubthread(String name, CyclicBarrier frameBarrierStart, CyclicBarrier frameBarrierEnd) {
+    protected FrameSubthread(String name, Phaser frameBarrierStart, Phaser frameBarrierEnd) {
         super(name);
 
         this.frameBarrierStart = frameBarrierStart;
@@ -22,19 +21,11 @@ public abstract class FrameSubthread extends Thread {
     @Override
     public final void run() {
         while (!interrupted()) {
-            try {
-                frameBarrierStart.await();
-            } catch (BrokenBarrierException | InterruptedException e) {
-                break;
-            }
+            frameBarrierStart.arriveAndAwaitAdvance();
 
             dispatchFrame();
 
-            try {
-                frameBarrierEnd.await();
-            } catch (BrokenBarrierException | InterruptedException e) {
-                break;
-            }
+            frameBarrierEnd.arriveAndAwaitAdvance();
         }
     }
 

@@ -1,6 +1,5 @@
 package ea.example.showcase;
 
-import ea.EngineAlpha;
 import ea.Game;
 import ea.Scene;
 import ea.keyboard.Key;
@@ -26,7 +25,7 @@ public abstract class ShowcaseDemo extends Scene {
             public void onKeyDown(int i) {
                 switch (i) {
                     case Key.ESCAPE:
-                        EngineAlpha.setDebug(false);
+                        Game.setDebug(false);
                         Game.transitionToScene(parent);
                         break;
                     case Key.D: //Toggle Debug
@@ -75,7 +74,7 @@ public abstract class ShowcaseDemo extends Scene {
     }
 
     protected void toggleDebug() {
-        EngineAlpha.setDebug(!EngineAlpha.isDebug());
+        Game.setDebug(!Game.isDebug());
     }
 
     public void setDebuggingEnabled(boolean debuggingEnabled) {

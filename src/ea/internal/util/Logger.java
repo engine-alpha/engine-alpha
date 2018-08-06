@@ -19,7 +19,7 @@
 
 package ea.internal.util;
 
-import ea.EngineAlpha;
+import ea.Game;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -179,6 +179,6 @@ final public class Logger {
      */
     public static void debug(String tag, String s) {
         StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-        write("DEBUG", tag, e.getFileName(), e.getLineNumber(), s, false, EngineAlpha.isDebug());
+        write("DEBUG", tag, e.getFileName(), e.getLineNumber(), s, false, Game.isDebug());
     }
 }

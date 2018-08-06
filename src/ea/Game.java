@@ -39,9 +39,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
 import java.util.Queue;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Phaser;
 
 /**
  * Diese Klasse gibt Zugriff auf das aktuelle Spiel.
@@ -58,6 +57,11 @@ public class Game {
         System.setProperty("sun.java2d.ddoffscreen", "true"); // ok, windows
         System.setProperty("sun.java2d.ddscale", "true"); // ok, hardware accelerated image scaling on windows
     }
+
+    /**
+     * Wird debug auf <code>true</code> gesetzt, so werden ausführliche Informationen zu Tickern im Logger ausgegeben.
+     */
+    private static boolean debug;
 
     /**
      * Breite des Fensters.
@@ -91,9 +95,9 @@ public class Game {
      */
     private static Scene nextScene;
 
-    private static CyclicBarrier frameBarrierStart;
+    private static Phaser frameBarrierStart;
 
-    private static CyclicBarrier frameBarrierEnd;
+    private static Phaser frameBarrierEnd;
 
     private static FrameSubthread renderThread;
 
@@ -178,7 +182,7 @@ public class Game {
 
                 g.setTransform(transform);
 
-                if (EngineAlpha.isDebug()) {
+                if (isDebug()) {
                     renderDebug(g);
                 }
             }
@@ -256,8 +260,8 @@ public class Game {
             Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
         }
 
-        frameBarrierStart = new CyclicBarrier(2);
-        frameBarrierEnd = new CyclicBarrier(2);
+        frameBarrierStart = new Phaser(2);
+        frameBarrierEnd = new Phaser(2);
 
         renderThread = new FrameSubthread("Rendering", frameBarrierStart, frameBarrierEnd) {
             @Override
@@ -396,7 +400,9 @@ public class Game {
         renderThread.start();
 
         frameDuration = 16; // TODO: Readd FPS setting (maxmillis)
+
         long frameStart = System.nanoTime();
+        long frameEnd;
 
         while (!Thread.interrupted()) {
             if (nextScene != null) {
@@ -406,11 +412,7 @@ public class Game {
 
             scene.getWorldHandler().step(frameDuration);
 
-            try {
-                frameBarrierStart.await();
-            } catch (BrokenBarrierException | InterruptedException e) {
-                break;
-            }
+            frameBarrierStart.arriveAndAwaitAdvance();
 
             scene.onFrameUpdateInternal(frameDuration);
 
@@ -418,13 +420,9 @@ public class Game {
                 dispatchableQueue.poll().dispatch();
             }
 
-            try {
-                frameBarrierEnd.await();
-            } catch (BrokenBarrierException | InterruptedException e) {
-                break;
-            }
+            frameBarrierEnd.arriveAndAwaitAdvance();
 
-            long frameEnd = System.nanoTime();
+            frameEnd = System.nanoTime();
             int duration = (int) (frameEnd - frameStart) / 1000000;
 
             if (duration < 16) {
@@ -628,10 +626,11 @@ public class Game {
     }
 
     /**
-     * Gibt einen Nachricht in einem modalen Dialogfenster aus.
-     * Der Dialog ist über {@link javax.swing.JOptionPane} implementiert.
-     * @param message   Der Inhalt der Botschaft im Dialogfenster.
-     * @param title     Der Titel des Dialogfensters.
+     * Gibt einen Nachricht in einem modalen Dialogfenster aus. Der Dialog ist über {@link javax.swing.JOptionPane}
+     * implementiert.
+     *
+     * @param message Der Inhalt der Botschaft im Dialogfenster.
+     * @param title   Der Titel des Dialogfensters.
      */
     @API
     public static void showMessage(String message, String title) {
@@ -639,13 +638,13 @@ public class Game {
     }
 
     /**
-     * Öffnet ein modales Dialogfenster, in dem der Nutzer zur Eingabe von Text in einer
-     * Zeile aufgerufen wird.
-     * Der Dialog ist über {@link javax.swing.JOptionPane} implementiert.
-     * @param message   Der Inhalt der Botschaft im Dialogfenster.
-     * @param title     Der Titel des Dialogfensters.
-     * @return          Die Eingabe des Nutzers. Ist <code>null</code>, wenn der Nutzer
-     *                  den Dialog abgebrochen hat.
+     * Öffnet ein modales Dialogfenster, in dem der Nutzer zur Eingabe von Text in einer Zeile aufgerufen wird. Der
+     * Dialog ist über {@link javax.swing.JOptionPane} implementiert.
+     *
+     * @param message Der Inhalt der Botschaft im Dialogfenster.
+     * @param title   Der Titel des Dialogfensters.
+     *
+     * @return Die Eingabe des Nutzers. Ist <code>null</code>, wenn der Nutzer den Dialog abgebrochen hat.
      */
     @API
     public static String requestStringInput(String message, String title) {
@@ -653,16 +652,18 @@ public class Game {
     }
 
     /**
-     * Öffnet ein modales Dialogfenster mit Ja/Nein-Buttons.
-     * Der Dialog ist über {@link javax.swing.JOptionPane} implementiert.
-     * @param message   Der Inhalt der Botschaft im Dialogfenster.
-     * @param title     Der Titel des Dialogfensters.
-     * @return          Die Eingabe des Nutzers:
-     *                  <ul>
-     *                      <li>Ja -> <code>true</code></li>
-     *                      <li>Nein -> <code>false</code></li>
-     *                      <li>Abbruch (= Dialog manuell schließen) -> <code>false</code></li>
-     *                  </ul>
+     * Öffnet ein modales Dialogfenster mit Ja/Nein-Buttons. Der Dialog ist über {@link javax.swing.JOptionPane}
+     * implementiert.
+     *
+     * @param message Der Inhalt der Botschaft im Dialogfenster.
+     * @param title   Der Titel des Dialogfensters.
+     *
+     * @return Die Eingabe des Nutzers:
+     * <ul>
+     * <li>Ja -> <code>true</code></li>
+     * <li>Nein -> <code>false</code></li>
+     * <li>Abbruch (= Dialog manuell schließen) -> <code>false</code></li>
+     * </ul>
      */
     @API
     public static boolean requestYesNo(String message, String title) {
@@ -671,16 +672,18 @@ public class Game {
     }
 
     /**
-     * Öffnet ein modales Dialogfenster mit OK/Abbrechen-Buttons.
-     * Der Dialog ist über {@link javax.swing.JOptionPane} implementiert.
-     * @param message   Der Inhalt der Botschaft im Dialogfenster.
-     * @param title     Der Titel des Dialogfensters.
-     * @return          Die Eingabe des Nutzers:
-     *                  <ul>
-     *                      <li>OK -> <code>true</code></li>
-     *                      <li>Abbrechen -> <code>false</code></li>
-     *                      <li>Abbruch (= Dialog manuell schließen) -> <code>false</code></li>
-     *                  </ul>
+     * Öffnet ein modales Dialogfenster mit OK/Abbrechen-Buttons. Der Dialog ist über {@link javax.swing.JOptionPane}
+     * implementiert.
+     *
+     * @param message Der Inhalt der Botschaft im Dialogfenster.
+     * @param title   Der Titel des Dialogfensters.
+     *
+     * @return Die Eingabe des Nutzers:
+     * <ul>
+     * <li>OK -> <code>true</code></li>
+     * <li>Abbrechen -> <code>false</code></li>
+     * <li>Abbruch (= Dialog manuell schließen) -> <code>false</code></li>
+     * </ul>
      */
     @API
     public static boolean requestOkCancel(String message, String title) {
@@ -691,5 +694,32 @@ public class Game {
     @NoExternalUse
     public static java.awt.Point getMousePositionInFrame() {
         return mousePosition;
+    }
+
+    /**
+     * Gibt an, ob die Engine gerade im Debug-Modus ausgeführt wird.
+     *
+     * @return ist dieser Wert <code>true</code>, wird die Engine gerade im Debug-Modus ausgeführt. Sonst ist der Wert
+     * <code>false</code>.
+     *
+     * @see #setDebug(boolean)
+     */
+    @API
+    public static boolean isDebug() {
+        return debug;
+    }
+
+    /**
+     * Setzt, ob die Engine im Debug-Modus ausgeführt werden soll.
+     *
+     * @param value ist dieser Wert <code>true</code>, wird die Engine ab sofort im Debug-Modus ausgeführt. Hierdurch
+     *              werden mehr Informationen beim Ausführen der Engine angegeben, zum Beispiel ein Grafisches Raster
+     *              und mehr Logging-Informationen. Dies ist hilfreich für Debugging am eigenen Spiel.
+     *
+     * @see #isDebug()
+     */
+    @API
+    public static void setDebug(boolean value) {
+        debug = value;
     }
 }
