@@ -19,7 +19,6 @@
 
 package ea;
 
-import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
 
