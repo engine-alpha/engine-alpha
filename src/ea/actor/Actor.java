@@ -364,7 +364,7 @@ public abstract class Actor {
             g.drawPolygon(xs, ys, xs.length);
         } else if (shape instanceof CircleShape) {
             int diameter = (int) (((CircleShape) shape).m_radius * 2 * pixelPerMeter);
-            g.drawOval(0, 0, diameter, -diameter);
+            g.drawOval(0, -diameter, diameter, diameter);
         } else {
             Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");
         }

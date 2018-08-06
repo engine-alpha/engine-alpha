@@ -22,8 +22,8 @@ package ea;
 import ea.internal.ano.API;
 
 /**
- * Ein Vector bezeichnet eine relative Punktangabe, ansonsten unterscheidet er sich nicht weiter von einem Point.<br />
- * Vektoren werden meist für die Beschreibung einer Bewegung benutzt.
+ * Beschreibt einen zweidimensionalen Vektor auf der Zeichenebene.
+ * Diese Klasse wird für alle Positions- und Richtungsangaben genutzt.
  *
  * @author Michael Andonie
  */
