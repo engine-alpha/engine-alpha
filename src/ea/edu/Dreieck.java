@@ -9,8 +9,8 @@ import ea.internal.ano.API;
 public class Dreieck extends Polygon implements EduGeometrie {
 
     @API
-    public Dreieck(Scene scene, float ax, float ay, float bx, float by, float cx, float cy) {
-        super(scene, new Point(ax, ay), new Point(bx, by), new Point(cx, cy));
+    public Dreieck(float ax, float ay, float bx, float by, float cx, float cy) {
+        super(Spiel.getActiveScene(), new Point(ax, ay), new Point(bx, by), new Point(cx, cy));
 
         eduSetup();
     }

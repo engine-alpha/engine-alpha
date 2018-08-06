@@ -13,8 +13,8 @@ public class Bild extends Image implements EduActor {
      * @param y         Y-Koordinate (linke obere Ecke des Bildes)
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
-    public Bild(Scene scene, float x, float y, String filepath) {
-        super(scene, filepath);
+    public Bild(float x, float y, String filepath) {
+        super(Spiel.getActiveScene(), filepath);
         eduSetup();
         position.set(x,y);
     }

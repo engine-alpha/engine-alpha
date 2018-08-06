@@ -6,8 +6,8 @@ import ea.actor.Rectangle;
 
 public class Rechteck extends Rectangle implements EduGeometrie {
 
-    public Rechteck(Scene scene, float breite, float hoehe) {
-        super(scene, breite, hoehe);
+    public Rechteck(float breite, float hoehe) {
+        super(Spiel.getActiveScene(), breite, hoehe);
         eduSetup();
     }
 

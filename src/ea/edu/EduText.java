@@ -6,8 +6,8 @@ import ea.actor.Text;
 
 public class EduText extends Text implements EduActor {
 
-    public EduText(Scene scene, String content) {
-        super(scene, content);
+    public EduText(String content) {
+        super(Spiel.getActiveScene(), content);
 
         eduSetup();
     }

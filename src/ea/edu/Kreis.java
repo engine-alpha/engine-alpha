@@ -15,8 +15,8 @@ public class Kreis extends Circle implements EduGeometrie {
      *
      * @param radius Durchmesser des Kreises
      */
-    public Kreis(Scene scene, float radius) {
-        super(scene, radius*2);
+    public Kreis(float radius) {
+        super(Spiel.getActiveScene(), radius*2);
         eduSetup();
     }
 
