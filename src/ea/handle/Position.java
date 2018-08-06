@@ -26,11 +26,8 @@ import ea.actor.Actor;
  * </code>
  *
  * So lassen sich beliebig viele "eigentlich-void-Operationen" hintereinander ausführen.
- * Created by andonie on 16.02.15.
  */
 public class Position {
-    private static final float DEG_PRO_RADIAN = (float) (180f/Math.PI);
-
     /**
      * Das Actor-Objekt, zu dem dieses Objekt eine Schnittstelle darstellt.
      */

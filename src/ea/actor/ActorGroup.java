@@ -24,9 +24,9 @@ import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.keyboard.KeyListener;
-import ea.mouse.MouseClickListener;
-import ea.mouse.MouseWheelListener;
+import ea.input.KeyListener;
+import ea.input.MouseClickListener;
+import ea.input.MouseWheelListener;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.WeldJointDef;
 

@@ -8,7 +8,7 @@ import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.handle.Physics;
-import ea.keyboard.KeyListener;
+import ea.input.KeyListener;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

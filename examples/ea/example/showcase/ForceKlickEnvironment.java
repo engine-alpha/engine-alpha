@@ -10,9 +10,9 @@ import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.handle.Physics;
-import ea.keyboard.KeyListener;
-import ea.mouse.MouseButton;
-import ea.mouse.MouseClickListener;
+import ea.input.KeyListener;
+import ea.input.MouseButton;
+import ea.input.MouseClickListener;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

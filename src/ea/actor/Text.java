@@ -89,7 +89,7 @@ public class Text extends Actor {
     public Text(Scene scene, String content, String fontName, int size, int type) {
         super(scene, () -> {
             Font font = FontLoader.loadByName(fontName).deriveFont(type, size);
-            FontMetrics fontMetrics = ea.util.FontMetrics.get(font);
+            FontMetrics fontMetrics = ea.internal.util.FontMetrics.get(font);
 
             return ShapeHelper.createRectangularShape(
                     fontMetrics.stringWidth(content) / scene.getWorldHandler().getPixelProMeter(),

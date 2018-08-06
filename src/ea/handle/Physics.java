@@ -33,8 +33,6 @@ import org.jbox2d.dynamics.joints.*;
  * <code>
  *     actor.physics.setMass(80).getFriction(0.3f).applyForce(new Vector(10, -30)).drehimpuls(5);
  * </code>
- *
- * Created by andonie on 16.02.15.
  */
 @API
 public class Physics {

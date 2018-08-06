@@ -3,9 +3,9 @@ package ea.edu;
 import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.Vector;
-import ea.keyboard.KeyListener;
-import ea.mouse.MouseButton;
-import ea.mouse.MouseClickListener;
+import ea.input.KeyListener;
+import ea.input.MouseButton;
+import ea.input.MouseClickListener;
 
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;

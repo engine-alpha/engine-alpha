@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.mouse;
+package ea.input;
 
 import ea.Vector;
 import ea.internal.ano.API;

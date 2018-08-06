@@ -7,7 +7,7 @@ import ea.actor.Circle;
 import ea.actor.Polygon;
 import ea.actor.Rectangle;
 import ea.handle.Physics;
-import ea.keyboard.KeyListener;
+import ea.input.KeyListener;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 
 import java.awt.*;

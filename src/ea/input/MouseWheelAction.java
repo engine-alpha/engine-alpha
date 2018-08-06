@@ -1,11 +1,11 @@
-package ea.mouse;
+package ea.input;
 
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 
 /**
  * Beschreibt eine Bewegung des Mausrads. Wird vom {@link MouseWheelListener} genutzt.
- * @see ea.mouse.MouseWheelListener
+ * @see ea.input.MouseWheelListener
  * @author Michael Andonie
  */
 @API

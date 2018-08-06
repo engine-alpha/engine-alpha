@@ -24,8 +24,8 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.util.Logger;
-import ea.mouse.MouseButton;
-import ea.mouse.MouseWheelAction;
+import ea.input.MouseButton;
+import ea.input.MouseWheelAction;
 
 import javax.swing.*;
 import java.awt.*;

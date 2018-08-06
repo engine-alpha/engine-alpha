@@ -9,8 +9,8 @@ import ea.actor.Rectangle;
 import ea.actor.Text;
 import ea.example.showcase.jump.DinglyJump;
 import ea.example.showcase.swordplay.Swordplay;
-import ea.mouse.MouseButton;
-import ea.mouse.MouseClickListener;
+import ea.input.MouseButton;
+import ea.input.MouseClickListener;
 
 import java.awt.*;
 import java.util.function.Supplier;
