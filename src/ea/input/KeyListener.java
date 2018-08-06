@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.keyboard;
+package ea.input;
 
 import ea.internal.ano.API;
 

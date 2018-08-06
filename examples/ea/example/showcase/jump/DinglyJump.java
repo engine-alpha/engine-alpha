@@ -7,7 +7,7 @@ import ea.animation.ValueAnimator;
 import ea.animation.interpolation.ReverseEaseFloat;
 import ea.example.showcase.ShowcaseDemo;
 import ea.handle.Physics;
-import ea.keyboard.KeyListener;
+import ea.input.KeyListener;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

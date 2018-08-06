@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +19,13 @@
 
 package ea;
 
-import ea.internal.FrameSubthread;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.util.Logger;
-import ea.mouse.MouseAction;
-import ea.mouse.MouseButton;
-import ea.mouse.MouseWheelAction;
+import ea.input.MouseButton;
+import ea.input.MouseWheelAction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,9 +33,9 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
 
@@ -47,7 +45,20 @@ import java.util.concurrent.Phaser;
  * @author Michael Andonie
  * @author Niklas Keller
  */
+@SuppressWarnings ( "StaticVariableOfConcreteClass" )
 public final class Game {
+
+    public static final int DESIRED_FRAME_DURATION = 16;
+    public static final int NANOSECONDS_PER_MILLISECOND = 1000000;
+    public static final Color COLOR_FPS_BACKGROUND = new Color(255, 255, 255, 50);
+    public static final Color COLOR_FPS_BORDER = new Color(0, 106, 214);
+    public static final Color COLOR_BODY_COUNT_BORDER = new Color(0, 214, 84);
+    public static final Color COLOR_BODY_COUNT_BACKGROUND = new Color(255, 255, 255, 50);
+    public static final int DEBUG_INFO_HEIGHT = 20;
+    public static final int DEBUG_INFO_LEFT = 10;
+    public static final int DEBUG_INFO_TEXT_OFFSET = 16;
+    public static final Color DEBUG_GRID_COLOR = new Color(255, 255, 255, 100);
+
     static {
         System.setProperty("sun.java2d.opengl", "true"); // ok
         System.setProperty("sun.java2d.d3d", "true"); // ok
@@ -94,11 +105,11 @@ public final class Game {
      */
     private static Scene nextScene;
 
-    private static Phaser frameBarrierStart;
+    private static Phaser frameBarrierStart = new Phaser(2);
 
-    private static Phaser frameBarrierEnd;
+    private static Phaser frameBarrierEnd = new Phaser(2);
 
-    private static FrameSubthread renderThread;
+    private static Thread renderThread;
 
     private static Thread mainThread;
 
@@ -111,7 +122,7 @@ public final class Game {
      * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die entsprechende Taste
      * gedrückt, sonst ist der Wert <code>false</code>.
      */
-    private static Set<Integer> pressedKeys = new HashSet<>();
+    private static Collection<Integer> pressedKeys = new HashSet<>();
 
     /**
      * Letzte Mausposition.
@@ -206,51 +217,16 @@ public final class Game {
             }
         });
 
-        KeyListener keyListener = new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                enqueueKeyEvent(e, true);
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                enqueueKeyEvent(e, false);
-            }
-        };
+        java.awt.event.KeyListener keyListener = new KeyListener();
 
         frame.addKeyListener(keyListener);
         renderPanel.addKeyListener(keyListener);
         renderPanel.setFocusable(true);
 
-        MouseAdapter mouseAdapter = new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                enqueueMouseEvent(e, MouseAction.DOWN);
-            }
+        MouseAdapter mouseListener = new MouseListener();
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                enqueueMouseEvent(e, MouseAction.UP);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                mousePosition = e.getPoint();
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                mousePosition = e.getPoint();
-            }
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                mousePosition = e.getPoint();
-            }
-        };
-
-        renderPanel.addMouseMotionListener(mouseAdapter);
-        renderPanel.addMouseListener(mouseAdapter);
+        renderPanel.addMouseMotionListener(mouseListener);
+        renderPanel.addMouseListener(mouseListener);
         renderPanel.addMouseWheelListener(Game::enqueueMouseWheelEvent);
 
         try {
@@ -259,42 +235,7 @@ public final class Game {
             Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
         }
 
-        frameBarrierStart = new Phaser(2);
-        frameBarrierEnd = new Phaser(2);
-
-        renderThread = new FrameSubthread("Rendering", frameBarrierStart, frameBarrierEnd) {
-            @Override
-            public void dispatchFrame() {
-                try {
-                    do {
-                        BufferStrategy bufferStrategy = renderPanel.getBufferStrategy();
-
-                        do {
-                            Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
-
-                            // have to be the same @ Game.screenshot!
-                            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
-                            renderPanel.render(g);
-
-                            g.dispose();
-                        } while (bufferStrategy.contentsRestored());
-
-                        if (!bufferStrategy.contentsLost()) {
-                            bufferStrategy.show();
-                        }
-
-                        Toolkit.getDefaultToolkit().sync();
-                    } while (renderPanel.getBufferStrategy().contentsLost());
-                } catch (IllegalStateException e) {
-                    Logger.error("Rendering", e.getMessage());
-                    Game.exit();
-                }
-            }
-        };
-
+        renderThread = new RenderThread();
         renderThread.setPriority(Thread.MAX_PRIORITY);
 
         mousePosition = new java.awt.Point(width / 2, height / 2);
@@ -335,7 +276,7 @@ public final class Game {
         ty -= ty % gridSize;
 
         g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
-        g.setColor(new Color(255, 255, 255, 100));
+        g.setColor(DEBUG_GRID_COLOR);
 
         for (int x = tx; x < tx + 2 * windowSize + gridSize; x += gridSize) {
             g.drawLine(x, ty - gridSize, x, ty + windowSize * 2 + gridSize);
@@ -367,38 +308,37 @@ public final class Game {
         Rectangle2D bounds;
         int y = 10;
 
-        // Prevent java.lang.ArithmeticException: / by zero
-        String fpsMessage = "FPS: " + (1000 / Math.max(frameDuration, 1));
+        String fpsMessage = "FPS: " + (frameDuration == 0 ? "∞" : 1000 / frameDuration);
         bounds = fm.getStringBounds(fpsMessage, g);
 
-        g.setColor(new Color(0, 106, 214));
-        g.fillRect(10, y, (int) bounds.getWidth() + 20, (int) bounds.getHeight() + 16);
-        g.setColor(new Color(255, 255, 255, 50));
-        g.drawRect(10, y, (int) bounds.getWidth() + 19, (int) bounds.getHeight() + 15);
+        g.setColor(COLOR_FPS_BORDER);
+        g.fillRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET);
+        g.setColor(COLOR_FPS_BACKGROUND);
+        g.drawRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT - 1, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET - 1);
 
-        g.setColor(Color.white);
+        g.setColor(Color.WHITE);
         g.setFont(displayFont);
-        g.drawString(fpsMessage, 20, y + 8 + fm.getHeight() - fm.getDescent());
+        g.drawString(fpsMessage, DEBUG_INFO_LEFT + 10, y + 8 + fm.getHeight() - fm.getDescent());
 
-        y += fm.getHeight() + 20;
+        y += fm.getHeight() + DEBUG_INFO_HEIGHT;
 
         String bodyMessage = "Bodies: " + scene.getWorldHandler().getWorld().getBodyCount();
         bounds = fm.getStringBounds(bodyMessage, g);
 
-        g.setColor(new Color(0, 214, 84));
-        g.fillRect(10, y, (int) bounds.getWidth() + 20, (int) bounds.getHeight() + 16);
-        g.setColor(new Color(255, 255, 255, 50));
-        g.drawRect(10, y, (int) bounds.getWidth() + 19, (int) bounds.getHeight() + 15);
+        g.setColor(COLOR_BODY_COUNT_BORDER);
+        g.fillRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET);
+        g.setColor(COLOR_BODY_COUNT_BACKGROUND);
+        g.drawRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT - 1, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET - 1);
 
-        g.setColor(Color.white);
+        g.setColor(Color.WHITE);
         g.setFont(displayFont);
-        g.drawString(bodyMessage, 20, y + 8 + fm.getHeight() - fm.getDescent());
+        g.drawString(bodyMessage, DEBUG_INFO_LEFT + 10, y + 8 + fm.getHeight() - fm.getDescent());
     }
 
     private static void run() {
         renderThread.start();
 
-        frameDuration = 16; // TODO: Readd FPS setting (maxmillis)
+        frameDuration = DESIRED_FRAME_DURATION;
 
         long frameStart = System.nanoTime();
         long frameEnd;
@@ -415,18 +355,20 @@ public final class Game {
 
             scene.onFrameUpdateInternal(frameDuration);
 
-            while (!dispatchableQueue.isEmpty()) {
-                dispatchableQueue.poll().run();
+            Runnable runnable = dispatchableQueue.poll();
+            while (runnable != null) {
+                runnable.run();
+                runnable = dispatchableQueue.poll();
             }
 
             frameBarrierEnd.arriveAndAwaitAdvance();
 
             frameEnd = System.nanoTime();
-            int duration = (int) (frameEnd - frameStart) / 1000000;
+            int duration = (int) (frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND;
 
-            if (duration < 16) {
+            if (duration < DESIRED_FRAME_DURATION) {
                 try {
-                    Thread.sleep(16 - duration);
+                    Thread.sleep(DESIRED_FRAME_DURATION - duration);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
@@ -434,7 +376,7 @@ public final class Game {
             }
 
             frameEnd = System.nanoTime();
-            frameDuration = (int) ((frameEnd - frameStart) / 1000000);
+            frameDuration = (int) ((frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND);
 
             frameStart = frameEnd;
         }
@@ -452,71 +394,6 @@ public final class Game {
         frame.dispose();
 
         System.exit(0);
-    }
-
-    /**
-     * Diese Methode wird immer dann ausgeführt, wenn eine Taste gedrückt oder losgelassen wurde.
-     *
-     * @param e    Das KeyEvent.
-     * @param down Drücken oder Loslassen?
-     */
-    private static void enqueueKeyEvent(KeyEvent e, boolean down) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && exitOnEsc) {
-            Game.exit();
-        }
-
-        enqueue(() -> {
-            boolean pressed = pressedKeys.contains(e.getKeyCode());
-
-            if (down) {
-                if (pressed) {
-                    return; // Ignore duplicate presses, because they're system dependent
-                }
-
-                pressedKeys.add(e.getKeyCode());
-            } else {
-                pressedKeys.remove(e.getKeyCode());
-            }
-
-            if (down) {
-                scene.onKeyDownInternal(e);
-            } else {
-                scene.onKeyUpInternal(e);
-            }
-        });
-    }
-
-    /**
-     * Diese Methode wird immer dann ausgeführt, wenn ein simplifiedDirection Klick der Maus ausgeführt wird.
-     *
-     * @param e      Das MouseEvent.
-     * @param action Drücken oder Loslassen?
-     */
-    private static void enqueueMouseEvent(MouseEvent e, MouseAction action) {
-        Vector sourcePosition = convertMousePosition(scene, e.getPoint());
-        MouseButton button;
-
-        switch (e.getButton()) {
-            case MouseEvent.BUTTON1:
-                button = MouseButton.LEFT;
-                break;
-
-            case MouseEvent.BUTTON3:
-                button = MouseButton.RIGHT;
-                break;
-
-            default:
-                // Ignore event
-                return;
-        }
-
-        enqueue(() -> {
-            if (action == MouseAction.DOWN) {
-                scene.onMouseDownInternal(sourcePosition, button);
-            } else {
-                scene.onMouseUpInternal(sourcePosition, button);
-            }
-        });
     }
 
     @NoExternalUse
@@ -717,5 +594,141 @@ public final class Game {
     @API
     public static void setDebug(boolean value) {
         debug = value;
+    }
+
+    @SuppressWarnings ( "AssignmentToStaticFieldFromInstanceMethod" )
+    private static class MouseListener extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            enqueueMouseEvent(e, true);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            enqueueMouseEvent(e, false);
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            mousePosition = e.getPoint();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            mousePosition = e.getPoint();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            mousePosition = e.getPoint();
+        }
+
+        private void enqueueMouseEvent(MouseEvent e, boolean down) {
+            Vector sourcePosition = convertMousePosition(scene, e.getPoint());
+            MouseButton button;
+
+            switch (e.getButton()) {
+                case MouseEvent.BUTTON1:
+                    button = MouseButton.LEFT;
+                    break;
+
+                case MouseEvent.BUTTON3:
+                    button = MouseButton.RIGHT;
+                    break;
+
+                default:
+                    // Ignore event
+                    return;
+            }
+
+            enqueue(() -> {
+                if (down) {
+                    scene.onMouseDownInternal(sourcePosition, button);
+                } else {
+                    scene.onMouseUpInternal(sourcePosition, button);
+                }
+            });
+        }
+    }
+
+    private static class KeyListener extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            enqueueKeyEvent(e, true);
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            enqueueKeyEvent(e, false);
+        }
+
+        private void enqueueKeyEvent(KeyEvent e, boolean down) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE && exitOnEsc) {
+                Game.exit();
+            }
+
+            enqueue(() -> {
+                boolean pressed = pressedKeys.contains(e.getKeyCode());
+
+                if (down) {
+                    if (pressed) {
+                        return; // Ignore duplicate presses, because they're system dependent
+                    }
+
+                    pressedKeys.add(e.getKeyCode());
+                } else {
+                    pressedKeys.remove(e.getKeyCode());
+                }
+
+                if (down) {
+                    scene.onKeyDownInternal(e);
+                } else {
+                    scene.onKeyUpInternal(e);
+                }
+            });
+        }
+    }
+
+    private static class RenderThread extends Thread {
+        public RenderThread() {
+            super("Rendering");
+        }
+
+        @Override
+        public void run() {
+            while (!interrupted()) {
+                frameBarrierStart.arriveAndAwaitAdvance();
+
+                try {
+                    do {
+                        BufferStrategy bufferStrategy = renderPanel.getBufferStrategy();
+
+                        do {
+                            Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
+
+                            // have to be the same @ Game.screenshot!
+                            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
+                            renderPanel.render(g);
+
+                            g.dispose();
+                        } while (bufferStrategy.contentsRestored());
+
+                        if (!bufferStrategy.contentsLost()) {
+                            bufferStrategy.show();
+                        }
+
+                        Toolkit.getDefaultToolkit().sync();
+                    } while (renderPanel.getBufferStrategy().contentsLost());
+                } catch (IllegalStateException e) {
+                    Logger.error(getName(), e.getMessage());
+                    Game.exit();
+                }
+
+                frameBarrierEnd.arriveAndAwaitAdvance();
+            }
+        }
     }
 }

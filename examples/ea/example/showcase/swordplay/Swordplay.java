@@ -7,7 +7,7 @@ import ea.actor.Actor;
 import ea.actor.Image;
 import ea.example.showcase.ShowcaseDemo;
 import ea.handle.Physics;
-import ea.keyboard.KeyListener;
+import ea.input.KeyListener;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;

@@ -25,17 +25,19 @@ import ea.actor.Rectangle;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.ReverseEaseFloat;
 import ea.handle.Physics;
-import ea.keyboard.KeyListener;
+import ea.input.KeyListener;
 import ea.particle.ParticleEmitter;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+@SuppressWarnings ( "MagicNumber" )
 public class Particles extends ea.Scene implements KeyListener {
     public static final int WIDTH = 800, HEIGHT = 600;
 
     public static void main(String[] args) {
         EngineAlpha.setVerbose(true);
+        Game.setDebug(true);
         Game.start(WIDTH, HEIGHT, new Particles());
     }
 

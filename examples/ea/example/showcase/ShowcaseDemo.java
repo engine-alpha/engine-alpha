@@ -2,7 +2,7 @@ package ea.example.showcase;
 
 import ea.Game;
 import ea.Scene;
-import ea.keyboard.KeyListener;
+import ea.input.KeyListener;
 
 import java.awt.event.KeyEvent;
 
