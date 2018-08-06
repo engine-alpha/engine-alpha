@@ -21,14 +21,10 @@ package ea;
 
 import ea.actor.Actor;
 import ea.actor.ActorGroup;
+import ea.input.*;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.WorldHandler;
-import ea.input.KeyListener;
-import ea.input.MouseButton;
-import ea.input.MouseClickListener;
-import ea.input.MouseWheelAction;
-import ea.input.MouseWheelListener;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.DistanceJoint;
 import org.jbox2d.dynamics.joints.Joint;
@@ -38,34 +34,37 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.HashSet;
 
 public class Scene {
     /**
-     * Die Kamera des Spiels. Hiermit kann der sichtbare Ausschnitt der Zeichenebene
-     * bestimmt und manipuliert werden.
+     * Die Kamera des Spiels. Hiermit kann der sichtbare Ausschnitt der Zeichenebene bestimmt und manipuliert werden.
      */
     private final Camera camera;
 
     /**
      * Die Liste aller angemeldeten KeyListener.
      */
-    private final Collection<KeyListener> keyListeners = new CopyOnWriteArraySet<>();
+    private final Collection<KeyListener> keyListeners = new HashSet<>();
+    private boolean keyIterating = false;
 
     /**
      * Die Liste aller angemeldeten MouseClickListener.
      */
-    private final Collection<MouseClickListener> mouseClickListeners = new CopyOnWriteArraySet<>();
+    private final Collection<MouseClickListener> mouseClickListeners = new HashSet<>();
+    private boolean mouseClickIterating = false;
 
     /**
      * Die Liste aller angemeldeten MouseWheelListener.
      */
-    private final Collection<MouseWheelListener> mouseWheelListeners = new CopyOnWriteArraySet<>();
+    private final Collection<MouseWheelListener> mouseWheelListeners = new HashSet<>();
+    private boolean mouseWheelIterating = false;
 
     /**
      * Die Liste aller angemeldeten FrameUpdateListener.
      */
-    private final Collection<FrameUpdateListener> frameUpdateListeners = new CopyOnWriteArraySet<>();
+    private final Collection<FrameUpdateListener> frameUpdateListeners = new HashSet<>();
+    private boolean frameUpdateIterating = false;
 
     /**
      * Der Wurzel-ActorGroup. An ihm müssen direkt oder indirekt (über weitere ActorGroup) alle
@@ -161,83 +160,179 @@ public class Scene {
 
     @API
     final public void addMouseClickListener(MouseClickListener mouseClickListener) {
-        this.mouseClickListeners.add(mouseClickListener);
+        synchronized (mouseClickListeners) {
+            if (mouseClickIterating) {
+                Game.enqueue(() -> mouseClickListeners.add(mouseClickListener));
+            } else {
+                mouseClickListeners.add(mouseClickListener);
+            }
+        }
     }
 
     @API
     final public void removeMouseClickListener(MouseClickListener mouseClickListener) {
-        this.mouseClickListeners.remove(mouseClickListener);
+        synchronized (mouseClickListeners) {
+            if (mouseClickIterating) {
+                Game.enqueue(() -> mouseClickListeners.remove(mouseClickListener));
+            } else {
+                mouseClickListeners.remove(mouseClickListener);
+            }
+        }
     }
 
     @API
     final public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        this.mouseWheelListeners.add(mouseWheelListener);
+        synchronized (mouseWheelListeners) {
+            if (mouseWheelIterating) {
+                Game.enqueue(() -> mouseWheelListeners.add(mouseWheelListener));
+            } else {
+                mouseWheelListeners.add(mouseWheelListener);
+            }
+        }
     }
 
     @API
     final public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        this.mouseWheelListeners.remove(mouseWheelListener);
+        synchronized (mouseWheelListeners) {
+            if (mouseWheelIterating) {
+                Game.enqueue(() -> mouseWheelListeners.remove(mouseWheelListener));
+            } else {
+                mouseWheelListeners.remove(mouseWheelListener);
+            }
+        }
     }
 
     @API
     final public void addKeyListener(KeyListener keyListener) {
-        this.keyListeners.add(keyListener);
+        synchronized (keyListeners) {
+            if (keyIterating) {
+                Game.enqueue(() -> keyListeners.add(keyListener));
+            } else {
+                keyListeners.add(keyListener);
+            }
+        }
     }
 
     @API
     final public void removeKeyListener(KeyListener keyListener) {
-        this.keyListeners.remove(keyListener);
+        synchronized (keyListeners) {
+            if (keyIterating) {
+                Game.enqueue(() -> keyListeners.remove(keyListener));
+            } else {
+                keyListeners.remove(keyListener);
+            }
+        }
     }
 
     @API
     final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        this.frameUpdateListeners.add(frameUpdateListener);
+        synchronized (frameUpdateListeners) {
+            if (frameUpdateIterating) {
+                Game.enqueue(() -> frameUpdateListeners.add(frameUpdateListener));
+            } else {
+                frameUpdateListeners.add(frameUpdateListener);
+            }
+        }
     }
 
     @API
     final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        this.frameUpdateListeners.remove(frameUpdateListener);
+        synchronized (frameUpdateListeners) {
+            if (frameUpdateIterating) {
+                Game.enqueue(() -> frameUpdateListeners.remove(frameUpdateListener));
+            } else {
+                frameUpdateListeners.remove(frameUpdateListener);
+            }
+        }
     }
 
     @NoExternalUse
     final void onFrameUpdateInternal(int frameDuration) {
-        for (FrameUpdateListener listener : this.frameUpdateListeners) {
-            listener.onFrameUpdate(frameDuration);
+        synchronized (frameUpdateListeners) {
+            try {
+                frameUpdateIterating = true;
+
+                for (FrameUpdateListener listener : frameUpdateListeners) {
+                    listener.onFrameUpdate(frameDuration);
+                }
+            } finally {
+                frameUpdateIterating = false;
+            }
         }
     }
 
     @NoExternalUse
     final void onKeyDownInternal(KeyEvent e) {
-        for (KeyListener listener : keyListeners) {
-            listener.onKeyDown(e);
+        synchronized (keyListeners) {
+            try {
+                keyIterating = true;
+
+                for (KeyListener listener : keyListeners) {
+                    listener.onKeyDown(e);
+                }
+            } finally {
+                keyIterating = false;
+            }
         }
     }
 
     @NoExternalUse
     final void onKeyUpInternal(KeyEvent e) {
-        for (KeyListener listener : keyListeners) {
-            listener.onKeyUp(e);
+        synchronized (keyListeners) {
+            try {
+                keyIterating = true;
+
+                for (KeyListener listener : keyListeners) {
+                    listener.onKeyUp(e);
+                }
+            } finally {
+                keyIterating = false;
+            }
         }
     }
 
     @NoExternalUse
     final void onMouseDownInternal(Vector position, MouseButton button) {
-        for (MouseClickListener listener : mouseClickListeners) {
-            listener.onMouseDown(position, button);
+        synchronized (mouseClickListeners) {
+            try {
+                mouseClickIterating = true;
+
+                for (MouseClickListener listener : mouseClickListeners) {
+                    listener.onMouseDown(position, button);
+                }
+            } finally {
+                mouseClickIterating = false;
+            }
         }
     }
 
     @NoExternalUse
     final void onMouseUpInternal(Vector position, MouseButton button) {
-        for (MouseClickListener listener : mouseClickListeners) {
-            listener.onMouseUp(position, button);
+        synchronized (mouseClickListeners) {
+            try {
+                mouseClickIterating = true;
+
+                for (MouseClickListener listener : mouseClickListeners) {
+                    listener.onMouseUp(position, button);
+                }
+            } finally {
+                mouseClickIterating = false;
+            }
         }
     }
 
     @NoExternalUse
     final void onMouseWheelMoveInternal(MouseWheelAction mouseWheelAction) {
-        for (MouseWheelListener listener : mouseWheelListeners) {
-            listener.onMouseWheelMove(mouseWheelAction);
+        synchronized (mouseWheelListeners) {
+            try {
+                mouseWheelIterating = true;
+
+                for (MouseWheelListener listener : mouseWheelListeners) {
+                    listener.onMouseWheelMove(mouseWheelAction);
+                }
+            } finally {
+                mouseWheelIterating = false;
+            }
         }
     }
 

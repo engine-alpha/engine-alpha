@@ -34,17 +34,13 @@ public class MarbleDemo
         initialisieren();
 
         addKeyListener(this);
-        addFrameUpdateListener(new PeriodicTask(100) {
-
-            @Override
-            public void run() {
-                Circle marble = makeAMarble();
-                add(marble);
-                marble.physics.setType(Physics.Type.DYNAMIC);
-                marble.position.set(new Vector(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150));
-                marble.physics.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
-            }
-        });
+        addFrameUpdateListener(new PeriodicTask(100, () -> {
+            Circle marble = makeAMarble();
+            add(marble);
+            marble.physics.setType(Physics.Type.DYNAMIC);
+            marble.position.set(new Vector(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150));
+            marble.physics.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
+        }));
     }
 
     public void initialisieren() {

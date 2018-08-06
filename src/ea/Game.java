@@ -349,36 +349,42 @@ public final class Game {
                 nextScene = null;
             }
 
-            scene.getWorldHandler().step(frameDuration);
+            try {
+                scene.getWorldHandler().step(frameDuration);
 
-            frameBarrierStart.arriveAndAwaitAdvance();
+                frameBarrierStart.arriveAndAwaitAdvance();
 
-            scene.onFrameUpdateInternal(frameDuration);
+                scene.onFrameUpdateInternal(frameDuration);
 
-            Runnable runnable = dispatchableQueue.poll();
-            while (runnable != null) {
-                runnable.run();
-                runnable = dispatchableQueue.poll();
-            }
-
-            frameBarrierEnd.arriveAndAwaitAdvance();
-
-            frameEnd = System.nanoTime();
-            int duration = (int) (frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND;
-
-            if (duration < DESIRED_FRAME_DURATION) {
-                try {
-                    Thread.sleep(DESIRED_FRAME_DURATION - duration);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
+                Runnable runnable = dispatchableQueue.poll();
+                while (runnable != null) {
+                    runnable.run();
+                    runnable = dispatchableQueue.poll();
                 }
+
+                frameBarrierEnd.arriveAndAwaitAdvance();
+
+                frameEnd = System.nanoTime();
+                int duration = (int) (frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND;
+
+                if (duration < DESIRED_FRAME_DURATION) {
+                    try {
+                        Thread.sleep(DESIRED_FRAME_DURATION - duration);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+
+                frameEnd = System.nanoTime();
+                frameDuration = (int) ((frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND);
+
+                frameStart = frameEnd;
+            } catch (Exception e) {
+                Game.exit();
+
+                throw e;
             }
-
-            frameEnd = System.nanoTime();
-            frameDuration = (int) ((frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND);
-
-            frameStart = frameEnd;
         }
 
         // Thread soll aufhören: Sauber machen!

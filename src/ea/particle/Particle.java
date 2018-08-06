@@ -53,7 +53,7 @@ public class Particle implements FrameUpdateListener {
 
     public void render(Graphics2D g) {
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (color.getAlpha() * Math.max(0, 1 - (float) age / life))));
-        g.fillOval((int) x - size, (int) y - size, 2 * size, 2 * size);
+        g.fillOval((int) x - size, 0 - (int) y - size, 2 * size, 2 * size);
     }
 
     public boolean isDead() {
