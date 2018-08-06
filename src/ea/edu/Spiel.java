@@ -203,7 +203,7 @@ public class Spiel {
         getActiveScene().getCamera().rotateTo(winkelInBogenmass);
     }
 
-    /* ~~~ GLOBAL WORLD PHYICS ~~~ */
+    /* ~~~ GLOBAL WORLD PHYSICS ~~~ */
 
     public void setzeSchwerkraft(float schwerkraft) {
         getActiveScene().getWorldHandler().getWorld().setGravity(new Vec2(0, -schwerkraft));

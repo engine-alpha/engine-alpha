@@ -92,6 +92,7 @@ public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
                             listener.accept(this.interpolator.interpolate(1));
                         }
                         progress = 1;
+                        complete = true;
                         break;
                     case PINGPONG:
                         //Ging bisher vorwärts -> Jetzt Rückwärts
@@ -126,7 +127,7 @@ public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
         this.scene = scene;
     }
 
-    public ValueAnimator<V> onComplete(Consumer<V> listener) {
+    public ValueAnimator<V> addCompletionListener(Consumer<V> listener) {
         if (this.complete) {
             listener.accept(this.interpolator.interpolate(1));
         } else {

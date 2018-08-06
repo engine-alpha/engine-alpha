@@ -3,6 +3,8 @@ package ea.edu;
 import ea.Point;
 import ea.Vector;
 import ea.actor.Actor;
+import ea.animation.CircleAnimation;
+import ea.animation.LineAnimation;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.CosinusFloat;
 import ea.animation.interpolation.LinearFloat;
@@ -158,17 +160,7 @@ public interface EduActor {
      *              wurde.
      */
     default void geradenAnimation(float zX, float zY, int ms, boolean loop) {
-        Point center = getActor().position.getCenter();
-        ValueAnimator<Float> aX = new ValueAnimator<>(ms,
-                x->getActor().position.setCenter(x, getActor().position.getCenter().getRealY()),
-                new LinearFloat(center.getRealX(), zX),
-                loop ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
-        ValueAnimator<Float> aY = new ValueAnimator<>(ms,
-                y->getActor().position.setCenter(getActor().position.getCenter().getRealX(), y),
-                new LinearFloat(center.getRealY(), zY),
-                loop ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
-        Spiel.getActiveScene().addFrameUpdateListener(aX);
-        Spiel.getActiveScene().addFrameUpdateListener(aY);
+        Spiel.getActiveScene().addFrameUpdateListener(new LineAnimation(getActor(), new Point(zX, zY), ms, loop));
     }
 
     /**
@@ -180,51 +172,9 @@ public interface EduActor {
      *                      Uhrzeigersinn
      * @param rotation      <code>true</code>=Das Actor-Objekt wird auch entsprechend seiner Kreis-Position rotiert.
      *                      <code>false</code>=Das Actor-Objekt behält seine Rotation bei.
-     * @param loop          <code>true</code>=Die Umdrehung wird wiederholt. <code>false</code>: Die Umdrehung endet
-     *                      nach der ersten kompletten Drehung.
      */
-    default void kreisAnimation(float mX, float mY, int ms, boolean uhrzeigersinn, boolean rotation, boolean loop) {
-        Point currentActorCenter = getActor().position.getCenter();
-        Point rotationCenter = new Point(mX, mY);
-        float radius = rotationCenter.distanceTo(currentActorCenter);
-        Point rightPoint = rotationCenter.verschobeneInstanz(
-                new Vector(radius, 0));
-
-        ValueAnimator<Float> aX = new ValueAnimator<>(ms,
-                x->getActor().position.setCenter(x, getActor().position.getCenter().getRealY()),
-                new CosinusFloat(rightPoint.getRealX(), radius),
-                loop ? ValueAnimator.Mode.REPEATED : ValueAnimator.Mode.SINGLE);
-        ValueAnimator<Float> aY = new ValueAnimator<>(ms,
-                y->getActor().position.setCenter(getActor().position.getCenter().getRealX(), y),
-                new SinusFloat(rotationCenter.getRealY(), uhrzeigersinn ? -radius : radius),
-                loop ? ValueAnimator.Mode.REPEATED : ValueAnimator.Mode.SINGLE);
-
-
-        //Winkel zwischen gewünschtem Startpunkt und aktueller Actor-Position (immer in [0;PI])
-        float angle = rotationCenter.vectorFromThisTo(rightPoint).getAngle(
-                rotationCenter.vectorFromThisTo(currentActorCenter));
-
-        if(uhrzeigersinn && currentActorCenter.getRealY() > rotationCenter.getRealY()
-            || !uhrzeigersinn && currentActorCenter.getRealY() < rotationCenter.getRealY()) {
-            //Gedrehter Winkel ist bereits über die Hälfte
-            angle = (float)(2*Math.PI-angle);
-        }
-
-        float actualProgress = (float) (angle/(Math.PI*2));
-        aX.setProgress(actualProgress);
-        aY.setProgress(actualProgress);
-
-        Spiel.getActiveScene().addFrameUpdateListener(aX);
-        Spiel.getActiveScene().addFrameUpdateListener(aY);
-
-        if(rotation) {
-            float rotationAngle = uhrzeigersinn ? angle : -angle;
-            ValueAnimator<Float> aR = new ValueAnimator<>(ms,
-                    getActor().position::setRotation,
-                    new LinearFloat(-angle, -angle + ((float)(Math.PI*2) * (uhrzeigersinn ? -1 : 1))),
-                    loop ? ValueAnimator.Mode.REPEATED : ValueAnimator.Mode.SINGLE);
-            aR.setProgress(actualProgress);
-            Spiel.getActiveScene().addFrameUpdateListener(aR);
-        }
+    default void kreisAnimation(float mX, float mY, int ms, boolean uhrzeigersinn, boolean rotation) {
+        Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Point(mX,mY),
+                ms, uhrzeigersinn, rotation));
     }
 }

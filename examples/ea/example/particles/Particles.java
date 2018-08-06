@@ -135,8 +135,8 @@ public class Particles extends ea.Scene implements KeyListener {
     }
 
     private void animateCamera() {
-        this.addFrameUpdateListener(new ValueAnimator<>(400, getCamera()::rotateTo, new ReverseEaseFloat(0, .002f + (float) Math.random() * 0.002f)).onComplete(
-                (value) -> this.addFrameUpdateListener(new ValueAnimator<>(350, getCamera()::rotateTo, new ReverseEaseFloat(0, -.002f + (float) Math.random() * -0.002f)).onComplete((dummy) -> this.animateCamera()))
+        this.addFrameUpdateListener(new ValueAnimator<>(400, getCamera()::rotateTo, new ReverseEaseFloat(0, .002f + (float) Math.random() * 0.002f)).addCompletionListener(
+                (value) -> this.addFrameUpdateListener(new ValueAnimator<>(350, getCamera()::rotateTo, new ReverseEaseFloat(0, -.002f + (float) Math.random() * -0.002f)).addCompletionListener((dummy) -> this.animateCamera()))
         ));
     }
 
