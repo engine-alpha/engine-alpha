@@ -48,16 +48,17 @@ import java.util.concurrent.Phaser;
 @SuppressWarnings ( "StaticVariableOfConcreteClass" )
 public final class Game {
 
-    public static final int DESIRED_FRAME_DURATION = 16;
-    public static final int NANOSECONDS_PER_MILLISECOND = 1000000;
-    public static final Color COLOR_FPS_BACKGROUND = new Color(255, 255, 255, 50);
-    public static final Color COLOR_FPS_BORDER = new Color(0, 106, 214);
-    public static final Color COLOR_BODY_COUNT_BORDER = new Color(0, 214, 84);
-    public static final Color COLOR_BODY_COUNT_BACKGROUND = new Color(255, 255, 255, 50);
-    public static final int DEBUG_INFO_HEIGHT = 20;
-    public static final int DEBUG_INFO_LEFT = 10;
-    public static final int DEBUG_INFO_TEXT_OFFSET = 16;
-    public static final Color DEBUG_GRID_COLOR = new Color(255, 255, 255, 100);
+    private static final int DESIRED_FRAME_DURATION = 16;
+    private static final int NANOSECONDS_PER_MILLISECOND = 1000000;
+    private static final Color COLOR_FPS_BACKGROUND = new Color(255, 255, 255, 50);
+    private static final Color COLOR_FPS_BORDER = new Color(0, 106, 214);
+    private static final Color COLOR_BODY_COUNT_BORDER = new Color(0, 214, 84);
+    private static final Color COLOR_BODY_COUNT_BACKGROUND = new Color(255, 255, 255, 50);
+    private static final int DEBUG_INFO_HEIGHT = 20;
+    private static final int DEBUG_INFO_LEFT = 10;
+    private static final int DEBUG_INFO_TEXT_OFFSET = 16;
+    private static final Color DEBUG_GRID_COLOR = new Color(255, 255, 255, 100);
+    private static final Color DEBUG_GRID_COLOR_0 = new Color(255, 255, 255, 150);
 
     static {
         System.setProperty("sun.java2d.opengl", "true"); // ok
@@ -286,10 +287,12 @@ public final class Game {
         g.setColor(DEBUG_GRID_COLOR);
 
         for (int x = startX; x < startX + windowSize + gridSize; x += gridSize) {
+            g.setColor(x == 0 ? DEBUG_GRID_COLOR_0 : DEBUG_GRID_COLOR);
             g.fillRect(x - 1, startY - gridSize, 2, windowSize + 2 * gridSize);
         }
 
         for (int y = startY; y < startY + windowSize + gridSize; y += gridSize) {
+            g.setColor(y == 0 ? DEBUG_GRID_COLOR_0 : DEBUG_GRID_COLOR);
             g.fillRect(startX - gridSize, y - 1, windowSize + 2 * gridSize, 2);
         }
 
@@ -422,7 +425,7 @@ public final class Game {
 
         return new Vector(
                 position.x + (((float) Math.cos(rotation) * (mousePosition.x - width / 2f) + (float) Math.sin(rotation) * (mousePosition.y - height / 2f))) / zoom,
-                (-1) * position.y + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom
+                position.y + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom
         );
     }
 
