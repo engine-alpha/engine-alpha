@@ -205,6 +205,10 @@ public class Spiel {
         getActiveScene().getWorldHandler().getWorld().setGravity(new Vec2(0, -schwerkraft));
     }
 
+    public void setzePixelProMeter(float pixelProMeter) {
+        getActiveScene().getWorldHandler().setPixelProMeter(pixelProMeter);
+    }
+
     /* ~~~ Dialogues ~~~ */
 
     public void nachricht(String nachricht) {
