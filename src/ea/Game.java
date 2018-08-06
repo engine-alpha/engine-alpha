@@ -47,7 +47,7 @@ import java.util.concurrent.Phaser;
  * @author Michael Andonie
  * @author Niklas Keller
  */
-public class Game {
+public final class Game {
     static {
         System.setProperty("sun.java2d.opengl", "true"); // ok
         System.setProperty("sun.java2d.d3d", "true"); // ok

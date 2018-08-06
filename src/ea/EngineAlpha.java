@@ -47,7 +47,7 @@ import java.util.TimeZone;
  * @author Niklas Keller <me@kelunik.com>
  */
 @NoExternalUse
-public class EngineAlpha extends Frame {
+public final class EngineAlpha extends Frame {
 
 	/**
 	 * Der Versionscode des aktuellen Release.<br />

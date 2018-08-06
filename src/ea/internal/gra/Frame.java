@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
  * @author Nicklas Keller
  */
 @NoExternalUse
-public class Frame {
+public final class Frame {
     /**
      * Das Bild, das zu diesem Frame gehört.
      */

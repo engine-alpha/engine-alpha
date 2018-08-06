@@ -23,7 +23,7 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
-public class ShapeHelper {
+public final class ShapeHelper {
     public static Shape createRectangularShape(float width, float height) {
         PolygonShape shape = new PolygonShape();
 

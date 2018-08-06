@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Diese Klasse liefert Methoden, die <b>zufällig verteilte Rückgaben</b> haben.
  */
 @API
-public class Random {
+public final class Random {
     /**
      * Privater Konstruktor.
      */
