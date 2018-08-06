@@ -7,11 +7,11 @@ import ea.actor.Circle;
 import ea.actor.Polygon;
 import ea.actor.Rectangle;
 import ea.handle.Physics;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Einfaches Programm zur Demonstration von Joints in der Engine
@@ -179,9 +179,9 @@ implements KeyListener {
     }
 
     @Override
-    public void onKeyDown(int code) {
-        switch(code){
-            case  Key.S:
+    public void onKeyDown(KeyEvent e) {
+        switch(e.getKeyCode()){
+            case KeyEvent.VK_S:
                 schwerkraftActive = !schwerkraftActive;
                 ball.physics.setGravity(schwerkraftActive ? new Vector(0, 10) : Vector.NULL);
                 break;
@@ -189,7 +189,7 @@ implements KeyListener {
     }
 
     @Override
-    public void onKeyUp(int i) {
+    public void onKeyUp(KeyEvent e) {
 
     }
 }

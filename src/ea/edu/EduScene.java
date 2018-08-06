@@ -7,13 +7,12 @@ import ea.keyboard.KeyListener;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
 
+import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-public class EduScene
-extends Scene
-implements KeyListener, MouseClickListener, FrameUpdateListener {
+public class EduScene extends Scene implements KeyListener, MouseClickListener, FrameUpdateListener {
 
     /**
      * Die Liste aller TICKER-Aufgaben
@@ -103,15 +102,15 @@ implements KeyListener, MouseClickListener, FrameUpdateListener {
     }
 
     @Override
-    public void onKeyDown(int key) {
-        for(TastenAuftrag ta : aufgaben) {
-            ta.ausfuehren(key);
+    public void onKeyDown(KeyEvent e) {
+        for (TastenAuftrag ta : aufgaben) {
+            ta.ausfuehren(e.getKeyCode());
         }
     }
 
     @Override
-    public void onKeyUp(int code) {
-        //Ignore.
+    public void onKeyUp(KeyEvent e) {
+        // Ignore.
     }
 
     @Override

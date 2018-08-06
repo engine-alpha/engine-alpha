@@ -7,9 +7,9 @@ import ea.actor.Actor;
 import ea.actor.Image;
 import ea.example.showcase.ShowcaseDemo;
 import ea.handle.Physics;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -63,48 +63,48 @@ public class Swordplay extends ShowcaseDemo implements KeyListener {
     }
 
     @Override
-    public void onKeyDown(int key) {
-        switch (key) {
-            case Key.A: //Move left
+    public void onKeyDown(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A: //Move left
                 if (character.getHorizontalMovement() != PlayerCharacter.HorizontalMovement.RIGHT) {
                     //Wir bewegen uns gerade NICHT schon nach rechts-> Dann auf nach links
                     character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.LEFT);
                 }
                 break;
-            case Key.S:
+            case KeyEvent.VK_S:
                 character.smash();
                 break;
-            case Key.D://Move right
+            case KeyEvent.VK_D://Move right
                 if (character.getHorizontalMovement() != PlayerCharacter.HorizontalMovement.LEFT) {
                     //Wir bewegen uns gerade NICHT schon nach links -> Dann auf nach rechts
                     character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
                 }
                 break;
-            case Key.W: //Sprungbefehl
+            case KeyEvent.VK_W: //Sprungbefehl
                 character.tryJumping();
                 break;
-            case Key.X:
+            case KeyEvent.VK_X:
                 character.physics.applyImpulse(new Vector(500, 0));
                 break;
-            case Key.P:
+            case KeyEvent.VK_P:
                 toggleDebug();
                 break;
-            case Key.T:
+            case KeyEvent.VK_T:
                 character.physics.applyImpulse(new Vector(0, -2000));
                 break;
-            case Key.C:
+            case KeyEvent.VK_C:
                 //
                 break;
         }
     }
 
     @Override
-    public void onKeyUp(int code) {
-        switch (code) {
-            case Key.A: //Links losgelassen
+    public void onKeyUp(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A: //Links losgelassen
                 if (character.getHorizontalMovement() == PlayerCharacter.HorizontalMovement.LEFT) {
                     //Wir haben uns bisher nach links bewegt und das soll jetzt aufhören
-                    if (Game.isKeyPressed(Key.D)) {
+                    if (Game.isKeyPressed(KeyEvent.VK_D)) {
                         //D ist auch gedrückt, wir wollen Also ab jetzt nach Rechts
                         character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
                     } else {
@@ -112,10 +112,10 @@ public class Swordplay extends ShowcaseDemo implements KeyListener {
                     }
                 }
                 break;
-            case Key.D: //Rechts losgelassen
+            case KeyEvent.VK_D: //Rechts losgelassen
                 if (character.getHorizontalMovement() == PlayerCharacter.HorizontalMovement.RIGHT) {
                     //Wir haben uns bisher nach rechts bewegt und das soll jetzt aufhören
-                    if (Game.isKeyPressed(Key.A)) {
+                    if (Game.isKeyPressed(KeyEvent.VK_A)) {
                         //A ist gedrückt, wir wollen also ab jetzt nach Links
                         character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.LEFT);
                     } else {

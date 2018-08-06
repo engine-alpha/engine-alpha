@@ -2,8 +2,9 @@ package ea.example.showcase;
 
 import ea.Game;
 import ea.Scene;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
+
+import java.awt.event.KeyEvent;
 
 public abstract class ShowcaseDemo extends Scene {
 
@@ -22,21 +23,21 @@ public abstract class ShowcaseDemo extends Scene {
     public ShowcaseDemo(Scene parent) {
         addKeyListener(new KeyListener() {
             @Override
-            public void onKeyDown(int i) {
-                switch (i) {
-                    case Key.ESCAPE:
+            public void onKeyDown(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_ESCAPE:
                         Game.setDebug(false);
                         Game.transitionToScene(parent);
                         break;
-                    case Key.D: //Toggle Debug
+                    case KeyEvent.VK_D: //Toggle Debug
                         if (debuggingEnabled) toggleDebug();
                         break;
                 }
             }
 
             @Override
-            public void onKeyUp(int i) {
-                //NADA
+            public void onKeyUp(KeyEvent e) {
+                // NADA
             }
         });
 
@@ -44,14 +45,14 @@ public abstract class ShowcaseDemo extends Scene {
             if (!cameraControlEnabled) return;
             //Smooth Camera Movement
             float dX = 0, dY = 0;
-            if (Game.isKeyPressed(Key.OBEN)) {
+            if (Game.isKeyPressed(KeyEvent.VK_UP)) {
                 dY = -CAMERA_SPEED;
-            } else if (Game.isKeyPressed(Key.UNTEN)) {
+            } else if (Game.isKeyPressed(KeyEvent.VK_DOWN)) {
                 dY = CAMERA_SPEED;
             }
-            if (Game.isKeyPressed(Key.LINKS)) {
+            if (Game.isKeyPressed(KeyEvent.VK_LEFT)) {
                 dX = -CAMERA_SPEED;
-            } else if (Game.isKeyPressed(Key.RECHTS)) {
+            } else if (Game.isKeyPressed(KeyEvent.VK_RIGHT)) {
                 dX = CAMERA_SPEED;
             }
             if (dX != 0 || dY != 0) getCamera().move(dX, dY);

@@ -1,6 +1,8 @@
 package ea.example.showcase;
 
-import ea.*;
+import ea.FrameUpdateListener;
+import ea.Scene;
+import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.Circle;
 import ea.actor.Geometry;
@@ -8,12 +10,12 @@ import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.handle.Physics;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Eine kleine Sandbox, in der man ein paar Grundfunktionen der EA-Physik (4.0) ausprobieren kann.
@@ -150,9 +152,9 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         addFrameUpdateListener(this);
         addKeyListener(new KeyListener() {
             @Override
-            public void onKeyDown(int code) {
-                switch(code) {
-                    case Key.E:
+            public void onKeyDown(KeyEvent e) {
+                switch(e.getKeyCode()) {
+                    case KeyEvent.VK_E:
                         boolean wasActive = walls[1].isVisible();
                         Physics.Type newType = wasActive ? Physics.Type.PASSIVE :Physics.Type.STATIC;
                         for(int i = 0; i <= 3; i++) {
@@ -165,8 +167,8 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
             }
 
             @Override
-            public void onKeyUp(int i) {
-                //DONT CARE
+            public void onKeyUp(KeyEvent e) {
+                // DONT CARE
             }
         });
     }

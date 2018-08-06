@@ -4,10 +4,10 @@ import ea.*;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
 import ea.handle.Physics;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Eine kleine Demo zum Verhalten vieler partikelähnlicher Physik-Objekte in der Engine.
@@ -83,9 +83,9 @@ public class MarbleDemo
     }
 
     @Override
-    public void onKeyDown(int code) {
-        switch (code) {
-            case Key.X: //Boden togglen
+    public void onKeyDown(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_X: // Boden togglen
                 if (boden.physics.getType() == Physics.Type.STATIC) {
                     boden.physics.setType(Physics.Type.PASSIVE);
                     boden.setColor(new Color(255, 255, 255, 100));
@@ -98,8 +98,8 @@ public class MarbleDemo
     }
 
     @Override
-    public void onKeyUp(int code) {
-        //Ignore.
+    public void onKeyUp(KeyEvent e) {
+        // Ignore.
     }
 
     /**

@@ -25,11 +25,11 @@ import ea.actor.Rectangle;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.ReverseEaseFloat;
 import ea.handle.Physics;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 import ea.particle.ParticleEmitter;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Particles extends ea.Scene implements KeyListener {
     public static final int WIDTH = 800, HEIGHT = 600;
@@ -141,44 +141,44 @@ public class Particles extends ea.Scene implements KeyListener {
     }
 
     @Override
-    public void onKeyDown(int code) {
-        switch (code) {
-            case Key.LINKS:
+    public void onKeyDown(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT:
                 getCamera().move(-30, 0);
                 break;
 
-            case Key.RECHTS:
+            case KeyEvent.VK_RIGHT:
                 getCamera().move(30, 0);
                 break;
 
-            case Key.OBEN:
+            case KeyEvent.VK_UP:
                 getCamera().move(0, -30);
                 break;
 
-            case Key.UNTEN:
+            case KeyEvent.VK_DOWN:
                 getCamera().move(0, 30);
                 break;
 
-            case Key.R: // RESET
+            case KeyEvent.VK_R: // RESET
                 Game.transitionToScene(new Particles());
                 break;
 
-            case Key.D: // Toggle Debug
+            case KeyEvent.VK_D: // Toggle Debug
                 Game.setDebug(!Game.isDebug());
                 break;
 
-            case Key._1: // Zoom Out
+            case KeyEvent.VK_1: // Zoom Out
                 getCamera().setZoom(getCamera().getZoom() * .9f);
                 break;
 
-            case Key._2: // Zoom In
+            case KeyEvent.VK_2: // Zoom In
                 getCamera().setZoom(getCamera().getZoom() * 1.1f);
                 break;
         }
     }
 
     @Override
-    public void onKeyUp(int code) {
+    public void onKeyUp(KeyEvent e) {
         // do nothing
     }
 }

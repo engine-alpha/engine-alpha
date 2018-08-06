@@ -9,12 +9,12 @@ import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.handle.Physics;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Eine kleine Sandbox, in der man ein paar Grundfunktionen der EA-Physik (4.0) ausprobieren kann.
@@ -285,15 +285,15 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
 
     /**
      * Wird bei jedem Keyndruck aufgerufen.
-     * @param code  Der Code der gedrückten Key.
+     * @param e  Der Code der gedrückten Key.
      */
     @Override
-    public void onKeyDown(int code) {
-        switch(code) {
-            case Key.R: //RESET
+    public void onKeyDown(KeyEvent e) {
+        switch(e.getKeyCode()) {
+            case KeyEvent.VK_R: // RESET
                 resetSituation();
                 break;
-            case Key.S: //SCHWERKRAFT-TOGGLE
+            case KeyEvent.VK_S: // SCHWERKRAFT-TOGGLE
                 hatSchwerkraft = !hatSchwerkraft;
                 for(Actor testObject : testObjects) {
                     testObject.physics.setGravity(hatSchwerkraft ?
@@ -301,7 +301,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 }
                 //System.out.println("Schwerkraft: " + hatSchwerkraft + " - ");
                 break;
-            case Key.E: //Toggle Environment
+            case KeyEvent.VK_E: // Toggle Environment
                 boolean wasActive = walls[1].isVisible();
                 Physics.Type newType = wasActive ? Physics.Type.PASSIVE : Physics.Type.STATIC;
                 //System.out.println("Type = " + newType);
@@ -310,30 +310,30 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                     walls[i].physics.setType(newType);
                 }
                 break;
-            case Key.I: //Toggle Info Box
+            case KeyEvent.VK_I: //Toggle Info Box
                 box.setVisible(!box.isVisible());
                 break;
-            case Key.U: //Increase Mass
+            case KeyEvent.VK_U: //Increase Mass
                 changeMass(10);
                 break;
-            case Key.J: //Decrease Mass
+            case KeyEvent.VK_J: //Decrease Mass
                 changeMass(-10);
                 break;
-            case Key.W: //Elastizitaet der Wände erhöhen
+            case KeyEvent.VK_W: //Elastizitaet der Wände erhöhen
                 ground.physics.setElasticity(ground.physics.getElasticity() + 0.1f);
                 System.out.println("Ela der Wand " + ground.physics.getElasticity());
                 break;
-            case Key.Q: //Elastizitaet der Wände erhöhen
+            case KeyEvent.VK_Q: //Elastizitaet der Wände erhöhen
                 ground.physics.setElasticity(ground.physics.getElasticity() - 0.1f);
                 System.out.println("Ela der Wand " + ground.physics.getElasticity());
                 break;
-            case Key._1: //Zoom Out
+            case KeyEvent.VK_1: //Zoom Out
                 getCamera().setZoom(getCamera().getZoom()-0.1f);
                 break;
-            case Key._2: //Zoom In
+            case KeyEvent.VK_2: //Zoom In
                 getCamera().setZoom(getCamera().getZoom()+0.1f);
                 break;
-            case Key.B: //Toggle die Circlefixierung
+            case KeyEvent.VK_B: //Toggle die Circlefixierung
                 if(fixierungsGruppe.isFixated()) {
                     fixierungsGruppe.freeFixation();
                 } else {
@@ -344,8 +344,8 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     }
 
     @Override
-    public void onKeyUp(int i) {
-        //Ignore.
+    public void onKeyUp(KeyEvent e) {
+        // Ignore.
     }
 
     /**

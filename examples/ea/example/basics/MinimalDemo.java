@@ -7,12 +7,12 @@ import ea.actor.Animation;
 import ea.actor.Rectangle;
 import ea.actor.StatefulAnimation;
 import ea.actor.Text;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseWheelAction;
 import ea.mouse.MouseWheelListener;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class MinimalDemo extends Scene implements KeyListener, MouseWheelListener, FrameUpdateListener {
     private static final int WIDTH = 1020;
@@ -82,22 +82,22 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     }
 
     @Override
-    public void onKeyDown(int key) {
-        switch (key) {
-            case Key.RECHTS:
+    public void onKeyDown(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_RIGHT:
                 rectangle.position.move(50, 0);
                 break;
-            case Key.LINKS:
+            case KeyEvent.VK_LEFT:
                 rectangle.position.move(-50, 0);
                 break;
-            case Key.C:
+            case KeyEvent.VK_C:
                 character.setState("midair");
                 break;
         }
     }
 
     @Override
-    public void onKeyUp(int code) {
+    public void onKeyUp(KeyEvent e) {
 
     }
 
@@ -109,17 +109,17 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
 
     @Override
     public void onFrameUpdate(int frameDuration) {
-        if (Game.isKeyPressed(Key.W)) {
+        if (Game.isKeyPressed(KeyEvent.VK_W)) {
             //W ist gedrückt -> Kamera nach oben bewegen.
             getCamera().move(0, -CAM_SPEED * frameDuration);
         }
-        if (Game.isKeyPressed(Key.S)) {
+        if (Game.isKeyPressed(KeyEvent.VK_S)) {
             getCamera().move(0, CAM_SPEED * frameDuration);
         }
-        if (Game.isKeyPressed(Key.A)) {
+        if (Game.isKeyPressed(KeyEvent.VK_A)) {
             getCamera().move(-CAM_SPEED * frameDuration, 0);
         }
-        if (Game.isKeyPressed(Key.D)) {
+        if (Game.isKeyPressed(KeyEvent.VK_D)) {
             getCamera().move(CAM_SPEED * frameDuration, 0);
         }
     }

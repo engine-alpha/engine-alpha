@@ -19,14 +19,12 @@
 
 package ea;
 
+import ea.internal.FrameSubthread;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.FrameSubthread;
 import ea.internal.gra.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.util.Logger;
-import ea.keyboard.Key;
-import ea.keyboard.KeyAction;
 import ea.mouse.MouseAction;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseWheelAction;
@@ -37,7 +35,9 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
+import java.util.HashSet;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Phaser;
 
@@ -111,7 +111,7 @@ public final class Game {
      * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die entsprechende Taste
      * gedrückt, sonst ist der Wert <code>false</code>.
      */
-    private static volatile boolean[] keys = new boolean[45];
+    private static Set<Integer> pressedKeys = new HashSet<>();
 
     /**
      * Letzte Mausposition.
@@ -209,12 +209,12 @@ public final class Game {
         KeyListener keyListener = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                enqueueKeyEvent(e, KeyAction.DOWN);
+                enqueueKeyEvent(e, true);
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                enqueueKeyEvent(e, KeyAction.UP);
+                enqueueKeyEvent(e, false);
             }
         };
 
@@ -457,35 +457,31 @@ public final class Game {
     /**
      * Diese Methode wird immer dann ausgeführt, wenn eine Taste gedrückt oder losgelassen wurde.
      *
-     * @param e      Das KeyEvent.
-     * @param action Drücken oder Loslassen?
+     * @param e    Das KeyEvent.
+     * @param down Drücken oder Loslassen?
      */
-    private static void enqueueKeyEvent(KeyEvent e, KeyAction action) {
+    private static void enqueueKeyEvent(KeyEvent e, boolean down) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE && exitOnEsc) {
             Game.exit();
         }
 
-        int z = Key.vonJava(e.getKeyCode());
+        enqueue(() -> {
+            boolean pressed = pressedKeys.contains(e.getKeyCode());
 
-        if (z == -1) {
-            return;
-        }
+            if (down) {
+                if (pressed) {
+                    return; // Ignore duplicate presses, because they're system dependent
+                }
 
-        if (action == KeyAction.DOWN) {
-            if (keys[z]) {
-                return; // Ignore duplicate presses, because they're system dependent
+                pressedKeys.add(e.getKeyCode());
+            } else {
+                pressedKeys.remove(e.getKeyCode());
             }
 
-            keys[z] = true;
-        } else {
-            keys[z] = false;
-        }
-
-        enqueue(() -> {
-            if (action == KeyAction.DOWN) {
-                scene.onKeyDownInternal(z);
+            if (down) {
+                scene.onKeyDownInternal(e);
             } else {
-                scene.onKeyUpInternal(z);
+                scene.onKeyUpInternal(e);
             }
         });
     }
@@ -564,15 +560,15 @@ public final class Game {
     /**
      * Gibt an, ob eine bestimmte Taste derzeit heruntergedrückt ist.
      *
-     * @param key Die zu testende Taste als Key-Code (also z.B. <code>Key.W</code>).
+     * @param keyCode Die zu testende Taste als Key-Code (also z.B. <code>Key.W</code>).
      *
      * @return <code>true</code>, wenn die zu testende Taste gerade heruntergedrückt ist. Sonst <code>false</code>.
      *
-     * @see ea.keyboard.Key
+     * @see KeyEvent#getKeyCode()
      */
     @API
-    public static boolean isKeyPressed(int key) {
-        return keys[key];
+    public static boolean isKeyPressed(int keyCode) {
+        return pressedKeys.contains(keyCode);
     }
 
     /**

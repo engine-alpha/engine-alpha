@@ -8,10 +8,10 @@ import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.handle.Physics;
-import ea.keyboard.Key;
 import ea.keyboard.KeyListener;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Eine einfache Demonstration der Engine-Physik durch eine Ball-Wurf-Simulation. Es wird ein Ball (durch Wirkung
@@ -41,9 +41,7 @@ import java.awt.*;
  * </ul>
  * Created by Michael on 11.04.2017.
  */
-public class BallThrow
-        extends ShowcaseDemo
-implements CollisionListener<Actor>, KeyListener {
+public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>, KeyListener {
 
     /**
      * Der Circle. Auf ihn wird ein Impuls gewirkt.
@@ -111,23 +109,24 @@ implements CollisionListener<Actor>, KeyListener {
 
     /**
      * Wird bei jedem Keyndruck ausgeführt.
-     * @param code Der eindeutige Code der gedrückten Key.
+     *
+     * @param e KeyEvent
      */
     @Override
-    public void onKeyDown(int code) {
-        switch(code) {
-            case Key.S: //Starte die Simulation
+    public void onKeyDown(KeyEvent e) {
+        switch(e.getKeyCode()) {
+            case KeyEvent.VK_S: // Starte die Simulation
                 simulationStarten();
                 break;
-            case Key.R: //Reset
+            case KeyEvent.VK_R: // Reset
                 simulationZuruecksetzen();
                 break;
         }
     }
 
     @Override
-    public void onKeyUp(int i) {
-        //Ignore
+    public void onKeyUp(KeyEvent e) {
+        // Ignore
     }
 
     /**

@@ -36,6 +36,7 @@ import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -206,16 +207,16 @@ public class Scene {
     }
 
     @NoExternalUse
-    final void onKeyDownInternal(int key) {
+    final void onKeyDownInternal(KeyEvent e) {
         for (KeyListener listener : keyListeners) {
-            listener.onKeyDown(key);
+            listener.onKeyDown(e);
         }
     }
 
     @NoExternalUse
-    final void onKeyUpInternal(int key) {
+    final void onKeyUpInternal(KeyEvent e) {
         for (KeyListener listener : keyListeners) {
-            listener.onKeyUp(key);
+            listener.onKeyUp(e);
         }
     }
 
