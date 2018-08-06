@@ -67,7 +67,7 @@ public class ActorGroup extends Actor {
      * Konstruktor für Objekte der Klasse ActorGroup
      */
     public ActorGroup(Scene scene) {
-        super(scene, null);
+        super(scene, () -> null);
 
         actors =  new ArrayList<>();
         joints = new ArrayList<>();

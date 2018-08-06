@@ -160,14 +160,14 @@ public abstract class Actor {
             return;
         }
 
-        if (Game.isLocked()) {
-            Game.enqueue(this::destroy);
-            return;
-        }
-
         this.alive = false;
-        this.physicsHandler.killBody();
         this.scene = null;
+
+        if (Game.isLocked()) {
+            Game.enqueue(physicsHandler::killBody);
+        } else {
+            physicsHandler.killBody();
+        }
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
