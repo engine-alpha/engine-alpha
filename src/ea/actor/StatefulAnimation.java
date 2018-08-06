@@ -251,6 +251,10 @@ public class StatefulAnimation extends Actor {
      */
     @NoExternalUse
     private void internalOnFrameUpdate(int frameDuration) {
+        if (currentAnimation == null) {
+            return; // we don't have a state yet
+        }
+
         currentTime += frameDuration;
 
         Frame currentFrame = currentAnimation[currentIndex];
