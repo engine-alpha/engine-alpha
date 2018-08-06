@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,14 @@ import ea.internal.util.Optimizer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Lädt Bilder vom Dateisystem und optimiert diese direkt für die Anzeige.
+ *
+ * @author Niklas Keller
  */
 final public class ImageLoader {
     /**
@@ -56,7 +57,7 @@ final public class ImageLoader {
 
         try {
             BufferedImage img = Optimizer.toCompatibleImage(
-                    ImageIO.read(new ByteArrayInputStream(ResourceLoader.load(path)))
+                    ImageIO.read(ResourceLoader.loadAsStream(path))
             );
 
             cache.put(path, img);

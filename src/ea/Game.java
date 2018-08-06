@@ -274,30 +274,28 @@ public final class Game {
         g.translate(-position.x, position.y);
 
         int gridSize = 100;
-        int windowSize = Math.max(width, height);
+        int windowSize = (int) Math.ceil(Math.max(width, height) / camera.getZoom());
 
-        // TODO: Optimize to draw only the required grid cells on getRotation
-        // Without getRotation: - width / 2, - height / 2
-        int tx = (int) position.x - windowSize;
-        int ty = (int) (-1 * position.y) - windowSize;
+        int startX = (int) position.x - windowSize / 2;
+        int startY = (int) (-1 * position.y) - windowSize / 2;
 
-        tx -= tx % gridSize;
-        ty -= ty % gridSize;
+        startX -= startX % gridSize;
+        startY -= startY % gridSize;
 
         g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
         g.setColor(DEBUG_GRID_COLOR);
 
-        for (int x = tx; x < tx + 2 * windowSize + gridSize; x += gridSize) {
-            g.drawLine(x, ty - gridSize, x, ty + windowSize * 2 + gridSize);
+        for (int x = startX; x < startX + windowSize + gridSize; x += gridSize) {
+            g.fillRect(x - 1, startY - gridSize, 2, windowSize + 2 * gridSize);
         }
 
-        for (int y = ty; y < ty + 2 * windowSize + gridSize; y += gridSize) {
-            g.drawLine(tx - gridSize, y, tx + windowSize * 2 + gridSize, y);
+        for (int y = startY; y < startY + windowSize + gridSize; y += gridSize) {
+            g.fillRect(startX - gridSize, y - 1, windowSize + 2 * gridSize, 2);
         }
 
-        for (int x = tx; x < tx + 2 * windowSize + gridSize; x += gridSize) {
-            for (int y = ty; y < ty + 2 * windowSize + gridSize; y += gridSize) {
-                g.drawString(x + " / " + (-y), x + 10, y + 20);
+        for (int x = startX; x < startX + windowSize + gridSize; x += gridSize) {
+            for (int y = startY; y < startY + windowSize + gridSize; y += gridSize) {
+                g.drawString(x + " / " + (-y), x + 5, y - 5);
             }
         }
 

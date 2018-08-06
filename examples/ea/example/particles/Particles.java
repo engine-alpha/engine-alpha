@@ -33,7 +33,7 @@ import java.awt.event.KeyEvent;
 
 @SuppressWarnings ( "MagicNumber" )
 public class Particles extends ea.Scene implements KeyListener {
-    public static final int WIDTH = 800, HEIGHT = 600;
+    public static final int WIDTH = 800, HEIGHT = 100;
 
     public static void main(String[] args) {
         Game.setVerbose(true);
@@ -168,6 +168,9 @@ public class Particles extends ea.Scene implements KeyListener {
             case KeyEvent.VK_2: // Zoom In
                 getCamera().setZoom(getCamera().getZoom() * 1.1f);
                 break;
+
+            case KeyEvent.VK_LESS:
+                getCamera().rotate(0.1f);
         }
     }
 
