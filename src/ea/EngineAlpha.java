@@ -19,6 +19,7 @@
 
 package ea;
 
+import ea.internal.FrameSubthread;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
@@ -88,7 +89,7 @@ public class EngineAlpha extends Frame {
 	 * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
 	 * Dies betrifft unter anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
 	 * diese Variable eingeführt.
-	 * @see ea.internal.frame.FrameSubthread
+	 * @see FrameSubthread
 	 * @author andonie
 	 * @version 11.04.2017
 	 */

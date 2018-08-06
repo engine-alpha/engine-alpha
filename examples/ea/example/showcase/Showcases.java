@@ -170,7 +170,7 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new BallThrow(mainscene), "Einfacher Ballwurf");
         mainscene.addScene(() -> new PhysicsSandbox(mainscene, WIDTH, HEIGHT), "Kräfte-Sandbox");
         mainscene.addScene(() -> new JointDemo(mainscene, WIDTH, HEIGHT), "Joints in der Engine");
-        mainscene.addScene(() -> new MarbleDemo(mainscene, WIDTH, HEIGHT), "Murmel-Demo");
+        mainscene.addScene(() -> new MarbleDemo(mainscene), "Murmel-Demo");
         mainscene.addScene(() -> new DinglyJump(mainscene), "Dingly Jump");
         mainscene.addScene(() -> new Swordplay(mainscene), "Swordplay");
 

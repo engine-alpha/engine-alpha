@@ -63,7 +63,7 @@ public class Particles extends ea.Scene implements KeyListener {
 
         addFrameUpdateListener(new PeriodicTask(1000) {
             @Override
-            public void dispatch() {
+            public void run() {
                 Circle k = new Circle(Particles.this, 6) {
                     private ParticleEmitter particles = new ParticleEmitter();
                     private boolean registered = false;

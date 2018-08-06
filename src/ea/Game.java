@@ -21,8 +21,7 @@ package ea;
 
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.frame.Dispatchable;
-import ea.internal.frame.FrameSubthread;
+import ea.internal.FrameSubthread;
 import ea.internal.gra.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.util.Logger;
@@ -106,7 +105,7 @@ public class Game {
     /**
      * Queue aller Dispatchables, die im nächsten Frame ausgeführt werden.
      */
-    private static volatile Queue<Dispatchable> dispatchableQueue = new ConcurrentLinkedQueue<>();
+    private static volatile Queue<Runnable> dispatchableQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die entsprechende Taste
@@ -417,7 +416,7 @@ public class Game {
             scene.onFrameUpdateInternal(frameDuration);
 
             while (!dispatchableQueue.isEmpty()) {
-                dispatchableQueue.poll().dispatch();
+                dispatchableQueue.poll().run();
             }
 
             frameBarrierEnd.arriveAndAwaitAdvance();
@@ -482,7 +481,7 @@ public class Game {
             keys[z] = false;
         }
 
-        enqueueDispatchable(() -> {
+        enqueue(() -> {
             if (action == KeyAction.DOWN) {
                 scene.onKeyDownInternal(z);
             } else {
@@ -515,7 +514,7 @@ public class Game {
                 return;
         }
 
-        enqueueDispatchable(() -> {
+        enqueue(() -> {
             if (action == MouseAction.DOWN) {
                 scene.onMouseDownInternal(sourcePosition, button);
             } else {
@@ -546,14 +545,12 @@ public class Game {
      */
     private static void enqueueMouseWheelEvent(MouseWheelEvent mouseWheelEvent) {
         MouseWheelAction mouseWheelAction = new MouseWheelAction((float) mouseWheelEvent.getPreciseWheelRotation());
-        enqueueDispatchable(() -> {
-            scene.onMouseWheelMoveInternal(mouseWheelAction);
-        });
+        enqueue(() -> scene.onMouseWheelMoveInternal(mouseWheelAction));
     }
 
     @API
-    public static void enqueueDispatchable(Dispatchable dispatchable) {
-        dispatchableQueue.add(dispatchable);
+    public static void enqueue(Runnable runnable) {
+        dispatchableQueue.add(runnable);
     }
 
     /**
@@ -561,7 +558,7 @@ public class Game {
      */
     @API
     public static void transitionToScene(Scene scene) {
-        enqueueDispatchable(() -> nextScene = scene);
+        enqueue(() -> nextScene = scene);
     }
 
     /**

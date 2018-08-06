@@ -28,7 +28,7 @@ public class MarbleDemo
      */
     private Rectangle boden;
 
-    public MarbleDemo(Scene parent, int width, int height) {
+    public MarbleDemo(Scene parent) {
         super(parent);
 
         initialisieren();
@@ -37,7 +37,7 @@ public class MarbleDemo
         addFrameUpdateListener(new PeriodicTask(100) {
 
             @Override
-            public void dispatch() {
+            public void run() {
                 Circle marble = makeAMarble();
                 add(marble);
                 marble.physics.setType(Physics.Type.DYNAMIC);

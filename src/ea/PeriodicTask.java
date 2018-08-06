@@ -21,14 +21,13 @@ package ea;
 
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.frame.Dispatchable;
 
 /**
  * Ein periodischer Task, der regelmäßig ausgeführt wird.
  *
  * @author Niklas Keller
  */
-public abstract class PeriodicTask implements Dispatchable, FrameUpdateListener {
+public abstract class PeriodicTask implements Runnable, FrameUpdateListener {
     /**
      * Intervall in Millisekunden.
      */
@@ -82,7 +81,7 @@ public abstract class PeriodicTask implements Dispatchable, FrameUpdateListener 
 
         while (this.countdown < 0) {
             this.countdown += this.interval;
-            Game.enqueueDispatchable(this);
+            Game.enqueue(this);
         }
     }
 }
