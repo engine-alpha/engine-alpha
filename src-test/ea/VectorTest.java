@@ -31,8 +31,8 @@ public class VectorTest {
 
 		Vector vector = new Vector(p1, p2);
 
-		assertEquals(vector.getDX(), 20);
-		assertEquals(vector.getDY(), 10);
+		assertEquals(vector.x, 20);
+		assertEquals(vector.y, 10);
 	}
 
 	@Test
@@ -41,9 +41,9 @@ public class VectorTest {
 		Vector v2 = new Vector(0, 1);
 		Vector v3 = new Vector(2, 1);
 
-		assertEquals(v1.scalarProduct(v2), 0, 0);
-		assertNotEquals(v1.scalarProduct(v3), 0, 0);
-		assertNotEquals(v2.scalarProduct(v3), 0, 0);
+		assertEquals(v1.getScalarProduct(v2), 0, 0);
+		assertNotEquals(v1.getScalarProduct(v3), 0, 0);
+		assertNotEquals(v2.getScalarProduct(v3), 0, 0);
 	}
 
 	@Test
@@ -125,12 +125,6 @@ public class VectorTest {
 	@Test
 	public void testToString() {
 		assertEquals("ea.Vector [getX = 1.0; getY = 1.0]", new Vector(1, 1).toString());
-	}
-
-	@Test
-	public void cloneable() {
-		Vector vector = new Vector(1, 1);
-		assertEquals(vector, vector.clone());
 	}
 
 	@Test

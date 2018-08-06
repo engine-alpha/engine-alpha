@@ -17,7 +17,7 @@ public class KnotenHandler extends PhysikHandler {
     /**
      * Symbolische Position des Knotens.
      */
-    private Vector position = Vector.NULLVECTOR;
+    private Vector position = Vector.NULL;
 
     /**
      * Symbolische Rotation des Knotens

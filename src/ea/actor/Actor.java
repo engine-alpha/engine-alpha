@@ -149,7 +149,7 @@ public abstract class Actor {
         fixtureDef.shape = shape;
         fixtureDef.isSensor = true;
 
-        bodyDef.position.set(scene.getWorldHandler().fromVektor(Vector.NULLVECTOR));
+        bodyDef.position.set(scene.getWorldHandler().fromVektor(Vector.NULL));
         bodyDef.gravityScale = 0;
 
         return new BodyHandler(this, scene.getWorldHandler(), bodyDef, fixtureDef, Physics.Type.PASSIVE, true);

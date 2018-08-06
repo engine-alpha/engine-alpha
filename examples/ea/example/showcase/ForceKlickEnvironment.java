@@ -235,7 +235,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
             if(pointer==null || lastAttack == null)
                 return;
             stange.setWidth(new Vector(lastAttack, pointer).getLength());
-            float rot = Vector.RECHTS.getAngle(lastAttack.negate().add(pointer));
+            float rot = Vector.RIGHT.getAngle(lastAttack.negate().add(pointer));
             if(Float.isNaN(rot))
                 return;
             if(pointer.y < lastAttack.y)

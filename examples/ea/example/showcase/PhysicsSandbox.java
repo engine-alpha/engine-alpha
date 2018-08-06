@@ -297,7 +297,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 hatSchwerkraft = !hatSchwerkraft;
                 for(Actor testObject : testObjects) {
                     testObject.physics.setGravity(hatSchwerkraft ?
-                            ERDBESCHLEUNIGUNG : Vector.NULLVECTOR);
+                            ERDBESCHLEUNIGUNG : Vector.NULL);
                 }
                 //System.out.println("Schwerkraft: " + hatSchwerkraft + " - ");
                 break;
@@ -425,7 +425,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
             stange.setLayer(-10);
             stange.position.set(pos);
             add(stange);
-            float rot = Vector.RECHTS.getAngle(lastAttack.negate().add(pointer));
+            float rot = Vector.RIGHT.getAngle(lastAttack.negate().add(pointer));
             if(Float.isNaN(rot))
                 return;
             if(pointer.y < lastAttack.y)

@@ -41,7 +41,7 @@ import ea.internal.ano.NoExternalUse;
  *
  * @author Michael Andonie
  */
-public class Camera implements FrameUpdateListener {
+public final class Camera implements FrameUpdateListener {
     /**
      * Aktuelle Position des Mittelpunkts der Kamera.
      */
@@ -60,7 +60,7 @@ public class Camera implements FrameUpdateListener {
     /**
      * Der Kameraverzug.
      */
-    private Vector offset = Vector.NULLVECTOR;
+    private Vector offset = Vector.NULL;
 
     /**
      * Der aktuelle Kamerazoom.
@@ -214,16 +214,7 @@ public class Camera implements FrameUpdateListener {
      */
     @API
     public Vector getPosition() {
-        Vector position = this.position.add(this.offset);
-
-        if (this.hasBounds()) {
-            float x = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
-            float y = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
-
-            position = new Vector(x, y);
-        }
-
-        return position;
+        return moveIntoBounds(this.position.add(this.offset));
     }
 
     @Override
@@ -232,15 +223,21 @@ public class Camera implements FrameUpdateListener {
             this.position = focus.position.getCenter();
         }
 
-        if (this.hasBounds()) {
-            float x = Math.max(this.bounds.getRealX(), Math.min(this.position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
-            float y = Math.max(this.bounds.getRealX(), Math.min(this.position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
-
-            this.position = new Vector(x, y);
-        }
+        this.position = moveIntoBounds(this.position);
     }
 
     public float getRotation() {
         return rotation;
+    }
+
+    private Vector moveIntoBounds(Vector position) {
+        if (!this.hasBounds()) {
+            return position;
+        }
+
+        float x = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
+        float y = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
+
+        return new Vector(x, y);
     }
 }

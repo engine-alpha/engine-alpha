@@ -41,7 +41,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     }
 
     private HorizontalMovement horizontalMovement = HorizontalMovement.IDLE;
-    private Vector smashForce = Vector.NULLVECTOR;
+    private Vector smashForce = Vector.NULL;
 
     public PlayerCharacter(Scene scene) {
         super(scene, 64, 64);
@@ -137,7 +137,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         if (position.getY() < BOTTOM_OUT) {
             position.set(0, 0);
-            physics.setVelocity(Vector.NULLVECTOR);
+            physics.setVelocity(Vector.NULL);
             setState("falling");
         }
     }
@@ -153,7 +153,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         if ((falling || smashing) && physics.testStanding()) {
             setState("landing");
-            smashForce = Vector.NULLVECTOR;
+            smashForce = Vector.NULL;
 
             if (smashing) {
                 Interpolator<Float> interpolator = new ReverseEaseFloat(0, -0.01f * physics.getVelocity().y);
