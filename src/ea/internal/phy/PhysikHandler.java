@@ -189,7 +189,7 @@ public abstract class PhysikHandler {
      * befindet.
      * @return  Der World-Handler, der zu diesem Physics-Handler gehört.
      */
-    public abstract WorldHandler worldHandler();
+    public abstract WorldHandler getWorldHandler();
 
     /**
      * Wird intern zum Debuggen benutzt. Gibt den korrespondierenden Body aus.

@@ -156,7 +156,7 @@ public class KnotenHandler extends PhysikHandler {
     }
 
     @Override
-    public WorldHandler worldHandler() {
+    public WorldHandler getWorldHandler() {
         return actorGroup.getScene().getWorldHandler();
     }
 

@@ -76,6 +76,6 @@ public class CollisionEvent<E extends Actor> {
     @API
     public void ignoreCollision() {
         contact.setEnabled(false);
-        colliding.getPhysicsHandler().worldHandler().addContactToBlacklist(contact);
+        colliding.getPhysicsHandler().getWorldHandler().addContactToBlacklist(contact);
     }
 }

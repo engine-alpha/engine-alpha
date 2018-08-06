@@ -286,7 +286,7 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
-    public WorldHandler worldHandler() {
+    public WorldHandler getWorldHandler() {
         return worldHandler;
     }
 }

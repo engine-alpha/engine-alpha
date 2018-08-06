@@ -438,7 +438,7 @@ public class WorldHandler implements ContactListener {
      */
     @NoExternalUse
     public static void allgemeinesKollisionsReagierbarEingliedern(CollisionListener<Actor> kr, Actor actor) {
-        final WorldHandler worldHandler = actor.getPhysicsHandler().worldHandler();
+        final WorldHandler worldHandler = actor.getPhysicsHandler().getWorldHandler();
         if (worldHandler == null) {
             Logger.error("Kollision", "Das anzumeldende Actor-Objekt war noch nicht an der Wurzel angemeldet. "
                     + "Erst an der Wurzel anmelden, bevor Kollisionsanmeldungen durchgeführt werden.");
@@ -472,8 +472,8 @@ public class WorldHandler implements ContactListener {
     @NoExternalUse
     public static <E extends Actor> void spezifischesKollisionsReagierbarEingliedern(
             CollisionListener<E> kr, Actor actor, E collider) {
-        final WorldHandler wh1 = actor.getPhysicsHandler().worldHandler();
-        final WorldHandler wh2 = collider.getPhysicsHandler().worldHandler();
+        final WorldHandler wh1 = actor.getPhysicsHandler().getWorldHandler();
+        final WorldHandler wh2 = collider.getPhysicsHandler().getWorldHandler();
         if (wh1 == null || wh2 == null || wh1 != wh2) {
             Logger.error("Kollision", "Zwei Objekte sollten zur Kollision angemeldet werden. " +
                     "Dafür müssen beide an der selben Wurzel (direkt oder indirekt) angemeldet sein.");

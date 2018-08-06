@@ -318,7 +318,7 @@ public abstract class Actor {
 
             if (Game.isDebug()) {
                 // Visualisiere die Shape
-                float ppm = getPhysicsHandler().worldHandler().getPixelProMeter();
+                float ppm = getPhysicsHandler().getWorldHandler().getPixelProMeter();
                 g.setColor(Color.red);
                 renderShape(physicsHandler.getBody().m_fixtureList.m_shape, g, ppm);
             }

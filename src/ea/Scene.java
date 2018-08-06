@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,22 +86,22 @@ public class Scene {
 
     @NoExternalUse
     public void render(Graphics2D g, BoundingRechteck bounds) {
-        this.root.renderBasic(g, bounds);
+        root.renderBasic(g, bounds);
 
         if (Game.isDebug()) {
-            this.renderDebug(g);
+            renderJoints(g);
         }
     }
 
     @API
     public Camera getCamera() {
-        return this.camera;
+        return camera;
     }
 
     @NoExternalUse
-    private void renderDebug(Graphics2D g) {
+    private void renderJoints(Graphics2D g) {
         // Display Joints
-        Joint j = root.getPhysicsHandler().worldHandler().getWorld().getJointList();
+        Joint j = root.getPhysicsHandler().getWorldHandler().getWorld().getJointList();
 
         while (j != null) {
             renderJoint(j, g);
@@ -118,22 +118,22 @@ public class Scene {
         j.getAnchorA(anchorA);
         j.getAnchorB(anchorB);
 
-        Vector aOnZE = root.getPhysicsHandler().worldHandler().fromVec2(anchorA);
-        Vector bOnZE = root.getPhysicsHandler().worldHandler().fromVec2(anchorB);
+        Vector aOnGrid = worldHandler.fromVec2(anchorA);
+        Vector bOnGrid = worldHandler.fromVec2(anchorB);
 
         if (j instanceof RevoluteJoint) {
             g.setColor(Color.blue);
-            g.drawOval((int) aOnZE.x - (CIRC_RAD / 2), (int) aOnZE.y - (CIRC_RAD / 2), CIRC_RAD, CIRC_RAD);
+            g.drawOval((int) aOnGrid.x - (CIRC_RAD / 2), (int) aOnGrid.y - (CIRC_RAD / 2), CIRC_RAD, CIRC_RAD);
         } else if (j instanceof RopeJoint) {
             g.setColor(Color.cyan);
-            g.drawRect((int) aOnZE.x - (CIRC_RAD / 2), (int) aOnZE.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawRect((int) bOnZE.x - (CIRC_RAD / 2), (int) bOnZE.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawLine((int) aOnZE.x, (int) aOnZE.y, (int) bOnZE.x, (int) bOnZE.y);
+            g.drawRect((int) aOnGrid.x - (CIRC_RAD / 2), (int) aOnGrid.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawRect((int) bOnGrid.x - (CIRC_RAD / 2), (int) bOnGrid.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawLine((int) aOnGrid.x, (int) aOnGrid.y, (int) bOnGrid.x, (int) bOnGrid.y);
         } else if (j instanceof DistanceJoint) {
             g.setColor(Color.orange);
-            g.drawRect((int) aOnZE.x - (CIRC_RAD / 2), (int) aOnZE.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawRect((int) bOnZE.x - (CIRC_RAD / 2), (int) bOnZE.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawLine((int) aOnZE.x, (int) aOnZE.y, (int) bOnZE.x, (int) bOnZE.y);
+            g.drawRect((int) aOnGrid.x - (CIRC_RAD / 2), (int) aOnGrid.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawRect((int) bOnGrid.x - (CIRC_RAD / 2), (int) bOnGrid.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawLine((int) aOnGrid.x, (int) aOnGrid.y, (int) bOnGrid.x, (int) bOnGrid.y);
         }
     }
 
@@ -155,8 +155,6 @@ public class Scene {
             room.destroy();
         }
     }
-
-    // TODO : Dokumentation für alle ADD-Methoden
 
     @API
     final public void addMouseClickListener(MouseClickListener mouseClickListener) {
@@ -337,7 +335,7 @@ public class Scene {
     }
 
     @API
-    final public Vector getMousePosition() {
+    public final Vector getMousePosition() {
         return Game.convertMousePosition(this, Game.getMousePositionInFrame());
     }
 }

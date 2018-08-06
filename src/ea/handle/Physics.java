@@ -305,7 +305,7 @@ public class Physics {
      */
     @NoExternalUse
     private boolean assertSameWorld(Actor other) {
-        if(other.getPhysicsHandler().worldHandler() != actor.getPhysicsHandler().worldHandler()) {
+        if(other.getPhysicsHandler().getWorldHandler() != actor.getPhysicsHandler().getWorldHandler()) {
             Logger.error("Physics", "Die Actor-Objekte sind nicht an der selben Wurzel angemeldet. Sie können " +
                     "deshalb (noch) nicht physikalisch verbunden werden.");
             return false;
@@ -333,11 +333,11 @@ public class Physics {
         //Definiere den Joint
         RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
         revoluteJointDef.initialize(actor.getPhysicsHandler().getBody(), other.getPhysicsHandler().getBody(),
-                //actor.physicsHandler.worldHandler().fromVektor(actor.getPosition.get().asVector().add(anchor)));
-                actor.getPhysicsHandler().worldHandler().fromVektor(anchor));
+                //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchor)));
+                actor.getPhysicsHandler().getWorldHandler().fromVektor(anchor));
         revoluteJointDef.collideConnected = false;
 
-        return (RevoluteJoint) actor.getPhysicsHandler().worldHandler().getWorld().createJoint(revoluteJointDef);
+        return (RevoluteJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(revoluteJointDef);
     }
 
     /**
@@ -361,11 +361,11 @@ public class Physics {
         ropeJointDef.bodyA = actor.getPhysicsHandler().getBody();
         ropeJointDef.bodyB = other.getPhysicsHandler().getBody();
 
-        ropeJointDef.localAnchorA.set(actor.getPhysicsHandler().worldHandler().fromVektor(anchorA));
-        ropeJointDef.localAnchorB.set(actor.getPhysicsHandler().worldHandler().fromVektor(anchorB));
+        ropeJointDef.localAnchorA.set(actor.getPhysicsHandler().getWorldHandler().fromVektor(anchorA));
+        ropeJointDef.localAnchorB.set(actor.getPhysicsHandler().getWorldHandler().fromVektor(anchorB));
         ropeJointDef.maxLength = ropeLength;
 
-        return (RopeJoint) actor.getPhysicsHandler().worldHandler().getWorld().createJoint(ropeJointDef);
+        return (RopeJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(ropeJointDef);
 
     }
 
@@ -389,10 +389,10 @@ public class Physics {
         distanceJointDef.initialize(
                 actor.getPhysicsHandler().getBody(),
                 other.getPhysicsHandler().getBody(),
-                actor.getPhysicsHandler().worldHandler().fromVektor(anchorAAsWorldPos),
-                actor.getPhysicsHandler().worldHandler().fromVektor(anchorBAsWorldPos));
+                actor.getPhysicsHandler().getWorldHandler().fromVektor(anchorAAsWorldPos),
+                actor.getPhysicsHandler().getWorldHandler().fromVektor(anchorBAsWorldPos));
 
-        return (DistanceJoint) actor.getPhysicsHandler().worldHandler().getWorld().createJoint(distanceJointDef);
+        return (DistanceJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(distanceJointDef);
     }
 
     /* _________________________ Physics-Type _________________________ */
