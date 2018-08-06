@@ -1,7 +1,9 @@
 package ea.example.showcase;
 
-import ea.*;
-import ea.Point;
+import ea.FrameUpdateListener;
+import ea.Game;
+import ea.Scene;
+import ea.Vector;
 import ea.actor.ActorGroup;
 import ea.actor.Rectangle;
 import ea.actor.Text;
@@ -87,7 +89,7 @@ public class Showcases extends Scene {
         }
 
         @Override
-        public void onMouseDown(Point point, MouseButton mouseButton) {
+        public void onMouseDown(Vector point, MouseButton mouseButton) {
             if (box.contains(point)) {
                 //CLICKED ME
                 state = TextboxState.PRESSED;
@@ -96,7 +98,7 @@ public class Showcases extends Scene {
         }
 
         @Override
-        public void onMouseUp(Point point, MouseButton mouseButton) {
+        public void onMouseUp(Vector point, MouseButton mouseButton) {
             if (box.contains(point)) {
                 //CLICKED ME
                 if (state == TextboxState.PRESSED) {
@@ -108,7 +110,7 @@ public class Showcases extends Scene {
 
         @Override
         public void onFrameUpdate(int i) {
-            Point mousePosition = Showcases.this.getMousePosition();
+            Vector mousePosition = Showcases.this.getMousePosition();
 
             if (box.contains(mousePosition)) {
                 //HOVER?

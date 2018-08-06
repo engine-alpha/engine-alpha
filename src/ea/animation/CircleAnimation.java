@@ -1,6 +1,5 @@
 package ea.animation;
 
-import ea.Point;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.animation.interpolation.CosinusFloat;
@@ -29,31 +28,30 @@ extends ActorAnimation {
      *                          sich durch die Animation.
      */
     @API
-    public CircleAnimation(Actor actor, Point rotationCenter, int durationInMS,
+    public CircleAnimation(Actor actor, Vector rotationCenter, int durationInMS,
                               boolean circleClockwise, boolean rotateActor) {
         super(actor);
 
-        Point currentActorCenter = actor.position.getCenter();
-        float radius = rotationCenter.distanceTo(currentActorCenter);
-        Point rightPoint = rotationCenter.verschobeneInstanz(
-                new Vector(radius, 0));
+        Vector currentActorCenter = actor.position.getCenter();
+        float radius = new Vector(rotationCenter, currentActorCenter).getLength();
+        Vector rightPoint = rotationCenter.add(new Vector(radius, 0));
 
         ValueAnimator<Float> aX = new ValueAnimator<>(durationInMS,
-                x->actor.position.setCenter(x, actor.position.getCenter().getRealY()),
-                new CosinusFloat(rightPoint.getRealX(), radius),
+                x->actor.position.setCenter(x, actor.position.getCenter().y),
+                new CosinusFloat(rightPoint.x, radius),
                 ValueAnimator.Mode.REPEATED );
         ValueAnimator<Float> aY = new ValueAnimator<>(durationInMS,
-                y->actor.position.setCenter(actor.position.getCenter().getRealX(), y),
-                new SinusFloat(rotationCenter.getRealY(), circleClockwise ? -radius : radius),
+                y->actor.position.setCenter(actor.position.getCenter().x, y),
+                new SinusFloat(rotationCenter.y, circleClockwise ? -radius : radius),
                 ValueAnimator.Mode.REPEATED);
 
 
         //Winkel zwischen gewünschtem Startpunkt und aktueller Actor-Position (immer in [0;PI])
-        float angle = rotationCenter.vectorFromThisTo(rightPoint).getAngle(
-                rotationCenter.vectorFromThisTo(currentActorCenter));
+        float angle = rotationCenter.negate().add(rightPoint).getAngle(
+                rotationCenter.negate().add(currentActorCenter));
 
-        if(circleClockwise && currentActorCenter.getRealY() > rotationCenter.getRealY()
-                || !circleClockwise && currentActorCenter.getRealY() < rotationCenter.getRealY()) {
+        if(circleClockwise && currentActorCenter.y > rotationCenter.y
+                || !circleClockwise && currentActorCenter.y < rotationCenter.y) {
             //Gedrehter Winkel ist bereits über die Hälfte
             angle = (float)(2*Math.PI-angle);
         }

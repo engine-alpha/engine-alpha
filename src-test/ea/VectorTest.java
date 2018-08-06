@@ -26,8 +26,8 @@ import static org.junit.Assert.*;
 public class VectorTest {
 	@Test
 	public void punktToPunkt () {
-		Point p1 = new Point(10, 10);
-		Point p2 = new Point(30, 20);
+		Vector p1 = new Vector(10, 10);
+		Vector p2 = new Vector(30, 20);
 
 		Vector vector = new Vector(p1, p2);
 
@@ -49,9 +49,9 @@ public class VectorTest {
 	@Test
 	public void punktGleichVektor () {
 		Vector v1 = new Vector(1, 1);
-		Point p1 = new Point(1, 1);
+		Vector p1 = new Vector(1, 1);
 
-		assertEquals(p1, v1.asPoint());
+		assertEquals(p1, v1);
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class VectorTest {
 	@Test
 	public void normiert () {
 		Vector vector = new Vector(10, 100);
-		assertEquals(vector.getNormalizedInstance().getLength(), 1, 0);
+		assertEquals(vector.normalize().getLength(), 1, 0);
 	}
 
 	@Test (expected = ArithmeticException.class)
@@ -86,7 +86,7 @@ public class VectorTest {
 
 	@Test
 	public void gegenrichtung () {
-		assertEquals(new Vector(1, 1).getNegatedVektor(), new Vector(-1, -1));
+		assertEquals(new Vector(1, 1).negate(), new Vector(-1, -1));
 	}
 
 	@Test
@@ -113,13 +113,13 @@ public class VectorTest {
 	@Test
 	public void realX() {
 		float x = .013f;
-		assertEquals(new Vector(x, 0).getRealX(), x, 0.00001f);
+		assertEquals(new Vector(x, 0).x, x, 0.00001f);
 	}
 
 	@Test
 	public void realY() {
 		float y = .013f;
-		assertEquals(new Vector(0, y).getRealY(), y, 0.00001f);
+		assertEquals(new Vector(0, y).y, y, 0.00001f);
 	}
 
 	@Test

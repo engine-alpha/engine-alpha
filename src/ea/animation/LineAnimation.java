@@ -1,9 +1,8 @@
 package ea.animation;
 
-import ea.Point;
+import ea.Vector;
 import ea.actor.Actor;
 import ea.animation.interpolation.LinearFloat;
-import ea.edu.Spiel;
 
 /**
  * Eine Animation, die ein Actor-Objekt in einer Linie animiert.
@@ -23,17 +22,17 @@ extends ActorAnimation {
      *                      hin und her. Jede Strecke in eine Richtung dauert <code>durationInMS</code>. Die Animation
      *                      endet nicht von sich aus.
      */
-    public LineAnimation(Actor actor, Point endPoint, int durationInMS, boolean pingpong) {
+    public LineAnimation(Actor actor, Vector endPoint, int durationInMS, boolean pingpong) {
         super(actor);
 
-        Point center = actor.position.getCenter();
+        Vector center = actor.position.getCenter();
         ValueAnimator<Float> aX = new ValueAnimator<>(durationInMS,
-                x->actor.position.setCenter(x, actor.position.getCenter().getRealY()),
-                new LinearFloat(center.getRealX(), endPoint.getRealX()),
+                x->actor.position.setCenter(x, actor.position.getCenter().y),
+                new LinearFloat(center.x, endPoint.x),
                 pingpong ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
         ValueAnimator<Float> aY = new ValueAnimator<>(durationInMS,
-                y->actor.position.setCenter(actor.position.getCenter().getRealX(), y),
-                new LinearFloat(center.getRealY(), endPoint.getRealY()),
+                y->actor.position.setCenter(actor.position.getCenter().x, y),
+                new LinearFloat(center.y, endPoint.y),
                 pingpong ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
         addAnimator(aX);
         addAnimator(aY);

@@ -1,14 +1,9 @@
 package ea.edu;
 
-import ea.Point;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
-import ea.animation.ValueAnimator;
-import ea.animation.interpolation.CosinusFloat;
-import ea.animation.interpolation.LinearFloat;
-import ea.animation.interpolation.SinusFloat;
 import ea.handle.Physics;
 import ea.internal.ano.NoExternalUse;
 
@@ -71,14 +66,14 @@ public interface EduActor {
     }
 
     default boolean beinhaltetPunkt(float pX, float pY) {
-        return getActor().contains(new Point(pX, pY));
+        return getActor().contains(new Vector(pX, pY));
     }
 
-    default Point mittelPunkt() {
+    default Vector mittelPunkt() {
         return getActor().position.getCenter();
     }
 
-    default Point zentrum() {
+    default Vector zentrum() {
         return mittelPunkt();
     }
 
@@ -117,11 +112,11 @@ public interface EduActor {
     }
 
     default float nenneVx() {
-        return getActor().physics.getVelocity().getRealX();
+        return getActor().physics.getVelocity().x;
     }
 
     default float nenneVy() {
-        return getActor().physics.getVelocity().getRealY();
+        return getActor().physics.getVelocity().y;
     }
 
     /* ~~~ JUMP N RUN WRAPPER ~~~ */
@@ -164,7 +159,7 @@ public interface EduActor {
      *              wurde.
      */
     default void geradenAnimation(float zX, float zY, int ms, boolean loop) {
-        Spiel.getActiveScene().addFrameUpdateListener(new LineAnimation(getActor(), new Point(zX, zY), ms, loop));
+        Spiel.getActiveScene().addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), ms, loop));
     }
 
     /**
@@ -178,7 +173,7 @@ public interface EduActor {
      *                      <code>false</code>=Das Actor-Objekt behält seine Rotation bei.
      */
     default void kreisAnimation(float mX, float mY, int ms, boolean uhrzeigersinn, boolean rotation) {
-        Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Point(mX,mY),
+        Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX,mY),
                 ms, uhrzeigersinn, rotation));
     }
 }

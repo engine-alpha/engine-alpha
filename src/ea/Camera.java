@@ -45,7 +45,7 @@ public class Camera implements FrameUpdateListener {
     /**
      * Aktuelle Position des Mittelpunkts der Kamera.
      */
-    private Point position;
+    private Vector position;
 
     /**
      * Die Bounds der Kamera (sofern vorhanden), die sie in der Bewegung einschränken.
@@ -77,7 +77,7 @@ public class Camera implements FrameUpdateListener {
      */
     @NoExternalUse
     public Camera() {
-        this.position = new Point(0, 0);
+        this.position = new Vector(0, 0);
     }
 
     /**
@@ -182,7 +182,7 @@ public class Camera implements FrameUpdateListener {
      */
     @API
     public void move(float x, float y) {
-        this.position = this.position.verschobeneInstanz(new Vector(x, y));
+        this.position = this.position.add(new Vector(x, y));
     }
 
     /**
@@ -194,7 +194,7 @@ public class Camera implements FrameUpdateListener {
      */
     @API
     public void moveTo(int x, int y) {
-        this.position = new Point(x, y);
+        this.position = new Vector(x, y);
     }
 
     @API
@@ -213,14 +213,14 @@ public class Camera implements FrameUpdateListener {
      * @return Die aktuelle Position der Kamera.
      */
     @API
-    public Point getPosition() {
-        Point position = this.position.verschobeneInstanz(this.offset);
+    public Vector getPosition() {
+        Vector position = this.position.add(this.offset);
 
         if (this.hasBounds()) {
-            float x = Math.max(this.bounds.getRealX(), Math.min(position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
-            float y = Math.max(this.bounds.getRealX(), Math.min(position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
+            float x = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
+            float y = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
 
-            position = new Point(x, y);
+            position = new Vector(x, y);
         }
 
         return position;
@@ -233,10 +233,10 @@ public class Camera implements FrameUpdateListener {
         }
 
         if (this.hasBounds()) {
-            float x = Math.max(this.bounds.getRealX(), Math.min(this.position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
-            float y = Math.max(this.bounds.getRealX(), Math.min(this.position.getX(), this.bounds.getRealX() + this.bounds.getRealBreite()));
+            float x = Math.max(this.bounds.getRealX(), Math.min(this.position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
+            float y = Math.max(this.bounds.getRealX(), Math.min(this.position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
 
-            this.position = new Point(x, y);
+            this.position = new Vector(x, y);
         }
     }
 

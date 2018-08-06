@@ -81,9 +81,9 @@ public final class BoundingRechteck {
      * @return Ein BoundingRechteck mit der gleichen Höhe und Breite wie dieses, jedoch so
      * verschoben, dass es mit seiner Mitte im angegebenen Zentrum liegt.
      */
-    public BoundingRechteck mittenAngleichInstanz(Point p) {
-        Point z = this.zentrum();
-        return this.verschobeneInstanz(new Vector(p.getRealX() - z.getRealX(), p.getRealY() - z.getRealY()));
+    public BoundingRechteck mittenAngleichInstanz(Vector p) {
+        Vector z = this.zentrum();
+        return this.verschobeneInstanz(new Vector(p.x - z.x, p.y - z.y));
     }
 
     /**
@@ -92,8 +92,8 @@ public final class BoundingRechteck {
      * @return Der Point mit den Koordinaten, der im Zentrum des Rechtecks liegt (bei ungeraden
      * Koordinaten mit Abrundung)
      */
-    public Point zentrum() {
-        return new Point(x + ((width) / 2), y + ((height) / 2));
+    public Vector zentrum() {
+        return new Vector(x + ((width) / 2), y + ((height) / 2));
     }
 
     /**
@@ -239,8 +239,8 @@ public final class BoundingRechteck {
      *
      * @return true, wenn der Point in dem BoundingRechteck ist
      */
-    public boolean istIn(Point p) {
-        return (p.getRealX() >= this.x && p.getRealY() >= this.y && p.getRealX() <= (x + width) && p.getRealY() <= (y + height));
+    public boolean istIn(Vector p) {
+        return (p.x >= this.x && p.y >= this.y && p.x <= (x + width) && p.y <= (y + height));
     }
 
     /**
@@ -248,8 +248,8 @@ public final class BoundingRechteck {
      *
      * @return Array mit den vier Eckpunkten des umfassenden {@link ea.BoundingRechteck}s
      */
-    public Point[] punkte() {
-        return new Point[] {new Point(x, y), new Point(x + width, y), new Point(x, y + height), new Point(x + width, y + height)};
+    public Vector[] punkte() {
+        return new Vector[] {new Vector(x, y), new Vector(x + width, y), new Vector(x, y + height), new Vector(x + width, y + height)};
     }
 
     /**
@@ -511,7 +511,7 @@ public final class BoundingRechteck {
      * @return die Position des BoundingRechtecks, beschrieben durch den Point der linken oberen
      * Ecke dieses Objekts.
      */
-    public Point getPosition() {
-        return new Point(x, y);
+    public Vector getPosition() {
+        return new Vector(x, y);
     }
 }

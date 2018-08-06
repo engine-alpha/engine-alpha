@@ -38,7 +38,7 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
     @Override
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
         PlayerCharacter pc = collisionEvent.getColliding();
-        float playerY = pc.position.get().verschobeneInstanz(new Vector(0, 64)).y;
+        float playerY = pc.position.get().add(new Vector(0, 64)).y;
         if(playerY <= this.position.get().y + 5f) {
             System.out.println("WIN");
             //Treffer!
@@ -49,7 +49,7 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
         } else {
             System.out.println("LOSE");
             //Verletzt
-            pc.physics.applyImpulse(position.get().vectorFromThisTo(pc.position.getCenter()).multiply(20));
+            pc.physics.applyImpulse(position.get().negate().add(pc.position.getCenter()).multiply(20));
         }
     }
 }

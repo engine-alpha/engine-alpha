@@ -19,8 +19,10 @@
 
 package ea.actor;
 
-import ea.*;
-import ea.Point;
+import ea.BoundingRechteck;
+import ea.Game;
+import ea.Scene;
+import ea.Vector;
 import ea.collision.CollisionListener;
 import ea.handle.Physics;
 import ea.handle.Position;
@@ -251,7 +253,7 @@ public abstract class Actor {
      * @return TRUE, wenn der Point innerhalb des Objekts liegt.
      */
     @API
-    public final boolean contains(Point p) {
+    public final boolean contains(Vector p) {
         return physicsHandler.beinhaltet(p);
     }
 
@@ -293,7 +295,7 @@ public abstract class Actor {
 
             //Hole Rotation und Position absolut auf der Zeichenebene.
             float rotation;
-            Point position;
+            Vector position;
 
             synchronized (physicsHandler.getBody()) {
                 rotation = physicsHandler.rotation();

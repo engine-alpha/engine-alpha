@@ -1,7 +1,6 @@
 package ea.example.showcase;
 
 import ea.*;
-import ea.Point;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
 import ea.handle.Physics;
@@ -12,43 +11,41 @@ import java.awt.*;
 
 /**
  * Eine kleine Demo zum Verhalten vieler partikelähnlicher Physik-Objekte in der Engine.
- *
+ * <p>
  * Created by Michael on 11.04.2017.
  */
 public class MarbleDemo
-extends ShowcaseDemo
-implements KeyListener {
+        extends ShowcaseDemo
+        implements KeyListener {
 
     /**
      * Konstanten zur Beschreibung der Position des Trichters.
      */
-    private static final int ABSTAND_OBEN=300, ABSTAND_LINKS=40, ABSTAND_RECHTS=470;
+    private static final int ABSTAND_OBEN = 300, ABSTAND_LINKS = 40, ABSTAND_RECHTS = 470;
 
     /**
      * Der Boden des Trichters. Kann durchlässig gemacht werden.
      */
     private Rectangle boden;
 
-
-    public MarbleDemo(Scene parent, int width, int height){
+    public MarbleDemo(Scene parent, int width, int height) {
         super(parent);
 
         initialisieren();
 
         addKeyListener(this);
-        addFrameUpdateListener(new PeriodicTask(100){
+        addFrameUpdateListener(new PeriodicTask(100) {
 
             @Override
             public void dispatch() {
                 Circle marble = makeAMarble();
                 add(marble);
                 marble.physics.setType(Physics.Type.DYNAMIC);
-                marble.position.set(new Point(ABSTAND_LINKS+200, ABSTAND_OBEN-150));
-                marble.physics.applyImpulse(new Vector(Random.getFloat()*200-100,Random.getFloat()*-300-100));
+                marble.position.set(new Vector(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150));
+                marble.physics.applyImpulse(new Vector(Random.getFloat() * 200 - 100, Random.getFloat() * -300 - 100));
             }
         });
     }
-
 
     public void initialisieren() {
 
@@ -56,47 +53,45 @@ implements KeyListener {
         Rectangle lo = new Rectangle(this, 50, 150);
         lo.position.set(ABSTAND_LINKS, ABSTAND_OBEN);
         Rectangle lm = new Rectangle(this, 50, 200);
-        lm.position.set(ABSTAND_LINKS,ABSTAND_OBEN+150);
+        lm.position.set(ABSTAND_LINKS, ABSTAND_OBEN + 150);
         Rectangle ro = new Rectangle(this, 50, 150);
         ro.position.set(ABSTAND_RECHTS, ABSTAND_OBEN);
         Rectangle rm = new Rectangle(this, 50, 200);
-        rm.position.set(ABSTAND_RECHTS+14, ABSTAND_OBEN+120);
+        rm.position.set(ABSTAND_RECHTS + 14, ABSTAND_OBEN + 120);
         Rectangle lu = new Rectangle(this, 50, 120);
-        lu.position.set(ABSTAND_LINKS+125, ABSTAND_OBEN+255);
+        lu.position.set(ABSTAND_LINKS + 125, ABSTAND_OBEN + 255);
         Rectangle ru = new Rectangle(this, 50, 120);
-        ru.position.set(ABSTAND_LINKS+304, ABSTAND_OBEN+260);
+        ru.position.set(ABSTAND_LINKS + 304, ABSTAND_OBEN + 260);
 
         boden = new Rectangle(this, 230, 40);
-        boden.position.set(ABSTAND_LINKS+125,ABSTAND_OBEN+375);
+        boden.position.set(ABSTAND_LINKS + 125, ABSTAND_OBEN + 375);
 
         Rectangle[] allRectangles = new Rectangle[] {
                 lo, lm, ro, rm, lu, ru, boden
         };
 
-        for(Rectangle r : allRectangles) {
+        for (Rectangle r : allRectangles) {
             r.setColor(Color.WHITE);
             add(r);
             r.physics.setType(Physics.Type.STATIC);
         }
 
-        lm.physics.setGravity(new Vector(0,15));
+        lm.physics.setGravity(new Vector(0, 15));
 
-        lm.position.setRotation(-(float)Math.PI/4);
-        rm.position.setRotation((float)Math.PI/4);
-
+        lm.position.setRotation(-(float) Math.PI / 4);
+        rm.position.setRotation((float) Math.PI / 4);
     }
-
 
     @Override
     public void onKeyDown(int code) {
-        switch(code) {
+        switch (code) {
             case Key.X: //Boden togglen
-                if(boden.physics.getType()== Physics.Type.STATIC) {
+                if (boden.physics.getType() == Physics.Type.STATIC) {
                     boden.physics.setType(Physics.Type.PASSIVE);
-                    boden.setColor(new Color(255,255,255,100));
+                    boden.setColor(new Color(255, 255, 255, 100));
                 } else {
                     boden.physics.setType(Physics.Type.STATIC);
-                    boden.setColor(new Color(255,255,255));
+                    boden.setColor(new Color(255, 255, 255));
                 }
                 break;
         }
@@ -109,10 +104,10 @@ implements KeyListener {
 
     /**
      * Erstellt eine neue Murmel.
+     *
      * @return eine Murmel. Farbe und Größe variieren.
      */
     public Circle makeAMarble() {
-
 
         class Marble extends Circle implements FrameUpdateListener {
 
@@ -122,19 +117,18 @@ implements KeyListener {
 
             @Override
             public void onFrameUpdate(int i) {
-                if(this.position.getCenter().distanceTo(Point.CENTRE) > 1000) {
+                if (this.position.getCenter().getLength() > 1000) {
                     MarbleDemo.this.remove(this);
                 }
             }
         }
-        Circle murmel = new Marble(Random.getInteger(50)+10);
+
+        Circle murmel = new Marble(Random.getInteger(50) + 10);
         murmel.physics.setType(Physics.Type.DYNAMIC);
         murmel.physics.setMass(4);
         murmel.setColor(new Color(
                 Random.getInteger(255), Random.getInteger(255), Random.getInteger(255)));
 
-
         return murmel;
     }
-
 }

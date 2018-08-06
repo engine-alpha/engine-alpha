@@ -1,7 +1,7 @@
 package ea.actor;
 
-import ea.Point;
 import ea.Scene;
+import ea.Vector;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -19,7 +19,7 @@ public class Polygon extends Geometry {
     /**
      * Die Punkte
      */
-    private final Point[] points;
+    private final Vector[] points;
 
     /**
      * Die Punkte, die das Polygon beschreiben
@@ -32,12 +32,12 @@ public class Polygon extends Geometry {
      * @param points Der Streckenzug an Punkten, der das Polygon beschreibt. Alle
      */
     @API
-    public Polygon(Scene scene, Point... points) {
+    public Polygon(Scene scene, Vector... points) {
         super(scene, () -> {
             Vec2[] vectors = new Vec2[points.length];
 
             for (int i = 0; i < points.length; i++) {
-                vectors[i] = points[i].toVec2().mul(1 / scene.getWorldHandler().getPixelProMeter());
+                vectors[i] = new Vec2(points[i].x, points[i].y).mul(1 / scene.getWorldHandler().getPixelProMeter());
             }
 
             PolygonShape shape = new PolygonShape();
@@ -56,8 +56,8 @@ public class Polygon extends Geometry {
         this.py = new int[points.length];
 
         for (int i = 0; i < points.length; i++) {
-            px[i] = Math.round(points[i].getRealX());
-            py[i] = -1 * Math.round(points[i].getRealY());
+            px[i] = Math.round(points[i].x);
+            py[i] = -1 * Math.round(points[i].y);
         }
     }
 

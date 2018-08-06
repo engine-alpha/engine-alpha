@@ -1,6 +1,5 @@
 package ea.handle;
 
-import ea.Point;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.internal.ano.API;
@@ -235,7 +234,7 @@ public class Physics {
      *                              Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
-    public Physics applyForce(Vector kraftInN, Point globalPoint) {
+    public Physics applyForce(Vector kraftInN, Vector globalPoint) {
         actor.getPhysicsHandler().kraftWirken(kraftInN, globalPoint);
         return this;
     }
@@ -260,7 +259,7 @@ public class Physics {
      *                      Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
-    public Physics applyImpulse(Vector impulseInNS, Point globalPoint) {
+    public Physics applyImpulse(Vector impulseInNS, Vector globalPoint) {
         actor.getPhysicsHandler().impulsWirken(impulseInNS, globalPoint);
         return this;
     }

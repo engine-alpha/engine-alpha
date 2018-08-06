@@ -32,10 +32,10 @@ public class ActorGroupTest {
 		assertEquals(2, k.getMembers().length);
 
 		k.position.move(new Vector(10, 10));
-		assertEquals(new Point(120, 120), r.position.get());
+		assertEquals(new Vector(120, 120), r.position.get());
 
 		r.position.move(new Vector(10, 10));
-		assertEquals(new Point(130, 130), r.position.get());
+		assertEquals(new Vector(130, 130), r.position.get());
 
 		k.remove(r);
 		assertEquals(0, k.getMembers().length);

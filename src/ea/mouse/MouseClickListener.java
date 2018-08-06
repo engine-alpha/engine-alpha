@@ -19,7 +19,7 @@
 
 package ea.mouse;
 
-import ea.Point;
+import ea.Vector;
 import ea.internal.ano.API;
 
 /**
@@ -40,7 +40,7 @@ public interface MouseClickListener {
      * @param button   Die Maustaste, die gedrückt wurde.
      */
     @API
-    void onMouseDown(Point position, MouseButton button);
+    void onMouseDown(Vector position, MouseButton button);
 
     /**
      * Diese Methode wird bei jedem <b>Loslassen</b> einer Maustaste aufgerufen, unabhängig davon
@@ -52,5 +52,5 @@ public interface MouseClickListener {
      * @param button   Die Maustaste, die gedrückt wurde.
      */
     @API
-    void onMouseUp(Point position, MouseButton button);
+    void onMouseUp(Vector position, MouseButton button);
 }

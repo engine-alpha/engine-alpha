@@ -1,6 +1,5 @@
 package ea.example.showcase;
 
-import ea.Point;
 import ea.Scene;
 import ea.Vector;
 import ea.actor.ActorGroup;
@@ -44,7 +43,7 @@ implements KeyListener {
     }
 
     public void initialisieren2() {
-        wippeBauen().position.set(new Point(500, 500));
+        wippeBauen().position.set(new Vector(500, 500));
 
         ketteBauen(15).position.move(new Vector(500, 00));
 
@@ -57,7 +56,7 @@ implements KeyListener {
 
         ball.setColor(Color.BLUE);
 
-        ball.position.set(new Point(300, 200));
+        ball.position.set(new Vector(300, 200));
         ball.physics.setType(Physics.Type.DYNAMIC);
     }
 
@@ -68,9 +67,9 @@ implements KeyListener {
         final int FACT = 2;
 
         Polygon halter = new Polygon(this,
-                new Point(0*FACT,50*FACT), new Point(25*FACT, 75*FACT),
-                new Point(50*FACT, 75*FACT), new Point(75*FACT, 50*FACT),
-                new Point(75*FACT, 100*FACT), new Point(0*FACT,100*FACT)
+                new Vector(0*FACT,50*FACT), new Vector(25*FACT, 75*FACT),
+                new Vector(50*FACT, 75*FACT), new Vector(75*FACT, 50*FACT),
+                new Vector(75*FACT, 100*FACT), new Vector(0*FACT,100*FACT)
         );
         knoten.add(halter);
         halter.setColor(Color.CYAN);
@@ -85,8 +84,7 @@ implements KeyListener {
 
         knoten.position.move(new Vector(160, 200));
 
-        halter.physics.createDistanceJoint(item, halter.position.getCenter().asVector(),
-                item.position.getCenter().asVector());
+        halter.physics.createDistanceJoint(item, halter.position.getCenter(), item.position.getCenter());
 
 
         return knoten;
@@ -123,7 +121,7 @@ implements KeyListener {
         ActorGroup bauwerk = new ActorGroup(this);
         add(bauwerk);
 
-        basis = new Polygon(this, new Point(0, 100), new Point(100, 100), new Point(50, 0));
+        basis = new Polygon(this, new Vector(0, 100), new Vector(100, 100), new Vector(50, 0));
         bauwerk.add(basis);
         basis.physics.setType(Physics.Type.STATIC);
         basis.setColor(Color.WHITE);
@@ -174,7 +172,7 @@ implements KeyListener {
         gewicht.physics.setMass(40);
 
         Vector vektor = new Vector(45*kette.length, 35);
-        gewicht.position.setCenter(new Point(vektor.getRealX(), vektor.getRealY()));
+        gewicht.position.setCenter(new Vector(vektor.x, vektor.y));
         gewicht.physics.createRevoluteJoint(kette[kette.length-1], vektor);
 
         return ketteK;

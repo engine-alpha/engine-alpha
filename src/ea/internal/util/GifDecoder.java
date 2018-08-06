@@ -50,7 +50,7 @@ import java.util.ArrayList;
  * @author Kevin Weiner, FM Software; LZW decoder adapted from John Cristy's ImageMagick.
  * @version 1.03 November 2003
  */
-public class GifDecoder {
+public final class GifDecoder {
 
     /**
      * File read status: No errors.

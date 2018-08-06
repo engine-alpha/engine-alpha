@@ -130,7 +130,7 @@ public final class Vector implements Cloneable {
 	 * @param end
 	 * 		Zielpunkt
 	 */
-	public Vector(Point start, Point end) {
+	public Vector(Vector start, Vector end) {
 		this.x = end.x - start.x;
 		this.y = end.y - start.y;
 	}
@@ -143,8 +143,8 @@ public final class Vector implements Cloneable {
 	 * @return Normierter Vector zu diesem Vector
 	 */
 	@API
-	public Vector getNormalizedInstance() {
-		return this.divide(this.getLength());
+	public Vector normalize() {
+		return divide(getLength());
 	}
 
 	/**
@@ -162,7 +162,7 @@ public final class Vector implements Cloneable {
 	 */
 	public Vector divide(float divisor) {
 		if (divisor == 0) {
-			throw new ArithmeticException("Der Divisor für das Teilen war 0!");
+			throw new ArithmeticException("Der Divisor für das Teilen war 0");
 		}
 
 		return new Vector(x / divisor, y / divisor);
@@ -182,7 +182,7 @@ public final class Vector implements Cloneable {
 	 *
 	 * @return Neues Vector-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
 	 */
-	public Vector getNegatedVektor() {
+	public Vector negate() {
 		return new Vector(-this.x, -this.y);
 	}
 
@@ -259,30 +259,6 @@ public final class Vector implements Cloneable {
 	 */
 	public boolean isIntegral() {
 		return x == (int) x && y == (int) y;
-	}
-
-	/**
-	 * Gibt die <code>getX</code>-Verschiebung dieses Vektors wider.
-	 *
-	 * @return <code>getX</code>-Verschiebung dieses Vektors. Positive Werte move vectorFromThisTo rechts,
-	 * negative Werte move vectorFromThisTo links.
-	 *
-	 * @see #getRealY()
-	 */
-	public float getRealX() {
-		return x;
-	}
-
-	/**
-	 * Gibt die <code>getY</code>-Verschiebung dieses Vektors wider.
-	 *
-	 * @return <code>getY</code>-Verschiebung dieses Vektors. Positive Werte move vectorFromThisTo unten,
-	 * negative Werte move vectorFromThisTo oben.
-	 *
-	 * @see #getRealX()
-	 */
-	public float getRealY() {
-		return y;
 	}
 
 	/**
@@ -434,21 +410,6 @@ public final class Vector implements Cloneable {
 	 */
 	public int getDY() {
 		return (int) y;
-	}
-
-	/**
-	 * Gibt diesen Ortsvektor vom Ursprung der Zeichenebene als Point aus.<br> Dieser hat die exakt
-	 * selben <code>getX</code>- / <code>getY</code>-Komponenten. Das bedeutet:<br> <code> Vector v = new
-	 * Vector (10, 20);<br />Point p = v.asPoint(); -> p == new Point(10, 20); </code>
-	 *
-	 * @return Ortsvektor dieses Punktes
-	 *
-	 * @see Point#asVector()
-	 */
-	@API
-	@SuppressWarnings ( "unused" )
-	public Point asPoint() {
-		return new Point(x, y);
 	}
 
 	/**

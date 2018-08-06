@@ -1,7 +1,6 @@
 package ea.example.showcase;
 
 import ea.FrameUpdateListener;
-import ea.Point;
 import ea.Scene;
 import ea.Vector;
 import ea.actor.*;
@@ -94,11 +93,11 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     /**
      * Die Startpunkte für die Test-Objekte
      */
-    private static final Point[] STARTINGPOINTS = new Point[] {
-            new Point(260, 250),
-            new Point(50, 60),
-            new Point(400, 100),
-            new Point(50, 200)
+    private static final Vector[] STARTINGPOINTS = new Vector[] {
+            new Vector(260, 250),
+            new Vector(50, 60),
+            new Vector(400, 100),
+            new Vector(50, 200)
     };
 
     /**
@@ -129,7 +128,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     private InfoBox  box;
 
     private KlickMode klickMode = KlickMode.ATTACK_POINT;
-    private Point lastAttack;
+    private Vector lastAttack;
     private boolean hatSchwerkraft = false;
 
     private final int FRAME_WIDHT, FRAME_HEIGHT;
@@ -185,8 +184,8 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         //kreis2.physics.masse(50);
         testObjects[2] = kreis2;
 
-        Polygon polygon = new Polygon(this, new Point(0,0), new Point(20, 30), new Point(10, 50),
-                new Point(80, 10), new Point(120, 0));
+        Polygon polygon = new Polygon(this, new Vector(0,0), new Vector(20, 30), new Vector(10, 50),
+                new Vector(80, 10), new Vector(120, 0));
         fixierungsGruppe.add(polygon);
         polygon.setColor(Color.BLUE);
         polygon.physics.setType(Physics.Type.DYNAMIC);
@@ -363,13 +362,13 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
      * @param p Point des Mausklicks auf der Zeichenebene.
      */
     @Override
-    public void onMouseDown(Point p, MouseButton button) {
+    public void onMouseDown(Vector p, MouseButton button) {
         switch(klickMode) {
             case ATTACK_POINT:
                 lastAttack = p;
 
                 //Visualize Attack Point
-                attack.position.set(p.verschobeneInstanz(new Vector(-5, -5)));
+                attack.position.set(p.add(new Vector(-5, -5)));
                 attack.setVisible(true);
 
                 //Prepare Vector Stick
@@ -388,7 +387,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
 
                 attack.setVisible(false);
                 stange.setVisible(false);
-                Vector distance = lastAttack.vectorFromThisTo(p);
+                Vector distance = lastAttack.negate().add(p);
 
                 for(int i = 0; i < testObjects.length; i++) {
                     if(isInAttackRange[i])
@@ -403,8 +402,8 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     }
 
     @Override
-    public void onMouseUp(Point point, MouseButton mouseButton) {
-        //Ignore.
+    public void onMouseUp(Vector point, MouseButton mouseButton) {
+        // Ignore.
     }
 
     /**
@@ -415,18 +414,18 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     public void onFrameUpdate(int ts) {
         //Visualisiere ggf. die Vectorstange
         if(klickMode == KlickMode.DIRECTION_INTENSITY) {
-            Point pointer = getMousePosition();
+            Vector pointer = getMousePosition();
             if(pointer==null || lastAttack == null)
                 return;
-            Point pos = stange.position.get();
+            Vector pos = stange.position.get();
             remove(stange);
-            stange = new Rectangle(this, lastAttack.distanceTo(pointer), 5);
+            stange = new Rectangle(this, new Vector(lastAttack, pointer).getLength(), 5);
             System.out.println("new Rectangle: " + stange);
             stange.setColor(new Color(200, 50, 50));
             stange.setLayer(-10);
             stange.position.set(pos);
             add(stange);
-            float rot = Vector.RECHTS.getAngle(lastAttack.vectorFromThisTo(pointer));
+            float rot = Vector.RECHTS.getAngle(lastAttack.negate().add(pointer));
             if(Float.isNaN(rot))
                 return;
             if(pointer.y < lastAttack.y)

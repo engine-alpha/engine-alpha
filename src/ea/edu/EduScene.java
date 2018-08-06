@@ -1,8 +1,8 @@
 package ea.edu;
 
 import ea.FrameUpdateListener;
-import ea.Point;
 import ea.Scene;
+import ea.Vector;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseButton;
 import ea.mouse.MouseClickListener;
@@ -115,7 +115,7 @@ implements KeyListener, MouseClickListener, FrameUpdateListener {
     }
 
     @Override
-    public void onMouseDown(Point position, MouseButton button) {
+    public void onMouseDown(Vector position, MouseButton button) {
         for(KlickAuftrag ka : aufgabenKlick) {
             if(ka.linksklick && button==MouseButton.LEFT) {
                 ka.ausfuehren((int)position.x, (int)position.y);
@@ -126,8 +126,8 @@ implements KeyListener, MouseClickListener, FrameUpdateListener {
     }
 
     @Override
-    public void onMouseUp(Point position, MouseButton button) {
-        //Ignore.
+    public void onMouseUp(Vector position, MouseButton button) {
+        // Ignore.
     }
 
     /* ~~~ Listener CLASSES ~~~ */

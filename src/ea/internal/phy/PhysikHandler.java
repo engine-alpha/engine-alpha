@@ -1,6 +1,5 @@
 package ea.internal.phy;
 
-import ea.Point;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.handle.Physics;
@@ -74,7 +73,7 @@ public abstract class PhysikHandler {
      * Gibt den <b>Gewichtsmittelpunkt</b> dieses <code>Actor</code>-Objekts aus.
      * @return  der aktuelle <b>Gewichtsmittelpunkt</b> des Ziel-Objekts als <i>Point auf der Zeichenebene</i>.
      */
-    public abstract Point mittelpunkt();
+    public abstract Vector mittelpunkt();
 
     /**
      * Gibt an, ob ein bestimmter Point auf der Zeichenebene innerhalb des Ziel-Objekts liegt.
@@ -83,14 +82,14 @@ public abstract class PhysikHandler {
      *          Das Ergebnis kann (abhängig von der implementierenden Klasse) verschieden sicher richtige Ergebnisse
      *          liefern.
      */
-    public abstract boolean beinhaltet(Point p);
+    public abstract boolean beinhaltet(Vector p);
 
     /**
      * Gibt die aktuelle Position des Ziel-Objekts an.
      * @return  Die aktuelle Position des Ziel-Objekts. Diese ist bei Erstellung des Objekts zunächst immer
      *          <code>(0|0)</code> und wird mit Rotation und Verschiebung verändert.
      */
-    public abstract Point position();
+    public abstract Vector position();
 
     /**
      * Gibt die aktuelle Rotation des Ziel-Objekts in <i>Radians</i> an. Bei Erstellung eines
@@ -170,14 +169,14 @@ public abstract class PhysikHandler {
         return physikType;
     }
 
-    public abstract void kraftWirken(Vector kraftInN, Point globalerOrt);
+    public abstract void kraftWirken(Vector kraftInN, Vector globalerOrt);
 
     /**
      * Wirkt einen Impuls auf einem Welt-Point.
      * @param impulsInNS        Ein Impuls (in [Ns]).
      * @param globalerOrt       Der
      */
-    public abstract void impulsWirken(Vector impulsInNS, Point globalerOrt);
+    public abstract void impulsWirken(Vector impulsInNS, Vector globalerOrt);
 
     /**
      * Entfernt den Körper von diesem Handler.

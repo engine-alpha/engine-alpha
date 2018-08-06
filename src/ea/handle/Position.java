@@ -1,6 +1,5 @@
 package ea.handle;
 
-import ea.Point;
 import ea.Vector;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
@@ -70,14 +69,14 @@ public class Position {
      *      Dokumentation der Klasse).
      *
      *
-     * @see #set(Point)
+     * @see #set(Vector)
      * @see #setCenter(float, float)
      * @see #setX(float)
      * @see #setY(float)
      */
     @API
     public Position set(float x, float y) {
-        this.set(new Point(x, y));
+        this.set(new Vector(x, y));
         return this;
     }
 
@@ -96,7 +95,7 @@ public class Position {
      * @see #setY(float)
      */
     @API
-    public Position set(Point p) {
+    public Position set(Vector p) {
         this.move(new Vector(p.x - this.getX(), p.y - this.getY()));
         return this;
     }
@@ -136,14 +135,14 @@ public class Position {
      *      Dokumentation der Klasse).
      *
      *
-     * @see #setCenter(Point)
+     * @see #setCenter(Vector)
      * @see #move(Vector)
      * @see #set(float, float)
      * @see #getCenter()
      */
     @API
     public Position setCenter(float x, float y) {
-        this.setCenter(new Point(x, y));
+        this.setCenter(new Vector(x, y));
         return this;
     }
 
@@ -166,8 +165,8 @@ public class Position {
      * @see #getCenter()
      */
     @API
-    public Position setCenter(Point p) {
-        this.move(this.getCenter().vectorFromThisTo(p));
+    public Position setCenter(Vector p) {
+        this.move(this.getCenter().negate().add(p));
         return this;
     }
 
@@ -255,7 +254,7 @@ public class Position {
      * @see #get()
      */
     @API
-    public Point getCenter() {
+    public Vector getCenter() {
         return actor.getPhysicsHandler().mittelpunkt();
     }
 
@@ -285,7 +284,7 @@ public class Position {
      * @return die aktuelle Position dieses <code>Actor</code>-Objekts.
      */
     @API
-    public Point get() {
+    public Vector get() {
         return actor.getPhysicsHandler().position();
     }
 

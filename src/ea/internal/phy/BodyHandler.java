@@ -1,6 +1,5 @@
 package ea.internal.phy;
 
-import ea.Point;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.handle.Physics;
@@ -69,21 +68,21 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
-    public Point mittelpunkt() {
+    public Vector mittelpunkt() {
         if (physikType == Physics.Type.DYNAMIC) {
             Vec2 wc = body.getWorldCenter();
-            return worldHandler.fromVec2(wc).asPoint();
+            return worldHandler.fromVec2(wc);
         } else {
             AABB bodyAABB = calculateBodyAABB();
-            return worldHandler.fromVec2(bodyAABB.getCenter()).asPoint();
+            return worldHandler.fromVec2(bodyAABB.getCenter());
         }
     }
 
     @Override
-    public boolean beinhaltet(Point p) {
+    public boolean beinhaltet(Vector p) {
         Fixture toTest = fixture;
         while (toTest != null) {
-            if (toTest.testPoint(worldHandler.fromVektor(p.asVector()))) {
+            if (toTest.testPoint(worldHandler.fromVektor(p))) {
                 return true;
             }
             toTest = toTest.m_next;
@@ -92,8 +91,8 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
-    public Point position() {
-        return worldHandler.fromVec2(body.getPosition()).asPoint();
+    public Vector position() {
+        return worldHandler.fromVec2(body.getPosition());
     }
 
     @Override
@@ -201,13 +200,13 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
-    public void kraftWirken(Vector kraftInN, Point globalerOrt) {
-        body.applyForce(new Vec2(kraftInN.x, kraftInN.y), worldHandler.fromVektor(globalerOrt.asVector()));
+    public void kraftWirken(Vector kraftInN, Vector globalerOrt) {
+        body.applyForce(new Vec2(kraftInN.x, kraftInN.y), worldHandler.fromVektor(globalerOrt));
     }
 
     @Override
-    public void impulsWirken(Vector impulsInNS, Point globalerOrt) {
-        body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), worldHandler.fromVektor(globalerOrt.asVector()));
+    public void impulsWirken(Vector impulsInNS, Vector globalerOrt) {
+        body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), worldHandler.fromVektor(globalerOrt));
     }
 
     @Override

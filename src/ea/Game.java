@@ -166,7 +166,7 @@ public class Game {
 
                 AffineTransform transform = g.getTransform();
                 Camera camera = Game.scene.getCamera();
-                Point position = camera.getPosition();
+                Vector position = camera.getPosition();
                 float rotation = -camera.getRotation();
 
                 g.setClip(0, 0, width, height);
@@ -314,7 +314,7 @@ public class Game {
     private static void renderDebug(Graphics2D g) {
         AffineTransform transform = g.getTransform();
         Camera camera = Game.scene.getCamera();
-        Point position = camera.getPosition();
+        Vector position = camera.getPosition();
         float rotation = -camera.getRotation();
 
         g.setClip(0, 0, width, height);
@@ -498,7 +498,7 @@ public class Game {
      * @param action Drücken oder Loslassen?
      */
     private static void enqueueMouseEvent(MouseEvent e, MouseAction action) {
-        Point sourcePosition = convertMousePosition(scene, e.getPoint());
+        Vector sourcePosition = convertMousePosition(scene, e.getPoint());
         MouseButton button;
 
         switch (e.getButton()) {
@@ -525,14 +525,14 @@ public class Game {
     }
 
     @NoExternalUse
-    public static Point convertMousePosition(Scene scene, java.awt.Point mousePosition) {
+    public static Vector convertMousePosition(Scene scene, java.awt.Point mousePosition) {
         // Finde Klick auf Zeichenebene, die Position relativ zum Ursprung des RenderPanel-Canvas.
         // Mausklick-Position muss mit Zoom-Wert verrechnet werden
         float zoom = scene.getCamera().getZoom();
         float rotation = scene.getCamera().getRotation();
-        Point position = scene.getCamera().getPosition();
+        Vector position = scene.getCamera().getPosition();
 
-        return new Point(
+        return new Vector(
                 position.x + (((float) Math.cos(rotation) * (mousePosition.x - width / 2f) + (float) Math.sin(rotation) * (mousePosition.y - height / 2f))) / zoom,
                 (-1) * position.y + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom
         );

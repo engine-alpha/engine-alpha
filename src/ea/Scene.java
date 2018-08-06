@@ -123,17 +123,17 @@ public class Scene {
 
         if (j instanceof RevoluteJoint) {
             g.setColor(Color.blue);
-            g.drawOval((int) aOnZE.getRealX() - (CIRC_RAD / 2), (int) aOnZE.getRealY() - (CIRC_RAD / 2), CIRC_RAD, CIRC_RAD);
+            g.drawOval((int) aOnZE.x - (CIRC_RAD / 2), (int) aOnZE.y - (CIRC_RAD / 2), CIRC_RAD, CIRC_RAD);
         } else if (j instanceof RopeJoint) {
             g.setColor(Color.cyan);
-            g.drawRect((int) aOnZE.getRealX() - (CIRC_RAD / 2), (int) aOnZE.getRealY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawRect((int) bOnZE.getRealX() - (CIRC_RAD / 2), (int) bOnZE.getRealY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawLine((int) aOnZE.getRealX(), (int) aOnZE.getRealY(), (int) bOnZE.getRealX(), (int) bOnZE.getRealY());
+            g.drawRect((int) aOnZE.x - (CIRC_RAD / 2), (int) aOnZE.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawRect((int) bOnZE.x - (CIRC_RAD / 2), (int) bOnZE.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawLine((int) aOnZE.x, (int) aOnZE.y, (int) bOnZE.x, (int) bOnZE.y);
         } else if (j instanceof DistanceJoint) {
             g.setColor(Color.orange);
-            g.drawRect((int) aOnZE.getRealX() - (CIRC_RAD / 2), (int) aOnZE.getRealY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawRect((int) bOnZE.getRealX() - (CIRC_RAD / 2), (int) bOnZE.getRealY() - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawLine((int) aOnZE.getRealX(), (int) aOnZE.getRealY(), (int) bOnZE.getRealX(), (int) bOnZE.getRealY());
+            g.drawRect((int) aOnZE.x - (CIRC_RAD / 2), (int) aOnZE.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawRect((int) bOnZE.x - (CIRC_RAD / 2), (int) bOnZE.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
+            g.drawLine((int) aOnZE.x, (int) aOnZE.y, (int) bOnZE.x, (int) bOnZE.y);
         }
     }
 
@@ -220,14 +220,14 @@ public class Scene {
     }
 
     @NoExternalUse
-    final void onMouseDownInternal(Point position, MouseButton button) {
+    final void onMouseDownInternal(Vector position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseDown(position, button);
         }
     }
 
     @NoExternalUse
-    final void onMouseUpInternal(Point position, MouseButton button) {
+    final void onMouseUpInternal(Vector position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseUp(position, button);
         }
@@ -241,7 +241,7 @@ public class Scene {
     }
 
     @API
-    final public Point getMousePosition() {
+    final public Vector getMousePosition() {
         return Game.convertMousePosition(this, Game.getMousePositionInFrame());
     }
 }

@@ -168,7 +168,7 @@ implements CollisionListener<Actor>, KeyListener {
         long zeitdifferenz = endzeit-startzeit;
 
         //Zurückgelegte Distanz seit Simulationsstart ausmessen (Pixel-Differenz ausrechnen und auf Meter umrechnen)
-        float distanz = (ball.position.getCenter().getRealX()-ABSTAND_LINKS) / PIXELPROMETER;
+        float distanz = (ball.position.getCenter().x-ABSTAND_LINKS) / PIXELPROMETER;
 
         //Messungen angeben
         System.out.println("Der Ball ist auf dem Boden aufgeschlagen. Seit Simulationsstart sind " +

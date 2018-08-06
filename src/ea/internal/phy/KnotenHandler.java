@@ -1,6 +1,5 @@
 package ea.internal.phy;
 
-import ea.Point;
 import ea.Vector;
 import ea.actor.ActorGroup;
 import ea.handle.Physics;
@@ -18,7 +17,7 @@ public class KnotenHandler extends PhysikHandler {
     /**
      * Symbolische Position des Knotens.
      */
-    private Point position = Point.CENTRE;
+    private Vector position = Vector.NULLVECTOR;
 
     /**
      * Symbolische Rotation des Knotens
@@ -42,22 +41,22 @@ public class KnotenHandler extends PhysikHandler {
 
     @Override
     public void verschieben(Vector v) {
-        position = position.verschobeneInstanz(v);
+        position = position.add(v);
         actorGroup.forEach(r -> r.position.move(v));
     }
 
     @Override
-    public Point mittelpunkt() {
+    public Vector mittelpunkt() {
         return null;
     }
 
     @Override
-    public boolean beinhaltet(Point p) {
+    public boolean beinhaltet(Vector p) {
         return false;
     }
 
     @Override
-    public Point position() {
+    public Vector position() {
         return position;
     }
 
@@ -142,12 +141,12 @@ public class KnotenHandler extends PhysikHandler {
     }
 
     @Override
-    public void kraftWirken(Vector kraftInN, Point globalerOrt) {
+    public void kraftWirken(Vector kraftInN, Vector globalerOrt) {
 
     }
 
     @Override
-    public void impulsWirken(Vector impulsInNS, Point globalerOrt) {
+    public void impulsWirken(Vector impulsInNS, Vector globalerOrt) {
 
     }
 

@@ -257,7 +257,7 @@ public class ActorGroup extends Actor {
             weldJointDef.initialize(
                     first.getPhysicsHandler().getBody(),
                     actor.getPhysicsHandler().getBody(),
-                    getScene().getWorldHandler().fromVektor(first.position.get().asVector())
+                    getScene().getWorldHandler().fromVektor(first.position.get())
             );
 
             // Joint erstellen und Referenz zum Joint halten

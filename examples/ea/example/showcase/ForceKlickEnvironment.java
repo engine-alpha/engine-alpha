@@ -1,7 +1,6 @@
 package ea.example.showcase;
 
 import ea.*;
-import ea.Point;
 import ea.actor.Actor;
 import ea.actor.Circle;
 import ea.actor.Geometry;
@@ -38,9 +37,7 @@ import java.awt.*;
  *
  * Created by andonie on 05.09.15.
  */
-public class ForceKlickEnvironment
-        extends ShowcaseDemo
-        implements CollisionListener<Actor>, MouseClickListener, FrameUpdateListener {
+public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionListener<Actor>, MouseClickListener, FrameUpdateListener {
 
     /**
      * Wird für die Schwerkraft-Berechnung genutzt
@@ -78,7 +75,7 @@ public class ForceKlickEnvironment
 
     private Rectangle stange;
     private KlickMode klickMode = KlickMode.ATTACK_POINT;
-    private Point lastAttack;
+    private Vector lastAttack;
     private boolean hatSchwerkraft = false;
 
     public static int PPM=100;
@@ -182,13 +179,13 @@ public class ForceKlickEnvironment
      * @param p Point des Mausklicks auf der Zeichenebene.
      */
     @Override
-    public void onMouseDown(Point p, MouseButton mouseButton) {
+    public void onMouseDown(Vector p, MouseButton mouseButton) {
         switch(klickMode) {
             case ATTACK_POINT:
                 lastAttack = p;
 
                 //Visualize Attack Point
-                attack.position.set(p.verschobeneInstanz(new Vector(-5, -5)));
+                attack.position.set(p.add(new Vector(-5, -5)));
                 attack.setVisible(true);
 
                 //Prepare Vector Stick
@@ -207,7 +204,7 @@ public class ForceKlickEnvironment
 
                 attack.setVisible(false);
                 stange.setVisible(false);
-                Vector distance = lastAttack.vectorFromThisTo(p);
+                Vector distance = lastAttack.negate().add(p);
 
                 if(attackedLast != null && attackedLast.physics.getType() == Physics.Type.DYNAMIC) {
                     attackedLast.physics.applyImpulse(distance.multiply(1), lastAttack);
@@ -222,8 +219,8 @@ public class ForceKlickEnvironment
     }
 
     @Override
-    public void onMouseUp(Point point, MouseButton mouseButton) {
-        //Ignore
+    public void onMouseUp(Vector point, MouseButton mouseButton) {
+        // Ignore
     }
 
     /**
@@ -234,11 +231,11 @@ public class ForceKlickEnvironment
     public void onFrameUpdate(int ts) {
         //Visualisiere ggf. die Vectorstange
         if(klickMode == KlickMode.DIRECTION_INTENSITY) {
-            Point pointer = getMousePosition();
+            Vector pointer = getMousePosition();
             if(pointer==null || lastAttack == null)
                 return;
-            stange.setWidth(lastAttack.distanceTo(pointer));
-            float rot = Vector.RECHTS.getAngle(lastAttack.vectorFromThisTo(pointer));
+            stange.setWidth(new Vector(lastAttack, pointer).getLength());
+            float rot = Vector.RECHTS.getAngle(lastAttack.negate().add(pointer));
             if(Float.isNaN(rot))
                 return;
             if(pointer.y < lastAttack.y)
