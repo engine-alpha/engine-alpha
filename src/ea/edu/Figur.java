@@ -7,9 +7,14 @@ import ea.actor.StatefulAnimation;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.Frame;
 import ea.internal.io.ImageLoader;
+import ea.internal.io.ResourceLoader;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * EDU-Variante der {@link StatefulAnimation}.
@@ -64,28 +69,53 @@ public class Figur extends StatefulAnimation implements EduActor {
         this(1f, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
     }
 
-//    /**
-//     * Erstellt eine Figur mit einem ersten Zustand. Lädt dazu alle Bilder in einem Verzeichnis ein, die zu einem
-//     * bestimmten Präfix passen.
-//     * @param zustandName       Name für den ersten Zustand.
-//     * @param verzeichnisPfad   Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
-//     * @param praefix           Das Präfix, das alle einzuladenden Bilder haben müssen.
-//     */
-//    public Figur(Scene scene, float scale, String zustandName, String verzeichnisPfad, String praefix) {
-//        super(scene);
-//
-//        if (scale <= 0) {
-//            throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
-//        }
-//
-//        this.scale = scale;
-//        zustandHinzufuegenNachPraefix(scene, zustandName, verzeichnisPfad, praefix);
-//        eduSetup();
-//    }
-//
-//    public Figur(Scene scene, String zustandName, String verzeichnisPfad, String praefix) {
-//        this(scene, 1f, zustandName, verzeichnisPfad, praefix);
-//    }
+    /**
+     * Erstellt eine Figur mit einem ersten Zustand. Lädt dazu alle Bilder in einem Verzeichnis ein, die zu einem
+     * bestimmten Präfix passen.
+     * @param zustandName       Name für den ersten Zustand.
+     * @param verzeichnisPfad   Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
+     * @param praefix           Das Präfix, das alle einzuladenden Bilder haben müssen.
+     */
+    public Figur(float scale, String zustandName, String verzeichnisPfad, String praefix) {
+        super(Spiel.getActiveScene(), getWidthHeightFromPrefixed(verzeichnisPfad, praefix, true),
+                getWidthHeightFromPrefixed(verzeichnisPfad, praefix, false));
+
+        if (scale <= 0) {
+            throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
+        }
+
+        this.scale = scale;
+        zustandHinzufuegenNachPraefix(zustandName, verzeichnisPfad, praefix);
+        eduSetup();
+    }
+
+    private static final int getWidthHeightFromPrefixed(String directoryPath, String prefix, boolean width) {
+        //Liste mit den Pfaden aller qualifizierten Dateien
+        ArrayList<String> allPaths = new ArrayList<>();
+
+        File directory;
+        try {
+            directory = ResourceLoader.loadAsFile(directoryPath);
+        } catch (IOException e) {
+            throw new RuntimeException("Fehler beim Einladen des Verzeichnisses: " + e.getMessage());
+        }
+        if(!directory.isDirectory()) {
+            throw new RuntimeException("Der angegebene Pfad war kein Verzeichnis: " + directoryPath);
+        }
+        File[] childs = directory.listFiles();
+        for(File file : childs) {
+            if(!file.isDirectory() && file.getName().startsWith(prefix)) {
+                return width ? ImageLoader.load(file.getAbsolutePath()).getWidth() :
+                        ImageLoader.load(file.getAbsolutePath()).getHeight();
+            }
+        }
+        throw new RuntimeException("Es gab kein Bild im Verzeichnis " + directoryPath + " mit Präfix " +
+                prefix);
+    }
+
+    public Figur(String zustandName, String verzeichnisPfad, String praefix) {
+        this(1f, zustandName, verzeichnisPfad, praefix);
+    }
 
     /**
      * Fügt einen Zustand mit GIF-Visualisierung ein.
