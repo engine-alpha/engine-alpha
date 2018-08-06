@@ -29,7 +29,6 @@ import ea.handle.Position;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.BodyHandler;
-import ea.internal.phy.KnotenHandler;
 import ea.internal.phy.PhysikHandler;
 import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
@@ -137,6 +136,8 @@ public abstract class Actor {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = Physics.Type.PASSIVE.convert();
         bodyDef.active = true;
+        bodyDef.position.set(scene.getWorldHandler().fromVektor(Vector.NULL));
+        bodyDef.gravityScale = 0;
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.density = 30f;
@@ -144,9 +145,6 @@ public abstract class Actor {
         fixtureDef.restitution = 0.5f;
         fixtureDef.shape = shape;
         fixtureDef.isSensor = true;
-
-        bodyDef.position.set(scene.getWorldHandler().fromVektor(Vector.NULL));
-        bodyDef.gravityScale = 0;
 
         return new BodyHandler(this, scene.getWorldHandler(), bodyDef, fixtureDef, Physics.Type.PASSIVE, true);
     }
