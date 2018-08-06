@@ -27,7 +27,7 @@ import ea.internal.ano.NoExternalUse;
  *
  * @author Niklas Keller
  */
-public abstract class PeriodicTask implements Runnable, FrameUpdateListener {
+public final class PeriodicTask implements FrameUpdateListener {
     /**
      * Intervall in Millisekunden.
      */
@@ -39,13 +39,19 @@ public abstract class PeriodicTask implements Runnable, FrameUpdateListener {
     private int countdown;
 
     /**
+     * Code, der alle X Millisekunden ausgeführt wird.
+     */
+    private Runnable runnable;
+
+    /**
      * Konstruktor.
      *
      * @param interval Zeit zwischen den Ausführungen in Millisekunden.
      */
-    public PeriodicTask(int interval) {
+    public PeriodicTask(int interval, Runnable runnable) {
         setInterval(interval);
         this.countdown = interval;
+        this.runnable = runnable;
     }
 
     /**
@@ -77,11 +83,11 @@ public abstract class PeriodicTask implements Runnable, FrameUpdateListener {
     @Override
     @NoExternalUse
     public void onFrameUpdate(int frameDuration) {
-        this.countdown -= frameDuration;
+        countdown -= frameDuration;
 
         while (this.countdown < 0) {
-            this.countdown += this.interval;
-            Game.enqueue(this);
+            countdown += interval;
+            Game.enqueue(runnable);
         }
     }
 }

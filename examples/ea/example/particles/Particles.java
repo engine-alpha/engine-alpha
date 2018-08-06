@@ -48,58 +48,22 @@ public class Particles extends ea.Scene implements KeyListener {
         Game.setTitle("Marbles");
 
         Rectangle left = new Rectangle(this, 200, 10);
-        left.position.set(-WIDTH / 6 - 50, 50);
+        left.position.set(-WIDTH / 6 - 50, -50);
         add(left);
 
         left.setColor(Color.white);
-        left.position.rotate((float) Math.toRadians(21));
+        left.position.rotate((float) Math.toRadians(-21));
 
         Rectangle right = new Rectangle(this, 200, 10);
         right.position.set(+WIDTH / 6, 0);
         add(right);
 
         right.setColor(Color.white);
-        right.position.rotate((float) Math.toRadians(-45));
+        right.position.rotate((float) Math.toRadians(45));
 
         this.addKeyListener(this);
 
-        addFrameUpdateListener(new PeriodicTask(1000) {
-            @Override
-            public void run() {
-                Circle k = new Circle(Particles.this, 6) {
-                    private ParticleEmitter particles = new ParticleEmitter();
-                    private boolean registered = false;
-
-                    @Override
-                    public void renderBasic(Graphics2D g, BoundingRechteck r) {
-                        if (!registered) {
-                            addFrameUpdateListener(particles);
-                            registered = true;
-                        }
-
-                        particles.render(g);
-                        particles.emit(
-                                position.getX() + 3,
-                                position.getY() + 3,
-                                20 * ((float) Math.random() - .5f),
-                                20 * ((float) Math.random() - .5f),
-                                2,
-                                300,
-                                Color.red
-                        );
-
-                        super.renderBasic(g, r);
-                    }
-                };
-
-                k.position.set(getMousePosition());
-                k.setColor(Color.white);
-                add(k);
-
-                k.physics.setType(Physics.Type.DYNAMIC);
-                k.physics.setGravity(new Vector(0, 10));
-            }
-        });
+        addFrameUpdateListener(new PeriodicTask(1000, this::createCircle));
 
         left.physics.setType(Physics.Type.STATIC);
         right.physics.setType(Physics.Type.STATIC);
@@ -130,16 +94,44 @@ public class Particles extends ea.Scene implements KeyListener {
         r3.setColor(Color.yellow);
         r4.setColor(Color.yellow);
 
-        r3.addCollisionListener((event) -> this.remove(event.getColliding()));
+        r3.addCollisionListener((event) -> Game.enqueue(() -> this.remove(event.getColliding())));
 
-        this.animateCamera();
         this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), ValueAnimator.Mode.REPEATED));
     }
 
-    private void animateCamera() {
-        this.addFrameUpdateListener(new ValueAnimator<>(400, getCamera()::rotateTo, new ReverseEaseFloat(0, .002f + (float) Math.random() * 0.002f)).addCompletionListener(
-                (value) -> this.addFrameUpdateListener(new ValueAnimator<>(350, getCamera()::rotateTo, new ReverseEaseFloat(0, -.002f + (float) Math.random() * -0.002f)).addCompletionListener((dummy) -> this.animateCamera()))
-        ));
+    private void createCircle() {
+        Circle k = new Circle(Particles.this, 6) {
+            private ParticleEmitter particles = new ParticleEmitter();
+            private boolean registered = false;
+
+            @Override
+            public void renderBasic(Graphics2D g, BoundingRechteck r) {
+                if (!registered) {
+                    addFrameUpdateListener(particles);
+                    registered = true;
+                }
+
+                particles.render(g);
+                particles.emit(
+                        position.getX() + 3,
+                        position.getY() + 3,
+                        20 * ((float) Math.random() - .5f),
+                        20 * ((float) Math.random() - .5f),
+                        2,
+                        300,
+                        Color.red
+                );
+
+                super.renderBasic(g, r);
+            }
+        };
+
+        k.position.set(getMousePosition());
+        k.setColor(Color.white);
+        add(k);
+
+        k.physics.setType(Physics.Type.DYNAMIC);
+        k.physics.setGravity(new Vector(0, -10));
     }
 
     @Override
