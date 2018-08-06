@@ -168,6 +168,9 @@ public class Particles extends ea.Scene implements KeyListener {
             case KeyEvent.VK_2: // Zoom In
                 getCamera().setZoom(getCamera().getZoom() * 1.1f);
                 break;
+
+            case KeyEvent.VK_LESS:
+                getCamera().rotate(0.1f);
         }
     }
 

@@ -31,6 +31,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Lädt Dateien aus der JAR oder dem aktuellen Arbeitsverzeichnis.
+ *
+ * @author Niklas Keller
+ */
 final public class ResourceLoader {
     private ResourceLoader() {
         // keine Objekte erlaubt!
