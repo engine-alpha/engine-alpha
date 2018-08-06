@@ -59,14 +59,16 @@ public class Showcases extends Scene {
         //Der aktuelle State der TextBox
         private TextboxState state = TextboxState.NORMAL;
 
-        public TextBox(String content, Supplier<Scene> sceneCreator) {
-            box = new Rectangle(BOX_WIDTH, BOX_HEIGHT);
+        public TextBox(Scene scene, String content, Supplier<Scene> sceneCreator) {
+            super(scene);
+
+            box = new Rectangle(scene, BOX_WIDTH, BOX_HEIGHT);
             box.setBorderRadius(6);
-            text = new Text(content, 24);
+            text = new Text(scene, content, 24);
             text.setStyle(Font.BOLD);
             text.setColor(Color.BLACK);
-            box.setZIndex(0);
-            text.setZIndex(1);
+            box.setLayer(0);
+            text.setLayer(1);
             text.position.move(20, 10);
             add(box, text);
 
@@ -126,9 +128,9 @@ public class Showcases extends Scene {
     private int buttonCount = 0;
 
     public Showcases() {
-        Text title = new Text("Engine Alpha: 4.0 Feature Showcase", 48);
+        Text title = new Text(this, "Engine Alpha: 4.0 Feature Showcase", 48);
         title.setColor(Color.WHITE);
-        Text subtitle = new Text("Knopfdruck startet Demo. Escape-Taste bringt dich ins Menü zurück", 24);
+        Text subtitle = new Text(this, "Knopfdruck startet Demo. Escape-Taste bringt dich ins Menü zurück", 24);
         subtitle.setColor(Color.GRAY);
 
         title.position.set(-500, 100);
@@ -150,7 +152,7 @@ public class Showcases extends Scene {
         boolean left = buttonCount % 2 == 1;
         int row = (buttonCount - 1) / 2;
 
-        TextBox button = new TextBox(title, sceneSupplier);
+        TextBox button = new TextBox(this, title, sceneSupplier);
         button.position.set(left ? -500 : -150, -60 + -1 * row * (BOX_HEIGHT + 5));
         add(button);
     }
@@ -163,7 +165,7 @@ public class Showcases extends Scene {
 
         Showcases mainscene = new Showcases();
 
-        mainscene.addScene(() -> new BallThrow(mainscene, WIDTH, HEIGHT), "Einfacher Ballwurf");
+        mainscene.addScene(() -> new BallThrow(mainscene), "Einfacher Ballwurf");
         mainscene.addScene(() -> new PhysicsSandbox(mainscene, WIDTH, HEIGHT), "Kräfte-Sandbox");
         mainscene.addScene(() -> new JointDemo(mainscene, WIDTH, HEIGHT), "Joints in der Engine");
         mainscene.addScene(() -> new MarbleDemo(mainscene, WIDTH, HEIGHT), "Murmel-Demo");

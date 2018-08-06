@@ -2,16 +2,24 @@ package ea;
 
 import ea.actor.ActorGroup;
 import ea.actor.Rectangle;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class ActorGroupTest {
+	private Scene scene;
+
+	@Before
+	public void setUp() {
+		scene = new Scene();
+	}
+
 	@Test
 	public void basic () {
-		Rectangle r = new Rectangle(100, 100);
+		Rectangle r = new Rectangle(scene, 100, 100);
 		r.position.set(100,100);
-		ActorGroup k = new ActorGroup();
+		ActorGroup k = new ActorGroup(scene);
 
 		k.add(r);
 		assertTrue(k.contains(r));

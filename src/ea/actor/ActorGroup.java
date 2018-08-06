@@ -24,11 +24,9 @@ import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.phy.KnotenHandler;
 import ea.keyboard.KeyListener;
 import ea.mouse.MouseClickListener;
 import ea.mouse.MouseWheelListener;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.WeldJointDef;
 
@@ -64,10 +62,11 @@ public class ActorGroup extends Actor {
     /**
      * Konstruktor für Objekte der Klasse ActorGroup
      */
-    public ActorGroup() {
+    public ActorGroup(Scene scene) {
+        super(scene, null);
+
         actors =  new ArrayList<>();
         joints = new ArrayList<>();
-        super.physicsHandler = new KnotenHandler(this);
     }
 
     /**
@@ -83,31 +82,17 @@ public class ActorGroup extends Actor {
     }
 
     @Override
-    public void onAttach(Scene scene) {
-        super.onAttach(scene);
-
+    public void destroy() {
         if (this.getScene() != null) {
             synchronized (this.actors) {
                 for (Actor actor : this.actors) {
-                    this.getScene().attach(actor);
-                    this.attachListeners(actor);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onDetach(Scene scene) {
-        if (this.getScene() != null) {
-            synchronized (this.actors) {
-                for (Actor actor : this.actors) {
-                    this.getScene().detach(actor);
                     this.detachListeners(actor);
+                    actor.destroy();
                 }
             }
         }
 
-        super.onDetach(scene);
+        super.destroy();
     }
 
     /**
@@ -116,15 +101,15 @@ public class ActorGroup extends Actor {
     @API
     public void clear() {
         synchronized (this.actors) {
-            Actor[] actors = this.actors.toArray(new Actor[this.actors.size()]);
+            Actor[] actors = this.actors.toArray(new Actor[0]);
             this.actors.clear();
 
             // Always detach _after_ removing from the actors,
             // otherwise rendering might result in a NPE.
             for (Actor actor : actors) {
                 if (this.getScene() != null) {
-                    this.getScene().detach(actor);
                     this.detachListeners(actor);
+                    actor.destroy();
                 }
             }
         }
@@ -149,8 +134,8 @@ public class ActorGroup extends Actor {
         // Always detach _after_ removing from the actors,
         // otherwise rendering might result in a NPE.
         if (this.getScene() != null) {
-            this.getScene().detach(actor);
             this.detachListeners(actor);
+            actor.destroy();
         }
     }
 
@@ -196,7 +181,6 @@ public class ActorGroup extends Actor {
         }
 
         if (this.getScene() != null) {
-            this.getScene().attach(m);
             this.attachListeners(m);
         }
 
@@ -204,7 +188,7 @@ public class ActorGroup extends Actor {
             // Add to actors _after_ calling onAttach,
             // otherwise rendering might ask for position with a NullHandler being set for physics.
             actors.add(m);
-            actors.sort(Comparator.comparingInt(Actor::getZIndex));
+            actors.sort(Comparator.comparingInt(Actor::getLayer));
         }
     }
 
@@ -325,7 +309,7 @@ public class ActorGroup extends Actor {
      * @return Alle Elemente als vollstaendig gefuelltes <code>Actor</code>-Objekt-Aray.
      */
     public Actor[] getMembers() {
-        return actors.toArray(new Actor[actors.size()]);
+        return actors.toArray(new Actor[0]);
     }
 
     /**
@@ -354,14 +338,6 @@ public class ActorGroup extends Actor {
     @NoExternalUse
     public void render(Graphics2D g) {
         throw new RuntimeException("Bug! Eine ActorGroup kann nicht gerendert werden.");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Shape createShape(float pixelProMeter) {
-        return null; // ActorGroup hat keine Shape => Null.
     }
 
     /**

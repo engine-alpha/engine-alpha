@@ -11,8 +11,8 @@ import ea.handle.Physics;
 public class Platform extends TileContainer {
     private static final int TILE_SIZE = 128;
 
-    public Platform(Scene parent, int tileCount) {
-        super(tileCount, 1, TILE_SIZE);
+    public Platform(Scene scene, int tileCount) {
+        super(scene, tileCount, 1, TILE_SIZE);
 
         if (tileCount < 2) {
             throw new IllegalArgumentException("Number of tiles must be at least 2");
@@ -31,7 +31,7 @@ public class Platform extends TileContainer {
         // Tile für das rechte Ende
         setTileAt(tileCount - 1, 0, basePath + "platform_r.png");
 
-        parent.add(this);
+        scene.add(this);
 
         physics.setType(Physics.Type.STATIC);
         physics.setElasticity(0);

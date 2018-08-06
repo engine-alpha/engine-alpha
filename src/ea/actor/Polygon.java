@@ -1,10 +1,10 @@
 package ea.actor;
 
 import ea.Point;
+import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
 import java.awt.*;
@@ -32,7 +32,20 @@ public class Polygon extends Geometry {
      * @param points Der Streckenzug an Punkten, der das Polygon beschreibt. Alle
      */
     @API
-    public Polygon(Point... points) {
+    public Polygon(Scene scene, Point... points) {
+        super(scene, () -> {
+            Vec2[] vectors = new Vec2[points.length];
+
+            for (int i = 0; i < points.length; i++) {
+                vectors[i] = points[i].toVec2().mul(1 / scene.getWorldHandler().getPixelProMeter());
+            }
+
+            PolygonShape shape = new PolygonShape();
+            shape.set(vectors, points.length);
+
+            return shape;
+        });
+
         if (points.length < 3) {
             throw new RuntimeException("Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein gültiges Polygon zu beschreiben.");
         }
@@ -55,24 +68,6 @@ public class Polygon extends Geometry {
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillPolygon(px, py, px.length); // TODO Draw at -height
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @NoExternalUse
-    @Override
-    public Shape createShape(float pixelProMeter) {
-        Vec2[] vectors = new Vec2[points.length];
-
-        for (int i = 0; i < points.length; i++) {
-            vectors[i] = points[i].toVec2().mul(1 / pixelProMeter);
-        }
-
-        PolygonShape shape = new PolygonShape();
-        shape.set(vectors, points.length);
-
-        return shape;
+        g.fillPolygon(px, py, px.length);
     }
 }

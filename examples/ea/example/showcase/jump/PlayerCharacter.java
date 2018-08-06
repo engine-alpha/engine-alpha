@@ -35,21 +35,23 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
     private MovementState movementState = MovementState.IDLE;
 
-    public PlayerCharacter(Scene parent) {
+    public PlayerCharacter(Scene scene) {
+        super(scene, 64, 64);
+
         //Load all Animations in
 
         //Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         final String pathbase = "game-assets\\jump\\spr_m_traveler_";
 
-        Animation idle = Animation.createFromAnimatedGif(pathbase + "idle_anim.gif");
+        Animation idle = Animation.createFromAnimatedGif(scene, pathbase + "idle_anim.gif");
         addState("idle", idle);
 
-        addState("walking", Animation.createFromAnimatedGif(pathbase + "walk_anim.gif"));
-        addState("running", Animation.createFromAnimatedGif(pathbase + "run_anim.gif"));
-        addState("jumpingUp", Animation.createFromAnimatedGif(pathbase + "jump_1up_anim.gif"));
-        addState("midair", Animation.createFromAnimatedGif(pathbase + "jump_2midair_anim.gif"));
-        addState("falling", Animation.createFromAnimatedGif(pathbase + "jump_3down_anim.gif"));
-        addState("landing", Animation.createFromAnimatedGif(pathbase + "jump_4land_anim.gif"));
+        addState("walking", Animation.createFromAnimatedGif(scene, pathbase + "walk_anim.gif"));
+        addState("running", Animation.createFromAnimatedGif(scene, pathbase + "run_anim.gif"));
+        addState("jumpingUp", Animation.createFromAnimatedGif(scene, pathbase + "jump_1up_anim.gif"));
+        addState("midair", Animation.createFromAnimatedGif(scene, pathbase + "jump_2midair_anim.gif"));
+        addState("falling", Animation.createFromAnimatedGif(scene, pathbase + "jump_3down_anim.gif"));
+        addState("landing", Animation.createFromAnimatedGif(scene, pathbase + "jump_4land_anim.gif"));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -57,7 +59,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         physics.setFriction(0);
         physics.setElasticity(0);
 
-        parent.add(this);
+        scene.add(this);
         physics.setMass(65);
         addCollisionListener(this);
     }

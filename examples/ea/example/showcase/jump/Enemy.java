@@ -1,7 +1,6 @@
 package ea.example.showcase.jump;
 
 import ea.FrameUpdateListener;
-import ea.Point;
 import ea.Scene;
 import ea.Vector;
 import ea.actor.Animation;
@@ -9,12 +8,9 @@ import ea.actor.StatefulAnimation;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 
-public class Enemy
-extends StatefulAnimation
-implements CollisionListener<PlayerCharacter> {
+public class Enemy extends StatefulAnimation implements CollisionListener<PlayerCharacter> {
 
     private final Vector velocity;
-    private final Scene parent;
     FrameUpdateListener enemyMover = new FrameUpdateListener() {
         @Override
         public void onFrameUpdate(int frameDuration) {
@@ -22,18 +18,19 @@ implements CollisionListener<PlayerCharacter> {
         }
     };
 
-    public Enemy(Scene parent, PlayerCharacter pc, Vector velocity) {
-        Animation flying = Animation.createFromAnimatedGif("game-assets\\jump\\spr_toucan_fly_anim.gif");
+    public Enemy(Scene scene, PlayerCharacter pc, Vector velocity) {
+        super(scene, 64, 64);
+
+        Animation flying = Animation.createFromAnimatedGif(scene, "game-assets/jump/spr_toucan_fly_anim.gif");
         addState("flying", flying);
 
-        this.parent = parent;
         this.velocity = velocity;
-        parent.add(this);
+        scene.add(this);
 
 
         if(velocity.x < 0) this.setFlipHorizontal(true);
 
-        parent.addFrameUpdateListener(enemyMover);
+        scene.addFrameUpdateListener(enemyMover);
 
         this.addCollisionListener(this, pc);
     }
@@ -47,12 +44,8 @@ implements CollisionListener<PlayerCharacter> {
             //Treffer!
             pc.physics.applyImpulse(new Vector(0, -2500));
 
-            Point position = this.position.get();
-            parent.removeFrameUpdateListener(enemyMover);
-            //Animation kill = Animation.createFromAnimatedGif("game-assets\\jump\\fx_explosion_b_anim.gif");
-            //parent.add(kill);
-            parent.remove(this);
-            //kill.setOneTimeOnly();
+            getScene().removeFrameUpdateListener(enemyMover);
+            destroy();
         } else {
             System.out.println("LOSE");
             //Verletzt

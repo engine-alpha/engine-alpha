@@ -108,7 +108,7 @@ public class ForceKlickEnvironment
 
 
         //Boden
-        Rectangle boden = new Rectangle(FIELD_WIDTH, 10);
+        Rectangle boden = new Rectangle(this, FIELD_WIDTH, 10);
         boden.position.set(0, FIELD_DEPTH);
         add(boden);
         boden.setColor(Color.WHITE);
@@ -116,10 +116,10 @@ public class ForceKlickEnvironment
         ground = walls[0] = boden;
 
         //Der Rest der Wände
-        Rectangle links = new Rectangle( 10, FIELD_DEPTH);
-        Rectangle rechts = new Rectangle(10, FIELD_DEPTH);
+        Rectangle links = new Rectangle(this, 10, FIELD_DEPTH);
+        Rectangle rechts = new Rectangle(this, 10, FIELD_DEPTH);
         rechts.position.set(FIELD_WIDTH-10, 0);
-        Rectangle oben = new Rectangle(FIELD_WIDTH, 10);
+        Rectangle oben = new Rectangle(this, FIELD_WIDTH, 10);
         add(links, rechts, oben);
         walls[1] = links;
         walls[2] = rechts;
@@ -133,18 +133,18 @@ public class ForceKlickEnvironment
 
 
         //Vector-Visualisierung
-        Rectangle stab = new Rectangle(100, 5);
+        Rectangle stab = new Rectangle(this, 100, 5);
         add(stab);
         stab.setColor(new Color(200, 50, 50));
         stange = stab;
-        stange.setZIndex(-10);
+        stange.setLayer(-10);
 
         //Attack-Visualisierung
-        Circle atv = new Circle(10);
+        Circle atv = new Circle(this, 10);
         add(atv);
         atv.setColor(Color.RED);
         attack = atv;
-        attack.setZIndex(-10);
+        attack.setLayer(-10);
 
         //Maus erstellen, Listener Anmelden.
         addMouseClickListener(this);

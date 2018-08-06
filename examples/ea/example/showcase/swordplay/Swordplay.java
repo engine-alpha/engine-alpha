@@ -40,16 +40,16 @@ public class Swordplay extends ShowcaseDemo implements KeyListener {
 
         getCamera().move(0, 200);
 
-        Coin coin = new Coin();
+        Coin coin = new Coin(this);
         coins.add(coin);
         add(coin);
 
-        coin = new Coin();
+        coin = new Coin(this);
         coin.position.set(100, 0);
         coins.add(coin);
         add(coin);
 
-        Image moon = new Image("game-assets/sword/moon.png");
+        Image moon = new Image(this, "game-assets/sword/moon.png");
         add(moon);
         moon.position.set(300, 300);
 

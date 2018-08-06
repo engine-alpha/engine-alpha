@@ -15,9 +15,9 @@ public class Platform extends Rectangle implements CollisionListener<PlayerChara
      * @param width  Die Breite des Rechtecks
      * @param height Die Höhe des Rechtecks
      */
-    public Platform(Scene parent, PlayerCharacter character, float width, float height) {
-        super(width, height);
-        parent.add(this);
+    public Platform(Scene scene, PlayerCharacter character, float width, float height) {
+        super(scene, width, height);
+        scene.add(this);
 
         setColor(new Color(130, 140, 255, 200));
         physics.setType(Physics.Type.STATIC);

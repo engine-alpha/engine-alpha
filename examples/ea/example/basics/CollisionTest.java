@@ -4,11 +4,8 @@ import ea.FrameUpdateListener;
 import ea.Game;
 import ea.Scene;
 import ea.Vector;
-import ea.actor.Actor;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
-import ea.collision.CollisionEvent;
-import ea.collision.CollisionListener;
 
 import java.awt.*;
 
@@ -18,8 +15,8 @@ implements FrameUpdateListener {
 
     Vector BALLSPEED_PER_MS = new Vector(0.2f, -0.002f);
 
-    Rectangle wall = new Rectangle(20, 300);
-    Circle ball = new Circle(20);
+    Rectangle wall = new Rectangle(this, 20, 300);
+    Circle ball = new Circle(this, 20);
 
     public CollisionTest() {
         wall.setColor(Color.ORANGE);
@@ -30,12 +27,7 @@ implements FrameUpdateListener {
 
         add(wall, ball);
 
-        ball.addCollisionListener(new CollisionListener<Rectangle>() {
-            @Override
-            public void onCollision(CollisionEvent<Rectangle> collisionEvent) {
-                System.out.println("COLLISION");
-            }
-        }, wall);
+        ball.addCollisionListener(collisionEvent -> System.out.println("COLLISION"), wall);
 
         if(ball.overlaps(wall)) {
             System.out.println("OVERLAP");

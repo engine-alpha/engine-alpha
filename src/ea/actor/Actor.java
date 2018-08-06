@@ -26,8 +26,8 @@ import ea.handle.Physics;
 import ea.handle.Position;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.phy.BodyCreateStrategy;
-import ea.internal.phy.NullHandler;
+import ea.internal.phy.BodyHandler;
+import ea.internal.phy.KnotenHandler;
 import ea.internal.phy.PhysikHandler;
 import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
@@ -35,39 +35,41 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.FixtureDef;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.function.Supplier;
 
 /**
- * Actor bezeichnet alles, was sich auf der Zeichenebene befindet.<br /> Dies ist die absolute
- * Superklasse aller grafischen Objekte. Umgekehrt kann somit jedes grafische Objekt die folgenden
- * Methoden nutzen.
+ * Actor bezeichnet alles, was sich auf der Zeichenebene befindet.<br /> Dies ist die absolute Superklasse aller
+ * grafischen Objekte. Umgekehrt kann somit jedes grafische Objekt die folgenden Methoden nutzen.
  *
  * @author Michael Andonie
  * @author Niklas Keller
  */
-public abstract class Actor implements Attachable {
+public abstract class Actor {
     /**
      * Szene, zu der der Actor gehört.
      */
     private Scene scene;
 
     /**
-     * Zum Überprüfen, dass ein Actor nur einmal zu einer Szene hinzugefügt wird.
+     * Gibt an, ob der Actor bereits zerstört wurde.
      */
-    private boolean attached = false;
+    private boolean alive = true;
 
     /**
-     * Gibt an, ob das Objekt zur Zeit ueberhaupt isVisible sein soll.<br /> Ist dies nicht der Fall,
-     * so wird die Zeichenroutine direkt uebergangen.
+     * Gibt an, ob das Objekt zur Zeit überhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall, so wird die
+     * Zeichenroutine direkt übergangen.
      */
     private boolean visible = true;
 
     /**
      * Z-Index des Raumes, je höher, desto weiter oben wird der Actor gezeichnet
      */
-    private int zIndex = 1;
+    private int layer = 1;
 
     /**
      * Opacity = Durchsichtigkeit des Raumes
@@ -83,21 +85,16 @@ public abstract class Actor implements Attachable {
     private Composite composite;
 
     /**
-     * Die Implementierung der Body-Erstellungsstrategie.
-     */
-    private BodyCreateStrategy bodyCreateStrategy;
-
-    /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
-    protected PhysikHandler physicsHandler = new NullHandler(this);
+    private final PhysikHandler physicsHandler;
 
     /* _________________________ Die Handler _________________________ */
 
     /**
-     * Über das <code>position</code>-Objekt lassen sich alle Operationen und Abfragen ausführen,
-     * die direkt die Position dieses <code>Actor</code>-Objekts betreffen. Dazu gehört: <ul> <li>Das
-     * Abfragen der aktuellen Position.</li> <li>Das Setzen einer Position das move.</li>
+     * Über das <code>position</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt die
+     * Position dieses <code>Actor</code>-Objekts betreffen. Dazu gehört: <ul> <li>Das Abfragen der aktuellen
+     * Position.</li> <li>Das Setzen einer Position das move.</li>
      * <li>Das Rotieren um einen Winkel.</li> </ul>
      * <p>
      * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
@@ -108,11 +105,11 @@ public abstract class Actor implements Attachable {
     public final Position position = new Position(this);
 
     /**
-     * Über das <code>physics</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die
-     * direkt die physikalischen Eigenschaften und Ümstände dieses <code>Actor</code>-Objekts
-     * betreffen. Dazu gehört: <ul> <li>Das Abfragen und Setzen von physikalischen Eigenschaften des
-     * Objekt, wie zum Beispiel der <i>Masse</i> oder der <i>Elastizität</i>.</li> <li>Das Anwenden
-     * von physikalischen Effekten (z.B. <i>Kräfte</i> oder <i>Impulse</i>) auf das Objekt.</li>
+     * Über das <code>physics</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt die
+     * physikalischen Eigenschaften und Ümstände dieses <code>Actor</code>-Objekts betreffen. Dazu gehört: <ul> <li>Das
+     * Abfragen und Setzen von physikalischen Eigenschaften des Objekt, wie zum Beispiel der <i>Masse</i> oder der
+     * <i>Elastizität</i>.</li> <li>Das Anwenden von physikalischen Effekten (z.B. <i>Kräfte</i> oder <i>Impulse</i>)
+     * auf das Objekt.</li>
      * <li>Das Ändern des <i>physikalischen Verhaltens</i> des Objekts.</li> </ul>
      * <p>
      * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
@@ -122,72 +119,85 @@ public abstract class Actor implements Attachable {
     @API
     public final Physics physics = new Physics(this);
 
-    /**
-     * Diese Methode wird aufgerufen, sobald ein Raumobjekt zu einer Szene hinzugefügt wird, also am
-     * Wurzelknoten der Szene direkt oder indirekt angemeldet wurde.
-     *
-     * @param scene Szene, an der das Raumobjekt angemeldet wurde.
-     */
-    @API
-    //TODO Dokumentation/Wiki für onAttach --> Objekt wird automatisch als Listener angemeldet, wenn es einer Scene
-    //angefügt wird. Sollte dem API-Nutzer bewusst bleiben.
-    public void onAttach(Scene scene) {
-        if (this.attached) {
-            throw new IllegalStateException("Ein Raumobjekt kann nur einmal einer Szene hinzugefügt werden. Um ein Objekt temporär auszublenden, kann sein Type auf passiv gestellt werden und das Objekt unsichtbar gemacht werden.");
+    public Actor(Scene scene, Supplier<Shape> shapeSupplier) {
+        if (scene == null) {
+            throw new IllegalArgumentException("Die übergebene Szene darf nicht null sein");
         }
 
         this.scene = scene;
-        this.physicsHandler.update(scene.getWorldHandler());
 
-        this.attached = true; // Set this after everything is done
+        if (this instanceof ActorGroup) {
+            this.physicsHandler = new KnotenHandler((ActorGroup) this);
+        } else {
+            this.physicsHandler = createDefaultPhysicsHandler(shapeSupplier.get());
+        }
     }
 
-    /**
-     * Diese Methode wird aufgerufen, sobald ein Raumobjekt von einer Szene entfernt wird, also am
-     * Wurzelknoten der Szene direkt oder indirekt abgemeldet wurde.
-     */
-    @NoExternalUse
-    @Override
-    public void onDetach(Scene scene) {
-        if (!this.attached) {
-            throw new IllegalStateException("Das Raumobjekt war bei keiner Szene angemeldet, wurde nun aber von einer entfernt?!");
+    private PhysikHandler createDefaultPhysicsHandler(Shape shape) {
+        scene.getWorldHandler().blockPPMChanges();
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = Physics.Type.PASSIVE.convert();
+        bodyDef.active = true;
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = 30f;
+        fixtureDef.friction = 0f;
+        fixtureDef.restitution = 0.5f;
+        fixtureDef.shape = shape;
+        fixtureDef.isSensor = true;
+
+        bodyDef.position.set(scene.getWorldHandler().fromVektor(Vector.NULLVECTOR));
+        bodyDef.gravityScale = 0;
+
+        return new BodyHandler(this, scene.getWorldHandler(), bodyDef, fixtureDef, Physics.Type.PASSIVE, true);
+    }
+
+    @API
+    public boolean isAlive() {
+        return alive;
+    }
+
+    @API
+    public void destroy() {
+        if (scene == null) {
+            return;
         }
 
+        this.alive = false;
         this.physicsHandler.killBody();
-        this.physicsHandler = new NullHandler(this);
-
         this.scene = null;
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
 
     /**
-     * Setzt den Z-Index dieses Raumes. Je größer, desto weiter vorne wird ein Actor gezeichnet.
-     * <b>Diese Methode muss ausgeführt werden, bevor der Actor zu einem ActorGroup hinzugefügt
+     * Setzt den Layer dieses Actors. Je größer, desto weiter vorne wird ein Actor gezeichnet.
+     * <b>Diese Methode muss ausgeführt werden, bevor der Actor zu einer ActorGroup hinzugefügt
      * wird.</b>
      *
-     * @param z zu setzender Index
+     * @param layer Layer-Index
      */
     @API
-    public void setZIndex(int z) {
-        zIndex = z;
+    public void setLayer(int layer) {
+        this.layer = layer;
     }
 
     /**
-     * Gibt den Z-Index zurück.
+     * Gibt den Layer zurück.
      *
-     * @return Z-Index des Actors.
+     * @return Layer-Index
      */
     @API
-    public int getZIndex() {
-        return this.zIndex;
+    public int getLayer() {
+        return this.layer;
     }
 
     /**
      * Setzt die Sichtbarkeit des Objektes.
      *
      * @param visible Ob das Objekt isVisible sein soll oder nicht.<br /> Ist dieser Wert
-     *                 <code>false</code>, so wird es nicht im Window gezeichnet.<br />
+     *                <code>false</code>, so wird es nicht im Window gezeichnet.<br />
      *
      * @see #isVisible()
      */
@@ -246,36 +256,36 @@ public abstract class Actor implements Attachable {
     }
 
     /**
-     * Prueft, ob dieser Actor sich mit einem weiteren Actor schneidet.<br />
-     * Für die Überprüfung des Überlappens werden die internen <b>Collider</b> genutzt. Je nach Genauigkeit der Collider
-     * kann die Überprüfung unterschiedlich befriedigend ausfallen. Die Collider können im <b>Debug-Modus</b> der
-     * Engine eingesehen werden.
-     * @param another   Ein weiteres Actor-Objekt.
-     * @return          <code>true</code>, wenn dieses Actor-Objekt sich mit <code>another</code> schneidet. Sonst
-     *                  <code>false</code>.
+     * Prueft, ob dieser Actor sich mit einem weiteren Actor schneidet.<br /> Für die Überprüfung des Überlappens werden
+     * die internen <b>Collider</b> genutzt. Je nach Genauigkeit der Collider kann die Überprüfung unterschiedlich
+     * befriedigend ausfallen. Die Collider können im <b>Debug-Modus</b> der Engine eingesehen werden.
+     *
+     * @param another Ein weiteres Actor-Objekt.
+     *
+     * @return <code>true</code>, wenn dieses Actor-Objekt sich mit <code>another</code> schneidet. Sonst
+     * <code>false</code>.
+     *
      * @see ea.EngineAlpha#setDebug(boolean)
      */
     @API
     public final boolean overlaps(Actor another) {
-        return WorldHandler.bodyCollisionCheckup(physicsHandler.getBody(),
-                another.getPhysicsHandler().getBody());
+        return WorldHandler.bodyCollisionCheckup(physicsHandler.getBody(), another.getPhysicsHandler().getBody());
     }
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
 
     @NoExternalUse
     public void setBodyType(Physics.Type type) {
-        this.physicsHandler = physicsHandler.typ(type);
+        this.physicsHandler.typ(type);
     }
 
     /**
-     * Die Basiszeichenmethode.<br /> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese
-     * Methode wird bei den einzelnen Gliedern eines Knotens aufgerufen.
+     * Die Basiszeichenmethode.<br /> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese Methode wird bei den
+     * einzelnen Gliedern eines Knotens aufgerufen.
      *
      * @param g Das zeichnende Graphics-Objekt
-     * @param r Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll
-     *          zunaechst getestet werden, ob das Objekt innerhalb der Kamera liegt, und erst dann
-     *          gezeichnet werden.
+     * @param r Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll zunaechst getestet
+     *          werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
      */
     @NoExternalUse
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
@@ -294,7 +304,7 @@ public abstract class Actor implements Attachable {
 
             AffineTransform transform = g.getTransform();
 
-            g.rotate(-rotation, position.x, -position.y); //TODO ist das die korrekte Rotation, Ursprung als Zentrum?
+            g.rotate(-rotation, position.x, -position.y); // TODO ist das die korrekte Rotation, Ursprung als Zentrum?
             g.translate(position.x, -position.y);
 
             //Opacity Update
@@ -310,24 +320,23 @@ public abstract class Actor implements Attachable {
             render(g);
 
             if (EngineAlpha.isDebug()) {
-                //Visualisiere die Shape
+                // Visualisiere die Shape
                 float ppm = getPhysicsHandler().worldHandler().getPixelProMeter();
-                Shape shape = createShape(ppm);
                 g.setColor(Color.red);
-                renderShape(shape, g, ppm);
+                renderShape(physicsHandler.getBody().m_fixtureList.m_shape, g, ppm);
             }
 
             // ____ Post-Render ____
 
-            //Opacity Update
+            // Opacity Update
             if (composite != null) {
                 g.setComposite(composite);
             }
 
-            //Transform zurücksetzen
+            // Transform zurücksetzen
             g.setTransform(transform);
 
-            //System.out.println("R: " + getPosition + " - " + getRotation);
+            // System.out.println("R: " + getPosition + " - " + getRotation);
         }
     }
 
@@ -335,9 +344,8 @@ public abstract class Actor implements Attachable {
      * Rendert eine Shape von JBox2D vectorFromThisTo den gegebenen Voreinstellungen im Graphics-Objekt.
      *
      * @param shape         Die Shape, die zu rendern ist.
-     * @param g             Das Graphics2D-Object, das die Shape rendern soll. Farbe & Co. sollte im
-     *                      Vorfeld eingestellt sein. Diese Methode übernimmt nur das direkte
-     *                      Rendern
+     * @param g             Das Graphics2D-Object, das die Shape rendern soll. Farbe & Co. sollte im Vorfeld eingestellt
+     *                      sein. Diese Methode übernimmt nur das direkte Rendern
      * @param pixelPerMeter die Umrechnungsgröße, von Meter (JBox2D) auf Pixel (EA)
      */
     @NoExternalUse
@@ -361,8 +369,7 @@ public abstract class Actor implements Attachable {
     }
 
     /**
-     * Interne Methode. Prüft, ob das anliegende Objekt (teilweise) innerhalb des sichtbaren
-     * Bereichs liegt.
+     * Interne Methode. Prüft, ob das anliegende Objekt (teilweise) innerhalb des sichtbaren Bereichs liegt.
      *
      * @param r Die Bounds der Kamera.
      *
@@ -371,8 +378,7 @@ public abstract class Actor implements Attachable {
      */
     @NoExternalUse
     private boolean camcheck(BoundingRechteck r) {
-        //FIXME : Parameter ändern (?) und Funktionalität implementieren.
-        //throw new UnsupportedOperationException("4.0 Implementierung steht aus.");
+        // FIXME : Parameter ändern (?) und Funktionalität implementieren.
         return true;
     }
 
@@ -386,43 +392,19 @@ public abstract class Actor implements Attachable {
         return physicsHandler;
     }
 
-    /**
-     * Berechnet eine boxartige Shape. Alle Seiten sind parallel zu den Achsen, die linke obere Ecke
-     * liegt auf (0|0).
-     *
-     * @param pixelProMeter PPM-Umrechnungskonstante.
-     * @param breite        Die <b>Breite in Pixel</b> der Box.
-     * @param laenge        Die <b>Laenge in Pixel</b> der Box.
-     *
-     * @return Eine Polygon-Shape, die die oben beschriebenen Eigenschaften erfüllt.
-     */
-    @NoExternalUse
-    protected Shape berechneBoxShape(float pixelProMeter, float breite, float laenge) {
-        PolygonShape shape = new PolygonShape();
-        float breiteInM = breite / pixelProMeter;
-        float laengeInM = laenge / pixelProMeter;
-        Vec2 relativeCenter = new Vec2(breiteInM / 2, laengeInM / 2);
-        shape.set(new Vec2[] {
-                new Vec2(0, 0),
-                new Vec2(0, laengeInM),
-                new Vec2(breiteInM, laengeInM),
-                new Vec2(breiteInM, 0)
-        }, 4);
-        shape.m_centroid.set(relativeCenter);
-        return shape;
-    }
-
     /* _________________________ Listeners _________________________ */
 
     /**
-     * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen zwischen diesem Actor und dem
-     * Actor <code>collider</code> reagiert.
-     * @param listener  Der Listener, der bei Kollisionen zwischen dem <b>ausführenden Actor</b> und
-     *                  <code>collider</code> informiert werden soll.
-     * @param collider  Ein weiteres Actor-Objekt.
-     * @param <E>       Typ-Parameter. SOllte im Regelfall exakt die Klasse von <code>collider</code> sein.
-     *                  Dies ermöglicht die Nutzung von spezifischen Methoden aus spezialisierteren Klassen
-     *                  der Actor-Hierarchie.
+     * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen zwischen diesem Actor und dem Actor
+     * <code>collider</code> reagiert.
+     *
+     * @param listener Der Listener, der bei Kollisionen zwischen dem <b>ausführenden Actor</b> und
+     *                 <code>collider</code> informiert werden soll.
+     * @param collider Ein weiteres Actor-Objekt.
+     * @param <E>      Typ-Parameter. SOllte im Regelfall exakt die Klasse von <code>collider</code> sein. Dies
+     *                 ermöglicht die Nutzung von spezifischen Methoden aus spezialisierteren Klassen der
+     *                 Actor-Hierarchie.
+     *
      * @see #addCollisionListener(CollisionListener)
      */
     @API
@@ -431,10 +413,12 @@ public abstract class Actor implements Attachable {
     }
 
     /**
-     * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen reagiert, die dieser Actor mit
-     * seiner Umwelt erlebt.
-     * @param listener  Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b>
-     *                  mit allen anderen Objekten der Scene erlebt.
+     * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen reagiert, die dieser Actor mit seiner
+     * Umwelt erlebt.
+     *
+     * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
+     *                 allen anderen Objekten der Scene erlebt.
+     *
      * @see #addCollisionListener(CollisionListener, Actor)
      */
     @API
@@ -445,8 +429,7 @@ public abstract class Actor implements Attachable {
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
 
     /**
-     * Rendert das Objekt am Ursprung. <ul> <li>Die Position ist (0|0).</li> <li>Die Roation ist
-     * 0.</li> </ul>
+     * Rendert das Objekt am Ursprung. <ul> <li>Die Position ist (0|0).</li> <li>Die Roation ist 0.</li> </ul>
      *
      * @param g Das zeichnende Graphics-Objekt
      */
@@ -454,20 +437,7 @@ public abstract class Actor implements Attachable {
     public abstract void render(Graphics2D g);
 
     /**
-     * Berechnet eine Form, die für die Kollisionsberechnungen dieses <code>Actor</code>-Objekts
-     * verwendet werden.
-     *
-     * @param pixelProMeter Die [px/m]-Konstante für die Umrechnung.
-     *
-     * @return Die zu dem Objekt zugehörige Shape in <b>[m]-Einheit, nicht in [px]</b>. Die
-     * Berechnung berücksichtigt die <b>aktuelle Position</b>.PositionHandlePositionalUse
-     */
-    @NoExternalUse
-    public abstract Shape createShape(final float pixelProMeter);
-
-    /**
-     * Überschriebene <code>finalize</code>-Methode. Loggt verbose die Garbage Collection des
-     * Actor-Objekts.
+     * Überschriebene <code>finalize</code>-Methode. Loggt verbose die Garbage Collection des Actor-Objekts.
      *
      * @throws Throwable Übernommen von Object
      */
@@ -481,7 +451,8 @@ public abstract class Actor implements Attachable {
 
     /**
      * Gibt die Scene aus, zu der dieser Actor gehört.
-     * @return  Das Scene-Objekt, zu dem dieser Actor gehört.
+     *
+     * @return Das Scene-Objekt, zu dem dieser Actor gehört.
      */
     public Scene getScene() {
         return scene;

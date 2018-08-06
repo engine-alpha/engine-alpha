@@ -19,17 +19,14 @@
 
 package ea.animation;
 
-import ea.Attachable;
 import ea.FrameUpdateListener;
-import ea.Scene;
 import ea.internal.ano.API;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
-    private Scene scene;
+public class ValueAnimator<V> implements FrameUpdateListener {
     private Consumer<V> consumer;
     private Interpolator<V> interpolator;
     private Mode mode;
@@ -86,7 +83,6 @@ public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
                         break;
                     case SINGLE:
                         this.currentTime = this.duration;
-                        this.scene.removeFrameUpdateListener(this);
 
                         for (Consumer<V> listener : completionListeners) {
                             listener.accept(this.interpolator.interpolate(1));
@@ -120,11 +116,6 @@ public class ValueAnimator<V> implements FrameUpdateListener, Attachable {
 
 
         this.consumer.accept(interpolator.interpolate(progress));
-    }
-
-    @Override
-    public void onAttach(Scene scene) {
-        this.scene = scene;
     }
 
     public ValueAnimator<V> addCompletionListener(Consumer<V> listener) {

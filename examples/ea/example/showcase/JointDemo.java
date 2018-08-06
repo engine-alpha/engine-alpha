@@ -52,7 +52,7 @@ implements KeyListener {
 
         hoverHolderBauen();
 
-        ball = new Circle(100);
+        ball = new Circle(this, 100);
         add(ball);
 
         ball.setColor(Color.BLUE);
@@ -62,12 +62,12 @@ implements KeyListener {
     }
 
     private ActorGroup hoverHolderBauen() {
-        ActorGroup knoten = new ActorGroup();
+        ActorGroup knoten = new ActorGroup(this);
         add(knoten);
 
         final int FACT = 2;
 
-        Polygon halter = new Polygon(
+        Polygon halter = new Polygon(this,
                 new Point(0*FACT,50*FACT), new Point(25*FACT, 75*FACT),
                 new Point(50*FACT, 75*FACT), new Point(75*FACT, 50*FACT),
                 new Point(75*FACT, 100*FACT), new Point(0*FACT,100*FACT)
@@ -76,7 +76,7 @@ implements KeyListener {
         halter.setColor(Color.CYAN);
         halter.physics.setType(Physics.Type.DYNAMIC);
 
-        Rectangle item = new Rectangle(35*FACT, 20*FACT);
+        Rectangle item = new Rectangle(this, 35*FACT, 20*FACT);
         item.position.set(30*FACT, 0);
         knoten.add(item);
         item.setColor(Color.red);
@@ -93,15 +93,15 @@ implements KeyListener {
     }
 
     private ActorGroup leashBauen() {
-        ActorGroup knoten = new ActorGroup();
+        ActorGroup knoten = new ActorGroup(this);
         add(knoten);
 
-        Circle kx = new Circle(30);
+        Circle kx = new Circle(this, 30);
         knoten.add(kx);
         kx.setColor(Color.BLUE);
         kx.physics.setType(Physics.Type.DYNAMIC);
 
-        Circle ky = new Circle(50);
+        Circle ky = new Circle(this, 50);
         ky.position.set(50, 0);
         knoten.add(ky);
         ky.setColor(Color.GREEN);
@@ -120,15 +120,15 @@ implements KeyListener {
     }
 
     private ActorGroup wippeBauen() {
-        ActorGroup bauwerk = new ActorGroup();
+        ActorGroup bauwerk = new ActorGroup(this);
         add(bauwerk);
 
-        basis = new Polygon(new Point(0, 100), new Point(100, 100), new Point(50, 0));
+        basis = new Polygon(this, new Point(0, 100), new Point(100, 100), new Point(50, 0));
         bauwerk.add(basis);
         basis.physics.setType(Physics.Type.STATIC);
         basis.setColor(Color.WHITE);
 
-        wippe = new Rectangle( 500, 40);
+        wippe = new Rectangle(this, 500, 40);
         bauwerk.add(wippe);
         wippe.physics.setType(Physics.Type.DYNAMIC);
 
@@ -147,12 +147,12 @@ implements KeyListener {
     }
 
     private ActorGroup ketteBauen(int kettenlaenge) {
-        ActorGroup ketteK = new ActorGroup();
+        ActorGroup ketteK = new ActorGroup(this);
         add(ketteK);
 
         kette = new Rectangle[kettenlaenge];
         for(int i = 0; i < kette.length; i++) {
-            kette[i] = new Rectangle(50, 10);
+            kette[i] = new Rectangle(this, 50, 10);
             Vector posrel = new Vector(45*i,30);
             ketteK.add(kette[i]);
             kette[i].position.move(posrel);
@@ -166,7 +166,7 @@ implements KeyListener {
             }
         }
 
-        Circle gewicht = new Circle(100);
+        Circle gewicht = new Circle(this, 100);
         ketteK.add(gewicht);
         gewicht.setColor(Color.WHITE);
 

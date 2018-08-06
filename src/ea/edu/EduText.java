@@ -1,15 +1,14 @@
 package ea.edu;
 
+import ea.Scene;
 import ea.actor.Actor;
 import ea.actor.Text;
 
-public class EduText
-extends Text
-implements EduActor{
+public class EduText extends Text implements EduActor {
 
+    public EduText(Scene scene, String content) {
+        super(scene, content);
 
-    public EduText(String content) {
-        super(content);
         eduSetup();
     }
 

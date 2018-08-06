@@ -2,9 +2,9 @@ package ea.internal.phy;
 
 import ea.Point;
 import ea.Vector;
+import ea.actor.ActorGroup;
 import ea.handle.Physics;
 import ea.internal.util.Logger;
-import ea.actor.ActorGroup;
 import org.jbox2d.dynamics.Body;
 
 /**
@@ -38,12 +38,6 @@ public class KnotenHandler extends PhysikHandler {
     @Override
     public void setSensor(boolean isSensor) {
         //
-    }
-
-    @Override
-    public void update(WorldHandler worldHandler) throws IllegalStateException {
-        //NICHTS ZU TUN
-        // (die Weitergabe wurde bereits im ActorGroup implementiert)
     }
 
     @Override

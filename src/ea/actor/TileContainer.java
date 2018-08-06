@@ -1,9 +1,11 @@
 package ea.actor;
 
+import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.io.ImageLoader;
-import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -39,8 +41,30 @@ public class TileContainer extends Actor {
      * @see #setTileAt(int, int, String)
      */
     @API
-    public TileContainer(int numX, int numY, int tileSize) {
-        if (numX <= 0 || numY <= 0) throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");
+    public TileContainer(Scene scene, int numX, int numY, int tileSize) {
+        super(scene, () -> {
+            PolygonShape shape = new PolygonShape();
+
+            float widthInMeters = tileSize * numX / scene.getWorldHandler().getPixelProMeter();
+            float heightInMeters = tileSize * numY / scene.getWorldHandler().getPixelProMeter();
+
+            Vec2 relativeCenter = new Vec2(widthInMeters / 2, heightInMeters / 2);
+            shape.set(new Vec2[] {
+                    new Vec2(0, 0),
+                    new Vec2(0, heightInMeters),
+                    new Vec2(widthInMeters, heightInMeters),
+                    new Vec2(widthInMeters, 0)
+            }, 4);
+
+            shape.m_centroid.set(relativeCenter);
+
+            return shape;
+        });
+
+        if (numX <= 0 || numY <= 0) {
+            throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");
+        }
+
         this.tileSize = tileSize;
         this.tiles = new Tile[numX][numY];
     }
@@ -143,15 +167,6 @@ public class TileContainer extends Actor {
         } finally {
             g.translate(0, offset);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @NoExternalUse
-    @Override
-    public Shape createShape(float pixelProMeter) {
-        return berechneBoxShape(pixelProMeter, tileSize * tiles.length, tileSize * tiles[0].length);
     }
 
     /**

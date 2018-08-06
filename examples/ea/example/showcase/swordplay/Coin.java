@@ -19,6 +19,7 @@
 
 package ea.example.showcase.swordplay;
 
+import ea.Scene;
 import ea.actor.Animation;
 
 /**
@@ -26,7 +27,7 @@ import ea.actor.Animation;
  * kostenfreien Grafiken.
  */
 public class Coin extends Animation {
-    public Coin() {
-        super(Animation.createFromAnimatedGif("game-assets/sword/coin.gif"));
+    public Coin(Scene scene) {
+        super(Animation.createFromAnimatedGif(scene, "game-assets/sword/coin.gif"));
     }
 }

@@ -19,10 +19,12 @@
 
 package ea.actor;
 
+import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.io.FontLoader;
-import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 
@@ -43,8 +45,8 @@ public class Text extends Actor {
     protected int size;
 
     /**
-     * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br /> Dies wird dargestellt als
-     * int.Wert:<br /> 0: Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv
+     * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br /> Dies wird dargestellt als int.Wert:<br /> 0:
+     * Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv
      */
     protected int fontStyle;
 
@@ -69,29 +71,48 @@ public class Text extends Actor {
     private Anchor anchor = Anchor.LEFT;
 
     /**
-     * Referenz auf die jüngsten Font-Metriken, die für die Berechnung der Textmaße verwendet
-     * wurden.
+     * Referenz auf die jüngsten Font-Metriken, die für die Berechnung der Textmaße verwendet wurden.
      */
     private FontMetrics fontMetrics;
 
     /**
-     * Konstruktor für Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im
-     * Projektordner sind. Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur
-     * Verfügung.
+     * Konstruktor für Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im Projektordner sind.
+     * Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur Verfügung.
      *
-     * @param content         Die Zeichenkette, die dargestellt werden soll
-     * @param fontName       Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font
-     *                       verwendet, der in dem Projektordner vorhanden sein soll, <b>und dies
-     *                       ist immer und in jedem Fall zu empfehlen</b>, muss der Name der
-     *                       Schriftart hier ebenfalls einfach nur eingegeben werden, <b>nicht der
-     *                       Name der schriftart-Datei!</b>
-     * @param size Die Groesse, in der die Schrift dargestellt werden soll
-     * @param type     Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br
-     *                       /> 0: Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett &
-     *                       Kursiv <br /> <br /> Alles andere sorgt nur fuer einen normalen Text.
+     * @param content  Die Zeichenkette, die dargestellt werden soll
+     * @param fontName Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
+     *                 Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu empfehlen</b>, muss
+     *                 der Name der Schriftart hier ebenfalls einfach nur eingegeben werden, <b>nicht der Name der
+     *                 schriftart-Datei!</b>
+     * @param size     Die Groesse, in der die Schrift dargestellt werden soll
+     * @param type     Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br /> 0: Normaler Text<br />
+     *                 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv <br /> <br /> Alles andere sorgt nur fuer einen
+     *                 normalen Text.
      */
     @API
-    public Text(String content, String fontName, int size, int type) {
+    public Text(Scene scene, String content, String fontName, int size, int type) {
+        super(scene, () -> {
+            Font font = FontLoader.loadByName(fontName).deriveFont(type, size);
+            FontMetrics fontMetrics = ea.util.FontMetrics.get(font);
+
+            PolygonShape shape = new PolygonShape();
+
+            float widthInMeters = fontMetrics.stringWidth(content) / scene.getWorldHandler().getPixelProMeter();
+            float heightInMeters = fontMetrics.getHeight() / scene.getWorldHandler().getPixelProMeter();
+
+            Vec2 relativeCenter = new Vec2(widthInMeters / 2, heightInMeters / 2);
+            shape.set(new Vec2[] {
+                    new Vec2(0, 0),
+                    new Vec2(0, heightInMeters),
+                    new Vec2(widthInMeters, heightInMeters),
+                    new Vec2(widthInMeters, 0)
+            }, 4);
+
+            shape.m_centroid.set(relativeCenter);
+
+            return shape;
+        });
+
         this.content = content;
         this.size = size;
 
@@ -105,35 +126,37 @@ public class Text extends Actor {
     }
 
     /**
-     * Erstellt einen Text mit spezifischem Inhalt und Font.
-     * Der Text ist in Schriftgröße 12, nicht fett, nicht kursiv.
-     * @param content       Der Inhalt, der dargestellt wird
-     * @param fontName      Der Font, in dem der Text dargestellt werden soll.
+     * Erstellt einen Text mit spezifischem Inhalt und Font. Der Text ist in Schriftgröße 12, nicht fett, nicht kursiv.
+     *
+     * @param content  Der Inhalt, der dargestellt wird
+     * @param fontName Der Font, in dem der Text dargestellt werden soll.
      */
     @API
-    public Text(String content, String fontName) {
-        this(content, fontName, 12, 0);
+    public Text(Scene scene, String content, String fontName) {
+        this(scene, content, fontName, 12, 0);
     }
 
     /**
-     * Erstellt einen Text mit spezifischem Inhalt und spezifischer Größe.
-     * Die Schriftart ist ein Standard-Font (Serifenfrei), nicht fett, nicht kursiv.
-     * @param content       Der Inhalt, der dargestellt wird
-     * @param size          Die Schriftgröße
+     * Erstellt einen Text mit spezifischem Inhalt und spezifischer Größe. Die Schriftart ist ein Standard-Font
+     * (Serifenfrei), nicht fett, nicht kursiv.
+     *
+     * @param content Der Inhalt, der dargestellt wird
+     * @param size    Die Schriftgröße
      */
     @API
-    public Text(String content, int size) {
-        this(content, Font.SANS_SERIF, size, 0);
+    public Text(Scene scene, String content, int size) {
+        this(scene, content, Font.SANS_SERIF, size, 0);
     }
 
     /**
-     * Erstellt einen Text mit spezifischem Inhalt und spezifischer Größe.
-     * Die Schriftart ist ein Standard-Font (Serifenfrei), Größe 12, nicht fett, nicht kursiv.
-     * @param content       Der Inhalt, der dargestellt wird
+     * Erstellt einen Text mit spezifischem Inhalt und spezifischer Größe. Die Schriftart ist ein Standard-Font
+     * (Serifenfrei), Größe 12, nicht fett, nicht kursiv.
+     *
+     * @param content Der Inhalt, der dargestellt wird
      */
     @API
-    public Text(String content) {
-        this(content, 12);
+    public Text(Scene scene, String content) {
+        this(scene, content, 12);
     }
 
     /**
@@ -160,9 +183,9 @@ public class Text extends Actor {
     /**
      * Setzt den Stil der Schriftart (Fett/Kursiv/Fett&Kursiv/Normal).
      *
-     * @param style Die Repraesentation der Schriftart als Zahl:<br/> 0: Normaler Text<br /> 1:
-     *            Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv<br /> <br /> Ist die Eingabe nicht
-     *            eine dieser 4 Zahlen, so wird nichts geaendert.
+     * @param style Die Repraesentation der Schriftart als Zahl:<br/> 0: Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br
+     *              /> 3: Fett & Kursiv<br /> <br /> Ist die Eingabe nicht eine dieser 4 Zahlen, so wird nichts
+     *              geaendert.
      */
     public void setStyle(int style) {
         if (style >= 0 && style <= 3) {
@@ -196,7 +219,7 @@ public class Text extends Actor {
      */
     @API
     public void setSize(int size) {
-        if(size <= 0) {
+        if (size <= 0) {
             throw new RuntimeException("Die Schriftgröße muss größer als 0 sein. Sie war " + size + ".");
         }
         this.size = size;
@@ -251,8 +274,8 @@ public class Text extends Actor {
     }
 
     /**
-     * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur getX-Koordinate befindet.
-     * Möglich sind: <li>{@code Text.Anchor.LEFT},</li> <li>{@code Text.Anchor.CENTER},</li>
+     * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur getX-Koordinate befindet. Möglich sind:
+     * <li>{@code Text.Anchor.LEFT},</li> <li>{@code Text.Anchor.CENTER},</li>
      * <li>{@code Text.Anchor.RIGHT}.</li> <br> <b>Hinweis</b>: {@code null} wird wie {@code
      * Anchor.LEFT} behandelt!
      *
@@ -266,20 +289,9 @@ public class Text extends Actor {
         this.anchor = anchor;
     }
 
-    @Override
-    @NoExternalUse
-    public Shape createShape(float pixelProMeter) {
-        if (fontMetrics == null) {
-            fontMetrics = ea.util.FontMetrics.get(font);
-        }
-
-        return berechneBoxShape(pixelProMeter, fontMetrics.stringWidth(content), fontMetrics.getHeight());
-    }
-
     /**
-     * Ein Textanker beschreibt, wo sich der Text relativ zu seiner getX-Koordinate befindet. Möglich
-     * sind: <li>{@code Anchor.LEFT},</li> <li>{@code Anchor.CENTER},</li> <li>{@code
-     * Anchor.RIGHT}.</li>
+     * Ein Textanker beschreibt, wo sich der Text relativ zu seiner getX-Koordinate befindet. Möglich sind: <li>{@code
+     * Anchor.LEFT},</li> <li>{@code Anchor.CENTER},</li> <li>{@code Anchor.RIGHT}.</li>
      *
      * @see #setAnchor(Anchor)
      * @see #getAnchor()

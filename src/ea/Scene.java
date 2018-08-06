@@ -37,10 +37,7 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scene {
     /**
@@ -70,11 +67,6 @@ public class Scene {
     private final Collection<FrameUpdateListener> frameUpdateListeners = new CopyOnWriteArraySet<>();
 
     /**
-     * Die Liste aller angemeldeten Attachables.
-     */
-    private final Map<Attachable, AtomicInteger> attachables = new ConcurrentHashMap<>();
-
-    /**
      * Der Wurzel-ActorGroup. An ihm müssen direkt oder indirekt (über weitere ActorGroup) alle
      * <code>Actor</code>-Objekte angemeldet werden, die gezeichnet werden sollen.
      */
@@ -86,10 +78,9 @@ public class Scene {
     private final WorldHandler worldHandler;
 
     public Scene() {
-        this.root = new ActorGroup();
-        this.camera = new Camera();
         this.worldHandler = new WorldHandler();
-        this.root.onAttach(this);
+        this.camera = new Camera();
+        this.root = new ActorGroup(this);
         this.addFrameUpdateListener(this.camera);
     }
 
@@ -151,148 +142,106 @@ public class Scene {
     }
 
     @API
-    public void add(Actor... rooms) {
+    final public void add(Actor... rooms) {
         for (Actor room : rooms) {
             this.root.add(room);
         }
     }
 
     @API
-    public void remove(Actor... rooms) {
+    final public void remove(Actor... rooms) {
         for (Actor room : rooms) {
             this.root.remove(room);
+            room.destroy();
         }
     }
 
     // TODO : Dokumentation für alle ADD-Methoden
 
-    public void attach(Object object) {
-        if (object instanceof Attachable) {
-            if (!attachables.containsKey(object)) {
-                Attachable attachable = (Attachable) object;
-                attachables.put(attachable, new AtomicInteger(1));
-                attachable.onAttach(this);
-            } else {
-                attachables.get(object).incrementAndGet();
-            }
-        }
-    }
-
-    public void detach(Object object) {
-        if (!(object instanceof Attachable) || !attachables.containsKey(object)) {
-            return;
-        }
-
-        int count = attachables.get(object).decrementAndGet();
-
-        if (count == 0) {
-            attachables.remove(object);
-            ((Attachable) object).onDetach(this);
-        }
+    @API
+    final public void addMouseClickListener(MouseClickListener mouseClickListener) {
+        this.mouseClickListeners.add(mouseClickListener);
     }
 
     @API
-    public void addMouseClickListener(MouseClickListener mouseClickListener) {
-        if (this.mouseClickListeners.add(mouseClickListener)) {
-            this.attach(mouseClickListener);
-        }
+    final public void removeMouseClickListener(MouseClickListener mouseClickListener) {
+        this.mouseClickListeners.remove(mouseClickListener);
     }
 
     @API
-    public void removeMouseClickListener(MouseClickListener mouseClickListener) {
-        if (this.mouseClickListeners.remove(mouseClickListener)) {
-            this.detach(mouseClickListener);
-        }
+    final public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        this.mouseWheelListeners.add(mouseWheelListener);
     }
 
     @API
-    public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        if (this.mouseWheelListeners.add(mouseWheelListener)) {
-            this.attach(mouseWheelListener);
-        }
+    final public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        this.mouseWheelListeners.remove(mouseWheelListener);
     }
 
     @API
-    public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        if (this.mouseWheelListeners.remove(mouseWheelListener)) {
-            this.detach(mouseWheelListener);
-        }
+    final public void addKeyListener(KeyListener keyListener) {
+        this.keyListeners.add(keyListener);
     }
 
     @API
-    public void addKeyListener(KeyListener keyListener) {
-        if (this.keyListeners.add(keyListener)) {
-            this.attach(keyListener);
-        }
+    final public void removeKeyListener(KeyListener keyListener) {
+        this.keyListeners.remove(keyListener);
     }
 
     @API
-    public void removeKeyListener(KeyListener keyListener) {
-        if (this.keyListeners.remove(keyListener)) {
-            this.detach(keyListener);
-        }
+    final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        this.frameUpdateListeners.add(frameUpdateListener);
     }
 
     @API
-    public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        if (this.frameUpdateListeners.add(frameUpdateListener)) {
-            this.attach(frameUpdateListener);
-        }
+    final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        this.frameUpdateListeners.remove(frameUpdateListener);
     }
-
-    @API
-    public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        if (this.frameUpdateListeners.remove(frameUpdateListener)) {
-            this.detach(frameUpdateListener);
-        }
-    }
-
-
 
     @NoExternalUse
-    public final void onFrameUpdateInternal(int frameDuration) {
+    final void onFrameUpdateInternal(int frameDuration) {
         for (FrameUpdateListener listener : this.frameUpdateListeners) {
             listener.onFrameUpdate(frameDuration);
         }
     }
 
     @NoExternalUse
-    public void onKeyDownInternal(int key) {
+    final void onKeyDownInternal(int key) {
         for (KeyListener listener : keyListeners) {
             listener.onKeyDown(key);
         }
     }
 
     @NoExternalUse
-    public void onKeyUpInternal(int key) {
+    final void onKeyUpInternal(int key) {
         for (KeyListener listener : keyListeners) {
             listener.onKeyUp(key);
         }
     }
 
     @NoExternalUse
-    public void onMouseDownInternal(Point position, MouseButton button) {
+    final void onMouseDownInternal(Point position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseDown(position, button);
         }
     }
 
     @NoExternalUse
-    public void onMouseUpInternal(Point position, MouseButton button) {
+    final void onMouseUpInternal(Point position, MouseButton button) {
         for (MouseClickListener listener : mouseClickListeners) {
             listener.onMouseUp(position, button);
         }
     }
 
     @NoExternalUse
-    public void onMouseWheelMoveInternal(MouseWheelAction mouseWheelAction) {
+    final void onMouseWheelMoveInternal(MouseWheelAction mouseWheelAction) {
         for (MouseWheelListener listener : mouseWheelListeners) {
             listener.onMouseWheelMove(mouseWheelAction);
         }
     }
 
     @API
-    public Point getMousePosition() {
+    final public Point getMousePosition() {
         return Game.convertMousePosition(this, Game.getMousePositionInFrame());
     }
 }

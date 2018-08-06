@@ -42,22 +42,21 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
     private HorizontalMovement horizontalMovement = HorizontalMovement.IDLE;
     private Vector smashForce = Vector.NULLVECTOR;
-    private Scene parent;
 
-    public PlayerCharacter(Scene parent) {
-        this.parent = parent;
+    public PlayerCharacter(Scene scene) {
+        super(scene, 64, 64);
 
         // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         String basePath = "game-assets/jump/spr_m_traveler_";
 
-        addState("idle", Animation.createFromAnimatedGif(basePath + "idle_anim.gif"));
-        addState("walking", Animation.createFromAnimatedGif(basePath + "walk_anim.gif"));
-        addState("running", Animation.createFromAnimatedGif(basePath + "run_anim.gif"));
-        addState("jumpingUp", Animation.createFromAnimatedGif(basePath + "jump_1up_anim.gif"));
-        addState("midair", Animation.createFromAnimatedGif(basePath + "jump_2midair_anim.gif"));
-        addState("falling", Animation.createFromAnimatedGif(basePath + "jump_3down_anim.gif"));
-        addState("landing", Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif"));
-        addState("smashing", Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif"));
+        addState("idle", Animation.createFromAnimatedGif(scene, basePath + "idle_anim.gif"));
+        addState("walking", Animation.createFromAnimatedGif(scene, basePath + "walk_anim.gif"));
+        addState("running", Animation.createFromAnimatedGif(scene, basePath + "run_anim.gif"));
+        addState("jumpingUp", Animation.createFromAnimatedGif(scene, basePath + "jump_1up_anim.gif"));
+        addState("midair", Animation.createFromAnimatedGif(scene, basePath + "jump_2midair_anim.gif"));
+        addState("falling", Animation.createFromAnimatedGif(scene, basePath + "jump_3down_anim.gif"));
+        addState("landing", Animation.createFromAnimatedGif(scene, basePath + "jump_4land_anim.gif"));
+        addState("smashing", Animation.createFromAnimatedGif(scene, basePath + "jump_4land_anim.gif"));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -65,7 +64,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         physics.setFriction(0);
         physics.setElasticity(0);
 
-        parent.add(this);
+        scene.add(this);
         physics.setMass(65);
         addCollisionListener(this);
     }
@@ -158,7 +157,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
             if (smashing) {
                 Interpolator<Float> interpolator = new ReverseEaseFloat(0, -0.01f * physics.getVelocity().y);
-                FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> parent.getCamera().setOffset(new Vector(0, y)), interpolator);
+                FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> getScene().getCamera().setOffset(new Vector(0, y)), interpolator);
                 getScene().addFrameUpdateListener(valueAnimator);
             }
         }

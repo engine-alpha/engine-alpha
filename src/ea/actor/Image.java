@@ -19,9 +19,11 @@
 
 package ea.actor;
 
+import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.io.ImageLoader;
-import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -43,7 +45,27 @@ public class Image extends Actor {
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
     @API
-    public Image(String filepath) {
+    public Image(Scene scene, String filepath) {
+        super(scene, () -> {
+            BufferedImage image = ImageLoader.load(filepath);
+            PolygonShape shape = new PolygonShape();
+
+            float breiteInM = image.getWidth() / scene.getWorldHandler().getPixelProMeter();
+            float laengeInM = image.getHeight() / scene.getWorldHandler().getPixelProMeter();
+
+            Vec2 relativeCenter = new Vec2(breiteInM / 2, laengeInM / 2);
+            shape.set(new Vec2[] {
+                    new Vec2(0, 0),
+                    new Vec2(0, laengeInM),
+                    new Vec2(breiteInM, laengeInM),
+                    new Vec2(breiteInM, 0)
+            }, 4);
+
+            shape.m_centroid.set(relativeCenter);
+
+            return shape;
+        });
+
         this.image = ImageLoader.load(filepath);
     }
 
@@ -55,14 +77,6 @@ public class Image extends Actor {
     @API
     public BufferedImage getImage() {
         return this.image;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Shape createShape(float pixelPerMeter) {
-        return this.berechneBoxShape(pixelPerMeter, image.getWidth(), image.getHeight());
     }
 
     /**

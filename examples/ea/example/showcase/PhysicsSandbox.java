@@ -39,9 +39,7 @@ import java.awt.*;
  *
  * Created by andonie on 05.09.15.
  */
-public class PhysicsSandbox
-extends ShowcaseDemo
-implements MouseClickListener, FrameUpdateListener, KeyListener {
+public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, FrameUpdateListener, KeyListener {
 
 
 
@@ -54,15 +52,15 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
 
         private Text[] texte; //Die Texte
 
-        public InfoBox() {
-            super();
-            box = new Rectangle( 150, 100);
+        public InfoBox(Scene scene) {
+            super(scene);
+            box = new Rectangle(scene, 150, 100);
             add(box);
             box.setColor(new Color(200, 200, 200, 100));
 
             texte = new Text[5];
             for(int i = 0; i < texte.length; i++) {
-                texte[i] = new Text("Text1");
+                texte[i] = new Text(scene, "Text1");
                 texte[i].position.set(i==0? 30 : 5, 5 + i*20);
                 texte[i].setSize(14);
                 add(texte[i]);
@@ -160,18 +158,18 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
         //fenster.nachrichtSchicken("Elastizität +[W]/-[Q] | Masse +[U] / -[J] | [R]eset | [S]chwerkraft | [E]insperren");
 
         //Test-Objekte
-        Rectangle rechteck = new Rectangle(100, 60);
+        Rectangle rechteck = new Rectangle(this, 100, 60);
         rechteck.position.set(10, 10);
         add(rechteck);
         rechteck.setColor(Color.YELLOW);
         rechteck.physics.setType(Physics.Type.DYNAMIC);
         testObjects[0] = rechteck;
 
-        fixierungsGruppe = new ActorGroup();
+        fixierungsGruppe = new ActorGroup(this);
         add(fixierungsGruppe);
 
 
-        Circle kreis = new Circle(50);
+        Circle kreis = new Circle(this, 50);
         kreis.position.set(10,10);
         //wurzel.add(kreis);
         fixierungsGruppe.add(kreis);
@@ -179,7 +177,7 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
         kreis.physics.setType(Physics.Type.DYNAMIC);
         testObjects[1] = kreis;
 
-        Circle kreis2 = new Circle(20);
+        Circle kreis2 = new Circle(this, 20);
         //wurzel.add(kreis2);
         fixierungsGruppe.add(kreis2);
         kreis2.setColor(Color.GREEN);
@@ -187,7 +185,7 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
         //kreis2.physics.masse(50);
         testObjects[2] = kreis2;
 
-        Polygon polygon = new Polygon(new Point(0,0), new Point(20, 30), new Point(10, 50),
+        Polygon polygon = new Polygon(this, new Point(0,0), new Point(20, 30), new Point(10, 50),
                 new Point(80, 10), new Point(120, 0));
         fixierungsGruppe.add(polygon);
         polygon.setColor(Color.BLUE);
@@ -195,7 +193,7 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
         testObjects[3] = polygon;
 
         //Boden
-        Rectangle boden = new Rectangle(FIELD_WIDTH, 10);
+        Rectangle boden = new Rectangle(this, FIELD_WIDTH, 10);
         boden.position.set(0, FIELD_DEPTH);
         add(boden);
         boden.setColor(Color.WHITE);
@@ -203,10 +201,10 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
         ground = walls[0] = boden;
 
         //Der Rest der Wände
-        Rectangle links = new Rectangle(10, FIELD_DEPTH);
-        Rectangle rechts = new Rectangle(10, FIELD_DEPTH);
+        Rectangle links = new Rectangle(this, 10, FIELD_DEPTH);
+        Rectangle rechts = new Rectangle(this, 10, FIELD_DEPTH);
         rechts.position.set(FIELD_WIDTH-10, 0);
-        Rectangle oben = new Rectangle(FIELD_WIDTH, 10);
+        Rectangle oben = new Rectangle(this, FIELD_WIDTH, 10);
         add(links, rechts, oben);
         walls[1] = links;
         walls[2] = rechts;
@@ -220,20 +218,20 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
 
 
         //Vector-Visualisierung
-        Rectangle stab = new Rectangle(100, 5);
+        Rectangle stab = new Rectangle(this, 100, 5);
         add(stab);
         stab.setColor(new Color(200, 50, 50));
         stange = stab;
-        stange.setZIndex(3);
+        stange.setLayer(3);
 
         //Attack-Visualisierung
-        Circle atv = new Circle(10);
+        Circle atv = new Circle(this, 10);
         add(atv);
         atv.setColor(Color.RED);
         attack = atv;
-        attack.setZIndex(4);
+        attack.setLayer(4);
 
-        box = new InfoBox();
+        box = new InfoBox(this);
         add(box);
         box.position.set(200, 30);
 
@@ -396,7 +394,7 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
                     if(isInAttackRange[i])
                         testObjects[i].physics.applyImpulse(distance.multiply(10), lastAttack);
                 }
-                
+
 
                 klickMode = KlickMode.ATTACK_POINT;
 
@@ -422,10 +420,10 @@ implements MouseClickListener, FrameUpdateListener, KeyListener {
                 return;
             Point pos = stange.position.get();
             remove(stange);
-            stange = new Rectangle(lastAttack.distanceTo(pointer), 5);
+            stange = new Rectangle(this, lastAttack.distanceTo(pointer), 5);
             System.out.println("new Rectangle: " + stange);
             stange.setColor(new Color(200, 50, 50));
-            stange.setZIndex(-10);
+            stange.setLayer(-10);
             stange.position.set(pos);
             add(stange);
             float rot = Vector.RECHTS.getAngle(lastAttack.vectorFromThisTo(pointer));

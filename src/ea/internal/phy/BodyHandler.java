@@ -1,9 +1,9 @@
 package ea.internal.phy;
 
+import ea.Point;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.handle.Physics;
-import ea.Point;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.AABB;
@@ -12,75 +12,45 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
 /**
- * Ein <code>Body-Handler</code> kümmert sich um die <i>physikalische Darstellung</i> eines <code>Actor</code>-Objekts.<br />
- * Er übernimmt zwei wesentliche Aufgaben:
+ * Ein <code>Body-Handler</code> kümmert sich um die <i>physikalische Darstellung</i> eines
+ * <code>Actor</code>-Objekts.<br /> Er übernimmt zwei wesentliche Aufgaben:
  * <ul>
- *     <li>Die Kontrolle und Steuerung innerhalb der <b>Physics-Engine</b> aus Sicht des respektiven Actor Objekts.</li>
- *     <li>Die Speicherung der <i>räumlichen Eigenschaften</i> (Position und Rotation) des respektiven Actor-Objekts.</li>
+ * <li>Die Kontrolle und Steuerung innerhalb der <b>Physics-Engine</b> aus Sicht des respektiven Actor Objekts.</li>
+ * <li>Die Speicherung der <i>räumlichen Eigenschaften</i> (Position und Rotation) des respektiven Actor-Objekts.</li>
  * </ul>
- * Created by andonie on 15.02.15.
  */
-public class BodyHandler
-extends PhysikHandler {
+public class BodyHandler extends PhysikHandler {
 
     /**
      * Referenz auf den Handler der World, in der sich der Body befindet.
      */
     private final WorldHandler worldHandler;
 
-
-    /**
-     * Beschreibt eine Aktion, die an diesem Body ausgeführt werden soll.
-     */
-    public interface BodyJob {
-        public void doJob();
-    }
-
-
-    /**
-     * Die Fixture Definition des Objekts.
-     */
-    private FixtureDef fixtureDef;
-    private BodyDef bodyDef;
-
-    /**
-     * Referenz auf den Vorgänger. Wird bewahrt für den Fall,
-     * dass vor der Safe Body Creation Positionsinformationen
-     * verlangt werden.
-     */
-    private NullHandler predecessor;
-
     /**
      * Die fixture (list) des Bodies.
      */
-    private Fixture fixture;
+    private final Fixture fixture;
 
     /**
      * Der Body als die physische Repräsentation des analogen Actor-Objekts in der Physics-Engine.
      */
-    private Body body;
-
-    public Body getBody() {
-        return body;
-    }
-
-
+    private final Body body;
 
     /**
      * Erstellt einen neuen Body-Handler
-     * @param actor
      */
     @NoExternalUse
-    public BodyHandler(Actor actor, WorldHandler worldHandler, BodyDef bd, FixtureDef fixtureDef, Physics.Type physikType, boolean isSensor, NullHandler predecessor) {
+    public BodyHandler(Actor actor, WorldHandler worldHandler, BodyDef bodyDef, FixtureDef fixtureDef, Physics.Type physikType, boolean isSensor) {
         super(actor, physikType, isSensor);
-        this.worldHandler = worldHandler;
-        this.fixtureDef = fixtureDef;
-        this.bodyDef = bd;
-        this.predecessor = predecessor;
 
-        //Enqueue for safe creation of body / fixture
-        //worldHandler.enqueueNewBodyHandler(this);
-        createBodyAndFixture();
+        this.worldHandler = worldHandler;
+
+        body = worldHandler.createBody(bodyDef, actor);
+        fixture = body.createFixture(fixtureDef);
+    }
+
+    public Body getBody() {
+        return body;
     }
 
     @Override
@@ -90,52 +60,32 @@ extends PhysikHandler {
     }
 
     @Override
-    public void update(WorldHandler worldHandler) throws IllegalStateException {
-        if(worldHandler != this.worldHandler) {
-            throw new IllegalStateException("Ein Actor-Objekt darf nicht zwischen Wurzeln wechseln.");
-        }
-    }
-
-    @Override
     public void verschieben(Vector v) {
-        if(body == null) {
-            predecessor.verschieben(v);
-            return;
-        }
-
-        //System.out.println("Position before: " + body.getPosition());
-        //System.out.println();
-
         Vec2 phyVec = worldHandler.fromVektor(v);
         body.setTransform(phyVec.add(body.getPosition()), body.getAngle());
 
-        //Wake Up Body -> Ensure In-Engine (JB2D) Adjustments will happen, e.g. Collision Readjustment
+        // Wake Up Body -> Ensure In-Engine (JB2D) Adjustments will happen, e.g. Collision Readjustment
         body.setAwake(true);
-        //System.out.println("Position after: " + body.getPosition());
-        //System.out.println();
     }
 
     @Override
     public Point mittelpunkt() {
-        if(physikType == Physics.Type.DYNAMIC) {
+        if (physikType == Physics.Type.DYNAMIC) {
             Vec2 wc = body.getWorldCenter();
             return worldHandler.fromVec2(wc).asPoint();
         } else {
             AABB bodyAABB = calculateBodyAABB();
             return worldHandler.fromVec2(bodyAABB.getCenter()).asPoint();
-            //Logger.error("Physics", "Mittelpunkt ist nur für Dynamische Objekte implementiert.");
-            //return worldHandler.fromVec2(body.getPosition()).asPoint();
         }
-
     }
 
     @Override
     public boolean beinhaltet(Point p) {
-        Fixture toTest=fixture;
-        //Iterate through all fixtures and check individually
-        while(toTest != null) {
-            if(toTest.testPoint(worldHandler.fromVektor(p.asVector())))
+        Fixture toTest = fixture;
+        while (toTest != null) {
+            if (toTest.testPoint(worldHandler.fromVektor(p.asVector()))) {
                 return true;
+            }
             toTest = toTest.m_next;
         }
         return false;
@@ -143,237 +93,189 @@ extends PhysikHandler {
 
     @Override
     public Point position() {
-        if(body == null) {
-            return predecessor.position();
-        }
         return worldHandler.fromVec2(body.getPosition()).asPoint();
     }
 
     @Override
     public float rotation() {
-        if(body == null) {
-            return predecessor.rotation();
-        }
         return body.getAngle();
     }
 
     @Override
     public void rotieren(float radians) {
-        //System.out.println("Rotiere um " + radians);
         body.setTransform(body.getPosition(), body.getAngle() + radians);
     }
 
     @Override
     public void dichteSetzen(float dichte) {
-        //Fixture body.getFixtureList()
-        if(physikBodyCheck()) {
-            Fixture fixture = body.getFixtureList();
-            while(fixture != null) {
-                fixture.setDensity(dichte);
-                fixture = fixture.getNext();
-            }
+        Fixture fixture = body.getFixtureList();
+        while (fixture != null) {
+            fixture.setDensity(dichte);
+            fixture = fixture.getNext();
         }
     }
 
     @Override
     public float dichte() {
-        if(physikBodyCheck()) {
-            return body.getFixtureList().getDensity();
-        } return -1;
+        return body.getFixtureList().getDensity();
     }
 
     @Override
     public void reibungSetzen(float reibung) {
-        if(physikBodyCheck()) {
-            Fixture fixture = body.getFixtureList();
-            while(fixture != null) {
-                fixture.setFriction(reibung);
-                fixture = fixture.getNext();
-            }
+        Fixture fixture = body.getFixtureList();
+        while (fixture != null) {
+            fixture.setFriction(reibung);
+            fixture = fixture.getNext();
         }
     }
 
     @Override
     public float reibung() {
-        if(physikBodyCheck()) {
-            return body.getFixtureList().getFriction();
-        } return -1;
+        return body.getFixtureList().getFriction();
     }
 
     @Override
     public void elastizitaetSetzen(float ela) {
-        if(physikBodyCheck()) {
-            Fixture fixture = body.getFixtureList();
-            if(fixture != null) {
-                fixture.setRestitution(ela);
-            }
+        Fixture fixture = body.getFixtureList();
+        if (fixture != null) {
+            fixture.setRestitution(ela);
         }
     }
 
     @Override
     public float elastizitaet() {
-        if(physikBodyCheck()) {
-            return body.getFixtureList().getRestitution();
-        } return -1;
+        return body.getFixtureList().getRestitution();
     }
 
     @Override
     public void masseSetzen(float masse) {
-        if(physikBodyCheck()) {
-            MassData md = new MassData();
-            body.getMassData(md);
-            md.mass = masse;
-            body.setMassData(md);
-        }
+        MassData md = new MassData();
+        body.getMassData(md);
+        md.mass = masse;
+        body.setMassData(md);
     }
 
     @Override
     public float masse() {
-        if(physikBodyCheck()) {
-            return body.getMass();
-        } return -1;
+        return body.getMass();
     }
 
     @Override
     public void kraftWirken(Vector kraft) {
-        if(physikBodyCheck())
-            body.applyForceToCenter(new Vec2(kraft.x, kraft.y));
+        body.applyForceToCenter(new Vec2(kraft.x, kraft.y));
     }
 
     @Override
     public void drehMomentWirken(float drehmoment) {
-        if(physikBodyCheck()) {
-            body.applyTorque(drehmoment);
-        }
+        body.applyTorque(drehmoment);
     }
 
     @Override
     public void drehImpulsWirken(float drehimpuls) {
-        if(physikBodyCheck()) {
-            body.applyAngularImpulse(drehimpuls);
-        }
+        body.applyAngularImpulse(drehimpuls);
     }
 
     @Override
     public void schwerkraftSetzen(Vector schwerkraftInN) {
         worldHandler.getWorld().setGravity(new Vec2(schwerkraftInN.x, schwerkraftInN.y));
-        if(physikBodyCheck()) {
-            body.setAwake(true);
-        }
+        body.setAwake(true);
     }
 
     @Override
     public PhysikHandler typ(Physics.Type type) {
-        //bodyGate();
-        if(type == physikType) {
-            return this; //kein Update nötig.
+        if (type == physikType) {
+            return this; // kein Update nötig
         }
+
         this.physikType = type;
+
         BodyType newType = type.convert();
         body.setType(newType);
-        //isSensor = true; //TODO Delete again.
+        // isSensor = true; // TODO Delete again.
 
-        //System.out.println("I have a fixture:" + body.getFixtureList());
-
-        //body.setActive(setType != Physics.Type.PASSIVE);
-        //System.out.println("Set active!");
         body.setActive(true);
         fixture.setSensor(type == Physics.Type.PASSIVE);// && isSensor);
         body.setGravityScale(type == Physics.Type.PASSIVE ? 0 : 1);
 
-        //System.out.println("Ph-Update: Sensor=" + body.getFixtureList().isSensor() + " - " + body.isActive());
-
         return this;
     }
 
-
     @Override
     public void kraftWirken(Vector kraftInN, Point globalerOrt) {
-        if(physikBodyCheck()) {
-            body.applyForce(new Vec2(kraftInN.x, kraftInN.y), worldHandler.fromVektor(globalerOrt.asVector()));
-        }
+        body.applyForce(new Vec2(kraftInN.x, kraftInN.y), worldHandler.fromVektor(globalerOrt.asVector()));
     }
 
     @Override
     public void impulsWirken(Vector impulsInNS, Point globalerOrt) {
-        if(physikBodyCheck()) {
-            body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), worldHandler.fromVektor(globalerOrt.asVector()));
-        }
+        body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), worldHandler.fromVektor(globalerOrt.asVector()));
     }
 
     @Override
     public void physicalReset() {
-        if(physikBodyCheck()) {
-            body.setLinearVelocity(new Vec2());
-            body.setAngularVelocity(0);
-        }
+        body.setLinearVelocity(new Vec2());
+        body.setAngularVelocity(0);
     }
 
     @Override
     public void geschwindigkeitSetzen(Vector geschwindigkeitInMProS) {
-        if(physikBodyCheck()) {
-            body.setLinearVelocity(new Vec2(geschwindigkeitInMProS.x, geschwindigkeitInMProS.y));
-        }
+        body.setLinearVelocity(new Vec2(geschwindigkeitInMProS.x, geschwindigkeitInMProS.y));
     }
 
     @Override
     public Vector geschwindigkeit() {
-        if(physikBodyCheck()) {
-            return worldHandler.fromVec2(body.getLinearVelocity());
-        } return null;
+        return worldHandler.fromVec2(body.getLinearVelocity());
     }
 
     @Override
     public void rotationBlockiertSetzen(boolean block) {
-        if(physikBodyCheck()) {
-            body.setFixedRotation(block);
-        }
+        body.setFixedRotation(block);
     }
 
     @Override
     public boolean rotationBlockiert() {
-        if(physikBodyCheck()) {
-            return body.isFixedRotation();
-        } return false;
+        return body.isFixedRotation();
     }
 
     private AABB calculateBodyAABB() {
         AABB bodyBounds = new AABB();
-        bodyBounds.lowerBound.x = bodyBounds.lowerBound.y =  Float.MAX_VALUE;
-        bodyBounds.upperBound.x = bodyBounds.upperBound.y = -Float.MAX_VALUE;
-        Fixture nextFixture = body.m_fixtureList;
+        bodyBounds.lowerBound.x = Float.MAX_VALUE;
+        bodyBounds.lowerBound.y = Float.MAX_VALUE;
+        bodyBounds.upperBound.x = -Float.MAX_VALUE;
+        bodyBounds.upperBound.y = -Float.MAX_VALUE;
 
+        Fixture nextFixture = body.m_fixtureList;
         while (nextFixture != null) {
-            //TODO Include chain shapes (more than one child)
+            // TODO Include chain shapes (more than one child)
             bodyBounds.combine(bodyBounds, nextFixture.getAABB(0));
             nextFixture = nextFixture.m_next;
         }
+
         return bodyBounds;
     }
 
     @Override
     public boolean testIfGrounded() {
-        if(this.typ() != Physics.Type.DYNAMIC) {
-            Logger.error("Phyiscs", "Der Steh-Test ist nur definiert für dynamische Objekte.");
-            return false;
+        if (this.typ() != Physics.Type.DYNAMIC) {
+            throw new RuntimeException("Der Steh-Test ist nur für dynamische Objekte definiert");
         }
+
         AABB bodyBounds = calculateBodyAABB();
 
-        //Test-AABB: Should be a minimal space centered right below the Body
+        // Test-AABB: Should be a minimal space centered right below the Body
         AABB testAABB = new AABB();
         final float epsilon = 0.0001f;
-        testAABB.lowerBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2-epsilon,bodyBounds.lowerBound.y);
-        testAABB.upperBound.set((bodyBounds.lowerBound.x+bodyBounds.upperBound.x)/2+epsilon,
-                bodyBounds.lowerBound.y + 2*epsilon);
-
-
+        testAABB.lowerBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 - epsilon, bodyBounds.lowerBound.y);
+        testAABB.upperBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 + epsilon,
+                bodyBounds.lowerBound.y + 2 * epsilon);
 
         Fixture[] groundCandidates = worldHandler.aabbQuery(testAABB);
-        for(Fixture fixture : groundCandidates) {
+        for (Fixture fixture : groundCandidates) {
             Actor corresponding = worldHandler.bodyLookup(fixture.m_body);
-            if(corresponding != null && corresponding.physics.getType() == Physics.Type.STATIC)
+            if (corresponding != null && corresponding.physics.getType() == Physics.Type.STATIC) {
                 return true;
+            }
         }
+
         return false;
     }
 
@@ -387,36 +289,5 @@ extends PhysikHandler {
     @Override
     public WorldHandler worldHandler() {
         return worldHandler;
-    }
-
-    /**
-     * Wird aufgerufen, sobald
-     */
-    @NoExternalUse
-    public void createBodyAndFixture() {
-
-        bodyDef.position.set(worldHandler.fromVektor(predecessor.position().asVector()));
-
-
-        body =  worldHandler.createBody(bodyDef, super.actor);
-        fixture = body.createFixture(fixtureDef);
-
-        bodyDef = null;
-        fixtureDef = null;
-        predecessor = null;
-    }
-
-    /**
-     * Interner Check, ob der Body bereits erstellt wurde. Falls dies nicht der Fall ist,
-     * wird eine Fehlermeldung ausgegeben.
-     * @return  <code>true</code>, wenn der Body bereits existiert (ungleich <code>null</code> ist),
-     *          sonst <code>false</code>.
-     */
-    private boolean physikBodyCheck() {
-        if(body == null) {
-            Logger.error("Physics", "Bevor das Actor-Objekt an einer Physics-Umgebung (~Wurzel) angemeldet war, " +
-                    "wurde versucht, eine physikalische Operation daran auszuführen.");
-            return false;
-        } else return true;
     }
 }

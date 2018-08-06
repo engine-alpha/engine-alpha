@@ -77,7 +77,7 @@ implements CollisionListener<Actor>, KeyListener {
 
     private static final float BODEN_TIEFE = 700, ABSTAND_LINKS=50;
 
-    public BallThrow(Scene parent, int width, int height) {
+    public BallThrow(Scene parent) {
         super(parent);
         initialisieren();
         addKeyListener(this);
@@ -88,7 +88,7 @@ implements CollisionListener<Actor>, KeyListener {
         getWorldHandler().setPixelProMeter(PIXELPROMETER);
 
         //Den Ball erstellen
-        ball = new Circle( DURCHMESSER*PIXELPROMETER);
+        ball = new Circle(this, DURCHMESSER*PIXELPROMETER);
         add(ball);
         ball.setColor(Color.RED);
         ball.physics.setType(Physics.Type.DYNAMIC);
@@ -99,7 +99,7 @@ implements CollisionListener<Actor>, KeyListener {
         //kamera.fokusSetzen(ball);
 
         //Den Boden erstellen
-        boden=new Rectangle(20000,20);
+        boden=new Rectangle(this, 20000,20);
         boden.position.set(0,BODEN_TIEFE);
         add(boden);
         boden.setColor(Color.WHITE);

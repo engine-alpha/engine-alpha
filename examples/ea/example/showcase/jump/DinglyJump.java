@@ -30,7 +30,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
         toggleGravity();
 
-        Rectangle platform = new Rectangle(5000, 10);
+        Rectangle platform = new Rectangle(this, 5000, 10);
         platform.setColor(Color.WHITE);
         platform.position.set(-2500, -300);
         add(platform);
@@ -45,7 +45,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
         setDebuggingEnabled(false);
 
-        Circle circleToAnimate = new Circle(250);
+        Circle circleToAnimate = new Circle(this, 250);
         add(circleToAnimate);
         circleToAnimate.setColor(Color.YELLOW);
 

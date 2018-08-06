@@ -45,14 +45,14 @@ public class Particles extends ea.Scene implements KeyListener {
     private Particles() {
         Game.setTitle("Marbles");
 
-        Rectangle left = new Rectangle(200, 10);
+        Rectangle left = new Rectangle(this, 200, 10);
         left.position.set(-WIDTH / 6 - 50, 50);
         add(left);
 
         left.setColor(Color.white);
         left.position.rotate((float) Math.toRadians(21));
 
-        Rectangle right = new Rectangle(200, 10);
+        Rectangle right = new Rectangle(this, 200, 10);
         right.position.set(+WIDTH / 6, 0);
         add(right);
 
@@ -64,7 +64,7 @@ public class Particles extends ea.Scene implements KeyListener {
         addFrameUpdateListener(new PeriodicTask(1000) {
             @Override
             public void dispatch() {
-                Circle k = new Circle(6) {
+                Circle k = new Circle(Particles.this, 6) {
                     private ParticleEmitter particles = new ParticleEmitter();
                     private boolean registered = false;
 
@@ -104,16 +104,16 @@ public class Particles extends ea.Scene implements KeyListener {
         left.physics.setElasticity(.9f);
         right.physics.setElasticity(.9f);
 
-        Rectangle r1 = new Rectangle(WIDTH, 10);
+        Rectangle r1 = new Rectangle(this, WIDTH, 10);
         r1.position.set(-WIDTH / 2, -HEIGHT / 2);
 
-        Rectangle r2 = new Rectangle(10, HEIGHT);
+        Rectangle r2 = new Rectangle(this, 10, HEIGHT);
         r2.position.set(-WIDTH / 2, -HEIGHT / 2);
 
-        Rectangle r3 = new Rectangle(WIDTH, 10);
+        Rectangle r3 = new Rectangle(this, WIDTH, 10);
         r3.position.set(-WIDTH / 2, HEIGHT / 2 - 10);
 
-        Rectangle r4 = new Rectangle(10, HEIGHT);
+        Rectangle r4 = new Rectangle(this, 10, HEIGHT);
         r4.position.set(WIDTH / 2 - 10, -HEIGHT / 2);
 
         add(r1, r2, r3, r4);

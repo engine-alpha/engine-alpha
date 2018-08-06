@@ -19,9 +19,11 @@
 
 package ea.actor;
 
-import ea.Point;
+import ea.Scene;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
+import java.util.function.Supplier;
 
 /**
  * Ein Objekt, das aus n primitiven Geometrischen Formen - <b>Dreiecken</b> - besteht.
@@ -36,9 +38,9 @@ public abstract class Geometry extends Actor {
 
     /**
      * Konstruktor.
-     *
      */
-    public Geometry() {
+    public Geometry(Scene scene, Supplier<Shape> shapeSupplier) {
+        super(scene, shapeSupplier);
     }
 
     /**

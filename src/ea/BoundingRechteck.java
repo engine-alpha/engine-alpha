@@ -19,7 +19,6 @@
 
 package ea;
 
-import ea.actor.Rectangle;
 import ea.internal.ano.NoExternalUse;
 
 /**
@@ -62,18 +61,6 @@ public final class BoundingRechteck {
         this.y = y;
         this.width = dX;
         this.height = dY;
-    }
-
-    /**
-     * Berechnet aus diesem rein aus Zahlen bestehenden Rahmen ein Rectangle, das in der Zeichenebene
-     * darstellbar ist.
-     *
-     * @return Ein neues Rectangle-Objekt, das genau dieses BoundingRechteck abdeckt
-     */
-    public Rectangle ausDiesem() {
-        Rectangle rectangle = new Rectangle(width, height);
-        rectangle.position.set(x,y);
-        return rectangle;
     }
 
     /**

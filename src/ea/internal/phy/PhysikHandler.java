@@ -62,15 +62,6 @@ public abstract class PhysikHandler {
     public abstract void setSensor(boolean isSensor);
 
     /**
-     * Informiert diesen Handler, wenn es ein Update in der Baumstruktur um das Actor-Objekt gab. Die neue Physics (falls vorhanden)
-     * wird so an alle Actor-Objekte weitergegeben.
-     * @param worldHandler      Die neue Physics-Umgebung.
-     * @throws java.lang.IllegalStateException  Falls ein Actor-Objekt vectorFromThisTo dem tastenReagierbarAnmelden an einer Wurzel auf die Wurzel eines anderen Fensters
-     *                                          verschoben wird.
-     */
-    public abstract void update(WorldHandler worldHandler) throws IllegalStateException;
-
-    /**
      * Verschiebt das Ziel-Objekt um einen spezifischen Wert auf der Zeichenebene. Die Ausführung hat <b>erst (ggf.) im
      * kommenden Frame</b> einfluss auf die Physics und <b>ändert keine physikalischen Eigenschaften</b> des Ziel-Objekts
      * (außer dessen Ort).
