@@ -154,7 +154,8 @@ public class Spiel {
      * </ul>
      */
     public void neueSzene() {
-        setActiveScene(new EduScene());
+        EduScene newScene = new EduScene();
+        setActiveScene(newScene);
     }
 
     /**
@@ -237,8 +238,17 @@ public class Spiel {
      * @param linksklick
      * 		Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
      */
-    public void klickReagierbarAnmelden (Object client, boolean linksklick) {
+    public void klickReagierbarAnmeldenSzene (Object client, boolean linksklick) {
         getActiveScene().addEduClickListener(client, linksklick);
+    }
+
+    /**
+     *
+     * @param client
+     * @param linksklick
+     */
+    public void klickReagierbarAnmelden (Object client, boolean linksklick) {
+        klickReagierbarAnmeldenSzene(client, linksklick);
     }
 
     /**
@@ -250,6 +260,10 @@ public class Spiel {
      * @param o
      * 		Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Tastendruck informiert.
      */
+    public void tastenReagierbarAnmeldenSzene (Object o) {
+        getActiveScene().addEduKeyListener(o);
+    }
+
     public void tastenReagierbarAnmelden (Object o) {
         getActiveScene().addEduKeyListener(o);
     }
