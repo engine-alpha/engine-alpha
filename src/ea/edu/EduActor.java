@@ -100,6 +100,10 @@ public interface EduActor {
         getActor().physics.setFriction(reibungsKoeffizient);
     }
 
+    default void setzeGeschwindigkeit(float vX, float vY) {
+        getActor().physics.setVelocity(new Vector(vX, vY));
+    }
+
     default void setzeElastizitaet(float elastizitaetsKoeffizient) {
         getActor().physics.setElasticity(elastizitaetsKoeffizient);
     }
