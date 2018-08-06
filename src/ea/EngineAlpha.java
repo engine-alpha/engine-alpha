@@ -19,7 +19,6 @@
 
 package ea;
 
-import ea.internal.FrameSubthread;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.util.Logger;
@@ -84,16 +83,6 @@ public final class EngineAlpha extends Frame {
 		IS_JAR = isJar();
 		BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;
 	}
-
-	/**
-	 * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
-	 * Dies betrifft unter anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
-	 * diese Variable eingeführt.
-	 * @see FrameSubthread
-	 * @author andonie
-	 * @version 11.04.2017
-	 */
-	private static boolean verbose;
 
 	/**
 	 * Panel, das den Fensterinhalt zeichnet.
@@ -222,29 +211,6 @@ public final class EngineAlpha extends Frame {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Gibt an, ob die laufende Instanz der Engine gerade verbose Output gibt.
-	 * @return	ist dieser Wert <code>true</code>, werden extrem ausführliche Logging-Informationen gespeichert.
-	 * 			Sonst ist der Wert <code>false</code>.
-	 * @see #setVerbose(boolean)
-	 */
-	@API
-	public static boolean isVerbose () {
-		return verbose;
-	}
-
-	/**
-	 * Setzt, ob die aktuell laufende Instanz der Engine verbose Output geben soll.
-	 * @param value	ist dieser Wert <code>true</code>, so wird ein äußerst ausführlicher Log über die Funktionalität
-	 *              der Engine geführt. Dies ist hauptsächlich für das Debugging an der Engine selbst notwendig.
-	 * @see #isVerbose()
-	 * @see #setDebug(boolean)
-	 */
-	@API
-	public static void setVerbose(boolean value) {
-		verbose = value;
 	}
 
 	private class EngineAlphaPromotion extends Canvas implements Runnable {

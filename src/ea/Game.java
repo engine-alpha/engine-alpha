@@ -74,6 +74,15 @@ public final class Game {
     private static boolean debug;
 
     /**
+     * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
+     * Dies betrifft unter anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
+     * diese Variable eingeführt.
+     * @author andonie
+     * @version 11.04.2017
+     */
+    private static boolean verbose;
+
+    /**
      * Breite des Fensters.
      */
     private static int width;
@@ -580,6 +589,29 @@ public final class Game {
     @API
     public static boolean isDebug() {
         return debug;
+    }
+
+    /**
+     * Gibt an, ob die laufende Instanz der Engine gerade verbose Output gibt.
+     * @return	ist dieser Wert <code>true</code>, werden extrem ausführliche Logging-Informationen gespeichert.
+     * 			Sonst ist der Wert <code>false</code>.
+     * @see #setVerbose(boolean)
+     */
+    @API
+    public static boolean isVerbose () {
+        return verbose;
+    }
+
+    /**
+     * Setzt, ob die aktuell laufende Instanz der Engine verbose Output geben soll.
+     * @param value	ist dieser Wert <code>true</code>, so wird ein äußerst ausführlicher Log über die Funktionalität
+     *              der Engine geführt. Dies ist hauptsächlich für das Debugging an der Engine selbst notwendig.
+     * @see #isVerbose()
+     * @see #setDebug(boolean)
+     */
+    @API
+    public static void setVerbose(boolean value) {
+        verbose = value;
     }
 
     /**

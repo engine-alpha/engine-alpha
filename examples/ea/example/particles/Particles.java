@@ -36,7 +36,7 @@ public class Particles extends ea.Scene implements KeyListener {
     public static final int WIDTH = 800, HEIGHT = 600;
 
     public static void main(String[] args) {
-        EngineAlpha.setVerbose(true);
+        Game.setVerbose(true);
         Game.setDebug(true);
         Game.start(WIDTH, HEIGHT, new Particles());
     }

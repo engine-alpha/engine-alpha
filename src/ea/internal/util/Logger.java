@@ -162,7 +162,7 @@ final public class Logger {
      * @see ea.EngineAlpha#setVerbose(boolean)
      */
     public static void verboseInfo(String tag, String s) {
-        if (ea.EngineAlpha.isVerbose()) {
+        if (ea.Game.isVerbose()) {
             StackTraceElement e = Thread.currentThread().getStackTrace()[2];
             write("VER", tag, e.getFileName(), e.getLineNumber(), s, false, false);
         }
