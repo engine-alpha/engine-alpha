@@ -22,7 +22,6 @@ package ea.actor;
 import ea.FrameUpdateListener;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
-import ea.internal.frame.Dispatchable;
 import ea.internal.gra.Frame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
@@ -31,7 +30,10 @@ import org.jbox2d.collision.shapes.Shape;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -85,6 +87,15 @@ public class Animation extends Actor implements FrameUpdateListener {
 
         this.currentTime = 0;
         this.currentIndex = 0;
+    }
+
+    /**
+     * Copy-Konstruktor, damit Vererbung genutzt werden kann.
+     *
+     * @param animation Animation.
+     */
+    public Animation(Animation animation) {
+        this(animation.getFrames());
     }
 
     /**
