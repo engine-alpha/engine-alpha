@@ -429,6 +429,7 @@ public class Game {
                 try {
                     Thread.sleep(16 - duration);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
             }
@@ -622,6 +623,8 @@ public class Game {
             return;
         }
 
+        frameBarrierStart.forceTermination();
+        frameBarrierEnd.forceTermination();
         mainThread.interrupt();
     }
 
