@@ -328,11 +328,18 @@ public class WorldHandler implements ContactListener {
     private void generalCheckup(Body act, Body col, Contact contact, final boolean isBegin) {
         List<CollisionListener<Actor>> list = generalCollisonListeners.get(act);
         if (list != null) {
-            Actor other = worldMap.get(col); // Darf (eigentlich) niemals null sein
+            Actor other = worldMap.get(col);
+            if (other == null) {
+                return; // Is null on async removals
+            }
+
             CollisionEvent<Actor> collisionEvent = new CollisionEvent<>(contact, other);
             for (CollisionListener<Actor> kr : list) {
-                if (isBegin) kr.onCollision(collisionEvent);
-                else kr.onCollisionEnd(collisionEvent);
+                if (isBegin) {
+                    kr.onCollision(collisionEvent);
+                } else {
+                    kr.onCollisionEnd(collisionEvent);
+                }
             }
         }
     }

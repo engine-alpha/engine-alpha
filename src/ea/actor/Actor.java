@@ -166,6 +166,11 @@ public abstract class Actor {
             return;
         }
 
+        if (Game.isLocked()) {
+            Game.enqueue(this::destroy);
+            return;
+        }
+
         this.alive = false;
         this.physicsHandler.killBody();
         this.scene = null;

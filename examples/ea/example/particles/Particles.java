@@ -94,7 +94,7 @@ public class Particles extends ea.Scene implements KeyListener {
         r3.setColor(Color.yellow);
         r4.setColor(Color.yellow);
 
-        r3.addCollisionListener((event) -> Game.enqueue(() -> this.remove(event.getColliding())));
+        r1.addCollisionListener(event -> remove(event.getColliding()));
 
         this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), ValueAnimator.Mode.REPEATED));
     }

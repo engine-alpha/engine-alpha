@@ -392,7 +392,10 @@ public final class Game {
             } catch (Exception e) {
                 Game.exit();
 
-                throw e;
+                // noinspection CallToPrintStackTrace
+                e.printStackTrace();
+
+                break; // comment out to keep window open
             }
         }
 
@@ -632,6 +635,14 @@ public final class Game {
     @API
     public static void setDebug(boolean value) {
         debug = value;
+    }
+
+    /**
+     * Überprüft, ob das Spiel gerade im World Step ist.
+     */
+    @NoExternalUse
+    public static boolean isLocked() {
+        return scene.getWorldHandler().getWorld().isLocked();
     }
 
     @SuppressWarnings ( "AssignmentToStaticFieldFromInstanceMethod" )

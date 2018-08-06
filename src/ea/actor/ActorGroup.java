@@ -21,6 +21,7 @@ package ea.actor;
 
 import ea.BoundingRechteck;
 import ea.FrameUpdateListener;
+import ea.Game;
 import ea.Scene;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
@@ -126,6 +127,11 @@ public class ActorGroup extends Actor {
     @API
     public void remove(Actor actor) {
         synchronized (this.actors) {
+            if (Game.isLocked()) {
+                Game.enqueue(() -> remove(actor));
+                return;
+            }
+
             if (!this.actors.remove(actor)) {
                 return;
             }
@@ -133,10 +139,8 @@ public class ActorGroup extends Actor {
 
         // Always detach _after_ removing from the actors,
         // otherwise rendering might result in a NPE.
-        if (this.getScene() != null) {
-            this.detachListeners(actor);
-            actor.destroy();
-        }
+        this.detachListeners(actor);
+        actor.destroy();
     }
 
     /**
