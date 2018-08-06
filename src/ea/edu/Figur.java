@@ -32,7 +32,7 @@ public class Figur extends StatefulAnimation implements EduActor {
         }
 
         this.scale = scale;
-        zustandHinzufuegenVonGIF(scene, zustandsName, gifBildPfad);
+        zustandHinzufuegenVonGIF(zustandsName, gifBildPfad);
         eduSetup();
     }
 
@@ -47,7 +47,7 @@ public class Figur extends StatefulAnimation implements EduActor {
      * @param anzahlX       Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY       Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
-    public Figur(, float scale, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+    public Figur(float scale, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
         super(Spiel.getActiveScene(), ImageLoader.load(spriteSheetPfad).getWidth()/anzahlX,
                 ImageLoader.load(spriteSheetPfad).getHeight()/anzahlY);
 
@@ -56,7 +56,7 @@ public class Figur extends StatefulAnimation implements EduActor {
         }
 
         this.scale = scale;
-        zustandHinzufuegenVonSpritesheet(scene, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
+        zustandHinzufuegenVonSpritesheet(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
         eduSetup();
     }
 
@@ -92,12 +92,12 @@ public class Figur extends StatefulAnimation implements EduActor {
      * @param zustandsName  Name des Zustands.
      * @param bildpfad      Pfad zum GIF, das zu diesem Zustand animiert wird.
      */
-    public void zustandHinzufuegenVonGIF(Scene scene, String zustandsName, String bildpfad) {
+    public void zustandHinzufuegenVonGIF(String zustandsName, String bildpfad) {
         if(!bildpfad.toLowerCase().endsWith(".gif")) {
             throw new RuntimeException("Der agegebene Bildpfad muss eine GIF-Datei sein und auf \".gif\" enden. "
                     + "Der angegebene Bildpfad war " + bildpfad);
         }
-        Animation animation = Animation.createFromAnimatedGif(scene, bildpfad);
+        Animation animation = Animation.createFromAnimatedGif(Spiel.getActiveScene(), bildpfad);
         addStateWithScaling(zustandsName, animation);
     }
 
@@ -109,8 +109,8 @@ public class Figur extends StatefulAnimation implements EduActor {
      * @param anzahlX       Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY       Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
-    public void zustandHinzufuegenVonSpritesheet(Scene scene, String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
-        Animation animation = Animation.createFromSpritesheet(scene, 250, bildpfad, anzahlX, anzahlY);
+    public void zustandHinzufuegenVonSpritesheet(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
+        Animation animation = Animation.createFromSpritesheet(Spiel.getActiveScene(), 250, bildpfad, anzahlX, anzahlY);
         addStateWithScaling(zustandsName, animation);
     }
 
@@ -119,8 +119,8 @@ public class Figur extends StatefulAnimation implements EduActor {
      * @param zustandsName  Der Name des Zustands.
      * @param bildpfade     Die Pfade der Animationsframes in korrekter Reihenfolge.
      */
-    public void zustandHinzufuegenVonBildern(Scene scene, String zustandsName, String... bildpfade) {
-        Animation animation = Animation.createFromImages(scene, 250, bildpfade);
+    public void zustandHinzufuegenVonBildern(String zustandsName, String... bildpfade) {
+        Animation animation = Animation.createFromImages(Spiel.getActiveScene(), 250, bildpfade);
         addStateWithScaling(zustandsName, animation);
     }
 
@@ -131,8 +131,8 @@ public class Figur extends StatefulAnimation implements EduActor {
      * @param verzeichnisPfad   Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
      * @param praefix           Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
-    public void zustandHinzufuegenNachPraefix(Scene scene, String zustandName, String verzeichnisPfad, String praefix) {
-        Animation animation = Animation.createFromImagesPrefix(scene, 250, verzeichnisPfad, praefix);
+    public void zustandHinzufuegenNachPraefix(String zustandName, String verzeichnisPfad, String praefix) {
+        Animation animation = Animation.createFromImagesPrefix(Spiel.getActiveScene(), 250, verzeichnisPfad, praefix);
         super.addState(zustandName, animation);
     }
 
