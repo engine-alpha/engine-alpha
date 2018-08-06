@@ -24,8 +24,8 @@ public class Figur extends StatefulAnimation implements EduActor {
      * @param zustandsName  Der Name für den ersten Zustand.
      * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>.
      */
-    public Figur(Scene scene, float scale, String zustandsName, String gifBildPfad) {
-        super(scene, ImageLoader.load(gifBildPfad).getWidth(), ImageLoader.load(gifBildPfad).getHeight());
+    public Figur(float scale, String zustandsName, String gifBildPfad) {
+        super(Spiel.getActiveScene(), ImageLoader.load(gifBildPfad).getWidth(), ImageLoader.load(gifBildPfad).getHeight());
 
         if (scale <= 0) {
             throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
@@ -36,8 +36,8 @@ public class Figur extends StatefulAnimation implements EduActor {
         eduSetup();
     }
 
-    public Figur(Scene scene, String zustandsName, String gifBildPfad) {
-        this(scene, 1f, zustandsName, gifBildPfad);
+    public Figur(String zustandsName, String gifBildPfad) {
+        this(1f, zustandsName, gifBildPfad);
     }
 
     /**
@@ -47,8 +47,8 @@ public class Figur extends StatefulAnimation implements EduActor {
      * @param anzahlX       Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY       Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
-    public Figur(Scene scene, float scale, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        super(scene, ImageLoader.load(spriteSheetPfad).getWidth()/anzahlX,
+    public Figur(, float scale, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        super(Spiel.getActiveScene(), ImageLoader.load(spriteSheetPfad).getWidth()/anzahlX,
                 ImageLoader.load(spriteSheetPfad).getHeight()/anzahlY);
 
         if (scale <= 0) {
@@ -60,8 +60,8 @@ public class Figur extends StatefulAnimation implements EduActor {
         eduSetup();
     }
 
-    public Figur(Scene scene, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        this(scene, 1f, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
+    public Figur(String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        this(1f, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
     }
 
 //    /**
