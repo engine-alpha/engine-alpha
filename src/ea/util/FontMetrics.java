@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@ package ea.util;
 
 import java.awt.*;
 
-public class FontMetrics {
-    private static Canvas canvas = new Canvas();
+public final class FontMetrics {
+    private static final ThreadLocal<Canvas> canvas = ThreadLocal.withInitial(Canvas::new);
 
     public static java.awt.FontMetrics get(Font font) {
-        return canvas.getFontMetrics(font);
+        return canvas.get().getFontMetrics(font);
     }
 }
