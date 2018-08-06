@@ -445,6 +445,15 @@ public final class Game {
         dispatchableQueue.add(runnable);
     }
 
+    @API
+    public static void afterWorldStep(Runnable runnable) {
+        if (scene.getWorldHandler().getWorld().isLocked()) {
+            enqueue(runnable);
+        } else {
+            runnable.run();
+        }
+    }
+
     /**
      * TODO : Dokumentation!
      */
@@ -636,14 +645,6 @@ public final class Game {
     @API
     public static void setDebug(boolean value) {
         debug = value;
-    }
-
-    /**
-     * Überprüft, ob das Spiel gerade im World Step ist.
-     */
-    @NoExternalUse
-    public static boolean isLocked() {
-        return scene.getWorldHandler().getWorld().isLocked();
     }
 
     @SuppressWarnings ( "AssignmentToStaticFieldFromInstanceMethod" )

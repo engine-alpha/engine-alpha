@@ -21,13 +21,12 @@ package ea.actor;
 
 import ea.BoundingRechteck;
 import ea.FrameUpdateListener;
-import ea.Game;
 import ea.Scene;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
 import ea.input.KeyListener;
 import ea.input.MouseClickListener;
 import ea.input.MouseWheelListener;
+import ea.internal.ano.API;
+import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.KnotenHandler;
 import ea.internal.phy.PhysikHandler;
 import org.jbox2d.collision.shapes.Shape;
@@ -130,11 +129,6 @@ public class ActorGroup extends Actor {
     @API
     public void remove(Actor actor) {
         synchronized (this.actors) {
-            if (Game.isLocked()) {
-                Game.enqueue(() -> remove(actor));
-                return;
-            }
-
             if (!this.actors.remove(actor)) {
                 return;
             }

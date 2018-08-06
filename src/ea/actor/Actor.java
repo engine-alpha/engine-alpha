@@ -163,11 +163,7 @@ public abstract class Actor {
         this.alive = false;
         this.scene = null;
 
-        if (Game.isLocked()) {
-            Game.enqueue(physicsHandler::killBody);
-        } else {
-            physicsHandler.killBody();
-        }
+        Game.afterWorldStep(physicsHandler::killBody);
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
