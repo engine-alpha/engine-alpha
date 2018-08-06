@@ -27,6 +27,9 @@ public class Spiel {
 
     public static final String DEFAULT_EDU_DIALOG_TITLE = "Engine Alpha - EDU Version";
 
+    private static int frame_width = 800;
+    private static int frame_height =600;
+
     /* ~~~ EDU-UTILITY ~~~*/
 
     /**
@@ -98,8 +101,16 @@ public class Spiel {
      */
     @API
     public static void setzeFensterGroesse(int breite, int hoehe) {
-        getActiveScene(); //<- Stellt sicher, dass ein Fenster zum Resizen existiert.
-        Game.setFrameSize(breite, hoehe);
+        if(activeScene != null) {
+            throw new RuntimeException("setzeFensterGroesse kann nur aufgerufen werden, bevor " +
+                    "das erste grafische Objekt erzeugt wurde.");
+        }
+        if(breite < 0 || hoehe < 0) {
+            throw new RuntimeException("Die Fenstergroesse (Breite sowie Höhe) muss jeweils > 0 sein. "+
+                    "Eingabe war: " + breite + " Breite und " + hoehe + " Höhe");
+        }
+        frame_width = breite;
+        frame_height = hoehe;
     }
 
     /**
@@ -119,7 +130,7 @@ public class Spiel {
     static EduScene getActiveScene() {
         if(activeScene == null) {
             activeScene = new EduScene();
-            Game.start(800, 600, activeScene);
+            Game.start(frame_width, frame_height, activeScene);
         }
         return activeScene;
     }
