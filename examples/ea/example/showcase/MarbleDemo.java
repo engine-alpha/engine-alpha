@@ -42,7 +42,7 @@ public class MarbleDemo
                 add(marble);
                 marble.physics.setType(Physics.Type.DYNAMIC);
                 marble.position.set(new Vector(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150));
-                marble.physics.applyImpulse(new Vector(Random.getFloat() * 200 - 100, Random.getFloat() * -300 - 100));
+                marble.physics.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
             }
         });
     }
@@ -123,11 +123,11 @@ public class MarbleDemo
             }
         }
 
-        Circle murmel = new Marble(Random.getInteger(50) + 10);
+        Circle murmel = new Marble(Random.nextInteger(50) + 10);
         murmel.physics.setType(Physics.Type.DYNAMIC);
         murmel.physics.setMass(4);
         murmel.setColor(new Color(
-                Random.getInteger(255), Random.getInteger(255), Random.getInteger(255)));
+                Random.nextInteger(255), Random.nextInteger(255), Random.nextInteger(255)));
 
         return murmel;
     }

@@ -119,8 +119,8 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
     private void createRandomParcour(int numPlatforms) {
         for (int i = 0; i < numPlatforms; i++) {
-            Platform platform = new Platform(this, character, Random.getInteger(10) * 20 + 20, 10);
-            platform.position.set(i * 250 + (Random.getInteger(10) * 5), - 300 + (i * 50));
+            Platform platform = new Platform(this, character, Random.nextInteger(10) * 20 + 20, 10);
+            platform.position.set(i * 250 + (Random.nextInteger(10) * 5), - 300 + (i * 50));
         }
     }
 
