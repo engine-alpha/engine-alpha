@@ -28,6 +28,9 @@ import ea.internal.ano.NoExternalUse;
 import ea.input.KeyListener;
 import ea.input.MouseClickListener;
 import ea.input.MouseWheelListener;
+import ea.internal.phy.KnotenHandler;
+import ea.internal.phy.PhysikHandler;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.WeldJointDef;
 
@@ -353,5 +356,11 @@ public class ActorGroup extends Actor {
     @API
     public void setOpacity(float opacity) {
         forEach((actor) -> actor.setOpacity(opacity));
+    }
+
+
+    @Override
+    protected PhysikHandler createDefaultPhysicsHandler(Shape shape) {
+        return new KnotenHandler(this);
     }
 }

@@ -128,14 +128,10 @@ public abstract class Actor {
 
         this.scene = scene;
 
-        if (this instanceof ActorGroup) {
-            this.physicsHandler = new KnotenHandler((ActorGroup) this);
-        } else {
-            this.physicsHandler = createDefaultPhysicsHandler(shapeSupplier.get());
-        }
+        this.physicsHandler = createDefaultPhysicsHandler(shapeSupplier.get());
     }
 
-    private PhysikHandler createDefaultPhysicsHandler(Shape shape) {
+    protected PhysikHandler createDefaultPhysicsHandler(Shape shape) {
         scene.getWorldHandler().blockPPMChanges();
 
         BodyDef bodyDef = new BodyDef();
