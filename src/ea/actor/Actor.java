@@ -187,9 +187,10 @@ public abstract class Actor {
         }
 
         this.alive = false;
-        this.scene = null;
 
         scene.remove(this);
+        this.scene = null;
+
         physicsHandler.killBody();
     }
 
