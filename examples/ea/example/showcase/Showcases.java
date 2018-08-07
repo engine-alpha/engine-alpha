@@ -7,8 +7,8 @@ import ea.Vector;
 import ea.actor.ActorGroup;
 import ea.actor.Rectangle;
 import ea.actor.Text;
+import ea.example.showcase.dude.DudeDemo;
 import ea.example.showcase.jump.DinglyJump;
-import ea.example.showcase.swordplay.Swordplay;
 import ea.input.MouseButton;
 import ea.input.MouseClickListener;
 
@@ -19,6 +19,8 @@ import java.util.function.Supplier;
  * Diese Klasse beschreibt die Kontroll-Scene, in der man Demos auswählen und starten kann.
  */
 public class Showcases extends Scene {
+
+    public static final int WIDTH = 1240, HEIGHT = 812;
 
     /**
      * State für die interne TextBoxen
@@ -163,8 +165,6 @@ public class Showcases extends Scene {
      * Main-Methode. Startet die Demo.
      */
     public static void main(String[] args) {
-        final int WIDTH = 1240, HEIGHT = 812;
-
         Showcases mainscene = new Showcases();
 
         mainscene.addScene(() -> new BallThrow(mainscene), "Einfacher Ballwurf");
@@ -172,7 +172,7 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new JointDemo(mainscene, WIDTH, HEIGHT), "Joints in der Engine");
         mainscene.addScene(() -> new MarbleDemo(mainscene), "Murmel-Demo");
         mainscene.addScene(() -> new DinglyJump(mainscene), "Dingly Jump");
-        mainscene.addScene(() -> new Swordplay(mainscene), "Swordplay");
+        mainscene.addScene(() -> new DudeDemo(mainscene), "DudeDemo");
 
         Game.setDebug(false);
         Game.setExitOnEsc(false);
