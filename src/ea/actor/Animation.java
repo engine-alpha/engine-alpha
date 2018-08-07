@@ -75,10 +75,7 @@ public class Animation extends Actor implements FrameUpdateListener {
                 throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
             }
 
-            return ShapeHelper.createRectangularShape(
-                    frames[0].getImage().getWidth() / scene.getWorldHandler().getPixelProMeter(),
-                    frames[0].getImage().getHeight() / scene.getWorldHandler().getPixelProMeter()
-            );
+            return ShapeHelper.createRectangularShape(frames[0].getImage().getWidth() / scene.getWorldHandler().getPixelProMeter(), frames[0].getImage().getHeight() / scene.getWorldHandler().getPixelProMeter());
         });
 
         for (ea.internal.gra.Frame frame : frames) {
@@ -101,8 +98,8 @@ public class Animation extends Actor implements FrameUpdateListener {
      *
      * @param animation Animation.
      */
-    public Animation(Animation animation) {
-        this(animation.getScene(), animation.getFrames());
+    public Animation(Scene scene, Animation animation) {
+        this(scene, animation.getFrames());
 
         animation.destroy();
     }
@@ -261,14 +258,15 @@ public class Animation extends Actor implements FrameUpdateListener {
         }
         File[] childs = directory.listFiles();
         for (File file : childs) {
-            if (!file.isDirectory() && file.getName().startsWith(prefix)) allPaths.add(file.getAbsolutePath());
+            if (!file.isDirectory() && file.getName().startsWith(prefix)) {
+                allPaths.add(file.getAbsolutePath());
+            }
         }
 
         allPaths.sort(Comparator.naturalOrder());
 
         if (allPaths.isEmpty()) {
-            throw new RuntimeException("Konnte keine Bilder mit Präfix \"" + prefix
-                    + "\" im Verzeichnis \"" + directoryPath + "\" finden.");
+            throw new RuntimeException("Konnte keine Bilder mit Präfix \"" + prefix + "\" im Verzeichnis \"" + directoryPath + "\" finden.");
         }
         return createFromImages(scene, frameDuration, allPaths.toArray(new String[0]));
     }

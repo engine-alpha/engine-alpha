@@ -45,7 +45,7 @@ import java.util.concurrent.Phaser;
  * @author Michael Andonie
  * @author Niklas Keller
  */
-@SuppressWarnings("StaticVariableOfConcreteClass")
+@SuppressWarnings ( "StaticVariableOfConcreteClass" )
 public final class Game {
 
     private static final int DESIRED_FRAME_DURATION = 16;
@@ -172,9 +172,9 @@ public final class Game {
     @API
     public static void start(int width, int height, Scene scene) {
         if (renderPanel != null) {
+            //Start wurde schon ausgeführt.
             throw new RuntimeException("Game.start wurde bereits ausgeführt.");
         }
-
         Game.width = width;
         Game.height = height;
         Game.scene = scene;
@@ -186,20 +186,8 @@ public final class Game {
                 g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
                 AffineTransform transform = g.getTransform();
-                Camera camera = Game.scene.getCamera();
-                Vector position = camera.getPosition();
-                float rotation = -camera.getRotation();
 
-                g.setClip(0, 0, width, height);
-                g.translate(width / 2, height / 2);
-
-                g.scale(camera.getZoom(), camera.getZoom());
-                g.rotate(rotation, 0, 0);
-                g.translate(-position.x, position.y);
-
-                // TODO: Calculate optimal bounds
-                int size = Math.max(width, height);
-                Game.scene.render(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
+                Game.scene.render(g, Game.width, Game.height);
 
                 g.setTransform(transform);
 
@@ -251,11 +239,9 @@ public final class Game {
 
         mousePosition = new java.awt.Point(width / 2, height / 2);
 
-        mainThread = Thread.currentThread();
-        mainThread.setName("Main Game");
+        mainThread = new Thread(Game::run, "Main Game");
+        mainThread.start();
         mainThread.setPriority(Thread.MAX_PRIORITY);
-
-        run();
     }
 
     /**
@@ -426,10 +412,7 @@ public final class Game {
         float rotation = scene.getCamera().getRotation();
         Vector position = scene.getCamera().getPosition();
 
-        return new Vector(
-                position.x + (((float) Math.cos(rotation) * (mousePosition.x - width / 2f) + (float) Math.sin(rotation) * (mousePosition.y - height / 2f))) / zoom,
-                position.y + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom
-        );
+        return new Vector(position.x + (((float) Math.cos(rotation) * (mousePosition.x - width / 2f) + (float) Math.sin(rotation) * (mousePosition.y - height / 2f))) / zoom, position.y + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom);
     }
 
     /**
@@ -477,6 +460,7 @@ public final class Game {
      * Gibt die gerade aktive Szene an.
      *
      * @return Die gerade aktive Szene. Wurde das Spiel noch nicht gestartet, ist die Rückgabe <code>null</code>.
+     *
      * @see ea.Scene
      */
     @API
@@ -487,9 +471,12 @@ public final class Game {
     /**
      * Gibt an, ob eine bestimmte Taste derzeit heruntergedrückt ist.
      *
-     * @param keyCode Die zu testende Taste als Key-Code (also z.B. <code>Key.W</code>).
+     * @param keyCode Die zu testende Taste als Key-Code (also z.B. <code>KeyEvent.VK_D</code>).
+     *
      * @return <code>true</code>, wenn die zu testende Taste gerade heruntergedrückt ist. Sonst <code>false</code>.
+     *
      * @see KeyEvent#getKeyCode()
+     * @see java.awt.event.KeyEvent
      */
     @API
     public static boolean isKeyPressed(int keyCode) {
@@ -501,6 +488,7 @@ public final class Game {
      * sobald {@link #start(int, int, Scene)} ausgeführt wurde.
      *
      * @return <code>true</code>, wenn das Spiel läuft, sonst <code>false</code>.
+     *
      * @see #start(int, int, Scene)
      */
     @API
@@ -517,8 +505,7 @@ public final class Game {
     @API
     public static void setFrameSize(int width, int height) {
         if (width <= 0 || height <= 0) {
-            throw new RuntimeException("Die Fenstergröße kann nicht kleiner/gleich 0 sein. "
-                    + "Eingabe war: " + width + " - " + height + ".");
+            throw new RuntimeException("Die Fenstergröße kann nicht kleiner/gleich 0 sein. " + "Eingabe war: " + width + " - " + height + ".");
         }
         if (renderPanel == null) {
             throw new RuntimeException("Fenster-Resizing ist erst möglich, nachdem Game.start ausgeführt wurde.");
@@ -563,6 +550,7 @@ public final class Game {
      *
      * @param message Der Inhalt der Botschaft im Dialogfenster.
      * @param title   Der Titel des Dialogfensters.
+     *
      * @return Die Eingabe des Nutzers. Ist <code>null</code>, wenn der Nutzer den Dialog abgebrochen hat.
      */
     @API
@@ -576,6 +564,7 @@ public final class Game {
      *
      * @param message Der Inhalt der Botschaft im Dialogfenster.
      * @param title   Der Titel des Dialogfensters.
+     *
      * @return Die Eingabe des Nutzers:
      * <ul>
      * <li>Ja -> <code>true</code></li>
@@ -585,8 +574,7 @@ public final class Game {
      */
     @API
     public static boolean requestYesNo(String message, String title) {
-        return JOptionPane.showConfirmDialog(frame, message, title,
-                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION;
+        return JOptionPane.showConfirmDialog(frame, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.YES_OPTION;
     }
 
     /**
@@ -595,6 +583,7 @@ public final class Game {
      *
      * @param message Der Inhalt der Botschaft im Dialogfenster.
      * @param title   Der Titel des Dialogfensters.
+     *
      * @return Die Eingabe des Nutzers:
      * <ul>
      * <li>OK -> <code>true</code></li>
@@ -604,8 +593,7 @@ public final class Game {
      */
     @API
     public static boolean requestOkCancel(String message, String title) {
-        return JOptionPane.showConfirmDialog(frame, message, title,
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+        return JOptionPane.showConfirmDialog(frame, message, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
     }
 
     @NoExternalUse
@@ -618,6 +606,7 @@ public final class Game {
      *
      * @return ist dieser Wert <code>true</code>, wird die Engine gerade im Debug-Modus ausgeführt. Sonst ist der Wert
      * <code>false</code>.
+     *
      * @see #setDebug(boolean)
      */
     @API
@@ -630,6 +619,7 @@ public final class Game {
      *
      * @return ist dieser Wert <code>true</code>, werden extrem ausführliche Logging-Informationen gespeichert.
      * Sonst ist der Wert <code>false</code>.
+     *
      * @see #setVerbose(boolean)
      */
     @API
@@ -642,6 +632,7 @@ public final class Game {
      *
      * @param value ist dieser Wert <code>true</code>, so wird ein äußerst ausführlicher Log über die Funktionalität
      *              der Engine geführt. Dies ist hauptsächlich für das Debugging an der Engine selbst notwendig.
+     *
      * @see #isVerbose()
      * @see #setDebug(boolean)
      */
@@ -656,6 +647,7 @@ public final class Game {
      * @param value ist dieser Wert <code>true</code>, wird die Engine ab sofort im Debug-Modus ausgeführt. Hierdurch
      *              werden mehr Informationen beim Ausführen der Engine angegeben, zum Beispiel ein Grafisches Raster
      *              und mehr Logging-Informationen. Dies ist hilfreich für Debugging am eigenen Spiel.
+     *
      * @see #isDebug()
      */
     @API
@@ -663,7 +655,7 @@ public final class Game {
         debug = value;
     }
 
-    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
+    @SuppressWarnings ( "AssignmentToStaticFieldFromInstanceMethod" )
     private static class MouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {

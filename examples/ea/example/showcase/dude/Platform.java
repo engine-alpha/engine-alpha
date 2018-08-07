@@ -1,4 +1,4 @@
-package ea.example.showcase.swordplay;
+package ea.example.showcase.dude;
 
 import ea.Scene;
 import ea.actor.TileContainer;
@@ -18,7 +18,7 @@ public class Platform extends TileContainer {
             throw new IllegalArgumentException("Number of tiles must be at least 2");
         }
 
-        String basePath = "game-assets/sword/tiles/";
+        String basePath = "game-assets/dude/tiles/";
 
         // Tile für das linke Ende
         setTileAt(0, 0, basePath + "platform_l.png");

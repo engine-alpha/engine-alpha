@@ -105,7 +105,8 @@ public class Showcases extends Scene {
                 //CLICKED ME
                 if (state == TextboxState.PRESSED) {
                     //I was pressed before ==> CHANGE SCENE
-                    Game.transitionToScene(sceneCreator.get());
+                    Scene scene = sceneCreator.get();
+                    Game.transitionToScene(scene);
                 }
             }
         }
@@ -177,6 +178,7 @@ public class Showcases extends Scene {
         Game.setDebug(false);
         Game.setExitOnEsc(false);
         Game.setTitle("Engine Alpha: Feature Showcase");
+
         Game.start(WIDTH, HEIGHT, mainscene);
     }
 }

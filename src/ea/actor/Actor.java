@@ -124,6 +124,11 @@ public abstract class Actor {
     @API
     public final Physics physics = new Physics(this);
 
+    /**
+     * Gibt an, ob dieser Actor bereits durch den Aufruf von {@link #destroy()} zerstört wird bzw. wurde.
+     */
+    private boolean isDestroying = false;
+
     public Actor(Scene scene, Supplier<Shape> shapeSupplier) {
         if (scene == null) {
             throw new IllegalArgumentException("Die übergebene Szene darf nicht null sein");
@@ -163,11 +168,19 @@ public abstract class Actor {
         destructionListeners.add(listener);
     }
 
+    /**
+     * Zerstört dieses <code>Actor</code>-Objekt. Das bedeutet:
+     * <ul>
+     * <li>Das Actor-Objekt wird nicht mehr gerendert/dargestellt.</li>
+     * <li>Alle Engine-internen Referenzen auf den Actor werden entfernt.</li>
+     * </ul>
+     */
     @API
     public final void destroy() {
-        if (scene == null) {
+        if (isDestroying || scene == null) {
             return;
         }
+        isDestroying = true;
 
         for (Runnable listener : destructionListeners) {
             listener.run();
@@ -176,6 +189,7 @@ public abstract class Actor {
         this.alive = false;
         this.scene = null;
 
+        scene.remove(this);
         physicsHandler.killBody();
     }
 

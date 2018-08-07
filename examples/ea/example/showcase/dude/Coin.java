@@ -17,17 +17,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.example.showcase.swordplay;
+package ea.example.showcase.dude;
 
 import ea.Scene;
 import ea.actor.Animation;
+import ea.collision.CollisionEvent;
+import ea.collision.CollisionListener;
 
 /**
  * Herzlichen Dank an <a href="https://opengameart.org/content/coin-animation">dontmind8.blogspot.com</a> für die
  * kostenfreien Grafiken.
  */
-public class Coin extends Animation {
+public class Coin extends Animation implements CollisionListener<PlayerCharacter> {
     public Coin(Scene scene) {
-        super(Animation.createFromAnimatedGif(scene, "game-assets/sword/coin.gif"));
+        super(scene, Animation.createFromAnimatedGif(scene, "game-assets/dude/coin.gif"));
+    }
+
+    @Override
+    public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
+        //Habe mich mit PlayerCharacter kollidiert!
+        this.destroy();
+    }
+
+    @Override
+    public void onCollisionEnd(CollisionEvent<PlayerCharacter> collisionEvent) {
+
     }
 }

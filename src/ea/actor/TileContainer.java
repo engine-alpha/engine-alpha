@@ -26,32 +26,52 @@ public class TileContainer extends Actor {
     private final Tile[][] tiles;
 
     /**
-     * Die Größe eines Tiles in px
+     * Die Breite eines Tiles.
      */
-    private final int tileSize;
+    private final int tileWidth;
+
+    /**
+     * Die Höhe eines Tiles.
+     */
+    private final int tileHeight;
+
+    /**
+     * Erstellt einen <b>leeren</b> Tile-Container. Er ist erst "sichtbar", wenn Tiles gesetzt werden.
+     *
+     * @param numX       Die Anzahl an Tiles in X-Richtung.
+     * @param numY       Die Anzahl an Tiles in Y-Richtung.
+     * @param tileWidth  Die Breite eines Tiles in Pixel.
+     * @param tileHeight Die Höhe eines Tiles in Pixel.
+     *
+     * @see #setTileAt(int, int, String)
+     */
+    @API
+    public TileContainer(Scene scene, int numX, int numY, int tileWidth, int tileHeight) {
+        super(scene, () -> ShapeHelper.createRectangularShape(tileWidth * numX / scene.getWorldHandler().getPixelProMeter(), tileHeight * numY / scene.getWorldHandler().getPixelProMeter()));
+
+        if (numX <= 0 || numY <= 0) {
+            throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");
+        }
+        if (tileWidth <= 0 || tileHeight <= 0) {
+            throw new IllegalArgumentException("Breite und Höhe der Tiles müssen jeweils > 0 sein.");
+        }
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
+        this.tiles = new Tile[numX][numY];
+    }
 
     /**
      * Erstellt einen <b>leeren</b> Tile-Container. Er ist erst "sichtbar", wenn Tiles gesetzt werden.
      *
      * @param numX     Die Anzahl an Tiles in X-Richtung.
      * @param numY     Die Anzahl an Tiles in Y-Richtung.
-     * @param tileSize Die Größe eines Tiles in Pixel.
+     * @param tileSize Die Höhe <b>und</b> Breite eines Tiles in Pixel.
      *
      * @see #setTileAt(int, int, String)
      */
     @API
     public TileContainer(Scene scene, int numX, int numY, int tileSize) {
-        super(scene, () -> ShapeHelper.createRectangularShape(
-                tileSize * numX / scene.getWorldHandler().getPixelProMeter(),
-                tileSize * numY / scene.getWorldHandler().getPixelProMeter()
-        ));
-
-        if (numX <= 0 || numY <= 0) {
-            throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");
-        }
-
-        this.tileSize = tileSize;
-        this.tiles = new Tile[numX][numY];
+        this(scene, numX, numY, tileSize, tileSize);
     }
 
     /**
@@ -72,9 +92,8 @@ public class TileContainer extends Actor {
 
         //Load in new Tile in Atlas (issues like non-existent files are thrown as RuntimeException)
         BufferedImage tileImage = ImageLoader.load(imagePath);
-        if (tileImage.getWidth() != tileImage.getHeight() || tileImage.getWidth() != tileSize) {
-            throw new RuntimeException("Das Bild hatte nicht die korrekten Maße (" + tileSize + "x" + tileSize
-                    + "). Die Maße waren: " + tileImage.getWidth() + "x" + tileImage.getHeight());
+        if (tileImage.getWidth() != tileWidth || tileImage.getHeight() != tileHeight) {
+            throw new RuntimeException("Das Bild hatte nicht die korrekten Maße (" + tileWidth + "x" + tileHeight + "). Die Maße waren: " + tileImage.getWidth() + "x" + tileImage.getHeight());
         }
 
         tiles[x][y] = new BufferedImageTile(tileImage);
@@ -92,23 +111,23 @@ public class TileContainer extends Actor {
     @API
     public void setTileAt(int x, int y, String imagePath, int imageIndexX, int imageIndexY) {
         assertXYIndices(x, y);
-        if (imagePath == null) throw new IllegalArgumentException("Der imagePath kann nicht null sein.");
+        if (imagePath == null) {
+            throw new IllegalArgumentException("Der imagePath kann nicht null sein.");
+        }
 
-        final String tileKey = imagePath + "|" + tileSize + "|" + imageIndexX + "|" + imageIndexY;
+        final String tileKey = imagePath + "|" + tileWidth + "|" + tileHeight + "|" + imageIndexX + "|" + imageIndexY;
 
         Tile newTile;
 
         // Check if Tile exists in TileAtlas
         if (!tileAtlas.containsKey(tileKey)) {
             // Load in new Tile in Atlas (issues like non-existent files are thrown as RuntimeException)
-            BufferedImage tileImage = ImageLoader.load(imagePath).getSubimage(
-                    imageIndexX * tileSize, imageIndexY * tileSize, tileSize, tileSize);
+            BufferedImage tileImage = ImageLoader.load(imagePath).getSubimage(imageIndexX * tileWidth, imageIndexY * tileHeight, tileWidth, tileHeight);
             tileAtlas.put(tileKey, new BufferedImageTile(tileImage));
         }
         newTile = tileAtlas.get(tileKey);
-        if (newTile.getSize() != tileSize) {
-            throw new RuntimeException("Das Bild hatte nicht die korrekten Maße (" +
-                    tileSize + "x" + tileSize + "). Die Maße waren: " + newTile.getSize() + "x" + newTile.getSize());
+        if (newTile.getWidth() != tileWidth || newTile.getHeight() != tileHeight) {
+            throw new RuntimeException("Das Bild hatte nicht die korrekten Maße (" + tileWidth + "x" + tileHeight + "). Die Maße waren: " + newTile.getWidth() + "x" + newTile.getHeight());
         }
 
         tiles[x][y] = newTile;
@@ -125,27 +144,27 @@ public class TileContainer extends Actor {
     @NoExternalUse
     private void assertXYIndices(int x, int y) {
         if (x < 0 || x >= tiles.length) {
-            throw new IllegalArgumentException("X muss innerhalb der richtigen Größe sein (0-" + (tiles.length - 1) + ")"
-                    + ". War: " + x);
+            throw new IllegalArgumentException("X muss innerhalb der richtigen Größe sein (0-" + (tiles.length - 1) + ")" + ". War: " + x);
         }
         if (y < 0 || y >= tiles[0].length) {
-            throw new IllegalArgumentException("Y muss innerhalb der richtigen Größe sein (0-" + (tiles[0].length - 1)
-                    + "). War: " + y);
+            throw new IllegalArgumentException("Y muss innerhalb der richtigen Größe sein (0-" + (tiles[0].length - 1) + "). War: " + y);
         }
     }
 
     @NoExternalUse
     @Override
     public void render(Graphics2D g) {
-        int offset = tiles[0].length * tileSize;
+        int offset = tiles[0].length * tileHeight;
 
         try {
             g.translate(0, -offset);
 
             for (int x = 0; x < tiles.length; x++) {
                 for (int y = 0; y < tiles[0].length; y++) {
-                    if (tiles[x][y] == null) continue;
-                    tiles[x][y].render(g, tileSize * x, tileSize * y);
+                    if (tiles[x][y] == null) {
+                        continue;
+                    }
+                    tiles[x][y].render(g, tileWidth * x, tileHeight * y);
                 }
             }
         } finally {
@@ -160,12 +179,12 @@ public class TileContainer extends Actor {
     @NoExternalUse
     private abstract class Tile {
         abstract void render(Graphics2D g, int dX, int dY);
-        abstract int getSize();
+        abstract int getWidth();
+        abstract int getHeight();
     }
 
     @NoExternalUse
-    private class BufferedImageTile
-            extends Tile {
+    private class BufferedImageTile extends Tile {
         private final BufferedImage bufferedImage;
 
         private BufferedImageTile(BufferedImage bufferedImage) {
@@ -179,8 +198,13 @@ public class TileContainer extends Actor {
         }
 
         @Override
-        int getSize() {
+        int getWidth() {
             return bufferedImage.getWidth();
+        }
+
+        @Override
+        int getHeight() {
+            return bufferedImage.getHeight();
         }
     }
 }

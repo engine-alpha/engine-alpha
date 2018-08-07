@@ -1,14 +1,13 @@
-package ea.example.showcase.swordplay;
+package ea.example.showcase.dude;
 
 import ea.*;
-import ea.actor.Actor;
 import ea.actor.Image;
-import ea.actor.Particle;
+import ea.actor.TileContainer;
 import ea.example.showcase.ShowcaseDemo;
+import ea.example.showcase.Showcases;
 import ea.handle.Physics;
 import ea.input.KeyListener;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,28 +17,49 @@ import java.util.HashSet;
  * <p>
  * Vielen Dank an <a href="https://rvros.itch.io/animated-pixel-hero">rvros</a>
  */
-public class Swordplay extends ShowcaseDemo implements KeyListener {
+public class DudeDemo extends ShowcaseDemo implements KeyListener {
+
+    public static final int GAME_WIDTH = Showcases.WIDTH, GAME_HEIGHT = Showcases.HEIGHT;
 
     private PlayerCharacter character;
     private Collection<Coin> coins = new HashSet<>();
 
-    public Swordplay(Scene parent) {
+    public DudeDemo(Scene parent) {
         super(parent);
         super.setDebuggingEnabled(false);
 
-        character = new PlayerCharacter(this);
+        HUD hud = new HUD(this, character);
+        addLayer(hud);
+
+        character = new PlayerCharacter(this, hud);
         character.position.set(-20, 200);
         character.setBodyType(Physics.Type.DYNAMIC);
         character.physics.setRotationLocked(true);
 
         setGravity(new Vector(0, -13));
+        getCamera().setFocus(character);
+        getCamera().setOffset(new Vector(0, 200));
+        getCamera().setBounds(new BoundingRechteck(-2000, 0, 20000, 20000));
 
-        new Platform(this, 7).position.set(-450, -200);
+        setupPlayground();
+        setupCosmeticLayers();
+
+        // addFrameUpdateListener(new PeriodicTask(16, () -> {
+        //     Particle particle = new Particle(DudeDemo.this, Random.nextInteger(2) + 2, 3000);
+        //     particle.position.set(Random.nextInteger(860) - 430, -110);
+        //     particle.physics.applyImpulse(new Vector(.5f * ((float) Math.random() - .5f), 2f * ((float) Math.random())));
+        //     particle.setColor(new Color(54, 255, 195));
+        //     particle.setLayer(-1);
+        //
+        //     add(particle);
+        // }));
 
         addKeyListener(this);
-        addFrameUpdateListener(character);
+    }
 
-        getCamera().move(0, 200);
+    private void setupPlayground() {
+        makePlatform(7, -450, -200);
+        makePlatform(3, 200, 0);
 
         Coin coin = new Coin(this);
         coins.add(coin);
@@ -49,28 +69,48 @@ public class Swordplay extends ShowcaseDemo implements KeyListener {
         coin.position.set(100, 0);
         coins.add(coin);
         add(coin);
+    }
 
-        Image moon = new Image(this, "game-assets/sword/moon.png");
-        add(moon);
+    private void setupCosmeticLayers() {
+        Layer middleBackground = new Layer(this);
+        middleBackground.setParallaxPosition(0.1f, 0.1f);
+        middleBackground.setLayerPosition(-200);
+        Image backgroundImage = new Image(this, "game-assets/dude/background/snow.png");
+        backgroundImage.position.set(-GAME_WIDTH / 2 - 100, -GAME_HEIGHT / 2);
+        middleBackground.add(backgroundImage);
+
+        Layer furtherBackground = new Layer(this);
+        //furtherBackground.setLayerPosition(-300);
+        furtherBackground.setParallaxPosition(0.05f, 0.05f);
+
+        Image moon = new Image(this, "game-assets/dude/moon.png");
+        furtherBackground.add(moon);
         moon.position.set(300, 300);
 
-        character.addCollisionListener(e -> {
-            Actor actor = e.getColliding();
-            if (actor instanceof Coin) {
-                coins.remove(actor);
-                remove(actor);
-            }
-        });
+        addLayer(middleBackground);
+        addLayer(furtherBackground);
 
-        addFrameUpdateListener(new PeriodicTask(16, () -> {
-            Particle particle = new Particle(Swordplay.this, Random.nextInteger(2) + 2, 3000);
-            particle.position.set(Random.nextInteger(860) - 430, -110);
-            particle.physics.applyImpulse(new Vector(.5f * ((float) Math.random() - .5f), 2f * ((float) Math.random())));
-            particle.setColor(new Color(54, 255, 195));
-            particle.setLayer(-1);
+        //CLOUDS
+        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_1.png", 300, 1.6f, 0.1f, -2000);
+        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_2.png", 200, 1.4f, 0.1f, -2000);
+        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_3.png", -60, 1.2f, 0.1f, -2000);
+    }
 
-            add(particle);
-        }));
+    private final void addCloudLayer(final int NUM_TILES, String tilePath, int layerLevel, float xParallax, float yParallax, float xOffset) {
+        Layer clouds = new Layer(this);
+        clouds.setParallaxPosition(xParallax, yParallax);
+        clouds.setLayerPosition(layerLevel);
+        TileContainer cloudTiles = new TileContainer(this, NUM_TILES, 1, 384, 216);
+        for (int i = 0; i < NUM_TILES; i++) {
+            cloudTiles.setTileAt(i, 0, tilePath);
+        }
+        cloudTiles.position.set(xOffset, -GAME_HEIGHT / 2);
+        clouds.add(cloudTiles);
+        addLayer(clouds);
+    }
+
+    private void makePlatform(int length, float pX, float pY) {
+        new Platform(this, length).position.set(pX, pY);
     }
 
     @Override
@@ -91,6 +131,7 @@ public class Swordplay extends ShowcaseDemo implements KeyListener {
                     character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
                 }
                 break;
+            case KeyEvent.VK_SPACE:
             case KeyEvent.VK_W: //Sprungbefehl
                 character.tryJumping();
                 break;

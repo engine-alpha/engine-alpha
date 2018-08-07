@@ -19,8 +19,8 @@
 
 package ea;
 
-import ea.internal.ano.API;
 import ea.actor.Actor;
+import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 
 /**
@@ -236,7 +236,7 @@ public final class Camera implements FrameUpdateListener {
         }
 
         float x = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
-        float y = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
+        float y = Math.max(this.bounds.getRealY(), Math.min(position.y, this.bounds.getRealY() + this.bounds.getRealHoehe()));
 
         return new Vector(x, y);
     }

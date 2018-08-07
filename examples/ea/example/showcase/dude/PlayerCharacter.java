@@ -1,4 +1,4 @@
-package ea.example.showcase.swordplay;
+package ea.example.showcase.dude;
 
 import ea.*;
 import ea.actor.Actor;
@@ -20,6 +20,13 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     public static final int JUMP_FORCE = +2000;
     public static final int SMASH_FORCE = -15000;
     public static final int BOTTOM_OUT = -500;
+
+    /**
+     * Guthaben.
+     */
+    private int money = 0;
+
+    private final HUD hud;
 
     /**
      * Beschreibt die drei Zustände, die ein Character bezüglich seiner horizontalen Bewegung haben kann.
@@ -44,11 +51,12 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private HorizontalMovement horizontalMovement = HorizontalMovement.IDLE;
     private Vector smashForce = Vector.NULL;
 
-    public PlayerCharacter(Scene scene) {
+    public PlayerCharacter(Scene scene, HUD hud) {
         super(scene, 64, 64);
+        this.hud = hud;
 
         // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
-        String basePath = "game-assets/jump/spr_m_traveler_";
+        String basePath = "game-assets/dude/char/spr_m_traveler_";
 
         addState("idle", Animation.createFromAnimatedGif(scene, basePath + "idle_anim.gif"));
         addState("walking", Animation.createFromAnimatedGif(scene, basePath + "walk_anim.gif"));
@@ -86,6 +94,18 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
     public HorizontalMovement getHorizontalMovement() {
         return this.horizontalMovement;
+    }
+
+    /**
+     * Diese Methode wird aufgerufen, wenn der Character ein Item berührt hat.
+     */
+    public void gotItem(Item item) {
+        switch (item) {
+            case Coin:
+                money++;
+
+                break;
+        }
     }
 
     public void smash() {
@@ -160,7 +180,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
             if (smashing) {
                 Interpolator<Float> interpolator = new ReverseEaseFloat(0, -0.01f * physics.getVelocity().y);
-                FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> getScene().getCamera().setOffset(new Vector(0, y)), interpolator);
+                FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> getScene().getCamera().setOffset(new Vector(0, 200 + y)), interpolator);
                 getScene().addFrameUpdateListener(valueAnimator);
             }
 

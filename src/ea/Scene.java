@@ -20,11 +20,11 @@
 package ea;
 
 import ea.actor.Actor;
-import ea.actor.ActorGroup;
 import ea.input.*;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.phy.WorldHandler;
+import ea.internal.util.Logger;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.DistanceJoint;
 import org.jbox2d.dynamics.joints.Joint;
@@ -33,7 +33,10 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 
 public class Scene {
@@ -67,10 +70,14 @@ public class Scene {
     private boolean frameUpdateIterating = false;
 
     /**
-     * Der Wurzel-ActorGroup. An ihm müssen direkt oder indirekt (über weitere ActorGroup) alle
-     * <code>Actor</code>-Objekte angemeldet werden, die gezeichnet werden sollen.
+     * Die Layer dieser Szene.
      */
-    private final ActorGroup root;
+    private final ArrayList<Layer> layers = new ArrayList<>();
+
+    /**
+     * Das Main-Layer (default-additions)
+     */
+    private final Layer mainLayer;
 
     /**
      * Die Physics der Szene.
@@ -80,16 +87,40 @@ public class Scene {
     public Scene() {
         this.worldHandler = new WorldHandler();
         this.camera = new Camera();
-        this.root = new ActorGroup(this);
+        mainLayer = new Layer(this);
+        mainLayer.setLayerPosition(0);
+        layers.add(mainLayer);
         this.addFrameUpdateListener(this.camera);
+        cnt = CNT++;
     }
 
+    public static int CNT = 1;
+    private final int cnt;
+
     @NoExternalUse
-    public void render(Graphics2D g, BoundingRechteck bounds) {
-        root.renderBasic(g, bounds);
+    public void render(Graphics2D g, int width, int height) {
+        final AffineTransform base = g.getTransform();
+
+        for (Layer layer : layers) {
+            layer.render(g, camera, width, height);
+            g.setTransform(base);
+        }
 
         if (Game.isDebug()) {
             renderJoints(g);
+        }
+    }
+
+    @API
+    public void addLayer(Layer layer) {
+        this.layers.add(layer);
+        this.layers.sort(Comparator.comparingInt(Layer::getLayerPosition));
+    }
+
+    @API
+    public void removeLayer(Layer layer) {
+        if (!this.layers.remove(layer) && Game.isVerbose()) {
+            Logger.warning("Ein Layer, das gar nicht an der Scene angehängt ist, sollte entfernt werden.", "layer");
         }
     }
 
@@ -101,7 +132,7 @@ public class Scene {
     @NoExternalUse
     private void renderJoints(Graphics2D g) {
         // Display Joints
-        Joint j = root.getPhysicsHandler().getWorldHandler().getWorld().getJointList();
+        Joint j = worldHandler.getWorld().getJointList();
 
         while (j != null) {
             renderJoint(j, g);
@@ -145,6 +176,7 @@ public class Scene {
      * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb der Scene</b> wirkt.
      *
      * @param gravityInN Die neue Schwerkraft als Vector. Die Einheit ist <b>[N]</b>.
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
@@ -154,18 +186,13 @@ public class Scene {
     }
 
     @API
-    final public void add(Actor... rooms) {
-        for (Actor room : rooms) {
-            this.root.add(room);
-        }
+    final public void add(Actor... actors) {
+        mainLayer.add(actors);
     }
 
     @API
-    final public void remove(Actor... rooms) {
-        for (Actor room : rooms) {
-            this.root.remove(room);
-            room.destroy();
-        }
+    final public void remove(Actor... actors) {
+        mainLayer.remove(actors);
     }
 
     @API
