@@ -46,7 +46,7 @@ public class KnotenHandler extends PhysikHandler {
     }
 
     @Override
-    public Vector mittelpunkt() {
+    public Vector getCenter() {
         return null;
     }
 
@@ -127,11 +127,6 @@ public class KnotenHandler extends PhysikHandler {
 
     @Override
     public void drehImpulsWirken(float drehimpuls) {
-
-    }
-
-    @Override
-    public void schwerkraftSetzen(Vector schwerkraftInN) {
 
     }
 

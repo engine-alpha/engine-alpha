@@ -163,7 +163,7 @@ public abstract class Actor {
         this.alive = false;
         this.scene = null;
 
-        Game.afterWorldStep(physicsHandler::killBody);
+        physicsHandler.killBody();
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
@@ -195,7 +195,6 @@ public abstract class Actor {
      *
      * @param visible Ob das Objekt isVisible sein soll oder nicht.<br /> Ist dieser Wert
      *                <code>false</code>, so wird es nicht im Window gezeichnet.<br />
-     *
      * @see #isVisible()
      */
     @API
@@ -207,7 +206,6 @@ public abstract class Actor {
      * Gibt an, ob das Actor-Objekt isVisible ist.
      *
      * @return Ist <code>true</code>, wenn das Actor-Objekt zur Zeit isVisible ist.
-     *
      * @see #setVisible(boolean)
      */
     @API
@@ -221,7 +219,7 @@ public abstract class Actor {
      * @return Gibt die aktuelle Opacity des Raumes zurück.
      */
     @API
-    @SuppressWarnings ( "unused" )
+    @SuppressWarnings("unused")
     public float getOpacity() {
         return opacity;
     }
@@ -233,7 +231,7 @@ public abstract class Actor {
      * <li><code>1.0f</code> entspricht einem undurchsichtigem Actor.</li></ul>
      */
     @API
-    @SuppressWarnings ( "unused" )
+    @SuppressWarnings("unused")
     public void setOpacity(float opacity) {
         this.opacity = opacity;
     }
@@ -244,7 +242,6 @@ public abstract class Actor {
      * Prueft, ob ein bestimmter Point innerhalb des Actor-Objekts liegt.
      *
      * @param p Der Point, der auf Inhalt im Objekt getestet werden soll.
-     *
      * @return TRUE, wenn der Point innerhalb des Objekts liegt.
      */
     @API
@@ -258,10 +255,8 @@ public abstract class Actor {
      * befriedigend ausfallen. Die Collider können im <b>Debug-Modus</b> der Engine eingesehen werden.
      *
      * @param another Ein weiteres Actor-Objekt.
-     *
      * @return <code>true</code>, wenn dieses Actor-Objekt sich mit <code>another</code> schneidet. Sonst
      * <code>false</code>.
-     *
      * @see ea.Game#setDebug(boolean)
      */
     @API
@@ -369,7 +364,6 @@ public abstract class Actor {
      * Interne Methode. Prüft, ob das anliegende Objekt (teilweise) innerhalb des sichtbaren Bereichs liegt.
      *
      * @param r Die Bounds der Kamera.
-     *
      * @return <code>true</code>, wenn das Objekt (teilweise) innerhalb des derzeit sichtbaren
      * Breichs liegt, sonst <code>false</code>.
      */
@@ -401,7 +395,6 @@ public abstract class Actor {
      * @param <E>      Typ-Parameter. SOllte im Regelfall exakt die Klasse von <code>collider</code> sein. Dies
      *                 ermöglicht die Nutzung von spezifischen Methoden aus spezialisierteren Klassen der
      *                 Actor-Hierarchie.
-     *
      * @see #addCollisionListener(CollisionListener)
      */
     @API
@@ -415,7 +408,6 @@ public abstract class Actor {
      *
      * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
      *                 allen anderen Objekten der Scene erlebt.
-     *
      * @see #addCollisionListener(CollisionListener, Actor)
      */
     @API

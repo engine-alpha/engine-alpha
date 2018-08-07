@@ -60,6 +60,7 @@ public class BodyHandler extends PhysikHandler {
 
     @Override
     public void verschieben(Vector v) {
+        WorldHandler.assertNoWorldStep();
         Vec2 phyVec = worldHandler.fromVektor(v);
         body.setTransform(phyVec.add(body.getPosition()), body.getAngle());
 
@@ -68,7 +69,7 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
-    public Vector mittelpunkt() {
+    public Vector getCenter() {
         if (physikType == Physics.Type.DYNAMIC) {
             Vec2 wc = body.getWorldCenter();
             return worldHandler.fromVec2(wc);
@@ -102,6 +103,7 @@ public class BodyHandler extends PhysikHandler {
 
     @Override
     public void rotieren(float radians) {
+        WorldHandler.assertNoWorldStep();
         body.setTransform(body.getPosition(), body.getAngle() + radians);
     }
 
@@ -148,6 +150,7 @@ public class BodyHandler extends PhysikHandler {
 
     @Override
     public void masseSetzen(float masse) {
+        WorldHandler.assertNoWorldStep();
         MassData md = new MassData();
         body.getMassData(md);
         md.mass = masse;
@@ -175,13 +178,8 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
-    public void schwerkraftSetzen(Vector schwerkraftInN) {
-        worldHandler.getWorld().setGravity(new Vec2(schwerkraftInN.x, schwerkraftInN.y));
-        body.setAwake(true);
-    }
-
-    @Override
     public PhysikHandler typ(Physics.Type type) {
+        WorldHandler.assertNoWorldStep();
         if (type == physikType) {
             return this; // kein Update nötig
         }

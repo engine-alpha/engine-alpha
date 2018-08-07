@@ -141,6 +141,18 @@ public class Scene {
         return worldHandler;
     }
 
+    /**
+     * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb der Scene</b> wirkt.
+     *
+     * @param gravityInN Die neue Schwerkraft als Vector. Die Einheit ist <b>[N]</b>.
+     * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
+     * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     */
+    @API
+    public void setGravity(Vector gravityInN) {
+        worldHandler.getWorld().setGravity(new Vec2(gravityInN.x, gravityInN.y));
+    }
+
     @API
     final public void add(Actor... rooms) {
         for (Actor room : rooms) {

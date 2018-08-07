@@ -1,5 +1,6 @@
 package ea.internal.phy;
 
+import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.collision.CollisionEvent;
@@ -30,6 +31,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * (Zeichengrößen)</li> </ul>
  */
 public class WorldHandler implements ContactListener {
+
+    /**
+     * Assertion-Methode, die sicherstellt, dass die (JBox2D-)World der gerade aktiven Szene nicht im World-Step ist.
+     * Dies ist wichtig für die Manipulation von Actors (Manipulation vieler physikalischen Eigenschaften während
+     * des World-Steps führt zu Inkonsistenzen).
+     *
+     * @throws RuntimeException Wenn die World sich gerade im World-Step befindet. Ist dies nicht der Fall, passiert
+     *                          nichts (und es wird keine Exception geworfen).
+     */
+    @NoExternalUse
+    public static void assertNoWorldStep() {
+        if (Game.getActiveScene().getWorldHandler().getWorld().isLocked()) {
+            throw new RuntimeException("Die Operation kann nicht während des World-Step ausgeführt werden. "
+                    + "Ggf. mit Game.afterWorldStep wrappen.");
+        }
+    }
+
     /**
      * Die World dieses Handlers. Hierin laufen globale Einstellungen (z.B. Schwerkraft) ein.
      */
@@ -131,7 +149,6 @@ public class WorldHandler implements ContactListener {
      * Pixel/Meter-Verhältnisses.
      *
      * @param eaV Ein EA-Vector.
-     *
      * @return Der analoge Vector in der JB2D-Engine.
      */
     @NoExternalUse
@@ -146,7 +163,6 @@ public class WorldHandler implements ContactListener {
      * Pixel/Meter-Verhältnisses.
      *
      * @param jb2dV Ein JB2D-Vector.
-     *
      * @return Der analoge Vector im EA-Format auf der Zeichenebene.
      */
     @NoExternalUse
@@ -159,9 +175,8 @@ public class WorldHandler implements ContactListener {
     /**
      * Erstellt einen Body und mappt ihn intern zum analogen Actor-Objekt.
      *
-     * @param bd   Exakte Beschreibung des Bodies.
+     * @param bd    Exakte Beschreibung des Bodies.
      * @param actor Actor-Objekt, das ab sofort zu dem Body gehört.
-     *
      * @return Der Body, der aus der BodyDef generiert wurde. Er liegt in der Game-World dieses
      * Handlers.
      */
@@ -178,14 +193,15 @@ public class WorldHandler implements ContactListener {
 
     /**
      * Überprüft, welcher Actor mit einem bestimmten Body in der World verknüpft ist.
-     * @param body  Der zu testende Body.
-     * @return      Der Actor, zu dem der zu testende Body gehört.
+     *
+     * @param body Der zu testende Body.
+     * @return Der Actor, zu dem der zu testende Body gehört.
      * @throws RuntimeException Falls der body nicht zur World gehört.
      */
     @NoExternalUse
     public Actor bodyLookup(Body body) {
         Actor result = worldMap.get(body);
-        if(result == null) {
+        if (result == null) {
             //throw new RuntimeException("Der zu testende Body war nicht Teil der World.");
         }
         return result;
@@ -207,7 +223,6 @@ public class WorldHandler implements ContactListener {
      * Übersetzt einen Winkel in Radians in Grad.
      *
      * @param rad Ein Winkel in Radians.
-     *
      * @return Der analoge Winkel in Grad.
      */
     public static float radToDeg(float rad) {
@@ -301,7 +316,7 @@ public class WorldHandler implements ContactListener {
         generalCheckup(b1, b2, contact, isBegin);
         generalCheckup(b2, b1, contact, isBegin);
 
-        if(!isBegin) {
+        if (!isBegin) {
             //Contact ist beendet -> Set Enabled and remove from blacklist
             contact.setEnabled(true);
             //System.out.println("REMOVE");
@@ -311,14 +326,14 @@ public class WorldHandler implements ContactListener {
 
     private void removeFromBlacklist(Contact contact) {
         FixturePair fixturePair = null;
-        for(FixturePair fp : contactsToIgnore) {
+        for (FixturePair fp : contactsToIgnore) {
             if (fp.validate(contact.m_fixtureA, contact.m_fixtureB)) {
                 //MATCH
                 fixturePair = fp;
                 break;
             }
         }
-        if(fixturePair != null) {
+        if (fixturePair != null) {
             contactsToIgnore.remove(fixturePair);
             //System.out.println("REAL REMOVE");
         }
@@ -353,9 +368,9 @@ public class WorldHandler implements ContactListener {
         //    System.out.println("GROUND");
         //    return;
         //}
-        for(FixturePair bP : contactsToIgnore) {
+        for (FixturePair bP : contactsToIgnore) {
 
-            if(bP.validate(contact.m_fixtureA, contact.m_fixtureB)) {
+            if (bP.validate(contact.m_fixtureA, contact.m_fixtureB)) {
                 //MATCH
                 //System.out.println("MATCH");
                 contact.setEnabled(false);
@@ -376,7 +391,7 @@ public class WorldHandler implements ContactListener {
     @NoExternalUse
     public Fixture[] aabbQuery(AABB aabb) {
         ArrayList<Fixture> fixtures = new ArrayList<>();
-        world.queryAABB(fixture -> fixtures.add(fixture),aabb);
+        world.queryAABB(fixture -> fixtures.add(fixture), aabb);
         return fixtures.toArray(new Fixture[fixtures.size()]);
     }
 
@@ -384,10 +399,10 @@ public class WorldHandler implements ContactListener {
     @NoExternalUse
     public static boolean bodyCollisionCheckup(Body b1, Body b2) {
         ContactEdge b1Contacts = b1.getContactList();
-        for(ContactEdge ce = b1Contacts; ce != null; ce = ce.next) {
-            if(ce.other == b2) {
+        for (ContactEdge ce = b1Contacts; ce != null; ce = ce.next) {
+            if (ce.other == b2) {
                 //Contact exists with other Body. Next, check if they are actually touching
-                if(ce.contact.isTouching()) {
+                if (ce.contact.isTouching()) {
                     //TOUCHING!
                     return true;
                 }
@@ -411,9 +426,9 @@ public class WorldHandler implements ContactListener {
         /**
          * Erstellt das Checkup-Objekt
          *
-         * @param reagierbar Das aufzurufende KR
-         * @param body2      Der zweite Body für den Checkup
-         * @param collidingActor   Der zugehörige Collider für diesen Checkup
+         * @param reagierbar     Das aufzurufende KR
+         * @param body2          Der zweite Body für den Checkup
+         * @param collidingActor Der zugehörige Collider für diesen Checkup
          */
         private Checkup(CollisionListener<E> reagierbar, Body body2, E collidingActor) {
             this.reagierbar = reagierbar;
@@ -522,9 +537,10 @@ public class WorldHandler implements ContactListener {
 
         /**
          * Prüft dieses Body-Tupel auf Referenzgleichheit mit einem weiteren.
-         * @param bA    Body A
-         * @param bB    Body B
-         * @return      this == (A|B)
+         *
+         * @param bA Body A
+         * @param bB Body B
+         * @return this == (A|B)
          */
         public boolean validate(Fixture bA, Fixture bB) {
             return (f1 == bA && f2 == bB) || (f1 == bB && f2 == bA);

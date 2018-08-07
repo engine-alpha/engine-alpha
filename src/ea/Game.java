@@ -19,13 +19,13 @@
 
 package ea;
 
+import ea.input.MouseButton;
+import ea.input.MouseWheelAction;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.util.Logger;
-import ea.input.MouseButton;
-import ea.input.MouseWheelAction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +45,7 @@ import java.util.concurrent.Phaser;
  * @author Michael Andonie
  * @author Niklas Keller
  */
-@SuppressWarnings ( "StaticVariableOfConcreteClass" )
+@SuppressWarnings("StaticVariableOfConcreteClass")
 public final class Game {
 
     private static final int DESIRED_FRAME_DURATION = 16;
@@ -78,6 +78,7 @@ public final class Game {
      * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
      * Dies betrifft unter anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
      * diese Variable eingeführt.
+     *
      * @author andonie
      * @version 11.04.2017
      */
@@ -445,6 +446,14 @@ public final class Game {
         dispatchableQueue.add(runnable);
     }
 
+    /**
+     * Führt eine Operation aus und stellt dabei sicher, dass diese nicht ausgeführt wird, während der WorldStep
+     * der Phyiscs-Engine läuft.
+     *
+     * @param runnable Die auszuführende Operation. Wird entweder sofort ausgeführt (falls der WorldStep nicht läuft)
+     *                 oder (falls der WorldStep läuft) enqueued und später ausgeführt, nachdem der WorldStep
+     *                 terminiert ist.
+     */
     @API
     public static void afterWorldStep(Runnable runnable) {
         if (scene.getWorldHandler().getWorld().isLocked()) {
@@ -463,12 +472,21 @@ public final class Game {
     }
 
     /**
+     * Gibt die gerade aktive Szene an.
+     *
+     * @return Die gerade aktive Szene. Wurde das Spiel noch nicht gestartet, ist die Rückgabe <code>null</code>.
+     * @see ea.Scene
+     */
+    @API
+    public static Scene getActiveScene() {
+        return scene;
+    }
+
+    /**
      * Gibt an, ob eine bestimmte Taste derzeit heruntergedrückt ist.
      *
      * @param keyCode Die zu testende Taste als Key-Code (also z.B. <code>Key.W</code>).
-     *
      * @return <code>true</code>, wenn die zu testende Taste gerade heruntergedrückt ist. Sonst <code>false</code>.
-     *
      * @see KeyEvent#getKeyCode()
      */
     @API
@@ -481,7 +499,6 @@ public final class Game {
      * sobald {@link #start(int, int, Scene)} ausgeführt wurde.
      *
      * @return <code>true</code>, wenn das Spiel läuft, sonst <code>false</code>.
-     *
      * @see #start(int, int, Scene)
      */
     @API
@@ -544,7 +561,6 @@ public final class Game {
      *
      * @param message Der Inhalt der Botschaft im Dialogfenster.
      * @param title   Der Titel des Dialogfensters.
-     *
      * @return Die Eingabe des Nutzers. Ist <code>null</code>, wenn der Nutzer den Dialog abgebrochen hat.
      */
     @API
@@ -558,7 +574,6 @@ public final class Game {
      *
      * @param message Der Inhalt der Botschaft im Dialogfenster.
      * @param title   Der Titel des Dialogfensters.
-     *
      * @return Die Eingabe des Nutzers:
      * <ul>
      * <li>Ja -> <code>true</code></li>
@@ -578,7 +593,6 @@ public final class Game {
      *
      * @param message Der Inhalt der Botschaft im Dialogfenster.
      * @param title   Der Titel des Dialogfensters.
-     *
      * @return Die Eingabe des Nutzers:
      * <ul>
      * <li>OK -> <code>true</code></li>
@@ -602,7 +616,6 @@ public final class Game {
      *
      * @return ist dieser Wert <code>true</code>, wird die Engine gerade im Debug-Modus ausgeführt. Sonst ist der Wert
      * <code>false</code>.
-     *
      * @see #setDebug(boolean)
      */
     @API
@@ -612,18 +625,20 @@ public final class Game {
 
     /**
      * Gibt an, ob die laufende Instanz der Engine gerade verbose Output gibt.
-     * @return	ist dieser Wert <code>true</code>, werden extrem ausführliche Logging-Informationen gespeichert.
-     * 			Sonst ist der Wert <code>false</code>.
+     *
+     * @return ist dieser Wert <code>true</code>, werden extrem ausführliche Logging-Informationen gespeichert.
+     * Sonst ist der Wert <code>false</code>.
      * @see #setVerbose(boolean)
      */
     @API
-    public static boolean isVerbose () {
+    public static boolean isVerbose() {
         return verbose;
     }
 
     /**
      * Setzt, ob die aktuell laufende Instanz der Engine verbose Output geben soll.
-     * @param value	ist dieser Wert <code>true</code>, so wird ein äußerst ausführlicher Log über die Funktionalität
+     *
+     * @param value ist dieser Wert <code>true</code>, so wird ein äußerst ausführlicher Log über die Funktionalität
      *              der Engine geführt. Dies ist hauptsächlich für das Debugging an der Engine selbst notwendig.
      * @see #isVerbose()
      * @see #setDebug(boolean)
@@ -639,7 +654,6 @@ public final class Game {
      * @param value ist dieser Wert <code>true</code>, wird die Engine ab sofort im Debug-Modus ausgeführt. Hierdurch
      *              werden mehr Informationen beim Ausführen der Engine angegeben, zum Beispiel ein Grafisches Raster
      *              und mehr Logging-Informationen. Dies ist hilfreich für Debugging am eigenen Spiel.
-     *
      * @see #isDebug()
      */
     @API
@@ -647,7 +661,7 @@ public final class Game {
         debug = value;
     }
 
-    @SuppressWarnings ( "AssignmentToStaticFieldFromInstanceMethod" )
+    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     private static class MouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
