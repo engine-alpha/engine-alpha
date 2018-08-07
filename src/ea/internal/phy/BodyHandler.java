@@ -220,7 +220,8 @@ public class BodyHandler extends PhysikHandler {
 
     @Override
     public Vector geschwindigkeit() {
-        return worldHandler.fromVec2(body.getLinearVelocity());
+        Vec2 velV2 = body.getLinearVelocity();
+        return new Vector(velV2.x, velV2.y);
     }
 
     @Override
@@ -262,8 +263,7 @@ public class BodyHandler extends PhysikHandler {
         AABB testAABB = new AABB();
         final float epsilon = 0.0001f;
         testAABB.lowerBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 - epsilon, bodyBounds.lowerBound.y);
-        testAABB.upperBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 + epsilon,
-                bodyBounds.lowerBound.y + 2 * epsilon);
+        testAABB.upperBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 + epsilon, bodyBounds.lowerBound.y + 2 * epsilon);
 
         Fixture[] groundCandidates = worldHandler.aabbQuery(testAABB);
         for (Fixture fixture : groundCandidates) {

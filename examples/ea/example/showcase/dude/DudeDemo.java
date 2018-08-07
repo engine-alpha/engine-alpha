@@ -1,6 +1,9 @@
 package ea.example.showcase.dude;
 
-import ea.*;
+import ea.BoundingRechteck;
+import ea.Layer;
+import ea.Scene;
+import ea.Vector;
 import ea.actor.Image;
 import ea.actor.TileContainer;
 import ea.example.showcase.ShowcaseDemo;
@@ -28,17 +31,18 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         super(parent);
         super.setDebuggingEnabled(false);
 
-        HUD hud = new HUD(this, character);
+        HUD hud = new HUD(this);
         addLayer(hud);
 
         character = new PlayerCharacter(this, hud);
         character.position.set(-20, 200);
         character.setBodyType(Physics.Type.DYNAMIC);
         character.physics.setRotationLocked(true);
+        hud.setPlayerCharacter(character);
 
         setGravity(new Vector(0, -13));
         getCamera().setFocus(character);
-        getCamera().setOffset(new Vector(0, 200));
+        getCamera().setOffset(new Vector(0, -100));
         getCamera().setBounds(new BoundingRechteck(-2000, 0, 20000, 20000));
 
         setupPlayground();
@@ -61,14 +65,18 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         makePlatform(7, -450, -200);
         makePlatform(3, 200, 0);
 
-        Coin coin = new Coin(this);
-        coins.add(coin);
-        add(coin);
-
-        coin = new Coin(this);
-        coin.position.set(100, 0);
-        coins.add(coin);
-        add(coin);
+        for (int i = 0; i < 15; i++) {
+            Coin coin = new Coin(this);
+            coin.position.set(200 + 30 * i, 200);
+            coin.addCollisionListener(coin, character);
+            add(coin);
+        }
+        for (int j = 0; j < 10; j++) {
+            ManaPickup manaPickup = new ManaPickup(this);
+            manaPickup.position.set(0 - 30 * j, 0);
+            manaPickup.addCollisionListener(manaPickup, character);
+            add(manaPickup);
+        }
     }
 
     private void setupCosmeticLayers() {
@@ -116,65 +124,14 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     @Override
     public void onKeyDown(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_A: //Move left
-                if (character.getHorizontalMovement() != PlayerCharacter.HorizontalMovement.RIGHT) {
-                    //Wir bewegen uns gerade NICHT schon nach rechts-> Dann auf nach links
-                    character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.LEFT);
-                }
-                break;
-            case KeyEvent.VK_S:
-                character.smash();
-                break;
-            case KeyEvent.VK_D://Move right
-                if (character.getHorizontalMovement() != PlayerCharacter.HorizontalMovement.LEFT) {
-                    //Wir bewegen uns gerade NICHT schon nach links -> Dann auf nach rechts
-                    character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
-                }
-                break;
-            case KeyEvent.VK_SPACE:
-            case KeyEvent.VK_W: //Sprungbefehl
-                character.tryJumping();
-                break;
-            case KeyEvent.VK_X:
-                character.physics.applyImpulse(new Vector(500, 0));
-                break;
             case KeyEvent.VK_P:
                 toggleDebug();
-                break;
-            case KeyEvent.VK_T:
-                character.physics.applyImpulse(new Vector(0, -2000));
-                break;
-            case KeyEvent.VK_C:
-                //
                 break;
         }
     }
 
     @Override
     public void onKeyUp(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_A: //Links losgelassen
-                if (character.getHorizontalMovement() == PlayerCharacter.HorizontalMovement.LEFT) {
-                    //Wir haben uns bisher nach links bewegt und das soll jetzt aufhören
-                    if (Game.isKeyPressed(KeyEvent.VK_D)) {
-                        //D ist auch gedrückt, wir wollen Also ab jetzt nach Rechts
-                        character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
-                    } else {
-                        character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.IDLE);
-                    }
-                }
-                break;
-            case KeyEvent.VK_D: //Rechts losgelassen
-                if (character.getHorizontalMovement() == PlayerCharacter.HorizontalMovement.RIGHT) {
-                    //Wir haben uns bisher nach rechts bewegt und das soll jetzt aufhören
-                    if (Game.isKeyPressed(KeyEvent.VK_A)) {
-                        //A ist gedrückt, wir wollen also ab jetzt nach Links
-                        character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.LEFT);
-                    } else {
-                        character.setHorizontalMovement(PlayerCharacter.HorizontalMovement.IDLE);
-                    }
-                }
-                break;
-        }
+
     }
 }

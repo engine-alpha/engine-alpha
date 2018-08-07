@@ -12,11 +12,11 @@ public class HUD extends Layer implements FrameUpdateListener {
     /**
      * Referenz zur Darstellung relevanter Infos zum PC.
      */
-    private final PlayerCharacter playerCharacter;
+    private PlayerCharacter playerCharacter;
 
     private final HUDDisplay display;
 
-    public HUD(Scene scene, PlayerCharacter playerCharacter) {
+    public HUD(Scene scene) {
         super(scene);
         this.playerCharacter = playerCharacter;
         this.setParallaxZoom(0);
@@ -25,13 +25,21 @@ public class HUD extends Layer implements FrameUpdateListener {
 
         display = new HUDDisplay(scene);
         add(display);
-        display.position.set(-DudeDemo.GAME_WIDTH / 2 + 20, DudeDemo.GAME_HEIGHT / 2 - 80);
+        display.position.set(-DudeDemo.GAME_WIDTH / 2 + 20, DudeDemo.GAME_HEIGHT / 2 - 190);
 
         scene.addFrameUpdateListener(this);
     }
 
-    public void setMoneyValue(int val) {
+    public void setPlayerCharacter(PlayerCharacter playerCharacter) {
+        this.playerCharacter = playerCharacter;
+    }
 
+    public void setMoneyValue(int val) {
+        display.setDisplayNumber(val);
+    }
+
+    public void setManaValue(float rel) {
+        display.setLineDisplay(1, rel);
     }
 
     /**
@@ -41,6 +49,11 @@ public class HUD extends Layer implements FrameUpdateListener {
      */
     @Override
     public void onFrameUpdate(int frameDuration) {
+        if (playerCharacter == null) {
+            return;
+        }
+        float vel = playerCharacter.physics.getVelocity().getLength();
 
+        display.setLineDisplay(2, Math.min(1, vel / 40));
     }
 }

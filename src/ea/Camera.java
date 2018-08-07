@@ -123,6 +123,18 @@ public final class Camera implements FrameUpdateListener {
     }
 
     /**
+     * Gibt den Offset/Verzug der Kamera aus.
+     *
+     * @return Der aktuelle Verzug der Kamera.
+     *
+     * @see #setOffset(Vector)
+     */
+    @API
+    public Vector getOffset() {
+        return this.offset;
+    }
+
+    /**
      * Mit dieser Methode kann die Kamerabewegung eingeschränkt werden.
      * <p>
      * Ein Rectangle gibt die Begrenzung an, die die Kameraperspektive niemals übertreten wird.

@@ -7,6 +7,7 @@ import ea.internal.ano.NoExternalUse;
 import ea.internal.io.ImageLoader;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,14 +27,19 @@ public class TileContainer extends Actor {
     private final Tile[][] tiles;
 
     /**
-     * Die Breite eines Tiles.
+     * Die Breite eines Tiles (original) in px.
      */
     private final int tileWidth;
 
     /**
-     * Die Höhe eines Tiles.
+     * Die Höhe eines Tiles (original) in px.
      */
     private final int tileHeight;
+
+    /**
+     * Scale-Faktor, um das das Objekt gerendert wird.
+     */
+    private final float scale;
 
     /**
      * Erstellt einen <b>leeren</b> Tile-Container. Er ist erst "sichtbar", wenn Tiles gesetzt werden.
@@ -42,13 +48,16 @@ public class TileContainer extends Actor {
      * @param numY       Die Anzahl an Tiles in Y-Richtung.
      * @param tileWidth  Die Breite eines Tiles in Pixel.
      * @param tileHeight Die Höhe eines Tiles in Pixel.
+     * @param scale      Der Faktor, um das die Tiles skaliert werden sollen (<b>hat keinen Einfluss auf die nötige
+     *                   Auflösung der Quell-Tiles</b>).
      *
      * @see #setTileAt(int, int, String)
      */
     @API
-    public TileContainer(Scene scene, int numX, int numY, int tileWidth, int tileHeight) {
-        super(scene, () -> ShapeHelper.createRectangularShape(tileWidth * numX / scene.getWorldHandler().getPixelProMeter(), tileHeight * numY / scene.getWorldHandler().getPixelProMeter()));
+    public TileContainer(Scene scene, int numX, int numY, int tileWidth, int tileHeight, float scale) {
+        super(scene, () -> ShapeHelper.createRectangularShape(scale * tileWidth * numX / scene.getWorldHandler().getPixelProMeter(), scale * tileHeight * numY / scene.getWorldHandler().getPixelProMeter()));
 
+        this.scale = scale;
         if (numX <= 0 || numY <= 0) {
             throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");
         }
@@ -62,6 +71,21 @@ public class TileContainer extends Actor {
 
     /**
      * Erstellt einen <b>leeren</b> Tile-Container. Er ist erst "sichtbar", wenn Tiles gesetzt werden.
+     *
+     * @param numX       Die Anzahl an Tiles in X-Richtung.
+     * @param numY       Die Anzahl an Tiles in Y-Richtung.
+     * @param tileWidth  Die Breite eines Tiles in Pixel.
+     * @param tileHeight Die Höhe eines Tiles in Pixel.
+     *
+     * @see #setTileAt(int, int, String)
+     */
+    public TileContainer(Scene scene, int numX, int numY, int tileWidth, int tileHeight) {
+        this(scene, numX, numY, tileWidth, tileHeight, 1f);
+    }
+
+    /**
+     * Erstellt einen <b>leeren</b> Tile-Container für quadratische Tiles. Er ist erst "sichtbar", wenn Tiles gesetzt
+     * werden.
      *
      * @param numX     Die Anzahl an Tiles in X-Richtung.
      * @param numY     Die Anzahl an Tiles in Y-Richtung.
@@ -154,9 +178,11 @@ public class TileContainer extends Actor {
     @NoExternalUse
     @Override
     public void render(Graphics2D g) {
+        final AffineTransform before = g.getTransform();
         int offset = tiles[0].length * tileHeight;
 
         try {
+            g.scale(scale, scale);
             g.translate(0, -offset);
 
             for (int x = 0; x < tiles.length; x++) {
@@ -168,7 +194,7 @@ public class TileContainer extends Actor {
                 }
             }
         } finally {
-            g.translate(0, offset);
+            g.setTransform(before);
         }
     }
 

@@ -7,6 +7,7 @@ import ea.actor.TileContainer;
 public class HUDDisplay extends ActorGroup {
 
     private static final int HUD_VALUE_LENGTH = 10;
+    private static final float HUD_SCALE = 1.5f;
 
     private final TileContainer background;
     private final TileContainer lines;
@@ -22,7 +23,7 @@ public class HUDDisplay extends ActorGroup {
     public HUDDisplay(Scene scene) {
         super(scene);
 
-        background = new TileContainer(scene, HUD_VALUE_LENGTH + 7, 4, 8, 16);
+        background = new TileContainer(scene, HUD_VALUE_LENGTH + 7, 4, 8, 16, HUD_SCALE);
 
         //Initialize Standard-Parts of backgrounds.
         for (int i = 0; i < 4; i++) {
@@ -53,8 +54,8 @@ public class HUDDisplay extends ActorGroup {
         background.setTileAt(3, 3, "game-assets/dude/hud/num_black.png", 3, 2);
 
         //LINE CONTENT
-        lines = new TileContainer(scene, HUD_VALUE_LENGTH, 4, 8, 16);
-        lines.position.move(5 * 8, 0);
+        lines = new TileContainer(scene, HUD_VALUE_LENGTH, 4, 8, 16, HUD_SCALE);
+        lines.position.move(5 * 8 * HUD_SCALE, 0);
 
         setLineValue(0, 10);
         setLineValue(1, 7);
@@ -78,10 +79,10 @@ public class HUDDisplay extends ActorGroup {
 
     private void setLineValue(int lineIndex, int lineValue) {
         for (int i = 0; i < HUD_VALUE_LENGTH; i++) {
-            if (i < lineValue) {
+            if (i + 1 < lineValue) {
                 //Voll ausgemaltes HUD
                 lines.setTileAt(i, lineIndex, lineSources[lineIndex], 1, 0);
-            } else if (i == lineValue) {
+            } else if (i + 1 == lineValue) {
                 //Ende des Striches
                 lines.setTileAt(i, lineIndex, lineSources[lineIndex], 2, 0);
             } else {
@@ -91,5 +92,18 @@ public class HUDDisplay extends ActorGroup {
         }
     }
 
-    //public void setNumberA
+    public void setLineDisplay(int lineNo, float rel) {
+        if (lineNo < 0 || lineNo > 2 || rel < 0 || rel > 1) {
+            return;
+        }
+        setLineValue(lineNo, (int) (rel * (HUD_VALUE_LENGTH + 1)));
+    }
+
+    public void setDisplayNumber(int value) {
+        for (int z = 1; z <= 5; z++) {
+            int baseValue = value % 10;
+            setNumberOf(5 - z, baseValue);
+            value /= 10;
+        }
+    }
 }

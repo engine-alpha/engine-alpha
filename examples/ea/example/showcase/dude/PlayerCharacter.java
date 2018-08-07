@@ -7,24 +7,37 @@ import ea.actor.Particle;
 import ea.actor.StatefulAnimation;
 import ea.animation.Interpolator;
 import ea.animation.ValueAnimator;
-import ea.animation.interpolation.ReverseEaseFloat;
+import ea.animation.interpolation.SinusFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.example.showcase.jump.Enemy;
+import ea.input.KeyListener;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
-public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener {
+public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
     private static final float MAX_SPEED = 5000;
     public static final int JUMP_FORCE = +2000;
     public static final int SMASH_FORCE = -15000;
     public static final int BOTTOM_OUT = -500;
+    private static final int DOUBLE_JUMP_COST = 3;
+    private static final int MANA_PICKUP_BONUS = 1;
 
     /**
      * Guthaben.
      */
     private int money = 0;
+
+    /**
+     * Ability-Points
+     */
+    private int mana = 0;
+
+    private final int MAX_MANA = 10;
+
+    private boolean didDoubleJump = false;
 
     private final HUD hud;
 
@@ -73,9 +86,22 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         physics.setFriction(0);
         physics.setElasticity(0);
 
+        setMana(0);
+
         scene.add(this);
         physics.setMass(65);
         addCollisionListener(this);
+    }
+
+    private void setMana(int mana) {
+        this.mana = mana;
+        if (this.mana < 0) {
+            this.mana = 0;
+        }
+        if (this.mana > MAX_MANA) {
+            this.mana = MAX_MANA;
+        }
+        hud.setManaValue((float) mana / (float) MAX_MANA);
     }
 
     /**
@@ -85,10 +111,25 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         if (physics.testStanding()) {
             physics.applyImpulse(new Vector(0, JUMP_FORCE));
             setState("jumpingUp");
+        } else if (!didDoubleJump && mana >= DOUBLE_JUMP_COST && !getCurrentState().equals("smashing")) {
+            //Double Jump!
+            didDoubleJump = true;
+            setMana(mana - DOUBLE_JUMP_COST);
+            physics.setVelocity(new Vector(physics.getVelocity().x, 0));
+            physics.applyImpulse(new Vector(0, JUMP_FORCE * 0.8f));
+            setState("jumpingUp");
         }
     }
 
     public void setHorizontalMovement(HorizontalMovement state) {
+        switch (state) {
+            case LEFT:
+                setFlipHorizontal(true);
+                break;
+            case RIGHT:
+                setFlipHorizontal(false);
+                break;
+        }
         this.horizontalMovement = state;
     }
 
@@ -103,13 +144,16 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         switch (item) {
             case Coin:
                 money++;
-
+                hud.setMoneyValue(money);
+                break;
+            case ManaPickup:
+                setMana(mana + MANA_PICKUP_BONUS);
                 break;
         }
     }
 
     public void smash() {
-        if (getCurrentState().equals("falling")) {
+        if (getCurrentState().equals("falling") || getCurrentState().equals("jumpingUp") || getCurrentState().equals("midair")) {
             setState("smashing");
             smashForce = new Vector(0, SMASH_FORCE);
         }
@@ -129,7 +173,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         switch (getCurrentState()) {
             case "jumpingUp":
-                if (velocity.y > 0) {
+                if (velocity.y < 0) {
                     setState("midair");
                 }
                 break;
@@ -137,6 +181,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             case "running":
             case "walking":
                 //if(standing) {
+                didDoubleJump = false;
                 if (velocity.y > 0.1f) {
                     setState("midair");
                 } else if (Math.abs(velocity.x) > 550f) {
@@ -150,18 +195,74 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 break;
         }
 
-        if (velocity.x > 0) {
-            setFlipHorizontal(false);
-        } else if (velocity.x < 0) {
-            setFlipHorizontal(true);
-        }
-
         physics.applyForce(smashForce);
 
         if (position.getY() < BOTTOM_OUT) {
             position.set(0, 0);
             physics.setVelocity(Vector.NULL);
             setState("falling");
+        }
+    }
+
+    @Override
+    public void onKeyDown(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A: //Move left
+                if (horizontalMovement != PlayerCharacter.HorizontalMovement.RIGHT) {
+                    //Wir bewegen uns gerade NICHT schon nach rechts-> Dann auf nach links
+                    setHorizontalMovement(PlayerCharacter.HorizontalMovement.LEFT);
+                }
+                break;
+            case KeyEvent.VK_S:
+                smash();
+                break;
+            case KeyEvent.VK_D://Move right
+                if (getHorizontalMovement() != PlayerCharacter.HorizontalMovement.LEFT) {
+                    //Wir bewegen uns gerade NICHT schon nach links -> Dann auf nach rechts
+                    setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
+                }
+                break;
+            case KeyEvent.VK_SPACE:
+            case KeyEvent.VK_W: //Sprungbefehl
+                tryJumping();
+                break;
+            case KeyEvent.VK_X:
+                //physics.applyImpulse(new Vector(500, 0));
+                break;
+            case KeyEvent.VK_T:
+                //physics.applyImpulse(new Vector(0, -2000));
+                break;
+            case KeyEvent.VK_C:
+                physics.setVelocity(physics.getVelocity());
+                break;
+        }
+    }
+
+    @Override
+    public void onKeyUp(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A: //Links losgelassen
+                if (horizontalMovement == PlayerCharacter.HorizontalMovement.LEFT) {
+                    //Wir haben uns bisher nach links bewegt und das soll jetzt aufhören
+                    if (Game.isKeyPressed(KeyEvent.VK_D)) {
+                        //D ist auch gedrückt, wir wollen Also ab jetzt nach Rechts
+                        setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
+                    } else {
+                        setHorizontalMovement(PlayerCharacter.HorizontalMovement.IDLE);
+                    }
+                }
+                break;
+            case KeyEvent.VK_D: //Rechts losgelassen
+                if (getHorizontalMovement() == PlayerCharacter.HorizontalMovement.RIGHT) {
+                    //Wir haben uns bisher nach rechts bewegt und das soll jetzt aufhören
+                    if (Game.isKeyPressed(KeyEvent.VK_A)) {
+                        //A ist gedrückt, wir wollen also ab jetzt nach Links
+                        setHorizontalMovement(PlayerCharacter.HorizontalMovement.LEFT);
+                    } else {
+                        setHorizontalMovement(PlayerCharacter.HorizontalMovement.IDLE);
+                    }
+                }
+                break;
         }
     }
 
@@ -179,8 +280,8 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             smashForce = Vector.NULL;
 
             if (smashing) {
-                Interpolator<Float> interpolator = new ReverseEaseFloat(0, -0.01f * physics.getVelocity().y);
-                FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> getScene().getCamera().setOffset(new Vector(0, 200 + y)), interpolator);
+                Interpolator<Float> interpolator = new SinusFloat(0, -0.4f * physics.getVelocity().y);
+                FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> getScene().getCamera().setOffset(getScene().getCamera().getOffset().add(new Vector(0, y))), interpolator);
                 getScene().addFrameUpdateListener(valueAnimator);
             }
 
