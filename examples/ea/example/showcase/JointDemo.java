@@ -183,7 +183,7 @@ implements KeyListener {
         switch(e.getKeyCode()){
             case KeyEvent.VK_S:
                 schwerkraftActive = !schwerkraftActive;
-                ball.physics.setGravity(schwerkraftActive ? new Vector(0, 10) : Vector.NULL);
+                setGravity(schwerkraftActive ? new Vector(0, 10) : Vector.NULL);
                 break;
         }
     }

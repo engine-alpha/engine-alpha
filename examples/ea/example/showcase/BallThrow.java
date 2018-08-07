@@ -137,7 +137,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         startzeit=System.currentTimeMillis();
 
         //Schwerkraft auf den Ball wirken lassen
-        ball.physics.setGravity(new Vector(0, 9.81f));
+        setGravity(new Vector(0, 9.81f));
 
         //Impuls berechnen und auf den Ball wirken lassen
         Vector impuls = new Vector((float)Math.cos(Math.toRadians(WINKEL))*IMPULS,
@@ -150,7 +150,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
      * zurückgesetzt und der Ball wird in Ruhe versetzt.
      */
     private void simulationZuruecksetzen() {
-        ball.physics.setGravity(new Vector(0,0)); //Schwerkraft deaktivieren
+        setGravity(new Vector(0,0)); //Schwerkraft deaktivieren
         ball.position.setCenter(ABSTAND_LINKS, //Ballposition zurücksetzen
                 BODEN_TIEFE-(HOEHE_UEBER_BODEN*PIXELPROMETER + 0.5f*DURCHMESSER*PIXELPROMETER));
         ball.physics.cancelAll(); //Ball in Ruhe versetzen

@@ -113,7 +113,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
     }
 
     private void toggleGravity() {
-        character.physics.setGravity(new Vector(0, hasGravity ? 0 : -13));
+        setGravity(new Vector(0, hasGravity ? 0 : -13));
         hasGravity = !hasGravity;
     }
 

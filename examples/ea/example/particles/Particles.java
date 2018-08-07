@@ -100,6 +100,8 @@ public class Particles extends ea.Scene implements KeyListener {
 
         r1.addCollisionListener(event -> remove(event.getColliding()));
 
+        setGravity(new Vector(0, -10));
+
         this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), ValueAnimator.Mode.REPEATED));
     }
 
@@ -128,7 +130,6 @@ public class Particles extends ea.Scene implements KeyListener {
         add(k);
 
         k.setBodyType(Physics.Type.DYNAMIC);
-        k.physics.setGravity(new Vector(0, -10));
     }
 
     @Override

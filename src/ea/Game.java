@@ -172,9 +172,9 @@ public final class Game {
     @API
     public static void start(int width, int height, Scene scene) {
         if (renderPanel != null) {
-            //Start wurde schon ausgeführt.
             throw new RuntimeException("Game.start wurde bereits ausgeführt.");
         }
+
         Game.width = width;
         Game.height = height;
         Game.scene = scene;
@@ -251,9 +251,11 @@ public final class Game {
 
         mousePosition = new java.awt.Point(width / 2, height / 2);
 
-        mainThread = new Thread(Game::run, "Main Game");
-        mainThread.start();
+        mainThread = Thread.currentThread();
+        mainThread.setName("Main Game");
         mainThread.setPriority(Thread.MAX_PRIORITY);
+
+        run();
     }
 
     /**

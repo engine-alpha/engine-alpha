@@ -1,5 +1,7 @@
 package ea.internal.phy;
 
+import ea.Game;
+import ea.Scene;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.collision.CollisionEvent;
@@ -45,7 +47,8 @@ public class WorldHandler implements ContactListener {
      */
     @NoExternalUse
     public static void assertNoWorldStep() {
-        if (Game.getActiveScene().getWorldHandler().getWorld().isLocked()) {
+        Scene scene = Game.getActiveScene();
+        if (scene != null && scene.getWorldHandler().getWorld().isLocked()) {
             throw new RuntimeException("Die Operation kann nicht während des World-Step ausgeführt werden. "
                     + "Ggf. mit Game.afterWorldStep wrappen.");
         }

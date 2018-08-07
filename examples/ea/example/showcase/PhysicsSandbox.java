@@ -296,7 +296,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
             case KeyEvent.VK_S: // SCHWERKRAFT-TOGGLE
                 hatSchwerkraft = !hatSchwerkraft;
                 for(Actor testObject : testObjects) {
-                    testObject.physics.setGravity(hatSchwerkraft ?
+                    testObject.getScene().setGravity(hatSchwerkraft ?
                             ERDBESCHLEUNIGUNG : Vector.NULL);
                 }
                 //System.out.println("Schwerkraft: " + hatSchwerkraft + " - ");

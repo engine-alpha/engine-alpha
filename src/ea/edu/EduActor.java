@@ -26,7 +26,8 @@ public interface EduActor {
         //Default Physics Setup für EDU Objekte
         getActor().physics.setRotationLocked(true);
         getActor().physics.setElasticity(0);
-        getActor().physics.setGravity(new Vector(0, -9.81f));
+
+        getActor().getScene().setGravity(new Vector(0, -9.81f));
     }
 
     default void entfernen() {
@@ -104,7 +105,7 @@ public interface EduActor {
     }
 
     default void setzeSchwerkraft(float schwerkraft) {
-        getActor().physics.setGravity(new Vector(0, -schwerkraft));
+        getActor().getScene().setGravity(new Vector(0, -schwerkraft));
     }
 
     default void setzeMasse(float masse) {

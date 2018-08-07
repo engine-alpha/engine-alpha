@@ -72,7 +72,7 @@ public class MarbleDemo
             r.setBodyType(Physics.Type.STATIC);
         }
 
-        lm.physics.setGravity(new Vector(0, 15));
+        lm.getScene().setGravity(new Vector(0, 15));
 
         lm.position.setRotation(-(float) Math.PI / 4);
         rm.position.setRotation((float) Math.PI / 4);

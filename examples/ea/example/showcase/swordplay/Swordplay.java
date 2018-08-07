@@ -31,7 +31,8 @@ public class Swordplay extends ShowcaseDemo implements KeyListener {
         character.position.set(-20, 200);
         character.setBodyType(Physics.Type.DYNAMIC);
         character.physics.setRotationLocked(true);
-        character.physics.setGravity(new Vector(0, -13));
+
+        setGravity(new Vector(0, -13));
 
         new Platform(this, 7).position.set(-450, -200);
 
