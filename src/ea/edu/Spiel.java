@@ -130,7 +130,7 @@ public class Spiel {
     static EduScene getActiveScene() {
         if(activeScene == null) {
             activeScene = new EduScene();
-            Game.start(frame_width, frame_height, activeScene);
+            new Thread(() -> Game.start(frame_width, frame_height, activeScene)).start();
         }
         return activeScene;
     }
