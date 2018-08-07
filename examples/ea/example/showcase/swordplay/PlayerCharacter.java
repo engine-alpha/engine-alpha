@@ -1,10 +1,9 @@
 package ea.example.showcase.swordplay;
 
-import ea.FrameUpdateListener;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.actor.Actor;
 import ea.actor.Animation;
+import ea.actor.Particle;
 import ea.actor.StatefulAnimation;
 import ea.animation.Interpolator;
 import ea.animation.ValueAnimator;
@@ -12,6 +11,8 @@ import ea.animation.interpolation.ReverseEaseFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.example.showcase.jump.Enemy;
+
+import java.awt.*;
 
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener {
 
@@ -108,7 +109,9 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         switch (getCurrentState()) {
             case "jumpingUp":
-                if (velocity.y > 0) setState("midair");
+                if (velocity.y > 0) {
+                    setState("midair");
+                }
                 break;
             case "idle":
             case "running":
@@ -160,6 +163,21 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> getScene().getCamera().setOffset(new Vector(0, y)), interpolator);
                 getScene().addFrameUpdateListener(valueAnimator);
             }
+
+            Vector speed = getPhysicsHandler().geschwindigkeit();
+            Vector transformedSpeed = Math.abs(speed.x) < .1f ? speed.add(100f * ((float) Math.random() - .5f), 0) : speed;
+
+            Game.enqueue(() -> {
+                for (int i = 0; i < 100; i++) {
+                    Particle particle = new Particle(getScene(), Random.nextInteger(2) + 2, 500);
+                    particle.position.set(position.getCenter().add(0, -32));
+                    particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
+                    particle.setColor(Color.GRAY);
+                    particle.setLayer(-1);
+
+                    getScene().add(particle);
+                }
+            });
         }
     }
 }

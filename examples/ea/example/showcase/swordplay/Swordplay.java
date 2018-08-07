@@ -1,14 +1,14 @@
 package ea.example.showcase.swordplay;
 
-import ea.Game;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.actor.Actor;
 import ea.actor.Image;
+import ea.actor.Particle;
 import ea.example.showcase.ShowcaseDemo;
 import ea.handle.Physics;
 import ea.input.KeyListener;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashSet;
@@ -61,6 +61,16 @@ public class Swordplay extends ShowcaseDemo implements KeyListener {
                 remove(actor);
             }
         });
+
+        addFrameUpdateListener(new PeriodicTask(16, () -> {
+            Particle particle = new Particle(Swordplay.this, Random.nextInteger(2) + 2, 3000);
+            particle.position.set(Random.nextInteger(860) - 430, -110);
+            particle.physics.applyImpulse(new Vector(.5f * ((float) Math.random() - .5f), 2f * ((float) Math.random())));
+            particle.setColor(new Color(54, 255, 195));
+            particle.setLayer(-1);
+
+            add(particle);
+        }));
     }
 
     @Override

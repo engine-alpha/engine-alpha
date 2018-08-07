@@ -148,6 +148,39 @@ public final class Vector implements Cloneable {
     }
 
     /**
+     * Berechnet die Gegenrichtung des Vektors in X-Richtung.
+     *
+     * @return Neues Vector-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
+     */
+    @API
+    public Vector negateX() {
+        return new Vector(-this.x, this.y);
+    }
+
+    /**
+     * Berechnet die Gegenrichtung des Vektors in Y-Richtung.
+     *
+     * @return Neues Vector-Objekt, das genau die Gegenbewegung zu dem eigenen beschreibt.
+     */
+    @API
+    public Vector negateY() {
+        return new Vector(this.x, -this.y);
+    }
+
+    /**
+     * Berechnet die effektive Bewegung, die dieser Vector und ein weiterer zusammen ausüben.
+     *
+     * @param x Änderung in X-Richtung
+     * @param y Änderung in Y-Richtung
+     *
+     * @return Neues Vector-Objekt, das die Summe der beiden ursprünglichen Bewegungen darstellt.
+     */
+    @API
+    public Vector add(float x, float y) {
+        return new Vector(this.x + x, this.y + y);
+    }
+
+    /**
      * Berechnet die effektive Bewegung, die dieser Vector und ein weiterer zusammen ausüben.
      *
      * @param v zweiter Vector
@@ -157,6 +190,19 @@ public final class Vector implements Cloneable {
     @API
     public Vector add(Vector v) {
         return new Vector(this.x + v.x, this.y + v.y);
+    }
+
+    /**
+     * Berechnet die Differenz zwischen diesem und einem weiteren Vector.
+     *
+     * @param x Änderung in X-Richtung
+     * @param y Änderung in Y-Richtung
+     *
+     * @return Die Differenz der beiden Vektoren (<code>"this - v"</code>)
+     */
+    @API
+    public Vector subtract(float x, float y) {
+        return new Vector(this.x - x, this.y - y);
     }
 
     /**
@@ -176,7 +222,7 @@ public final class Vector implements Cloneable {
      * <code>getY</code>) mit einem festen Faktor. <br /> Dadurch entsteht ein neuer Vector mit anderen
      * Werten, welcher zurückgegeben wird.
      *
-     * @param faktor Der Faktor, mit dem die <code>getX</code>- und <code>getY</code>-Werte des Vektors multipliziert
+     * @param factor Der Faktor, mit dem die <code>getX</code>- und <code>getY</code>-Werte des Vektors multipliziert
      *               werden
      *
      * @return Der Vector mit den multiplizierten Werten
@@ -184,8 +230,38 @@ public final class Vector implements Cloneable {
      * @see #divide(float)
      */
     @API
-    public Vector multiply(float faktor) {
-        return new Vector(x * faktor, y * faktor);
+    public Vector multiply(float factor) {
+        return new Vector(x * factor, y * factor);
+    }
+
+    /**
+     * Multipliziert die effektive Länge des X-Anteils des Vektors mit einem festen Faktor. <br />
+     * Dadurch entsteht ein neuer Vector mit anderen Werten, welcher zurückgegeben wird.
+     *
+     * @param factor Der Faktor, mit dem der x-Wert des Vektors multipliziert wird
+     *
+     * @return Der Vector mit den multiplizierten Werten
+     *
+     * @see #multiply(float)
+     */
+    @API
+    public Vector multiplyX(float factor) {
+        return new Vector(x * factor, y);
+    }
+
+    /**
+     * Multipliziert die effektive Länge des X-Anteils des Vektors mit einem festen Faktor. <br />
+     * Dadurch entsteht ein neuer Vector mit anderen Werten, welcher zurückgegeben wird.
+     *
+     * @param factor Der Faktor, mit dem der x-Wert des Vektors multipliziert wird
+     *
+     * @return Der Vector mit den multiplizierten Werten
+     *
+     * @see #multiply(float)
+     */
+    @API
+    public Vector multiplyY(float factor) {
+        return new Vector(x, y * factor);
     }
 
     /**

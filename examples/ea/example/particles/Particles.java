@@ -19,10 +19,7 @@
 
 package ea.example.particles;
 
-import ea.FrameUpdateListener;
-import ea.Game;
-import ea.PeriodicTask;
-import ea.Vector;
+import ea.*;
 import ea.actor.Circle;
 import ea.actor.Particle;
 import ea.actor.Rectangle;
@@ -40,8 +37,6 @@ public class Particles extends ea.Scene implements KeyListener {
     public static final int WIDTH = 800, HEIGHT = 600;
 
     public static void main(String[] args) {
-        Game.setVerbose(true);
-        Game.setDebug(true);
         Game.start(WIDTH, HEIGHT, new Particles());
     }
 
@@ -52,7 +47,7 @@ public class Particles extends ea.Scene implements KeyListener {
         Game.setTitle("Marbles");
 
         Rectangle left = new Rectangle(this, 200, 10);
-        left.position.set(-WIDTH / 6 - 50, -50);
+        left.position.set(-WIDTH / 6 - 150, -50);
         add(left);
 
         left.setColor(Color.white);
@@ -102,20 +97,36 @@ public class Particles extends ea.Scene implements KeyListener {
 
         setGravity(new Vector(0, -10));
 
+        addFrameUpdateListener(new PeriodicTask(1000, () -> {
+            Particle particle = new Particle(Particles.this, Random.nextInteger(2) + 6, 3000);
+            particle.position.set(Random.nextInteger(WIDTH) - WIDTH / 2, Random.nextInteger(HEIGHT) - HEIGHT / 2);
+            particle.physics.applyImpulse(new Vector(.5f * ((float) Math.random() - .5f), .5f * ((float) Math.random() - .5f)));
+            particle.setColor(Color.RED);
+            particle.setBodyType(Physics.Type.DYNAMIC);
+            particle.setLayer(-1);
+
+            ValueAnimator<Integer> animator = new ValueAnimator<>(1500, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
+            animator.addCompletionListener((value) -> removeFrameUpdateListener(animator));
+            addFrameUpdateListener(animator);
+
+            add(particle);
+        }));
+
         this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), ValueAnimator.Mode.REPEATED));
     }
 
     private void createCircle() {
         Circle k = new Circle(Particles.this, 6);
 
-        FrameUpdateListener emitter = new PeriodicTask(16, () -> {
-            Particle particle = new Particle(Particles.this, 3, 3000);
-            particle.position.set(k.position.getCenter());
-            particle.physics.applyImpulse(new Vector(((float) Math.random() - .5f), ((float) Math.random() - .5f)));
+        FrameUpdateListener emitter = new PeriodicTask(10, () -> {
+            Particle particle = new Particle(Particles.this, 3, 500);
+            particle.position.set(k.position.getCenter().subtract(new Vector(1, 1)));
+            particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), 2 * ((float) Math.random() - .5f)));
             particle.setColor(Color.RED);
             particle.setBodyType(Physics.Type.DYNAMIC);
+            particle.setLayer(-1);
 
-            ValueAnimator<Integer> animator = new ValueAnimator<>(1500, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
+            ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
             animator.addCompletionListener((value) -> removeFrameUpdateListener(animator));
             addFrameUpdateListener(animator);
 

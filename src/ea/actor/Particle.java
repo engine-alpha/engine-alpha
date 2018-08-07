@@ -83,18 +83,22 @@ public class Particle extends Circle implements FrameUpdateListener {
     public void onFrameUpdate(int frameDuration) {
         this.age += frameDuration;
 
-        Color c = getColor();
-        this.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255 * Math.max(0, 1 - (float) age / life))));
+        Color color = getColor();
+
+        int alpha = (int) (255 * Math.max(0, 1 - (float) age / life));
+        this.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
 
         if (isDead()) {
             getScene().remove(this);
         }
     }
 
+    @API
     public boolean isDead() {
         return this.age > this.life;
     }
 
+    @API
     public int getRemainingLifetime() {
         return Math.max(0, this.life - this.age);
     }
