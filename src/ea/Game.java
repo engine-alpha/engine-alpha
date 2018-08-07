@@ -21,6 +21,7 @@ package ea;
 
 import ea.input.MouseButton;
 import ea.input.MouseWheelAction;
+import ea.internal.ThreadSyncHelper;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
 import ea.internal.gra.RenderPanel;
@@ -402,6 +403,10 @@ public final class Game {
         frame.dispose();
 
         System.exit(0);
+    }
+
+    public static boolean isGameThread() {
+        return Thread.currentThread() == mainThread || Thread.currentThread() == renderThread || mainThread == null || ThreadSyncHelper.isSynced();
     }
 
     @NoExternalUse

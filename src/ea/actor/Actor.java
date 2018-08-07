@@ -499,19 +499,6 @@ public abstract class Actor {
     public abstract void render(Graphics2D g);
 
     /**
-     * Überschriebene <code>finalize</code>-Methode. Loggt verbose die Garbage Collection des Actor-Objekts.
-     *
-     * @throws Throwable Übernommen von Object
-     */
-    @Override
-    public void finalize() throws Throwable {
-        // Logge die Zerstörung
-        Logger.verboseInfo("Actor", "Actor-Objekt in Garbage Collection: " + toString());
-
-        super.finalize();
-    }
-
-    /**
      * Gibt die Scene aus, zu der dieser Actor gehört.
      *
      * @return Das Scene-Objekt, zu dem dieser Actor gehört.
