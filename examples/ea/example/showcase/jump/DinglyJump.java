@@ -25,7 +25,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
         super(parent);
 
         character = new PlayerCharacter(this);
-        character.physics.setType(Physics.Type.DYNAMIC);
+        character.setBodyType(Physics.Type.DYNAMIC);
         character.physics.setRotationLocked(true);
 
         toggleGravity();
@@ -34,7 +34,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
         platform.setColor(Color.WHITE);
         platform.position.set(-2500, -300);
         add(platform);
-        platform.physics.setType(Physics.Type.STATIC);
+        platform.setBodyType(Physics.Type.STATIC);
         platform.physics.setElasticity(0);
         platform.getPhysicsHandler().getBody().m_userData = "Ground";
 

@@ -19,14 +19,18 @@
 
 package ea.example.particles;
 
-import ea.*;
+import ea.FrameUpdateListener;
+import ea.Game;
+import ea.PeriodicTask;
+import ea.Vector;
 import ea.actor.Circle;
+import ea.actor.Particle;
 import ea.actor.Rectangle;
 import ea.animation.ValueAnimator;
+import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.ReverseEaseFloat;
 import ea.handle.Physics;
 import ea.input.KeyListener;
-import ea.particle.ParticleEmitter;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -65,8 +69,8 @@ public class Particles extends ea.Scene implements KeyListener {
 
         addFrameUpdateListener(new PeriodicTask(1000, this::createCircle));
 
-        left.physics.setType(Physics.Type.STATIC);
-        right.physics.setType(Physics.Type.STATIC);
+        left.setBodyType(Physics.Type.STATIC);
+        right.setBodyType(Physics.Type.STATIC);
         left.physics.setElasticity(.9f);
         right.physics.setElasticity(.9f);
 
@@ -84,10 +88,10 @@ public class Particles extends ea.Scene implements KeyListener {
 
         add(r1, r2, r3, r4);
 
-        r1.physics.setType(Physics.Type.STATIC);
-        r2.physics.setType(Physics.Type.STATIC);
-        r3.physics.setType(Physics.Type.STATIC);
-        r4.physics.setType(Physics.Type.STATIC);
+        r1.setBodyType(Physics.Type.STATIC);
+        r2.setBodyType(Physics.Type.STATIC);
+        r3.setBodyType(Physics.Type.STATIC);
+        r4.setBodyType(Physics.Type.STATIC);
 
         r1.setColor(Color.yellow);
         r2.setColor(Color.yellow);
@@ -100,37 +104,30 @@ public class Particles extends ea.Scene implements KeyListener {
     }
 
     private void createCircle() {
-        Circle k = new Circle(Particles.this, 6) {
-            private ParticleEmitter particles = new ParticleEmitter();
-            private boolean registered = false;
+        Circle k = new Circle(Particles.this, 6);
 
-            @Override
-            public void renderBasic(Graphics2D g, BoundingRechteck r) {
-                if (!registered) {
-                    addFrameUpdateListener(particles);
-                    registered = true;
-                }
+        FrameUpdateListener emitter = new PeriodicTask(16, () -> {
+            Particle particle = new Particle(Particles.this, 3, 3000);
+            particle.position.set(k.position.getCenter());
+            particle.physics.applyImpulse(new Vector(((float) Math.random() - .5f), ((float) Math.random() - .5f)));
+            particle.setColor(Color.RED);
+            particle.setBodyType(Physics.Type.DYNAMIC);
 
-                particles.render(g);
-                particles.emit(
-                        position.getX() + 3,
-                        position.getY() + 3,
-                        20 * ((float) Math.random() - .5f),
-                        20 * ((float) Math.random() - .5f),
-                        2,
-                        300,
-                        Color.red
-                );
+            ValueAnimator<Integer> animator = new ValueAnimator<>(1500, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
+            animator.addCompletionListener((value) -> removeFrameUpdateListener(animator));
+            addFrameUpdateListener(animator);
 
-                super.renderBasic(g, r);
-            }
-        };
+            add(particle);
+        });
+
+        addFrameUpdateListener(emitter);
+        k.addDestructionListener(() -> removeFrameUpdateListener(emitter));
 
         k.position.set(getMousePosition());
         k.setColor(Color.white);
         add(k);
 
-        k.physics.setType(Physics.Type.DYNAMIC);
+        k.setBodyType(Physics.Type.DYNAMIC);
         k.physics.setGravity(new Vector(0, -10));
     }
 

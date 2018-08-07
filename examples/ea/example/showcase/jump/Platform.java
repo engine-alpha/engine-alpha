@@ -20,7 +20,7 @@ public class Platform extends Rectangle implements CollisionListener<PlayerChara
         scene.add(this);
 
         setColor(new Color(130, 140, 255, 200));
-        physics.setType(Physics.Type.STATIC);
+        setBodyType(Physics.Type.STATIC);
         physics.setElasticity(0);
 
         addCollisionListener(this, character);

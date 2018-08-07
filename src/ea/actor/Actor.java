@@ -41,6 +41,8 @@ import org.jbox2d.dynamics.FixtureDef;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
 /**
@@ -90,6 +92,8 @@ public abstract class Actor {
      */
     private final PhysikHandler physicsHandler;
 
+    private final Collection<Runnable> destructionListeners = new CopyOnWriteArrayList<>();
+
     /* _________________________ Die Handler _________________________ */
 
     /**
@@ -127,10 +131,10 @@ public abstract class Actor {
 
         this.scene = scene;
 
-        this.physicsHandler = createDefaultPhysicsHandler(shapeSupplier.get());
+        this.physicsHandler = createPhysicsHandler(shapeSupplier.get());
     }
 
-    protected PhysikHandler createDefaultPhysicsHandler(Shape shape) {
+    protected PhysikHandler createPhysicsHandler(Shape shape) {
         scene.getWorldHandler().blockPPMChanges();
 
         BodyDef bodyDef = new BodyDef();
@@ -155,9 +159,18 @@ public abstract class Actor {
     }
 
     @API
-    public void destroy() {
+    public final void addDestructionListener(Runnable listener) {
+        destructionListeners.add(listener);
+    }
+
+    @API
+    public final void destroy() {
         if (scene == null) {
             return;
+        }
+
+        for (Runnable listener : destructionListeners) {
+            listener.run();
         }
 
         this.alive = false;
@@ -266,9 +279,40 @@ public abstract class Actor {
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
 
-    @NoExternalUse
+    /**
+     * Setzt, was für eine Type physikalisches Objekt das Objekt sein soll. Erläuterung findet
+     * sich im <code>enum Type</code>.
+     *
+     * @param type Der Type Physics-Objekt, der ab sofort dieses Objekt sein soll.
+     *
+     * @see Physics.Type
+     */
+    @API
     public void setBodyType(Physics.Type type) {
         this.physicsHandler.typ(type);
+
+        int category = 0;
+        switch (type) {
+            case STATIC:
+                category = WorldHandler.CATEGORY_PASSIVE;
+                break;
+            case DYNAMIC:
+            case KINEMATIC:
+                category = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
+                break;
+        }
+
+        this.physicsHandler.getBody().m_fixtureList.m_filter.categoryBits = category;
+    }
+
+    /**
+     * Gibt aus, was für ein Type Physics-Objekt dieses Objekt momentan ist.
+     * @return  der Type Physics-Objekt, der das entsprechende <code>Actor</code>-Objekt momentan ist.
+     * @see Physics.Type
+     */
+    @API
+    public Physics.Type getBodyType() {
+        return physicsHandler.typ();
     }
 
     /**
@@ -312,10 +356,14 @@ public abstract class Actor {
             render(g);
 
             if (Game.isDebug()) {
-                // Visualisiere die Shape
-                float ppm = getPhysicsHandler().getWorldHandler().getPixelProMeter();
-                g.setColor(Color.red);
-                renderShape(physicsHandler.getBody().m_fixtureList.m_shape, g, ppm);
+                synchronized (physicsHandler) {
+                    // Visualisiere die Shape
+                    if (physicsHandler.getBody().m_fixtureList != null) {
+                        float ppm = physicsHandler.getWorldHandler().getPixelProMeter();
+                        g.setColor(Color.red);
+                        renderShape(physicsHandler.getBody().m_fixtureList.m_shape, g, ppm);
+                    }
+                }
             }
 
             // ____ Post-Render ____
@@ -345,8 +393,7 @@ public abstract class Actor {
         if (shape instanceof PolygonShape) {
             PolygonShape polygonShape = (PolygonShape) shape;
             Vec2[] vec2s = polygonShape.getVertices();
-            int[] xs = new int[polygonShape.getVertexCount()],
-                    ys = new int[polygonShape.getVertexCount()];
+            int[] xs = new int[polygonShape.getVertexCount()], ys = new int[polygonShape.getVertexCount()];
             for (int i = 0; i < xs.length; i++) {
                 xs[i] = (int) (vec2s[i].x * pixelPerMeter);
                 ys[i] = (-1) * (int) (vec2s[i].y * pixelPerMeter);

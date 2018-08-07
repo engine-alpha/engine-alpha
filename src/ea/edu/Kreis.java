@@ -1,6 +1,5 @@
 package ea.edu;
 
-import ea.Scene;
 import ea.actor.Actor;
 import ea.actor.Circle;
 

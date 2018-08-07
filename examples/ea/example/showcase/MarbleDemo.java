@@ -37,7 +37,7 @@ public class MarbleDemo
         addFrameUpdateListener(new PeriodicTask(100, () -> {
             Circle marble = makeAMarble();
             add(marble);
-            marble.physics.setType(Physics.Type.DYNAMIC);
+            marble.setBodyType(Physics.Type.DYNAMIC);
             marble.position.set(new Vector(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150));
             marble.physics.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
         }));
@@ -69,7 +69,7 @@ public class MarbleDemo
         for (Rectangle r : allRectangles) {
             r.setColor(Color.WHITE);
             add(r);
-            r.physics.setType(Physics.Type.STATIC);
+            r.setBodyType(Physics.Type.STATIC);
         }
 
         lm.physics.setGravity(new Vector(0, 15));
@@ -82,11 +82,11 @@ public class MarbleDemo
     public void onKeyDown(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_X: // Boden togglen
-                if (boden.physics.getType() == Physics.Type.STATIC) {
-                    boden.physics.setType(Physics.Type.PASSIVE);
+                if (boden.getBodyType() == Physics.Type.STATIC) {
+                    boden.setBodyType(Physics.Type.PASSIVE);
                     boden.setColor(new Color(255, 255, 255, 100));
                 } else {
-                    boden.physics.setType(Physics.Type.STATIC);
+                    boden.setBodyType(Physics.Type.STATIC);
                     boden.setColor(new Color(255, 255, 255));
                 }
                 break;
@@ -120,7 +120,7 @@ public class MarbleDemo
         }
 
         Circle murmel = new Marble(Random.nextInteger(50) + 10);
-        murmel.physics.setType(Physics.Type.DYNAMIC);
+        murmel.setBodyType(Physics.Type.DYNAMIC);
         murmel.physics.setMass(4);
         murmel.setColor(new Color(
                 Random.nextInteger(255), Random.nextInteger(255), Random.nextInteger(255)));

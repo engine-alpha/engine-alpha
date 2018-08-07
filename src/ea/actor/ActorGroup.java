@@ -70,6 +70,17 @@ public class ActorGroup extends Actor {
 
         actors =  new ArrayList<>();
         joints = new ArrayList<>();
+
+        addDestructionListener(() -> {
+            if (this.getScene() != null) {
+                synchronized (this.actors) {
+                    for (Actor actor : this.actors) {
+                        this.detachListeners(actor);
+                        actor.destroy();
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -82,20 +93,6 @@ public class ActorGroup extends Actor {
                 functor.accept(room);
             }
         }
-    }
-
-    @Override
-    public void destroy() {
-        if (this.getScene() != null) {
-            synchronized (this.actors) {
-                for (Actor actor : this.actors) {
-                    this.detachListeners(actor);
-                    actor.destroy();
-                }
-            }
-        }
-
-        super.destroy();
     }
 
     /**
@@ -354,7 +351,7 @@ public class ActorGroup extends Actor {
 
 
     @Override
-    protected PhysikHandler createDefaultPhysicsHandler(Shape shape) {
+    protected PhysikHandler createPhysicsHandler(Shape shape) {
         return new KnotenHandler(this);
     }
 }

@@ -57,7 +57,7 @@ implements KeyListener {
         ball.setColor(Color.BLUE);
 
         ball.position.set(new Vector(300, 200));
-        ball.physics.setType(Physics.Type.DYNAMIC);
+        ball.setBodyType(Physics.Type.DYNAMIC);
     }
 
     private ActorGroup hoverHolderBauen() {
@@ -73,13 +73,13 @@ implements KeyListener {
         );
         knoten.add(halter);
         halter.setColor(Color.CYAN);
-        halter.physics.setType(Physics.Type.DYNAMIC);
+        halter.setBodyType(Physics.Type.DYNAMIC);
 
         Rectangle item = new Rectangle(this, 35*FACT, 20*FACT);
         item.position.set(30*FACT, 0);
         knoten.add(item);
         item.setColor(Color.red);
-        item.physics.setType(Physics.Type.DYNAMIC);
+        item.setBodyType(Physics.Type.DYNAMIC);
 
 
         knoten.position.move(new Vector(160, 200));
@@ -97,13 +97,13 @@ implements KeyListener {
         Circle kx = new Circle(this, 30);
         knoten.add(kx);
         kx.setColor(Color.BLUE);
-        kx.physics.setType(Physics.Type.DYNAMIC);
+        kx.setBodyType(Physics.Type.DYNAMIC);
 
         Circle ky = new Circle(this, 50);
         ky.position.set(50, 0);
         knoten.add(ky);
         ky.setColor(Color.GREEN);
-        ky.physics.setType(Physics.Type.DYNAMIC);
+        ky.setBodyType(Physics.Type.DYNAMIC);
 
         knoten.position.move(-20,500);
 
@@ -123,12 +123,12 @@ implements KeyListener {
 
         basis = new Polygon(this, new Vector(0, 100), new Vector(100, 100), new Vector(50, 0));
         bauwerk.add(basis);
-        basis.physics.setType(Physics.Type.STATIC);
+        basis.setBodyType(Physics.Type.STATIC);
         basis.setColor(Color.WHITE);
 
         wippe = new Rectangle(this, 500, 40);
         bauwerk.add(wippe);
-        wippe.physics.setType(Physics.Type.DYNAMIC);
+        wippe.setBodyType(Physics.Type.DYNAMIC);
 
         wippe.position.setCenter(50, 0);
 
@@ -156,7 +156,7 @@ implements KeyListener {
             kette[i].position.move(posrel);
             kette[i].setColor(Color.GREEN);
 
-            kette[i].physics.setType(i == 0 ? Physics.Type.STATIC : Physics.Type.DYNAMIC);
+            kette[i].setBodyType(i == 0 ? Physics.Type.STATIC : Physics.Type.DYNAMIC);
 
             if(i != 0) {
                 RevoluteJoint rj = kette[i-1].physics.createRevoluteJoint(kette[i], new Vector(0, 5).add(posrel));
@@ -168,7 +168,7 @@ implements KeyListener {
         ketteK.add(gewicht);
         gewicht.setColor(Color.WHITE);
 
-        gewicht.physics.setType(Physics.Type.DYNAMIC);
+        gewicht.setBodyType(Physics.Type.DYNAMIC);
         gewicht.physics.setMass(40);
 
         Vector vektor = new Vector(45*kette.length, 35);

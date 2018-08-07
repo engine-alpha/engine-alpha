@@ -33,7 +33,7 @@ public class Platform extends TileContainer {
 
         scene.add(this);
 
-        physics.setType(Physics.Type.STATIC);
+        setBodyType(Physics.Type.STATIC);
         physics.setElasticity(0);
     }
 }

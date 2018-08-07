@@ -268,7 +268,7 @@ public class BodyHandler extends PhysikHandler {
         Fixture[] groundCandidates = worldHandler.aabbQuery(testAABB);
         for (Fixture fixture : groundCandidates) {
             Actor corresponding = worldHandler.bodyLookup(fixture.m_body);
-            if (corresponding != null && corresponding.physics.getType() == Physics.Type.STATIC) {
+            if (corresponding != null && corresponding.getBodyType() == Physics.Type.STATIC) {
                 return true;
             }
         }

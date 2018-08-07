@@ -89,7 +89,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         ball = new Circle(this, DURCHMESSER*PIXELPROMETER);
         add(ball);
         ball.setColor(Color.RED);
-        ball.physics.setType(Physics.Type.DYNAMIC);
+        ball.setBodyType(Physics.Type.DYNAMIC);
         ball.physics.setMass(MASSE);
         ball.position.setCenter(ABSTAND_LINKS,
                 BODEN_TIEFE-(HOEHE_UEBER_BODEN*PIXELPROMETER + 0.5f*DURCHMESSER*PIXELPROMETER));
@@ -101,7 +101,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         boden.position.set(0,BODEN_TIEFE);
         add(boden);
         boden.setColor(Color.WHITE);
-        boden.physics.setType(Physics.Type.STATIC);
+        boden.setBodyType(Physics.Type.STATIC);
 
         //Kollision zwischen Ball und Boden beobachten (Code ist uns egal, wir kennen nur einen Kollisionsfall)
         ball.addCollisionListener(this, boden);

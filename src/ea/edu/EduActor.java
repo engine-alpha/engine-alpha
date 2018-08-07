@@ -130,15 +130,15 @@ public interface EduActor {
     }
 
     default void macheAktiv() {
-        getActor().physics.setType(Physics.Type.DYNAMIC);
+        getActor().setBodyType(Physics.Type.DYNAMIC);
     }
 
     default void machePassiv() {
-        getActor().physics.setType(Physics.Type.STATIC);
+        getActor().setBodyType(Physics.Type.STATIC);
     }
 
     default void macheNeutral() {
-        getActor().physics.setType(Physics.Type.PASSIVE);
+        getActor().setBodyType(Physics.Type.PASSIVE);
     }
 
     default void sprung(float staerke) {

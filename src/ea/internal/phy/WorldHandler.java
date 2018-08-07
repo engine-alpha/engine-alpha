@@ -1,6 +1,5 @@
 package ea.internal.phy;
 
-import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.collision.CollisionEvent;
@@ -31,6 +30,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * (Zeichengrößen)</li> </ul>
  */
 public class WorldHandler implements ContactListener {
+    public static final int CATEGORY_PASSIVE = 1;
+    public static final int CATEGORY_DYNAMIC_OR_KINEMATIC = 2;
+    public static final int CATEGORY_PARTICLE = 4;
+
 
     /**
      * Assertion-Methode, die sicherstellt, dass die (JBox2D-)World der gerade aktiven Szene nicht im World-Step ist.

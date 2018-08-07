@@ -58,6 +58,7 @@ public class StatefulAnimation extends Actor {
         this.height = height;
 
         getScene().addFrameUpdateListener(frameUpdateListener);
+        addDestructionListener(() -> getScene().removeFrameUpdateListener(frameUpdateListener));
     }
 
     /**
@@ -238,13 +239,6 @@ public class StatefulAnimation extends Actor {
     /* ~~ Internal Functions ~~ */
 
     private final FrameUpdateListener frameUpdateListener = (l) -> internalOnFrameUpdate(l);
-
-    @Override
-    public void destroy() {
-        getScene().removeFrameUpdateListener(frameUpdateListener);
-
-        super.destroy();
-    }
 
     /**
      * Methode wird frameweise über einen anononymen Listener aufgerufen.

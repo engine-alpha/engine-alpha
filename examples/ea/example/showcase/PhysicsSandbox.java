@@ -161,7 +161,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         rechteck.position.set(10, 10);
         add(rechteck);
         rechteck.setColor(Color.YELLOW);
-        rechteck.physics.setType(Physics.Type.DYNAMIC);
+        rechteck.setBodyType(Physics.Type.DYNAMIC);
         testObjects[0] = rechteck;
 
         fixierungsGruppe = new ActorGroup(this);
@@ -173,14 +173,14 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         //wurzel.add(kreis);
         fixierungsGruppe.add(kreis);
         kreis.setColor(Color.MAGENTA);
-        kreis.physics.setType(Physics.Type.DYNAMIC);
+        kreis.setBodyType(Physics.Type.DYNAMIC);
         testObjects[1] = kreis;
 
         Circle kreis2 = new Circle(this, 20);
         //wurzel.add(kreis2);
         fixierungsGruppe.add(kreis2);
         kreis2.setColor(Color.GREEN);
-        kreis2.physics.setType(Physics.Type.DYNAMIC);
+        kreis2.setBodyType(Physics.Type.DYNAMIC);
         //kreis2.physics.masse(50);
         testObjects[2] = kreis2;
 
@@ -188,7 +188,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 new Vector(80, 10), new Vector(120, 0));
         fixierungsGruppe.add(polygon);
         polygon.setColor(Color.BLUE);
-        polygon.physics.setType(Physics.Type.DYNAMIC);
+        polygon.setBodyType(Physics.Type.DYNAMIC);
         testObjects[3] = polygon;
 
         //Boden
@@ -196,7 +196,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         boden.position.set(0, FIELD_DEPTH);
         add(boden);
         boden.setColor(Color.WHITE);
-        boden.physics.setType(Physics.Type.STATIC);
+        boden.setBodyType(Physics.Type.STATIC);
         ground = walls[0] = boden;
 
         //Der Rest der Wände
@@ -212,7 +212,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         for(int i = 1; i <= 3; i++) {
             walls[i].setColor(Color.WHITE);
             walls[i].setVisible(false);
-            walls[i].physics.setType(Physics.Type.PASSIVE);
+            walls[i].setBodyType(Physics.Type.PASSIVE);
         }
 
 
@@ -307,7 +307,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 //System.out.println("Type = " + newType);
                 for(int i = 1; i <= 3; i++) {
                     walls[i].setVisible(!wasActive);
-                    walls[i].physics.setType(newType);
+                    walls[i].setBodyType(newType);
                 }
                 break;
             case KeyEvent.VK_I: //Toggle Info Box

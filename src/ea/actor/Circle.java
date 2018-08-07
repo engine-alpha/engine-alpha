@@ -52,6 +52,7 @@ public class Circle extends Geometry {
 
         this.diameter = diameter;
         this.diameterInt = Math.round(diameter);
+        this.setColor(Color.WHITE);
     }
 
     /**

@@ -111,7 +111,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         boden.position.set(0, FIELD_DEPTH);
         add(boden);
         boden.setColor(Color.WHITE);
-        boden.physics.setType(Physics.Type.STATIC);
+        boden.setBodyType(Physics.Type.STATIC);
         ground = walls[0] = boden;
 
         //Der Rest der Wände
@@ -127,7 +127,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         for(int i = 1; i <= 3; i++) {
             walls[i].setColor(Color.WHITE);
             walls[i].setVisible(false);
-            walls[i].physics.setType(Physics.Type.PASSIVE);
+            walls[i].setBodyType(Physics.Type.PASSIVE);
         }
 
 
@@ -159,7 +159,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
                         Physics.Type newType = wasActive ? Physics.Type.PASSIVE :Physics.Type.STATIC;
                         for(int i = 0; i <= 3; i++) {
                             walls[i].setVisible(!wasActive);
-                            walls[i].physics.setType(newType);
+                            walls[i].setBodyType(newType);
                         }
                         break;
 
@@ -208,7 +208,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
                 stange.setVisible(false);
                 Vector distance = lastAttack.negate().add(p);
 
-                if(attackedLast != null && attackedLast.physics.getType() == Physics.Type.DYNAMIC) {
+                if(attackedLast != null && attackedLast.getBodyType() == Physics.Type.DYNAMIC) {
                     attackedLast.physics.applyImpulse(distance.multiply(1), lastAttack);
                     attackedLast = null;
                 }

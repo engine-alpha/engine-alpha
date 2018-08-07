@@ -404,32 +404,6 @@ public class Physics {
     /* _________________________ Physics-Type _________________________ */
 
     /**
-     * Setzt, was für eine Type physikalisches Objekt das Objekt sein soll. Erläuterung findet
-     * sich im <code>enum Type</code>.
-     *
-     * @param type Der Type Physics-Objekt, der ab sofort dieses Objekt sein soll.
-     * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
-     * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
-     * @see Type
-     */
-    @API
-    public Physics setType(Type type) {
-        actor.setBodyType(type);
-        return this;
-    }
-
-    /**
-     * Gibt aus, was für ein Type Physics-Objekt dieses Objekt momentan ist.
-     *
-     * @return der Type Physics-Objekt, der das entsprechende <code>Actor</code>-Objekt momentan ist.
-     * @see Type
-     */
-    @API
-    public Type getType() {
-        return actor.getPhysicsHandler().typ();
-    }
-
-    /**
      * Aufzählung der drei verschiedenen Typen von Objekten innerhalb der Physics der EA.
      * <ul>
      * <li>
@@ -466,8 +440,8 @@ public class Physics {
      * </li>
      * </ul>
      *
-     * @see #setType(Type)
-     * @see #getType()
+     * @see Actor#setBodyType(Type)
+     * @see Actor#getBodyType()
      */
     @API
     public enum Type {
@@ -492,5 +466,4 @@ public class Physics {
             return null;
         }
     }
-
 }
