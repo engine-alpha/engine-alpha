@@ -253,4 +253,8 @@ public abstract class PhysikHandler {
      */
     @NoExternalUse
     public abstract boolean testIfGrounded();
+
+    public abstract float getTorque();
+
+    public abstract void setTorque(float value);
 }

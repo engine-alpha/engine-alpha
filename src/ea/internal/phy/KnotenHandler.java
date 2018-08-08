@@ -189,4 +189,14 @@ public class KnotenHandler extends PhysikHandler {
     public boolean testIfGrounded() {
         return false;
     }
+
+    @Override
+    public float getTorque() {
+        return 0;
+    }
+
+    @Override
+    public void setTorque(float value) {
+
+    }
 }

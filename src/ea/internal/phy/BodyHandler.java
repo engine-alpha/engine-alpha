@@ -277,6 +277,16 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
+    public float getTorque() {
+        return body.m_torque;
+    }
+
+    @Override
+    public void setTorque(float value) {
+        body.m_torque = value;
+    }
+
+    @Override
     public void killBody() {
         Logger.verboseInfo("Physics", "Entferne Actor-Objekt aus Physics-Umgebung.");
         worldHandler.removeAllInternalReferences(body);

@@ -7,6 +7,7 @@ import ea.Vector;
 import ea.actor.ActorGroup;
 import ea.actor.Rectangle;
 import ea.actor.Text;
+import ea.example.showcase.billard.Billard;
 import ea.example.showcase.dude.DudeDemo;
 import ea.example.showcase.jump.DinglyJump;
 import ea.input.MouseButton;
@@ -174,6 +175,7 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new MarbleDemo(mainscene), "Murmel-Demo");
         mainscene.addScene(() -> new DinglyJump(mainscene), "Dingly Jump");
         mainscene.addScene(() -> new DudeDemo(mainscene), "DudeDemo");
+        mainscene.addScene(() -> new Billard(mainscene), "Billard");
 
         Game.setDebug(false);
         Game.setExitOnEsc(false);

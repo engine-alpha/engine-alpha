@@ -7,7 +7,7 @@ import ea.collision.CollisionListener;
 import ea.handle.Physics;
 
 /**
- * Einfache Plattform. Herzlichen Dank an <a href="https://www.gameart2d.com/free-graveyard-platformer-tileset.html">Game
+ * Einfache Plattform. Herzlichen Dank an <a href="https://www.gameart2d.com/free-graveyard-platformer-tileset.html">Billard
  * Art 2D</a> für die kostenfreien Tiles.
  */
 public class Platform extends TileContainer implements CollisionListener<Box> {

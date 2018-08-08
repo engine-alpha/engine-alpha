@@ -22,8 +22,10 @@ package ea.actor;
 import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.ano.API;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
+import java.util.function.Supplier;
 
 /**
  * Beschreibt ein RechteckTreeSet.
@@ -65,10 +67,14 @@ public class Rectangle extends Geometry {
      * @param height Die Höhe des Rechtecks
      */
     public Rectangle(Scene scene, float width, float height) {
-        super(scene, () -> ShapeHelper.createRectangularShape(
+        this(scene, width, height, () -> ShapeHelper.createRectangularShape(
                 width / scene.getWorldHandler().getPixelProMeter(),
                 height / scene.getWorldHandler().getPixelProMeter()
         ));
+    }
+
+    public Rectangle(Scene scene, float width, float height, Supplier<Shape> shapeSupplier) {
+        super(scene, shapeSupplier);
 
         this.width = width;
         this.height = height;

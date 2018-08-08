@@ -401,6 +401,14 @@ public class Physics {
         return (DistanceJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(distanceJointDef);
     }
 
+    public float getTorque() {
+        return actor.getPhysicsHandler().getTorque();
+    }
+
+    public void setTorque(float value) {
+        actor.getPhysicsHandler().setTorque(value);
+    }
+
     /* _________________________ Physics-Type _________________________ */
 
     /**

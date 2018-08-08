@@ -176,6 +176,7 @@ public final class Game {
             //Start wurde schon ausgeführt.
             throw new RuntimeException("Game.start wurde bereits ausgeführt.");
         }
+
         Game.width = width;
         Game.height = height;
         Game.scene = scene;

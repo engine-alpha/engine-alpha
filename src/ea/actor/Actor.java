@@ -382,6 +382,8 @@ public abstract class Actor {
                     // Visualisiere die Shape
                     if (physicsHandler.getBody().m_fixtureList != null) {
                         float ppm = physicsHandler.getWorldHandler().getPixelProMeter();
+                        g.setColor(Color.YELLOW);
+                        g.fillRect(-2, -2, 4, 4);
                         g.setColor(Color.red);
                         renderShape(physicsHandler.getBody().m_fixtureList.m_shape, g, ppm);
                     }
