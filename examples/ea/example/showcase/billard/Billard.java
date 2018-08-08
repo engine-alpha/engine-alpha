@@ -26,7 +26,6 @@ import ea.Vector;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
 import ea.input.KeyListener;
-import ea.sound.Music;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -56,9 +55,6 @@ public class Billard extends ShowcaseDemo implements KeyListener {
         add(whiteBall);
 
         addKeyListener(this);
-
-        Music music = new Music("/home/kelunik/Downloads/Prologue Theme/Prologue Theme.mp3");
-        music.loop();
     }
 
     private Vector calculatePosition(int i) {
