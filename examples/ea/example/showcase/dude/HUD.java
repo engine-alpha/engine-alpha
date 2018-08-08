@@ -25,7 +25,7 @@ public class HUD extends Layer implements FrameUpdateListener {
 
         display = new HUDDisplay(scene);
         add(display);
-        display.position.set(-DudeDemo.GAME_WIDTH / 2 + 20, DudeDemo.GAME_HEIGHT / 2 - 190);
+        display.position.set(-DudeDemo.GAME_WIDTH / 2 + 20, DudeDemo.GAME_HEIGHT / 2 - 130);
 
         scene.addFrameUpdateListener(this);
     }
@@ -54,6 +54,6 @@ public class HUD extends Layer implements FrameUpdateListener {
         }
         float vel = playerCharacter.physics.getVelocity().getLength();
 
-        display.setLineDisplay(2, Math.min(1, vel / 40));
+        display.setLineDisplay(2, Math.min(1, vel / 80));
     }
 }

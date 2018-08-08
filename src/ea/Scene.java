@@ -185,6 +185,34 @@ public class Scene {
         worldHandler.getWorld().setGravity(new Vec2(gravityInN.x, gravityInN.y));
     }
 
+    /**
+     * Setzt, ob die Engine-Physics für diese Szene pausiert sein soll.
+     *
+     * @param worldPaused <code>false</code>: Die Engine-Physik läuft normal.
+     *                    <code>true</code>: Die Engine-Physik läuft <b>nicht</b>. Das bedeutet u.A. keine
+     *                    Collision-Detection, keine Physik-Simulation etc., bis die Physik wieder mit
+     *                    <code>setPhysicsPaused(true)</code> aktiviert wird.
+     *
+     * @see #getPhysicsPaused()
+     */
+    @API
+    public void setPhysicsPaused(boolean worldPaused) {
+        worldHandler.setWorldPaused(worldPaused);
+    }
+
+    /**
+     * Gibt an, ob die Physik dieser Szene pausiert ist.
+     *
+     * @return <code>true</code>: Die Physik ist pausiert.
+     * <code>false</code>: Die Physik ist nicht pausiert.
+     *
+     * @see #setPhysicsPaused(boolean)
+     */
+    @API
+    public boolean getPhysicsPaused() {
+        return worldHandler.getWorldPaused();
+    }
+
     @API
     final public void add(Actor... actors) {
         mainLayer.add(actors);

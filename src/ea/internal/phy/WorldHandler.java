@@ -36,6 +36,10 @@ public class WorldHandler implements ContactListener {
     public static final int CATEGORY_DYNAMIC_OR_KINEMATIC = 2;
     public static final int CATEGORY_PARTICLE = 4;
 
+    /**
+     * Gibt an, ob die World/Physics gerade pausiert sind.
+     */
+    private boolean worldPaused = false;
 
     /**
      * Assertion-Methode, die sicherstellt, dass die (JBox2D-)World der gerade aktiven Szene nicht im World-Step ist.
@@ -49,8 +53,7 @@ public class WorldHandler implements ContactListener {
     public static void assertNoWorldStep() {
         Scene scene = Game.getActiveScene();
         if (scene != null && scene.getWorldHandler().getWorld().isLocked()) {
-            throw new RuntimeException("Die Operation kann nicht während des World-Step ausgeführt werden. "
-                    + "Ggf. mit Game.afterWorldStep wrappen.");
+            throw new RuntimeException("Die Operation kann nicht während des World-Step ausgeführt werden. " + "Ggf. mit Game.afterWorldStep wrappen.");
         }
     }
 
@@ -118,9 +121,7 @@ public class WorldHandler implements ContactListener {
      */
     public void setPixelProMeter(float pixelProMeter) {
         if (ppmRequested) {
-            throw new IllegalStateException("Die Pixel-Pro-Meter Umrechnungszahl darf vectorFromThisTo Arbeit mit den Actor-Objekten" +
-                    " der entsprechenden WorldHandler-Umgebung nicht geändert werden. Das Setzen der Konstante vor" +
-                    " die Arbeit mit den Actor-Objekten move.");
+            throw new IllegalStateException("Die Pixel-Pro-Meter Umrechnungszahl darf vectorFromThisTo Arbeit mit den Actor-Objekten" + " der entsprechenden WorldHandler-Umgebung nicht geändert werden. Das Setzen der Konstante vor" + " die Arbeit mit den Actor-Objekten move.");
         }
         this.pixelProMeter = pixelProMeter;
     }
@@ -144,7 +145,18 @@ public class WorldHandler implements ContactListener {
         return world;
     }
 
+    public void setWorldPaused(boolean worldPaused) {
+        this.worldPaused = worldPaused;
+    }
+
+    public boolean getWorldPaused() {
+        return this.worldPaused;
+    }
+
     public void step(float frameDuration) {
+        if (worldPaused) {
+            return;
+        }
         synchronized (this.world) {
             this.world.step(frameDuration / 1000, 6, 3);
         }
@@ -155,6 +167,7 @@ public class WorldHandler implements ContactListener {
      * Pixel/Meter-Verhältnisses.
      *
      * @param eaV Ein EA-Vector.
+     *
      * @return Der analoge Vector in der JB2D-Engine.
      */
     @NoExternalUse
@@ -169,6 +182,7 @@ public class WorldHandler implements ContactListener {
      * Pixel/Meter-Verhältnisses.
      *
      * @param jb2dV Ein JB2D-Vector.
+     *
      * @return Der analoge Vector im EA-Format auf der Zeichenebene.
      */
     @NoExternalUse
@@ -183,6 +197,7 @@ public class WorldHandler implements ContactListener {
      *
      * @param bd    Exakte Beschreibung des Bodies.
      * @param actor Actor-Objekt, das ab sofort zu dem Body gehört.
+     *
      * @return Der Body, der aus der BodyDef generiert wurde. Er liegt in der Game-World dieses
      * Handlers.
      */
@@ -201,7 +216,9 @@ public class WorldHandler implements ContactListener {
      * Überprüft, welcher Actor mit einem bestimmten Body in der World verknüpft ist.
      *
      * @param body Der zu testende Body.
+     *
      * @return Der Actor, zu dem der zu testende Body gehört.
+     *
      * @throws RuntimeException Falls der body nicht zur World gehört.
      */
     @NoExternalUse
@@ -229,6 +246,7 @@ public class WorldHandler implements ContactListener {
      * Übersetzt einen Winkel in Radians in Grad.
      *
      * @param rad Ein Winkel in Radians.
+     *
      * @return Der analoge Winkel in Grad.
      */
     public static float radToDeg(float rad) {
@@ -239,7 +257,6 @@ public class WorldHandler implements ContactListener {
      * Umrechnungskonstante für Grad/Radians
      */
     private static final float degProRad = (float) ((double) 180 / Math.PI);
-
 
     /**
      * Fügt einen Contact der Blacklist hinzu. Kontakte in der Blacklist werden bis zur Trennung nicht aufgelöst.
@@ -401,7 +418,6 @@ public class WorldHandler implements ContactListener {
         return fixtures.toArray(new Fixture[fixtures.size()]);
     }
 
-
     @NoExternalUse
     public static boolean bodyCollisionCheckup(Body b1, Body b2) {
         ContactEdge b1Contacts = b1.getContactList();
@@ -445,8 +461,11 @@ public class WorldHandler implements ContactListener {
         public void checkCollision(Body secondBodyOfActualCollision, Contact contact, boolean isBegin) {
             if (body2 == secondBodyOfActualCollision) {
                 CollisionEvent<E> collisionEvent = new CollisionEvent<>(contact, collidingActor);
-                if (isBegin) reagierbar.onCollision(collisionEvent);
-                else reagierbar.onCollisionEnd(collisionEvent);
+                if (isBegin) {
+                    reagierbar.onCollision(collisionEvent);
+                } else {
+                    reagierbar.onCollisionEnd(collisionEvent);
+                }
             }
         }
     }
@@ -461,15 +480,13 @@ public class WorldHandler implements ContactListener {
     public static void allgemeinesKollisionsReagierbarEingliedern(CollisionListener<Actor> kr, Actor actor) {
         final WorldHandler worldHandler = actor.getPhysicsHandler().getWorldHandler();
         if (worldHandler == null) {
-            Logger.error("Kollision", "Das anzumeldende Actor-Objekt war noch nicht an der Wurzel angemeldet. "
-                    + "Erst an der Wurzel anmelden, bevor Kollisionsanmeldungen durchgeführt werden.");
+            Logger.error("Kollision", "Das anzumeldende Actor-Objekt war noch nicht an der Wurzel angemeldet. " + "Erst an der Wurzel anmelden, bevor Kollisionsanmeldungen durchgeführt werden.");
             return;
         }
 
         Body body = actor.getPhysicsHandler().getBody();
         if (body == null) {
-            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
-                    " angemeldet.");
+            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" + " angemeldet.");
             return;
         }
 
@@ -491,20 +508,17 @@ public class WorldHandler implements ContactListener {
      * @param <E>      Der Type des Colliders.
      */
     @NoExternalUse
-    public static <E extends Actor> void spezifischesKollisionsReagierbarEingliedern(
-            CollisionListener<E> kr, Actor actor, E collider) {
+    public static <E extends Actor> void spezifischesKollisionsReagierbarEingliedern(CollisionListener<E> kr, Actor actor, E collider) {
         final WorldHandler wh1 = actor.getPhysicsHandler().getWorldHandler();
         final WorldHandler wh2 = collider.getPhysicsHandler().getWorldHandler();
         if (wh1 == null || wh2 == null || wh1 != wh2) {
-            Logger.error("Kollision", "Zwei Objekte sollten zur Kollision angemeldet werden. " +
-                    "Dafür müssen beide an der selben Wurzel (direkt oder indirekt) angemeldet sein.");
+            Logger.error("Kollision", "Zwei Objekte sollten zur Kollision angemeldet werden. " + "Dafür müssen beide an der selben Wurzel (direkt oder indirekt) angemeldet sein.");
             return;
         }
 
         Body b1 = actor.getPhysicsHandler().getBody(), b2 = collider.getPhysicsHandler().getBody();
         if (b1 == null || b2 == null) {
-            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" +
-                    " angemeldet.");
+            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" + " angemeldet.");
             return;
         }
 
@@ -546,6 +560,7 @@ public class WorldHandler implements ContactListener {
          *
          * @param bA Body A
          * @param bB Body B
+         *
          * @return this == (A|B)
          */
         public boolean validate(Fixture bA, Fixture bB) {

@@ -95,11 +95,11 @@ public class Sound {
 
     /**
      * Spielt den Sound mit der gegebenen Lautstärke und der gegebenen Balance ab.
-     *
+     * <p>
      * Spielt den Sound mehrfach zeitgleich ab, wenn diese Methode mehrmals aufgerufen wird, aber
      * maximal {@link #MAX_CONCURRENT_PLAYS} mal gleichzeitig.
      *
-     * @param volume Wert zwischen 0 (leise) und 1 (laut).
+     * @param volume  Wert zwischen 0 (leise) und 1 (laut).
      * @param balance Wert zwischen -1 (nur links) und 1 (nur rechts).
      *
      * @see #play()

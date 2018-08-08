@@ -10,6 +10,7 @@ import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
 import ea.handle.Physics;
 import ea.input.KeyListener;
+import ea.sound.Music;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -26,6 +27,12 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
     private PlayerCharacter character;
     private Collection<Coin> coins = new HashSet<>();
+
+    private final PauseLayer pauseLayer;
+
+    private boolean isPaused = false;
+
+    private Music game_loop = new Music("game-assets/dude/audio/background_game.wav");
 
     public DudeDemo(Scene parent) {
         super(parent);
@@ -58,12 +65,23 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         //     add(particle);
         // }));
 
+        pauseLayer = new PauseLayer(this);
+        isPaused = false;
+        pauseLayer.setVisible(false);
+        addLayer(pauseLayer);
+
         addKeyListener(this);
+
+        //game_loop.loop();
     }
 
     private void setupPlayground() {
         makePlatform(7, -450, -200);
         makePlatform(3, 200, 0);
+
+        makePlatform(5, 800, -100);
+
+        makeBoxes(0, 40, 5);
 
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin(this);
@@ -121,10 +139,22 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         new Platform(this, length).position.set(pX, pY);
     }
 
+    private void makeBoxes(float pX, float pY, int amount) {
+        for (int i = 0; i < amount; i++) {
+            Box box = new Box(this);
+            box.position.set(pX + i * 80, pY);
+            //box.position.set(0, 0);
+            add(box);
+        }
+    }
+
     @Override
     public void onKeyDown(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_P:
+                togglePause();
+                break;
+            case KeyEvent.VK_M:
                 toggleDebug();
                 break;
         }
@@ -132,6 +162,16 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
     @Override
     public void onKeyUp(KeyEvent e) {
+        //Ignore
+    }
 
+    private void togglePause() {
+        isPaused = !isPaused;
+        pauseLayer.setVisible(isPaused);
+        setPhysicsPaused(isPaused);
+    }
+
+    public boolean isPaused() {
+        return isPaused;
     }
 }

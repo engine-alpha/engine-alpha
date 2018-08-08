@@ -124,6 +124,33 @@ public class Layer {
         this.parallaxRotation = parallaxRotation;
     }
 
+    /**
+     * Setzt, ob dieses Layer sichtbar sein soll.
+     *
+     * @param visible <code>true</code>: Das Layer ist sichtbar, wenn es an einer Szene angemeldet ist.
+     *                <code>false</code>: Das Layer ist auch dann nicht sichtbar, wenn es an einer Szene angemeldet
+     *                ist.
+     *
+     * @see #isVisible()
+     */
+    @API
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    /**
+     * Gibt an, ob dieses Layer gerade sichtbar ist.
+     *
+     * @return <code>true</code>: Das Layer ist sichtbar.
+     * <code>false</code>: Das Layer ist nicht sichtbar.
+     *
+     * @see #setVisible(boolean)
+     */
+    @API
+    public boolean isVisible() {
+        return this.visible;
+    }
+
     @API
     public void add(Actor... actors) {
         for (Actor room : actors) {
@@ -141,7 +168,9 @@ public class Layer {
 
     @NoExternalUse
     public void render(Graphics2D g, Camera camera, int width, int height) {
-
+        if (!visible) {
+            return;
+        }
         Vector position = camera.getPosition();
         float rotation = -camera.getRotation();
         g.setClip(0, 0, width, height);

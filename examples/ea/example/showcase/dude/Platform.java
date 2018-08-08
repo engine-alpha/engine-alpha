@@ -2,13 +2,15 @@ package ea.example.showcase.dude;
 
 import ea.Scene;
 import ea.actor.TileContainer;
+import ea.collision.CollisionEvent;
+import ea.collision.CollisionListener;
 import ea.handle.Physics;
 
 /**
  * Einfache Plattform. Herzlichen Dank an <a href="https://www.gameart2d.com/free-graveyard-platformer-tileset.html">Game
  * Art 2D</a> für die kostenfreien Tiles.
  */
-public class Platform extends TileContainer {
+public class Platform extends TileContainer implements CollisionListener<Box> {
     private static final int TILE_SIZE = 128;
 
     public Platform(Scene scene, int tileCount) {
@@ -35,5 +37,15 @@ public class Platform extends TileContainer {
 
         setBodyType(Physics.Type.STATIC);
         physics.setElasticity(0);
+    }
+
+    @Override
+    public void onCollisionEnd(CollisionEvent<Box> collisionEvent) {
+        
+    }
+
+    @Override
+    public void onCollision(CollisionEvent<Box> collisionEvent) {
+
     }
 }

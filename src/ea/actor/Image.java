@@ -25,6 +25,7 @@ import ea.internal.ano.API;
 import ea.internal.io.ImageLoader;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
@@ -38,6 +39,28 @@ public class Image extends Actor {
      */
     private final BufferedImage image;
 
+    private final float scale;
+
+    /**
+     * Der Konstruktor lädt das Image und erlaubt die Nutung von Spritesheets.
+     *
+     * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
+     */
+    @API
+    public Image(Scene scene, String filepath, float scale) {
+        super(scene, () -> {
+            BufferedImage image = ImageLoader.load(filepath);
+
+            return ShapeHelper.createRectangularShape(scale * image.getWidth() / scene.getWorldHandler().getPixelProMeter(), scale * image.getHeight() / scene.getWorldHandler().getPixelProMeter());
+        });
+        if (scale <= 0) {
+            throw new RuntimeException("Skalierungswert darf nicht <= 0 sein.");
+        }
+        this.scale = scale;
+
+        this.image = ImageLoader.load(filepath);
+    }
+
     /**
      * Der Konstruktor lädt das Image und erlaubt die Nutung von Spritesheets.
      *
@@ -45,16 +68,7 @@ public class Image extends Actor {
      */
     @API
     public Image(Scene scene, String filepath) {
-        super(scene, () -> {
-            BufferedImage image = ImageLoader.load(filepath);
-
-            return ShapeHelper.createRectangularShape(
-                    image.getWidth() / scene.getWorldHandler().getPixelProMeter(),
-                    image.getHeight() / scene.getWorldHandler().getPixelProMeter()
-            );
-        });
-
-        this.image = ImageLoader.load(filepath);
+        this(scene, filepath, 1f);
     }
 
     @API
@@ -72,6 +86,9 @@ public class Image extends Actor {
      */
     @Override
     public void render(Graphics2D g) {
+        AffineTransform pre = g.getTransform();
+        g.scale(scale, scale);
         g.drawImage(this.image, 0, -this.image.getHeight(), null);
+        g.setTransform(pre);
     }
 }

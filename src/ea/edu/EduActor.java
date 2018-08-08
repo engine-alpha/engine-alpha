@@ -11,7 +11,8 @@ public interface EduActor {
 
     /**
      * Gibt den Actor aus. Standardimplementierung: return this;
-     * @return  Das Core-Engine-Actor-Objekt
+     *
+     * @return Das Core-Engine-Actor-Objekt
      */
     @NoExternalUse
     Actor getActor();
@@ -26,8 +27,6 @@ public interface EduActor {
         //Default Physics Setup für EDU Objekte
         getActor().physics.setRotationLocked(true);
         getActor().physics.setElasticity(0);
-
-        getActor().getScene().setGravity(new Vector(0, -9.81f));
     }
 
     default void entfernen() {
@@ -143,21 +142,23 @@ public interface EduActor {
     }
 
     default void sprung(float staerke) {
-        if(steht())
-            getActor().physics.applyImpulse(new Vector(0, staerke*1000));
+        if (steht()) {
+            getActor().physics.applyImpulse(new Vector(0, staerke * 1000));
+        }
     }
 
     /**
      * Bewegt den Actor anhand einer Gerade.
-     * @param zX    X-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
-     * @param zY    Y-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
-     * @param ms    Zeit in Millisekunden, die der Actor von Beginn der Animation benötigt, bis er am angegebenen
-     *              Endpunkt angekommen ist.
-     * @param loop  <code>true</code>: Der Actor "ping pongt" zwischen dem impliziten Startpunkt und dem angegebenen
-     *              Endpunkt hin und her. Die Strecke in eine Richtung benötigt jeweils <code>ms</code> Millisekunden
-     *              Zeit. <br/>
-     *              <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal) erreicht
-     *              wurde.
+     *
+     * @param zX   X-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
+     * @param zY   Y-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
+     * @param ms   Zeit in Millisekunden, die der Actor von Beginn der Animation benötigt, bis er am angegebenen
+     *             Endpunkt angekommen ist.
+     * @param loop <code>true</code>: Der Actor "ping pongt" zwischen dem impliziten Startpunkt und dem angegebenen
+     *             Endpunkt hin und her. Die Strecke in eine Richtung benötigt jeweils <code>ms</code> Millisekunden
+     *             Zeit. <br/>
+     *             <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal) erreicht
+     *             wurde.
      */
     default void geradenAnimation(float zX, float zY, int ms, boolean loop) {
         Spiel.getActiveScene().addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), ms, loop));
@@ -165,16 +166,16 @@ public interface EduActor {
 
     /**
      * Bewegt den Actor in einem Kreis um einen Angegebenen Mittelpunkt.
-     * @param mX    X-Koordinate des Mittelpunkts der Revolution.
-     * @param mY    Y-Koordinate des Mittelpunkts der Revolution.
-     * @param ms    Dauer in Millisekunden, die eine komplette Umdrehung benötigt.
-     * @param uhrzeigersinn  <code>true</code>= Drehung findet im Uhrzeigersinn statt. <code>false</code>: Gegen den
+     *
+     * @param mX            X-Koordinate des Mittelpunkts der Revolution.
+     * @param mY            Y-Koordinate des Mittelpunkts der Revolution.
+     * @param ms            Dauer in Millisekunden, die eine komplette Umdrehung benötigt.
+     * @param uhrzeigersinn <code>true</code>= Drehung findet im Uhrzeigersinn statt. <code>false</code>: Gegen den
      *                      Uhrzeigersinn
      * @param rotation      <code>true</code>=Das Actor-Objekt wird auch entsprechend seiner Kreis-Position rotiert.
      *                      <code>false</code>=Das Actor-Objekt behält seine Rotation bei.
      */
     default void kreisAnimation(float mX, float mY, int ms, boolean uhrzeigersinn, boolean rotation) {
-        Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX,mY),
-                ms, uhrzeigersinn, rotation));
+        Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), ms, uhrzeigersinn, rotation));
     }
 }

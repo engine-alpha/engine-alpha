@@ -1,6 +1,9 @@
 package ea.example.showcase.dude;
 
-import ea.*;
+import ea.FrameUpdateListener;
+import ea.Game;
+import ea.Random;
+import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.Particle;
@@ -12,6 +15,7 @@ import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.example.showcase.jump.Enemy;
 import ea.input.KeyListener;
+import ea.sound.Sound;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -24,6 +28,12 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     public static final int BOTTOM_OUT = -500;
     private static final int DOUBLE_JUMP_COST = 3;
     private static final int MANA_PICKUP_BONUS = 1;
+
+    private final DudeDemo master;
+
+    private final Sound walk = new Sound("game-assets/dude/audio/footstep.wav");
+    private final Sound jump = new Sound("game-assets/dude/audio/footstep.wav");
+    private final Sound pickup_gold = new Sound("game-assets/dude/audio/pickup_gold.wav");
 
     /**
      * Guthaben.
@@ -64,9 +74,10 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private HorizontalMovement horizontalMovement = HorizontalMovement.IDLE;
     private Vector smashForce = Vector.NULL;
 
-    public PlayerCharacter(Scene scene, HUD hud) {
+    public PlayerCharacter(DudeDemo scene, HUD hud) {
         super(scene, 64, 64);
         this.hud = hud;
+        this.master = scene;
 
         // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         String basePath = "game-assets/dude/char/spr_m_traveler_";
@@ -145,6 +156,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             case Coin:
                 money++;
                 hud.setMoneyValue(money);
+                pickup_gold.play();
                 break;
             case ManaPickup:
                 setMana(mana + MANA_PICKUP_BONUS);
@@ -206,6 +218,10 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
     @Override
     public void onKeyDown(KeyEvent e) {
+        if (master.isPaused()) {
+            //Pause --> Ignoriere Key Input
+            return;
+        }
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A: //Move left
                 if (horizontalMovement != PlayerCharacter.HorizontalMovement.RIGHT) {
@@ -240,6 +256,10 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
     @Override
     public void onKeyUp(KeyEvent e) {
+        if (master.isPaused()) {
+            //Pause --> Ignoriere Key Input
+            return;
+        }
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A: //Links losgelassen
                 if (horizontalMovement == PlayerCharacter.HorizontalMovement.LEFT) {

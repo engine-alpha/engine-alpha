@@ -1,6 +1,7 @@
 package ea.edu;
 
 import ea.Game;
+import ea.Vector;
 import ea.actor.Actor;
 import ea.internal.ano.API;
 import ea.internal.ano.NoExternalUse;
@@ -13,9 +14,10 @@ import java.util.HashMap;
 /**
  * Diese Klasse steuert die EDU-Version. Sie ist Schnittstelle für:
  * <ul>
- *     <li>Szenen-Management</li>
- *     <li>Listener-Management</li>
+ * <li>Szenen-Management</li>
+ * <li>Listener-Management</li>
  * </ul>
+ *
  * @author Michael Andonie
  */
 public class Spiel {
@@ -28,14 +30,15 @@ public class Spiel {
     public static final String DEFAULT_EDU_DIALOG_TITLE = "Engine Alpha - EDU Version";
 
     private static int frame_width = 800;
-    private static int frame_height =600;
+    private static int frame_height = 600;
 
     /* ~~~ EDU-UTILITY ~~~*/
 
     /**
      * Fügt eine String-awt/Color-Zuordnung zu.
-     * @param string    Ein String (lowercase)
-     * @param color     Eine Color
+     *
+     * @param string Ein String (lowercase)
+     * @param color  Eine Color
      */
     private static void addC(String string, Color color) {
         stringToColor.put(string, color);
@@ -46,27 +49,30 @@ public class Spiel {
      * Diese Methode ordnet einem String ein Color-Objekt zu.<br /> Hierdurch ist in den Klassen
      * außerhalb der Engine keine awt-Klasse nötig.
      *
-     * @param t
-     * 		Der Name der Farbe.
+     * @param t Der Name der Farbe.
      *
      * @return Das Farbobjekt zum String; ist Color.black bei unzuordnembaren String
      */
     @NoExternalUse
-    public static Color stringToColor (String t) {
+    public static Color stringToColor(String t) {
         Color res = stringToColor.get(t.toLowerCase());
-        if(res == null) return Color.BLACK;
-        else return res;
+        if (res == null) {
+            return Color.BLACK;
+        } else {
+            return res;
+        }
     }
 
     /**
      * Reverse-Lookup für Farbzuordnung
-     * @param color
-     * @return
      */
     public static String colorToString(Color color) {
         String res = colorToString.get(color);
-        if(res==null) return "unbekannt";
-        else return res;
+        if (res == null) {
+            return "unbekannt";
+        } else {
+            return res;
+        }
     }
 
 
@@ -75,18 +81,23 @@ public class Spiel {
     static {
         //Fülle alle Farbzuweisungen hinzu
         addC("gelb", Color.YELLOW);
-        addC("weiss", Color.WHITE); stringToColor.put("weiß", Color.WHITE);
+        addC("weiss", Color.WHITE);
+        stringToColor.put("weiß", Color.WHITE);
         addC("orange", Color.ORANGE);
         addC("grau", Color.GRAY);
-        addC("gruen", Color.GREEN); stringToColor.put("grün", Color.GREEN);
+        addC("gruen", Color.GREEN);
+        stringToColor.put("grün", Color.GREEN);
         addC("blau", Color.BLUE);
         addC("rot", Color.RED);
         addC("pink", Color.PINK);
-        addC("magenta", Color.MAGENTA); stringToColor.put("lila", Color.MAGENTA);
-        addC("cyan", Color.CYAN); stringToColor.put("tuerkis", Color.CYAN); stringToColor.put("türkis", Color.CYAN);
+        addC("magenta", Color.MAGENTA);
+        stringToColor.put("lila", Color.MAGENTA);
+        addC("cyan", Color.CYAN);
+        stringToColor.put("tuerkis", Color.CYAN);
+        stringToColor.put("türkis", Color.CYAN);
         addC("dunkelgrau", Color.DARK_GRAY);
         addC("hellgrau", Color.LIGHT_GRAY);
-        addC("braun", new Color(110,68,14));
+        addC("braun", new Color(110, 68, 14));
 
         //Startup-Game
 
@@ -96,18 +107,17 @@ public class Spiel {
 
     /**
      * Setzt die Groesse des Engine-Fensters.
-     * @param breite    Fenster-Breite
-     * @param hoehe     Fenster-Hoehe
+     *
+     * @param breite Fenster-Breite
+     * @param hoehe  Fenster-Hoehe
      */
     @API
     public static void setzeFensterGroesse(int breite, int hoehe) {
-        if(activeScene != null) {
-            throw new RuntimeException("setzeFensterGroesse kann nur aufgerufen werden, bevor " +
-                    "das erste grafische Objekt erzeugt wurde.");
+        if (activeScene != null) {
+            throw new RuntimeException("setzeFensterGroesse kann nur aufgerufen werden, bevor " + "das erste grafische Objekt erzeugt wurde.");
         }
-        if(breite < 0 || hoehe < 0) {
-            throw new RuntimeException("Die Fenstergroesse (Breite sowie Höhe) muss jeweils > 0 sein. "+
-                    "Eingabe war: " + breite + " Breite und " + hoehe + " Höhe");
+        if (breite < 0 || hoehe < 0) {
+            throw new RuntimeException("Die Fenstergroesse (Breite sowie Höhe) muss jeweils > 0 sein. " + "Eingabe war: " + breite + " Breite und " + hoehe + " Höhe");
         }
         frame_width = breite;
         frame_height = hoehe;
@@ -115,8 +125,9 @@ public class Spiel {
 
     /**
      * Stellt, ob das Hilfs-Raster, das die Koordinatenachsen visualisiert, dargestellt werden soll.
-     * @param sichtbar  ist dieser Wert <code>true</code>, wird das Raster dargestellt. Ist er <code>false</code>,
-     *                  wird das Raster deaktiviert.
+     *
+     * @param sichtbar ist dieser Wert <code>true</code>, wird das Raster dargestellt. Ist er <code>false</code>,
+     *                 wird das Raster deaktiviert.
      */
     @API
     public void rasterSichtbarSetzen(boolean sichtbar) {
@@ -128,8 +139,9 @@ public class Spiel {
     private static EduScene activeScene;
 
     static EduScene getActiveScene() {
-        if(activeScene == null) {
+        if (activeScene == null) {
             activeScene = new EduScene();
+            activeScene.setGravity(new Vector(0, -9.81f));
             new Thread(() -> Game.start(frame_width, frame_height, activeScene)).start();
         }
         return activeScene;
@@ -143,11 +155,13 @@ public class Spiel {
     /**
      * Gibt der aktuellen Szene einen Namen. Eine Szene mit Name bleibt im System erhalten und kann wieder
      * aufgerufen werden.
+     *
      * @param name Der Name für die Szene.
+     *
      * @see #setzeSzene(String)
      */
     public void benenneSzene(String name) {
-        if(getActiveScene().getSceneName() != null) {
+        if (getActiveScene().getSceneName() != null) {
             Logger.error("EDU", "Die Szene hat bereits einen Namen: " + getActiveScene().getSceneName());
             return;
         }
@@ -159,25 +173,28 @@ public class Spiel {
      * Erstellt eine neue (leere) Szene und setzt diese aktiv.
      * Damit
      * <ul>
-     *     <li>Wird der Bildschirm "geleert"</li>
-     *     <li>Geht die vorige Szene "verloren", wenn sie nicht mit benannt wurde.</li>
-     *     <li>Werden alle grafischen Objekte, die ab sofort erstellt werden, in der neuen Szene eingesetzt.</li>
+     * <li>Wird der Bildschirm "geleert"</li>
+     * <li>Geht die vorige Szene "verloren", wenn sie nicht mit benannt wurde.</li>
+     * <li>Werden alle grafischen Objekte, die ab sofort erstellt werden, in der neuen Szene eingesetzt.</li>
      * </ul>
      */
     public void neueSzene() {
         EduScene newScene = new EduScene();
+        newScene.setGravity(new Vector(0, -9.81f));
         setActiveScene(newScene);
     }
 
     /**
      * Setzt die aktive Szene. Wurde eine Szene benannt, so bleibt sie gespeichert und kann wieder aktiv gesetzt
      * werden.
-     * @param szenenName    der Name der aktiv zu setzenden Szene.
+     *
+     * @param szenenName der Name der aktiv zu setzenden Szene.
+     *
      * @see #benenneSzene(String)
      */
     public void setzeSzene(String szenenName) {
         EduScene scene = sceneMap.get(szenenName);
-        if(scene == null) {
+        if (scene == null) {
             Logger.error("EDU", "Konnte keine Szene mit dem Namen " + szenenName + " finden.");
             return;
         }
@@ -248,12 +265,10 @@ public class Spiel {
      * Methode diesen Namens MUSS existieren!!<br /> public abstract void klickReagieren(int x, int
      * y);<br /> }</code>
      *
-     * @param client
-     * 		Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Mausklick informiert.
-     * @param linksklick
-     * 		Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
+     * @param client     Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Mausklick informiert.
+     * @param linksklick Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
      */
-    public void klickReagierbarAnmeldenSzene (Object client, boolean linksklick) {
+    public void klickReagierbarAnmeldenSzene(Object client, boolean linksklick) {
         getActiveScene().addEduClickListener(client, linksklick);
     }
 
@@ -262,7 +277,7 @@ public class Spiel {
      * @param client
      * @param linksklick
      */
-    public void klickReagierbarAnmelden (Object client, boolean linksklick) {
+    public void klickReagierbarAnmelden(Object client, boolean linksklick) {
         klickReagierbarAnmeldenSzene(client, linksklick);
     }
 
@@ -272,14 +287,13 @@ public class Spiel {
      * angemeldet werden, die Instanzen des EDU-<code>TASTENREAGIERBARANMELDEN</code>-Interfaces
      * sind!!</i>
      *
-     * @param o
-     * 		Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Tastendruck informiert.
+     * @param o Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Tastendruck informiert.
      */
-    public void tastenReagierbarAnmeldenSzene (Object o) {
+    public void tastenReagierbarAnmeldenSzene(Object o) {
         getActiveScene().addEduKeyListener(o);
     }
 
-    public void tastenReagierbarAnmelden (Object o) {
+    public void tastenReagierbarAnmelden(Object o) {
         getActiveScene().addEduKeyListener(o);
     }
 
@@ -288,25 +302,22 @@ public class Spiel {
      * Klasse anmelden!<br /> Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des
      * EDU-<code>TICKER</code>-Interfaces sind!!</i>
      *
-     * @param o
-     * 		Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br /> Es <b>MUSS</b>
-     * 		eine Methode <code>tick()</code> haben.
-     * @param intervall
-     * 		Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
+     * @param o         Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br /> Es <b>MUSS</b>
+     *                  eine Methode <code>tick()</code> haben.
+     * @param intervall Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
      */
-    public void tickerAnmelden (Object o, int intervall) {
+    public void tickerAnmelden(Object o, int intervall) {
         getActiveScene().addEduTicker(o, intervall);
     }
 
     /**
      * Meldet einen "Ticker" ab.
      *
-     * @param o
-     * 		Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
+     * @param o Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
      *
      * @see #tickerAnmelden(Object, int)
      */
-    public void tickerAbmelden (Object o) {
+    public void tickerAbmelden(Object o) {
         getActiveScene().removeEduTicker(o);
     }
 }
