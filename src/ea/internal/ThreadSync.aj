@@ -13,10 +13,10 @@ aspect ThreadSync {
             Phaser start = ThreadSyncHelper.getStart();
             Phaser end = ThreadSyncHelper.getEnd();
 
-            ThreadSyncHelper.setSynced(true);
-
             AtomicBoolean enqueueState;
             synchronized (ThreadSyncHelper.BACKGROUND) {
+                ThreadSyncHelper.setSynced(true);
+
                 enqueueState = ThreadSyncHelper.getEnqueueState();
                 if (enqueueState.compareAndSet(false, true)) {
                     Game.enqueue(() -> {
@@ -31,8 +31,10 @@ aspect ThreadSync {
             try {
                 return proceed();
             } finally {
-                ThreadSyncHelper.setSynced(false);
-                ThreadSyncHelper.delayAwait(enqueueState, end);
+                synchronized (ThreadSyncHelper.BACKGROUND) {
+                    ThreadSyncHelper.setSynced(false);
+                    ThreadSyncHelper.delayAwait(enqueueState, end);
+                }
             }
         } else {
             return proceed();
