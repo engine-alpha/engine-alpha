@@ -176,6 +176,7 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new DinglyJump(mainscene), "Dingly Jump");
         mainscene.addScene(() -> new DudeDemo(mainscene), "DudeDemo");
         mainscene.addScene(() -> new Billard(mainscene), "Billard");
+        mainscene.addScene(() -> new Particles(mainscene), "Particles");
 
         Game.setDebug(false);
         Game.setExitOnEsc(false);

@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.example.particles;
+package ea.example.showcase;
 
 import ea.*;
 import ea.actor.Circle;
@@ -33,28 +33,24 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 @SuppressWarnings ( "MagicNumber" )
-public class Particles extends ea.Scene implements KeyListener {
-    public static final int WIDTH = 800, HEIGHT = 600;
-
-    public static void main(String[] args) {
-        Game.start(WIDTH, HEIGHT, new Particles());
-    }
-
+public class Particles extends ShowcaseDemo implements KeyListener {
     /**
      * Startet ein Sandbox-Fenster.
      */
-    private Particles() {
+    public Particles(Scene parent) {
+        super(parent);
+
         Game.setTitle("Marbles");
 
         Rectangle left = new Rectangle(this, 200, 10);
-        left.position.set(-WIDTH / 6 - 150, -50);
+        left.position.set(-Showcases.WIDTH / 6 - 150, -50);
         add(left);
 
         left.setColor(Color.white);
         left.position.rotate((float) Math.toRadians(-21));
 
         Rectangle right = new Rectangle(this, 200, 10);
-        right.position.set(+WIDTH / 6, 0);
+        right.position.set(+Showcases.WIDTH / 6, 0);
         add(right);
 
         right.setColor(Color.white);
@@ -62,24 +58,24 @@ public class Particles extends ea.Scene implements KeyListener {
 
         this.addKeyListener(this);
 
-        addFrameUpdateListener(new PeriodicTask(1000, this::createCircle));
+        addFrameUpdateListener(new PeriodicTask(1000, () -> createCircle(getMousePosition(), Color.YELLOW)));
 
         left.setBodyType(Physics.Type.STATIC);
         right.setBodyType(Physics.Type.STATIC);
         left.physics.setElasticity(.9f);
         right.physics.setElasticity(.9f);
 
-        Rectangle r1 = new Rectangle(this, WIDTH, 10);
-        r1.position.set(-WIDTH / 2, -HEIGHT / 2);
+        Rectangle r1 = new Rectangle(this, Showcases.WIDTH, 10);
+        r1.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
 
-        Rectangle r2 = new Rectangle(this, 10, HEIGHT);
-        r2.position.set(-WIDTH / 2, -HEIGHT / 2);
+        Rectangle r2 = new Rectangle(this, 10, Showcases.HEIGHT);
+        r2.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
 
-        Rectangle r3 = new Rectangle(this, WIDTH, 10);
-        r3.position.set(-WIDTH / 2, HEIGHT / 2 - 10);
+        Rectangle r3 = new Rectangle(this, Showcases.WIDTH, 10);
+        r3.position.set(-Showcases.WIDTH / 2, Showcases.HEIGHT / 2 - 10);
 
-        Rectangle r4 = new Rectangle(this, 10, HEIGHT);
-        r4.position.set(WIDTH / 2 - 10, -HEIGHT / 2);
+        Rectangle r4 = new Rectangle(this, 10, Showcases.HEIGHT);
+        r4.position.set(Showcases.WIDTH / 2 - 10, -Showcases.HEIGHT / 2);
 
         add(r1, r2, r3, r4);
 
@@ -88,34 +84,19 @@ public class Particles extends ea.Scene implements KeyListener {
         r3.setBodyType(Physics.Type.STATIC);
         r4.setBodyType(Physics.Type.STATIC);
 
-        r1.setColor(Color.yellow);
-        r2.setColor(Color.yellow);
-        r3.setColor(Color.yellow);
-        r4.setColor(Color.yellow);
+        r1.setColor(Color.DARK_GRAY);
+        r2.setColor(Color.DARK_GRAY);
+        r3.setColor(Color.DARK_GRAY);
+        r4.setColor(Color.DARK_GRAY);
 
         r1.addCollisionListener(event -> remove(event.getColliding()));
 
         setGravity(new Vector(0, -10));
 
-        addFrameUpdateListener(new PeriodicTask(1000, () -> {
-            Particle particle = new Particle(Particles.this, Random.nextInteger(2) + 6, 3000);
-            particle.position.set(Random.nextInteger(WIDTH) - WIDTH / 2, Random.nextInteger(HEIGHT) - HEIGHT / 2);
-            particle.physics.applyImpulse(new Vector(.5f * ((float) Math.random() - .5f), .5f * ((float) Math.random() - .5f)));
-            particle.setColor(Color.RED);
-            particle.setBodyType(Physics.Type.DYNAMIC);
-            particle.setLayer(-1);
-
-            ValueAnimator<Integer> animator = new ValueAnimator<>(1500, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
-            animator.addCompletionListener((value) -> removeFrameUpdateListener(animator));
-            addFrameUpdateListener(animator);
-
-            add(particle);
-        }));
-
         this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), ValueAnimator.Mode.REPEATED));
     }
 
-    private void createCircle() {
+    private void createCircle(Vector position, Color color) {
         Circle k = new Circle(Particles.this, 6);
 
         FrameUpdateListener emitter = new PeriodicTask(10, () -> {
@@ -136,8 +117,8 @@ public class Particles extends ea.Scene implements KeyListener {
         addFrameUpdateListener(emitter);
         k.addDestructionListener(() -> removeFrameUpdateListener(emitter));
 
-        k.position.set(getMousePosition());
-        k.setColor(Color.white);
+        k.position.set(position);
+        k.setColor(color);
         add(k);
 
         k.setBodyType(Physics.Type.DYNAMIC);
@@ -160,10 +141,6 @@ public class Particles extends ea.Scene implements KeyListener {
 
             case KeyEvent.VK_DOWN:
                 getCamera().move(0, 30);
-                break;
-
-            case KeyEvent.VK_R: // RESET
-                Game.transitionToScene(new Particles());
                 break;
 
             case KeyEvent.VK_D: // Toggle Debug
