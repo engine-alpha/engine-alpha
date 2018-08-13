@@ -41,7 +41,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         //Load all Animations in
 
         //Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
-        final String pathbase = "game-assets\\jump\\spr_m_traveler_";
+        final String pathbase = "game-assets/dude/char/spr_m_traveler_";
 
         Animation idle = Animation.createFromAnimatedGif(scene, pathbase + "idle_anim.gif");
         addState("idle", idle);

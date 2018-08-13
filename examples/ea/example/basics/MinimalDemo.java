@@ -64,7 +64,7 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
         //"leerer Automat" -> Erstellt StatefulAnimation ohne Zustände
         character = new StatefulAnimation(this, 64, 64);
 
-        final String pathbase = "game-assets/jump/spr_m_traveler_";
+        final String pathbase = "game-assets/dude/char/spr_m_traveler_";
 
         Animation idle = Animation.createFromAnimatedGif(this, pathbase + "idle_anim.gif");
         character.addState("idle", idle);
@@ -111,10 +111,10 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     public void onFrameUpdate(int frameDuration) {
         if (Game.isKeyPressed(KeyEvent.VK_W)) {
             //W ist gedrückt -> Kamera nach oben bewegen.
-            getCamera().move(0, -CAM_SPEED * frameDuration);
+            getCamera().move(0, CAM_SPEED * frameDuration);
         }
         if (Game.isKeyPressed(KeyEvent.VK_S)) {
-            getCamera().move(0, CAM_SPEED * frameDuration);
+            getCamera().move(0, -CAM_SPEED * frameDuration);
         }
         if (Game.isKeyPressed(KeyEvent.VK_A)) {
             getCamera().move(-CAM_SPEED * frameDuration, 0);
