@@ -287,7 +287,7 @@ public final class Game {
             g.fillRect(startX - gridSize, y - 1, windowSize + 2 * gridSize, 2);
         }
 
-        for (int x = startX; x < startX + windowSize + gridSize; x += gridSize) {
+        for (int x = startX - gridSize; x < startX + windowSize + gridSize; x += gridSize) {
             for (int y = startY; y < startY + windowSize + gridSize; y += gridSize) {
                 g.drawString(x + " / " + (-y), x + 5, y - 5);
             }
