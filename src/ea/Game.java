@@ -233,7 +233,8 @@ public final class Game {
         try {
             frame.setIconImage(ImageLoader.load("assets/favicon.png"));
         } catch (Exception e) {
-            Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
+            // FIXME: Doesn't work in JAR in BlueJ
+            // Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
         }
 
         renderThread = new RenderThread();
