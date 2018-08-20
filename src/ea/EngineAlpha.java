@@ -39,17 +39,17 @@ import java.util.TimeZone;
 /**
  * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box beim Ausführen der
  * .jar-Datei.
- * <p/>
+ * <p>
  * TODO: Commit-ID in Jar packen und mit aktueller ID auf GitHub vergleichen
  *
- * @author Niklas Keller <me@kelunik.com>
+ * @author Niklas Keller {@literal <me@kelunik.com>}
  */
 @NoExternalUse
 public final class EngineAlpha extends Frame {
 
 	/**
-	 * Der Versionscode des aktuellen Release.<br />
-	 * Rechnung:<br/>
+	 * Der Versionscode des aktuellen Release.<br>
+	 * Rechnung:<br>
 	 * <code>
 	 * 10000 * major + 100 * minor + 1 * bugfix
 	 * </code>
@@ -74,7 +74,7 @@ public final class EngineAlpha extends Frame {
 	 */
 	public static final long BUILD_TIME;
 
-	/**
+	/*
 	 * Statischer Konstruktor.
 	 * Ermittelt <code>IS_JAR</code> und <code>BUILD_TIME</code>.
 	 */

@@ -176,9 +176,6 @@ public class Scene {
      * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb der Scene</b> wirkt.
      *
      * @param gravityInN Die neue Schwerkraft als Vector. Die Einheit ist <b>[N]</b>.
-     *
-     * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
-     * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public void setGravity(Vector gravityInN) {

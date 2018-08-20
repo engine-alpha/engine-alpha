@@ -24,7 +24,7 @@ import java.lang.annotation.Documented;
 /**
  * Markiert Methoden, die Schüler definitiv <u><b>nicht</b></u> verwenden sollen.
  *
- * @author Niklas Keller <me@kelunik.com>
+ * @author Niklas Keller {@literal <me@kelunik.com>}
  */
 @Documented
 public @interface NoExternalUse {

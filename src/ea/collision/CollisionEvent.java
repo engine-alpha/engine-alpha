@@ -64,7 +64,7 @@ public class CollisionEvent<E extends Actor> {
 
     /**
      * Wenn diese Methode aufgerufen wird, wird diese Kollision <b>nicht von der Physics-Engine</b> aufgelöst, sondern
-     * ignoriert. <br />
+     * ignoriert. <br>
      * Dies lässt sich Nutzen zum Beispiel für:
      * <ul>
      *     <li>Feste Plattformen, durch die man von unten "durchspringen" kann, um so von unten auf sie drauf zu

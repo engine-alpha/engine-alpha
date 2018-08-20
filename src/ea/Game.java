@@ -522,7 +522,7 @@ public final class Game {
     }
 
     /**
-     * Diese Methode beendet das Spiel.<br /> Das heißt, dass das Fenster geschlossen, alle belegten Ressourcen
+     * Diese Methode beendet das Spiel.<br> Das heißt, dass das Fenster geschlossen, alle belegten Ressourcen
      * freigegeben und auch die virtuelle Maschine von Java beendet wird.
      */
     @API
@@ -573,9 +573,9 @@ public final class Game {
      *
      * @return Die Eingabe des Nutzers:
      * <ul>
-     * <li>Ja -> <code>true</code></li>
-     * <li>Nein -> <code>false</code></li>
-     * <li>Abbruch (= Dialog manuell schließen) -> <code>false</code></li>
+     * <li>Ja → <code>true</code></li>
+     * <li>Nein → <code>false</code></li>
+     * <li>Abbruch (= Dialog manuell schließen) → <code>false</code></li>
      * </ul>
      */
     @API
@@ -592,9 +592,9 @@ public final class Game {
      *
      * @return Die Eingabe des Nutzers:
      * <ul>
-     * <li>OK -> <code>true</code></li>
-     * <li>Abbrechen -> <code>false</code></li>
-     * <li>Abbruch (= Dialog manuell schließen) -> <code>false</code></li>
+     * <li>OK → <code>true</code></li>
+     * <li>Abbrechen → <code>false</code></li>
+     * <li>Abbruch (= Dialog manuell schließen) → <code>false</code></li>
      * </ul>
      */
     @API

@@ -87,7 +87,7 @@ public class Layer {
      * weniger als die der Kamera</li>
      * <li><code>0</code> bedeutet, die Bewegung der Kamera hat gar keinen Einfluss auf das Layer.</li>
      * <li>Negative Werte sorgen für Bewegung entgegen der Kamera</li>
-     * <li>Werte <code>>1</code> verstärken die Bewegung der Kamera (z.B. für Vordergrund). </li>
+     * <li>Werte <code>&gt; 1</code> verstärken die Bewegung der Kamera (z.B. für Vordergrund). </li>
      * </ul>
      *
      * @param parallaxX Der X-Parallaxenwert.
@@ -104,9 +104,9 @@ public class Layer {
      * <ul>
      * <li><code>1</code>: Normaler Zoom mit der Kamera</li>
      * <li><code>0</code>: Kamerazoom hat keinen Einfluss auf dieses Layer.</li>
-     * <li><code>0 < parallaxZoom < 1</code>: Der Zoomeffekt tritt schwächer auf.</li>
-     * <li><code>parallaxZoom>1</code>: Der Zoomeffekt tritt stärker auf. </li>
-     * <li><code>parallaxZoom < 0</code>: Der Zoomeffekt tritt betragsmäßig ähnlich und umgekehrt auf.</li>
+     * <li><code>0 &lt; parallaxZoom &lt; 1</code>: Der Zoomeffekt tritt schwächer auf.</li>
+     * <li><code>parallaxZoom &gt; 1</code>: Der Zoomeffekt tritt stärker auf. </li>
+     * <li><code>parallaxZoom &lt; 0</code>: Der Zoomeffekt tritt betragsmäßig ähnlich und umgekehrt auf.</li>
      * </ul>
      */
     @API

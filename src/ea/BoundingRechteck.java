@@ -188,7 +188,7 @@ public final class BoundingRechteck {
      * @param grenzeLinks Der Wert, den das Ergebnisrechteck maximal links sein darf
      *
      * @return Ein BoundingRechteck derselben Höhe und Breite, das in jedem rechts jenseits oder auf
-     * der Grenze liegt.<br /> Wenn diese Eigenschaften bereits von diesem Objekt erfüllt werden, so
+     * der Grenze liegt.<br> Wenn diese Eigenschaften bereits von diesem Objekt erfüllt werden, so
      * wird <code>this</code> zurückgegeben.
      */
     public BoundingRechteck rechtsVon(int grenzeLinks) {
@@ -206,7 +206,7 @@ public final class BoundingRechteck {
      * @param grenzeRechts Der Wert, den das Ergebnisrechteck maximal rechts sein darf
      *
      * @return Ein BoundingRechteck derselben Höhe und Breite, das in jedem Fall links jenseits oder
-     * auf der Grenze liegt.<br /> Wenn diese Eigenschaften bereits von diesem Objekt erfüllt
+     * auf der Grenze liegt.<br> Wenn diese Eigenschaften bereits von diesem Objekt erfüllt
      * werden, so wird <code>this</code> zurückgegeben.
      */
     public BoundingRechteck linksVon(int grenzeRechts) {
@@ -219,7 +219,7 @@ public final class BoundingRechteck {
 
     /**
      * Gibt ein neues BoundingRechteck mit selber Höhe und Breite, jedoch einer bestimmten, zu
-     * definierenden Position.<br /> Diese Position ist die der <i>linken oberen Ecke</i> des
+     * definierenden Position.<br> Diese Position ist die der <i>linken oberen Ecke</i> des
      * BoundingRechtecks.
      *
      * @param realX Die <i>X-Koordinate der linken oberen Ecke</i> des BoundingRechtecks
@@ -253,7 +253,7 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Diese Methoden prüft, ob dieses Bounding-Rectangle ein zweites vollkommen umschliesst.<br />
+     * Diese Methoden prüft, ob dieses Bounding-Rectangle ein zweites vollkommen umschliesst.<br>
      * <i>Gemeinsame Ränder zählen <b>AUCH</b> als umschliessen!</i>
      *
      * @param innen Das Innere Bounding-Rectangle. Es soll geprüft werden, ob dieses Vollkommen von
@@ -301,8 +301,8 @@ public final class BoundingRechteck {
     }
 
     /**
-     * Testet, ob ein anderes BoundingRechteck dieses schneidet.<br /> Schneiden bedeutet folgendes
-     * im Sinne der Engine Alpha:<br /> <i>Beide Rechtecke divide sich mindestens einen (aber
+     * Testet, ob ein anderes BoundingRechteck dieses schneidet.<br> Schneiden bedeutet folgendes
+     * im Sinne der Engine Alpha:<br> <i>Beide Rechtecke divide sich mindestens einen (aber
      * meistens mehrere) Punkte auf der Zeichenebene</i>.
      *
      * @param fig Das zweite zu testende BoundingRechteck
@@ -400,7 +400,7 @@ public final class BoundingRechteck {
      * Rechtecks liegen, so wird versucht, dieses Bounding-Rectangle <i>in das andere mit möglichst
      * wenig Verschiebung</i> zu bringen. Diese Methode wird intern für die Beschränkung des
      * Kamera-Bereiches genutzt.
-     * <p/>
+     * <p>
      * <div class='hinweisProbleme'><b>Achtung</b>: Voraussetzung dafuer, dass dieser Algorithmus
      * Sinn macht ist, dass das äußere Rectangle ausreichend größer als dieses ist!</div>
      *

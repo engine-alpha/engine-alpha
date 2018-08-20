@@ -46,7 +46,7 @@ public class Spiel {
     }
 
     /**
-     * Diese Methode ordnet einem String ein Color-Objekt zu.<br /> Hierdurch ist in den Klassen
+     * Diese Methode ordnet einem String ein Color-Objekt zu.<br> Hierdurch ist in den Klassen
      * außerhalb der Engine keine awt-Klasse nötig.
      *
      * @param t Der Name der Farbe.
@@ -258,12 +258,12 @@ public class Spiel {
     /* ~~~ Listener Addition ~~~ */
 
     /**
-     * Meldet ein Objekt an, das ab sofort auf Mausklicks reagieren wird.<br /> Intern laesst sich
-     * theoretisch ein Objekt <b>JEDER</b> Klasse anmelden!<br /> Deshalb <i>sollten nur Objekte
+     * Meldet ein Objekt an, das ab sofort auf Mausklicks reagieren wird.<br> Intern laesst sich
+     * theoretisch ein Objekt <b>JEDER</b> Klasse anmelden!<br> Deshalb <i>sollten nur Objekte
      * angemeldet werden, die Instanzen eines interfaces EDU-<code>KLICKREAGIERBAR</code>-Interfaces
-     * sind!!</i><br /> <br /> <br /> Example:<br /> <b /> <code>KLICKREAGIERBAR { <br /> //Eine
-     * Methode diesen Namens MUSS existieren!!<br /> public abstract void klickReagieren(int x, int
-     * y);<br /> }</code>
+     * sind!!</i><br> <br> <br> Example:<br> <br> <code>KLICKREAGIERBAR { <br> //Eine
+     * Methode diesen Namens MUSS existieren!!<br> public abstract void klickReagieren(int x, int
+     * y);<br> }</code>
      *
      * @param client     Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Mausklick informiert.
      * @param linksklick Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
@@ -282,8 +282,8 @@ public class Spiel {
     }
 
     /**
-     * Meldet ein Objekt an, das ab sofort auf Tastendruck reagieren wird.<br /> Intern laesst sich
-     * theoretisch ein Objekt <b>JEDER</b> Klasse anmelden!<br /> Deshalb <i>sollten nur Objekte
+     * Meldet ein Objekt an, das ab sofort auf Tastendruck reagieren wird.<br> Intern laesst sich
+     * theoretisch ein Objekt <b>JEDER</b> Klasse anmelden!<br> Deshalb <i>sollten nur Objekte
      * angemeldet werden, die Instanzen des EDU-<code>TASTENREAGIERBARANMELDEN</code>-Interfaces
      * sind!!</i>
      *
@@ -299,10 +299,10 @@ public class Spiel {
 
     /**
      * Meldet ein Objekt zum Ticken an. Intern laesst sich theoretisch ein Objekt <b>JEDER</b>
-     * Klasse anmelden!<br /> Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des
+     * Klasse anmelden!<br> Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des
      * EDU-<code>TICKER</code>-Interfaces sind!!</i>
      *
-     * @param o         Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br /> Es <b>MUSS</b>
+     * @param o         Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br> Es <b>MUSS</b>
      *                  eine Methode <code>tick()</code> haben.
      * @param intervall Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
      */

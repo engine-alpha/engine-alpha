@@ -26,7 +26,7 @@ import java.awt.image.ColorModel;
 /**
  * Diese Klasse optimiert Resourcen für das System des Anwenders.
  *
- * @author Niklas Keller <me@kelunik.com>
+ * @author Niklas Keller {@literal <me@kelunik.com>}
  */
 final public class Optimizer {
     private static final GraphicsConfiguration graphicsConfig = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();

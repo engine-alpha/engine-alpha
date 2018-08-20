@@ -46,7 +46,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
 /**
- * Actor bezeichnet alles, was sich auf der Zeichenebene befindet.<br /> Dies ist die absolute Superklasse aller
+ * Actor bezeichnet alles, was sich auf der Zeichenebene befindet.<br> Dies ist die absolute Superklasse aller
  * grafischen Objekte. Umgekehrt kann somit jedes grafische Objekt die folgenden Methoden nutzen.
  *
  * @author Michael Andonie
@@ -64,7 +64,7 @@ public abstract class Actor {
     private boolean alive = true;
 
     /**
-     * Gibt an, ob das Objekt zur Zeit überhaupt sichtbar sein soll.<br /> Ist dies nicht der Fall, so wird die
+     * Gibt an, ob das Objekt zur Zeit überhaupt sichtbar sein soll.<br> Ist dies nicht der Fall, so wird die
      * Zeichenroutine direkt übergangen.
      */
     private boolean visible = true;
@@ -76,7 +76,7 @@ public abstract class Actor {
 
     /**
      * Opacity = Durchsichtigkeit des Raumes
-     * <p/>
+     * <p>
      * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Image.</li>
      * <li><code>1.0f</code> entspricht einem undurchsichtigem Image.</li></ul>
      */
@@ -221,8 +221,8 @@ public abstract class Actor {
     /**
      * Setzt die Sichtbarkeit des Objektes.
      *
-     * @param visible Ob das Objekt isVisible sein soll oder nicht.<br /> Ist dieser Wert
-     *                <code>false</code>, so wird es nicht im Window gezeichnet.<br />
+     * @param visible Ob das Objekt isVisible sein soll oder nicht.<br> Ist dieser Wert
+     *                <code>false</code>, so wird es nicht im Window gezeichnet.
      *
      * @see #isVisible()
      */
@@ -256,7 +256,7 @@ public abstract class Actor {
 
     /**
      * Setzt die Opacity des Raumes.
-     * <p/>
+     * <p>
      * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Actor.</li>
      * <li><code>1.0f</code> entspricht einem undurchsichtigem Actor.</li></ul>
      */
@@ -281,7 +281,7 @@ public abstract class Actor {
     }
 
     /**
-     * Prueft, ob dieser Actor sich mit einem weiteren Actor schneidet.<br /> Für die Überprüfung des Überlappens werden
+     * Prueft, ob dieser Actor sich mit einem weiteren Actor schneidet.<br> Für die Überprüfung des Überlappens werden
      * die internen <b>Collider</b> genutzt. Je nach Genauigkeit der Collider kann die Überprüfung unterschiedlich
      * befriedigend ausfallen. Die Collider können im <b>Debug-Modus</b> der Engine eingesehen werden.
      *
@@ -338,11 +338,11 @@ public abstract class Actor {
     }
 
     /**
-     * Die Basiszeichenmethode.<br /> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese Methode wird bei den
+     * Die Basiszeichenmethode.<br> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese Methode wird bei den
      * einzelnen Gliedern eines Knotens aufgerufen.
      *
      * @param g Das zeichnende Graphics-Objekt
-     * @param r Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br /> Hierbei soll zunaechst getestet
+     * @param r Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br> Hierbei soll zunaechst getestet
      *          werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
      */
     @NoExternalUse
@@ -408,8 +408,8 @@ public abstract class Actor {
      * Rendert eine Shape von JBox2D vectorFromThisTo den gegebenen Voreinstellungen im Graphics-Objekt.
      *
      * @param shape         Die Shape, die zu rendern ist.
-     * @param g             Das Graphics2D-Object, das die Shape rendern soll. Farbe & Co. sollte im Vorfeld eingestellt
-     *                      sein. Diese Methode übernimmt nur das direkte Rendern
+     * @param g             Das Graphics2D-Object, das die Shape rendern soll. Farbe &amp; Co. sollte im Vorfeld
+     *                      eingestellt sein. Diese Methode übernimmt nur das direkte rendern.
      * @param pixelPerMeter die Umrechnungsgröße, von Meter (JBox2D) auf Pixel (EA)
      */
     @NoExternalUse

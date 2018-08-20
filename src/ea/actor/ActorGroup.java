@@ -116,9 +116,9 @@ public class ActorGroup extends Actor {
     }
 
     /**
-     * Entfernt ein Actor-Objekt von diesem ActorGroup.<br /> War es mehrfach angesteckt, so werden alle
-     * Verbindungen geloescht, war es niemals angemeldet, so passiert <b>gar nichts</b>.<br /> <br
-     * /> <b>Achtung!!</b><br /> Sollte <i>Physics</i> benutzt werden:<br /> Diese Methode macht alle
+     * Entfernt ein Actor-Objekt von diesem ActorGroup.<br> War es mehrfach angesteckt, so werden alle
+     * Verbindungen gelöscht, war es niemals angemeldet, so passiert <b>gar nichts</b>.<br> <br>
+     * <b>Achtung!!</b><br> Sollte <i>Physics</i> benutzt werden:<br> Diese Methode macht alle
      * abgemeldeten <code>Actor</code>-Objekt fuer die Physics neutral!!!
      *
      * @param actor Das von diesem ActorGroup zu entfernende Actor-Objekt
@@ -138,8 +138,8 @@ public class ActorGroup extends Actor {
     }
 
     /**
-     * Prüft, ob ein bestimmtes Actor-Objekt in dieser ActorGroup gelagert ist.<br /> <br />
-     * <b>ACHTUNG</b><br /> Diese Methode prüft nicht für eventuelle Unterknoten, ob diese
+     * Prüft, ob ein bestimmtes Actor-Objekt in dieser ActorGroup gelagert ist.<br> <br>
+     * <b>ACHTUNG</b><br> Diese Methode prüft nicht für eventuelle Unterknoten, ob diese
      * vielleicht das Actor-Objekt beinhalten, sondern nur den eigenen Inhalt!
      *
      * @param m Das Actor-Objekt, das auf Vorkommen in diesem ActorGroup überprueft werden soll
@@ -153,12 +153,12 @@ public class ActorGroup extends Actor {
 
     /**
      * Kombinationsmethode. Hiermit kann man so viele Actor-Objekte gleichzeitig an den ActorGroup
-     * tastenReagierbarAnmelden, wie man will.<br /> <b>Beispiel:</b><br /> <br /> <code> //Der
-     * ActorGroup, um alle Objekte zu sammeln<br /> ActorGroup knoten = new ActorGroup();<br /> <br /> //Lauter
-     * gebastelte Actor-Objekte<br /> Actor r1<br /> Actor r2;<br /> Actor r3;<br /> Actor r4;<br /> Actor
-     * r5<br /> Actor r6;<br /> Actor r7;<br /> Actor r8;<br /> Actor r9<br /> Actor r10;<br /> Actor
-     * r11;<br /> Actor r12;<br /> <br /> //Eine Methode, um alle anzumelden:<br /> knoten.add(r1,
-     * r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12);<br /> </code><br /> Das Ergebnis: 11 Zeilen
+     * tastenReagierbarAnmelden, wie man will.<br> <b>Beispiel:</b><br> <br> <code> //Der
+     * ActorGroup, um alle Objekte zu sammeln<br> ActorGroup knoten = new ActorGroup();<br> <br> //Lauter
+     * gebastelte Actor-Objekte<br> Actor r1<br> Actor r2;<br> Actor r3;<br> Actor r4;<br> Actor
+     * r5<br> Actor r6;<br> Actor r7;<br> Actor r8;<br> Actor r9<br> Actor r10;<br> Actor
+     * r11;<br> Actor r12;<br> <br> //Eine Methode, um alle anzumelden:<br> knoten.add(r1,
+     * r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12);<br> </code><br> Das Ergebnis: 11 Zeilen
      * Programmcode gespart.
      */
     public void add(Actor... m) {
@@ -168,7 +168,7 @@ public class ActorGroup extends Actor {
     }
 
     /**
-     * Fuegt ein Actor-Objekt diesem ActorGroup hinzu.<br /> Das zugefuegte Objekt wird ab dann in alle
+     * Fuegt ein Actor-Objekt diesem ActorGroup hinzu.<br> Das zugefuegte Objekt wird ab dann in alle
      * Methoden des Knotens (<code>move(), dimension()</code> etc.) mit eingebunden.
      *
      * @param m Das hinzuzufuegende Actor-Objekt
@@ -328,7 +328,7 @@ public class ActorGroup extends Actor {
     }
 
     /**
-     * {@inheritDoc} Der Zeichnen-Befehl wird an die Unterobjekte weitergetragen.<br />
+     * {@inheritDoc} Der Zeichnen-Befehl wird an die Unterobjekte weitergetragen.<br>
      *
      * @param g Das Grafik-Objekt
      */

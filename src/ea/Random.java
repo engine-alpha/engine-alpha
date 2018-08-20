@@ -19,7 +19,7 @@ public final class Random {
     }
 
     /**
-     * Gibt einen <b>zufälligen</b> <code>boolean</code>-Wert zurück.<br /> Die Wahrscheinlichkeiten für
+     * Gibt einen <b>zufälligen</b> <code>boolean</code>-Wert zurück.<br> Die Wahrscheinlichkeiten für
      * <code>true</code> bzw. <code>false</code> sind gleich groß.
      *
      * @return Mit 50% Wahrscheinlichkeit <code>false</code>, mit 50% Wahrscheinlichkeit
@@ -32,12 +32,12 @@ public final class Random {
 
     /**
      * Gibt einen <b>zufälligen</b> <code>int</code>-Wert zwischen <code>0</code> und einer festgelegten Obergrenze
-     * zurück.<br /> Die Wahrscheinlichkeiten für die Werte zwischen
+     * zurück.<br> Die Wahrscheinlichkeiten für die Werte zwischen
      * <code>0</code> und der Obergrenze sind gleich groß.
      *
      * @param upperLimit Die höchste Zahl, die im Ergebnis vorkommen kann.
      *
-     * @return Eine Zahl <code>getX</code>, wobei <code>0 <= getX <= upperLimit</code> gilt. Die Wahrscheinlichkeit für
+     * @return Eine Zahl <code>getX</code>, wobei <code>0 &lt;= getX &lt;= upperLimit</code> gilt. Die Wahrscheinlichkeit für
      * alle möglichen Rückgaben ist <i>gleich groß</i>.
      */
     @API

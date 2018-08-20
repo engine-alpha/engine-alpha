@@ -99,7 +99,7 @@ public class WorldHandler implements ContactListener {
     /**
      * Gibt die Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA an.
      *
-     * @return Gibt an, wie viele Pixel genau einen Meter ausmachen.<br /> <b>Einheit: [px/m]</b>
+     * @return Gibt an, wie viele Pixel genau einen Meter ausmachen.<br> <b>Einheit: [px/m]</b>
      */
     public float getPixelProMeter() {
         return pixelProMeter;
@@ -116,8 +116,8 @@ public class WorldHandler implements ContactListener {
     /**
      * Setzt die Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA.
      *
-     * @param pixelProMeter Die Anzahl an Pixeln, die genau einen Meter ausmachen.<br /> <i>Die
-     *                      Größe ist unabhängig vom Kamerazoom.</i>< br/> <b>Einheit: [px/m]</b>
+     * @param pixelProMeter Die Anzahl an Pixeln, die genau einen Meter ausmachen.<br> <i>Die
+     *                      Größe ist unabhängig vom Kamerazoom.</i><br> <b>Einheit: [px/m]</b>
      */
     public void setPixelProMeter(float pixelProMeter) {
         if (ppmRequested) {

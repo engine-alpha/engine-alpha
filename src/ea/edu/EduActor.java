@@ -156,7 +156,7 @@ public interface EduActor {
      *             Endpunkt angekommen ist.
      * @param loop <code>true</code>: Der Actor "ping pongt" zwischen dem impliziten Startpunkt und dem angegebenen
      *             Endpunkt hin und her. Die Strecke in eine Richtung benötigt jeweils <code>ms</code> Millisekunden
-     *             Zeit. <br/>
+     *             Zeit. <br>
      *             <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal) erreicht
      *             wurde.
      */

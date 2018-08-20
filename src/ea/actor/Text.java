@@ -29,7 +29,7 @@ import java.awt.*;
 
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
- * <p/>
+ * <p>
  * TODO: Review der ganzen Klasse (v.a. der Dokumentation)
  * <p>
  * TODO: Allow Custom Colors
@@ -46,8 +46,8 @@ public class Text extends Actor {
     private int size;
 
     /**
-     * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br /> Dies wird dargestellt als int.Wert:<br /> 0:
-     * Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv
+     * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br> Dies wird dargestellt als int.Wert:<br> 0:
+     * Normaler Text<br> 1: Fett<br> 2: Kursiv<br> 3: Fett & Kursiv
      */
     private int fontStyle;
 
@@ -72,17 +72,17 @@ public class Text extends Actor {
     private Anchor anchor = Anchor.LEFT;
 
     /**
-     * Konstruktor für Objekte der Klasse Text<br /> Möglich ist es auch, Fonts zu laden, die im Projektordner sind.
+     * Konstruktor für Objekte der Klasse Text<br> Möglich ist es auch, Fonts zu laden, die im Projektordner sind.
      * Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur Verfügung.
      *
      * @param content  Die Zeichenkette, die dargestellt werden soll
-     * @param fontName Der Name des zu verwendenden Fonts.<br /> Wird hierfuer ein Font verwendet, der in dem
+     * @param fontName Der Name des zu verwendenden Fonts.<br> Wird hierfuer ein Font verwendet, der in dem
      *                 Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu empfehlen</b>, muss
      *                 der Name der Schriftart hier ebenfalls einfach nur eingegeben werden, <b>nicht der Name der
      *                 schriftart-Datei!</b>
      * @param size     Die Groesse, in der die Schrift dargestellt werden soll
-     * @param type     Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br /> 0: Normaler Text<br />
-     *                 1: Fett<br /> 2: Kursiv<br /> 3: Fett & Kursiv <br /> <br /> Alles andere sorgt nur fuer einen
+     * @param type     Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br> 0: Normaler Text<br>
+     *                 1: Fett<br> 2: Kursiv<br> 3: Fett &amp; Kursiv <br> <br> Alles andere sorgt nur für einen
      *                 normalen Text.
      */
     @API
@@ -165,11 +165,11 @@ public class Text extends Actor {
     }
 
     /**
-     * Setzt den Stil der Schriftart (Fett/Kursiv/Fett&Kursiv/Normal).
+     * Setzt den Stil der Schriftart (Fett/Kursiv/Fett&amp;Kursiv/Normal).
      *
-     * @param style Die Repraesentation der Schriftart als Zahl:<br/> 0: Normaler Text<br /> 1: Fett<br /> 2: Kursiv<br
-     *              /> 3: Fett & Kursiv<br /> <br /> Ist die Eingabe nicht eine dieser 4 Zahlen, so wird nichts
-     *              geaendert.
+     * @param style Die Repräsentation der Schriftart als Zahl:<br> 0: Normaler Text<br> 1: Fett<br> 2: Kursiv<br>
+     *              3: Fett &amp; Kursiv<br> <br> Ist die Eingabe nicht eine dieser 4 Zahlen, so wird nichts
+     *              geändert.
      */
     public void setStyle(int style) {
         if (style >= 0 && style <= 3) {
@@ -258,8 +258,11 @@ public class Text extends Actor {
 
     /**
      * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur getX-Koordinate befindet. Möglich sind:
-     * <li>{@code Text.Anchor.LEFT},</li> <li>{@code Text.Anchor.CENTER},</li>
-     * <li>{@code Text.Anchor.RIGHT}.</li> <br> <b>Hinweis</b>: {@code null} wird wie {@code
+     * <ul>
+     *     <li>{@code Text.Anchor.LEFT},</li>
+     *     <li>{@code Text.Anchor.CENTER},</li>
+     *     <li>{@code Text.Anchor.RIGHT}.</li>
+     *  </ul><br><b>Hinweis</b>: {@code null} wird wie {@code
      * Anchor.LEFT} behandelt!
      *
      * @param anchor neuer Anchor
@@ -273,8 +276,12 @@ public class Text extends Actor {
     }
 
     /**
-     * Ein Textanker beschreibt, wo sich der Text relativ zu seiner getX-Koordinate befindet. Möglich sind: <li>{@code
-     * Anchor.LEFT},</li> <li>{@code Anchor.CENTER},</li> <li>{@code Anchor.RIGHT}.</li>
+     * Ein Textanker beschreibt, wo sich der Text relativ zu seiner getX-Koordinate befindet. Möglich sind:
+     * <ul>
+     *     <li>{@code Anchor.LEFT},</li>
+     *     <li>{@code Anchor.CENTER},</li>
+     *     <li>{@code Anchor.RIGHT}.</li>
+     * </ul>
      *
      * @see #setAnchor(Anchor)
      * @see #getAnchor()

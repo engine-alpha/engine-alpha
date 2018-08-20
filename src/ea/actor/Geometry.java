@@ -44,7 +44,7 @@ public abstract class Geometry extends Actor {
     }
 
     /**
-     * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br /> Dadurch färbt
+     * Setzt ganzheitlich die Farbe aller Formen auf eine bestimmte Farbe.<br>Dadurch färbt
      * sich im Endeffekt das ganze Objekt neu ein.
      *
      * @param color Die neue Farbe.

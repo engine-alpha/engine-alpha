@@ -31,8 +31,8 @@ import java.util.Date;
  * Logger für die Engine Alpha, damit Probleme bei Anwendern auch von Entwicklern nachvollzogen
  * werden können.
  *
- * @author Julien Gelmar <master@nownewstart.net>
- * @author Niklas Keller <me@kelunik.com>
+ * @author Julien Gelmar {@literal <master@nownewstart.net>}
+ * @author Niklas Keller {@literal <me@kelunik.com>}
  */
 final public class Logger {
     private static BufferedWriter writer;
@@ -157,9 +157,9 @@ final public class Logger {
      * @param tag Tag für den Log
      * @param s   Text der Information
      *
-     * @author andonie
-     * @version 11.04.2017
-     * @see ea.EngineAlpha#setVerbose(boolean)
+     * @author Michael Andonie
+     * @since 11.04.2017
+     * @see ea.Game#setVerbose(boolean)
      */
     public static void verboseInfo(String tag, String s) {
         if (ea.Game.isVerbose()) {

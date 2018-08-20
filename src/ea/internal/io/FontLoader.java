@@ -32,7 +32,7 @@ final public class FontLoader {
     private static final int DEFAULT_SIZE = 12;
 
     /**
-     * Alle möglichen Schriftnamen des Systems, auf dem man sich gerade befindet.<br />
+     * Alle möglichen Schriftnamen des Systems, auf dem man sich gerade befindet.<br>
      * Hiernach werden Überprüfungen gemacht, ob die gewünschte Schriftart auf dem System vorhanden
      * ist.
      */

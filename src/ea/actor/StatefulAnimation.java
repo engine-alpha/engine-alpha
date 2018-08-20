@@ -193,10 +193,10 @@ public class StatefulAnimation extends Actor {
     }
 
     /**
-     * Setzt eine neue Übergangsregel für die Zustände der Animation.<br /> Jedes Mal, wenn die Animation vom
-     * <b>Von-Zustand</b> einmal durchlaufen wurde, geht die Animation automatisch in den <b>Ziel-Zustand</b> über. <br
-     * /> Per Default gilt: Ein zugefügter Zustand geht nach Abschluss seiner Animation "in sich selbst" über. Also
-     * <code>Von-Zustand = Ziel-Zustand</code>. Effektiv ist das ein Loop.<br />
+     * Setzt eine neue Übergangsregel für die Zustände der Animation.<br> Jedes Mal, wenn die Animation vom
+     * <b>Von-Zustand</b> einmal durchlaufen wurde, geht die Animation automatisch in den <b>Ziel-Zustand</b> über. <br>
+     * Per Default gilt: Ein zugefügter Zustand geht nach Abschluss seiner Animation "in sich selbst" über. Also
+     * <code>Von-Zustand = Ziel-Zustand</code>. Effektiv ist das ein Loop.<br>
      * Diese Methode überschreibt die bisherige Übergangsregel für den entsprechenden Von-Zustand.
      *
      * @param stateFrom Der Von-Zustand.

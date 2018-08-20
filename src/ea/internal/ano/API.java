@@ -24,10 +24,10 @@ import java.lang.annotation.Documented;
 /**
  * Markiert Methoden, die Schüler verwenden sollen. Methoden ohne @API sollen nicht verwendet
  * werden!
- * <p/>
- * Bisher müssen diese Methoden auch mit @SuppressWarnings("unused") zusätzlich markiert werden.
+ * <p>
+ * Bisher müssen diese Methoden auch mit <code>@SuppressWarnings("unused")</code> zusätzlich markiert werden.
  *
- * @author Niklas Keller <me@kelunik.com>
+ * @author Niklas Keller {@literal <me@kelunik.com>}
  */
 @Documented
 public @interface API {

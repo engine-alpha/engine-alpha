@@ -32,7 +32,7 @@ public enum Direction {
      * Berechnet einen einfachen Vector (maximale Auslenkung bei jeder Achse 1 (positiv wie negativ)).
      *
      * @return Vector, der mit einer einfachen Auslenkung (d.h. für <code>getX</code> und
-     * <code>getY</code> je ein Wertebereich von {-1, 0, 1}) die entsprechende Bewegung macht.<br />
+     * <code>getY</code> je ein Wertebereich von {-1, 0, 1}) die entsprechende Bewegung macht.
      */
     @API
     public Vector toVector() {

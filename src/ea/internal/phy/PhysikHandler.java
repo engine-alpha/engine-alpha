@@ -109,8 +109,8 @@ public abstract class PhysikHandler {
      *
      * @param radians Der Winkel, um den das Ziel-Objekt gedreht werden soll (in <i>Radians</i>).
      *                <ul>
-     *                <li>Werte > 0 : Drehung gegen Uhrzeigersinn</li>
-     *                <li>Werte < 0 : Drehung im Uhrzeigersinn</li>
+     *                <li>Werte &gt; 0 : Drehung gegen Uhrzeigersinn</li>
+     *                <li>Werte &lt; 0 : Drehung im Uhrzeigersinn</li>
      *                </ul>
      */
     public abstract void rotieren(float radians);
@@ -244,7 +244,7 @@ public abstract class PhysikHandler {
 
     /**
      * Testet, ob das Objekt unter sich festen Boden hat. Dies ist der Fall, wenn direkt unter dem Objekt ein
-     * passives Objekt liegt.<br />
+     * passives Objekt liegt.<br>
      * Diese Methode geht bei <b>unten</b> explizit von "unterhalb der Y-Achse" aus. Ein Objekt hat also Boden sich,
      * wenn am "unteren" Ende seines Bodies (=höchster Y-Wert) in unmittelbarer Nähe (heuristisch getestet) ein passives
      * Objekt anliegt.

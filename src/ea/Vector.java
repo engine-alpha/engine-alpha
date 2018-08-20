@@ -85,7 +85,7 @@ public final class Vector implements Cloneable {
     }
 
     /**
-     * Konstruktor. <br /><br /> Vector wird erzeugt als die nötige Bewegung von einem Point zu einem zweiten.
+     * Konstruktor. <br><br> Vector wird erzeugt als die nötige Bewegung von einem Point zu einem zweiten.
      *
      * @param start Ausgangspunkt
      * @param end   Zielpunkt
@@ -97,8 +97,8 @@ public final class Vector implements Cloneable {
     }
 
     /**
-     * Gibt eine <b>Normierung</b> des Vektors aus. Dies ist ein Vector, der <li>in die selbe Richtung wie der
-     * ursprüngliche Vector zeigt.</li> <li>eine Länge von (möglichst) exakt 1 hat.</li>
+     * Gibt eine <b>Normierung</b> des Vektors aus. Dies ist ein Vector, der <ul><li>in die selbe Richtung wie der
+     * ursprüngliche Vector zeigt.</li> <li>eine Länge von (möglichst) exakt 1 hat.</li></ul>
      *
      * @return Normierter Vector zu diesem Vector
      */
@@ -219,7 +219,7 @@ public final class Vector implements Cloneable {
 
     /**
      * Multipliziert die effektiven Längen beider Anteile des Vektors (<code>getX</code> und
-     * <code>getY</code>) mit einem festen Faktor. <br /> Dadurch entsteht ein neuer Vector mit anderen
+     * <code>getY</code>) mit einem festen Faktor. <br> Dadurch entsteht ein neuer Vector mit anderen
      * Werten, welcher zurückgegeben wird.
      *
      * @param factor Der Faktor, mit dem die <code>getX</code>- und <code>getY</code>-Werte des Vektors multipliziert
@@ -235,7 +235,7 @@ public final class Vector implements Cloneable {
     }
 
     /**
-     * Multipliziert die effektive Länge des X-Anteils des Vektors mit einem festen Faktor. <br />
+     * Multipliziert die effektive Länge des X-Anteils des Vektors mit einem festen Faktor. <br>
      * Dadurch entsteht ein neuer Vector mit anderen Werten, welcher zurückgegeben wird.
      *
      * @param factor Der Faktor, mit dem der x-Wert des Vektors multipliziert wird
@@ -250,7 +250,7 @@ public final class Vector implements Cloneable {
     }
 
     /**
-     * Multipliziert die effektive Länge des X-Anteils des Vektors mit einem festen Faktor. <br />
+     * Multipliziert die effektive Länge des X-Anteils des Vektors mit einem festen Faktor. <br>
      * Dadurch entsteht ein neuer Vector mit anderen Werten, welcher zurückgegeben wird.
      *
      * @param factor Der Faktor, mit dem der x-Wert des Vektors multipliziert wird
@@ -327,7 +327,7 @@ public final class Vector implements Cloneable {
     }
 
     /**
-     * Prüft, ob ein beliebiges Objekt gleich diesem Vector ist. <br /><br /> Zwei Vektoren gelten als gleich, wenn
+     * Prüft, ob ein beliebiges Objekt gleich diesem Vector ist. <br><br> Zwei Vektoren gelten als gleich, wenn
      * <code>getX</code> und <code>getY</code> der beiden Vektoren übereinstimmen.
      *
      * @param o Das auf Gleichheit mit diesem zu überprüfende Objekt.
@@ -375,8 +375,8 @@ public final class Vector implements Cloneable {
     }
 
     /**
-     * Berechnet den Winkel zwischen diesem Vector und einem weiteren. Hierzu wird diese Formel verwendet: <br />
-     * <code>cos t = [a o b] / [|a| * |b|]</code><br />
+     * Berechnet den Winkel zwischen diesem Vector und einem weiteren. Hierzu wird diese Formel verwendet: <br>
+     * <code>cos t = [a o b] / [|a| * |b|]</code><br>
      * <ul>
      * <li>cos ist der Kosinus</li>
      * <li>t ist der gesuchte Winkel</li>

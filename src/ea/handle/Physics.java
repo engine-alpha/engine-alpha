@@ -11,25 +11,25 @@ import org.jbox2d.dynamics.joints.*;
 /**
  * Jedes <code>Actor</code>-Objekt hat ein öffentlich erreichbares Objekt <code>physics</code> dieser Klasse.
  * Dieses Objekt bietet eine umfangreiches Set an <i>Methoden</i>, die die Physics des entsprechenden
- * <code>Actor</code>-Objekts betreffen.<br /><br />
+ * <code>Actor</code>-Objekts betreffen.<br><br>
  * <p>
  * Alle Methoden, die keine "richtige" Rückgabe hätten (also <code>void</code>-Methoden), sind mit <b>Chaining</b>
  * versehen. Das bedeutet, dass statt bei jeder Methode, die eigentlich vom <code>void</code>-Type wäre,
  * der Rückgabetyp <code>Position</code> ist und die Rückgabe das Objekt, das die Methode ausgeführt hat. Das ermöglicht
- * übersichtlichere Codes:<br />
+ * übersichtlichere Codes:<br>
  * <code>
- * actor.physics.applyForce(new Vector(10,0)); //Wirkt 10N vectorFromThisTo rechts <br />
- * actor.physics.drehimpulsWirken(2);         //Wirke einen Drehimpuls von 2 kg*m*m/s <br />
+ * actor.physics.applyForce(new Vector(10,0)); //Wirkt 10N vectorFromThisTo rechts <br>
+ * actor.physics.drehimpulsWirken(2);         //Wirke einen Drehimpuls von 2 kg*m*m/s <br>
  * </code>
- * <br />
- * <b> ... kann so verkürzt werden zu ... </b> <br /> <br />
+ * <br>
+ * <b> ... kann so verkürzt werden zu ... </b> <br> <br>
  *
  * <code>
- * actor.physics.applyForce(new Vector(10,0)).drehimpulsWirken(2); <br />
- * </code> <br /> <br />
+ * actor.physics.applyForce(new Vector(10,0)).drehimpulsWirken(2); <br>
+ * </code> <br> <br>
  * <p>
  * Oder als größeres Beispiel:
- * <br />
+ * <br>
  * <code>
  * actor.physics.setMass(80).getFriction(0.3f).applyForce(new Vector(10, -30)).drehimpuls(5);
  * </code>
@@ -59,10 +59,10 @@ public class Physics {
 
     /**
      * Setzt, ob <i>im Rahmen der physikalischen Simulation</i> die Rotation dieses Objekts
-     * blockiert werden soll. <br/>
+     * blockiert werden soll. <br>
      * Das Objekt kann in jedem Fall weiterhin über einen direkten Methodenaufruf rotiert
      * werden. Der folgende Code ist immer wirksam, unabhängig davon, ob die Rotation
-     * im Rahmen der physikalischen Simulation blockiert ist:<br />
+     * im Rahmen der physikalischen Simulation blockiert ist:<br>
      * <code>
      * actor.getPosition.rotate(4.31f);
      * </code>
@@ -211,7 +211,7 @@ public class Physics {
     /**
      * Wirkt eine Kraft auf den <i>Schwerpunkt</i> des Objekts.
      *
-     * @param force Ein Kraft-Vector. Einheit ist <b>nicht [px], sonder [N]</b.
+     * @param force Ein Kraft-Vector. Einheit ist <b>nicht [px], sonder [N]</b>.
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
@@ -279,9 +279,9 @@ public class Physics {
 
     /**
      * Testet, ob das Objekt "steht". Diese Funktion ist unter anderem hilfreich für die Entwicklung von Platformern
-     * (z.B. wenn der Spieler nur springen können soll, wenn er auf dem Boden steht).<br />
+     * (z.B. wenn der Spieler nur springen können soll, wenn er auf dem Boden steht).<br>
      * Diese Funktion ist eine <b>Heuristik</b>, sprich sie ist eine Annäherung. In einer Physik-Simulation ist die
-     * Definition von "stehen" nicht unbedingt einfach. Hier bedeutet es folgendes:<br />
+     * Definition von "stehen" nicht unbedingt einfach. Hier bedeutet es folgendes:<br>
      * <i>Ein Objekt steht genau dann, wenn alle Eigenschaften erfüllt sind:</i>
      * <ul>
      * <li>Es ist ein <b>dynamisches Objekt</b>.</li>
