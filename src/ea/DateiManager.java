@@ -23,13 +23,9 @@ import ea.compat.CompatDateiManager;
 import ea.internal.gra.PixelFeld;
 import ea.internal.util.Logger;
 
-import javax.xml.bind.DatatypeConverter;
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Der Dateimanager liest und schreibt Dateien und beachtet dabei die jeweiligen System-abhängigen
@@ -123,7 +119,7 @@ public class DateiManager {
 				if (line == null) {
 					line = Character.toString((char) 0);
 				} else {
-					line = DatatypeConverter.printBase64Binary(line.getBytes());
+					line = Base64.getEncoder().encodeToString(line.getBytes());
 				}
 
 				writer.write(line);
@@ -204,7 +200,7 @@ public class DateiManager {
 			for (int i = 0; i < ret.length; i++) {
 				line = reader.readLine();
 
-				ret[i] = line.equals(Character.toString((char) 0)) ? null : new String(DatatypeConverter.parseBase64Binary(line));
+				ret[i] = line.equals(Character.toString((char) 0)) ? null : new String(Base64.getDecoder().decode(line));
 			}
 
 			return ret;
