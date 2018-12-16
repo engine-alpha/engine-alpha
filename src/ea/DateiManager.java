@@ -23,6 +23,10 @@ import ea.compat.CompatDateiManager;
 import ea.internal.gra.PixelFeld;
 import ea.internal.util.Logger;
 
+import java.awt.*;
+import java.io.*;
+import java.util.*;
+
 /**
  * Der Dateimanager liest und schreibt Dateien und beachtet dabei die jeweiligen System-abhängigen
  * Zeichen zur Pfadtrennung.
