@@ -27,6 +27,10 @@
             <include name="**/*.jar"/>
         </fileset>
     </path>
+    
+    <cobertura-instrument>
+        <auxClasspath path="Test.jar" />
+    </cobertura-instrument>
 
     <taskdef classpathref="classpath.cobertura" resource="tasks.properties"/>
 
