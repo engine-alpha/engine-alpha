@@ -97,7 +97,7 @@
         </cobertura-instrument>
         
         <cobertura-instrument>
-            <auxClasspath path="Test.jar" />
+            <auxClasspath path="${build.dir}/Engine.Alpha.jar" />
         </cobertura-instrument>
     </target>
 
