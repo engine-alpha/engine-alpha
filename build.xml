@@ -28,10 +28,6 @@
         </fileset>
     </path>
     
-    <cobertura-instrument>
-        <auxClasspath path="Test.jar" />
-    </cobertura-instrument>
-
     <taskdef classpathref="classpath.cobertura" resource="tasks.properties"/>
 
     <path id="application" location="${build.dir}/Engine.Alpha.jar"/>
@@ -98,6 +94,10 @@
             <fileset dir="${bin.dir}/ea">
                 <include name="**/*.class"/>
             </fileset>
+        </cobertura-instrument>
+        
+        <cobertura-instrument>
+            <auxClasspath path="Test.jar" />
         </cobertura-instrument>
     </target>
 
