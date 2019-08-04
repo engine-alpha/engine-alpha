@@ -30,7 +30,9 @@ public abstract class ShowcaseDemo extends Scene {
                         Game.transitionToScene(parent);
                         break;
                     case KeyEvent.VK_D: //Toggle Debug
-                        if (debuggingEnabled) toggleDebug();
+                        if (debuggingEnabled) {
+                            toggleDebug();
+                        }
                         break;
                 }
             }
@@ -42,26 +44,34 @@ public abstract class ShowcaseDemo extends Scene {
         });
 
         addFrameUpdateListener(i -> {
-            if (!cameraControlEnabled) return;
+            if (!cameraControlEnabled) {
+                return;
+            }
             //Smooth Camera Movement
             float dX = 0, dY = 0;
             if (Game.isKeyPressed(KeyEvent.VK_UP)) {
-                dY = -CAMERA_SPEED;
-            } else if (Game.isKeyPressed(KeyEvent.VK_DOWN)) {
                 dY = CAMERA_SPEED;
+            } else if (Game.isKeyPressed(KeyEvent.VK_DOWN)) {
+                dY = -CAMERA_SPEED;
             }
             if (Game.isKeyPressed(KeyEvent.VK_LEFT)) {
                 dX = -CAMERA_SPEED;
             } else if (Game.isKeyPressed(KeyEvent.VK_RIGHT)) {
                 dX = CAMERA_SPEED;
             }
-            if (dX != 0 || dY != 0) getCamera().move(dX, dY);
+            if (dX != 0 || dY != 0) {
+                getCamera().move(dX, dY);
+            }
         });
 
         addMouseWheelListener(mouseWheelAction -> {
-            if (!zoomEnabled) return;
+            if (!zoomEnabled) {
+                return;
+            }
             float newzoom = getCamera().getZoom() + (mouseWheelAction.getPreciseWheelRotation() * -0.1f);
-            if (newzoom <= 0) return;
+            if (newzoom <= 0) {
+                return;
+            }
             getCamera().setZoom(newzoom);
         });
     }
@@ -78,7 +88,7 @@ public abstract class ShowcaseDemo extends Scene {
         Game.setDebug(!Game.isDebug());
     }
 
-    public void setDebuggingEnabled(boolean debuggingEnabled) {
+    protected void setDebuggingEnabled(boolean debuggingEnabled) {
         this.debuggingEnabled = debuggingEnabled;
     }
 }

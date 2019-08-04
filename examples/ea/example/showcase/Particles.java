@@ -127,25 +127,6 @@ public class Particles extends ShowcaseDemo implements KeyListener {
     @Override
     public void onKeyDown(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:
-                getCamera().move(-30, 0);
-                break;
-
-            case KeyEvent.VK_RIGHT:
-                getCamera().move(30, 0);
-                break;
-
-            case KeyEvent.VK_UP:
-                getCamera().move(0, -30);
-                break;
-
-            case KeyEvent.VK_DOWN:
-                getCamera().move(0, 30);
-                break;
-
-            case KeyEvent.VK_D: // Toggle Debug
-                Game.setDebug(!Game.isDebug());
-                break;
 
             case KeyEvent.VK_1: // Zoom Out
                 getCamera().setZoom(getCamera().getZoom() * .9f);
