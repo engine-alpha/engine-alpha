@@ -22,8 +22,8 @@ package ea.actor;
 import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.internal.ShapeHelper;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.gra.Frame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
@@ -61,9 +61,6 @@ public class Animation extends Actor implements FrameUpdateListener {
     private int currentTime;
     private int currentIndex;
 
-    private boolean flipHorizontal = false;
-    private boolean flipVertical = false;
-
     /**
      * Liste aller Dispatchables, die beim Abschließen des Loops ausgeführt werden.
      */
@@ -75,7 +72,7 @@ public class Animation extends Actor implements FrameUpdateListener {
                 throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
             }
 
-            return ShapeHelper.createRectangularShape(frames[0].getImage().getWidth() / scene.getWorldHandler().getPixelProMeter(), frames[0].getImage().getHeight() / scene.getWorldHandler().getPixelProMeter());
+            return ShapeHelper.createRectangularShape(frames[0].getImage().getWidth() / scene.getWorldHandler().getPixelPerMeter(), frames[0].getImage().getHeight() / scene.getWorldHandler().getPixelPerMeter());
         });
 
         for (ea.internal.gra.Frame frame : frames) {
@@ -109,7 +106,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      *
      * @return Die Frames dieser Animation.
      */
-    @NoExternalUse
+    @Internal
     public Frame[] getFrames() {
         return frames.clone();
     }
@@ -159,7 +156,7 @@ public class Animation extends Actor implements FrameUpdateListener {
         addOnCompleteListener(() -> getScene().remove(Animation.this));
     }
 
-    @NoExternalUse
+    @Internal
     @Override
     public void onFrameUpdate(int frameDuration) {
         this.currentTime += frameDuration;
@@ -182,7 +179,7 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     @Override
     public void render(Graphics2D g) {
-        this.frames[currentIndex].render(g, flipHorizontal, flipVertical);
+        this.frames[currentIndex].render(g, false, false);
     }
 
     @API
@@ -244,7 +241,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      */
     @API
     public static Animation createFromImagesPrefix(Scene scene, int frameDuration, String directoryPath, String prefix) {
-        //Liste mit den Pfaden aller qualifizierten Dateien
+        // Liste mit den Pfaden aller qualifizierten Dateien
         ArrayList<String> allPaths = new ArrayList<>();
 
         File directory;
@@ -256,10 +253,13 @@ public class Animation extends Actor implements FrameUpdateListener {
         if (!directory.isDirectory()) {
             throw new RuntimeException("Der angegebene Pfad war kein Verzeichnis: " + directoryPath);
         }
-        File[] childs = directory.listFiles();
-        for (File file : childs) {
-            if (!file.isDirectory() && file.getName().startsWith(prefix)) {
-                allPaths.add(file.getAbsolutePath());
+
+        File[] children = directory.listFiles();
+        if (children != null) {
+            for (File file : children) {
+                if (!file.isDirectory() && file.getName().startsWith(prefix)) {
+                    allPaths.add(file.getAbsolutePath());
+                }
             }
         }
 
@@ -268,20 +268,24 @@ public class Animation extends Actor implements FrameUpdateListener {
         if (allPaths.isEmpty()) {
             throw new RuntimeException("Konnte keine Bilder mit Präfix \"" + prefix + "\" im Verzeichnis \"" + directoryPath + "\" finden.");
         }
+
         return createFromImages(scene, frameDuration, allPaths.toArray(new String[0]));
     }
 
     @API
     public static Animation createFromAnimatedGif(Scene scene, String filepath) {
-        GifDecoder gd = new GifDecoder();
-        gd.read(filepath);
-        int frameCount = gd.getFrameCount();
+        GifDecoder gifDecoder = new GifDecoder();
+        gifDecoder.read(filepath);
+
+        int frameCount = gifDecoder.getFrameCount();
         ea.internal.gra.Frame[] frames = new ea.internal.gra.Frame[frameCount];
+
         for (int i = 0; i < frameCount; i++) {
-            BufferedImage frame = gd.getFrame(i);  // frame i
-            int t = gd.getDelay(i);  // display duration of frame in milliseconds
-            frames[i] = new Frame(frame, t);
+            BufferedImage frame = gifDecoder.getFrame(i);
+            int durationInMillis = gifDecoder.getDelay(i);
+            frames[i] = new Frame(frame, durationInMillis);
         }
+
         return new Animation(scene, frames);
     }
 }

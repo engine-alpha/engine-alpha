@@ -5,7 +5,7 @@ import ea.actor.Actor;
 import ea.animation.interpolation.CosinusFloat;
 import ea.animation.interpolation.LinearFloat;
 import ea.animation.interpolation.SinusFloat;
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 /**
  * Animiert einen Actor in einem Kreis.

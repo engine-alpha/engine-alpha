@@ -2,8 +2,8 @@ package ea.handle;
 
 import ea.Vector;
 import ea.actor.Actor;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.joints.*;
@@ -42,14 +42,14 @@ public class Physics {
      */
     private final Actor actor;
 
-
     /**
-     * Interner Konstruktor. Wird nicht von außerhalb der Engine genutzt. Ein <code>Physics</code>-Objekt wird von seinem
+     * Interner Konstruktor. Wird nicht von außerhalb der Engine genutzt. Ein <code>Physics</code>-Objekt wird von
+     * seinem
      * <code>Actor</code>-Parent erzeugt.
      *
      * @param actor Das <code>Actor</code>-Objekt, zu dem dieses <code>Physics</code>-Objekt ab sofort gehört.
      */
-    @NoExternalUse
+    @Internal
     public Physics(Actor actor) {
         this.actor = actor;
     }
@@ -71,13 +71,15 @@ public class Physics {
      *                       Objekts innerhalb der physikalischen Simulation <b>nicht mehr</b>.
      *                       Ist dieser Wert <code>false</code>, rotiert sich dieses
      *                       Objekt innerhalb der physikalsichen Simulation.
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
+     *
      * @see #isRotationLocked()
      */
     @API
     public Physics setRotationLocked(boolean rotationLocked) {
-        actor.getPhysicsHandler().rotationBlockiertSetzen(rotationLocked);
+        actor.getPhysicsHandler().setRotationLocked(rotationLocked);
         return this;
     }
 
@@ -87,23 +89,25 @@ public class Physics {
      *
      * @return <code>true</code>, wenn die Rotation dieses Objekts derzeit innerhalb der
      * physikalischen Simulation blockiert ist.
+     *
      * @see #setRotationLocked(boolean)
      */
     @API
     public boolean isRotationLocked() {
-        return actor.getPhysicsHandler().rotationBlockiert();
+        return actor.getPhysicsHandler().isRotationLocked();
     }
 
     /**
      * Setzt die Masse des Objekts neu. Hat Einfluss auf das physikalische Verhalten des Objekts.
      *
      * @param massInKG Die neue Masse für das Objekt in <b>[kg]</b>.
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public Physics setMass(float massInKG) {
-        actor.getPhysicsHandler().masseSetzen(massInKG);
+        actor.getPhysicsHandler().setMass(massInKG);
         return this;
     }
 
@@ -115,7 +119,7 @@ public class Physics {
      */
     @API
     public float getMass() {
-        return actor.getPhysicsHandler().masse();
+        return actor.getPhysicsHandler().getMass();
     }
 
     /**
@@ -123,12 +127,13 @@ public class Physics {
      * <b>Masse</b> in der Regel.
      *
      * @param densityInKgProQM die neue Dichte des Objekts in <b>[kg/m^2]</b>
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public Physics setDensity(float densityInKgProQM) {
-        actor.getPhysicsHandler().dichteSetzen(densityInKgProQM);
+        actor.getPhysicsHandler().setDensity(densityInKgProQM);
         return this;
     }
 
@@ -139,7 +144,7 @@ public class Physics {
      */
     @API
     public float getDensity() {
-        return actor.getPhysicsHandler().dichte();
+        return actor.getPhysicsHandler().getDensity();
     }
 
     /**
@@ -147,12 +152,13 @@ public class Physics {
      * die Bewegung des Objekts.
      *
      * @param coefficientOfElasticity Der Reibungskoeffizient. In der Regel im Bereich <b>[0; 1]</b>.
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public Physics setFriction(float coefficientOfElasticity) {
-        actor.getPhysicsHandler().reibungSetzen(coefficientOfElasticity);
+        actor.getPhysicsHandler().setFriction(coefficientOfElasticity);
         return this;
     }
 
@@ -164,7 +170,7 @@ public class Physics {
      */
     @API
     public float getFriction() {
-        return actor.getPhysicsHandler().reibung();
+        return actor.getPhysicsHandler().getFriction();
     }
 
     /**
@@ -174,12 +180,13 @@ public class Physics {
      *
      * @param velocityInMPerS Die Geschwindigkeit, mit der sich dieses Objekt ab sofort
      *                        bewegen soll. In <b>[m / s]</b>
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public Physics setVelocity(Vector velocityInMPerS) {
-        actor.getPhysicsHandler().geschwindigkeitSetzen(velocityInMPerS);
+        actor.getPhysicsHandler().setVelocity(velocityInMPerS);
         return this;
     }
 
@@ -191,18 +198,18 @@ public class Physics {
      */
     @API
     public Vector getVelocity() {
-        return actor.getPhysicsHandler().geschwindigkeit();
+        return actor.getPhysicsHandler().getVelocity();
     }
 
     @API
     public Physics setElasticity(float elasticity) {
-        actor.getPhysicsHandler().elastizitaetSetzen(elasticity);
+        actor.getPhysicsHandler().setRestitution(elasticity);
         return this;
     }
 
     @API
     public float getElasticity() {
-        return actor.getPhysicsHandler().elastizitaet();
+        return actor.getPhysicsHandler().getRestitution();
     }
 
 
@@ -212,12 +219,13 @@ public class Physics {
      * Wirkt eine Kraft auf den <i>Schwerpunkt</i> des Objekts.
      *
      * @param force Ein Kraft-Vector. Einheit ist <b>nicht [px], sonder [N]</b>.
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public Physics applyForce(Vector force) {
-        actor.getPhysicsHandler().kraftWirken(force);
+        actor.getPhysicsHandler().applyForce(force);
         return this;
     }
 
@@ -226,12 +234,13 @@ public class Physics {
      *
      * @param kraftInN    Eine Kraft. Einheit ist <b>[N]</b>
      * @param globalPoint Der Ort auf der <i>Zeichenebene</i>, an dem die Kraft wirken soll.
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public Physics applyForce(Vector kraftInN, Vector globalPoint) {
-        actor.getPhysicsHandler().kraftWirken(kraftInN, globalPoint);
+        actor.getPhysicsHandler().applyForce(kraftInN, globalPoint);
         return this;
     }
 
@@ -239,12 +248,13 @@ public class Physics {
      * Wirkt einen Impuls auf den <i>Schwerpunkt</i> des Objekts.
      *
      * @param impulseInNS Der Impuls, der auf den Schwerpunkt wirken soll. Einheit ist <b>[Ns]</b>
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public Physics applyImpulse(Vector impulseInNS) {
-        actor.getPhysicsHandler().impulsWirken(impulseInNS, actor.getPhysicsHandler().getCenter());
+        actor.getPhysicsHandler().applyImpluse(impulseInNS, actor.getPhysicsHandler().getCenter());
         return this;
     }
 
@@ -253,12 +263,13 @@ public class Physics {
      *
      * @param impulseInNS Ein Impuls. Einheit ist <b>[Ns]</b>
      * @param globalPoint Der Ort auf der <i>Zeichenebene</i>, an dem der Impuls wirken soll.
+     *
      * @return Das ausführende Objekt (also sinngemäß <code>return this;</code>).
      * Für <b>Chaining</b> von Methoden (siehe Dokumentation der Klasse).
      */
     @API
     public Physics applyImpulse(Vector impulseInNS, Vector globalPoint) {
-        actor.getPhysicsHandler().impulsWirken(impulseInNS, globalPoint);
+        actor.getPhysicsHandler().applyImpluse(impulseInNS, globalPoint);
         return this;
     }
 
@@ -273,7 +284,7 @@ public class Physics {
      */
     @API
     public Physics cancelAll() {
-        actor.getPhysicsHandler().physicalReset();
+        actor.getPhysicsHandler().resetMovement();
         return this;
     }
 
@@ -289,12 +300,10 @@ public class Physics {
      * <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box">AABB</a>,
      * die das gesamte Objekt umspannt, befindet sich ein <b>statisches Objekt</b>.</li>
      * </ul>
-     *
-     * @return
      */
     @API
     public boolean testStanding() {
-        return actor.getPhysicsHandler().testIfGrounded();
+        return actor.getPhysicsHandler().isGrounded();
     }
 
     /* _________________________ JOINTS _________________________ */
@@ -304,13 +313,13 @@ public class Physics {
      * Diese Logik ist ausgelagert, um den Code etwas schöner zu machen.
      *
      * @param other ein zweites <code>Actor</code>-Objekt zum testen.
+     *
      * @return true = beide Objekte liegen in der selben World. Sonst false.
      */
-    @NoExternalUse
+    @Internal
     private boolean assertSameWorld(Actor other) {
         if (other.getPhysicsHandler().getWorldHandler() != actor.getPhysicsHandler().getWorldHandler()) {
-            Logger.error("Physics", "Die Actor-Objekte sind nicht an der selben Wurzel angemeldet. Sie können " +
-                    "deshalb (noch) nicht physikalisch verbunden werden.");
+            Logger.error("Physics", "Die Actor-Objekte sind nicht an der selben Wurzel angemeldet. Sie können " + "deshalb (noch) nicht physikalisch verbunden werden.");
             return false;
         }
         return true;
@@ -327,18 +336,22 @@ public class Physics {
      *               über einen <code>RevoluteJoint</code> verbunden sein soll.
      * @param anchor Der Ankerpunkt <b>auf der Zeichenebene</b>. Es wird davon
      *               ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
+     *
      * @return Ein <code>RevoluteJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     *
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
     public RevoluteJoint createRevoluteJoint(Actor other, Vector anchor) {
-        if (!assertSameWorld(other)) return null;
+        if (!assertSameWorld(other)) {
+            return null;
+        }
 
-        //Definiere den Joint
+        // Definiere den Joint
         RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
         revoluteJointDef.initialize(actor.getPhysicsHandler().getBody(), other.getPhysicsHandler().getBody(),
                 //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchor)));
-                actor.getPhysicsHandler().getWorldHandler().fromVektor(anchor));
+                anchor.toVec2());
         revoluteJointDef.collideConnected = false;
 
         return (RevoluteJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(revoluteJointDef);
@@ -347,7 +360,8 @@ public class Physics {
     /**
      * Erstellt einen Rope-Joint zwischen diesem und einem weiteren <code>Actor</code>-Objekt.
      *
-     * @param other      Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen <code>Actor</code>-Objekt
+     * @param other      Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                   <code>Actor</code>-Objekt
      *                   über einen <code>RopeJoint</code> verbunden sein soll.
      * @param anchorA    Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste Befestigungspunkt
      *                   des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
@@ -355,48 +369,52 @@ public class Physics {
      *                   Der zweite Befestigungspunkt des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
      * @param ropeLength Die Länge des Lassos. Dies ist ab sofort die maximale Länge, die die beiden Ankerpunkte
      *                   der Objekte voneinader entfernt sein können.
+     *
      * @return Ein <code>RopeJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     *
      * @see org.jbox2d.dynamics.joints.RopeJoint
      */
     @API
     public RopeJoint createRopeJoint(Actor other, Vector anchorA, Vector anchorB, float ropeLength) {
-        if (!assertSameWorld(other)) return null;
+        if (!assertSameWorld(other)) {
+            return null;
+        }
 
         RopeJointDef ropeJointDef = new RopeJointDef();
         ropeJointDef.bodyA = actor.getPhysicsHandler().getBody();
         ropeJointDef.bodyB = other.getPhysicsHandler().getBody();
 
-        ropeJointDef.localAnchorA.set(actor.getPhysicsHandler().getWorldHandler().fromVektor(anchorA));
-        ropeJointDef.localAnchorB.set(actor.getPhysicsHandler().getWorldHandler().fromVektor(anchorB));
+        ropeJointDef.localAnchorA.set(anchorA.toVec2());
+        ropeJointDef.localAnchorB.set(anchorB.toVec2());
         ropeJointDef.maxLength = ropeLength;
 
         return (RopeJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(ropeJointDef);
-
     }
 
     /**
      * Erstellt einen Distance-Joint zwischen diesem und einem weiteren <code>Actor</code>-Objekt.
      *
-     * @param other             Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen <code>Actor</code>-Objekt
+     * @param other             Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                          <code>Actor</code>-Objekt
      *                          über einen <code>DistanceJoint</code> verbunden sein soll.
      * @param anchorAAsWorldPos Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste Befestigungspunkt
      *                          des Joints. Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
      * @param anchorBAsWorldPos Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
      *                          Der zweite Befestigungspunkt des Joints.
      *                          Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
+     *
      * @return Ein <code>DistanceJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     *
      * @see org.jbox2d.dynamics.joints.DistanceJoint
      */
     @API
     public DistanceJoint createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
-        if (!assertSameWorld(other)) return null;
+        if (!assertSameWorld(other)) {
+            return null;
+        }
 
         DistanceJointDef distanceJointDef = new DistanceJointDef();
-        distanceJointDef.initialize(
-                actor.getPhysicsHandler().getBody(),
-                other.getPhysicsHandler().getBody(),
-                actor.getPhysicsHandler().getWorldHandler().fromVektor(anchorAAsWorldPos),
-                actor.getPhysicsHandler().getWorldHandler().fromVektor(anchorBAsWorldPos));
+        distanceJointDef.initialize(actor.getPhysicsHandler().getBody(), other.getPhysicsHandler().getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
 
         return (DistanceJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(distanceJointDef);
     }
@@ -460,7 +478,7 @@ public class Physics {
          *
          * @return Der zugehörige JB2D-Phy-Type zu diesem Engine-Phy-Type.
          */
-        @NoExternalUse
+        @Internal
         public BodyType convert() {
             switch (this) {
                 case STATIC:

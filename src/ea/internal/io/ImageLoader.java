@@ -19,7 +19,7 @@
 
 package ea.internal.io;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 import ea.internal.util.Optimizer;
 
 import javax.imageio.ImageIO;

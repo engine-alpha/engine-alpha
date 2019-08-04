@@ -83,7 +83,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
 
     public void initialisieren() {
         //Zuallererst die Größenordnung klar machen (muss vor Erstellung der Objekte geschehen)
-        getWorldHandler().setPixelProMeter(PIXELPROMETER);
+        getWorldHandler().setPixelPerMeter(PIXELPROMETER);
 
         //Den Ball erstellen
         ball = new Circle(this, DURCHMESSER*PIXELPROMETER);

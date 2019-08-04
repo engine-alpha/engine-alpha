@@ -1,8 +1,8 @@
 package ea.collision;
 
 import ea.actor.Actor;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import org.jbox2d.dynamics.contacts.Contact;
 
 /**
@@ -45,7 +45,7 @@ public class CollisionEvent<E extends Actor> {
      * @param colliding Das kollidierende Actor-Objekt. Das zweite Objekt der Kollision ist implizit durch die
      *                  Anmeldung am entsprechenden Actor gegeben.
      */
-    @NoExternalUse
+    @Internal
     public CollisionEvent(Contact contact, E colliding) {
         this.contact = contact;
         this.colliding = colliding;

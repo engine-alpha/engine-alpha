@@ -21,7 +21,7 @@ package ea.actor;
 
 import ea.Scene;
 import ea.internal.ShapeHelper;
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 import ea.internal.io.ImageLoader;
 
 import java.awt.*;
@@ -51,7 +51,7 @@ public class Image extends Actor {
         super(scene, () -> {
             BufferedImage image = ImageLoader.load(filepath);
 
-            return ShapeHelper.createRectangularShape(scale * image.getWidth() / scene.getWorldHandler().getPixelProMeter(), scale * image.getHeight() / scene.getWorldHandler().getPixelProMeter());
+            return ShapeHelper.createRectangularShape(scale * image.getWidth() / scene.getWorldHandler().getPixelPerMeter(), scale * image.getHeight() / scene.getWorldHandler().getPixelPerMeter());
         });
         if (scale <= 0) {
             throw new RuntimeException("Skalierungswert darf nicht <= 0 sein.");

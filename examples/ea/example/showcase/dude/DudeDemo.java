@@ -122,7 +122,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_3.png", -60, 1.2f, 0.1f, -2000);
     }
 
-    private final void addCloudLayer(final int NUM_TILES, String tilePath, int layerLevel, float xParallax, float yParallax, float xOffset) {
+    private void addCloudLayer(final int NUM_TILES, String tilePath, int layerLevel, float xParallax, float yParallax, float xOffset) {
         Layer clouds = new Layer(this);
         clouds.setParallaxPosition(xParallax, yParallax);
         clouds.setLayerPosition(layerLevel);

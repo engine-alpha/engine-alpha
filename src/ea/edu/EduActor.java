@@ -6,7 +6,7 @@ import ea.actor.Actor;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
 import ea.handle.Physics;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.Internal;
 
 public interface EduActor {
 
@@ -15,13 +15,13 @@ public interface EduActor {
      *
      * @return Das Core-Engine-Actor-Objekt
      */
-    @NoExternalUse
+    @Internal
     Actor getActor();
 
     /**
      * Standard-Ausführung im Konstruktor. Meldet das Objekt unmittelbar in der aktuell aktiven Szene an.
      */
-    @NoExternalUse
+    @Internal
     default void eduSetup() {
         Spiel.getActiveScene().add(getActor());
 

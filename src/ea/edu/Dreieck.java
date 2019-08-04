@@ -3,7 +3,7 @@ package ea.edu;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.Polygon;
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 public class Dreieck implements EduGeometrie {
 

@@ -2,8 +2,8 @@ package ea;
 
 import ea.actor.Actor;
 import ea.actor.ActorGroup;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 import java.awt.*;
 
@@ -166,7 +166,7 @@ public class Layer {
         }
     }
 
-    @NoExternalUse
+    @Internal
     public void render(Graphics2D g, Camera camera, int width, int height) {
         if (!visible) {
             return;

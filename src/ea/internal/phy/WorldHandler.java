@@ -2,11 +2,10 @@ package ea.internal.phy;
 
 import ea.Game;
 import ea.Scene;
-import ea.Vector;
 import ea.actor.Actor;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
@@ -49,7 +48,7 @@ public class WorldHandler implements ContactListener {
      * @throws RuntimeException Wenn die World sich gerade im World-Step befindet. Ist dies nicht der Fall, passiert
      *                          nichts (und es wird keine Exception geworfen).
      */
-    @NoExternalUse
+    @Internal
     public static void assertNoWorldStep() {
         Scene scene = Game.getActiveScene();
         if (scene != null && scene.getWorldHandler().getWorld().isLocked()) {
@@ -81,7 +80,7 @@ public class WorldHandler implements ContactListener {
     /**
      * Diese Liste enthält die (noch nicht beendeten) Kontakte, die nicht aufgelöst werden sollen.
      */
-    private final ArrayList<FixturePair> contactsToIgnore = new ArrayList<>();
+    private final List<FixturePair> contactsToIgnore = new ArrayList<>();
 
     /**
      * Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA.
@@ -89,49 +88,50 @@ public class WorldHandler implements ContactListener {
      * <p>
      * <b>Einheit: [px/m]</b>
      */
-    private float pixelProMeter = 30f;
+    private float pixelPerMeter = 30f;
 
     /**
      * Flag, das angibt, ob die Pixel Pro Meter bereits angefragt wurden.
      */
-    private boolean ppmRequested = false;
+    private boolean pixelPerMeterRequested = false;
 
     /**
      * Gibt die Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA an.
      *
      * @return Gibt an, wie viele Pixel genau einen Meter ausmachen.<br> <b>Einheit: [px/m]</b>
      */
-    public float getPixelProMeter() {
-        return pixelProMeter;
+    public float getPixelPerMeter() {
+        return pixelPerMeter;
     }
 
     /**
      * Blockiert die Möglichkeit weitere PPM-Changes zu machen.
      * Wird intern aufgerufen, sobald innerhalb der Engine die erste Shape kreiert wurde.
      */
-    public void blockPPMChanges() {
-        ppmRequested = true;
+    public void lockPixelPerMeter() {
+        pixelPerMeterRequested = true;
     }
 
     /**
      * Setzt die Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA.
      *
-     * @param pixelProMeter Die Anzahl an Pixeln, die genau einen Meter ausmachen.<br> <i>Die
+     * @param pixelPerMeter Die Anzahl an Pixeln, die genau einen Meter ausmachen.<br> <i>Die
      *                      Größe ist unabhängig vom Kamerazoom.</i><br> <b>Einheit: [px/m]</b>
      */
-    public void setPixelProMeter(float pixelProMeter) {
-        if (ppmRequested) {
-            throw new IllegalStateException("Die Pixel-Pro-Meter Umrechnungszahl darf vectorFromThisTo Arbeit mit den Actor-Objekten" + " der entsprechenden WorldHandler-Umgebung nicht geändert werden. Das Setzen der Konstante vor" + " die Arbeit mit den Actor-Objekten move.");
+    public void setPixelPerMeter(float pixelPerMeter) {
+        if (pixelPerMeterRequested) {
+            throw new IllegalStateException("Die Pixel-Pro-Meter-Umrechnungszahl darf nach Arbeit mit den Actor-Objekten der entsprechenden WorldHandler-Umgebung nicht geändert werden.");
         }
-        this.pixelProMeter = pixelProMeter;
+
+        this.pixelPerMeter = pixelPerMeter;
     }
 
     /**
-     * Erstellt eine neue standardisierte Physics (Schwerkraft senkrecht vectorFromThisTo unten, 9,81 m/s^2)
+     * Erstellt eine neue standardisierte Physik ohne Schwerkraft.
      */
-    @NoExternalUse
+    @Internal
     public WorldHandler() {
-        this.world = new World(new Vec2(0f, 0f)); //Erstelle standard-World mit Standard-Gravitation.
+        this.world = new World(new Vec2());
         this.world.setContactListener(this);
     }
 
@@ -140,7 +140,7 @@ public class WorldHandler implements ContactListener {
      *
      * @return Der JB2D-World-Parameter der Welt.
      */
-    @NoExternalUse
+    @Internal
     public World getWorld() {
         return world;
     }
@@ -149,7 +149,7 @@ public class WorldHandler implements ContactListener {
         this.worldPaused = worldPaused;
     }
 
-    public boolean getWorldPaused() {
+    public boolean isWorldPaused() {
         return this.worldPaused;
     }
 
@@ -157,39 +157,10 @@ public class WorldHandler implements ContactListener {
         if (worldPaused) {
             return;
         }
+
         synchronized (this.world) {
             this.world.step(frameDuration / 1000, 6, 3);
         }
-    }
-
-    /**
-     * Übersetzt einen EA-Vector in einen JB2D-Vector auf Basis des gesetzten
-     * Pixel/Meter-Verhältnisses.
-     *
-     * @param eaV Ein EA-Vector.
-     *
-     * @return Der analoge Vector in der JB2D-Engine.
-     */
-    @NoExternalUse
-    public Vec2 fromVektor(Vector eaV) {
-        float x = eaV.x / pixelProMeter;
-        float y = eaV.y / pixelProMeter;
-        return new Vec2(x, y);
-    }
-
-    /**
-     * Übersetzt einen JB2D-Vector in einen EA-Vector auf Basis des gesetzten
-     * Pixel/Meter-Verhältnisses.
-     *
-     * @param jb2dV Ein JB2D-Vector.
-     *
-     * @return Der analoge Vector im EA-Format auf der Zeichenebene.
-     */
-    @NoExternalUse
-    public Vector fromVec2(Vec2 jb2dV) {
-        float x = jb2dV.x * pixelProMeter;
-        float y = jb2dV.y * pixelProMeter;
-        return new Vector(x, y);
     }
 
     /**
@@ -221,8 +192,8 @@ public class WorldHandler implements ContactListener {
      *
      * @throws RuntimeException Falls der body nicht zur World gehört.
      */
-    @NoExternalUse
-    public Actor bodyLookup(Body body) {
+    @Internal
+    public Actor lookupActor(Body body) {
         Actor result = worldMap.get(body);
         if (result == null) {
             //throw new RuntimeException("Der zu testende Body war nicht Teil der World.");
@@ -235,7 +206,7 @@ public class WorldHandler implements ContactListener {
      *
      * @param body der zu entfernende Body
      */
-    @NoExternalUse
+    @Internal
     public void removeAllInternalReferences(Body body) {
         specificCollisionListeners.remove(body);
         generalCollisonListeners.remove(body);
@@ -262,7 +233,7 @@ public class WorldHandler implements ContactListener {
      * Fügt einen Contact der Blacklist hinzu. Kontakte in der Blacklist werden bis zur Trennung nicht aufgelöst.
      * Der Kontakt wird nach endContact wieder entfernt.
      */
-    @NoExternalUse
+    @Internal
     public void addContactToBlacklist(Contact contact) {
         contactsToIgnore.add(new FixturePair(contact.m_fixtureA, contact.m_fixtureB));
     }
@@ -285,7 +256,7 @@ public class WorldHandler implements ContactListener {
      * @param contact JBox2D Contact Objekt, das den Contact beschreibt.
      * @param isBegin true = Begin-Kontakt | false = End-Kontakt
      */
-    @NoExternalUse
+    @Internal
     private void processContact(final Contact contact, boolean isBegin) {
         final Body b1 = contact.getFixtureA().getBody();
         final Body b2 = contact.getFixtureB().getBody();
@@ -362,7 +333,7 @@ public class WorldHandler implements ContactListener {
         }
     }
 
-    @NoExternalUse
+    @Internal
     private void generalCheckup(Body act, Body col, Contact contact, final boolean isBegin) {
         List<CollisionListener<Actor>> list = generalCollisonListeners.get(act);
         if (list != null) {
@@ -411,14 +382,14 @@ public class WorldHandler implements ContactListener {
 
     /* ____________ On-Request Collision Checkups ____________ */
 
-    @NoExternalUse
+    @Internal
     public Fixture[] aabbQuery(AABB aabb) {
         ArrayList<Fixture> fixtures = new ArrayList<>();
         world.queryAABB(fixture -> fixtures.add(fixture), aabb);
         return fixtures.toArray(new Fixture[fixtures.size()]);
     }
 
-    @NoExternalUse
+    @Internal
     public static boolean bodyCollisionCheckup(Body b1, Body b2) {
         ContactEdge b1Contacts = b1.getContactList();
         for (ContactEdge ce = b1Contacts; ce != null; ce = ce.next) {
@@ -476,7 +447,7 @@ public class WorldHandler implements ContactListener {
      * @param kr    Das anzumeldende KR Interface
      * @param actor Der Actor (KR Interface wird bei jeder Kollision des Actors informiert)
      */
-    @NoExternalUse
+    @Internal
     public static void allgemeinesKollisionsReagierbarEingliedern(CollisionListener<Actor> kr, Actor actor) {
         final WorldHandler worldHandler = actor.getPhysicsHandler().getWorldHandler();
         if (worldHandler == null) {
@@ -507,7 +478,7 @@ public class WorldHandler implements ContactListener {
      * @param collider Der Collider (zweites Actor-Objekt)
      * @param <E>      Der Type des Colliders.
      */
-    @NoExternalUse
+    @Internal
     public static <E extends Actor> void spezifischesKollisionsReagierbarEingliedern(CollisionListener<E> kr, Actor actor, E collider) {
         final WorldHandler wh1 = actor.getPhysicsHandler().getWorldHandler();
         final WorldHandler wh2 = collider.getPhysicsHandler().getWorldHandler();

@@ -2,8 +2,8 @@ package ea.actor;
 
 import ea.Scene;
 import ea.Vector;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 
@@ -37,7 +37,7 @@ public class Polygon extends Geometry {
             Vec2[] vectors = new Vec2[points.length];
 
             for (int i = 0; i < points.length; i++) {
-                vectors[i] = new Vec2(points[i].x, points[i].y).mul(1 / scene.getWorldHandler().getPixelProMeter());
+                vectors[i] = new Vec2(points[i].x, points[i].y).mul(1 / scene.getWorldHandler().getPixelPerMeter());
             }
 
             PolygonShape shape = new PolygonShape();
@@ -64,7 +64,7 @@ public class Polygon extends Geometry {
     /**
      * {@inheritDoc}
      */
-    @NoExternalUse
+    @Internal
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());

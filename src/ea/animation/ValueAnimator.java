@@ -20,7 +20,7 @@
 package ea.animation;
 
 import ea.FrameUpdateListener;
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;

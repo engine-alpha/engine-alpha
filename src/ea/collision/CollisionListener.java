@@ -20,7 +20,7 @@
 package ea.collision;
 
 import ea.actor.Actor;
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 /**
  * Beschreibt allgemein ein Objekt, das auf die <b>Kollision zweier Actor-Objekte</b> onKeyDownInternal

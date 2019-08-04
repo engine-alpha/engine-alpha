@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.internal.ano;
+package ea.internal.annotations;
 
 import java.lang.annotation.Documented;
 
@@ -27,6 +27,6 @@ import java.lang.annotation.Documented;
  * @author Niklas Keller {@literal <me@kelunik.com>}
  */
 @Documented
-public @interface NoExternalUse {
+public @interface Internal {
 
 }

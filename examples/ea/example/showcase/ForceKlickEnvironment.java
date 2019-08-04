@@ -101,7 +101,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
      *
      */
     public void initialisieren() {
-        getWorldHandler().setPixelProMeter(PPM);
+        getWorldHandler().setPixelPerMeter(PPM);
         //Info-Message
         //fenster.nachrichtSchicken("Elastizität +[W]/-[Q] | Masse +[U] / -[J] | [R]eset | [S]chwerkraft | [E]insperren");
 

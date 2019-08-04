@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.internal.ano;
+package ea.internal.annotations;
 
 import java.lang.annotation.Documented;
 

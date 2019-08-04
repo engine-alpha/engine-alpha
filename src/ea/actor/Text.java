@@ -21,8 +21,8 @@ package ea.actor;
 
 import ea.Scene;
 import ea.internal.ShapeHelper;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.io.FontLoader;
 
 import java.awt.*;
@@ -92,8 +92,8 @@ public class Text extends Actor {
             FontMetrics fontMetrics = ea.internal.util.FontMetrics.get(font);
 
             return ShapeHelper.createRectangularShape(
-                    fontMetrics.stringWidth(content) / scene.getWorldHandler().getPixelProMeter(),
-                    fontMetrics.getHeight() / scene.getWorldHandler().getPixelProMeter()
+                    fontMetrics.stringWidth(content) / scene.getWorldHandler().getPixelPerMeter(),
+                    fontMetrics.getHeight() / scene.getWorldHandler().getPixelPerMeter()
             );
         });
 
@@ -181,7 +181,7 @@ public class Text extends Actor {
     /**
      * Klasseninterne Methode zum aktualisieren des Font-Objektes
      */
-    @NoExternalUse
+    @Internal
     private void aktualisieren() {
         this.font = this.font.deriveFont(fontStyle, size);
     }
@@ -226,7 +226,7 @@ public class Text extends Actor {
      * {@inheritDoc}
      */
     @Override
-    @NoExternalUse
+    @Internal
     public void render(Graphics2D g) {
         FontMetrics fontMetrics = g.getFontMetrics(font);
 

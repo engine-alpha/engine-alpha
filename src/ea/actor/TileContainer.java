@@ -2,8 +2,8 @@ package ea.actor;
 
 import ea.Scene;
 import ea.internal.ShapeHelper;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.io.ImageLoader;
 
 import java.awt.*;
@@ -55,7 +55,7 @@ public class TileContainer extends Actor {
      */
     @API
     public TileContainer(Scene scene, int numX, int numY, int tileWidth, int tileHeight, float scale) {
-        super(scene, () -> ShapeHelper.createRectangularShape(scale * tileWidth * numX / scene.getWorldHandler().getPixelProMeter(), scale * tileHeight * numY / scene.getWorldHandler().getPixelProMeter()));
+        super(scene, () -> ShapeHelper.createRectangularShape(scale * tileWidth * numX / scene.getWorldHandler().getPixelPerMeter(), scale * tileHeight * numY / scene.getWorldHandler().getPixelPerMeter()));
 
         this.scale = scale;
         if (numX <= 0 || numY <= 0) {
@@ -165,7 +165,7 @@ public class TileContainer extends Actor {
      *
      * @throws IllegalArgumentException Wenn das Parameterpaar nicht im Rahmen der möglichen Indizes lag.
      */
-    @NoExternalUse
+    @Internal
     private void assertXYIndices(int x, int y) {
         if (x < 0 || x >= tiles.length) {
             throw new IllegalArgumentException("X muss innerhalb der richtigen Größe sein (0-" + (tiles.length - 1) + ")" + ". War: " + x);
@@ -175,7 +175,7 @@ public class TileContainer extends Actor {
         }
     }
 
-    @NoExternalUse
+    @Internal
     @Override
     public void render(Graphics2D g) {
         final AffineTransform before = g.getTransform();
@@ -202,14 +202,14 @@ public class TileContainer extends Actor {
      * Abstrakte Klasse beschreibt eine Tile-Instanz für den Tile-Atlas. <i>In jeder Engine-Instanz existiert jedes Tile
      * nur einmal im Atlas.</i>
      */
-    @NoExternalUse
+    @Internal
     private abstract class Tile {
         abstract void render(Graphics2D g, int dX, int dY);
         abstract int getWidth();
         abstract int getHeight();
     }
 
-    @NoExternalUse
+    @Internal
     private class BufferedImageTile extends Tile {
         private final BufferedImage bufferedImage;
 
@@ -218,7 +218,7 @@ public class TileContainer extends Actor {
         }
 
         @Override
-        @NoExternalUse
+        @Internal
         void render(Graphics2D g, int dX, int dY) {
             g.drawImage(bufferedImage, null, dX, dY);
         }

@@ -3,7 +3,7 @@ package ea.edu;
 import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.Internal;
 import ea.internal.gra.Frame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
@@ -203,7 +203,7 @@ public class Figur implements EduActor {
         statefulAnimation.setFrameDurationsOf(zustandName, frameDauerInMS);
     }
 
-    @NoExternalUse
+    @Internal
     @Override
     public Actor getActor() {
         return statefulAnimation;

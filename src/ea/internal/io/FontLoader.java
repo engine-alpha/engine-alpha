@@ -19,7 +19,7 @@
 
 package ea.internal.io;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 import java.awt.*;
 import java.io.IOException;

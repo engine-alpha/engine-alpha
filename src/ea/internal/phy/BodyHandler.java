@@ -3,7 +3,7 @@ package ea.internal.phy;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.handle.Physics;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.MassData;
@@ -18,7 +18,8 @@ import org.jbox2d.dynamics.*;
  * <li>Die Speicherung der <i>räumlichen Eigenschaften</i> (Position und Rotation) des respektiven Actor-Objekts.</li>
  * </ul>
  */
-public class BodyHandler extends PhysikHandler {
+public class BodyHandler extends PhysicsHandler {
+    private static final Vec2 NULL_VECTOR = new Vec2();
 
     /**
      * Referenz auf den Handler der World, in der sich der Body befindet.
@@ -38,7 +39,7 @@ public class BodyHandler extends PhysikHandler {
     /**
      * Erstellt einen neuen Body-Handler
      */
-    @NoExternalUse
+    @Internal
     public BodyHandler(Actor actor, WorldHandler worldHandler, BodyDef bodyDef, FixtureDef fixtureDef, Physics.Type physikType, boolean isSensor) {
         super(actor, physikType, isSensor);
 
@@ -55,136 +56,148 @@ public class BodyHandler extends PhysikHandler {
     @Override
     public void setSensor(boolean isSensor) {
         this.isSensor = isSensor;
-        this.body.getFixtureList().setSensor(isSensor);
+
+        Fixture current = fixture;
+        while (current != null) {
+            current.setSensor(isSensor);
+            current = current.m_next;
+        }
     }
 
     @Override
-    public void verschieben(Vector v) {
+    public void moveBy(Vector meters) {
         WorldHandler.assertNoWorldStep();
-        Vec2 phyVec = worldHandler.fromVektor(v);
-        body.setTransform(phyVec.add(body.getPosition()), body.getAngle());
 
-        // Wake Up Body -> Ensure In-Engine (JB2D) Adjustments will happen, e.g. Collision Readjustment
+        Vec2 vector = meters.toVec2();
+        body.setTransform(vector.addLocal(body.getPosition()), body.getAngle());
+
+        // Wake up body, ensures in-engine (JB2D) adjustments will happen, e.g. collision rejustment
         body.setAwake(true);
     }
 
     @Override
     public Vector getCenter() {
-        if (physikType == Physics.Type.DYNAMIC) {
-            Vec2 wc = body.getWorldCenter();
-            return worldHandler.fromVec2(wc);
-        } else {
-            AABB bodyAABB = calculateBodyAABB();
-            return worldHandler.fromVec2(bodyAABB.getCenter());
+        if (type == Physics.Type.DYNAMIC) {
+            return Vector.of(body.getWorldCenter());
         }
+
+        return Vector.of(calculateBodyAABB().getCenter());
     }
 
     @Override
-    public boolean beinhaltet(Vector p) {
-        Fixture toTest = fixture;
-        while (toTest != null) {
-            if (toTest.testPoint(worldHandler.fromVektor(p))) {
+    public boolean contains(Vector vector) {
+        Vec2 point = vector.toVec2();
+
+        Fixture current = fixture;
+        while (current != null) {
+            if (current.testPoint(point)) {
                 return true;
             }
-            toTest = toTest.m_next;
+
+            current = current.m_next;
         }
+
         return false;
     }
 
     @Override
-    public Vector position() {
-        return worldHandler.fromVec2(body.getPosition());
+    public Vector getPosition() {
+        return Vector.of(body.getPosition());
     }
 
     @Override
-    public float rotation() {
+    public float getRotation() {
         return body.getAngle();
     }
 
     @Override
-    public void rotieren(float radians) {
+    public void rotateBy(float radians) {
         WorldHandler.assertNoWorldStep();
+
         body.setTransform(body.getPosition(), body.getAngle() + radians);
     }
 
     @Override
-    public void dichteSetzen(float dichte) {
+    public void setDensity(float density) {
         Fixture fixture = body.getFixtureList();
         while (fixture != null) {
-            fixture.setDensity(dichte);
+            fixture.setDensity(density);
             fixture = fixture.getNext();
         }
     }
 
     @Override
-    public float dichte() {
-        return body.getFixtureList().getDensity();
+    public float getDensity() {
+        return fixture.getDensity();
     }
 
     @Override
-    public void reibungSetzen(float reibung) {
+    public void setFriction(float friction) {
         Fixture fixture = body.getFixtureList();
         while (fixture != null) {
-            fixture.setFriction(reibung);
+            fixture.setFriction(friction);
             fixture = fixture.getNext();
         }
     }
 
     @Override
-    public float reibung() {
-        return body.getFixtureList().getFriction();
+    public float getFriction() {
+        return fixture.getFriction();
     }
 
     @Override
-    public void elastizitaetSetzen(float ela) {
-        Fixture fixture = body.getFixtureList();
-        if (fixture != null) {
-            fixture.setRestitution(ela);
+    public void setRestitution(float elasticity) {
+        Fixture current = fixture;
+        while (current != null) {
+            current.setRestitution(elasticity);
+            current = current.m_next;
         }
     }
 
     @Override
-    public float elastizitaet() {
-        return body.getFixtureList().getRestitution();
+    public float getRestitution() {
+        return fixture.getRestitution();
     }
 
     @Override
-    public void masseSetzen(float masse) {
+    public void setMass(float mass) {
         WorldHandler.assertNoWorldStep();
-        MassData md = new MassData();
-        body.getMassData(md);
-        md.mass = masse;
-        body.setMassData(md);
+
+        MassData massData = new MassData();
+        body.getMassData(massData);
+        massData.mass = mass;
+        body.setMassData(massData);
     }
 
     @Override
-    public float masse() {
+    public float getMass() {
         return body.getMass();
     }
 
     @Override
-    public void kraftWirken(Vector kraft) {
-        body.applyForceToCenter(new Vec2(kraft.x, kraft.y));
+    public void applyForce(Vector force) {
+        body.applyForceToCenter(force.toVec2());
     }
 
     @Override
-    public void drehMomentWirken(float drehmoment) {
-        body.applyTorque(drehmoment);
+    public void applyRotationMomentum(float rotationMomentum) {
+        body.applyTorque(rotationMomentum);
     }
 
     @Override
-    public void drehImpulsWirken(float drehimpuls) {
-        body.applyAngularImpulse(drehimpuls);
+    public void applyRotationImpulse(float rotationImpulse) {
+        body.applyAngularImpulse(rotationImpulse);
     }
 
     @Override
-    public PhysikHandler typ(Physics.Type type) {
+    public PhysicsHandler setType(Physics.Type type) {
         WorldHandler.assertNoWorldStep();
-        if (type == physikType) {
+
+        if (type == this.type) {
             return this; // kein Update nötig
         }
 
-        this.physikType = type;
+        this.type = type;
 
         BodyType newType = type.convert();
         body.setType(newType);
@@ -198,39 +211,38 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
-    public void kraftWirken(Vector kraftInN, Vector globalerOrt) {
-        body.applyForce(new Vec2(kraftInN.x, kraftInN.y), worldHandler.fromVektor(globalerOrt));
+    public void applyForce(Vector forceInN, Vector globalLocation) {
+        body.applyForce(forceInN.toVec2(), globalLocation.toVec2());
     }
 
     @Override
-    public void impulsWirken(Vector impulsInNS, Vector globalerOrt) {
-        body.applyLinearImpulse(new Vec2(impulsInNS.x, impulsInNS.y), worldHandler.fromVektor(globalerOrt));
+    public void applyImpluse(Vector impluseInNs, Vector globalLocation) {
+        body.applyLinearImpulse(impluseInNs.toVec2(), globalLocation.toVec2());
     }
 
     @Override
-    public void physicalReset() {
-        body.setLinearVelocity(new Vec2());
+    public void resetMovement() {
+        body.setLinearVelocity(NULL_VECTOR);
         body.setAngularVelocity(0);
     }
 
     @Override
-    public void geschwindigkeitSetzen(Vector geschwindigkeitInMProS) {
-        body.setLinearVelocity(new Vec2(geschwindigkeitInMProS.x, geschwindigkeitInMProS.y));
+    public void setVelocity(Vector metersPerSecond) {
+        body.setLinearVelocity(metersPerSecond.toVec2());
     }
 
     @Override
-    public Vector geschwindigkeit() {
-        Vec2 velV2 = body.getLinearVelocity();
-        return new Vector(velV2.x, velV2.y);
+    public Vector getVelocity() {
+        return Vector.of(body.getLinearVelocity());
     }
 
     @Override
-    public void rotationBlockiertSetzen(boolean block) {
+    public void setRotationLocked(boolean block) {
         body.setFixedRotation(block);
     }
 
     @Override
-    public boolean rotationBlockiert() {
+    public boolean isRotationLocked() {
         return body.isFixedRotation();
     }
 
@@ -252,8 +264,8 @@ public class BodyHandler extends PhysikHandler {
     }
 
     @Override
-    public boolean testIfGrounded() {
-        if (this.typ() != Physics.Type.DYNAMIC) {
+    public boolean isGrounded() {
+        if (this.getType() != Physics.Type.DYNAMIC) {
             throw new RuntimeException("Der Steh-Test ist nur für dynamische Objekte definiert");
         }
 
@@ -267,7 +279,7 @@ public class BodyHandler extends PhysikHandler {
 
         Fixture[] groundCandidates = worldHandler.aabbQuery(testAABB);
         for (Fixture fixture : groundCandidates) {
-            Actor corresponding = worldHandler.bodyLookup(fixture.m_body);
+            Actor corresponding = worldHandler.lookupActor(fixture.m_body);
             if (corresponding != null && corresponding.getBodyType() == Physics.Type.STATIC) {
                 return true;
             }

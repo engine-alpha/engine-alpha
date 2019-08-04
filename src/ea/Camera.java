@@ -20,8 +20,8 @@
 package ea;
 
 import ea.actor.Actor;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 /**
  * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene;
@@ -75,7 +75,7 @@ public final class Camera implements FrameUpdateListener {
     /**
      * Konstruktor erstellt eine neue Kamera mit Fokus auf <code>(0, 0)</code>.
      */
-    @NoExternalUse
+    @Internal
     public Camera() {
         this.position = new Vector(0, 0);
     }

@@ -1,6 +1,6 @@
 package ea.input;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 /**
  * Implementierende Klassen können auf das Drehen des Mausrades reagieren.

@@ -26,10 +26,10 @@ import ea.Vector;
 import ea.collision.CollisionListener;
 import ea.handle.Physics;
 import ea.handle.Position;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.phy.BodyHandler;
-import ea.internal.phy.PhysikHandler;
+import ea.internal.phy.PhysicsHandler;
 import ea.internal.phy.WorldHandler;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.CircleShape;
@@ -90,7 +90,7 @@ public abstract class Actor {
     /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
-    private final PhysikHandler physicsHandler;
+    private final PhysicsHandler physicsHandler;
 
     private final Collection<Runnable> destructionListeners = new CopyOnWriteArrayList<>();
 
@@ -139,13 +139,13 @@ public abstract class Actor {
         this.physicsHandler = createPhysicsHandler(shapeSupplier.get());
     }
 
-    protected PhysikHandler createPhysicsHandler(Shape shape) {
-        scene.getWorldHandler().blockPPMChanges();
+    protected PhysicsHandler createPhysicsHandler(Shape shape) {
+        scene.getWorldHandler().lockPixelPerMeter();
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = Physics.Type.PASSIVE.convert();
         bodyDef.active = true;
-        bodyDef.position.set(scene.getWorldHandler().fromVektor(Vector.NULL));
+        bodyDef.position.set(Vector.NULL.toVec2());
         bodyDef.gravityScale = 0;
 
         FixtureDef fixtureDef = new FixtureDef();
@@ -249,7 +249,6 @@ public abstract class Actor {
      * @return Gibt die aktuelle Opacity des Raumes zurück.
      */
     @API
-    @SuppressWarnings ( "unused" )
     public float getOpacity() {
         return opacity;
     }
@@ -261,7 +260,6 @@ public abstract class Actor {
      * <li><code>1.0f</code> entspricht einem undurchsichtigem Actor.</li></ul>
      */
     @API
-    @SuppressWarnings ( "unused" )
     public void setOpacity(float opacity) {
         this.opacity = opacity;
     }
@@ -277,7 +275,7 @@ public abstract class Actor {
      */
     @API
     public final boolean contains(Vector p) {
-        return physicsHandler.beinhaltet(p);
+        return physicsHandler.contains(p);
     }
 
     /**
@@ -309,7 +307,7 @@ public abstract class Actor {
      */
     @API
     public void setBodyType(Physics.Type type) {
-        this.physicsHandler.typ(type);
+        this.physicsHandler.setType(type);
 
         int category = 0;
         switch (type) {
@@ -334,7 +332,7 @@ public abstract class Actor {
      */
     @API
     public Physics.Type getBodyType() {
-        return physicsHandler.typ();
+        return physicsHandler.getType();
     }
 
     /**
@@ -345,17 +343,17 @@ public abstract class Actor {
      * @param r Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br> Hierbei soll zunaechst getestet
      *          werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
      */
-    @NoExternalUse
+    @Internal
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
-        if (visible && this.camcheck(r)) {
+        if (visible && this.isWithinBounds(r)) {
 
             //Hole Rotation und Position absolut auf der Zeichenebene.
             float rotation;
             Vector position;
 
             synchronized (physicsHandler.getBody()) {
-                rotation = physicsHandler.rotation();
-                position = physicsHandler.position();
+                rotation = physicsHandler.getRotation();
+                position = physicsHandler.getPosition();
             }
 
             // ____ Pre-Render ____
@@ -381,7 +379,7 @@ public abstract class Actor {
                 synchronized (physicsHandler) {
                     // Visualisiere die Shape
                     if (physicsHandler.getBody().m_fixtureList != null) {
-                        float ppm = physicsHandler.getWorldHandler().getPixelProMeter();
+                        float ppm = physicsHandler.getWorldHandler().getPixelPerMeter();
                         g.setColor(Color.YELLOW);
                         g.fillRect(-2, -2, 4, 4);
                         g.setColor(Color.red);
@@ -412,7 +410,7 @@ public abstract class Actor {
      *                      eingestellt sein. Diese Methode übernimmt nur das direkte rendern.
      * @param pixelPerMeter die Umrechnungsgröße, von Meter (JBox2D) auf Pixel (EA)
      */
-    @NoExternalUse
+    @Internal
     public static void renderShape(Shape shape, Graphics2D g, float pixelPerMeter) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         if (shape instanceof PolygonShape) {
@@ -441,8 +439,8 @@ public abstract class Actor {
      * @return <code>true</code>, wenn das Objekt (teilweise) innerhalb des derzeit sichtbaren
      * Breichs liegt, sonst <code>false</code>.
      */
-    @NoExternalUse
-    private boolean camcheck(BoundingRechteck r) {
+    @Internal
+    private boolean isWithinBounds(BoundingRechteck r) {
         // FIXME : Parameter ändern (?) und Funktionalität implementieren.
         return true;
     }
@@ -452,8 +450,8 @@ public abstract class Actor {
      *
      * @return der aktuellen, internen WorldHandler-Handler aus.
      */
-    @NoExternalUse
-    public PhysikHandler getPhysicsHandler() {
+    @Internal
+    public PhysicsHandler getPhysicsHandler() {
         return physicsHandler;
     }
 
@@ -498,7 +496,7 @@ public abstract class Actor {
      *
      * @param g Das zeichnende Graphics-Objekt
      */
-    @NoExternalUse
+    @Internal
     public abstract void render(Graphics2D g);
 
     /**

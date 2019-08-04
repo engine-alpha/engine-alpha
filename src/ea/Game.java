@@ -22,8 +22,8 @@ package ea;
 import ea.input.MouseButton;
 import ea.input.MouseWheelAction;
 import ea.internal.ThreadSyncHelper;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.gra.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.util.Logger;
@@ -252,7 +252,7 @@ public final class Game {
      *
      * @param g Das Graphics-Objekt zum zeichnen.
      */
-    @NoExternalUse
+    @Internal
     private static void renderDebug(Graphics2D g) {
         AffineTransform transform = g.getTransform();
         Camera camera = Game.scene.getCamera();
@@ -379,7 +379,9 @@ public final class Game {
                 }
 
                 frameEnd = System.nanoTime();
-                frameDuration = (int) ((frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND);
+
+                // Avoid very long frames. It lags then, but doesn't jump around
+                frameDuration = (int) Math.min(2 * DESIRED_FRAME_DURATION, (frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND);
 
                 frameStart = frameEnd;
             } catch (Exception e) {
@@ -411,7 +413,7 @@ public final class Game {
         return Thread.currentThread() == mainThread || Thread.currentThread() == renderThread || mainThread == null || ThreadSyncHelper.isSynced();
     }
 
-    @NoExternalUse
+    @Internal
     public static Vector convertMousePosition(Scene scene, java.awt.Point mousePosition) {
         // Finde Klick auf Zeichenebene, die Position relativ zum Ursprung des RenderPanel-Canvas.
         // Mausklick-Position muss mit Zoom-Wert verrechnet werden
@@ -603,7 +605,7 @@ public final class Game {
         return JOptionPane.showConfirmDialog(frame, message, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
     }
 
-    @NoExternalUse
+    @Internal
     public static java.awt.Point getMousePositionInFrame() {
         return mousePosition;
     }

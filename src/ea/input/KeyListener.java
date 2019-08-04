@@ -19,7 +19,7 @@
 
 package ea.input;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 import java.awt.event.KeyEvent;
 

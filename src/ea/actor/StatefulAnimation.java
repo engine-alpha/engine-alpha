@@ -3,8 +3,8 @@ package ea.actor;
 import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.internal.ShapeHelper;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.gra.Frame;
 
 import java.awt.*;
@@ -49,7 +49,10 @@ public class StatefulAnimation extends Actor {
     private boolean flipVertical = false;
 
     public StatefulAnimation(Scene scene, int width, int height) {
-        super(scene, () -> ShapeHelper.createRectangularShape(width / scene.getWorldHandler().getPixelProMeter(), height / scene.getWorldHandler().getPixelProMeter()));
+        super(scene, () -> ShapeHelper.createRectangularShape(
+                width / scene.getWorldHandler().getPixelPerMeter(),
+                height / scene.getWorldHandler().getPixelPerMeter()
+        ));
 
         this.width = width;
         this.height = height;
@@ -78,7 +81,7 @@ public class StatefulAnimation extends Actor {
         addStateRaw(stateName, stateAnimation.getFrames());
     }
 
-    @NoExternalUse
+    @Internal
     public void addStateRaw(String stateName, Frame[] frames) {
         for (Frame frame : frames) {
             if (this.width != frame.getImage().getWidth() || this.height != frame.getImage().getHeight()) {
@@ -252,7 +255,7 @@ public class StatefulAnimation extends Actor {
     /**
      * Methode wird frameweise über einen anononymen Listener aufgerufen.
      */
-    @NoExternalUse
+    @Internal
     private void internalOnFrameUpdate(int frameDuration) {
         if (currentAnimation == null) {
             return; // we don't have a state yet
@@ -283,7 +286,7 @@ public class StatefulAnimation extends Actor {
 
     /* ~~ ACTOR FUNCTIONALITY ~~ */
 
-    @NoExternalUse
+    @Internal
     @Override
     public void render(Graphics2D g) {
         if (currentAnimation.length == 0) {
