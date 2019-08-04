@@ -1,4 +1,4 @@
-package ea.internal.phy;
+package ea.internal.physics;
 
 import ea.Vector;
 import ea.actor.Actor;

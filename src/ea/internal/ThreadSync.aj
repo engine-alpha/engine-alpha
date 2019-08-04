@@ -6,7 +6,7 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 aspect ThreadSync {
-    pointcut syncThread(): execution(* *(..)) && within(ea.internal.phy.*) || call(ea.internal.phy.BodyHandler.new(..));
+    pointcut syncThread(): execution(* *(..)) && within(ea.internal.physics.*) || call(ea.internal.physics.BodyHandler.new(..));
 
     Object around(): syncThread() {
         if (!Game.isGameThread()) {

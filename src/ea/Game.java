@@ -24,7 +24,7 @@ import ea.input.MouseWheelAction;
 import ea.internal.ThreadSyncHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.gra.RenderPanel;
+import ea.internal.graphics.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.util.Logger;
 

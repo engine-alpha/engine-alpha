@@ -5,7 +5,7 @@ import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.gra.Frame;
+import ea.internal.graphics.Frame;
 
 import java.awt.*;
 import java.util.HashMap;

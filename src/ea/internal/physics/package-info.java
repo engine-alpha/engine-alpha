@@ -30,4 +30,4 @@
  * </blockquote>
  * Created by andonie on 15.02.15.
  */
-package ea.internal.phy;
+package ea.internal.physics;

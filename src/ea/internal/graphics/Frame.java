@@ -1,4 +1,4 @@
-package ea.internal.gra;
+package ea.internal.graphics;
 
 //import com.sun.corba.se.impl.orbutil.graph.Graph;
 import ea.internal.annotations.Internal;

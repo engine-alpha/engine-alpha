@@ -23,7 +23,7 @@ import ea.actor.Actor;
 import ea.input.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.phy.WorldHandler;
+import ea.internal.physics.WorldHandler;
 import ea.internal.util.Logger;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.DistanceJoint;

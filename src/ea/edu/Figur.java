@@ -4,7 +4,7 @@ import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.internal.annotations.Internal;
-import ea.internal.gra.Frame;
+import ea.internal.graphics.Frame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 
