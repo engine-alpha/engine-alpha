@@ -49,10 +49,7 @@ public class StatefulAnimation extends Actor {
     private boolean flipVertical = false;
 
     public StatefulAnimation(Scene scene, int width, int height) {
-        super(scene, () -> ShapeHelper.createRectangularShape(
-                width / scene.getWorldHandler().getPixelProMeter(),
-                height / scene.getWorldHandler().getPixelProMeter()
-        ));
+        super(scene, () -> ShapeHelper.createRectangularShape(width / scene.getWorldHandler().getPixelProMeter(), height / scene.getWorldHandler().getPixelProMeter()));
 
         this.width = width;
         this.height = height;
@@ -82,7 +79,7 @@ public class StatefulAnimation extends Actor {
     }
 
     @NoExternalUse
-    protected void addStateRaw(String stateName, Frame[] frames) {
+    public void addStateRaw(String stateName, Frame[] frames) {
         for (Frame frame : frames) {
             if (this.width != frame.getImage().getWidth() || this.height != frame.getImage().getHeight()) {
                 throw new RuntimeException("Wrong image dimensions");
@@ -135,6 +132,18 @@ public class StatefulAnimation extends Actor {
         if (!stateName.equals(currentState)) {
             setState(stateName);
         }
+    }
+
+    /**
+     * Gibt an, ob ein bestimmer Zustandsname bereits in dieser Animation genutzt wird.
+     *
+     * @param stateName Der zu testende Name.
+     *
+     * @return <code>true</code>: Diese Animation hat einen Zustand mit dem Namen <code>stateName</code>. <br />
+     * <code>false</code>: Diese Animation hat keinen Zustand mit dem Namen <code>stateName</code>.
+     */
+    public boolean hasState(String stateName) {
+        return states.containsKey(stateName);
     }
 
     /**

@@ -5,9 +5,12 @@ import ea.actor.Circle;
 
 /**
  * EDU-Variante von {@link Circle}.
+ *
  * @author Michael Andonie
  */
-public class Kreis extends Circle implements EduGeometrie {
+public class Kreis implements EduGeometrie {
+
+    private final Circle circle;
 
     /**
      * Konstruktor. Erstellt einen Kreis.
@@ -15,12 +18,12 @@ public class Kreis extends Circle implements EduGeometrie {
      * @param radius Durchmesser des Kreises
      */
     public Kreis(float radius) {
-        super(Spiel.getActiveScene(), radius*2);
+        circle = new Circle(Spiel.getActiveScene(), radius * 2);
         eduSetup();
     }
 
     @Override
     public Actor getActor() {
-        return this;
+        return circle;
     }
 }

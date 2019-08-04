@@ -8,15 +8,17 @@ import ea.actor.Particle;
  *
  * @author Michael Andonie
  */
-public class Partikel extends Particle implements EduActor {
+public class Partikel implements EduActor {
+
+    private final Particle particle;
 
     public Partikel(float diameter, int life) {
-        super(Spiel.getActiveScene(), diameter, life);
+        particle = new Particle(Spiel.getActiveScene(), diameter, life);
         eduSetup();
     }
 
     @Override
     public Actor getActor() {
-        return this;
+        return particle;
     }
 }

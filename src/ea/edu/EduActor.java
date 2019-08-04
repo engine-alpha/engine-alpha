@@ -10,7 +10,7 @@ import ea.internal.ano.NoExternalUse;
 public interface EduActor {
 
     /**
-     * Gibt den Actor aus. Standardimplementierung: return this;
+     * Gibt das Engine-interne Actor-Objekt zurück.
      *
      * @return Das Core-Engine-Actor-Objekt
      */
@@ -77,8 +77,8 @@ public interface EduActor {
         return mittelPunkt();
     }
 
-    default boolean schneidet(Actor actor) {
-        return getActor().overlaps(actor);
+    default boolean schneidet(EduActor other) {
+        return other.getActor().overlaps(getActor());
     }
 
     /* ~~~ PHYSICS ~~~ */

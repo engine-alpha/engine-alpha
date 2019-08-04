@@ -3,15 +3,17 @@ package ea.edu;
 import ea.actor.Actor;
 import ea.actor.Rectangle;
 
-public class Rechteck extends Rectangle implements EduGeometrie {
+public class Rechteck implements EduGeometrie {
+
+    private final Rectangle rectangle;
 
     public Rechteck(float breite, float hoehe) {
-        super(Spiel.getActiveScene(), breite, hoehe);
+        rectangle = new Rectangle(Spiel.getActiveScene(), breite, hoehe);
         eduSetup();
     }
 
     @Override
     public Actor getActor() {
-        return this;
+        return rectangle;
     }
 }
