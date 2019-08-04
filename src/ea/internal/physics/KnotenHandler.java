@@ -1,4 +1,4 @@
-package ea.internal.phy;
+package ea.internal.physics;
 
 import ea.Vector;
 import ea.actor.ActorGroup;
@@ -11,7 +11,7 @@ import org.jbox2d.dynamics.Body;
  *
  * @author Michael Andonie
  */
-public class KnotenHandler extends PhysikHandler {
+public class KnotenHandler extends PhysicsHandler {
     private final ActorGroup actorGroup;
 
     /**
@@ -40,7 +40,7 @@ public class KnotenHandler extends PhysikHandler {
     }
 
     @Override
-    public void verschieben(Vector v) {
+    public void moveBy(Vector v) {
         position = position.add(v);
         actorGroup.forEach(r -> r.position.move(v));
     }
@@ -51,97 +51,97 @@ public class KnotenHandler extends PhysikHandler {
     }
 
     @Override
-    public boolean beinhaltet(Vector p) {
+    public boolean contains(Vector p) {
         return false;
     }
 
     @Override
-    public Vector position() {
+    public Vector getPosition() {
         return position;
     }
 
     @Override
-    public float rotation() {
+    public float getRotation() {
         return rotation;
     }
 
     @Override
-    public void rotieren(float radians) {
+    public void rotateBy(float radians) {
         rotation += radians;
         actorGroup.forEach(r -> r.position.setRotation(radians));
     }
 
     @Override
-    public void dichteSetzen(float dichte) {
+    public void setDensity(float density) {
         Logger.error("Physics", "Ein ActorGroup hat keine Dichte");
     }
 
     @Override
-    public float dichte() {
+    public float getDensity() {
         Logger.error("Physics", "Ein ActorGroup hat keine Dichte");
         return 0;
     }
 
     @Override
-    public void reibungSetzen(float reibung) {
+    public void setFriction(float friction) {
         Logger.error("Physics", "Ein ActorGroup hat keine Reibung");
     }
 
     @Override
-    public float reibung() {
+    public float getFriction() {
         Logger.error("Physics", "Ein ActorGroup hat keine Reibung");
         return 0;
     }
 
     @Override
-    public void elastizitaetSetzen(float ela) {
+    public void setRestitution(float elasticity) {
         Logger.error("Physics", "Ein ActorGroup hat keine Elastizität");
     }
 
     @Override
-    public float elastizitaet() {
+    public float getRestitution() {
         Logger.error("Physics", "Ein ActorGroup hat keine Elastizität");
         return 0;
     }
 
     @Override
-    public void masseSetzen(float masse) {
+    public void setMass(float mass) {
         Logger.error("Physics", "Ein ActorGroup hat keine Masse");
     }
 
     @Override
-    public float masse() {
+    public float getMass() {
         Logger.error("Physics", "Ein ActorGroup hat keine Masse");
         return 0;
     }
 
     @Override
-    public void kraftWirken(Vector kraft) {
+    public void applyForce(Vector force) {
 
     }
 
     @Override
-    public void drehMomentWirken(float drehmoment) {
+    public void applyRotationMomentum(float rotationMomentum) {
 
     }
 
     @Override
-    public void drehImpulsWirken(float drehimpuls) {
+    public void applyRotationImpulse(float rotationImpulse) {
 
     }
 
     @Override
-    public PhysikHandler typ(Physics.Type type) {
+    public PhysicsHandler setType(Physics.Type type) {
         return null;
     }
 
     @Override
-    public void kraftWirken(Vector kraftInN, Vector globalerOrt) {
+    public void applyForce(Vector kraftInN, Vector globalerOrt) {
 
     }
 
     @Override
-    public void impulsWirken(Vector impulsInNS, Vector globalerOrt) {
+    public void applyImpluse(Vector impulsInNS, Vector globalerOrt) {
 
     }
 
@@ -161,32 +161,32 @@ public class KnotenHandler extends PhysikHandler {
     }
 
     @Override
-    public void physicalReset() {
+    public void resetMovement() {
         actorGroup.forEach(r -> r.physics.cancelAll());
     }
 
     @Override
-    public void geschwindigkeitSetzen(Vector geschwindigkeitInMProS) {
+    public void setVelocity(Vector geschwindigkeitInMProS) {
 
     }
 
     @Override
-    public Vector geschwindigkeit() {
+    public Vector getVelocity() {
         return null;
     }
 
     @Override
-    public void rotationBlockiertSetzen(boolean block) {
+    public void setRotationLocked(boolean block) {
 
     }
 
     @Override
-    public boolean rotationBlockiert() {
+    public boolean isRotationLocked() {
         return false;
     }
 
     @Override
-    public boolean testIfGrounded() {
+    public boolean isGrounded() {
         return false;
     }
 

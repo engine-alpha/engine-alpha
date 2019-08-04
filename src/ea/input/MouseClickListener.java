@@ -20,7 +20,7 @@
 package ea.input;
 
 import ea.Vector;
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 /**
  * Implementierende Klassen können auf jeden einzelnen Klick reagieren, unabhängig davon, ob dies

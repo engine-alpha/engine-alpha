@@ -305,7 +305,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 getScene().addFrameUpdateListener(valueAnimator);
             }
 
-            Vector speed = getPhysicsHandler().geschwindigkeit();
+            Vector speed = getPhysicsHandler().getVelocity();
             Vector transformedSpeed = Math.abs(speed.x) < .1f ? speed.add(100f * ((float) Math.random() - .5f), 0) : speed;
 
             Game.enqueue(() -> {

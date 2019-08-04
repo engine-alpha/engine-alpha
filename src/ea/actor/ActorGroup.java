@@ -25,10 +25,10 @@ import ea.Scene;
 import ea.input.KeyListener;
 import ea.input.MouseClickListener;
 import ea.input.MouseWheelListener;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
-import ea.internal.phy.KnotenHandler;
-import ea.internal.phy.PhysikHandler;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
+import ea.internal.physics.KnotenHandler;
+import ea.internal.physics.PhysicsHandler;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.WeldJointDef;
@@ -86,7 +86,7 @@ public class ActorGroup extends Actor {
     /**
      * Führt die angegebene Funktion für jedes Element am ActorGroup aus.
      */
-    @NoExternalUse
+    @Internal
     public void forEach(Consumer<Actor> functor) {
         synchronized (this.actors) {
             for (Actor room : this.actors) {
@@ -255,7 +255,7 @@ public class ActorGroup extends Actor {
             weldJointDef.initialize(
                     first.getPhysicsHandler().getBody(),
                     actor.getPhysicsHandler().getBody(),
-                    getScene().getWorldHandler().fromVektor(first.position.get())
+                    first.position.get().toVec2()
             );
 
             // Joint erstellen und Referenz zum Joint halten
@@ -333,7 +333,7 @@ public class ActorGroup extends Actor {
      * @param g Das Grafik-Objekt
      */
     @Override
-    @NoExternalUse
+    @Internal
     public void render(Graphics2D g) {
         throw new RuntimeException("Bug! Eine ActorGroup kann nicht gerendert werden.");
     }
@@ -351,7 +351,7 @@ public class ActorGroup extends Actor {
 
 
     @Override
-    protected PhysikHandler createPhysicsHandler(Shape shape) {
+    protected PhysicsHandler createPhysicsHandler(Shape shape) {
         return new KnotenHandler(this);
     }
 }

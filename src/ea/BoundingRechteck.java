@@ -19,14 +19,14 @@
 
 package ea;
 
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.Internal;
 
 /**
  * Ein nicht-grafisches Rectangle auf der Zeichenebene, das eine allgemeine Fläche beschreibt.
  *
  * @author Michael Andonie
  */
-@NoExternalUse
+@Internal
 public final class BoundingRechteck {
     /**
      * <b>Reelle</b> <code>getX</code>-Position des Rechtecks

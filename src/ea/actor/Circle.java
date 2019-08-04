@@ -20,7 +20,7 @@
 package ea.actor;
 
 import ea.Scene;
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 import org.jbox2d.collision.shapes.CircleShape;
 
 import java.awt.*;
@@ -44,7 +44,7 @@ public class Circle extends Geometry {
     public Circle(Scene scene, float diameter) {
         super(scene, () -> {
             CircleShape shape = new CircleShape();
-            shape.m_radius = diameter / 2 / scene.getWorldHandler().getPixelProMeter();
+            shape.m_radius = diameter / 2 / scene.getWorldHandler().getPixelPerMeter();
             shape.m_p.set(shape.m_radius, shape.m_radius);
 
             return shape;

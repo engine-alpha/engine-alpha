@@ -1,7 +1,7 @@
 package ea.input;
 
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 /**
  * Beschreibt eine Bewegung des Mausrads. Wird vom {@link MouseWheelListener} genutzt.
@@ -19,7 +19,7 @@ public class MouseWheelAction {
     private final float wheelRotation;
 
 
-    @NoExternalUse
+    @Internal
     public MouseWheelAction(float wheelRotation) {
         this.wheelRotation = wheelRotation;
     }

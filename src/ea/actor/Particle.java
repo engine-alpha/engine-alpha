@@ -23,10 +23,10 @@ import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.Vector;
 import ea.handle.Physics;
-import ea.internal.ano.API;
-import ea.internal.phy.BodyHandler;
-import ea.internal.phy.PhysikHandler;
-import ea.internal.phy.WorldHandler;
+import ea.internal.annotations.API;
+import ea.internal.physics.BodyHandler;
+import ea.internal.physics.PhysicsHandler;
+import ea.internal.physics.WorldHandler;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.FixtureDef;
@@ -50,13 +50,13 @@ public class Particle extends Circle implements FrameUpdateListener {
     }
 
     @Override
-    protected PhysikHandler createPhysicsHandler(Shape shape) {
-        getScene().getWorldHandler().blockPPMChanges();
+    protected PhysicsHandler createPhysicsHandler(Shape shape) {
+        getScene().getWorldHandler().lockPixelPerMeter();
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = Physics.Type.PASSIVE.convert();
         bodyDef.active = true;
-        bodyDef.position.set(getScene().getWorldHandler().fromVektor(Vector.NULL));
+        bodyDef.position.set(Vector.NULL.toVec2());
         bodyDef.gravityScale = 0;
 
         FixtureDef fixtureDef = new FixtureDef();

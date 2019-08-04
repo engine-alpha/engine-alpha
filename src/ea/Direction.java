@@ -19,7 +19,7 @@
 
 package ea;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 /**
  * Repräsentation einer Richtung.

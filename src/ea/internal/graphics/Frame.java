@@ -1,7 +1,7 @@
-package ea.internal.gra;
+package ea.internal.graphics;
 
 //import com.sun.corba.se.impl.orbutil.graph.Graph;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.Internal;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
  * Beschreibt einen Frame einer {@link ea.actor.Animation}.
  * @author Nicklas Keller
  */
-@NoExternalUse
+@Internal
 public final class Frame {
     /**
      * Das Bild, das zu diesem Frame gehört.
@@ -26,23 +26,23 @@ public final class Frame {
      * @param image     Das Bild für den Frame.
      * @param duration  Die Dauer, die dieser Frame aktiv bleibt.
      */
-    @NoExternalUse
+    @Internal
     public Frame(BufferedImage image, int duration) {
         this.image = image;
         this.duration = duration;
     }
 
-    @NoExternalUse
+    @Internal
     public void setDuration(int duration) {
         this.duration = duration;
     }
 
-    @NoExternalUse
+    @Internal
     public BufferedImage getImage() {
         return image;
     }
 
-    @NoExternalUse
+    @Internal
     public int getDuration() {
         return duration;
     }
@@ -51,7 +51,7 @@ public final class Frame {
      * Rendert den Frame (an der entsprechenden Position des Graphics Objekts)
      * @param g2d   Das Graphics Objekt
      */
-    @NoExternalUse
+    @Internal
     public void render(Graphics2D g2d, boolean flipHorizontal, boolean flipVertical) {
         g2d.drawImage(image,
                 flipHorizontal ? image.getWidth() : 0,

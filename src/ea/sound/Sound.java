@@ -19,7 +19,7 @@
 
 package ea.sound;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 import ea.internal.io.ResourceLoader;
 import ea.internal.util.Logger;
 

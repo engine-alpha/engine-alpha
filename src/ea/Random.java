@@ -1,7 +1,7 @@
 package ea;
 
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -13,7 +13,7 @@ public final class Random {
     /**
      * Privater Konstruktor.
      */
-    @NoExternalUse
+    @Internal
     private Random() {
         // Es sollen keine Instanzen dieser Klasse erstellt werden.
     }

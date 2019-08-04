@@ -19,7 +19,7 @@
 
 package ea.input;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 @API
 public enum MouseButton {

@@ -2,8 +2,8 @@ package ea.handle;
 
 import ea.Vector;
 import ea.actor.Actor;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 /**
  * Jedes <code>Actor</code>-Objekt hat ein öffentlich erreichbares Objekt <code>position</code>.
@@ -31,7 +31,7 @@ public class Position {
     /**
      * Das Actor-Objekt, zu dem dieses Objekt eine Schnittstelle darstellt.
      */
-    @NoExternalUse
+    @Internal
     private final Actor actor;
 
     /**
@@ -49,7 +49,7 @@ public class Position {
      *
      * @param actor Das Actor-Objekt, dass zu diesem Objekt gehört.
      */
-    @NoExternalUse
+    @Internal
     public Position(Actor actor) {
         this.actor = actor;
     }
@@ -104,7 +104,7 @@ public class Position {
      */
     @API
     public Position move(Vector v) {
-        actor.getPhysicsHandler().verschieben(v);
+        actor.getPhysicsHandler().moveBy(v);
         return this;
     }
 
@@ -253,7 +253,7 @@ public class Position {
      */
     @API
     public Vector get() {
-        return actor.getPhysicsHandler().position();
+        return actor.getPhysicsHandler().getPosition();
     }
 
 
@@ -271,7 +271,7 @@ public class Position {
      */
     @API
     public Position rotate(float radians) {
-        actor.getPhysicsHandler().rotieren(radians);
+        actor.getPhysicsHandler().rotateBy(radians);
         return this;
     }
 
@@ -284,7 +284,7 @@ public class Position {
      */
     @API
     public float getRotation() {
-        return actor.getPhysicsHandler().rotation();
+        return actor.getPhysicsHandler().getRotation();
     }
 
     /**
@@ -297,7 +297,7 @@ public class Position {
      */
     @API
     public Position setRotation(float degreeInRad) {
-        actor.getPhysicsHandler().rotieren(degreeInRad - getRotation());
+        actor.getPhysicsHandler().rotateBy(degreeInRad - getRotation());
         return this;
     }
 }

@@ -21,19 +21,18 @@ package ea.actor;
 
 import ea.Scene;
 import ea.internal.ShapeHelper;
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
 import java.util.function.Supplier;
 
 /**
- * Beschreibt ein RechteckTreeSet.
+ * Beschreibt ein Rechteck.
  *
  * @author Michael Andonie
  * @author Niklas Keller
  */
-@SuppressWarnings ( "serial" )
 public class Rectangle extends Geometry {
     /**
      * Die Breite
@@ -68,8 +67,8 @@ public class Rectangle extends Geometry {
      */
     public Rectangle(Scene scene, float width, float height) {
         this(scene, width, height, () -> ShapeHelper.createRectangularShape(
-                width / scene.getWorldHandler().getPixelProMeter(),
-                height / scene.getWorldHandler().getPixelProMeter()
+                width / scene.getWorldHandler().getPixelPerMeter(),
+                height / scene.getWorldHandler().getPixelPerMeter()
         ));
     }
 
@@ -92,11 +91,13 @@ public class Rectangle extends Geometry {
         return height;
     }
 
+    @API
     public void setWidth(float width) {
         this.width = width;
         this.widthInt = (int) width;
     }
 
+    @API
     public void setHeight(float height) {
         this.height = height;
         this.heightInt = (int) height;

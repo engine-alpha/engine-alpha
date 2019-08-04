@@ -19,7 +19,9 @@
 
 package ea;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
+import org.jbox2d.common.Vec2;
 
 /**
  * Beschreibt einen zweidimensionalen Vektor auf der Zeichenebene.
@@ -30,6 +32,12 @@ import ea.internal.ano.API;
 @API
 @SuppressWarnings ( "StaticVariableOfConcreteClass" )
 public final class Vector implements Cloneable {
+
+    @Internal
+    public static Vector of(Vec2 vector) {
+        return new Vector(vector.x, vector.y);
+    }
+
     /**
      * Konstante für einen "bewegungslosen" Vector (0, 0)
      */
@@ -391,5 +399,10 @@ public final class Vector implements Cloneable {
     @API
     public float getAngle(Vector other) {
         return (float) Math.acos((double) (this.getScalarProduct(other) / (this.getLength() * other.getLength())));
+    }
+
+    @Internal
+    public Vec2 toVec2() {
+        return new Vec2(x, y);
     }
 }

@@ -19,7 +19,7 @@
 
 package ea;
 
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 
 import javax.imageio.ImageIO;
@@ -44,7 +44,7 @@ import java.util.TimeZone;
  *
  * @author Niklas Keller {@literal <me@kelunik.com>}
  */
-@NoExternalUse
+@Internal
 public final class EngineAlpha extends Frame {
 
 	/**

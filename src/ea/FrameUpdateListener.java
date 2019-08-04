@@ -1,6 +1,6 @@
 package ea;
 
-import ea.internal.ano.API;
+import ea.internal.annotations.API;
 
 /**
  * Beschreibt ein Objekt, dass auf jedes Frame-Update reagieren kann.

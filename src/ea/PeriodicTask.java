@@ -19,8 +19,8 @@
 
 package ea;
 
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 /**
  * Ein periodischer Task, der regelmäßig ausgeführt wird.
@@ -81,7 +81,7 @@ public final class PeriodicTask implements FrameUpdateListener {
      * @param frameDuration Die Zeit in Millisekunden, die seit dem letzten Update vergangen
      */
     @Override
-    @NoExternalUse
+    @Internal
     public void onFrameUpdate(int frameDuration) {
         countdown -= frameDuration;
 

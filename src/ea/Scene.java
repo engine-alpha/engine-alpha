@@ -21,9 +21,9 @@ package ea;
 
 import ea.actor.Actor;
 import ea.input.*;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
-import ea.internal.phy.WorldHandler;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
+import ea.internal.physics.WorldHandler;
 import ea.internal.util.Logger;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.DistanceJoint;
@@ -97,7 +97,7 @@ public class Scene {
     public static int CNT = 1;
     private final int cnt;
 
-    @NoExternalUse
+    @Internal
     public void render(Graphics2D g, int width, int height) {
         final AffineTransform base = g.getTransform();
 
@@ -129,7 +129,7 @@ public class Scene {
         return camera;
     }
 
-    @NoExternalUse
+    @Internal
     private void renderJoints(Graphics2D g) {
         // Display Joints
         Joint j = worldHandler.getWorld().getJointList();
@@ -140,7 +140,7 @@ public class Scene {
         }
     }
 
-    @NoExternalUse
+    @Internal
     private void renderJoint(Joint j, Graphics2D g) {
         final int CIRC_RAD = 10; // (Basis-)Radius für die Visualisierung von Kreisen
         final int RECT_SID = 12; // (Basis-)Breite für die Visualisierung von Rechtecken
@@ -149,8 +149,8 @@ public class Scene {
         j.getAnchorA(anchorA);
         j.getAnchorB(anchorB);
 
-        Vector aOnGrid = worldHandler.fromVec2(anchorA);
-        Vector bOnGrid = worldHandler.fromVec2(anchorB);
+        Vector aOnGrid = Vector.of(anchorA);
+        Vector bOnGrid = Vector.of(anchorB);
 
         if (j instanceof RevoluteJoint) {
             g.setColor(Color.blue);
@@ -207,7 +207,7 @@ public class Scene {
      */
     @API
     public boolean getPhysicsPaused() {
-        return worldHandler.getWorldPaused();
+        return worldHandler.isWorldPaused();
     }
 
     @API
@@ -308,7 +308,7 @@ public class Scene {
         }
     }
 
-    @NoExternalUse
+    @Internal
     final void onFrameUpdateInternal(int frameDuration) {
         synchronized (frameUpdateListeners) {
             try {
@@ -323,7 +323,7 @@ public class Scene {
         }
     }
 
-    @NoExternalUse
+    @Internal
     final void onKeyDownInternal(KeyEvent e) {
         synchronized (keyListeners) {
             try {
@@ -338,7 +338,7 @@ public class Scene {
         }
     }
 
-    @NoExternalUse
+    @Internal
     final void onKeyUpInternal(KeyEvent e) {
         synchronized (keyListeners) {
             try {
@@ -353,7 +353,7 @@ public class Scene {
         }
     }
 
-    @NoExternalUse
+    @Internal
     final void onMouseDownInternal(Vector position, MouseButton button) {
         synchronized (mouseClickListeners) {
             try {
@@ -368,7 +368,7 @@ public class Scene {
         }
     }
 
-    @NoExternalUse
+    @Internal
     final void onMouseUpInternal(Vector position, MouseButton button) {
         synchronized (mouseClickListeners) {
             try {
@@ -383,7 +383,7 @@ public class Scene {
         }
     }
 
-    @NoExternalUse
+    @Internal
     final void onMouseWheelMoveInternal(MouseWheelAction mouseWheelAction) {
         synchronized (mouseWheelListeners) {
             try {

@@ -3,8 +3,8 @@ package ea.edu;
 import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
-import ea.internal.ano.API;
-import ea.internal.ano.NoExternalUse;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 import org.jbox2d.common.Vec2;
 
@@ -53,7 +53,7 @@ public class Spiel {
      *
      * @return Das Farbobjekt zum String; ist Color.black bei unzuordnembaren String
      */
-    @NoExternalUse
+    @Internal
     public static Color stringToColor(String t) {
         Color res = stringToColor.get(t.toLowerCase());
         if (res == null) {
@@ -234,7 +234,7 @@ public class Spiel {
     }
 
     public void setzePixelProMeter(float pixelProMeter) {
-        getActiveScene().getWorldHandler().setPixelProMeter(pixelProMeter);
+        getActiveScene().getWorldHandler().setPixelPerMeter(pixelProMeter);
     }
 
     /* ~~~ Dialogues ~~~ */
