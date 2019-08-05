@@ -276,19 +276,6 @@ public abstract class Actor {
     @API
     public void setBodyType(Physics.Type type) {
         this.physicsHandler.setType(type);
-
-        int category = 0;
-        switch (type) {
-            case STATIC:
-                category = WorldHandler.CATEGORY_PASSIVE;
-                break;
-            case DYNAMIC:
-            case KINEMATIC:
-                category = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
-                break;
-        }
-
-        this.physicsHandler.getBody().m_fixtureList.m_filter.categoryBits = category;
     }
 
     /**

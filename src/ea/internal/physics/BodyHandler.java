@@ -211,6 +211,23 @@ public class BodyHandler extends PhysicsHandler {
         setSensor(type == Physics.Type.PASSIVE);// && isSensor);
         body.setGravityScale(type == Physics.Type.PASSIVE ? 0 : 1);
 
+        int category = 0;
+        switch (type) {
+            case STATIC:
+                category = WorldHandler.CATEGORY_PASSIVE;
+                break;
+            case DYNAMIC:
+            case KINEMATIC:
+                category = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
+                break;
+        }
+
+        Fixture current = this.body.m_fixtureList;
+        while (current != null) {
+            current.m_filter.categoryBits = category;
+            current = current.m_next;
+        }
+
         return this;
     }
 
