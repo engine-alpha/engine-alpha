@@ -22,7 +22,6 @@ package ea.actor;
 import ea.FrameUpdateListener;
 import ea.handle.Physics;
 import ea.internal.annotations.API;
-import ea.internal.physics.WorldHandler;
 
 import java.awt.*;
 
@@ -39,35 +38,8 @@ public class Particle extends Circle implements FrameUpdateListener {
     public Particle(float diameter, int life) {
         super(diameter);
 
+        this.setBodyType(Physics.Type.PARTICLE);
         this.life = life;
-    }
-
-    //@Override
-    /*protected PhysicsHandler createBodyHandler(Shape shape) {
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = Physics.Type.PASSIVE.convert();
-        bodyDef.active = true;
-        bodyDef.position.set(Vector.NULL.toVec2());
-        bodyDef.gravityScale = 0;
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 0;
-        fixtureDef.friction = 0;
-        fixtureDef.restitution = 0.5f;
-        fixtureDef.shape = shape;
-        fixtureDef.isSensor = true;
-        fixtureDef.filter.categoryBits = WorldHandler.CATEGORY_PARTICLE;
-        fixtureDef.filter.maskBits = 0;
-
-        return new BodyHandler(this, getScene().getWorldHandler(), bodyDef, fixtureDef, Physics.Type.PASSIVE, true);
-    }*/
-
-    @Override
-    public void setBodyType(Physics.Type type) {
-        super.setBodyType(type);
-
-        getPhysicsHandler().getBody().m_fixtureList.m_filter.maskBits = WorldHandler.CATEGORY_PASSIVE;
-        getPhysicsHandler().getBody().m_gravityScale = 0;
     }
 
     @Override

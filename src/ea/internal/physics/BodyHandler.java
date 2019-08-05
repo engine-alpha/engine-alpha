@@ -4,13 +4,11 @@ import ea.Vector;
 import ea.actor.Actor;
 import ea.handle.Physics;
 import ea.internal.annotations.Internal;
-import ea.internal.util.Logger;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.MassData;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 
 import java.util.ArrayList;
@@ -26,6 +24,7 @@ import java.util.List;
  */
 public class BodyHandler extends PhysicsHandler {
     private static final Vec2 NULL_VECTOR = new Vec2();
+    private static final int DEFAULT_MASK_BITS = 0xFFFF;
 
     /**
      * Referenz auf den Handler der World, in der sich der Body befindet.
@@ -45,27 +44,15 @@ public class BodyHandler extends PhysicsHandler {
     @Internal
     public BodyHandler(Actor actor, ProxyData proxyData, WorldHandler worldHandler) {
         super(actor);
+
         this.worldHandler = worldHandler;
-        type = proxyData.type;
-        body = proxyData.createBody(worldHandler, actor);
+        this.body = proxyData.createBody(worldHandler, actor);
+
+        setType(proxyData.type);
     }
 
     public Body getBody() {
         return body;
-    }
-
-    @Override
-    public void setSensor(boolean isSensor) {
-        Fixture current = body.m_fixtureList;
-        while (current != null) {
-            current.setSensor(isSensor);
-            current = current.m_next;
-        }
-    }
-
-    @Override
-    public boolean isSensor(boolean isSensor) {
-        return body.m_fixtureList.isSensor();
     }
 
     @Override
@@ -81,7 +68,7 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public Vector getCenter() {
-        if (type == Physics.Type.DYNAMIC) {
+        if (type == Physics.Type.DYNAMIC || type == Physics.Type.PARTICLE) {
             return Vector.of(body.getWorldCenter());
         }
 
@@ -194,41 +181,48 @@ public class BodyHandler extends PhysicsHandler {
     }
 
     @Override
-    public PhysicsHandler setType(Physics.Type type) {
+    public void setType(Physics.Type type) {
         WorldHandler.assertNoWorldStep();
 
         if (type == this.type) {
-            return this; // kein Update nötig
+            return;
         }
 
         this.type = type;
 
-        BodyType newType = type.convert();
-        body.setType(newType);
-        // isSensor = true; // TODO Delete again.
-
+        body.setType(type.convert());
         body.setActive(true);
-        setSensor(type == Physics.Type.PASSIVE);// && isSensor);
-        body.setGravityScale(type == Physics.Type.PASSIVE ? 0 : 1);
-
-        int category = 0;
-        switch (type) {
-            case STATIC:
-                category = WorldHandler.CATEGORY_PASSIVE;
-                break;
-            case DYNAMIC:
-            case KINEMATIC:
-                category = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
-                break;
-        }
+        body.setGravityScale(type == Physics.Type.PASSIVE || type == Physics.Type.PARTICLE ? 0 : 1);
 
         Fixture current = this.body.m_fixtureList;
         while (current != null) {
-            current.m_filter.categoryBits = category;
+            switch (type) {
+                case PASSIVE:
+                    current.m_filter.categoryBits = WorldHandler.CATEGORY_PASSIVE;
+                    current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
+                    current.m_isSensor = true;
+                case STATIC:
+                    current.m_filter.categoryBits = WorldHandler.CATEGORY_STATIC;
+                    current.m_filter.maskBits = DEFAULT_MASK_BITS;
+                    current.m_isSensor = false;
+                    break;
+                case DYNAMIC:
+                case KINEMATIC:
+                    current.m_filter.categoryBits = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
+                    current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
+                    current.m_isSensor = false;
+                    break;
+                case PARTICLE:
+                    current.m_filter.categoryBits = WorldHandler.CATEGORY_PARTICLE;
+                    current.m_filter.maskBits = WorldHandler.CATEGORY_STATIC;
+                    current.m_isSensor = false;
+                    break;
+                default:
+                    throw new RuntimeException("Unknown body type: " + type);
+            }
+
             current = current.m_next;
         }
-
-        return this;
     }
 
     @Override
@@ -279,11 +273,11 @@ public class BodyHandler extends PhysicsHandler {
         bodyBounds.upperBound.x = -Float.MAX_VALUE;
         bodyBounds.upperBound.y = -Float.MAX_VALUE;
 
-        Fixture nextFixture = body.m_fixtureList;
-        while (nextFixture != null) {
+        Fixture current = body.m_fixtureList;
+        while (current != null) {
             // TODO Include chain shapes (more than one child)
-            bodyBounds.combine(bodyBounds, nextFixture.getAABB(0));
-            nextFixture = nextFixture.m_next;
+            bodyBounds.combine(bodyBounds, current.getAABB(0));
+            current = current.m_next;
         }
 
         return bodyBounds;
@@ -334,13 +328,6 @@ public class BodyHandler extends PhysicsHandler {
             fixture = fixture.m_next;
         }
         return new ProxyData(body, () -> shapeList, getType());
-    }
-
-    @Override
-    public void killBody() {
-        Logger.verboseInfo("Physics", "Entferne Actor-Objekt aus Physics-Umgebung.");
-        worldHandler.removeAllInternalReferences(body);
-        worldHandler.getWorld().destroyBody(body);
     }
 
     @Override

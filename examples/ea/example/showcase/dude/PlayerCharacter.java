@@ -15,7 +15,6 @@ import ea.animation.interpolation.SinusFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.example.showcase.jump.Enemy;
-import ea.handle.Physics;
 import ea.input.KeyListener;
 import ea.sound.Sound;
 
@@ -104,6 +103,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         setMana(0);
 
         scene.add(this);
+        scene.addKeyListener(this);
         physics.setMass(65);
         addCollisionListener(this);
     }
@@ -194,7 +194,6 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             particle.position.set(position.getCenter().subtract(new Vector((float)Math.random() * 0.1f, .45f)));
             particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), -2 * ((float) Math.random())));
             particle.setColor(Color.RED);
-            particle.setBodyType(Physics.Type.DYNAMIC);
             particle.setLayer(-1);
 
             ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));

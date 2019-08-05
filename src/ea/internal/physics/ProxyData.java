@@ -6,7 +6,6 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
 import java.util.ArrayList;
@@ -136,10 +135,11 @@ public class ProxyData {
      */
     Body createBody(WorldHandler world, Actor actor) {
         Body body = world.createBody(createBodyDef(), actor);
-        FixtureDef[] fixtureDefs = createFixtureDefs();
-        for (FixtureDef fixtureDef : fixtureDefs) {
-            Fixture fixture = body.createFixture(fixtureDef);
+
+        for (FixtureDef fixtureDef : createFixtureDefs()) {
+            body.createFixture(fixtureDef);
         }
+
         return body;
     }
 }

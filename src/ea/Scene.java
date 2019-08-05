@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 
 public class Scene {
     /**
@@ -72,7 +73,7 @@ public class Scene {
     /**
      * Die Layer dieser Szene.
      */
-    private final ArrayList<Layer> layers = new ArrayList<>();
+    private final List<Layer> layers = new ArrayList<>();
 
     /**
      * Das Main-Layer (default-additions)
@@ -91,11 +92,7 @@ public class Scene {
         mainLayer.setLayerPosition(0);
         layers.add(mainLayer);
         this.addFrameUpdateListener(this.camera);
-        cnt = CNT++;
     }
-
-    public static int CNT = 1;
-    private final int cnt;
 
     @Internal
     public void render(Graphics2D g, int width, int height) {
@@ -223,7 +220,9 @@ public class Scene {
 
     @API
     final public void remove(Actor... actors) {
-        mainLayer.remove(actors);
+        for (Actor actor : actors) {
+            mainLayer.remove(actor);
+        }
     }
 
     @API

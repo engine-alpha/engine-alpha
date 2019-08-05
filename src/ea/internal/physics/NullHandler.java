@@ -21,16 +21,6 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void setSensor(boolean isSensor) {
-        this.proxyData.isSensor = isSensor;
-    }
-
-    @Override
-    public boolean isSensor(boolean isSensor) {
-        return this.proxyData.isSensor;
-    }
-
-    @Override
     public void moveBy(Vector v) {
         this.proxyData.x += v.x;
         this.proxyData.y += v.y;
@@ -141,9 +131,8 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public PhysicsHandler setType(Physics.Type type) {
+    public void setType(Physics.Type type) {
         this.proxyData.type = type;
-        return this;
     }
 
     @Override
@@ -159,11 +148,6 @@ public class NullHandler extends PhysicsHandler {
     @Override
     public void applyImpluse(Vector impulsInNS, Vector globalerOrt) {
         throw makeNullException("das Wirken eines Impulses");
-    }
-
-    @Override
-    public void killBody() {
-        // TODO sicher nichts zu tun?
     }
 
     @Override

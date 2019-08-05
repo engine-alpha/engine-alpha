@@ -34,6 +34,7 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -133,22 +134,24 @@ public abstract class Actor {
      */
     @Internal
     public void setScene(Scene scene) {
-        //TODO
-        ProxyData proxyData = physicsHandler.getProxyData();
-        if (scene == null) {
-            //Von Scene entfernen
-            scene.getWorldHandler().removeAllInternalReferences(physicsHandler.getBody());
-            scene.getWorldHandler().getWorld().destroyBody(getPhysicsHandler().getBody());
-            this.scene = null;
-            this.physicsHandler = new NullHandler(this, proxyData);
-        } else {
-            //An Scene anmelden
-            if (this.scene != null) {
-                throw new IllegalStateException("Kann einen Actor nicht an mehr als einer Scene angemeldet haben.");
+        synchronized (this) {
+            ProxyData proxyData = physicsHandler.getProxyData();
+            if (scene == null) {
+                // Von Scene entfernen
+                Body body = physicsHandler.getBody();
+                this.scene.getWorldHandler().removeAllInternalReferences(body);
+                this.scene.getWorldHandler().getWorld().destroyBody(body);
+                this.scene = null;
+                this.physicsHandler = new NullHandler(this, proxyData);
+            } else {
+                // An Scene anmelden
+                if (this.scene != null) {
+                    throw new IllegalStateException("Kann einen Actor nicht an mehr als einer Scene angemeldet haben.");
+                }
+                // Neue Scene = neuer Handler
+                physicsHandler = new BodyHandler(this, proxyData, scene.getWorldHandler());
+                this.scene = scene;
             }
-            //Neue Scene = neuer Handler
-            physicsHandler = new BodyHandler(this, proxyData, scene.getWorldHandler());
-            this.scene = scene;
         }
     }
 
@@ -301,67 +304,61 @@ public abstract class Actor {
     @Internal
     public void renderBasic(Graphics2D g, BoundingRechteck r) {
         if (visible && this.isWithinBounds(r)) {
+            synchronized (this) {
+                float rotation = physicsHandler.getRotation();
+                Vector position = physicsHandler.getPosition();
 
-            //Hole Rotation und Position absolut auf der Zeichenebene.
-            float rotation;
-            Vector position;
+                // ____ Pre-Render ____
 
-            synchronized (physicsHandler.getBody()) {
-                rotation = physicsHandler.getRotation();
-                position = physicsHandler.getPosition();
-            }
+                AffineTransform transform = g.getTransform();
 
-            // ____ Pre-Render ____
+                g.rotate(-rotation, position.x, -position.y); // TODO ist das die korrekte Rotation, Ursprung als Zentrum?
+                g.translate(position.x, -position.y);
 
-            AffineTransform transform = g.getTransform();
+                //Opacity Update
+                if (opacity != 1) {
+                    composite = g.getComposite();
+                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
+                } else {
+                    composite = null;
+                }
 
-            g.rotate(-rotation, position.x, -position.y); // TODO ist das die korrekte Rotation, Ursprung als Zentrum?
-            g.translate(position.x, -position.y);
+                // ____ Render ____
 
-            //Opacity Update
-            if (opacity != 1) {
-                composite = g.getComposite();
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
-            } else {
-                composite = null;
-            }
+                render(g);
 
-            // ____ Render ____
-
-            render(g);
-
-            if (Game.isDebug()) {
-                synchronized (physicsHandler) {
-                    // Visualisiere die Shape
-                    if (physicsHandler.getBody().m_fixtureList != null) {
-                        g.setColor(Color.YELLOW);
-                        g.fillRect(-2, -2, 4, 4);
-                        g.setColor(Color.red);
-                        renderShape(physicsHandler.getBody().m_fixtureList.m_shape, g);
+                if (Game.isDebug()) {
+                    synchronized (this) {
+                        // Visualisiere die Shape
+                        Body body = physicsHandler.getBody();
+                        if (body != null && body.m_fixtureList != null && body.m_fixtureList.m_shape != null) {
+                            g.setColor(Color.YELLOW);
+                            g.fillRect(-2, -2, 4, 4);
+                            g.setColor(Color.red);
+                            renderShape(body.m_fixtureList.m_shape, g);
+                        }
                     }
                 }
+
+                // ____ Post-Render ____
+
+                // Opacity Update
+                if (composite != null) {
+                    g.setComposite(composite);
+                }
+
+                // Transform zurücksetzen
+                g.setTransform(transform);
             }
-
-            // ____ Post-Render ____
-
-            // Opacity Update
-            if (composite != null) {
-                g.setComposite(composite);
-            }
-
-            // Transform zurücksetzen
-            g.setTransform(transform);
-
-            // System.out.println("R: " + getPosition + " - " + getRotation);
         }
     }
 
     /**
      * Rendert eine Shape von JBox2D vectorFromThisTo den gegebenen Voreinstellungen im Graphics-Objekt.
      *
-     * @param shape         Die Shape, die zu rendern ist.
-     * @param g             Das Graphics2D-Object, das die Shape rendern soll. Farbe &amp; Co. sollte im Vorfeld
-     *                      eingestellt sein. Diese Methode übernimmt nur das direkte rendern.
+     * @param shape Die Shape, die zu rendern ist.
+     * @param g     Das Graphics2D-Object, das die Shape rendern soll. Farbe &amp; Co. sollte im Vorfeld
+     *              eingestellt sein. Diese Methode übernimmt nur das direkte rendern.
      */
     @Internal
     public static void renderShape(Shape shape, Graphics2D g) {

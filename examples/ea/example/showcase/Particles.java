@@ -107,16 +107,19 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         FrameUpdateListener emitter = new PeriodicTask(10, () -> {
             Particle particle = new Particle(3, 500);
             particle.position.set(k.position.getCenter().subtract(new Vector(1, 1)));
-            particle.physics.applyImpulse(new Vector(60 * ((float) Math.random() - .5f), 60 * ((float) Math.random() - .5f)));
             particle.setColor(Color.RED);
-            particle.setBodyType(Physics.Type.DYNAMIC);
             particle.setLayer(-1);
 
             ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
-            animator.addCompletionListener((value) -> removeFrameUpdateListener(animator));
-            addFrameUpdateListener(animator);
+            animator.addCompletionListener((value) -> {
+                removeFrameUpdateListener(animator);
+                particle.removeFromScene();
+            });
 
+            addFrameUpdateListener(animator);
             add(particle);
+
+            particle.physics.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f)));
         });
 
         addFrameUpdateListener(emitter);

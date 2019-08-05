@@ -23,8 +23,6 @@ public abstract class PhysicsHandler {
      */
     protected final Actor actor;
 
-    //protected boolean isSensor;
-
     /**
      * Initialisiert den Physics-Handler.
      *
@@ -36,19 +34,6 @@ public abstract class PhysicsHandler {
 
     /* __________________________ Kontrakt: Abstrakte Methoden/Funktionen der Physics __________________________ */
 
-    /**
-     * Setzt, ob das Klient-Objekt Sensorstatus haben soll oder nicht.
-     *
-     * @param isSensor Ob das Klient-Objekt Sensorstatus haben soll oder nicht.
-     */
-    public abstract void setSensor(boolean isSensor);
-
-    /**
-     * Gibt die Sensor-Flag des Klienten.
-     * Die Sensor-Flag is true, wenn ein passives Objekt (= keine Physics) trotzdem
-     * an Kollisionstests teilnehmen soll.
-     */
-    public abstract boolean isSensor(boolean isSensor);
     /**
      * Verschiebt das Ziel-Objekt um einen spezifischen Wert auf der Zeichenebene. Die Ausführung hat <b>erst (ggf.) im
      * kommenden Frame</b> einfluss auf die Physics und <b>ändert keine physikalischen Eigenschaften</b> des
@@ -157,10 +142,8 @@ public abstract class PhysicsHandler {
      * Macht ein Type-Update für diesen Handler.
      *
      * @param type Der neue Type.
-     *
-     * @return Ein Handler, der diesen Type behandelt (ggf. this).
      */
-    public abstract PhysicsHandler setType(Physics.Type type);
+    public abstract void setType(Physics.Type type);
 
     public abstract Physics.Type getType();
 
@@ -173,12 +156,6 @@ public abstract class PhysicsHandler {
      * @param globalerOrt Der
      */
     public abstract void applyImpluse(Vector impulsInNS, Vector globalerOrt);
-
-    /**
-     * Entfernt den Körper von diesem Handler.
-     * Danach ist das Objekt physikalisch nicht mehr existent.
-     */
-    public abstract void killBody();
 
     /**
      * Gibt den WorldHandler aus, der die Welt handelt, in der sich der Klient

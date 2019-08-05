@@ -33,8 +33,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class WorldHandler implements ContactListener {
     public static final int CATEGORY_PASSIVE = 1;
-    public static final int CATEGORY_DYNAMIC_OR_KINEMATIC = 2;
-    public static final int CATEGORY_PARTICLE = 4;
+    public static final int CATEGORY_STATIC = 2;
+    public static final int CATEGORY_DYNAMIC_OR_KINEMATIC = 4;
+    public static final int CATEGORY_PARTICLE = 8;
 
     /**
      * Gibt an, ob die World/Physics gerade pausiert sind.

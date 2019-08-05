@@ -471,7 +471,7 @@ public class Physics {
      */
     @API
     public enum Type {
-        STATIC, DYNAMIC, KINEMATIC, PASSIVE;
+        STATIC, DYNAMIC, KINEMATIC, PASSIVE, PARTICLE;
 
         /**
          * Konvertierungsmethode zwischen Engine-Physiktyp und JB2D-Physiktyp.
@@ -485,6 +485,7 @@ public class Physics {
                     return BodyType.STATIC;
                 case DYNAMIC:
                 case PASSIVE:
+                case PARTICLE:
                     return BodyType.DYNAMIC;
                 case KINEMATIC:
                     return BodyType.KINEMATIC;

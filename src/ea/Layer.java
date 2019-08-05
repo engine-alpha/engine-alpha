@@ -5,8 +5,8 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Layer bieten die Möglichkeit, <code>Actors</code> vor und hinter der Zeichenebene mit zusätzlichen Eigenschaften
@@ -19,7 +19,7 @@ public class Layer {
     /**
      * Der Inhalt des Layers.
      */
-    private final List<Actor> actorList;
+    private final Collection<Actor> actorList;
 
     /**
      * Parallaxen-X-Faktor
@@ -53,7 +53,7 @@ public class Layer {
      */
     @API
     public Layer() {
-        actorList = new ArrayList<>();
+        actorList = new ConcurrentLinkedQueue<>();
     }
 
     /**
