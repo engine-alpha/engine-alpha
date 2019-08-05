@@ -101,7 +101,7 @@ public class ProxyData {
             fixtureDef.friction = this.friction;
             fixtureDef.restitution = this.restitution;
             fixtureDef.shape = shape;
-            fixtureDef.isSensor = this.isSensor;
+            fixtureDef.isSensor = this.type == Physics.Type.PASSIVE;
             fixtureDefs.add(fixtureDef);
         }
         return fixtureDefs.toArray(new FixtureDef[fixtureDefs.size()]);
