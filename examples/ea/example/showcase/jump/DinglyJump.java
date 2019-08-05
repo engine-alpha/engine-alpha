@@ -6,7 +6,7 @@ import ea.actor.Rectangle;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.ReverseEaseFloat;
 import ea.example.showcase.ShowcaseDemo;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.input.KeyListener;
 
 import java.awt.*;
@@ -25,7 +25,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
         super(parent);
 
         character = new PlayerCharacter(this);
-        character.setBodyType(Physics.Type.DYNAMIC);
+        character.setBodyType(BodyType.DYNAMIC);
         character.physics.setRotationLocked(true);
 
         toggleGravity();
@@ -34,8 +34,8 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
         platform.setColor(Color.WHITE);
         platform.position.set(-2500, -300);
         add(platform);
-        platform.setBodyType(Physics.Type.STATIC);
-        platform.physics.setElasticity(0);
+        platform.setBodyType(BodyType.STATIC);
+        platform.physics.setRestitution(0);
         platform.getPhysicsHandler().getBody().m_userData = "Ground";
 
         getCamera().setFocus(character);

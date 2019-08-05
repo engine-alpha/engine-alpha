@@ -8,7 +8,7 @@ import ea.actor.Polygon;
 import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.input.KeyListener;
 import ea.input.MouseButton;
 import ea.input.MouseClickListener;
@@ -161,7 +161,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         rechteck.position.set(10, 10);
         add(rechteck);
         rechteck.setColor(Color.YELLOW);
-        rechteck.setBodyType(Physics.Type.DYNAMIC);
+        rechteck.setBodyType(BodyType.DYNAMIC);
         testObjects[0] = rechteck;
 
         //fixierungsGruppe = new ActorGroup(this);
@@ -173,14 +173,14 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         //wurzel.add(kreis);
         //fixierungsGruppe.add(kreis);
         kreis.setColor(Color.MAGENTA);
-        kreis.setBodyType(Physics.Type.DYNAMIC);
+        kreis.setBodyType(BodyType.DYNAMIC);
         testObjects[1] = kreis;
 
         Circle kreis2 = new Circle(20);
         //wurzel.add(kreis2);
         //fixierungsGruppe.add(kreis2);
         kreis2.setColor(Color.GREEN);
-        kreis2.setBodyType(Physics.Type.DYNAMIC);
+        kreis2.setBodyType(BodyType.DYNAMIC);
         //kreis2.physics.masse(50);
         testObjects[2] = kreis2;
 
@@ -188,7 +188,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 new Vector(80, 10), new Vector(120, 0));
         //fixierungsGruppe.add(polygon);
         polygon.setColor(Color.BLUE);
-        polygon.setBodyType(Physics.Type.DYNAMIC);
+        polygon.setBodyType(BodyType.DYNAMIC);
         testObjects[3] = polygon;
 
         //Boden
@@ -196,7 +196,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         boden.position.set(0, FIELD_DEPTH);
         add(boden);
         boden.setColor(Color.WHITE);
-        boden.setBodyType(Physics.Type.STATIC);
+        boden.setBodyType(BodyType.STATIC);
         ground = walls[0] = boden;
 
         //Der Rest der Wände
@@ -212,7 +212,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         for(int i = 1; i <= 3; i++) {
             walls[i].setColor(Color.WHITE);
             walls[i].setVisible(false);
-            walls[i].setBodyType(Physics.Type.PASSIVE);
+            walls[i].setBodyType(BodyType.PASSIVE);
         }
 
 
@@ -303,7 +303,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 break;
             case KeyEvent.VK_E: // Toggle Environment
                 boolean wasActive = walls[1].isVisible();
-                Physics.Type newType = wasActive ? Physics.Type.PASSIVE : Physics.Type.STATIC;
+                BodyType newType = wasActive ? BodyType.PASSIVE : BodyType.STATIC;
                 //System.out.println("Type = " + newType);
                 for(int i = 1; i <= 3; i++) {
                     walls[i].setVisible(!wasActive);
@@ -320,12 +320,12 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 changeMass(-10);
                 break;
             case KeyEvent.VK_W: //Elastizitaet der Wände erhöhen
-                ground.physics.setElasticity(ground.physics.getElasticity() + 0.1f);
-                System.out.println("Ela der Wand " + ground.physics.getElasticity());
+                ground.physics.setRestitution(ground.physics.getRestitution() + 0.1f);
+                System.out.println("Ela der Wand " + ground.physics.getRestitution());
                 break;
             case KeyEvent.VK_Q: //Elastizitaet der Wände erhöhen
-                ground.physics.setElasticity(ground.physics.getElasticity() - 0.1f);
-                System.out.println("Ela der Wand " + ground.physics.getElasticity());
+                ground.physics.setRestitution(ground.physics.getRestitution() - 0.1f);
+                System.out.println("Ela der Wand " + ground.physics.getRestitution());
                 break;
             case KeyEvent.VK_1: //Zoom Out
                 getCamera().setZoom(getCamera().getZoom()-0.1f);

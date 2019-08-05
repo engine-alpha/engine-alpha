@@ -24,6 +24,7 @@ import ea.Game;
 import ea.Scene;
 import ea.Vector;
 import ea.collision.CollisionListener;
+import ea.handle.BodyType;
 import ea.handle.Physics;
 import ea.handle.Position;
 import ea.internal.annotations.API;
@@ -138,19 +139,23 @@ public abstract class Actor {
             ProxyData proxyData = physicsHandler.getProxyData();
             if (scene == null) {
                 // Von Scene entfernen
-                Body body = physicsHandler.getBody();
-                this.scene.getWorldHandler().removeAllInternalReferences(body);
-                this.scene.getWorldHandler().getWorld().destroyBody(body);
-                this.scene = null;
-                this.physicsHandler = new NullHandler(this, proxyData);
+                synchronized (this.scene.getWorldHandler()) {
+                    Body body = physicsHandler.getBody();
+                    this.scene.getWorldHandler().removeAllInternalReferences(body);
+                    this.scene.getWorldHandler().getWorld().destroyBody(body);
+                    this.scene = null;
+                    this.physicsHandler = new NullHandler(this, proxyData);
+                }
             } else {
                 // An Scene anmelden
-                if (this.scene != null) {
-                    throw new IllegalStateException("Kann einen Actor nicht an mehr als einer Scene angemeldet haben.");
+                synchronized (scene.getWorldHandler()) {
+                    if (this.scene != null) {
+                        throw new IllegalStateException("Kann einen Actor nicht an mehr als einer Scene angemeldet haben.");
+                    }
+
+                    physicsHandler = new BodyHandler(this, proxyData, scene.getWorldHandler());
+                    this.scene = scene;
                 }
-                // Neue Scene = neuer Handler
-                physicsHandler = new BodyHandler(this, proxyData, scene.getWorldHandler());
-                this.scene = scene;
             }
         }
     }
@@ -274,10 +279,10 @@ public abstract class Actor {
      *
      * @param type Der Type Physics-Objekt, der ab sofort dieses Objekt sein soll.
      *
-     * @see Physics.Type
+     * @see BodyType
      */
     @API
-    public void setBodyType(Physics.Type type) {
+    public void setBodyType(BodyType type) {
         this.physicsHandler.setType(type);
     }
 
@@ -286,10 +291,10 @@ public abstract class Actor {
      *
      * @return der Type Physics-Objekt, der das entsprechende <code>Actor</code>-Objekt momentan ist.
      *
-     * @see Physics.Type
+     * @see BodyType
      */
     @API
-    public Physics.Type getBodyType() {
+    public BodyType getBodyType() {
         return physicsHandler.getType();
     }
 

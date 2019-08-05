@@ -57,7 +57,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         setStateTransition("landing", "idle");
 
         physics.setFriction(0);
-        physics.setElasticity(0);
+        physics.setRestitution(0);
 
         scene.add(this);
         physics.setMass(65);

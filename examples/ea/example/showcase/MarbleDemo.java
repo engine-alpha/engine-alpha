@@ -3,7 +3,7 @@ package ea.example.showcase;
 import ea.*;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.input.KeyListener;
 
 import java.awt.*;
@@ -37,7 +37,7 @@ public class MarbleDemo
         addFrameUpdateListener(new PeriodicTask(100, () -> {
             Circle marble = makeAMarble();
             add(marble);
-            marble.setBodyType(Physics.Type.DYNAMIC);
+            marble.setBodyType(BodyType.DYNAMIC);
             marble.position.set(new Vector(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150));
             marble.physics.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
         }));
@@ -69,7 +69,7 @@ public class MarbleDemo
         for (Rectangle r : allRectangles) {
             r.setColor(Color.WHITE);
             add(r);
-            r.setBodyType(Physics.Type.STATIC);
+            r.setBodyType(BodyType.STATIC);
         }
 
         lm.getScene().setGravity(new Vector(0, 15));
@@ -82,11 +82,11 @@ public class MarbleDemo
     public void onKeyDown(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_X: // Boden togglen
-                if (boden.getBodyType() == Physics.Type.STATIC) {
-                    boden.setBodyType(Physics.Type.PASSIVE);
+                if (boden.getBodyType() == BodyType.STATIC) {
+                    boden.setBodyType(BodyType.PASSIVE);
                     boden.setColor(new Color(255, 255, 255, 100));
                 } else {
-                    boden.setBodyType(Physics.Type.STATIC);
+                    boden.setBodyType(BodyType.STATIC);
                     boden.setColor(new Color(255, 255, 255));
                 }
                 break;
@@ -120,7 +120,7 @@ public class MarbleDemo
         }
 
         Circle murmel = new Marble(Random.nextInteger(50) + 10);
-        murmel.setBodyType(Physics.Type.DYNAMIC);
+        murmel.setBodyType(BodyType.DYNAMIC);
         murmel.physics.setMass(4);
         murmel.setColor(new Color(
                 Random.nextInteger(255), Random.nextInteger(255), Random.nextInteger(255)));

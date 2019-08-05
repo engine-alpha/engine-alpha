@@ -2,7 +2,7 @@ package ea.internal.physics;
 
 import ea.Vector;
 import ea.actor.Actor;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import org.jbox2d.dynamics.Body;
 
 /**
@@ -22,8 +22,8 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public void moveBy(Vector v) {
-        this.proxyData.x += v.x;
-        this.proxyData.y += v.y;
+        this.proxyData.setX(this.proxyData.getX() + v.x);
+        this.proxyData.setY(this.proxyData.getY() + v.y);
     }
 
     /**
@@ -48,17 +48,17 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public Vector getPosition() {
-        return new Vector(this.proxyData.x, this.proxyData.y);
+        return new Vector(this.proxyData.getX(), this.proxyData.getY());
     }
 
     @Override
     public float getRotation() {
-        return this.proxyData.rot;
+        return this.proxyData.getRotation();
     }
 
     @Override
     public void rotateBy(float radians) {
-        this.proxyData.rot += radians;
+        this.proxyData.setRotation(this.proxyData.getRotation() + radians);
     }
 
     @Override
@@ -66,32 +66,32 @@ public class NullHandler extends PhysicsHandler {
         if (density <= 0) {
             throw new IllegalArgumentException("Dichte kann nicht kleiner als 0 sein. Eingabe war " + density + ".");
         }
-        this.proxyData.density = density;
+        this.proxyData.setDensity(density);
     }
 
     @Override
     public float getDensity() {
-        return this.proxyData.density;
+        return this.proxyData.getDensity();
     }
 
     @Override
     public void setFriction(float friction) {
-        this.proxyData.friction = friction;
+        this.proxyData.setFriction(friction);
     }
 
     @Override
     public float getFriction() {
-        return this.proxyData.friction;
+        return this.proxyData.getFriction();
     }
 
     @Override
     public void setRestitution(float elasticity) {
-        this.proxyData.restitution = elasticity;
+        this.proxyData.setRestitution(elasticity);
     }
 
     @Override
     public float getRestitution() {
-        return this.proxyData.restitution;
+        return this.proxyData.getRestitution();
     }
 
     @Override
@@ -131,13 +131,13 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void setType(Physics.Type type) {
-        this.proxyData.type = type;
+    public void setType(BodyType type) {
+        this.proxyData.setType(type);
     }
 
     @Override
-    public Physics.Type getType() {
-        return proxyData.type;
+    public BodyType getType() {
+        return proxyData.getType();
     }
 
     @Override
@@ -177,12 +177,12 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public void setRotationLocked(boolean block) {
-        this.proxyData.isRotationLocked = block;
+        this.proxyData.setRotationLocked(block);
     }
 
     @Override
     public boolean isRotationLocked() {
-        return this.proxyData.isRotationLocked;
+        return this.proxyData.isRotationLocked();
     }
 
     @Override

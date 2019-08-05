@@ -7,7 +7,7 @@ import ea.actor.Circle;
 import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.input.KeyListener;
 
 import java.awt.*;
@@ -85,7 +85,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         ball = new Circle(DURCHMESSER * PIXELPROMETER);
         add(ball);
         ball.setColor(Color.RED);
-        ball.setBodyType(Physics.Type.DYNAMIC);
+        ball.setBodyType(BodyType.DYNAMIC);
         ball.physics.setMass(MASSE);
         ball.position.setCenter(ABSTAND_LINKS, BODEN_TIEFE - (HOEHE_UEBER_BODEN * PIXELPROMETER + 0.5f * DURCHMESSER * PIXELPROMETER));
 
@@ -96,7 +96,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         boden.position.set(0, BODEN_TIEFE);
         add(boden);
         boden.setColor(Color.WHITE);
-        boden.setBodyType(Physics.Type.STATIC);
+        boden.setBodyType(BodyType.STATIC);
 
         //Kollision zwischen Ball und Boden beobachten (Code ist uns egal, wir kennen nur einen Kollisionsfall)
         ball.addCollisionListener(this, boden);

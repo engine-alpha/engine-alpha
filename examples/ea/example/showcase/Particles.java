@@ -26,7 +26,7 @@ import ea.actor.Rectangle;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.ReverseEaseFloat;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.input.KeyListener;
 
 import java.awt.*;
@@ -65,10 +65,10 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         addFrameUpdateListener(new PeriodicTask(1000, () -> createCircle(getMousePosition(), Color.YELLOW)));
 
-        left.setBodyType(Physics.Type.STATIC);
-        right.setBodyType(Physics.Type.STATIC);
-        left.physics.setElasticity(15f);
-        right.physics.setElasticity(15f);
+        left.setBodyType(BodyType.STATIC);
+        right.setBodyType(BodyType.STATIC);
+        left.physics.setRestitution(15f);
+        right.physics.setRestitution(15f);
 
         Rectangle r1 = new Rectangle(Showcases.WIDTH, 10);
         r1.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
@@ -84,10 +84,10 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         add(r1, r2, r3, r4);
 
-        r1.setBodyType(Physics.Type.STATIC);
-        r2.setBodyType(Physics.Type.STATIC);
-        r3.setBodyType(Physics.Type.STATIC);
-        r4.setBodyType(Physics.Type.STATIC);
+        r1.setBodyType(BodyType.STATIC);
+        r2.setBodyType(BodyType.STATIC);
+        r3.setBodyType(BodyType.STATIC);
+        r4.setBodyType(BodyType.STATIC);
 
         r1.setColor(Color.DARK_GRAY);
         r2.setColor(Color.DARK_GRAY);
@@ -129,7 +129,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         k.setColor(color);
         add(k);
 
-        k.setBodyType(Physics.Type.DYNAMIC);
+        k.setBodyType(BodyType.DYNAMIC);
     }
 
     @Override

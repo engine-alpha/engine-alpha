@@ -9,7 +9,7 @@ import ea.actor.Geometry;
 import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.input.KeyListener;
 import ea.input.MouseButton;
 import ea.input.MouseClickListener;
@@ -109,7 +109,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         boden.position.set(0, FIELD_DEPTH);
         add(boden);
         boden.setColor(Color.WHITE);
-        boden.setBodyType(Physics.Type.STATIC);
+        boden.setBodyType(BodyType.STATIC);
         ground = walls[0] = boden;
 
         //Der Rest der Wände
@@ -125,7 +125,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         for(int i = 1; i <= 3; i++) {
             walls[i].setColor(Color.WHITE);
             walls[i].setVisible(false);
-            walls[i].setBodyType(Physics.Type.PASSIVE);
+            walls[i].setBodyType(BodyType.PASSIVE);
         }
 
 
@@ -154,7 +154,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
                 switch(e.getKeyCode()) {
                     case KeyEvent.VK_E:
                         boolean wasActive = walls[1].isVisible();
-                        Physics.Type newType = wasActive ? Physics.Type.PASSIVE :Physics.Type.STATIC;
+                        BodyType newType = wasActive ? BodyType.PASSIVE : BodyType.STATIC;
                         for(int i = 0; i <= 3; i++) {
                             walls[i].setVisible(!wasActive);
                             walls[i].setBodyType(newType);
@@ -206,7 +206,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
                 stange.setVisible(false);
                 Vector distance = lastAttack.negate().add(p);
 
-                if(attackedLast != null && attackedLast.getBodyType() == Physics.Type.DYNAMIC) {
+                if(attackedLast != null && attackedLast.getBodyType() == BodyType.DYNAMIC) {
                     attackedLast.physics.applyImpulse(distance.multiply(1), lastAttack);
                     attackedLast = null;
                 }

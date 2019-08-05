@@ -8,7 +8,7 @@ import ea.actor.Image;
 import ea.actor.TileContainer;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.input.KeyListener;
 import ea.sound.Music;
 
@@ -43,7 +43,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         character = new PlayerCharacter(this, hud);
         character.position.set(0, 0);
-        character.setBodyType(Physics.Type.DYNAMIC);
+        character.setBodyType(BodyType.DYNAMIC);
         character.physics.setRotationLocked(true);
         hud.setPlayerCharacter(character);
 

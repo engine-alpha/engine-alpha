@@ -5,7 +5,6 @@ import ea.actor.Actor;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
-import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.joints.*;
 
 /**
@@ -202,13 +201,13 @@ public class Physics {
     }
 
     @API
-    public Physics setElasticity(float elasticity) {
+    public Physics setRestitution(float elasticity) {
         actor.getPhysicsHandler().setRestitution(elasticity);
         return this;
     }
 
     @API
-    public float getElasticity() {
+    public float getRestitution() {
         return actor.getPhysicsHandler().getRestitution();
     }
 
@@ -428,69 +427,4 @@ public class Physics {
     }
 
     /* _________________________ Physics-Type _________________________ */
-
-    /**
-     * Aufzählung der drei verschiedenen Typen von Objekten innerhalb der Physics der EA.
-     * <ul>
-     * <li>
-     * <b>Statische</b> Objekte:
-     * <ul>
-     * <li>Haben keine Geschwindigkeit</li>
-     * <li>Bewegen sich nicht in der Simulation, Kräfte haben keinen Einfluss auf sie.</li>
-     * </ul>
-     * Diese Eigenschaft gehört zum Beispiel zu <i>Wänden, Böden und Decken</i>.
-     * </li>
-     * <li>
-     * <b>Dynamische</b> Objekte:
-     * <ul>
-     * <li>Verhalten sich wie Objekte der newton'schen Mechanik.</li>
-     * <li>Können Kräfte auf sich wirken lassen und miteinander interagieren.</li>
-     * </ul>
-     * Diese Eigenschaft gehört zum Beispiel zu <i>Billiardkugeln, Spielfiguren und Wurfgeschossen</i>.
-     * </li>
-     * <li>
-     * <b>Kinematische</b> Objekte:
-     * <ul>
-     * <li>Können eine Geschwindigkeit haben, aber onKeyDownInternal nicht auf Kräfte.</li>
-     * <li>Kollidieren (im Sinne der Physics) nur mit dynamischen Objekten.</li>
-     * </ul>
-     * Doese Eigenschaft gehört zum Beispiel zu <i>beweglichen Plattformen</i>.
-     * </li>
-     * <li>
-     * <b>Passive</b> Objekte:
-     * <ul>
-     * <li>Nehmen nicht an der Physics teil. Sie werden von der Physics so behandelt,
-     * <i>als wären sie nicht da</i>.</li>
-     * <li>Dies ist die <b>Standardeinstellung</b> für Objekte.</li>
-     * </ul>
-     * </li>
-     * </ul>
-     *
-     * @see Actor#setBodyType(Type)
-     * @see Actor#getBodyType()
-     */
-    @API
-    public enum Type {
-        STATIC, DYNAMIC, KINEMATIC, PASSIVE, PARTICLE;
-
-        /**
-         * Konvertierungsmethode zwischen Engine-Physiktyp und JB2D-Physiktyp.
-         *
-         * @return Der zugehörige JB2D-Phy-Type zu diesem Engine-Phy-Type.
-         */
-        @Internal
-        public BodyType convert() {
-            switch (this) {
-                case STATIC:
-                    return BodyType.STATIC;
-                case DYNAMIC:
-                case PASSIVE:
-                case PARTICLE:
-                    return BodyType.DYNAMIC;
-                case KINEMATIC:
-                    return BodyType.KINEMATIC;
-            }
-            return null;
-        }
-    }
 }

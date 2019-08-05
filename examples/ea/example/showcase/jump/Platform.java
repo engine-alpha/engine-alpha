@@ -3,7 +3,7 @@ package ea.example.showcase.jump;
 import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 
 import java.awt.*;
 
@@ -18,8 +18,8 @@ public class Platform extends Rectangle implements CollisionListener<PlayerChara
         super(width, height);
 
         setColor(new Color(130, 140, 255, 200));
-        setBodyType(Physics.Type.STATIC);
-        physics.setElasticity(0);
+        setBodyType(BodyType.STATIC);
+        physics.setRestitution(0);
 
         addCollisionListener(this, character);
     }

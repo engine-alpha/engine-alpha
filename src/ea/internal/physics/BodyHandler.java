@@ -2,7 +2,7 @@ package ea.internal.physics;
 
 import ea.Vector;
 import ea.actor.Actor;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.internal.annotations.Internal;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.MassData;
@@ -36,7 +36,7 @@ public class BodyHandler extends PhysicsHandler {
      */
     private final Body body;
 
-    private Physics.Type type;
+    private BodyType type;
 
     /**
      * Erstellt einen neuen Body-Handler
@@ -48,7 +48,7 @@ public class BodyHandler extends PhysicsHandler {
         this.worldHandler = worldHandler;
         this.body = proxyData.createBody(worldHandler, actor);
 
-        setType(proxyData.type);
+        setType(proxyData.getType());
     }
 
     public Body getBody() {
@@ -57,18 +57,20 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void moveBy(Vector meters) {
-        WorldHandler.assertNoWorldStep();
+        synchronized (worldHandler) {
+            WorldHandler.assertNoWorldStep();
 
-        Vec2 vector = meters.toVec2();
-        body.setTransform(vector.addLocal(body.getPosition()), body.getAngle());
+            Vec2 vector = meters.toVec2();
+            body.setTransform(vector.addLocal(body.getPosition()), body.getAngle());
 
-        // Wake up body, ensures in-engine (JB2D) adjustments will happen, e.g. collision rejustment
-        body.setAwake(true);
+            // Wake up body, ensures in-engine (JB2D) adjustments will happen, e.g. collision rejustment
+            body.setAwake(true);
+        }
     }
 
     @Override
     public Vector getCenter() {
-        if (type == Physics.Type.DYNAMIC || type == Physics.Type.PARTICLE) {
+        if (type == BodyType.DYNAMIC || type == BodyType.PARTICLE) {
             return Vector.of(body.getWorldCenter());
         }
 
@@ -103,17 +105,21 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void rotateBy(float radians) {
-        WorldHandler.assertNoWorldStep();
+        synchronized (worldHandler) {
+            WorldHandler.assertNoWorldStep();
 
-        body.setTransform(body.getPosition(), body.getAngle() + radians);
+            body.setTransform(body.getPosition(), body.getAngle() + radians);
+        }
     }
 
     @Override
     public void setDensity(float density) {
-        Fixture fixture = body.getFixtureList();
-        while (fixture != null) {
-            fixture.setDensity(density);
-            fixture = fixture.getNext();
+        synchronized (worldHandler) {
+            Fixture fixture = body.getFixtureList();
+            while (fixture != null) {
+                fixture.setDensity(density);
+                fixture = fixture.getNext();
+            }
         }
     }
 
@@ -124,10 +130,12 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void setFriction(float friction) {
-        Fixture fixture = body.getFixtureList();
-        while (fixture != null) {
-            fixture.setFriction(friction);
-            fixture = fixture.getNext();
+        synchronized (worldHandler) {
+            Fixture fixture = body.getFixtureList();
+            while (fixture != null) {
+                fixture.setFriction(friction);
+                fixture = fixture.getNext();
+            }
         }
     }
 
@@ -138,10 +146,12 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void setRestitution(float elasticity) {
-        Fixture current = body.m_fixtureList;
-        while (current != null) {
-            current.setRestitution(elasticity);
-            current = current.m_next;
+        synchronized (worldHandler) {
+            Fixture current = body.m_fixtureList;
+            while (current != null) {
+                current.setRestitution(elasticity);
+                current = current.m_next;
+            }
         }
     }
 
@@ -152,12 +162,14 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void setMass(float mass) {
-        WorldHandler.assertNoWorldStep();
+        synchronized (worldHandler) {
+            WorldHandler.assertNoWorldStep();
 
-        MassData massData = new MassData();
-        body.getMassData(massData);
-        massData.mass = mass;
-        body.setMassData(massData);
+            MassData massData = new MassData();
+            body.getMassData(massData);
+            massData.mass = mass;
+            body.setMassData(massData);
+        }
     }
 
     @Override
@@ -167,88 +179,103 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void applyForce(Vector force) {
-        body.applyForceToCenter(force.toVec2());
+        synchronized (worldHandler) {
+            body.applyForceToCenter(force.toVec2());
+        }
     }
 
     @Override
     public void applyTorque(float rotationMomentum) {
-        body.applyTorque(rotationMomentum);
+        synchronized (worldHandler) {
+            body.applyTorque(rotationMomentum);
+        }
     }
 
     @Override
     public void applyRotationImpulse(float rotationImpulse) {
-        body.applyAngularImpulse(rotationImpulse);
+        synchronized (worldHandler) {
+            body.applyAngularImpulse(rotationImpulse);
+        }
     }
 
     @Override
-    public void setType(Physics.Type type) {
-        WorldHandler.assertNoWorldStep();
+    public void setType(BodyType type) {
+        synchronized (worldHandler) {
+            WorldHandler.assertNoWorldStep();
 
-        if (type == this.type) {
-            return;
-        }
-
-        this.type = type;
-
-        body.setType(type.convert());
-        body.setActive(true);
-        body.setGravityScale(type == Physics.Type.PASSIVE || type == Physics.Type.PARTICLE ? 0 : 1);
-
-        Fixture current = this.body.m_fixtureList;
-        while (current != null) {
-            switch (type) {
-                case PASSIVE:
-                    current.m_filter.categoryBits = WorldHandler.CATEGORY_PASSIVE;
-                    current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
-                    current.m_isSensor = true;
-                case STATIC:
-                    current.m_filter.categoryBits = WorldHandler.CATEGORY_STATIC;
-                    current.m_filter.maskBits = DEFAULT_MASK_BITS;
-                    current.m_isSensor = false;
-                    break;
-                case DYNAMIC:
-                case KINEMATIC:
-                    current.m_filter.categoryBits = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
-                    current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
-                    current.m_isSensor = false;
-                    break;
-                case PARTICLE:
-                    current.m_filter.categoryBits = WorldHandler.CATEGORY_PARTICLE;
-                    current.m_filter.maskBits = WorldHandler.CATEGORY_STATIC;
-                    current.m_isSensor = false;
-                    break;
-                default:
-                    throw new RuntimeException("Unknown body type: " + type);
+            if (type == this.type) {
+                return;
             }
 
-            current = current.m_next;
+            this.type = type;
+
+            body.setType(type.convert());
+            body.setActive(true);
+            body.setGravityScale(type.getDefaultGravityScale());
+
+            Fixture current = this.body.m_fixtureList;
+            while (current != null) {
+                current.m_isSensor = type.isSensorType();
+
+                switch (type) {
+                    case PASSIVE:
+                        current.m_filter.categoryBits = WorldHandler.CATEGORY_PASSIVE;
+                        current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
+                        ;
+                    case STATIC:
+                        current.m_filter.categoryBits = WorldHandler.CATEGORY_STATIC;
+                        current.m_filter.maskBits = DEFAULT_MASK_BITS;
+                        break;
+                    case DYNAMIC:
+                    case KINEMATIC:
+                        current.m_filter.categoryBits = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
+                        current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
+                        break;
+                    case PARTICLE:
+                        current.m_filter.categoryBits = WorldHandler.CATEGORY_PARTICLE;
+                        current.m_filter.maskBits = WorldHandler.CATEGORY_STATIC;
+                        break;
+                    default:
+                        throw new RuntimeException("Unknown body type: " + type);
+                }
+
+                current = current.m_next;
+            }
         }
     }
 
     @Override
-    public Physics.Type getType() {
+    public BodyType getType() {
         return type;
     }
 
     @Override
     public void applyForce(Vector forceInN, Vector globalLocation) {
-        body.applyForce(forceInN.toVec2(), globalLocation.toVec2());
+        synchronized (worldHandler) {
+            body.applyForce(forceInN.toVec2(), globalLocation.toVec2());
+        }
     }
 
     @Override
     public void applyImpluse(Vector impluseInNs, Vector globalLocation) {
-        body.applyLinearImpulse(impluseInNs.toVec2(), globalLocation.toVec2());
+        synchronized (worldHandler) {
+            body.applyLinearImpulse(impluseInNs.toVec2(), globalLocation.toVec2());
+        }
     }
 
     @Override
     public void resetMovement() {
-        body.setLinearVelocity(NULL_VECTOR);
-        body.setAngularVelocity(0);
+        synchronized (worldHandler) {
+            body.setLinearVelocity(NULL_VECTOR);
+            body.setAngularVelocity(0);
+        }
     }
 
     @Override
     public void setVelocity(Vector metersPerSecond) {
-        body.setLinearVelocity(metersPerSecond.toVec2());
+        synchronized (worldHandler) {
+            body.setLinearVelocity(metersPerSecond.toVec2());
+        }
     }
 
     @Override
@@ -258,7 +285,9 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void setRotationLocked(boolean block) {
-        body.setFixedRotation(block);
+        synchronized (worldHandler) {
+            body.setFixedRotation(block);
+        }
     }
 
     @Override
@@ -285,7 +314,7 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public boolean isGrounded() {
-        if (this.getType() != Physics.Type.DYNAMIC) {
+        if (this.getType() != BodyType.DYNAMIC) {
             throw new RuntimeException("Der Steh-Test ist nur für dynamische Objekte definiert");
         }
 
@@ -300,7 +329,7 @@ public class BodyHandler extends PhysicsHandler {
         Fixture[] groundCandidates = worldHandler.aabbQuery(testAABB);
         for (Fixture fixture : groundCandidates) {
             Actor corresponding = worldHandler.lookupActor(fixture.m_body);
-            if (corresponding != null && corresponding.getBodyType() == Physics.Type.STATIC) {
+            if (corresponding != null && corresponding.getBodyType() == BodyType.STATIC) {
                 return true;
             }
         }
@@ -315,18 +344,22 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void setTorque(float value) {
-        body.m_torque = value;
+        synchronized (worldHandler) {
+            body.m_torque = value;
+        }
     }
 
     @Override
     @Internal
     public ProxyData getProxyData() {
         final List<Shape> shapeList = new ArrayList<>();
-        Fixture fixture = body.m_fixtureList;
-        while (fixture != null) {
-            shapeList.add(fixture.m_shape);
-            fixture = fixture.m_next;
+
+        Fixture current = body.m_fixtureList;
+        while (current != null) {
+            shapeList.add(current.m_shape);
+            current = current.m_next;
         }
+
         return new ProxyData(body, () -> shapeList, getType());
     }
 

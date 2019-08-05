@@ -5,7 +5,7 @@ import ea.Vector;
 import ea.actor.Actor;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.internal.annotations.Internal;
 
 public interface EduActor {
@@ -27,7 +27,7 @@ public interface EduActor {
 
         //Default Physics Setup für EDU Objekte
         getActor().physics.setRotationLocked(true);
-        getActor().physics.setElasticity(0);
+        getActor().physics.setRestitution(0);
     }
 
     default void entfernen() {
@@ -101,7 +101,7 @@ public interface EduActor {
     }
 
     default void setzeElastizitaet(float elastizitaetsKoeffizient) {
-        Game.enqueue(() -> getActor().physics.setElasticity(elastizitaetsKoeffizient));
+        Game.enqueue(() -> getActor().physics.setRestitution(elastizitaetsKoeffizient));
     }
 
     default void setzeSchwerkraft(float schwerkraft) {
@@ -131,15 +131,15 @@ public interface EduActor {
     }
 
     default void macheAktiv() {
-        Game.enqueue(() -> getActor().setBodyType(Physics.Type.DYNAMIC));
+        Game.enqueue(() -> getActor().setBodyType(BodyType.DYNAMIC));
     }
 
     default void machePassiv() {
-        Game.enqueue(() -> getActor().setBodyType(Physics.Type.STATIC));
+        Game.enqueue(() -> getActor().setBodyType(BodyType.STATIC));
     }
 
     default void macheNeutral() {
-        Game.enqueue(() -> getActor().setBodyType(Physics.Type.PASSIVE));
+        Game.enqueue(() -> getActor().setBodyType(BodyType.PASSIVE));
     }
 
     default void sprung(float staerke) {

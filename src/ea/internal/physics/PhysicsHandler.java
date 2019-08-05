@@ -2,7 +2,7 @@ package ea.internal.physics;
 
 import ea.Vector;
 import ea.actor.Actor;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.internal.annotations.Internal;
 import org.jbox2d.dynamics.Body;
 
@@ -143,9 +143,9 @@ public abstract class PhysicsHandler {
      *
      * @param type Der neue Type.
      */
-    public abstract void setType(Physics.Type type);
+    public abstract void setType(BodyType type);
 
-    public abstract Physics.Type getType();
+    public abstract BodyType getType();
 
     public abstract void applyForce(Vector kraftInN, Vector globalerOrt);
 

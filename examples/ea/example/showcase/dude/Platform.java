@@ -3,7 +3,7 @@ package ea.example.showcase.dude;
 import ea.actor.TileContainer;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 
 /**
  * Einfache Plattform. Herzlichen Dank an <a href="https://www.gameart2d.com/free-graveyard-platformer-tileset.html">Billard
@@ -32,8 +32,8 @@ public class Platform extends TileContainer implements CollisionListener<Box> {
         // Tile für das rechte Ende
         setTileAt(tileCount - 1, 0, basePath + "platform_r.png");
 
-        setBodyType(Physics.Type.STATIC);
-        physics.setElasticity(0);
+        setBodyType(BodyType.STATIC);
+        physics.setRestitution(0);
     }
 
     @Override

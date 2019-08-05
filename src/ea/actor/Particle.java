@@ -20,7 +20,7 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
-import ea.handle.Physics;
+import ea.handle.BodyType;
 import ea.internal.annotations.API;
 
 import java.awt.*;
@@ -38,7 +38,7 @@ public class Particle extends Circle implements FrameUpdateListener {
     public Particle(float diameter, int life) {
         super(diameter);
 
-        this.setBodyType(Physics.Type.PARTICLE);
+        this.setBodyType(BodyType.PARTICLE);
         this.life = life;
     }
 
