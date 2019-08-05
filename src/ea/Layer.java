@@ -3,6 +3,7 @@ package ea;
 import ea.actor.Actor;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
+import ea.internal.physics.WorldHandler;
 
 import java.awt.*;
 import java.util.Collection;
@@ -41,6 +42,11 @@ public class Layer {
      */
     private float parallaxZoom = 1;
 
+    /**
+     * Ein Zeitverzerrungsfaktor
+     */
+    private float timeDistort = 1;
+
     private int zIndex = -2;
 
     /**
@@ -49,11 +55,30 @@ public class Layer {
     private boolean visible = true;
 
     /**
+     * Die Physics des Layers.
+     */
+    private final WorldHandler worldHandler;
+
+    /**
+     * Die Parent-Scene dieses Layers.
+     */
+    private Scene parent;
+
+    /**
      * Erstellt ein neues Layer.
      */
     @API
     public Layer() {
+        worldHandler = new WorldHandler();
         actorList = new ConcurrentLinkedQueue<>();
+    }
+
+    @Internal
+    void setParent(Scene parent) {
+        if (this.parent != null) {
+            throw new IllegalStateException("Das Layer wurde bereits an einer Scene angemeldet.");
+        }
+        this.parent = parent;
     }
 
     /**
@@ -64,6 +89,9 @@ public class Layer {
     @API
     public void setLayerPosition(int sublayer) {
         this.zIndex = sublayer;
+        if (parent != null) {
+            parent.layersUpdated();
+        }
     }
 
     /**
@@ -121,6 +149,26 @@ public class Layer {
     @API
     public void setParallaxRotation(float parallaxRotation) {
         this.parallaxRotation = parallaxRotation;
+    }
+
+    /**
+     * Setzt einen Zeitverzerrungsfaktor. Die Zeit in der Physiksimulation vergeht standardmäßig in Echtzeit, kann
+     * allerdings verzerrt werden.
+     *
+     * @param timeDistort <i>Zeit in der Simulation = Echtzeit * Verzerrungsfaktor</i> <br />
+     *                    <ul>
+     *                    <li>Werte <code>>1</code> lassen die Zeit <b>schneller</b> vergehen</li>
+     *                    <li>Werte <code><1</code> lassen die Zeit <b>langsamer</b> vergehen</li>
+     *                    <li><code>1</code> lässt die Zeit in Echtzeit vergehen</li>
+     *                    <li>Werte <code><=0</code> sind nicht erlaubt</li>
+     *                    </ul>
+     */
+    @API
+    public void setTimeDistort(float timeDistort) {
+        if (timeDistort <= 0) {
+            throw new IllegalArgumentException("Zeitverzerrungsfaktor muss größer als 0 sein. War " + timeDistort);
+        }
+        this.timeDistort = timeDistort;
     }
 
     /**
@@ -188,6 +236,22 @@ public class Layer {
 
         for (Actor actor : actorList) {
             actor.renderBasic(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
+        }
+    }
+
+    /**
+     * Gibt den Worldhandler dieses Layers aus.
+     *
+     * @return Der Worldhandler dieser Ebene.
+     */
+    @Internal
+    public WorldHandler getWorldHandler() {
+        return worldHandler;
+    }
+
+    public void step(float deltaTime) {
+        synchronized (worldHandler) {
+            worldHandler.step(deltaTime * timeDistort);
         }
     }
 }

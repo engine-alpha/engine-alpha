@@ -111,14 +111,14 @@ public class WorldHandler implements ContactListener {
         return this.worldPaused;
     }
 
-    public void step(float frameDuration) {
+    public void step(float timeToSimulate) {
         if (worldPaused) {
             return;
         }
 
         synchronized (this) {
             synchronized (this.world) {
-                this.world.step(frameDuration / 1000, 6, 3);
+                this.world.step(timeToSimulate / 1000, 6, 3);
             }
         }
     }

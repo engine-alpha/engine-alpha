@@ -34,8 +34,13 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.util.List;
 import java.util.*;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.Phaser;
 
 public class Scene {
     /**
@@ -78,26 +83,98 @@ public class Scene {
     private final Layer mainLayer;
 
     /**
-     * Die Physics der Szene.
+     * Phaser für den Off-Worldstep.
      */
-    private final WorldHandler worldHandler;
+    private final Phaser offStepPhaser = new Phaser(1);
+
+    /**
+     * Phaser für den On-Worldstep.
+     */
+    private final Phaser onStepPhaser = new Phaser(1);
+
+    private int layerCountForCurrentRender;
+    private final Queue<Future> layerFutures = new ConcurrentLinkedQueue<>();
 
     public Scene() {
-        this.worldHandler = new WorldHandler();
         this.camera = new Camera();
         mainLayer = new Layer();
         mainLayer.setLayerPosition(0);
-        layers.add(mainLayer);
+        addLayer(mainLayer);
         this.addFrameUpdateListener(this.camera);
     }
 
+    /**
+     * Führt an allen Layern <b>parallelisiert</b> den World-Step aus.
+     *
+     * @param deltaTime Die Echtzeit, die seit dem letzten World-Step vergangen ist.
+     */
     @Internal
-    public void render(Graphics2D g, int width, int height) {
+    void worldStep(float deltaTime) {
+        synchronized (layers) {
+            layerCountForCurrentRender = layers.size();
+
+            for (Layer layer : layers) {
+                Future future = Game.threadPoolExecutor.submit(() -> layer.step(deltaTime));
+
+                layerFutures.add(future);
+            }
+        }
+    }
+
+    /**
+     * Gibt den World-Step Off-Phaser
+     */
+    @Internal
+    Phaser getWorldStepOffPhaser() {
+        return offStepPhaser;
+    }
+
+    /**
+     * Gibt den World-Step On-Phaser
+     */
+    @Internal
+    Phaser getOnStepPhaser() {
+        return onStepPhaser;
+    }
+
+    @Internal
+    public void render(Graphics2D g, int width, int height, Phaser worldStepEndBarrier) {
         final AffineTransform base = g.getTransform();
 
-        for (Layer layer : layers) {
+        int current = 0;
+        while (current < layerCountForCurrentRender) {
+            Future future = layerFutures.poll();
+            if (future == null) {
+                break;
+            }
+
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+
+            Layer layer;
+            synchronized (layers) {
+                layer = layers.get(current);
+            }
+
+            if (layer == null) {
+                break;
+            }
+
+            if (current == layerCountForCurrentRender - 1) {
+                worldStepEndBarrier.arrive();
+            }
+
             layer.render(g, camera, width, height);
             g.setTransform(base);
+
+            current++;
+        }
+
+        if (current < layerCountForCurrentRender) {
+            worldStepEndBarrier.arrive();
         }
 
         if (Game.isDebug()) {
@@ -105,16 +182,31 @@ public class Scene {
         }
     }
 
-    @API
-    public void addLayer(Layer layer) {
-        this.layers.add(layer);
+    /**
+     * Wird aufgerufen, wann immer ein Layerzustand innerhalb dieser Scene geändert wurde.
+     * Stellt sicher, dass die Layer-Liste korrekt sortiert ist und aller Layer in der richtigen Reihenfolge gerendert
+     * werden.
+     */
+    @Internal
+    void layersUpdated() {
         this.layers.sort(Comparator.comparingInt(Layer::getLayerPosition));
     }
 
     @API
+    public void addLayer(Layer layer) {
+        synchronized (this.layers) {
+            this.layers.add(layer);
+            layer.setParent(this);
+            layersUpdated();
+        }
+    }
+
+    @API
     public void removeLayer(Layer layer) {
-        if (!this.layers.remove(layer) && Game.isVerbose()) {
-            Logger.warning("Ein Layer, das gar nicht an der Scene angehängt ist, sollte entfernt werden.", "layer");
+        synchronized (this.layers) {
+            if (!this.layers.remove(layer) && Game.isVerbose()) {
+                Logger.warning("Ein Layer, das gar nicht an der Scene angehängt ist, sollte entfernt werden.", "layer");
+            }
         }
     }
 
@@ -126,7 +218,7 @@ public class Scene {
     @Internal
     private void renderJoints(Graphics2D g) {
         // Display Joints
-        Joint j = worldHandler.getWorld().getJointList();
+        Joint j = mainLayer.getWorldHandler().getWorld().getJointList();
 
         while (j != null) {
             renderJoint(j, g);
@@ -135,7 +227,7 @@ public class Scene {
     }
 
     @Internal
-    private void renderJoint(Joint j, Graphics2D g) {
+    private static void renderJoint(Joint j, Graphics2D g) {
         final int CIRC_RAD = 10; // (Basis-)Radius für die Visualisierung von Kreisen
         final int RECT_SID = 12; // (Basis-)Breite für die Visualisierung von Rechtecken
 
@@ -162,18 +254,24 @@ public class Scene {
         }
     }
 
+    /**
+     * Gibt den Worldhandler des Main-Layers aus.
+     *
+     * @return der Worldhandler des Main-Layers.
+     */
+    @Internal
     public WorldHandler getWorldHandler() {
-        return worldHandler;
+        return mainLayer.getWorldHandler();
     }
 
     /**
-     * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb der Scene</b> wirkt.
+     * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb des Hauptlayers der Scene</b> wirkt.
      *
      * @param gravityInN Die neue Schwerkraft als Vector. Die Einheit ist <b>[N]</b>.
      */
     @API
     public void setGravity(Vector gravityInN) {
-        worldHandler.getWorld().setGravity(new Vec2(gravityInN.x, gravityInN.y));
+        mainLayer.getWorldHandler().getWorld().setGravity(new Vec2(gravityInN.x, gravityInN.y));
     }
 
     /**
@@ -188,7 +286,7 @@ public class Scene {
      */
     @API
     public void setPhysicsPaused(boolean worldPaused) {
-        worldHandler.setWorldPaused(worldPaused);
+        mainLayer.getWorldHandler().setWorldPaused(worldPaused);
     }
 
     /**
@@ -201,7 +299,7 @@ public class Scene {
      */
     @API
     public boolean getPhysicsPaused() {
-        return worldHandler.isWorldPaused();
+        return mainLayer.getWorldHandler().isWorldPaused();
     }
 
     @API

@@ -20,6 +20,7 @@
 package ea.internal.graphics;
 
 import java.awt.*;
+import java.util.concurrent.Phaser;
 
 /**
  * Dies ist das Panel, in dem die einzelnen Dinge gezeichnet werden.
@@ -51,5 +52,5 @@ public abstract class RenderPanel extends Canvas {
      *
      * @param g Zeichenobjekt.
      */
-    public abstract void render(Graphics2D g);
+    public abstract void render(Graphics2D g, Phaser worldStepEndBarrier);
 }

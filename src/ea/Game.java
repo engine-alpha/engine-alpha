@@ -27,7 +27,6 @@ import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.physics.WorldHandler;
-import ea.internal.util.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +38,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
 
 /**
@@ -122,9 +123,17 @@ public final class Game {
 
     private static Phaser frameBarrierEnd = new Phaser(2);
 
+    private static Phaser worldStepEndBarrier = new Phaser(2);
+
     private static Thread renderThread;
 
     private static Thread mainThread;
+
+    /**
+     * Ein Thread Pool Executor Service für Engine-interne tasks.
+     */
+    @Internal
+    public static final ExecutorService threadPoolExecutor = Executors.newCachedThreadPool();//(ThreadPoolExecutor) Executors.newFixedThreadPool(6);
 
     /**
      * Queue aller Dispatchables, die im nächsten Frame ausgeführt werden.
@@ -183,14 +192,14 @@ public final class Game {
         Game.scene = scene;
 
         renderPanel = new RenderPanel(width, height) {
-            public void render(Graphics2D g) {
+            public void render(Graphics2D g, Phaser worldStepEndBarrier) {
                 // Absoluter Hintergrund
                 g.setColor(Color.black);
                 g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
                 AffineTransform transform = g.getTransform();
 
-                Game.scene.render(g, Game.width, Game.height);
+                Game.scene.render(g, Game.width, Game.height, worldStepEndBarrier);
 
                 g.setTransform(transform);
 
@@ -355,9 +364,10 @@ public final class Game {
             try {
                 int simulationTime = Math.min(DESIRED_FRAME_DURATION, frameDuration);
 
-                scene.getWorldHandler().step(simulationTime);
+                scene.worldStep(simulationTime);
 
                 frameBarrierStart.arriveAndAwaitAdvance();
+                worldStepEndBarrier.arriveAndAwaitAdvance();
 
                 scene.onFrameUpdateInternal(simulationTime);
 
@@ -397,14 +407,18 @@ public final class Game {
             }
         }
 
-        // Thread soll aufhören: Sauber machen!
-        renderThread.interrupt();
+        while (renderThread.isAlive()) {
+            // Thread soll aufhören: Sauber machen!
+            renderThread.interrupt();
 
-        try {
-            renderThread.join();
-        } catch (InterruptedException e) {
-            // Ignore here
+            try {
+                renderThread.join();
+            } catch (InterruptedException e) {
+                // Try again
+            }
         }
+
+        threadPoolExecutor.shutdown();
 
         frame.setVisible(false);
         frame.dispose();
@@ -548,8 +562,6 @@ public final class Game {
             return;
         }
 
-        frameBarrierStart.forceTermination();
-        frameBarrierEnd.forceTermination();
         mainThread.interrupt();
     }
 
@@ -776,38 +788,43 @@ public final class Game {
 
         @Override
         public void run() {
-            while (!interrupted()) {
-                frameBarrierStart.arriveAndAwaitAdvance();
-
+            while (!isInterrupted()) {
                 try {
-                    do {
-                        BufferStrategy bufferStrategy = renderPanel.getBufferStrategy();
+                    frameBarrierStart.awaitAdvanceInterruptibly(frameBarrierStart.arrive());
 
+                    try {
                         do {
-                            Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
+                            BufferStrategy bufferStrategy = renderPanel.getBufferStrategy();
 
-                            // have to be the same @ Game.screenshot!
-                            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+                            do {
+                                Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
 
-                            renderPanel.render(g);
+                                // have to be the same @ Game.screenshot!
+                                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-                            g.dispose();
-                        } while (bufferStrategy.contentsRestored());
+                                renderPanel.render(g, worldStepEndBarrier);
 
-                        if (!bufferStrategy.contentsLost()) {
-                            bufferStrategy.show();
-                        }
+                                g.dispose();
+                            } while (bufferStrategy.contentsRestored() && !isInterrupted());
 
-                        Toolkit.getDefaultToolkit().sync();
-                    } while (renderPanel.getBufferStrategy().contentsLost());
-                } catch (IllegalStateException e) {
-                    Logger.error(getName(), e.getMessage());
-                    Game.exit();
+                            if (!bufferStrategy.contentsLost()) {
+                                bufferStrategy.show();
+                            }
+
+                            Toolkit.getDefaultToolkit().sync();
+                        } while (renderPanel.getBufferStrategy().contentsLost() && !isInterrupted());
+                    } catch (IllegalStateException e) {
+                        //Logger.error(getName(), e.getMessage());
+                        e.printStackTrace();
+                        Game.exit();
+                    }
+
+                    frameBarrierEnd.awaitAdvanceInterruptibly(frameBarrierEnd.arrive());
+                } catch (InterruptedException e) {
+                    return;
                 }
-
-                frameBarrierEnd.arriveAndAwaitAdvance();
             }
         }
     }
