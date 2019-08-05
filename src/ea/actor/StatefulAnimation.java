@@ -1,6 +1,7 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
+import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -54,9 +55,17 @@ public class StatefulAnimation extends Actor {
         this.height = height;
 
         // TODO Check that all frames have the same size
+    }
 
-        getScene().addFrameUpdateListener(frameUpdateListener);
-        addDestructionListener(() -> getScene().removeFrameUpdateListener(frameUpdateListener));
+    @Override
+    public void setScene(Scene scene) {
+        if (scene != null) {
+            scene.addFrameUpdateListener(frameUpdateListener);
+        } else {
+            getScene().removeFrameUpdateListener(frameUpdateListener);
+        }
+
+        super.setScene(scene);
     }
 
     /**

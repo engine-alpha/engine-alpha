@@ -77,8 +77,6 @@ public class Showcases extends Scene {
             text.position.move(20, 10);
 
             this.sceneCreator = sceneCreator;
-            //Showcases.this.addMouseClickListener(this);
-            //Showcases.this.addFrameUpdateListener(this);
             updateUI();
         }
 
@@ -163,6 +161,8 @@ public class Showcases extends Scene {
 
         TextBox button = new TextBox(title, sceneSupplier, left ? -500 : -150, -60 + -1 * row * (BOX_HEIGHT + 5));
         add(button.getActors());
+        addMouseClickListener(button);
+        addFrameUpdateListener(button);
     }
 
     /**
