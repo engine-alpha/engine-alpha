@@ -123,11 +123,11 @@ public interface EduActor {
     /* ~~~ JUMP N RUN WRAPPER ~~~ */
 
     default boolean steht() {
-        return getActor().physics.testStanding();
+        return getActor().physics.isGrounded();
     }
 
     default boolean stehtAuf(Actor actor) {
-        return getActor().overlaps(actor) && getActor().physics.testStanding();
+        return getActor().overlaps(actor) && getActor().physics.isGrounded();
     }
 
     default void macheAktiv() {

@@ -11,7 +11,7 @@ import ea.handle.Physics;
  * Art 2D</a> für die kostenfreien Tiles.
  */
 public class Platform extends TileContainer implements CollisionListener<Box> {
-    private static final int TILE_SIZE = 128;
+    private static final int TILE_SIZE = 2;
 
     public Platform(Scene scene, int tileCount) {
         super(scene, tileCount, 1, TILE_SIZE);
@@ -41,7 +41,7 @@ public class Platform extends TileContainer implements CollisionListener<Box> {
 
     @Override
     public void onCollisionEnd(CollisionEvent<Box> collisionEvent) {
-        
+
     }
 
     @Override

@@ -42,7 +42,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         addLayer(hud);
 
         character = new PlayerCharacter(this, hud);
-        character.position.set(-20, 200);
+        character.position.set(0, 0);
         character.setBodyType(Physics.Type.DYNAMIC);
         character.physics.setRotationLocked(true);
         hud.setPlayerCharacter(character);
@@ -51,6 +51,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         getCamera().setFocus(character);
         getCamera().setOffset(new Vector(0, -100));
         getCamera().setBounds(new BoundingRechteck(-2000, 0, 20000, 20000));
+        getCamera().setZoom(30f);
 
         setupPlayground();
         setupCosmeticLayers();
@@ -76,22 +77,23 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     }
 
     private void setupPlayground() {
-        makePlatform(7, -450, -200);
-        makePlatform(3, 200, 0);
+        makePlatform(7, -450 / 60, -200 / 60);
+        makePlatform(3, 200 / 60, 0);
 
-        makePlatform(5, 800, -100);
+        makePlatform(5, 800 / 60, -100 / 60);
 
         makeBoxes(0, 40, 5);
 
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin(this);
-            coin.position.set(200 + 30 * i, 200);
+            coin.position.set(6 + i, 6);
             coin.addCollisionListener(coin, character);
             add(coin);
         }
+
         for (int j = 0; j < 10; j++) {
             ManaPickup manaPickup = new ManaPickup(this);
-            manaPickup.position.set(0 - 30 * j, 0);
+            manaPickup.position.set(-j, 1);
             manaPickup.addCollisionListener(manaPickup, character);
             add(manaPickup);
         }
@@ -101,7 +103,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         Layer middleBackground = new Layer(this);
         middleBackground.setParallaxPosition(0.1f, 0.1f);
         middleBackground.setLayerPosition(-200);
-        Image backgroundImage = new Image(this, "game-assets/dude/background/snow.png");
+        Image backgroundImage = new Image(this, "game-assets/dude/background/snow.png", 1, 1);
         backgroundImage.position.set(-GAME_WIDTH / 2 - 100, -GAME_HEIGHT / 2);
         middleBackground.add(backgroundImage);
 
@@ -109,7 +111,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         //furtherBackground.setLayerPosition(-300);
         furtherBackground.setParallaxPosition(0.05f, 0.05f);
 
-        Image moon = new Image(this, "game-assets/dude/moon.png");
+        Image moon = new Image(this, "game-assets/dude/moon.png", 1, 1);
         furtherBackground.add(moon);
         moon.position.set(300, 300);
 

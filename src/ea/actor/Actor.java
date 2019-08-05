@@ -347,11 +347,10 @@ public abstract class Actor {
                 synchronized (physicsHandler) {
                     // Visualisiere die Shape
                     if (physicsHandler.getBody().m_fixtureList != null) {
-                        float ppm = physicsHandler.getWorldHandler().getPixelPerMeter();
                         g.setColor(Color.YELLOW);
                         g.fillRect(-2, -2, 4, 4);
                         g.setColor(Color.red);
-                        renderShape(physicsHandler.getBody().m_fixtureList.m_shape, g, ppm);
+                        renderShape(physicsHandler.getBody().m_fixtureList.m_shape, g);
                     }
                 }
             }
@@ -376,22 +375,21 @@ public abstract class Actor {
      * @param shape         Die Shape, die zu rendern ist.
      * @param g             Das Graphics2D-Object, das die Shape rendern soll. Farbe &amp; Co. sollte im Vorfeld
      *                      eingestellt sein. Diese Methode übernimmt nur das direkte rendern.
-     * @param pixelPerMeter die Umrechnungsgröße, von Meter (JBox2D) auf Pixel (EA)
      */
     @Internal
-    public static void renderShape(Shape shape, Graphics2D g, float pixelPerMeter) {
+    public static void renderShape(Shape shape, Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         if (shape instanceof PolygonShape) {
             PolygonShape polygonShape = (PolygonShape) shape;
             Vec2[] vec2s = polygonShape.getVertices();
             int[] xs = new int[polygonShape.getVertexCount()], ys = new int[polygonShape.getVertexCount()];
             for (int i = 0; i < xs.length; i++) {
-                xs[i] = (int) (vec2s[i].x * pixelPerMeter);
-                ys[i] = (-1) * (int) (vec2s[i].y * pixelPerMeter);
+                xs[i] = (int) (vec2s[i].x);
+                ys[i] = (-1) * (int) (vec2s[i].y);
             }
             g.drawPolygon(xs, ys, xs.length);
         } else if (shape instanceof CircleShape) {
-            int diameter = (int) (((CircleShape) shape).m_radius * 2 * pixelPerMeter);
+            int diameter = (int) (((CircleShape) shape).m_radius * 2);
             g.drawOval(0, -diameter, diameter, diameter);
         } else {
             Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");

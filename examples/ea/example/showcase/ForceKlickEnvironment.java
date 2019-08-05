@@ -101,12 +101,10 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
      *
      */
     public void initialisieren() {
-        getWorldHandler().setPixelPerMeter(PPM);
-        //Info-Message
-        //fenster.nachrichtSchicken("Elastizität +[W]/-[Q] | Masse +[U] / -[J] | [R]eset | [S]chwerkraft | [E]insperren");
+        // Info-Message
+        // fenster.nachrichtSchicken("Elastizität +[W]/-[Q] | Masse +[U] / -[J] | [R]eset | [S]chwerkraft | [E]insperren");
 
-
-        //Boden
+        // Boden
         Rectangle boden = new Rectangle(this, FIELD_WIDTH, 10);
         boden.position.set(0, FIELD_DEPTH);
         add(boden);

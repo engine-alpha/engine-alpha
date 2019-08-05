@@ -23,7 +23,7 @@ public class HUDDisplay extends ActorGroup {
     public HUDDisplay(Scene scene) {
         super(scene);
 
-        background = new TileContainer(scene, HUD_VALUE_LENGTH + 7, 4, 8, 16, HUD_SCALE);
+        background = new TileContainer(scene, HUD_VALUE_LENGTH + 7, 4, 8, 16);
 
         //Initialize Standard-Parts of backgrounds.
         for (int i = 0; i < 4; i++) {
@@ -54,7 +54,7 @@ public class HUDDisplay extends ActorGroup {
         background.setTileAt(3, 3, "game-assets/dude/hud/num_black.png", 3, 2);
 
         //LINE CONTENT
-        lines = new TileContainer(scene, HUD_VALUE_LENGTH, 4, 8, 16, HUD_SCALE);
+        lines = new TileContainer(scene, HUD_VALUE_LENGTH, 4, 8, 16);
         lines.position.move(5 * 8 * HUD_SCALE, 0);
 
         setLineValue(0, 10);

@@ -24,7 +24,7 @@ import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.graphics.Frame;
+import ea.internal.graphics.AnimationFrame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 import ea.internal.util.GifDecoder;
@@ -33,10 +33,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.*;
 
 /**
  * Eine Animation ein Actor-Objekt, das aus mehreren
@@ -53,10 +51,10 @@ import java.util.LinkedList;
 @API
 public class Animation extends Actor implements FrameUpdateListener {
 
-    private ea.internal.graphics.Frame[] frames;
+    private AnimationFrame[] frames;
 
-    private final int width;
-    private final int height;
+    private final float width;
+    private final float height;
 
     private int currentTime;
     private int currentIndex;
@@ -66,25 +64,24 @@ public class Animation extends Actor implements FrameUpdateListener {
      */
     private Collection<Runnable> onCompleteListeners = new ArrayList<>();
 
-    private Animation(Scene scene, ea.internal.graphics.Frame[] frames) {
+    private Animation(Scene scene, AnimationFrame[] frames, float width, float height) {
         super(scene, () -> {
             if (frames.length < 1) {
                 throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
             }
 
-            return ShapeHelper.createRectangularShape(frames[0].getImage().getWidth() / scene.getWorldHandler().getPixelPerMeter(), frames[0].getImage().getHeight() / scene.getWorldHandler().getPixelPerMeter());
+            return ShapeHelper.createRectangularShape(width, height);
         });
 
-        for (ea.internal.graphics.Frame frame : frames) {
+        for (AnimationFrame frame : frames) {
             if (frame.getDuration() < 1) {
                 throw new RuntimeException("Ein Frame muss mindestens eine Millisekunde lang sein.");
             }
         }
 
         this.frames = frames;
-
-        this.width = frames[0].getImage().getWidth();
-        this.height = frames[0].getImage().getHeight();
+        this.width = width;
+        this.height = height;
 
         this.currentTime = 0;
         this.currentIndex = 0;
@@ -96,7 +93,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @param animation Animation.
      */
     public Animation(Scene scene, Animation animation) {
-        this(scene, animation.getFrames());
+        this(scene, animation.getFrames(), animation.getWidth(), animation.getHeight());
 
         animation.destroy();
     }
@@ -107,7 +104,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @return Die Frames dieser Animation.
      */
     @Internal
-    public Frame[] getFrames() {
+    public AnimationFrame[] getFrames() {
         return frames.clone();
     }
 
@@ -116,11 +113,11 @@ public class Animation extends Actor implements FrameUpdateListener {
      *
      * @return Die Breite der Animation in Pixel.
      *
-     * @see #getImageHeight()
+     * @see #getHeight()
      */
     @API
-    public int getImageWidth() {
-        return width;
+    public float getWidth() {
+        return this.width;
     }
 
     /**
@@ -128,11 +125,11 @@ public class Animation extends Actor implements FrameUpdateListener {
      *
      * @return Die Höhe der Animation in Pixel
      *
-     * @see #getImageWidth()
+     * @see #getWidth()
      */
     @API
-    public int getImageHeight() {
-        return height;
+    public float getHeight() {
+        return this.height;
     }
 
     /**
@@ -161,7 +158,7 @@ public class Animation extends Actor implements FrameUpdateListener {
     public void onFrameUpdate(int frameDuration) {
         this.currentTime += frameDuration;
 
-        ea.internal.graphics.Frame currentFrame = this.frames[currentIndex];
+        AnimationFrame currentFrame = this.frames[currentIndex];
 
         while (this.currentTime > currentFrame.getDuration()) {
             this.currentTime -= currentFrame.getDuration();
@@ -179,11 +176,11 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     @Override
     public void render(Graphics2D g) {
-        this.frames[currentIndex].render(g, false, false);
+        this.frames[currentIndex].render(g, width, height, false, false);
     }
 
     @API
-    public static Animation createFromSpritesheet(Scene scene, int frameDuration, String filepath, int x, int y) {
+    public static Animation createFromSpritesheet(Scene scene, int frameDuration, String filepath, int x, int y, float width, float height) {
         if (frameDuration < 1) {
             throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
         }
@@ -198,33 +195,33 @@ public class Animation extends Actor implements FrameUpdateListener {
             throw new RuntimeException(String.format("Spritesheet hat nicht die richtigen Maße (Höhe: %d) um es auf %d Elemente in getY-Richtung aufzuteilen.", image.getHeight(), y));
         }
 
-        int width = image.getWidth() / x;
-        int height = image.getHeight() / y;
+        int imageWidth = image.getWidth() / x;
+        int imageHeight = image.getHeight() / y;
 
-        java.util.List<ea.internal.graphics.Frame> frames = new LinkedList<>();
+        List<AnimationFrame> frames = new LinkedList<>();
 
         for (int j = 0; j < y; j++) {
             for (int i = 0; i < x; i++) {
-                frames.add(new ea.internal.graphics.Frame(image.getSubimage(i * width, j * height, width, height), frameDuration));
+                frames.add(new AnimationFrame(image.getSubimage(i * imageWidth, j * imageHeight, imageWidth, imageHeight), frameDuration));
             }
         }
 
-        return new Animation(scene, frames.toArray(new ea.internal.graphics.Frame[0]));
+        return new Animation(scene, frames.toArray(new AnimationFrame[0]), width, height);
     }
 
     @API
-    public static Animation createFromImages(Scene scene, int frameDuration, String... filepaths) {
+    public static Animation createFromImages(Scene scene, int frameDuration, float width, float height, String... filepaths) {
         if (frameDuration < 1) {
             throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
         }
 
-        java.util.List<ea.internal.graphics.Frame> frames = new LinkedList<>();
+        Collection<AnimationFrame> frames = new LinkedList<>();
 
         for (String filepath : filepaths) {
-            frames.add(new ea.internal.graphics.Frame(ImageLoader.load(filepath), frameDuration));
+            frames.add(new AnimationFrame(ImageLoader.load(filepath), frameDuration));
         }
 
-        return new Animation(scene, frames.toArray(new ea.internal.graphics.Frame[0]));
+        return new Animation(scene, frames.toArray(new AnimationFrame[0]), width, height);
     }
 
     /**
@@ -240,7 +237,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @author Michael Andonie
      */
     @API
-    public static Animation createFromImagesPrefix(Scene scene, int frameDuration, String directoryPath, String prefix) {
+    public static Animation createFromImagesPrefix(Scene scene, int frameDuration, float width, float height, String directoryPath, String prefix) {
         // Liste mit den Pfaden aller qualifizierten Dateien
         ArrayList<String> allPaths = new ArrayList<>();
 
@@ -269,23 +266,23 @@ public class Animation extends Actor implements FrameUpdateListener {
             throw new RuntimeException("Konnte keine Bilder mit Präfix \"" + prefix + "\" im Verzeichnis \"" + directoryPath + "\" finden.");
         }
 
-        return createFromImages(scene, frameDuration, allPaths.toArray(new String[0]));
+        return createFromImages(scene, frameDuration, width, height, allPaths.toArray(new String[0]));
     }
 
     @API
-    public static Animation createFromAnimatedGif(Scene scene, String filepath) {
+    public static Animation createFromAnimatedGif(Scene scene, String filepath, float width, float height) {
         GifDecoder gifDecoder = new GifDecoder();
         gifDecoder.read(filepath);
 
         int frameCount = gifDecoder.getFrameCount();
-        ea.internal.graphics.Frame[] frames = new ea.internal.graphics.Frame[frameCount];
+        AnimationFrame[] frames = new AnimationFrame[frameCount];
 
         for (int i = 0; i < frameCount; i++) {
             BufferedImage frame = gifDecoder.getFrame(i);
             int durationInMillis = gifDecoder.getDelay(i);
-            frames[i] = new Frame(frame, durationInMillis);
+            frames[i] = new AnimationFrame(frame, durationInMillis);
         }
 
-        return new Animation(scene, frames);
+        return new Animation(scene, frames, width, height);
     }
 }

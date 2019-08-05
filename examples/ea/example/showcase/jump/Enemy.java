@@ -21,7 +21,7 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
     public Enemy(Scene scene, PlayerCharacter pc, Vector velocity) {
         super(scene, 64, 64);
 
-        Animation flying = Animation.createFromAnimatedGif(scene, "game-assets/jump/spr_toucan_fly_anim.gif");
+        Animation flying = Animation.createFromAnimatedGif(scene, "game-assets/jump/spr_toucan_fly_anim.gif", 1, 1);
         addState("flying", flying);
 
         this.velocity = velocity;

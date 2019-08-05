@@ -12,7 +12,7 @@ public class Box extends Image {
     }
 
     public Box(Scene scene, int type) {
-        super(scene, boxPath(type), 0.4f);
+        super(scene, boxPath(type), 1, 1);
 
         setBodyType(Physics.Type.DYNAMIC);
         physics.setMass(30);
@@ -20,7 +20,7 @@ public class Box extends Image {
     }
 
     public static String boxPath(int type) {
-        if (type < 0 && type > 9) {
+        if (type < 0 || type > 9) {
             throw new RuntimeException("Box-Typ existiert nicht.");
         }
         String path;

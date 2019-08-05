@@ -20,6 +20,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -80,51 +81,7 @@ public class WorldHandler implements ContactListener {
     /**
      * Diese Liste enthält die (noch nicht beendeten) Kontakte, die nicht aufgelöst werden sollen.
      */
-    private final List<FixturePair> contactsToIgnore = new ArrayList<>();
-
-    /**
-     * Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA.
-     * Gibt an, wie viele Pixel genau einen Meter ausmachen.<br/>
-     * <p>
-     * <b>Einheit: [px/m]</b>
-     */
-    private float pixelPerMeter = 30f;
-
-    /**
-     * Flag, das angibt, ob die Pixel Pro Meter bereits angefragt wurden.
-     */
-    private boolean pixelPerMeterRequested = false;
-
-    /**
-     * Gibt die Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA an.
-     *
-     * @return Gibt an, wie viele Pixel genau einen Meter ausmachen.<br> <b>Einheit: [px/m]</b>
-     */
-    public float getPixelPerMeter() {
-        return pixelPerMeter;
-    }
-
-    /**
-     * Blockiert die Möglichkeit weitere PPM-Changes zu machen.
-     * Wird intern aufgerufen, sobald innerhalb der Engine die erste Shape kreiert wurde.
-     */
-    public void lockPixelPerMeter() {
-        pixelPerMeterRequested = true;
-    }
-
-    /**
-     * Setzt die Umrechnungsgröße zwischen Größen der Physics-Engine und der Zeichenebene der EA.
-     *
-     * @param pixelPerMeter Die Anzahl an Pixeln, die genau einen Meter ausmachen.<br> <i>Die
-     *                      Größe ist unabhängig vom Kamerazoom.</i><br> <b>Einheit: [px/m]</b>
-     */
-    public void setPixelPerMeter(float pixelPerMeter) {
-        if (pixelPerMeterRequested) {
-            throw new IllegalStateException("Die Pixel-Pro-Meter-Umrechnungszahl darf nach Arbeit mit den Actor-Objekten der entsprechenden WorldHandler-Umgebung nicht geändert werden.");
-        }
-
-        this.pixelPerMeter = pixelPerMeter;
-    }
+    private final Collection<FixturePair> contactsToIgnore = new ArrayList<>();
 
     /**
      * Erstellt eine neue standardisierte Physik ohne Schwerkraft.

@@ -4,7 +4,7 @@ import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.internal.annotations.Internal;
-import ea.internal.graphics.Frame;
+import ea.internal.graphics.AnimationFrame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 
@@ -127,7 +127,7 @@ public class Figur implements EduActor {
         if (!bildpfad.toLowerCase().endsWith(".gif")) {
             throw new RuntimeException("Der agegebene Bildpfad muss eine GIF-Datei sein und auf \".gif\" enden. " + "Der angegebene Bildpfad war " + bildpfad);
         }
-        Animation animation = Animation.createFromAnimatedGif(Spiel.getActiveScene(), bildpfad);
+        Animation animation = Animation.createFromAnimatedGif(Spiel.getActiveScene(), bildpfad, .3f, .3f);
         addStateWithScaling(zustandsName, animation);
     }
 
@@ -141,7 +141,7 @@ public class Figur implements EduActor {
      * @param anzahlY      Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
     public void zustandHinzufuegenVonSpritesheet(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
-        Animation animation = Animation.createFromSpritesheet(Spiel.getActiveScene(), 250, bildpfad, anzahlX, anzahlY);
+        Animation animation = Animation.createFromSpritesheet(Spiel.getActiveScene(), 250, bildpfad, anzahlX, anzahlY, .3f, .3f);
         addStateWithScaling(zustandsName, animation);
     }
 
@@ -152,7 +152,7 @@ public class Figur implements EduActor {
      * @param bildpfade    Die Pfade der Animationsframes in korrekter Reihenfolge.
      */
     public void zustandHinzufuegenVonBildern(String zustandsName, String... bildpfade) {
-        Animation animation = Animation.createFromImages(Spiel.getActiveScene(), 250, bildpfade);
+        Animation animation = Animation.createFromImages(Spiel.getActiveScene(), 250, .3f, .3f, bildpfade);
         addStateWithScaling(zustandsName, animation);
     }
 
@@ -165,7 +165,7 @@ public class Figur implements EduActor {
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
     public void zustandHinzufuegenNachPraefix(String zustandName, String verzeichnisPfad, String praefix) {
-        Animation animation = Animation.createFromImagesPrefix(Spiel.getActiveScene(), 250, verzeichnisPfad, praefix);
+        Animation animation = Animation.createFromImagesPrefix(Spiel.getActiveScene(), 250, .3f, .3f, verzeichnisPfad, praefix);
         statefulAnimation.addState(zustandName, animation);
     }
 
@@ -211,10 +211,10 @@ public class Figur implements EduActor {
 
     private void addStateWithScaling(String stateName, Animation animation) {
         if (scale != 1f) {
-            Frame[] standardFrames = animation.getFrames();
-            Frame[] resizedFrames = new Frame[standardFrames.length];
+            AnimationFrame[] standardFrames = animation.getFrames();
+            AnimationFrame[] resizedFrames = new AnimationFrame[standardFrames.length];
             for (int i = 0; i < standardFrames.length; i++) {
-                resizedFrames[i] = new Frame(getScaledImage(standardFrames[i].getImage(), scale), standardFrames[i].getDuration());
+                resizedFrames[i] = new AnimationFrame(getScaledImage(standardFrames[i].getImage(), scale), standardFrames[i].getDuration());
             }
             if (statefulAnimation.hasState(stateName)) {
                 throw new IllegalArgumentException("Der Zustand " + stateName + " existiert bereits in dieser Figur");

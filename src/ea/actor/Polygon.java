@@ -17,11 +17,6 @@ import java.awt.*;
 @API
 public class Polygon extends Geometry {
     /**
-     * Die Punkte
-     */
-    private final Vector[] points;
-
-    /**
      * Die Punkte, die das Polygon beschreiben
      */
     private final int[] px, py;
@@ -37,7 +32,7 @@ public class Polygon extends Geometry {
             Vec2[] vectors = new Vec2[points.length];
 
             for (int i = 0; i < points.length; i++) {
-                vectors[i] = new Vec2(points[i].x, points[i].y).mul(1 / scene.getWorldHandler().getPixelPerMeter());
+                vectors[i] = points[i].toVec2();
             }
 
             PolygonShape shape = new PolygonShape();
@@ -49,8 +44,6 @@ public class Polygon extends Geometry {
         if (points.length < 3) {
             throw new RuntimeException("Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein gültiges Polygon zu beschreiben.");
         }
-
-        this.points = points.clone();
 
         this.px = new int[points.length];
         this.py = new int[points.length];

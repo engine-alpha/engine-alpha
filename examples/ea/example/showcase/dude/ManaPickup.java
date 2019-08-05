@@ -10,16 +10,13 @@ import ea.collision.CollisionListener;
  */
 public class ManaPickup extends Animation implements CollisionListener<PlayerCharacter> {
 
-    /**
-     *
-     */
     public ManaPickup(Scene scene) {
-        super(scene, Animation.createFromSpritesheet(scene, 100, "game-assets/dude/gem_blue.png", 6, 1));
+        super(scene, Animation.createFromSpritesheet(scene, 100, "game-assets/dude/gem_blue.png", 6, 1, .2f, .2f));
     }
 
     @Override
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
-        //Ich wurde aufgesammelt!
+        // Ich wurde aufgesammelt!
         collisionEvent.getColliding().gotItem(Item.ManaPickup);
         destroy();
     }

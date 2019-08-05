@@ -1,9 +1,11 @@
 package ea.internal.graphics;
 
 //import com.sun.corba.se.impl.orbutil.graph.Graph;
+
 import ea.internal.annotations.Internal;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
@@ -11,7 +13,7 @@ import java.awt.image.BufferedImage;
  * @author Nicklas Keller
  */
 @Internal
-public final class Frame {
+public final class AnimationFrame {
     /**
      * Das Bild, das zu diesem Frame gehört.
      */
@@ -27,7 +29,7 @@ public final class Frame {
      * @param duration  Die Dauer, die dieser Frame aktiv bleibt.
      */
     @Internal
-    public Frame(BufferedImage image, int duration) {
+    public AnimationFrame(BufferedImage image, int duration) {
         this.image = image;
         this.duration = duration;
     }
@@ -49,15 +51,18 @@ public final class Frame {
 
     /**
      * Rendert den Frame (an der entsprechenden Position des Graphics Objekts)
-     * @param g2d   Das Graphics Objekt
+     * @param g   Das Graphics Objekt
      */
     @Internal
-    public void render(Graphics2D g2d, boolean flipHorizontal, boolean flipVertical) {
-        g2d.drawImage(image,
+    public void render(Graphics2D g, float width, float height, boolean flipHorizontal, boolean flipVertical) {
+        AffineTransform pre = g.getTransform();
+        g.scale(width / this.image.getWidth(), height / this.image.getHeight());
+        g.drawImage(image,
                 flipHorizontal ? image.getWidth() : 0,
                 -image.getHeight() + (flipVertical ? image.getHeight() : 0),
                 (flipHorizontal ? -1 : 1)*image.getWidth(),
                 (flipVertical ? -1 : 1)*image.getHeight(),
                 null);
+        g.setTransform(pre);
     }
 }

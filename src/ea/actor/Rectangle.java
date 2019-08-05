@@ -66,10 +66,7 @@ public class Rectangle extends Geometry {
      * @param height Die Höhe des Rechtecks
      */
     public Rectangle(Scene scene, float width, float height) {
-        this(scene, width, height, () -> ShapeHelper.createRectangularShape(
-                width / scene.getWorldHandler().getPixelPerMeter(),
-                height / scene.getWorldHandler().getPixelPerMeter()
-        ));
+        this(scene, width, height, () -> ShapeHelper.createRectangularShape(width, height));
     }
 
     public Rectangle(Scene scene, float width, float height, Supplier<Shape> shapeSupplier) {

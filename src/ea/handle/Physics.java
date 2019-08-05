@@ -302,7 +302,7 @@ public class Physics {
      * </ul>
      */
     @API
-    public boolean testStanding() {
+    public boolean isGrounded() {
         return actor.getPhysicsHandler().isGrounded();
     }
 

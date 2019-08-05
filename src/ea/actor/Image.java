@@ -39,36 +39,22 @@ public class Image extends Actor {
      */
     private final BufferedImage image;
 
-    private final float scale;
+    private final float width;
+    private final float height;
 
     /**
-     * Der Konstruktor lädt das Image und erlaubt die Nutung von Spritesheets.
+     * Der Konstruktor lädt das Bild.
      *
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
     @API
-    public Image(Scene scene, String filepath, float scale) {
-        super(scene, () -> {
-            BufferedImage image = ImageLoader.load(filepath);
+    public Image(Scene scene, String filepath, float width, float height) {
+        super(scene, () -> ShapeHelper.createRectangularShape(width, height));
 
-            return ShapeHelper.createRectangularShape(scale * image.getWidth() / scene.getWorldHandler().getPixelPerMeter(), scale * image.getHeight() / scene.getWorldHandler().getPixelPerMeter());
-        });
-        if (scale <= 0) {
-            throw new RuntimeException("Skalierungswert darf nicht <= 0 sein.");
-        }
-        this.scale = scale;
+        this.width = width;
+        this.height = height;
 
         this.image = ImageLoader.load(filepath);
-    }
-
-    /**
-     * Der Konstruktor lädt das Image und erlaubt die Nutung von Spritesheets.
-     *
-     * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
-     */
-    @API
-    public Image(Scene scene, String filepath) {
-        this(scene, filepath, 1f);
     }
 
     @API
@@ -87,8 +73,8 @@ public class Image extends Actor {
     @Override
     public void render(Graphics2D g) {
         AffineTransform pre = g.getTransform();
-        g.scale(scale, scale);
-        g.drawImage(this.image, 0, -this.image.getHeight(), null);
+        g.scale(width / this.image.getWidth(), height / this.image.getHeight());
+        g.drawImage(this.image, 0, -image.getHeight(), null);
         g.setTransform(pre);
     }
 }

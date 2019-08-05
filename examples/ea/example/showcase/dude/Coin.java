@@ -30,7 +30,7 @@ import ea.collision.CollisionListener;
  */
 public class Coin extends Animation implements CollisionListener<PlayerCharacter> {
     public Coin(Scene scene) {
-        super(scene, Animation.createFromAnimatedGif(scene, "game-assets/dude/coin.gif"));
+        super(scene, Animation.createFromAnimatedGif(scene, "game-assets/dude/coin.gif", .2f, .2f));
     }
 
     @Override

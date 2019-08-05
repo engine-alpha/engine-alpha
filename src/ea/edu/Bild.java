@@ -18,7 +18,7 @@ public class Bild implements EduActor {
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
     public Bild(float x, float y, String filepath) {
-        image = new Image(Spiel.getActiveScene(), filepath);
+        image = new Image(Spiel.getActiveScene(), filepath, 1, 1); // TODO width, height
         eduSetup();
         image.position.set(x, y);
     }

@@ -24,6 +24,7 @@ import ea.internal.annotations.API;
 import org.jbox2d.collision.shapes.CircleShape;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 /**
  * Beschreibt einen Kreis.
@@ -34,7 +35,6 @@ import java.awt.*;
 @SuppressWarnings ( "serial" )
 public class Circle extends Geometry {
     private float diameter;
-    private int diameterInt;
 
     /**
      * Konstruktor.
@@ -44,14 +44,13 @@ public class Circle extends Geometry {
     public Circle(Scene scene, float diameter) {
         super(scene, () -> {
             CircleShape shape = new CircleShape();
-            shape.m_radius = diameter / 2 / scene.getWorldHandler().getPixelPerMeter();
+            shape.m_radius = diameter / 2;
             shape.m_p.set(shape.m_radius, shape.m_radius);
 
             return shape;
         });
 
         this.diameter = diameter;
-        this.diameterInt = Math.round(diameter);
         this.setColor(Color.WHITE);
     }
 
@@ -77,7 +76,10 @@ public class Circle extends Geometry {
 
     @Override
     public void render(Graphics2D g) {
+        AffineTransform pre = g.getTransform();
+        g.scale(diameter, diameter);
         g.setColor(getColor());
-        g.fillOval(0, -this.diameterInt, this.diameterInt, this.diameterInt);
+        g.fillOval(0, -1, 1, 1);
+        g.setTransform(pre);
     }
 }

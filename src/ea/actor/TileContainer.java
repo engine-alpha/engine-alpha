@@ -29,17 +29,12 @@ public class TileContainer extends Actor {
     /**
      * Die Breite eines Tiles (original) in px.
      */
-    private final int tileWidth;
+    private final float tileWidth;
 
     /**
      * Die Höhe eines Tiles (original) in px.
      */
-    private final int tileHeight;
-
-    /**
-     * Scale-Faktor, um das das Objekt gerendert wird.
-     */
-    private final float scale;
+    private final float tileHeight;
 
     /**
      * Erstellt einen <b>leeren</b> Tile-Container. Er ist erst "sichtbar", wenn Tiles gesetzt werden.
@@ -48,39 +43,23 @@ public class TileContainer extends Actor {
      * @param numY       Die Anzahl an Tiles in Y-Richtung.
      * @param tileWidth  Die Breite eines Tiles in Pixel.
      * @param tileHeight Die Höhe eines Tiles in Pixel.
-     * @param scale      Der Faktor, um das die Tiles skaliert werden sollen (<b>hat keinen Einfluss auf die nötige
-     *                   Auflösung der Quell-Tiles</b>).
      *
      * @see #setTileAt(int, int, String)
      */
     @API
-    public TileContainer(Scene scene, int numX, int numY, int tileWidth, int tileHeight, float scale) {
-        super(scene, () -> ShapeHelper.createRectangularShape(scale * tileWidth * numX / scene.getWorldHandler().getPixelPerMeter(), scale * tileHeight * numY / scene.getWorldHandler().getPixelPerMeter()));
+    public TileContainer(Scene scene, int numX, int numY, float tileWidth, float tileHeight) {
+        super(scene, () -> ShapeHelper.createRectangularShape(tileWidth * numX, tileHeight * numY));
 
-        this.scale = scale;
         if (numX <= 0 || numY <= 0) {
             throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");
         }
         if (tileWidth <= 0 || tileHeight <= 0) {
             throw new IllegalArgumentException("Breite und Höhe der Tiles müssen jeweils > 0 sein.");
         }
+
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.tiles = new Tile[numX][numY];
-    }
-
-    /**
-     * Erstellt einen <b>leeren</b> Tile-Container. Er ist erst "sichtbar", wenn Tiles gesetzt werden.
-     *
-     * @param numX       Die Anzahl an Tiles in X-Richtung.
-     * @param numY       Die Anzahl an Tiles in Y-Richtung.
-     * @param tileWidth  Die Breite eines Tiles in Pixel.
-     * @param tileHeight Die Höhe eines Tiles in Pixel.
-     *
-     * @see #setTileAt(int, int, String)
-     */
-    public TileContainer(Scene scene, int numX, int numY, int tileWidth, int tileHeight) {
-        this(scene, numX, numY, tileWidth, tileHeight, 1f);
     }
 
     /**
@@ -94,7 +73,7 @@ public class TileContainer extends Actor {
      * @see #setTileAt(int, int, String)
      */
     @API
-    public TileContainer(Scene scene, int numX, int numY, int tileSize) {
+    public TileContainer(Scene scene, int numX, int numY, float tileSize) {
         this(scene, numX, numY, tileSize, tileSize);
     }
 
@@ -114,13 +93,8 @@ public class TileContainer extends Actor {
             return;
         }
 
-        //Load in new Tile in Atlas (issues like non-existent files are thrown as RuntimeException)
-        BufferedImage tileImage = ImageLoader.load(imagePath);
-        if (tileImage.getWidth() != tileWidth || tileImage.getHeight() != tileHeight) {
-            throw new RuntimeException("Das Bild hatte nicht die korrekten Maße (" + tileWidth + "x" + tileHeight + "). Die Maße waren: " + tileImage.getWidth() + "x" + tileImage.getHeight());
-        }
-
-        tiles[x][y] = new BufferedImageTile(tileImage);
+        // Load in new Tile in Atlas (issues like non-existent files are thrown as RuntimeException)
+        tiles[x][y] = new BufferedImageTile(ImageLoader.load(imagePath), tileWidth, tileHeight);
     }
 
     /**
@@ -139,15 +113,19 @@ public class TileContainer extends Actor {
             throw new IllegalArgumentException("Der imagePath kann nicht null sein.");
         }
 
-        final String tileKey = imagePath + "|" + tileWidth + "|" + tileHeight + "|" + imageIndexX + "|" + imageIndexY;
+        BufferedImage image = ImageLoader.load(imagePath);
+        int tileWidth = image.getWidth() / tiles.length;
+        int tileHeight = image.getHeight() / tiles[0].length;
+
+        String tileKey = imagePath + "|" + tileWidth + "|" + tileHeight + "|" + imageIndexX + "|" + imageIndexY;
 
         Tile newTile;
 
         // Check if Tile exists in TileAtlas
         if (!tileAtlas.containsKey(tileKey)) {
             // Load in new Tile in Atlas (issues like non-existent files are thrown as RuntimeException)
-            BufferedImage tileImage = ImageLoader.load(imagePath).getSubimage(imageIndexX * tileWidth, imageIndexY * tileHeight, tileWidth, tileHeight);
-            tileAtlas.put(tileKey, new BufferedImageTile(tileImage));
+            BufferedImage tileImage = image.getSubimage(imageIndexX * tileWidth, imageIndexY * tileHeight, tileWidth, tileHeight);
+            tileAtlas.put(tileKey, new BufferedImageTile(tileImage, tileWidth, tileHeight));
         }
         newTile = tileAtlas.get(tileKey);
         if (newTile.getWidth() != tileWidth || newTile.getHeight() != tileHeight) {
@@ -179,10 +157,9 @@ public class TileContainer extends Actor {
     @Override
     public void render(Graphics2D g) {
         final AffineTransform before = g.getTransform();
-        int offset = tiles[0].length * tileHeight;
+        float offset = tiles[0].length * tileHeight;
 
         try {
-            g.scale(scale, scale);
             g.translate(0, -offset);
 
             for (int x = 0; x < tiles.length; x++) {
@@ -190,7 +167,13 @@ public class TileContainer extends Actor {
                     if (tiles[x][y] == null) {
                         continue;
                     }
-                    tiles[x][y].render(g, tileWidth * x, tileHeight * y);
+
+                    float tx = tiles[x][y].getWidth() * x;
+                    float ty = tiles[x][y].getHeight() * y;
+
+                    g.translate(tx, ty);
+                    tiles[x][y].render(g);
+                    g.translate(-tx, -ty);
                 }
             }
         } finally {
@@ -203,34 +186,41 @@ public class TileContainer extends Actor {
      * nur einmal im Atlas.</i>
      */
     @Internal
-    private abstract class Tile {
-        abstract void render(Graphics2D g, int dX, int dY);
-        abstract int getWidth();
-        abstract int getHeight();
+    private abstract static class Tile {
+        abstract void render(Graphics2D g);
+        abstract float getWidth();
+        abstract float getHeight();
     }
 
     @Internal
-    private class BufferedImageTile extends Tile {
+    private static class BufferedImageTile extends Tile {
         private final BufferedImage bufferedImage;
+        private final float width;
+        private final float height;
 
-        private BufferedImageTile(BufferedImage bufferedImage) {
+        private BufferedImageTile(BufferedImage bufferedImage, float width, float height) {
             this.bufferedImage = bufferedImage;
+            this.width = width;
+            this.height = height;
         }
 
         @Override
         @Internal
-        void render(Graphics2D g, int dX, int dY) {
-            g.drawImage(bufferedImage, null, dX, dY);
+        void render(Graphics2D g) {
+            AffineTransform pre = g.getTransform();
+            g.scale(width / bufferedImage.getWidth(), height / bufferedImage.getHeight());
+            g.drawImage(this.bufferedImage, null, 0, 0);
+            g.setTransform(pre);
         }
 
         @Override
-        int getWidth() {
-            return bufferedImage.getWidth();
+        float getWidth() {
+            return width;
         }
 
         @Override
-        int getHeight() {
-            return bufferedImage.getHeight();
+        float getHeight() {
+            return height;
         }
     }
 }

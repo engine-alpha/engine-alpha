@@ -10,10 +10,12 @@ import ea.actor.Particle;
 import ea.actor.StatefulAnimation;
 import ea.animation.Interpolator;
 import ea.animation.ValueAnimator;
+import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.SinusFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.example.showcase.jump.Enemy;
+import ea.handle.Physics;
 import ea.input.KeyListener;
 import ea.sound.Sound;
 
@@ -22,10 +24,10 @@ import java.awt.event.KeyEvent;
 
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
-    private static final float MAX_SPEED = 5000;
-    public static final int JUMP_FORCE = +2000;
-    public static final int SMASH_FORCE = -15000;
-    public static final int BOTTOM_OUT = -500;
+    private static final float MAX_SPEED = 100;
+    public static final int JUMP_FORCE = +200;
+    public static final int SMASH_FORCE = -1500;
+    public static final int BOTTOM_OUT = -500/30;
     private static final int DOUBLE_JUMP_COST = 3;
     private static final int MANA_PICKUP_BONUS = 1;
 
@@ -48,6 +50,8 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private final int MAX_MANA = 10;
 
     private boolean didDoubleJump = false;
+
+    private boolean rocketMode = false;
 
     private final HUD hud;
 
@@ -75,21 +79,21 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private Vector smashForce = Vector.NULL;
 
     public PlayerCharacter(DudeDemo scene, HUD hud) {
-        super(scene, 64, 64);
+        super(scene, 1, 1);
         this.hud = hud;
         this.master = scene;
 
         // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         String basePath = "game-assets/dude/char/spr_m_traveler_";
 
-        addState("idle", Animation.createFromAnimatedGif(scene, basePath + "idle_anim.gif"));
-        addState("walking", Animation.createFromAnimatedGif(scene, basePath + "walk_anim.gif"));
-        addState("running", Animation.createFromAnimatedGif(scene, basePath + "run_anim.gif"));
-        addState("jumpingUp", Animation.createFromAnimatedGif(scene, basePath + "jump_1up_anim.gif"));
-        addState("midair", Animation.createFromAnimatedGif(scene, basePath + "jump_2midair_anim.gif"));
-        addState("falling", Animation.createFromAnimatedGif(scene, basePath + "jump_3down_anim.gif"));
-        addState("landing", Animation.createFromAnimatedGif(scene, basePath + "jump_4land_anim.gif"));
-        addState("smashing", Animation.createFromAnimatedGif(scene, basePath + "jump_4land_anim.gif"));
+        addState("idle", Animation.createFromAnimatedGif(scene, basePath + "idle_anim.gif", 1, 1));
+        addState("walking", Animation.createFromAnimatedGif(scene, basePath + "walk_anim.gif", 1, 1));
+        addState("running", Animation.createFromAnimatedGif(scene, basePath + "run_anim.gif", 1, 1));
+        addState("jumpingUp", Animation.createFromAnimatedGif(scene, basePath + "jump_1up_anim.gif", 1, 1));
+        addState("midair", Animation.createFromAnimatedGif(scene, basePath + "jump_2midair_anim.gif", 1, 1));
+        addState("falling", Animation.createFromAnimatedGif(scene, basePath + "jump_3down_anim.gif", 1, 1));
+        addState("landing", Animation.createFromAnimatedGif(scene, basePath + "jump_4land_anim.gif", 1, 1));
+        addState("smashing", Animation.createFromAnimatedGif(scene, basePath + "jump_4land_anim.gif", 1, 1));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -119,7 +123,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
      * Wird ausgeführt, wenn ein Sprungbefehl (W) angekommen ist.
      */
     public void tryJumping() {
-        if (physics.testStanding()) {
+        if (physics.isGrounded()) {
             physics.applyImpulse(new Vector(0, JUMP_FORCE));
             setState("jumpingUp");
         } else if (!didDoubleJump && mana >= DOUBLE_JUMP_COST && !getCurrentState().equals("smashing")) {
@@ -183,6 +187,23 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         float impulse = desiredVelocity - velocity.x;
         physics.applyForce(new Vector(impulse, 0));
 
+        if (rocketMode) {
+            physics.applyImpulse(new Vector(0, 10));
+
+            Particle particle = new Particle(getScene(), 0.1f, 500);
+            particle.position.set(position.getCenter().subtract(new Vector((float)Math.random() * 0.1f, .45f)));
+            particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), -2 * ((float) Math.random())));
+            particle.setColor(Color.RED);
+            particle.setBodyType(Physics.Type.DYNAMIC);
+            particle.setLayer(-1);
+
+            ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
+            animator.addCompletionListener((value) -> getScene().removeFrameUpdateListener(animator));
+            getScene().addFrameUpdateListener(animator);
+
+            getScene().add(particle);
+        }
+
         switch (getCurrentState()) {
             case "jumpingUp":
                 if (velocity.y < 0) {
@@ -196,9 +217,9 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 didDoubleJump = false;
                 if (velocity.y > 0.1f) {
                     setState("midair");
-                } else if (Math.abs(velocity.x) > 550f) {
+                } else if (Math.abs(velocity.x) > 5.5f) {
                     changeState("running");
-                } else if (Math.abs(velocity.x) > 10f) {
+                } else if (Math.abs(velocity.x) > .1f) {
                     changeState("walking");
                 } else {
                     changeState("idle");
@@ -251,6 +272,9 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             case KeyEvent.VK_C:
                 physics.setVelocity(physics.getVelocity());
                 break;
+            case KeyEvent.VK_R:
+                rocketMode = true;
+                break;
         }
     }
 
@@ -283,6 +307,9 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                     }
                 }
                 break;
+            case KeyEvent.VK_R:
+                rocketMode = false;
+                break;
         }
     }
 
@@ -295,7 +322,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         boolean falling = getCurrentState().equals("falling");
         boolean smashing = getCurrentState().equals("smashing");
 
-        if ((falling || smashing) && physics.testStanding()) {
+        if ((falling || smashing) && physics.isGrounded()) {
             setState("landing");
             smashForce = Vector.NULL;
 

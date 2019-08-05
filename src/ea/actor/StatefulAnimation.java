@@ -5,7 +5,7 @@ import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.graphics.Frame;
+import ea.internal.graphics.AnimationFrame;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class StatefulAnimation extends Actor {
     /**
      * Speichert die Frames (= "Animation") zu jedem State
      */
-    private final HashMap<String, Frame[]> states = new HashMap<>();
+    private final HashMap<String, AnimationFrame[]> states = new HashMap<>();
 
     /**
      * Speichert den Übergang zum Folgestate von jedem State. Ordnet standardmäßig jedem State sich selbst als
@@ -37,25 +37,24 @@ public class StatefulAnimation extends Actor {
     private final HashMap<String, String> stateTransitions = new HashMap<>();
 
     private String currentState = null;
-    private Frame[] currentAnimation = null;
+    private AnimationFrame[] currentAnimation = null;
 
     private int currentTime = 0;
     private int currentIndex = 0;
 
-    private int width;
-    private int height;
+    private float width;
+    private float height;
 
     private boolean flipHorizontal = false;
     private boolean flipVertical = false;
 
-    public StatefulAnimation(Scene scene, int width, int height) {
-        super(scene, () -> ShapeHelper.createRectangularShape(
-                width / scene.getWorldHandler().getPixelPerMeter(),
-                height / scene.getWorldHandler().getPixelPerMeter()
-        ));
+    public StatefulAnimation(Scene scene, float width, float height) {
+        super(scene, () -> ShapeHelper.createRectangularShape(width, height));
 
         this.width = width;
         this.height = height;
+
+        // TODO Check that all frames have the same size
 
         getScene().addFrameUpdateListener(frameUpdateListener);
         addDestructionListener(() -> getScene().removeFrameUpdateListener(frameUpdateListener));
@@ -82,14 +81,8 @@ public class StatefulAnimation extends Actor {
     }
 
     @Internal
-    public void addStateRaw(String stateName, Frame[] frames) {
-        for (Frame frame : frames) {
-            if (this.width != frame.getImage().getWidth() || this.height != frame.getImage().getHeight()) {
-                throw new RuntimeException("Wrong image dimensions");
-            }
-        }
-
-        Frame[] clone = frames.clone();
+    public void addStateRaw(String stateName, AnimationFrame[] frames) {
+        AnimationFrame[] clone = frames.clone();
 
         // Add Name->Animation pairing
         states.put(stateName, clone);
@@ -243,14 +236,14 @@ public class StatefulAnimation extends Actor {
             throw new RuntimeException("Der Zustand ist nicht bekannt: " + stateName);
         }
 
-        for (Frame frame : states.get(stateName)) {
+        for (AnimationFrame frame : states.get(stateName)) {
             frame.setDuration(frameDuration);
         }
     }
 
     /* ~~ Internal Functions ~~ */
 
-    private final FrameUpdateListener frameUpdateListener = (l) -> internalOnFrameUpdate(l);
+    private final FrameUpdateListener frameUpdateListener = this::internalOnFrameUpdate;
 
     /**
      * Methode wird frameweise über einen anononymen Listener aufgerufen.
@@ -263,7 +256,7 @@ public class StatefulAnimation extends Actor {
 
         currentTime += frameDuration;
 
-        Frame currentFrame = currentAnimation[currentIndex];
+        AnimationFrame currentFrame = currentAnimation[currentIndex];
 
         while (this.currentTime > currentFrame.getDuration()) {
             this.currentTime -= currentFrame.getDuration();
@@ -273,7 +266,7 @@ public class StatefulAnimation extends Actor {
                 currentIndex = 0;
 
                 String nextState = stateTransitions.get(currentState);
-                Frame[] nextAnimation = states.get(nextState);
+                AnimationFrame[] nextAnimation = states.get(nextState);
 
                 currentState = nextState;
                 currentAnimation = nextAnimation;
@@ -293,6 +286,6 @@ public class StatefulAnimation extends Actor {
             return;
         }
 
-        currentAnimation[currentIndex].render(g, flipHorizontal, flipVertical);
+        currentAnimation[currentIndex].render(g, width, height, flipHorizontal, flipVertical);
     }
 }

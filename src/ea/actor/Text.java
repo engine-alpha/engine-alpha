@@ -87,13 +87,14 @@ public class Text extends Actor {
      */
     @API
     public Text(Scene scene, String content, String fontName, int size, int type) {
+        // TODO Correct size after pixel per meter removal
         super(scene, () -> {
             Font font = FontLoader.loadByName(fontName).deriveFont(type, size);
             FontMetrics fontMetrics = ea.internal.util.FontMetrics.get(font);
 
             return ShapeHelper.createRectangularShape(
-                    fontMetrics.stringWidth(content) / scene.getWorldHandler().getPixelPerMeter(),
-                    fontMetrics.getHeight() / scene.getWorldHandler().getPixelPerMeter()
+                    fontMetrics.stringWidth(content),
+                    fontMetrics.getHeight()
             );
         });
 

@@ -45,8 +45,6 @@ public class Particle extends Circle implements FrameUpdateListener {
 
     //@Override
     /*protected PhysicsHandler createBodyHandler(Shape shape) {
-        getScene().getWorldHandler().lockPixelPerMeter();
-
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = Physics.Type.PASSIVE.convert();
         bodyDef.active = true;

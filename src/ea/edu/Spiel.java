@@ -234,7 +234,7 @@ public class Spiel {
     }
 
     public void setzePixelProMeter(float pixelProMeter) {
-        getActiveScene().getWorldHandler().setPixelPerMeter(pixelProMeter);
+        // TODO getActiveScene().getWorldHandler().setPixelPerMeter(pixelProMeter);
     }
 
     /* ~~~ Dialogues ~~~ */

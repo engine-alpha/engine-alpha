@@ -67,8 +67,8 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         left.setBodyType(Physics.Type.STATIC);
         right.setBodyType(Physics.Type.STATIC);
-        left.physics.setElasticity(.9f);
-        right.physics.setElasticity(.9f);
+        left.physics.setElasticity(15f);
+        right.physics.setElasticity(15f);
 
         Rectangle r1 = new Rectangle(this, Showcases.WIDTH, 10);
         r1.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
@@ -96,7 +96,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         r1.addCollisionListener(event -> remove(event.getColliding()));
 
-        setGravity(new Vector(0, -10));
+        setGravity(new Vector(0, -600));
 
         this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), ValueAnimator.Mode.REPEATED));
     }
@@ -107,7 +107,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         FrameUpdateListener emitter = new PeriodicTask(10, () -> {
             Particle particle = new Particle(Particles.this, 3, 500);
             particle.position.set(k.position.getCenter().subtract(new Vector(1, 1)));
-            particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), 2 * ((float) Math.random() - .5f)));
+            particle.physics.applyImpulse(new Vector(60 * ((float) Math.random() - .5f), 60 * ((float) Math.random() - .5f)));
             particle.setColor(Color.RED);
             particle.setBodyType(Physics.Type.DYNAMIC);
             particle.setLayer(-1);

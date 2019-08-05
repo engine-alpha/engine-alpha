@@ -43,15 +43,15 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         //Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         final String pathbase = "game-assets/dude/char/spr_m_traveler_";
 
-        Animation idle = Animation.createFromAnimatedGif(scene, pathbase + "idle_anim.gif");
+        Animation idle = Animation.createFromAnimatedGif(scene, pathbase + "idle_anim.gif", 1, 1);
         addState("idle", idle);
 
-        addState("walking", Animation.createFromAnimatedGif(scene, pathbase + "walk_anim.gif"));
-        addState("running", Animation.createFromAnimatedGif(scene, pathbase + "run_anim.gif"));
-        addState("jumpingUp", Animation.createFromAnimatedGif(scene, pathbase + "jump_1up_anim.gif"));
-        addState("midair", Animation.createFromAnimatedGif(scene, pathbase + "jump_2midair_anim.gif"));
-        addState("falling", Animation.createFromAnimatedGif(scene, pathbase + "jump_3down_anim.gif"));
-        addState("landing", Animation.createFromAnimatedGif(scene, pathbase + "jump_4land_anim.gif"));
+        addState("walking", Animation.createFromAnimatedGif(scene, pathbase + "walk_anim.gif", 1, 1));
+        addState("running", Animation.createFromAnimatedGif(scene, pathbase + "run_anim.gif", 1, 1));
+        addState("jumpingUp", Animation.createFromAnimatedGif(scene, pathbase + "jump_1up_anim.gif", 1, 1));
+        addState("midair", Animation.createFromAnimatedGif(scene, pathbase + "jump_2midair_anim.gif", 1, 1));
+        addState("falling", Animation.createFromAnimatedGif(scene, pathbase + "jump_3down_anim.gif", 1, 1));
+        addState("landing", Animation.createFromAnimatedGif(scene, pathbase + "jump_4land_anim.gif", 1, 1));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -68,7 +68,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
      * Wird ausgeführt, wenn ein Sprungbefehl (Leertaste) angekommen ist.
      */
     public void tryJumping() {
-        if (physics.testStanding()) {
+        if (physics.isGrounded()) {
             // Figur steht -> Jump
             physics.applyImpulse(new Vector(0, +2000));
             setState("jumpingUp");
@@ -129,7 +129,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     @Override
     public void onCollision(CollisionEvent<Actor> collisionEvent) {
         if (collisionEvent.getColliding() instanceof Enemy) return;
-        if (getCurrentState().equals("falling") && physics.testStanding()) {
+        if (getCurrentState().equals("falling") && physics.isGrounded()) {
             setState("landing");
         }
     }
