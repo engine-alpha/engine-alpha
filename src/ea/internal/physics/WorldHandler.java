@@ -19,10 +19,8 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -66,18 +64,18 @@ public class WorldHandler implements ContactListener {
     /**
      * Hashmap, die alle spezifisch angegebenen Actor-Actor Kollisionsüberwachungen innehat.
      */
-    private final HashMap<Body, List<Checkup>> specificCollisionListeners = new HashMap<>();
+    private final Map<Body, List<Checkup>> specificCollisionListeners = new ConcurrentHashMap<>();
 
     /**
      * Hashmap, die sämtliche allgemeinen CollisionListener-Listener innehat.
      */
-    private final HashMap<Body, List<CollisionListener<Actor>>> generalCollisonListeners = new HashMap<>();
+    private final Map<Body, List<CollisionListener<Actor>>> generalCollisonListeners = new HashMap<>();
 
     /**
      * Diese Hashmap enthält sämtliche Bodies, die in der World existieren und mapt diese auf die
      * zugehörigen Actor-Objekte.
      */
-    private final HashMap<Body, Actor> worldMap = new HashMap<>();
+    private final Map<Body, Actor> worldMap = new HashMap<>();
 
     /**
      * Diese Liste enthält die (noch nicht beendeten) Kontakte, die nicht aufgelöst werden sollen.
@@ -281,7 +279,7 @@ public class WorldHandler implements ContactListener {
     private void removeFromBlacklist(Contact contact) {
         FixturePair fixturePair = null;
         for (FixturePair fp : contactsToIgnore) {
-            if (fp.validate(contact.m_fixtureA, contact.m_fixtureB)) {
+            if (fp.matches(contact.m_fixtureA, contact.m_fixtureB)) {
                 //MATCH
                 fixturePair = fp;
                 break;
@@ -324,7 +322,7 @@ public class WorldHandler implements ContactListener {
         //}
         for (FixturePair bP : contactsToIgnore) {
 
-            if (bP.validate(contact.m_fixtureA, contact.m_fixtureB)) {
+            if (bP.matches(contact.m_fixtureA, contact.m_fixtureB)) {
                 //MATCH
                 //System.out.println("MATCH");
                 contact.setEnabled(false);
@@ -404,50 +402,54 @@ public class WorldHandler implements ContactListener {
     /**
      * Meldet ein allgemeines KR-Interface in dieser World an.
      *
-     * @param kr    Das anzumeldende KR Interface
-     * @param actor Der Actor (KR Interface wird bei jeder Kollision des Actors informiert)
+     * @param listener Das anzumeldende KR Interface
+     * @param actor    Der Actor (KR Interface wird bei jeder Kollision des Actors informiert)
      */
     @Internal
-    public static void allgemeinesKollisionsReagierbarEingliedern(CollisionListener<Actor> kr, Actor actor) {
-        final WorldHandler worldHandler = actor.getPhysicsHandler().getWorldHandler();
-        if (worldHandler == null) {
-            Logger.error("Kollision", "Das anzumeldende Actor-Objekt war noch nicht an der Wurzel angemeldet. " + "Erst an der Wurzel anmelden, bevor Kollisionsanmeldungen durchgeführt werden.");
+    public static void addGenericCollisionListener(CollisionListener<Actor> listener, Actor actor) {
+        final WorldHandler actorHandler = actor.getPhysicsHandler().getWorldHandler();
+
+        if (actorHandler == null) {
             return;
         }
 
         Body body = actor.getPhysicsHandler().getBody();
+
         if (body == null) {
-            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" + " angemeldet.");
-            return;
+            throw new IllegalStateException("Body is missing on an Actor with an existing WorldHandler");
         }
 
-        List<CollisionListener<Actor>> bodyList = worldHandler.generalCollisonListeners.get(body);
-        if (bodyList == null) {
-            bodyList = new CopyOnWriteArrayList<>();
-            worldHandler.generalCollisonListeners.put(body, bodyList);
-        }
-
-        bodyList.add(kr);
+        actorHandler.generalCollisonListeners.computeIfAbsent(body, key -> new CopyOnWriteArrayList<>()).add(listener);
     }
 
     /**
-     * Meldet ein spezifisches KR-Interface in dieser World an.
+     * Meldet ein spezifisches CollisionListener-Interface in dieser World an.
      *
-     * @param kr       Das anzumeldende KR Interface
+     * @param listener Das anzumeldende KR Interface
      * @param actor    Der Actor (Haupt-Actor-Objekt)
      * @param collider Der Collider (zweites Actor-Objekt)
      * @param <E>      Der Type des Colliders.
      */
     @Internal
-    public static <E extends Actor> void spezifischesKollisionsReagierbarEingliedern(CollisionListener<E> kr, Actor actor, E collider) {
-        final WorldHandler wh1 = actor.getPhysicsHandler().getWorldHandler();
-        final WorldHandler wh2 = collider.getPhysicsHandler().getWorldHandler();
-        if (wh1 == null || wh2 == null || wh1 != wh2) {
-            Logger.error("Kollision", "Zwei Objekte sollten zur Kollision angemeldet werden. " + "Dafür müssen beide an der selben Wurzel (direkt oder indirekt) angemeldet sein.");
-            return;
+    public static <E extends Actor> void addSpecificCollisionListener(CollisionListener<E> listener, Actor actor, E collider) {
+        final WorldHandler actorHandler = actor.getPhysicsHandler().getWorldHandler();
+        final WorldHandler colliderHandler = collider.getPhysicsHandler().getWorldHandler();
+
+        if (colliderHandler == null) {
+            collider.addOnetimeSetupListener(() -> addSpecificCollisionListener(listener, actor, collider));
         }
 
-        Body b1 = actor.getPhysicsHandler().getBody(), b2 = collider.getPhysicsHandler().getBody();
+        if (actorHandler == null) {
+            return; // actor will automatically re-register on setup
+        }
+
+        if (actorHandler != colliderHandler) {
+            throw new RuntimeException("Can't add collision listener for two objects registered in two different worlds");
+        }
+
+        Body b1 = actor.getPhysicsHandler().getBody();
+        Body b2 = collider.getPhysicsHandler().getBody();
+
         if (b1 == null || b2 == null) {
             Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" + " angemeldet.");
             return;
@@ -455,29 +457,18 @@ public class WorldHandler implements ContactListener {
 
         Body lower, higher;
         if (b1.hashCode() < b2.hashCode()) {
-            //f1 < f2
             lower = b1;
             higher = b2;
         } else {
-            //f1 > f2
             lower = b2;
             higher = b1;
         }
 
-        Checkup<E> toAdd = new Checkup<>(kr, higher, collider);
-
-        List<Checkup> atKey = wh1.specificCollisionListeners.get(lower);
-        if (atKey == null) {
-            //NO LIST THERE YET: Create new Entry in Hashmap
-            atKey = new CopyOnWriteArrayList<>();
-            atKey.add(toAdd);
-            wh1.specificCollisionListeners.put(lower, atKey);
-        } else {
-            atKey.add(toAdd);
-        }
+        Checkup<E> checkup = new Checkup<>(listener, higher, collider);
+        actorHandler.specificCollisionListeners.computeIfAbsent(lower, key -> new CopyOnWriteArrayList<>()).add(checkup);
     }
 
-    private class FixturePair {
+    private static class FixturePair {
         private final Fixture f1;
         private final Fixture f2;
 
@@ -489,13 +480,13 @@ public class WorldHandler implements ContactListener {
         /**
          * Prüft dieses Body-Tupel auf Referenzgleichheit mit einem weiteren.
          *
-         * @param bA Body A
-         * @param bB Body B
+         * @param a Body A
+         * @param b Body B
          *
          * @return this == (A|B)
          */
-        public boolean validate(Fixture bA, Fixture bB) {
-            return (f1 == bA && f2 == bB) || (f1 == bB && f2 == bA);
+        public boolean matches(Fixture a, Fixture b) {
+            return (f1 == a && f2 == b) || (f1 == b && f2 == a);
         }
     }
 }

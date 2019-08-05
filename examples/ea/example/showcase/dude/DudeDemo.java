@@ -87,15 +87,15 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin();
             coin.position.set(6 + i, 6);
-            add(coin);
             coin.addCollisionListener(coin, character);
+            add(coin);
         }
 
         for (int j = 0; j < 10; j++) {
             ManaPickup manaPickup = new ManaPickup();
             manaPickup.position.set(-j, 1);
-            add(manaPickup);
             manaPickup.addCollisionListener(manaPickup, character);
+            add(manaPickup);
         }
     }
 

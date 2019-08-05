@@ -40,6 +40,7 @@ import org.jbox2d.dynamics.Body;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
@@ -90,6 +91,10 @@ public abstract class Actor {
      */
     private PhysicsHandler physicsHandler;
 
+    private final List<Runnable> setupFunctions = new CopyOnWriteArrayList<>();
+
+    private final List<Runnable> onetimeSetupFunctions = new CopyOnWriteArrayList<>();
+
     private final Collection<Runnable> destructionListeners = new CopyOnWriteArrayList<>();
 
     /* _________________________ Die Handler _________________________ */
@@ -134,39 +139,55 @@ public abstract class Actor {
      *              Ist der Wert eine Scene, so wird die Scene
      */
     @Internal
-    public void setScene(Scene scene) {
-        synchronized (this) {
-            ProxyData proxyData = physicsHandler.getProxyData();
-            if (scene == null) {
-                if (this.scene == null) {
-                    return; // already removed, so we're fine
+    public synchronized void setScene(Scene scene) {
+        ProxyData proxyData = physicsHandler.getProxyData();
+        if (scene == null) {
+            if (this.scene == null) {
+                return; // already removed, so we're fine
+            }
+
+            // Von Scene entfernen
+            synchronized (this.scene.getWorldHandler()) {
+                for (Runnable destructionListener : destructionListeners) {
+                    destructionListener.run();
                 }
 
-                // Von Scene entfernen
-                synchronized (this.scene.getWorldHandler()) {
-                    for (Runnable destructionListener : destructionListeners) {
-                        destructionListener.run();
-                    }
+                destructionListeners.clear();
 
-                    destructionListeners.clear();
-
-                    Body body = physicsHandler.getBody();
-                    this.scene.getWorldHandler().removeAllInternalReferences(body);
-                    this.scene.getWorldHandler().getWorld().destroyBody(body);
-                    this.scene = null;
-                    this.physicsHandler = new NullHandler(this, proxyData);
+                Body body = physicsHandler.getBody();
+                this.scene.getWorldHandler().removeAllInternalReferences(body);
+                this.scene.getWorldHandler().getWorld().destroyBody(body);
+                this.scene = null;
+                this.physicsHandler = new NullHandler(this, proxyData);
+            }
+        } else {
+            // An Scene anmelden
+            synchronized (scene.getWorldHandler()) {
+                if (this.scene != null) {
+                    throw new IllegalStateException("Kann einen Actor nicht an mehr als einer Scene angemeldet haben.");
                 }
-            } else {
-                // An Scene anmelden
-                synchronized (scene.getWorldHandler()) {
-                    if (this.scene != null) {
-                        throw new IllegalStateException("Kann einen Actor nicht an mehr als einer Scene angemeldet haben.");
-                    }
 
-                    physicsHandler = new BodyHandler(this, proxyData, scene.getWorldHandler());
-                    this.scene = scene;
+                physicsHandler = new BodyHandler(this, proxyData, scene.getWorldHandler());
+                this.scene = scene;
+
+                for (Runnable listener : onetimeSetupFunctions) {
+                    listener.run();
+                }
+
+                onetimeSetupFunctions.clear();
+
+                for (Runnable listener : setupFunctions) {
+                    listener.run();
                 }
             }
+        }
+    }
+
+    public final synchronized void addOnetimeSetupListener(Runnable runnable) {
+        if (this.scene != null) {
+            runnable.run();
+        } else {
+            onetimeSetupFunctions.add(runnable);
         }
     }
 
@@ -436,8 +457,12 @@ public abstract class Actor {
      * @see #addCollisionListener(CollisionListener)
      */
     @API
-    public <E extends Actor> void addCollisionListener(CollisionListener<E> listener, E collider) {
-        WorldHandler.spezifischesKollisionsReagierbarEingliedern(listener, this, collider);
+    public synchronized <E extends Actor> void addCollisionListener(CollisionListener<E> listener, E collider) {
+        setupFunctions.add(() -> WorldHandler.addSpecificCollisionListener(listener, this, collider));
+
+        if (this.scene != null) {
+            WorldHandler.addSpecificCollisionListener(listener, this, collider);
+        }
     }
 
     /**
@@ -450,8 +475,12 @@ public abstract class Actor {
      * @see #addCollisionListener(CollisionListener, Actor)
      */
     @API
-    public void addCollisionListener(CollisionListener<Actor> listener) {
-        WorldHandler.allgemeinesKollisionsReagierbarEingliedern(listener, this);
+    public synchronized void addCollisionListener(CollisionListener<Actor> listener) {
+        setupFunctions.add(() -> WorldHandler.addGenericCollisionListener(listener, this));
+
+        if (this.scene != null) {
+            WorldHandler.addGenericCollisionListener(listener, this);
+        }
     }
 
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
