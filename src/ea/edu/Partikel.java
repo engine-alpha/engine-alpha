@@ -13,7 +13,7 @@ public class Partikel implements EduActor {
     private final Particle particle;
 
     public Partikel(float diameter, int life) {
-        particle = new Particle(Spiel.getActiveScene(), diameter, life);
+        particle = new Particle(diameter, life);
         eduSetup();
     }
 

@@ -20,31 +20,36 @@
 package ea.example.showcase.billard;
 
 import ea.Game;
-import ea.Scene;
 import ea.actor.Actor;
-import ea.actor.ActorGroup;
 import ea.actor.Rectangle;
 import ea.collision.CollisionListener;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Table extends ActorGroup {
+public class Table {
     public static final float BORDER = 30;
     public static final float GAP = 20;
     public static final float DIAGONAL_GAP = (float) Math.sqrt(GAP * GAP / 2) * 2;
 
-    public Table(Scene scene) {
-        super(scene);
+    private List<Actor> actors = new ArrayList<>();
 
-        Rectangle border = new Rectangle(getScene(), 2 * Edge.WIDTH + 2 * GAP + 2 * DIAGONAL_GAP + BORDER * 2, Edge.WIDTH + 2 * DIAGONAL_GAP + BORDER * 2);
+    public Actor[] getActors() {
+        return actors.toArray(new Actor[0]);
+    }
+
+    public Table() {
+        Rectangle border = new Rectangle(2 * Edge.WIDTH + 2 * GAP + 2 * DIAGONAL_GAP + BORDER * 2, Edge.WIDTH + 2 * DIAGONAL_GAP + BORDER * 2);
         border.position.set(-Edge.WIDTH - GAP - DIAGONAL_GAP - BORDER, -Edge.WIDTH / 2 - DIAGONAL_GAP - BORDER);
         border.setColor(new Color(226, 228, 231));
-        add(border);
 
-        Rectangle background = new Rectangle(getScene(), 2 * Edge.WIDTH + 2 * GAP + 2 * DIAGONAL_GAP, Edge.WIDTH + 2 * DIAGONAL_GAP);
+        Rectangle background = new Rectangle(2 * Edge.WIDTH + 2 * GAP + 2 * DIAGONAL_GAP, Edge.WIDTH + 2 * DIAGONAL_GAP);
         background.position.set(-Edge.WIDTH - GAP - DIAGONAL_GAP, -Edge.WIDTH / 2 - DIAGONAL_GAP);
         background.setColor(new Color(68, 121, 43));
-        add(background);
+
+        actors.add(border);
+        actors.add(background);
 
         createEdges();
         createHoles();
@@ -54,62 +59,62 @@ public class Table extends ActorGroup {
         Hole hole;
         CollisionListener<Actor> collisionListener = collisionEvent -> {
             if (collisionEvent.getColliding() instanceof Ball) {
-                Game.enqueue(() -> getScene().remove(collisionEvent.getColliding()));
+                Game.enqueue(() -> collisionEvent.getColliding().removeFromScene());
             }
         };
 
         // top left
-        hole = new Hole(getScene(), -Edge.WIDTH - GAP - DIAGONAL_GAP - Edge.HEIGHT / 2, Edge.WIDTH / 2 - Hole.RADIUS + DIAGONAL_GAP + Edge.HEIGHT / 2);
+        hole = new Hole(-Edge.WIDTH - GAP - DIAGONAL_GAP - Edge.HEIGHT / 2, Edge.WIDTH / 2 - Hole.RADIUS + DIAGONAL_GAP + Edge.HEIGHT / 2);
         hole.addCollisionListener(collisionListener);
-        add(hole);
+        actors.add(hole);
 
         // top midle
-        hole = new Hole(getScene(), -Hole.RADIUS / 2, Edge.WIDTH / 2 - Hole.RADIUS + DIAGONAL_GAP + Hole.RADIUS / 2);
+        hole = new Hole(-Hole.RADIUS / 2, Edge.WIDTH / 2 - Hole.RADIUS + DIAGONAL_GAP + Hole.RADIUS / 2);
         hole.addCollisionListener(collisionListener);
-        add(hole);
+        actors.add(hole);
 
         // top right
-        hole = new Hole(getScene(), +Edge.WIDTH + GAP + DIAGONAL_GAP - Hole.RADIUS + Edge.HEIGHT / 2, Edge.WIDTH / 2 - Hole.RADIUS + DIAGONAL_GAP + Edge.HEIGHT / 2);
+        hole = new Hole(+Edge.WIDTH + GAP + DIAGONAL_GAP - Hole.RADIUS + Edge.HEIGHT / 2, Edge.WIDTH / 2 - Hole.RADIUS + DIAGONAL_GAP + Edge.HEIGHT / 2);
         hole.addCollisionListener(collisionListener);
-        add(hole);
+        actors.add(hole);
 
         // bottom left
-        hole = new Hole(getScene(), -Edge.WIDTH - GAP - DIAGONAL_GAP - Edge.HEIGHT / 2, -Edge.WIDTH / 2 - DIAGONAL_GAP - Edge.HEIGHT / 2);
+        hole = new Hole(-Edge.WIDTH - GAP - DIAGONAL_GAP - Edge.HEIGHT / 2, -Edge.WIDTH / 2 - DIAGONAL_GAP - Edge.HEIGHT / 2);
         hole.addCollisionListener(collisionListener);
-        add(hole);
+        actors.add(hole);
 
         // bottom midle
-        hole = new Hole(getScene(), -Hole.RADIUS / 2, -Edge.WIDTH / 2 - DIAGONAL_GAP - Hole.RADIUS / 2);
+        hole = new Hole(-Hole.RADIUS / 2, -Edge.WIDTH / 2 - DIAGONAL_GAP - Hole.RADIUS / 2);
         hole.addCollisionListener(collisionListener);
-        add(hole);
+        actors.add(hole);
 
         // bottom right
-        hole = new Hole(getScene(), +Edge.WIDTH + GAP + DIAGONAL_GAP - Hole.RADIUS + Edge.HEIGHT / 2, -Edge.WIDTH / 2 - DIAGONAL_GAP - Edge.HEIGHT / 2);
+        hole = new Hole(+Edge.WIDTH + GAP + DIAGONAL_GAP - Hole.RADIUS + Edge.HEIGHT / 2, -Edge.WIDTH / 2 - DIAGONAL_GAP - Edge.HEIGHT / 2);
         hole.addCollisionListener(collisionListener);
-        add(hole);
+        actors.add(hole);
     }
 
     private void createEdges() {
-        Edge topLeft = new Edge(getScene(), -GAP, +Edge.WIDTH / 2 + DIAGONAL_GAP);
+        Edge topLeft = new Edge(-GAP, +Edge.WIDTH / 2 + DIAGONAL_GAP);
         topLeft.position.rotate((float) Math.PI);
-        add(topLeft);
+        actors.add(topLeft);
 
-        Edge topRight = new Edge(getScene(), Edge.WIDTH + GAP, +Edge.WIDTH / 2 + DIAGONAL_GAP);
+        Edge topRight = new Edge(Edge.WIDTH + GAP, +Edge.WIDTH / 2 + DIAGONAL_GAP);
         topRight.position.rotate((float) Math.PI);
-        add(topRight);
+        actors.add(topRight);
 
-        Edge bottomLeft = new Edge(getScene(), -GAP - Edge.WIDTH, -Edge.WIDTH / 2 - DIAGONAL_GAP);
-        add(bottomLeft);
+        Edge bottomLeft = new Edge(-GAP - Edge.WIDTH, -Edge.WIDTH / 2 - DIAGONAL_GAP);
+        actors.add(bottomLeft);
 
-        Edge bottomRight = new Edge(getScene(), GAP, -Edge.WIDTH / 2 - DIAGONAL_GAP);
-        add(bottomRight);
+        Edge bottomRight = new Edge(GAP, -Edge.WIDTH / 2 - DIAGONAL_GAP);
+        actors.add(bottomRight);
 
-        Edge left = new Edge(getScene(), -Edge.WIDTH - GAP - DIAGONAL_GAP, +Edge.WIDTH / 2);
+        Edge left = new Edge(-Edge.WIDTH - GAP - DIAGONAL_GAP, +Edge.WIDTH / 2);
         left.position.rotate((float) -Math.PI / 2);
-        add(left);
+        actors.add(left);
 
-        Edge right = new Edge(getScene(), +Edge.WIDTH + GAP + DIAGONAL_GAP, -Edge.WIDTH / 2);
+        Edge right = new Edge(+Edge.WIDTH + GAP + DIAGONAL_GAP, -Edge.WIDTH / 2);
         right.position.rotate((float) Math.PI / 2);
-        add(right);
+        actors.add(right);
     }
 }

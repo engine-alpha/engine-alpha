@@ -11,7 +11,7 @@ public class Dreieck implements EduGeometrie {
 
     @API
     public Dreieck(float ax, float ay, float bx, float by, float cx, float cy) {
-        polygon = new Polygon(Spiel.getActiveScene(), new Vector(ax, ay), new Vector(bx, by), new Vector(cx, cy));
+        polygon = new Polygon(new Vector(ax, ay), new Vector(bx, by), new Vector(cx, cy));
 
         eduSetup();
     }

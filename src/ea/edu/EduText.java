@@ -1,13 +1,12 @@
 package ea.edu;
 
-import ea.Scene;
 import ea.actor.Actor;
 import ea.actor.Text;
 
 public class EduText extends Text implements EduActor {
 
     public EduText(String content) {
-        super(Spiel.getActiveScene(), content);
+        super(content);
 
         eduSetup();
     }

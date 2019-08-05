@@ -15,8 +15,8 @@ implements FrameUpdateListener {
 
     Vector BALLSPEED_PER_MS = new Vector(0.2f, -0.002f);
 
-    Rectangle wall = new Rectangle(this, 20, 300);
-    Circle ball = new Circle(this, 20);
+    Rectangle wall = new Rectangle(20, 300);
+    Circle ball = new Circle(20);
 
     public CollisionTest() {
         wall.setColor(Color.ORANGE);

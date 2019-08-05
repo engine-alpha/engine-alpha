@@ -40,15 +40,15 @@ public class Billard extends ShowcaseDemo implements KeyListener {
     public Billard(Scene parent) {
         super(parent);
 
-        add(new Table(this));
+        add(new Table().getActors());
 
         for (int i = 0; i < 10; i++) {
-            Ball ball = new Ball(this);
+            Ball ball = new Ball();
             ball.position.set(calculatePosition(i));
             add(ball);
         }
 
-        whiteBall = new Ball(this);
+        whiteBall = new Ball();
         whiteBall.setColor(Color.WHITE);
         whiteBall.position.set(-200, 0);
 

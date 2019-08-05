@@ -46,20 +46,20 @@ public class MarbleDemo
     public void initialisieren() {
 
         //Trichter
-        Rectangle lo = new Rectangle(this, 50, 150);
+        Rectangle lo = new Rectangle(50, 150);
         lo.position.set(ABSTAND_LINKS, ABSTAND_OBEN);
-        Rectangle lm = new Rectangle(this, 50, 200);
+        Rectangle lm = new Rectangle(50, 200);
         lm.position.set(ABSTAND_LINKS, ABSTAND_OBEN + 150);
-        Rectangle ro = new Rectangle(this, 50, 150);
+        Rectangle ro = new Rectangle(50, 150);
         ro.position.set(ABSTAND_RECHTS, ABSTAND_OBEN);
-        Rectangle rm = new Rectangle(this, 50, 200);
+        Rectangle rm = new Rectangle(50, 200);
         rm.position.set(ABSTAND_RECHTS + 14, ABSTAND_OBEN + 120);
-        Rectangle lu = new Rectangle(this, 50, 120);
+        Rectangle lu = new Rectangle(50, 120);
         lu.position.set(ABSTAND_LINKS + 125, ABSTAND_OBEN + 255);
-        Rectangle ru = new Rectangle(this, 50, 120);
+        Rectangle ru = new Rectangle(50, 120);
         ru.position.set(ABSTAND_LINKS + 304, ABSTAND_OBEN + 260);
 
-        boden = new Rectangle(this, 230, 40);
+        boden = new Rectangle(230, 40);
         boden.position.set(ABSTAND_LINKS + 125, ABSTAND_OBEN + 375);
 
         Rectangle[] allRectangles = new Rectangle[] {
@@ -108,7 +108,7 @@ public class MarbleDemo
         class Marble extends Circle implements FrameUpdateListener {
 
             public Marble(float diameter) {
-                super(MarbleDemo.this, diameter);
+                super(diameter);
             }
 
             @Override

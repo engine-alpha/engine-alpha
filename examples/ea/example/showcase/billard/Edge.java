@@ -19,7 +19,6 @@
 
 package ea.example.showcase.billard;
 
-import ea.Scene;
 import ea.Vector;
 import ea.actor.Polygon;
 import ea.handle.Physics;
@@ -30,8 +29,8 @@ public class Edge extends Polygon {
     public static final float WIDTH = 500;
     public static final float HEIGHT = 20;
 
-    public Edge(Scene scene, float x, float y) {
-        super(scene, new Vector(0, 0), new Vector(HEIGHT, HEIGHT), new Vector(WIDTH- HEIGHT, HEIGHT), new Vector(WIDTH, 0));
+    public Edge(float x, float y) {
+        super(new Vector(0, 0), new Vector(HEIGHT, HEIGHT), new Vector(WIDTH- HEIGHT, HEIGHT), new Vector(WIDTH, 0));
 
         position.set(x, y);
         setColor(new Color(45, 90, 40));

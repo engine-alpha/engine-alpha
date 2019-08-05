@@ -30,7 +30,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
         toggleGravity();
 
-        Rectangle platform = new Rectangle(this, 5000, 10);
+        Rectangle platform = new Rectangle(5000, 10);
         platform.setColor(Color.WHITE);
         platform.position.set(-2500, -300);
         add(platform);
@@ -45,7 +45,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
         setDebuggingEnabled(false);
 
-        Circle circleToAnimate = new Circle(this, 250);
+        Circle circleToAnimate = new Circle(250);
         add(circleToAnimate);
         circleToAnimate.setColor(Color.YELLOW);
 
@@ -58,15 +58,17 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
     }
 
     private void createPlatforms() {
-        Platform p1 = new Platform(this, character, 100, 10);
-        Platform p2 = new Platform(this, character, 200, 10);
-        Platform p3 = new Platform(this, character, 200, 10);
-        Platform p4 = new Platform(this, character, 100, 10);
+        Platform p1 = new Platform(character, 100, 10);
+        Platform p2 = new Platform(character, 200, 10);
+        Platform p3 = new Platform(character, 200, 10);
+        Platform p4 = new Platform(character, 100, 10);
 
         p1.position.set(100, -200);
         p2.position.set(350, -250);
         p3.position.set(-50, 100);
         p4.position.set(500, -350);
+
+        add(p1, p2, p3, p4);
     }
 
     @Override
@@ -119,8 +121,9 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
     private void createRandomParcour(int numPlatforms) {
         for (int i = 0; i < numPlatforms; i++) {
-            Platform platform = new Platform(this, character, Random.nextInteger(10) * 20 + 20, 10);
+            Platform platform = new Platform(character, Random.nextInteger(10) * 20 + 20, 10);
             platform.position.set(i * 250 + (Random.nextInteger(10) * 5), - 300 + (i * 50));
+            add(platform);
         }
     }
 

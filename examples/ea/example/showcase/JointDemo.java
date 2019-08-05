@@ -2,15 +2,11 @@ package ea.example.showcase;
 
 import ea.Scene;
 import ea.Vector;
-import ea.actor.ActorGroup;
 import ea.actor.Circle;
 import ea.actor.Polygon;
 import ea.actor.Rectangle;
-import ea.handle.Physics;
 import ea.input.KeyListener;
-import org.jbox2d.dynamics.joints.RevoluteJoint;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 
 /**
@@ -38,11 +34,11 @@ implements KeyListener {
      */
     public JointDemo(Scene parent, int width, int height) {
         super(parent, width, height);
-        initialisieren2();
+        // initialisieren2();
         addKeyListener(this);
     }
 
-    public void initialisieren2() {
+    /* public void initialisieren2() {
         wippeBauen().position.set(new Vector(500, 500));
 
         ketteBauen(15).position.move(new Vector(500, 00));
@@ -176,7 +172,7 @@ implements KeyListener {
         gewicht.physics.createRevoluteJoint(kette[kette.length-1], vektor);
 
         return ketteK;
-    }
+    } */
 
     @Override
     public void onKeyDown(KeyEvent e) {

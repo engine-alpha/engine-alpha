@@ -1,18 +1,17 @@
 package ea.example.showcase.dude;
 
 import ea.Random;
-import ea.Scene;
 import ea.actor.Image;
 import ea.handle.Physics;
 
 public class Box extends Image {
 
-    public Box(Scene scene) {
-        this(scene, Random.nextInteger(9));
+    public Box() {
+        this(Random.nextInteger(9));
     }
 
-    public Box(Scene scene, int type) {
-        super(scene, boxPath(type), 1, 1);
+    public Box(int type) {
+        super(boxPath(type), 1, 1);
 
         setBodyType(Physics.Type.DYNAMIC);
         physics.setMass(30);

@@ -1,6 +1,5 @@
 package ea.actor;
 
-import ea.Scene;
 import ea.Vector;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -27,7 +26,7 @@ public class Polygon extends Geometry {
      * @param points Der Streckenzug an Punkten, der das Polygon beschreibt. Alle
      */
     @API
-    public Polygon(Scene scene, Vector... points) {
+    public Polygon(Vector... points) {
         super(() -> {
             Vec2[] vectors = new Vec2[points.length];
 

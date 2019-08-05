@@ -19,7 +19,6 @@
 
 package ea.example.showcase.billard;
 
-import ea.Scene;
 import ea.actor.Circle;
 
 import java.awt.*;
@@ -27,8 +26,8 @@ import java.awt.*;
 public class Hole extends Circle {
     public static final float RADIUS = Table.GAP * 2;
 
-    public Hole(Scene scene, float x, float y) {
-        super(scene, RADIUS);
+    public Hole(float x, float y) {
+        super(RADIUS);
 
         position.set(x, y);
         setColor(new Color(50, 50, 50));

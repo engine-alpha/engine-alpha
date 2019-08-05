@@ -20,7 +20,6 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
-import ea.Scene;
 import ea.handle.Physics;
 import ea.internal.annotations.API;
 import ea.internal.physics.WorldHandler;
@@ -37,8 +36,8 @@ public class Particle extends Circle implements FrameUpdateListener {
      *
      * @param diameter Durchmesser des Kreises
      */
-    public Particle(Scene scene, float diameter, int life) {
-        super(scene, diameter);
+    public Particle(float diameter, int life) {
+        super(diameter);
 
         this.life = life;
     }

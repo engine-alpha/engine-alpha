@@ -47,14 +47,14 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         Game.setTitle("Marbles");
 
-        Rectangle left = new Rectangle(this, 200, 10);
+        Rectangle left = new Rectangle(200, 10);
         left.position.set(-Showcases.WIDTH / 6 - 150, -50);
         add(left);
 
         left.setColor(Color.white);
         left.position.rotate((float) Math.toRadians(-21));
 
-        Rectangle right = new Rectangle(this, 200, 10);
+        Rectangle right = new Rectangle(200, 10);
         right.position.set(+Showcases.WIDTH / 6, 0);
         add(right);
 
@@ -70,16 +70,16 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         left.physics.setElasticity(15f);
         right.physics.setElasticity(15f);
 
-        Rectangle r1 = new Rectangle(this, Showcases.WIDTH, 10);
+        Rectangle r1 = new Rectangle(Showcases.WIDTH, 10);
         r1.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
 
-        Rectangle r2 = new Rectangle(this, 10, Showcases.HEIGHT);
+        Rectangle r2 = new Rectangle(10, Showcases.HEIGHT);
         r2.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
 
-        Rectangle r3 = new Rectangle(this, Showcases.WIDTH, 10);
+        Rectangle r3 = new Rectangle(Showcases.WIDTH, 10);
         r3.position.set(-Showcases.WIDTH / 2, Showcases.HEIGHT / 2 - 10);
 
-        Rectangle r4 = new Rectangle(this, 10, Showcases.HEIGHT);
+        Rectangle r4 = new Rectangle(10, Showcases.HEIGHT);
         r4.position.set(Showcases.WIDTH / 2 - 10, -Showcases.HEIGHT / 2);
 
         add(r1, r2, r3, r4);
@@ -102,10 +102,10 @@ public class Particles extends ShowcaseDemo implements KeyListener {
     }
 
     private void createCircle(Vector position, Color color) {
-        Circle k = new Circle(Particles.this, 6);
+        Circle k = new Circle(6);
 
         FrameUpdateListener emitter = new PeriodicTask(10, () -> {
-            Particle particle = new Particle(Particles.this, 3, 500);
+            Particle particle = new Particle(3, 500);
             particle.position.set(k.position.getCenter().subtract(new Vector(1, 1)));
             particle.physics.applyImpulse(new Vector(60 * ((float) Math.random() - .5f), 60 * ((float) Math.random() - .5f)));
             particle.setColor(Color.RED);

@@ -4,7 +4,7 @@ import ea.FrameUpdateListener;
 import ea.Game;
 import ea.Scene;
 import ea.Vector;
-import ea.actor.ActorGroup;
+import ea.actor.Actor;
 import ea.actor.Rectangle;
 import ea.actor.Text;
 import ea.example.showcase.billard.Billard;
@@ -53,7 +53,7 @@ public class Showcases extends Scene {
      * Textbox-Element. Besteht aus einem Text mit Hintergrund-Box. Beim Mausklick auf die Box wird die zugewiesene
      * Scene gestartet.
      */
-    private class TextBox extends ActorGroup implements MouseClickListener, FrameUpdateListener {
+    private class TextBox implements MouseClickListener, FrameUpdateListener {
 
         //Box für den Text
         private Rectangle box;
@@ -64,18 +64,17 @@ public class Showcases extends Scene {
         //Der aktuelle State der TextBox
         private TextboxState state = TextboxState.NORMAL;
 
-        public TextBox(Scene scene, String content, Supplier<Scene> sceneCreator) {
-            super(scene);
-
-            box = new Rectangle(scene, BOX_WIDTH, BOX_HEIGHT);
+        public TextBox(String content, Supplier<Scene> sceneCreator, float x, float y) {
+            box = new Rectangle(BOX_WIDTH, BOX_HEIGHT);
             box.setBorderRadius(6);
-            text = new Text(scene, content, 24);
+            box.position.set(x, y);
+            text = new Text(content, 24);
             text.setStyle(Font.BOLD);
             text.setColor(Color.BLACK);
             box.setLayer(0);
             text.setLayer(1);
+            text.position.set(x, y);
             text.position.move(20, 10);
-            add(box, text);
 
             this.sceneCreator = sceneCreator;
             //Showcases.this.addMouseClickListener(this);
@@ -112,6 +111,10 @@ public class Showcases extends Scene {
             }
         }
 
+        public Actor[] getActors() {
+            return new Actor[] {box, text};
+        }
+
         @Override
         public void onFrameUpdate(int i) {
             Vector mousePosition = Showcases.this.getMousePosition();
@@ -134,9 +137,9 @@ public class Showcases extends Scene {
     private int buttonCount = 0;
 
     public Showcases() {
-        Text title = new Text(this, "Engine Alpha: 4.0 Feature Showcase", 48);
+        Text title = new Text("Engine Alpha: 4.0 Feature Showcase", 48);
         title.setColor(Color.WHITE);
-        Text subtitle = new Text(this, "Knopfdruck startet Demo. Escape-Taste bringt dich ins Menü zurück", 24);
+        Text subtitle = new Text("Knopfdruck startet Demo. Escape-Taste bringt dich ins Menü zurück", 24);
         subtitle.setColor(Color.GRAY);
 
         title.position.set(-500, 100);
@@ -158,9 +161,8 @@ public class Showcases extends Scene {
         boolean left = buttonCount % 2 == 1;
         int row = (buttonCount - 1) / 2;
 
-        TextBox button = new TextBox(this, title, sceneSupplier);
-        button.position.set(left ? -500 : -150, -60 + -1 * row * (BOX_HEIGHT + 5));
-        add(button);
+        TextBox button = new TextBox(title, sceneSupplier, left ? -500 : -150, -60 + -1 * row * (BOX_HEIGHT + 5));
+        add(button.getActors());
     }
 
     /**

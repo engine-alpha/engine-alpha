@@ -66,14 +66,14 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
      * Impuls : Ns
      * Winkel : Grad (nicht Bogenmaß)
      */
-    private static final float DURCHMESSER=0.2f, HOEHE_UEBER_BODEN=1f, MASSE=1f, IMPULS=10, WINKEL=60;
+    private static final float DURCHMESSER = 0.2f, HOEHE_UEBER_BODEN = 1f, MASSE = 1f, IMPULS = 10, WINKEL = 60;
 
     /**
      * Die PPM-Berechnungskonstante
      */
-    private static final int PIXELPROMETER=100;
+    private static final int PIXELPROMETER = 100;
 
-    private static final float BODEN_TIEFE = 700, ABSTAND_LINKS=50;
+    private static final float BODEN_TIEFE = 700, ABSTAND_LINKS = 50;
 
     public BallThrow(Scene parent) {
         super(parent);
@@ -82,19 +82,18 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
     }
 
     public void initialisieren() {
-        ball = new Circle(this, DURCHMESSER*PIXELPROMETER);
+        ball = new Circle(DURCHMESSER * PIXELPROMETER);
         add(ball);
         ball.setColor(Color.RED);
         ball.setBodyType(Physics.Type.DYNAMIC);
         ball.physics.setMass(MASSE);
-        ball.position.setCenter(ABSTAND_LINKS,
-                BODEN_TIEFE-(HOEHE_UEBER_BODEN*PIXELPROMETER + 0.5f*DURCHMESSER*PIXELPROMETER));
+        ball.position.setCenter(ABSTAND_LINKS, BODEN_TIEFE - (HOEHE_UEBER_BODEN * PIXELPROMETER + 0.5f * DURCHMESSER * PIXELPROMETER));
 
         //kamera.fokusSetzen(ball);
 
         //Den Boden erstellen
-        boden=new Rectangle(this, 20000,20);
-        boden.position.set(0,BODEN_TIEFE);
+        boden = new Rectangle(20000, 20);
+        boden.position.set(0, BODEN_TIEFE);
         add(boden);
         boden.setColor(Color.WHITE);
         boden.setBodyType(Physics.Type.STATIC);
@@ -110,7 +109,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
      */
     @Override
     public void onKeyDown(KeyEvent e) {
-        switch(e.getKeyCode()) {
+        switch (e.getKeyCode()) {
             case KeyEvent.VK_S: // Starte die Simulation
                 simulationStarten();
                 break;
@@ -130,14 +129,13 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
      */
     private void simulationStarten() {
         //Zeitmessung beginnen = Startzeit erheben
-        startzeit=System.currentTimeMillis();
+        startzeit = System.currentTimeMillis();
 
         //Schwerkraft auf den Ball wirken lassen
         setGravity(new Vector(0, 9.81f));
 
         //Impuls berechnen und auf den Ball wirken lassen
-        Vector impuls = new Vector((float)Math.cos(Math.toRadians(WINKEL))*IMPULS,
-                (float)-Math.sin(Math.toRadians(WINKEL))*IMPULS);
+        Vector impuls = new Vector((float) Math.cos(Math.toRadians(WINKEL)) * IMPULS, (float) -Math.sin(Math.toRadians(WINKEL)) * IMPULS);
         ball.physics.applyImpulse(impuls);
     }
 
@@ -146,9 +144,9 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
      * zurückgesetzt und der Ball wird in Ruhe versetzt.
      */
     private void simulationZuruecksetzen() {
-        setGravity(new Vector(0,0)); //Schwerkraft deaktivieren
+        setGravity(new Vector(0, 0)); //Schwerkraft deaktivieren
         ball.position.setCenter(ABSTAND_LINKS, //Ballposition zurücksetzen
-                BODEN_TIEFE-(HOEHE_UEBER_BODEN*PIXELPROMETER + 0.5f*DURCHMESSER*PIXELPROMETER));
+                BODEN_TIEFE - (HOEHE_UEBER_BODEN * PIXELPROMETER + 0.5f * DURCHMESSER * PIXELPROMETER));
         ball.physics.cancelAll(); //Ball in Ruhe versetzen
     }
 
@@ -160,14 +158,12 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
     public void onCollision(CollisionEvent e) {
         //Kollision bedeutet, dass der Ball auf den Boden gefallen ist => Zeitmessung abschließen
         long endzeit = System.currentTimeMillis();
-        long zeitdifferenz = endzeit-startzeit;
+        long zeitdifferenz = endzeit - startzeit;
 
         //Zurückgelegte Distanz seit Simulationsstart ausmessen (Pixel-Differenz ausrechnen und auf Meter umrechnen)
-        float distanz = (ball.position.getCenter().x-ABSTAND_LINKS) / PIXELPROMETER;
+        float distanz = (ball.position.getCenter().x - ABSTAND_LINKS) / PIXELPROMETER;
 
         //Messungen angeben
-        System.out.println("Der Ball ist auf dem Boden aufgeschlagen. Seit Simulationsstart sind " +
-         + (zeitdifferenz/1000) + " Sekunden und " + (zeitdifferenz%1000) + " Millisekunden vergangen.\n" +
-                "Der Ball diese Distanz zurückgelegt: " + distanz + " m");
+        System.out.println("Der Ball ist auf dem Boden aufgeschlagen. Seit Simulationsstart sind " + +(zeitdifferenz / 1000) + " Sekunden und " + (zeitdifferenz % 1000) + " Millisekunden vergangen.\n" + "Der Ball diese Distanz zurückgelegt: " + distanz + " m");
     }
 }

@@ -19,7 +19,6 @@
 
 package ea.example.showcase.dude;
 
-import ea.Scene;
 import ea.actor.Animation;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
@@ -29,15 +28,15 @@ import ea.collision.CollisionListener;
  * kostenfreien Grafiken.
  */
 public class Coin extends Animation implements CollisionListener<PlayerCharacter> {
-    public Coin(Scene scene) {
-        super(scene, Animation.createFromAnimatedGif(scene, "game-assets/dude/coin.gif", .2f, .2f));
+    public Coin() {
+        super(Animation.createFromAnimatedGif("game-assets/dude/coin.gif", .2f, .2f));
     }
 
     @Override
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
         //Habe mich mit PlayerCharacter kollidiert!
         collisionEvent.getColliding().gotItem(Item.Coin);
-        this.destroy();
+        this.getScene().remove(this);
     }
 
     @Override

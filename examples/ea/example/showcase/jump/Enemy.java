@@ -19,16 +19,17 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
     };
 
     public Enemy(Scene scene, PlayerCharacter pc, Vector velocity) {
-        super(scene, 64, 64);
+        super(64, 64);
 
-        Animation flying = Animation.createFromAnimatedGif(scene, "game-assets/jump/spr_toucan_fly_anim.gif", 1, 1);
+        Animation flying = Animation.createFromAnimatedGif("game-assets/jump/spr_toucan_fly_anim.gif", 1, 1);
         addState("flying", flying);
 
         this.velocity = velocity;
         scene.add(this);
 
-
-        if(velocity.x < 0) this.setFlipHorizontal(true);
+        if (velocity.x < 0) {
+            this.setFlipHorizontal(true);
+        }
 
         scene.addFrameUpdateListener(enemyMover);
 
@@ -39,13 +40,13 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
         PlayerCharacter pc = collisionEvent.getColliding();
         float playerY = pc.position.get().add(new Vector(0, 64)).y;
-        if(playerY <= this.position.get().y + 5f) {
+        if (playerY <= this.position.get().y + 5f) {
             System.out.println("WIN");
             //Treffer!
             pc.physics.applyImpulse(new Vector(0, -2500));
 
             getScene().removeFrameUpdateListener(enemyMover);
-            destroy();
+            getScene().remove(this);
         } else {
             System.out.println("LOSE");
             //Verletzt

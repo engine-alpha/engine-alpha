@@ -473,4 +473,12 @@ public abstract class Actor {
     public Scene getScene() {
         return scene;
     }
+
+    @API
+    public void removeFromScene() {
+        Scene scene = this.scene;
+        if (scene != null) {
+            scene.remove(this);
+        }
+    }
 }

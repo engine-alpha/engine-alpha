@@ -3,6 +3,7 @@ package ea.example.showcase.dude;
 import ea.FrameUpdateListener;
 import ea.Layer;
 import ea.Scene;
+import ea.actor.Actor;
 
 /**
  * Das HUD gibt einige Spieldaten über dem Rest der Szenen-Objekte wieder
@@ -17,15 +18,13 @@ public class HUD extends Layer implements FrameUpdateListener {
     private final HUDDisplay display;
 
     public HUD(Scene scene) {
-        super(scene);
         this.playerCharacter = playerCharacter;
         this.setParallaxZoom(0);
         this.setParallaxPosition(0, 0);
         this.setParallaxRotation(0);
 
-        display = new HUDDisplay(scene);
-        add(display);
-        display.position.set(-DudeDemo.GAME_WIDTH / 2 + 20, DudeDemo.GAME_HEIGHT / 2 - 130);
+        display = new HUDDisplay(-DudeDemo.GAME_WIDTH / 2 + 20, DudeDemo.GAME_HEIGHT / 2 - 130);
+        add(display.getActors().toArray(new Actor[0]));
 
         scene.addFrameUpdateListener(this);
     }

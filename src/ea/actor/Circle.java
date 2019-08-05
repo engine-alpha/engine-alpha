@@ -19,7 +19,6 @@
 
 package ea.actor;
 
-import ea.Scene;
 import ea.internal.annotations.API;
 import org.jbox2d.collision.shapes.CircleShape;
 
@@ -41,8 +40,8 @@ public class Circle extends Geometry {
      *
      * @param diameter Durchmesser des Kreises
      */
-    public Circle(Scene scene, float diameter) {
-        super(scene, () -> {
+    public Circle(float diameter) {
+        super(() -> {
             CircleShape shape = new CircleShape();
             shape.m_radius = diameter / 2;
             shape.m_p.set(shape.m_radius, shape.m_radius);

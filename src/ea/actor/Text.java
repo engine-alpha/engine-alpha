@@ -19,7 +19,6 @@
 
 package ea.actor;
 
-import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -114,7 +113,7 @@ public class Text extends Actor {
      * @param fontName Der Font, in dem der Text dargestellt werden soll.
      */
     @API
-    public Text(Scene scene, String content, String fontName) {
+    public Text(String content, String fontName) {
         this(content, fontName, DEFAULT_SIZE, 0);
     }
 
@@ -126,7 +125,7 @@ public class Text extends Actor {
      * @param size    Die Schriftgröße
      */
     @API
-    public Text(Scene scene, String content, int size) {
+    public Text(String content, int size) {
         this(content, Font.SANS_SERIF, size, 0);
     }
 
@@ -137,8 +136,8 @@ public class Text extends Actor {
      * @param content Der Inhalt, der dargestellt wird
      */
     @API
-    public Text(Scene scene, String content) {
-        this(scene, content, DEFAULT_SIZE);
+    public Text(String content) {
+        this(content, DEFAULT_SIZE);
     }
 
     /**

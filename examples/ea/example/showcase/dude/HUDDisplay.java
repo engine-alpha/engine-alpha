@@ -1,10 +1,12 @@
 package ea.example.showcase.dude;
 
-import ea.Scene;
-import ea.actor.ActorGroup;
+import ea.actor.Actor;
 import ea.actor.TileContainer;
 
-public class HUDDisplay extends ActorGroup {
+import java.util.Arrays;
+import java.util.List;
+
+public class HUDDisplay {
 
     private static final int HUD_VALUE_LENGTH = 10;
     private static final float HUD_SCALE = 1.5f;
@@ -20,12 +22,10 @@ public class HUDDisplay extends ActorGroup {
     /**
      * Konstruktor für Objekte der Klasse ActorGroup
      */
-    public HUDDisplay(Scene scene) {
-        super(scene);
+    public HUDDisplay(float x, float y) {
+        background = new TileContainer(HUD_VALUE_LENGTH + 7, 4, 8, 16);
 
-        background = new TileContainer(scene, HUD_VALUE_LENGTH + 7, 4, 8, 16);
-
-        //Initialize Standard-Parts of backgrounds.
+        // Initialize Standard-Parts of backgrounds.
         for (int i = 0; i < 4; i++) {
             background.setTileAt(0, i, "game-assets/dude/hud/orb_orange.png", 0, 0);
             background.setTileAt(1, i, "game-assets/dude/hud/orb_orange.png", 1, 0);
@@ -54,17 +54,16 @@ public class HUDDisplay extends ActorGroup {
         background.setTileAt(3, 3, "game-assets/dude/hud/num_black.png", 3, 2);
 
         //LINE CONTENT
-        lines = new TileContainer(scene, HUD_VALUE_LENGTH, 4, 8, 16);
+        lines = new TileContainer(HUD_VALUE_LENGTH, 4, 8, 16);
         lines.position.move(5 * 8 * HUD_SCALE, 0);
 
         setLineValue(0, 10);
         setLineValue(1, 7);
         setLineValue(2, 3);
+
         for (int k = 0; k < 5; k++) {
             setNumberOf(k, 0);
         }
-
-        add(background, lines);
     }
 
     private void setNumberOf(int numIndex, int numValue) {
@@ -105,5 +104,9 @@ public class HUDDisplay extends ActorGroup {
             setNumberOf(5 - z, baseValue);
             value /= 10;
         }
+    }
+
+    public List<Actor> getActors() {
+        return Arrays.asList(background, lines);
     }
 }

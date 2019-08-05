@@ -66,7 +66,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         //     add(particle);
         // }));
 
-        pauseLayer = new PauseLayer(this);
+        pauseLayer = new PauseLayer();
         isPaused = false;
         pauseLayer.setVisible(false);
         addLayer(pauseLayer);
@@ -85,14 +85,14 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         makeBoxes(0, 40, 5);
 
         for (int i = 0; i < 15; i++) {
-            Coin coin = new Coin(this);
+            Coin coin = new Coin();
             coin.position.set(6 + i, 6);
             coin.addCollisionListener(coin, character);
             add(coin);
         }
 
         for (int j = 0; j < 10; j++) {
-            ManaPickup manaPickup = new ManaPickup(this);
+            ManaPickup manaPickup = new ManaPickup();
             manaPickup.position.set(-j, 1);
             manaPickup.addCollisionListener(manaPickup, character);
             add(manaPickup);
@@ -100,18 +100,18 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     }
 
     private void setupCosmeticLayers() {
-        Layer middleBackground = new Layer(this);
+        Layer middleBackground = new Layer();
         middleBackground.setParallaxPosition(0.1f, 0.1f);
         middleBackground.setLayerPosition(-200);
-        Image backgroundImage = new Image(this, "game-assets/dude/background/snow.png", 1, 1);
+        Image backgroundImage = new Image("game-assets/dude/background/snow.png", 1, 1);
         backgroundImage.position.set(-GAME_WIDTH / 2 - 100, -GAME_HEIGHT / 2);
         middleBackground.add(backgroundImage);
 
-        Layer furtherBackground = new Layer(this);
+        Layer furtherBackground = new Layer();
         //furtherBackground.setLayerPosition(-300);
         furtherBackground.setParallaxPosition(0.05f, 0.05f);
 
-        Image moon = new Image(this, "game-assets/dude/moon.png", 1, 1);
+        Image moon = new Image("game-assets/dude/moon.png", 1, 1);
         furtherBackground.add(moon);
         moon.position.set(300, 300);
 
@@ -125,10 +125,10 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     }
 
     private void addCloudLayer(final int NUM_TILES, String tilePath, int layerLevel, float xParallax, float yParallax, float xOffset) {
-        Layer clouds = new Layer(this);
+        Layer clouds = new Layer();
         clouds.setParallaxPosition(xParallax, yParallax);
         clouds.setLayerPosition(layerLevel);
-        TileContainer cloudTiles = new TileContainer(this, NUM_TILES, 1, 384, 216);
+        TileContainer cloudTiles = new TileContainer(NUM_TILES, 1, 384, 216);
         for (int i = 0; i < NUM_TILES; i++) {
             cloudTiles.setTileAt(i, 0, tilePath);
         }
@@ -138,12 +138,15 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     }
 
     private void makePlatform(int length, float pX, float pY) {
-        new Platform(this, length).position.set(pX, pY);
+        Platform platform = new Platform(length);
+        platform.position.set(pX, pY);
+
+        add(platform);
     }
 
     private void makeBoxes(float pX, float pY, int amount) {
         for (int i = 0; i < amount; i++) {
-            Box box = new Box(this);
+            Box box = new Box();
             box.position.set(pX + i * 80, pY);
             //box.position.set(0, 0);
             add(box);

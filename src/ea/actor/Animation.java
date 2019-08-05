@@ -51,20 +51,20 @@ import java.util.List;
 @API
 public class Animation extends Actor implements FrameUpdateListener {
 
-    private AnimationFrame[] frames;
+    private final AnimationFrame[] frames;
 
     private final float width;
     private final float height;
 
-    private int currentTime;
-    private int currentIndex;
+    private transient int currentTime;
+    private transient int currentIndex;
 
     /**
      * Liste aller Dispatchables, die beim Abschließen des Loops ausgeführt werden.
      */
     private Collection<Runnable> onCompleteListeners = new ArrayList<>();
 
-    private Animation(Scene scene, AnimationFrame[] frames, float width, float height) {
+    private Animation(AnimationFrame[] frames, float width, float height) {
         super(() -> {
             if (frames.length < 1) {
                 throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
@@ -92,8 +92,8 @@ public class Animation extends Actor implements FrameUpdateListener {
      *
      * @param animation Animation.
      */
-    public Animation(Scene scene, Animation animation) {
-        this(scene, animation.getFrames(), animation.getWidth(), animation.getHeight());
+    public Animation(Animation animation) {
+        this(animation.getFrames(), animation.getWidth(), animation.getHeight());
     }
 
     /**
@@ -178,7 +178,7 @@ public class Animation extends Actor implements FrameUpdateListener {
     }
 
     @API
-    public static Animation createFromSpritesheet(Scene scene, int frameDuration, String filepath, int x, int y, float width, float height) {
+    public static Animation createFromSpritesheet(int frameDuration, String filepath, int x, int y, float width, float height) {
         if (frameDuration < 1) {
             throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
         }
@@ -204,11 +204,11 @@ public class Animation extends Actor implements FrameUpdateListener {
             }
         }
 
-        return new Animation(scene, frames.toArray(new AnimationFrame[0]), width, height);
+        return new Animation(frames.toArray(new AnimationFrame[0]), width, height);
     }
 
     @API
-    public static Animation createFromImages(Scene scene, int frameDuration, float width, float height, String... filepaths) {
+    public static Animation createFromImages(int frameDuration, float width, float height, String... filepaths) {
         if (frameDuration < 1) {
             throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
         }
@@ -219,7 +219,7 @@ public class Animation extends Actor implements FrameUpdateListener {
             frames.add(new AnimationFrame(ImageLoader.load(filepath), frameDuration));
         }
 
-        return new Animation(scene, frames.toArray(new AnimationFrame[0]), width, height);
+        return new Animation(frames.toArray(new AnimationFrame[0]), width, height);
     }
 
     /**
@@ -264,11 +264,11 @@ public class Animation extends Actor implements FrameUpdateListener {
             throw new RuntimeException("Konnte keine Bilder mit Präfix \"" + prefix + "\" im Verzeichnis \"" + directoryPath + "\" finden.");
         }
 
-        return createFromImages(scene, frameDuration, width, height, allPaths.toArray(new String[0]));
+        return createFromImages(frameDuration, width, height, allPaths.toArray(new String[0]));
     }
 
     @API
-    public static Animation createFromAnimatedGif(Scene scene, String filepath, float width, float height) {
+    public static Animation createFromAnimatedGif(String filepath, float width, float height) {
         GifDecoder gifDecoder = new GifDecoder();
         gifDecoder.read(filepath);
 
@@ -281,6 +281,6 @@ public class Animation extends Actor implements FrameUpdateListener {
             frames[i] = new AnimationFrame(frame, durationInMillis);
         }
 
-        return new Animation(scene, frames, width, height);
+        return new Animation(frames, width, height);
     }
 }

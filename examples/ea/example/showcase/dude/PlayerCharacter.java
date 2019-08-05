@@ -79,21 +79,21 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private Vector smashForce = Vector.NULL;
 
     public PlayerCharacter(DudeDemo scene, HUD hud) {
-        super(scene, 1, 1);
+        super(1, 1);
         this.hud = hud;
         this.master = scene;
 
         // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         String basePath = "game-assets/dude/char/spr_m_traveler_";
 
-        addState("idle", Animation.createFromAnimatedGif(scene, basePath + "idle_anim.gif", 1, 1));
-        addState("walking", Animation.createFromAnimatedGif(scene, basePath + "walk_anim.gif", 1, 1));
-        addState("running", Animation.createFromAnimatedGif(scene, basePath + "run_anim.gif", 1, 1));
-        addState("jumpingUp", Animation.createFromAnimatedGif(scene, basePath + "jump_1up_anim.gif", 1, 1));
-        addState("midair", Animation.createFromAnimatedGif(scene, basePath + "jump_2midair_anim.gif", 1, 1));
-        addState("falling", Animation.createFromAnimatedGif(scene, basePath + "jump_3down_anim.gif", 1, 1));
-        addState("landing", Animation.createFromAnimatedGif(scene, basePath + "jump_4land_anim.gif", 1, 1));
-        addState("smashing", Animation.createFromAnimatedGif(scene, basePath + "jump_4land_anim.gif", 1, 1));
+        addState("idle", Animation.createFromAnimatedGif(basePath + "idle_anim.gif", 1, 1));
+        addState("walking", Animation.createFromAnimatedGif(basePath + "walk_anim.gif", 1, 1));
+        addState("running", Animation.createFromAnimatedGif(basePath + "run_anim.gif", 1, 1));
+        addState("jumpingUp", Animation.createFromAnimatedGif(basePath + "jump_1up_anim.gif", 1, 1));
+        addState("midair", Animation.createFromAnimatedGif(basePath + "jump_2midair_anim.gif", 1, 1));
+        addState("falling", Animation.createFromAnimatedGif(basePath + "jump_3down_anim.gif", 1, 1));
+        addState("landing", Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif", 1, 1));
+        addState("smashing", Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif", 1, 1));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
@@ -190,7 +190,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         if (rocketMode) {
             physics.applyImpulse(new Vector(0, 10));
 
-            Particle particle = new Particle(getScene(), 0.1f, 500);
+            Particle particle = new Particle(0.1f, 500);
             particle.position.set(position.getCenter().subtract(new Vector((float)Math.random() * 0.1f, .45f)));
             particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), -2 * ((float) Math.random())));
             particle.setColor(Color.RED);
@@ -337,7 +337,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
             Game.enqueue(() -> {
                 for (int i = 0; i < 100; i++) {
-                    Particle particle = new Particle(getScene(), Random.nextInteger(2) + 2, 500);
+                    Particle particle = new Particle(Random.nextInteger(2) + 2, 500);
                     particle.position.set(position.getCenter().add(0, -32));
                     particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
                     particle.setColor(Color.GRAY);

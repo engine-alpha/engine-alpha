@@ -1,6 +1,5 @@
 package ea.example.showcase.dude;
 
-import ea.Scene;
 import ea.actor.TileContainer;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
@@ -13,8 +12,8 @@ import ea.handle.Physics;
 public class Platform extends TileContainer implements CollisionListener<Box> {
     private static final int TILE_SIZE = 2;
 
-    public Platform(Scene scene, int tileCount) {
-        super(scene, tileCount, 1, TILE_SIZE);
+    public Platform(int tileCount) {
+        super(tileCount, 1, TILE_SIZE);
 
         if (tileCount < 2) {
             throw new IllegalArgumentException("Number of tiles must be at least 2");
@@ -32,8 +31,6 @@ public class Platform extends TileContainer implements CollisionListener<Box> {
 
         // Tile für das rechte Ende
         setTileAt(tileCount - 1, 0, basePath + "platform_r.png");
-
-        scene.add(this);
 
         setBodyType(Physics.Type.STATIC);
         physics.setElasticity(0);

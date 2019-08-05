@@ -20,7 +20,6 @@
 package ea.example.showcase.billard;
 
 import ea.FrameUpdateListener;
-import ea.Scene;
 import ea.Vector;
 import ea.actor.Circle;
 import ea.handle.Physics;
@@ -30,8 +29,8 @@ import java.awt.*;
 public class Ball extends Circle implements FrameUpdateListener {
     public static final float DIAMETER = 24;
 
-    public Ball(Scene scene) {
-        super(scene, DIAMETER);
+    public Ball() {
+        super(DIAMETER);
 
         setColor(Color.YELLOW);
         setBodyType(Physics.Type.DYNAMIC);

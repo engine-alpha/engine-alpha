@@ -45,7 +45,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     /**
      * Textbox für Infos
      */
-    private static class InfoBox
+    /* private static class InfoBox
     extends ActorGroup {
         private Rectangle box; //Hintergrund
 
@@ -73,7 +73,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 texte[i].setContent(texts[i]);
             }
         }
-    }
+    } */
 
     /**
      * Wird für die Schwerkraft-Berechnung genutzt
@@ -122,10 +122,10 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     private Actor attack;
     private Geometry[] walls = new Geometry[NUMER_OF_TESTOBJECTS];
 
-    private ActorGroup fixierungsGruppe;
+    // private ActorGroup fixierungsGruppe;
 
     private Rectangle stange;
-    private InfoBox  box;
+    // private InfoBox  box;
 
     private KlickMode klickMode = KlickMode.ATTACK_POINT;
     private Vector lastAttack;
@@ -157,42 +157,42 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         //fenster.nachrichtSchicken("Elastizität +[W]/-[Q] | Masse +[U] / -[J] | [R]eset | [S]chwerkraft | [E]insperren");
 
         //Test-Objekte
-        Rectangle rechteck = new Rectangle(this, 100, 60);
+        Rectangle rechteck = new Rectangle(100, 60);
         rechteck.position.set(10, 10);
         add(rechteck);
         rechteck.setColor(Color.YELLOW);
         rechteck.setBodyType(Physics.Type.DYNAMIC);
         testObjects[0] = rechteck;
 
-        fixierungsGruppe = new ActorGroup(this);
-        add(fixierungsGruppe);
+        //fixierungsGruppe = new ActorGroup(this);
+        //add(fixierungsGruppe);
 
 
-        Circle kreis = new Circle(this, 50);
+        Circle kreis = new Circle(50);
         kreis.position.set(10,10);
         //wurzel.add(kreis);
-        fixierungsGruppe.add(kreis);
+        //fixierungsGruppe.add(kreis);
         kreis.setColor(Color.MAGENTA);
         kreis.setBodyType(Physics.Type.DYNAMIC);
         testObjects[1] = kreis;
 
-        Circle kreis2 = new Circle(this, 20);
+        Circle kreis2 = new Circle(20);
         //wurzel.add(kreis2);
-        fixierungsGruppe.add(kreis2);
+        //fixierungsGruppe.add(kreis2);
         kreis2.setColor(Color.GREEN);
         kreis2.setBodyType(Physics.Type.DYNAMIC);
         //kreis2.physics.masse(50);
         testObjects[2] = kreis2;
 
-        Polygon polygon = new Polygon(this, new Vector(0,0), new Vector(20, 30), new Vector(10, 50),
+        Polygon polygon = new Polygon(new Vector(0,0), new Vector(20, 30), new Vector(10, 50),
                 new Vector(80, 10), new Vector(120, 0));
-        fixierungsGruppe.add(polygon);
+        //fixierungsGruppe.add(polygon);
         polygon.setColor(Color.BLUE);
         polygon.setBodyType(Physics.Type.DYNAMIC);
         testObjects[3] = polygon;
 
         //Boden
-        Rectangle boden = new Rectangle(this, FIELD_WIDTH, 10);
+        Rectangle boden = new Rectangle(FIELD_WIDTH, 10);
         boden.position.set(0, FIELD_DEPTH);
         add(boden);
         boden.setColor(Color.WHITE);
@@ -200,10 +200,10 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         ground = walls[0] = boden;
 
         //Der Rest der Wände
-        Rectangle links = new Rectangle(this, 10, FIELD_DEPTH);
-        Rectangle rechts = new Rectangle(this, 10, FIELD_DEPTH);
+        Rectangle links = new Rectangle(10, FIELD_DEPTH);
+        Rectangle rechts = new Rectangle(10, FIELD_DEPTH);
         rechts.position.set(FIELD_WIDTH-10, 0);
-        Rectangle oben = new Rectangle(this, FIELD_WIDTH, 10);
+        Rectangle oben = new Rectangle(FIELD_WIDTH, 10);
         add(links, rechts, oben);
         walls[1] = links;
         walls[2] = rechts;
@@ -217,22 +217,22 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
 
 
         //Vector-Visualisierung
-        Rectangle stab = new Rectangle(this, 100, 5);
+        Rectangle stab = new Rectangle(100, 5);
         add(stab);
         stab.setColor(new Color(200, 50, 50));
         stange = stab;
         stange.setLayer(3);
 
         //Attack-Visualisierung
-        Circle atv = new Circle(this, 10);
+        Circle atv = new Circle(10);
         add(atv);
         atv.setColor(Color.RED);
         attack = atv;
         attack.setLayer(4);
 
-        box = new InfoBox(this);
+        /* box = new InfoBox(this);
         add(box);
-        box.position.set(200, 30);
+        box.position.set(200, 30); */
 
 
         //Test-Objekte zur Kollision Anmelden
@@ -311,7 +311,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 }
                 break;
             case KeyEvent.VK_I: //Toggle Info Box
-                box.setVisible(!box.isVisible());
+                // box.setVisible(!box.isVisible());
                 break;
             case KeyEvent.VK_U: //Increase Mass
                 changeMass(10);
@@ -334,11 +334,11 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 getCamera().setZoom(getCamera().getZoom()+0.1f);
                 break;
             case KeyEvent.VK_B: //Toggle die Circlefixierung
-                if(fixierungsGruppe.isFixated()) {
+                /* if(fixierungsGruppe.isFixated()) {
                     fixierungsGruppe.freeFixation();
                 } else {
                     fixierungsGruppe.fixate();
-                }
+                } */
                 break;
         }
     }
@@ -419,7 +419,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 return;
             Vector pos = stange.position.get();
             remove(stange);
-            stange = new Rectangle(this, new Vector(lastAttack, pointer).getLength(), 5);
+            stange = new Rectangle(new Vector(lastAttack, pointer).getLength(), 5);
             System.out.println("new Rectangle: " + stange);
             stange.setColor(new Color(200, 50, 50));
             stange.setLayer(-10);
@@ -441,11 +441,11 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         String vx = Float.toString(vel.x), vy = Float.toString(vel.y);
         vx = vx.substring(0, vx.length() > 4 ? 4 : vx.length());
         vy = vy.substring(0, vy.length() > 4 ? 4 : vy.length());
-        box.setTexts(
+        /* box.setTexts(
                 "Objekt: " + (lastAttackTarget+1),
                 "Masse: " + testObjects[lastAttackTarget].physics.getMass(),
                 "v: (" + vx + " | " + vy + ")",
                 "Elastizität: " + testObjects[lastAttackTarget].physics.getElasticity(),
-                "Toggles: [D]ebug | [I]nfo Box");
+                "Toggles: [D]ebug | [I]nfo Box");  */
     }
 }

@@ -8,7 +8,7 @@ public class Rechteck implements EduGeometrie {
     private final Rectangle rectangle;
 
     public Rechteck(float breite, float hoehe) {
-        rectangle = new Rectangle(Spiel.getActiveScene(), breite, hoehe);
+        rectangle = new Rectangle(breite, hoehe);
         eduSetup();
     }
 

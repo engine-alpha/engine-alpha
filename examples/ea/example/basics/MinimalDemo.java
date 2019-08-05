@@ -42,19 +42,19 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     private final float CAM_SPEED = 0.6f;
 
     public MinimalDemo() {
-        rectangle = new Rectangle(this, 50, 100);
+        rectangle = new Rectangle(50, 100);
         rectangle.setColor(Color.BLUE);
         add(rectangle);
         addKeyListener(this);
         addMouseWheelListener(this);
         addFrameUpdateListener(this);
 
-        Animation animation = Animation.createFromAnimatedGif(this, "game-assets/jump/fx_explosion_b_anim.gif", 1, 1);
+        Animation animation = Animation.createFromAnimatedGif("game-assets/jump/fx_explosion_b_anim.gif", 1, 1);
         animation.position.set(200, 200);
         //animation.setOneTimeOnly();
         add(animation);
 
-        Text text = new Text(this, "Hallo!");
+        Text text = new Text("Hallo!");
         text.position.set(-100, -100);
         text.setColor(Color.MAGENTA);
         add(text);
@@ -62,19 +62,19 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
         //Stateful Animation
 
         //"leerer Automat" -> Erstellt StatefulAnimation ohne Zustände
-        character = new StatefulAnimation(this, 64, 64);
+        character = new StatefulAnimation(64, 64);
 
         final String pathbase = "game-assets/dude/char/spr_m_traveler_";
 
-        Animation idle = Animation.createFromAnimatedGif(this, pathbase + "idle_anim.gif", 1, 1);
+        Animation idle = Animation.createFromAnimatedGif(pathbase + "idle_anim.gif", 1, 1);
         character.addState("idle", idle);
 
-        character.addState("walking", Animation.createFromAnimatedGif(this, pathbase + "walk_anim.gif", 1, 1));
-        character.addState("running", Animation.createFromAnimatedGif(this, pathbase + "run_anim.gif", 1, 1));
-        character.addState("jumpingUp", Animation.createFromAnimatedGif(this, pathbase + "jump_1up_anim.gif", 1, 1));
-        character.addState("midair", Animation.createFromAnimatedGif(this, pathbase + "jump_2midair_anim.gif", 1, 1));
-        character.addState("falling", Animation.createFromAnimatedGif(this, pathbase + "jump_3down_anim.gif", 1, 1));
-        character.addState("landing", Animation.createFromAnimatedGif(this, pathbase + "jump_4land_anim.gif", 1, 1));
+        character.addState("walking", Animation.createFromAnimatedGif(pathbase + "walk_anim.gif", 1, 1));
+        character.addState("running", Animation.createFromAnimatedGif(pathbase + "run_anim.gif", 1, 1));
+        character.addState("jumpingUp", Animation.createFromAnimatedGif(pathbase + "jump_1up_anim.gif", 1, 1));
+        character.addState("midair", Animation.createFromAnimatedGif(pathbase + "jump_2midair_anim.gif", 1, 1));
+        character.addState("falling", Animation.createFromAnimatedGif(pathbase + "jump_3down_anim.gif", 1, 1));
+        character.addState("landing", Animation.createFromAnimatedGif(pathbase + "jump_4land_anim.gif", 1, 1));
 
         character.setStateTransition("landing", "idle");
 

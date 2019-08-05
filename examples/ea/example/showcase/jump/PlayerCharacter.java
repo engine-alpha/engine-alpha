@@ -36,22 +36,22 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private MovementState movementState = MovementState.IDLE;
 
     public PlayerCharacter(Scene scene) {
-        super(scene, 64, 64);
+        super(64, 64);
 
         //Load all Animations in
 
         //Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         final String pathbase = "game-assets/dude/char/spr_m_traveler_";
 
-        Animation idle = Animation.createFromAnimatedGif(scene, pathbase + "idle_anim.gif", 1, 1);
+        Animation idle = Animation.createFromAnimatedGif(pathbase + "idle_anim.gif", 1, 1);
         addState("idle", idle);
 
-        addState("walking", Animation.createFromAnimatedGif(scene, pathbase + "walk_anim.gif", 1, 1));
-        addState("running", Animation.createFromAnimatedGif(scene, pathbase + "run_anim.gif", 1, 1));
-        addState("jumpingUp", Animation.createFromAnimatedGif(scene, pathbase + "jump_1up_anim.gif", 1, 1));
-        addState("midair", Animation.createFromAnimatedGif(scene, pathbase + "jump_2midair_anim.gif", 1, 1));
-        addState("falling", Animation.createFromAnimatedGif(scene, pathbase + "jump_3down_anim.gif", 1, 1));
-        addState("landing", Animation.createFromAnimatedGif(scene, pathbase + "jump_4land_anim.gif", 1, 1));
+        addState("walking", Animation.createFromAnimatedGif(pathbase + "walk_anim.gif", 1, 1));
+        addState("running", Animation.createFromAnimatedGif(pathbase + "run_anim.gif", 1, 1));
+        addState("jumpingUp", Animation.createFromAnimatedGif(pathbase + "jump_1up_anim.gif", 1, 1));
+        addState("midair", Animation.createFromAnimatedGif(pathbase + "jump_2midair_anim.gif", 1, 1));
+        addState("falling", Animation.createFromAnimatedGif(pathbase + "jump_3down_anim.gif", 1, 1));
+        addState("landing", Animation.createFromAnimatedGif(pathbase + "jump_4land_anim.gif", 1, 1));
 
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
