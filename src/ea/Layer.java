@@ -161,7 +161,7 @@ public class Layer {
     final public void remove(Actor... actors) {
         for (Actor actor : actors) {
             this.actorList.remove(actor);
-            //actor.destroy();
+            actor.setScene(null);
         }
     }
 
