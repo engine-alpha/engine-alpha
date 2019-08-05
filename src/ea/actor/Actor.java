@@ -28,16 +28,12 @@ import ea.handle.Physics;
 import ea.handle.Position;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.physics.BodyHandler;
-import ea.internal.physics.PhysicsHandler;
-import ea.internal.physics.WorldHandler;
+import ea.internal.physics.*;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.FixtureDef;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -90,7 +86,7 @@ public abstract class Actor {
     /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
-    private final PhysicsHandler physicsHandler;
+    private PhysicsHandler physicsHandler;
 
     private final Collection<Runnable> destructionListeners = new CopyOnWriteArrayList<>();
 
@@ -124,38 +120,36 @@ public abstract class Actor {
     @API
     public final Physics physics = new Physics(this);
 
-    /**
-     * Gibt an, ob dieser Actor bereits durch den Aufruf von {@link #destroy()} zerstört wird bzw. wurde.
-     */
-    private boolean isDestroying = false;
-
-    public Actor(Scene scene, Supplier<Shape> shapeSupplier) {
-        if (scene == null) {
-            throw new IllegalArgumentException("Die übergebene Szene darf nicht null sein");
-        }
-
-        this.scene = scene;
-
-        this.physicsHandler = createPhysicsHandler(shapeSupplier.get());
+    public Actor(Supplier<Shape> shapeSupplier) {
+        this.physicsHandler = new NullHandler(this, new ProxyData(shapeSupplier));
+        //this.physicsHandler = createBodyHandler(shapeSupplier.get());
     }
 
-    protected PhysicsHandler createPhysicsHandler(Shape shape) {
-        scene.getWorldHandler().lockPixelPerMeter();
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = Physics.Type.PASSIVE.convert();
-        bodyDef.active = true;
-        bodyDef.position.set(Vector.NULL.toVec2());
-        bodyDef.gravityScale = 0;
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 30f;
-        fixtureDef.friction = 0f;
-        fixtureDef.restitution = 0.5f;
-        fixtureDef.shape = shape;
-        fixtureDef.isSensor = true;
-
-        return new BodyHandler(this, scene.getWorldHandler(), bodyDef, fixtureDef, Physics.Type.PASSIVE, true);
+    /**
+     * Setzt die Scene für diesen Actor.
+     *
+     * @param scene Die neu anzumeldende Scene. Ist der Wert <code>null</code>, wird der zugehörige Body zerstört.
+     *              Ist der Wert eine Scene, so wird die Scene
+     */
+    @Internal
+    public void setScene(Scene scene) {
+        //TODO
+        ProxyData proxyData = physicsHandler.getProxyData();
+        if (scene == null) {
+            //Von Scene entfernen
+            scene.getWorldHandler().removeAllInternalReferences(physicsHandler.getBody());
+            scene.getWorldHandler().getWorld().destroyBody(getPhysicsHandler().getBody());
+            this.scene = null;
+            this.physicsHandler = new NullHandler(this, proxyData);
+        } else {
+            //An Scene anmelden
+            if (this.scene != null) {
+                throw new IllegalStateException("Kann einen Actor nicht an mehr als einer Scene angemeldet haben.");
+            }
+            //Neue Scene = neuer Handler
+            physicsHandler = new BodyHandler(this, proxyData, scene.getWorldHandler());
+            this.scene = scene;
+        }
     }
 
     @API
@@ -166,32 +160,6 @@ public abstract class Actor {
     @API
     public final void addDestructionListener(Runnable listener) {
         destructionListeners.add(listener);
-    }
-
-    /**
-     * Zerstört dieses <code>Actor</code>-Objekt. Das bedeutet:
-     * <ul>
-     * <li>Das Actor-Objekt wird nicht mehr gerendert/dargestellt.</li>
-     * <li>Alle Engine-internen Referenzen auf den Actor werden entfernt.</li>
-     * </ul>
-     */
-    @API
-    public final void destroy() {
-        if (isDestroying || scene == null) {
-            return;
-        }
-        isDestroying = true;
-
-        for (Runnable listener : destructionListeners) {
-            listener.run();
-        }
-
-        this.alive = false;
-
-        scene.remove(this);
-        this.scene = null;
-
-        physicsHandler.killBody();
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */

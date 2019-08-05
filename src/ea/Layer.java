@@ -1,11 +1,12 @@
 package ea;
 
 import ea.actor.Actor;
-import ea.actor.ActorGroup;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Layer bieten die Möglichkeit, <code>Actors</code> vor und hinter der Zeichenebene mit zusätzlichen Eigenschaften
@@ -18,7 +19,7 @@ public class Layer {
     /**
      * Der Inhalt des Layers.
      */
-    private final ActorGroup root;
+    private final List<Actor> actorList;
 
     /**
      * Parallaxen-X-Faktor
@@ -49,12 +50,10 @@ public class Layer {
 
     /**
      * Erstellt ein neues Layer.
-     *
-     * @param scene Die Scene, zu der dieses Layer gehört.
      */
     @API
-    public Layer(Scene scene) {
-        root = new ActorGroup(scene);
+    public Layer() {
+        actorList = new ArrayList<>();
     }
 
     /**
@@ -154,15 +153,15 @@ public class Layer {
     @API
     public void add(Actor... actors) {
         for (Actor room : actors) {
-            this.root.add(room);
+            this.actorList.add(room);
         }
     }
 
     @API
     final public void remove(Actor... actors) {
-        for (Actor room : actors) {
-            this.root.remove(room);
-            room.destroy();
+        for (Actor actor : actors) {
+            this.actorList.remove(actor);
+            //actor.destroy();
         }
     }
 
@@ -187,6 +186,8 @@ public class Layer {
         // TODO: Calculate optimal bounds
         int size = Math.max(width, height);
 
-        root.renderBasic(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
+        for (Actor actor : actorList) {
+            actor.renderBasic(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
+        }
     }
 }

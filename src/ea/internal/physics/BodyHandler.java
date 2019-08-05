@@ -7,8 +7,14 @@ import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.MassData;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Fixture;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ein <code>Body-Handler</code> kümmert sich um die <i>physikalische Darstellung</i> eines
@@ -27,26 +33,21 @@ public class BodyHandler extends PhysicsHandler {
     private final WorldHandler worldHandler;
 
     /**
-     * Die fixture (list) des Bodies.
-     */
-    private final Fixture fixture;
-
-    /**
      * Der Body als die physische Repräsentation des analogen Actor-Objekts in der Physics-Engine.
      */
     private final Body body;
+
+    private Physics.Type type;
 
     /**
      * Erstellt einen neuen Body-Handler
      */
     @Internal
-    public BodyHandler(Actor actor, WorldHandler worldHandler, BodyDef bodyDef, FixtureDef fixtureDef, Physics.Type physikType, boolean isSensor) {
-        super(actor, physikType, isSensor);
-
+    public BodyHandler(Actor actor, ProxyData proxyData, WorldHandler worldHandler) {
+        super(actor);
         this.worldHandler = worldHandler;
-
-        body = worldHandler.createBody(bodyDef, actor);
-        fixture = body.createFixture(fixtureDef);
+        type = proxyData.type;
+        body = proxyData.createBody(worldHandler, actor);
     }
 
     public Body getBody() {
@@ -55,13 +56,16 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public void setSensor(boolean isSensor) {
-        this.isSensor = isSensor;
-
-        Fixture current = fixture;
+        Fixture current = body.m_fixtureList;
         while (current != null) {
             current.setSensor(isSensor);
             current = current.m_next;
         }
+    }
+
+    @Override
+    public boolean isSensor(boolean isSensor) {
+        return body.m_fixtureList.isSensor();
     }
 
     @Override
@@ -88,7 +92,7 @@ public class BodyHandler extends PhysicsHandler {
     public boolean contains(Vector vector) {
         Vec2 point = vector.toVec2();
 
-        Fixture current = fixture;
+        Fixture current = body.m_fixtureList;
         while (current != null) {
             if (current.testPoint(point)) {
                 return true;
@@ -128,7 +132,7 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public float getDensity() {
-        return fixture.getDensity();
+        return body.m_fixtureList.getDensity();
     }
 
     @Override
@@ -142,12 +146,12 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public float getFriction() {
-        return fixture.getFriction();
+        return body.m_fixtureList.getFriction();
     }
 
     @Override
     public void setRestitution(float elasticity) {
-        Fixture current = fixture;
+        Fixture current = body.m_fixtureList;
         while (current != null) {
             current.setRestitution(elasticity);
             current = current.m_next;
@@ -156,7 +160,7 @@ public class BodyHandler extends PhysicsHandler {
 
     @Override
     public float getRestitution() {
-        return fixture.getRestitution();
+        return body.m_fixtureList.getRestitution();
     }
 
     @Override
@@ -180,7 +184,7 @@ public class BodyHandler extends PhysicsHandler {
     }
 
     @Override
-    public void applyRotationMomentum(float rotationMomentum) {
+    public void applyTorque(float rotationMomentum) {
         body.applyTorque(rotationMomentum);
     }
 
@@ -204,10 +208,15 @@ public class BodyHandler extends PhysicsHandler {
         // isSensor = true; // TODO Delete again.
 
         body.setActive(true);
-        fixture.setSensor(type == Physics.Type.PASSIVE);// && isSensor);
+        setSensor(type == Physics.Type.PASSIVE);// && isSensor);
         body.setGravityScale(type == Physics.Type.PASSIVE ? 0 : 1);
 
         return this;
+    }
+
+    @Override
+    public Physics.Type getType() {
+        return type;
     }
 
     @Override
@@ -296,6 +305,18 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void setTorque(float value) {
         body.m_torque = value;
+    }
+
+    @Override
+    @Internal
+    public ProxyData getProxyData() {
+        final List<Shape> shapeList = new ArrayList<>();
+        Fixture fixture = body.m_fixtureList;
+        while (fixture != null) {
+            shapeList.add(fixture.m_shape);
+            fixture = fixture.m_next;
+        }
+        return new ProxyData(body, () -> shapeList, getType());
     }
 
     @Override

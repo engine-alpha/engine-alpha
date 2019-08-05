@@ -87,7 +87,7 @@ public class Scene {
     public Scene() {
         this.worldHandler = new WorldHandler();
         this.camera = new Camera();
-        mainLayer = new Layer(this);
+        mainLayer = new Layer();
         mainLayer.setLayerPosition(0);
         layers.add(mainLayer);
         this.addFrameUpdateListener(this.camera);
@@ -212,7 +212,13 @@ public class Scene {
 
     @API
     final public void add(Actor... actors) {
-        mainLayer.add(actors);
+        for (Actor actor : actors) {
+            if (actor.getScene() != null) {
+                throw new IllegalArgumentException("Ein Actor, der an einer Scene angemeldet ist, kann nicht " + "hinzugefügt werden, bevor er abgemeldet wurde.");
+            }
+            mainLayer.add(actor);
+            actor.setScene(this);
+        }
     }
 
     @API

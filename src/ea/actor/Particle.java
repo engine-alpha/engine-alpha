@@ -21,15 +21,9 @@ package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.Scene;
-import ea.Vector;
 import ea.handle.Physics;
 import ea.internal.annotations.API;
-import ea.internal.physics.BodyHandler;
-import ea.internal.physics.PhysicsHandler;
 import ea.internal.physics.WorldHandler;
-import org.jbox2d.collision.shapes.Shape;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.FixtureDef;
 
 import java.awt.*;
 
@@ -49,8 +43,8 @@ public class Particle extends Circle implements FrameUpdateListener {
         this.life = life;
     }
 
-    @Override
-    protected PhysicsHandler createPhysicsHandler(Shape shape) {
+    //@Override
+    /*protected PhysicsHandler createBodyHandler(Shape shape) {
         getScene().getWorldHandler().lockPixelPerMeter();
 
         BodyDef bodyDef = new BodyDef();
@@ -69,7 +63,7 @@ public class Particle extends Circle implements FrameUpdateListener {
         fixtureDef.filter.maskBits = 0;
 
         return new BodyHandler(this, getScene().getWorldHandler(), bodyDef, fixtureDef, Physics.Type.PASSIVE, true);
-    }
+    }*/
 
     @Override
     public void setBodyType(Physics.Type type) {

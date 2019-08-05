@@ -23,32 +23,15 @@ public abstract class PhysicsHandler {
      */
     protected final Actor actor;
 
-    /**
-     * Der physikalische Type, den der Klient gerade fährt.
-     */
-    protected Physics.Type type;
-
-    /**
-     * Diese Variable speichert die Sensor-Flag des Klienten.
-     * Die Sensor-Flag is true, wenn ein passives Objekt (= keine Physics) trotzdem
-     * an Kollisionstests teilnehmen soll.
-     */
-    protected boolean isSensor;
+    //protected boolean isSensor;
 
     /**
      * Initialisiert den Physics-Handler.
      *
      * @param actor Das eine Actor-Objekt, das dieser Handler kontrolliert.
      */
-    protected PhysicsHandler(Actor actor, Physics.Type type, boolean isSensor) {
+    protected PhysicsHandler(Actor actor) {
         this.actor = actor;
-        this.type = type;
-        this.isSensor = isSensor;
-    }
-
-    @Internal
-    public boolean isSensor() {
-        return isSensor;
     }
 
     /* __________________________ Kontrakt: Abstrakte Methoden/Funktionen der Physics __________________________ */
@@ -60,6 +43,12 @@ public abstract class PhysicsHandler {
      */
     public abstract void setSensor(boolean isSensor);
 
+    /**
+     * Gibt die Sensor-Flag des Klienten.
+     * Die Sensor-Flag is true, wenn ein passives Objekt (= keine Physics) trotzdem
+     * an Kollisionstests teilnehmen soll.
+     */
+    public abstract boolean isSensor(boolean isSensor);
     /**
      * Verschiebt das Ziel-Objekt um einen spezifischen Wert auf der Zeichenebene. Die Ausführung hat <b>erst (ggf.) im
      * kommenden Frame</b> einfluss auf die Physics und <b>ändert keine physikalischen Eigenschaften</b> des
@@ -155,7 +144,7 @@ public abstract class PhysicsHandler {
      *
      * @param rotationMomentum der Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
      */
-    public abstract void applyRotationMomentum(float rotationMomentum);
+    public abstract void applyTorque(float rotationMomentum);
 
     /**
      * Wirkt einen Drehimpuls auf das Ziel-Objekt.
@@ -173,9 +162,7 @@ public abstract class PhysicsHandler {
      */
     public abstract PhysicsHandler setType(Physics.Type type);
 
-    public Physics.Type getType() {
-        return type;
-    }
+    public abstract Physics.Type getType();
 
     public abstract void applyForce(Vector kraftInN, Vector globalerOrt);
 
@@ -259,4 +246,12 @@ public abstract class PhysicsHandler {
     public abstract float getTorque();
 
     public abstract void setTorque(float value);
+
+    /**
+     * Gibt die Proxy-Daten des Actors aus.
+     *
+     * @return der gegenwärtige physikalische Zustand des Raum-Objekts in Proxy-Daten.
+     */
+    @Internal
+    public abstract ProxyData getProxyData();
 }
