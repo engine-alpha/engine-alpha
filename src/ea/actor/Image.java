@@ -19,7 +19,6 @@
 
 package ea.actor;
 
-import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.io.ImageLoader;
@@ -48,8 +47,8 @@ public class Image extends Actor {
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
     @API
-    public Image(Scene scene, String filepath, float width, float height) {
-        super(scene, () -> ShapeHelper.createRectangularShape(width, height));
+    public Image(String filepath, float width, float height) {
+        super(() -> ShapeHelper.createRectangularShape(width, height));
 
         this.width = width;
         this.height = height;

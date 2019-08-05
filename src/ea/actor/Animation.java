@@ -33,8 +33,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 /**
  * Eine Animation ein Actor-Objekt, das aus mehreren
@@ -65,7 +65,7 @@ public class Animation extends Actor implements FrameUpdateListener {
     private Collection<Runnable> onCompleteListeners = new ArrayList<>();
 
     private Animation(Scene scene, AnimationFrame[] frames, float width, float height) {
-        super(scene, () -> {
+        super(() -> {
             if (frames.length < 1) {
                 throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
             }
@@ -94,8 +94,6 @@ public class Animation extends Actor implements FrameUpdateListener {
      */
     public Animation(Scene scene, Animation animation) {
         this(scene, animation.getFrames(), animation.getWidth(), animation.getHeight());
-
-        animation.destroy();
     }
 
     /**

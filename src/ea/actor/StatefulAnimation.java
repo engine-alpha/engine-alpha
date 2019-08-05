@@ -1,7 +1,6 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
-import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -48,8 +47,8 @@ public class StatefulAnimation extends Actor {
     private boolean flipHorizontal = false;
     private boolean flipVertical = false;
 
-    public StatefulAnimation(Scene scene, float width, float height) {
-        super(scene, () -> ShapeHelper.createRectangularShape(width, height));
+    public StatefulAnimation(float width, float height) {
+        super(() -> ShapeHelper.createRectangularShape(width, height));
 
         this.width = width;
         this.height = height;

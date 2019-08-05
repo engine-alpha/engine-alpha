@@ -19,7 +19,6 @@
 
 package ea.actor;
 
-import ea.Scene;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.*;
@@ -39,8 +38,8 @@ public abstract class Geometry extends Actor {
     /**
      * Konstruktor.
      */
-    public Geometry(Scene scene, Supplier<Shape> shapeSupplier) {
-        super(scene, shapeSupplier);
+    public Geometry(Supplier<Shape> shapeSupplier) {
+        super(shapeSupplier);
     }
 
     /**

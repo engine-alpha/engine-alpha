@@ -86,16 +86,13 @@ public class Text extends Actor {
      *                 normalen Text.
      */
     @API
-    public Text(Scene scene, String content, String fontName, int size, int type) {
+    public Text(String content, String fontName, int size, int type) {
         // TODO Correct size after pixel per meter removal
-        super(scene, () -> {
+        super(() -> {
             Font font = FontLoader.loadByName(fontName).deriveFont(type, size);
             FontMetrics fontMetrics = ea.internal.util.FontMetrics.get(font);
 
-            return ShapeHelper.createRectangularShape(
-                    fontMetrics.stringWidth(content),
-                    fontMetrics.getHeight()
-            );
+            return ShapeHelper.createRectangularShape(fontMetrics.stringWidth(content), fontMetrics.getHeight());
         });
 
         this.content = content;
@@ -118,7 +115,7 @@ public class Text extends Actor {
      */
     @API
     public Text(Scene scene, String content, String fontName) {
-        this(scene, content, fontName, DEFAULT_SIZE, 0);
+        this(content, fontName, DEFAULT_SIZE, 0);
     }
 
     /**
@@ -130,7 +127,7 @@ public class Text extends Actor {
      */
     @API
     public Text(Scene scene, String content, int size) {
-        this(scene, content, Font.SANS_SERIF, size, 0);
+        this(content, Font.SANS_SERIF, size, 0);
     }
 
     /**
@@ -260,10 +257,10 @@ public class Text extends Actor {
     /**
      * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur getX-Koordinate befindet. Möglich sind:
      * <ul>
-     *     <li>{@code Text.Anchor.LEFT},</li>
-     *     <li>{@code Text.Anchor.CENTER},</li>
-     *     <li>{@code Text.Anchor.RIGHT}.</li>
-     *  </ul><br><b>Hinweis</b>: {@code null} wird wie {@code
+     * <li>{@code Text.Anchor.LEFT},</li>
+     * <li>{@code Text.Anchor.CENTER},</li>
+     * <li>{@code Text.Anchor.RIGHT}.</li>
+     * </ul><br><b>Hinweis</b>: {@code null} wird wie {@code
      * Anchor.LEFT} behandelt!
      *
      * @param anchor neuer Anchor
@@ -279,9 +276,9 @@ public class Text extends Actor {
     /**
      * Ein Textanker beschreibt, wo sich der Text relativ zu seiner getX-Koordinate befindet. Möglich sind:
      * <ul>
-     *     <li>{@code Anchor.LEFT},</li>
-     *     <li>{@code Anchor.CENTER},</li>
-     *     <li>{@code Anchor.RIGHT}.</li>
+     * <li>{@code Anchor.LEFT},</li>
+     * <li>{@code Anchor.CENTER},</li>
+     * <li>{@code Anchor.RIGHT}.</li>
      * </ul>
      *
      * @see #setAnchor(Anchor)

@@ -1,6 +1,5 @@
 package ea.actor;
 
-import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -47,8 +46,8 @@ public class TileContainer extends Actor {
      * @see #setTileAt(int, int, String)
      */
     @API
-    public TileContainer(Scene scene, int numX, int numY, float tileWidth, float tileHeight) {
-        super(scene, () -> ShapeHelper.createRectangularShape(tileWidth * numX, tileHeight * numY));
+    public TileContainer(int numX, int numY, float tileWidth, float tileHeight) {
+        super(() -> ShapeHelper.createRectangularShape(tileWidth * numX, tileHeight * numY));
 
         if (numX <= 0 || numY <= 0) {
             throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");
@@ -73,8 +72,8 @@ public class TileContainer extends Actor {
      * @see #setTileAt(int, int, String)
      */
     @API
-    public TileContainer(Scene scene, int numX, int numY, float tileSize) {
-        this(scene, numX, numY, tileSize, tileSize);
+    public TileContainer(int numX, int numY, float tileSize) {
+        this(numX, numY, tileSize, tileSize);
     }
 
     /**

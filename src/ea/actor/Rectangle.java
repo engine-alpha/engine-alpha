@@ -19,7 +19,6 @@
 
 package ea.actor;
 
-import ea.Scene;
 import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import org.jbox2d.collision.shapes.Shape;
@@ -65,12 +64,12 @@ public class Rectangle extends Geometry {
      * @param width  Die Breite des Rechtecks
      * @param height Die Höhe des Rechtecks
      */
-    public Rectangle(Scene scene, float width, float height) {
-        this(scene, width, height, () -> ShapeHelper.createRectangularShape(width, height));
+    public Rectangle(float width, float height) {
+        this(width, height, () -> ShapeHelper.createRectangularShape(width, height));
     }
 
-    public Rectangle(Scene scene, float width, float height, Supplier<Shape> shapeSupplier) {
-        super(scene, shapeSupplier);
+    public Rectangle(float width, float height, Supplier<Shape> shapeSupplier) {
+        super(shapeSupplier);
 
         this.width = width;
         this.height = height;

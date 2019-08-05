@@ -28,7 +28,7 @@ public class Polygon extends Geometry {
      */
     @API
     public Polygon(Scene scene, Vector... points) {
-        super(scene, () -> {
+        super(() -> {
             Vec2[] vectors = new Vec2[points.length];
 
             for (int i = 0; i < points.length; i++) {
