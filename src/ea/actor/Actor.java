@@ -138,8 +138,18 @@ public abstract class Actor {
         synchronized (this) {
             ProxyData proxyData = physicsHandler.getProxyData();
             if (scene == null) {
+                if (this.scene == null) {
+                    return; // already removed, so we're fine
+                }
+
                 // Von Scene entfernen
                 synchronized (this.scene.getWorldHandler()) {
+                    for (Runnable destructionListener : destructionListeners) {
+                        destructionListener.run();
+                    }
+
+                    destructionListeners.clear();
+
                     Body body = physicsHandler.getBody();
                     this.scene.getWorldHandler().removeAllInternalReferences(body);
                     this.scene.getWorldHandler().getWorld().destroyBody(body);

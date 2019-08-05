@@ -26,6 +26,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
 import ea.internal.io.ImageLoader;
+import ea.internal.physics.WorldHandler;
 import ea.internal.util.Logger;
 
 import javax.swing.*;
@@ -352,11 +353,13 @@ public final class Game {
             }
 
             try {
-                scene.getWorldHandler().step(frameDuration);
+                int simulationTime = Math.min(DESIRED_FRAME_DURATION, frameDuration);
+
+                scene.getWorldHandler().step(simulationTime);
 
                 frameBarrierStart.arriveAndAwaitAdvance();
 
-                scene.onFrameUpdateInternal(frameDuration);
+                scene.onFrameUpdateInternal(simulationTime);
 
                 Runnable runnable = dispatchableQueue.poll();
                 while (runnable != null) {
@@ -381,7 +384,7 @@ public final class Game {
                 frameEnd = System.nanoTime();
 
                 // Avoid very long frames. It lags then, but doesn't jump around
-                frameDuration = (int) Math.min(2 * DESIRED_FRAME_DURATION, (frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND);
+                frameDuration = (int) ((frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND);
 
                 frameStart = frameEnd;
             } catch (Exception e) {
@@ -450,10 +453,19 @@ public final class Game {
      */
     @API
     public static void afterWorldStep(Runnable runnable) {
-        if (scene.getWorldHandler().getWorld().isLocked()) {
-            enqueue(runnable);
-        } else {
-            runnable.run();
+        Scene currentScene = Game.scene;
+        WorldHandler worldHandler = currentScene == null ? null : currentScene.getWorldHandler();
+        if (worldHandler == null) {
+            Game.enqueue(runnable);
+            return;
+        }
+
+        synchronized (worldHandler) {
+            if (worldHandler.getWorld().isLocked()) {
+                enqueue(runnable);
+            } else {
+                runnable.run();
+            }
         }
     }
 

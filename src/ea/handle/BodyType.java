@@ -79,18 +79,19 @@ public enum BodyType {
      * @return Der zugehörige JB2D-Phy-Type zu diesem Engine-Phy-Type.
      */
     @Internal
-    public BodyType convert() {
+    public org.jbox2d.dynamics.BodyType toBox2D() {
         switch (this) {
             case STATIC:
-                return STATIC;
+                return org.jbox2d.dynamics.BodyType.STATIC;
             case DYNAMIC:
             case PASSIVE:
             case PARTICLE:
-                return DYNAMIC;
+                return org.jbox2d.dynamics.BodyType.DYNAMIC;
             case KINEMATIC:
-                return KINEMATIC;
+                return org.jbox2d.dynamics.BodyType.KINEMATIC;
+            default:
+                throw new RuntimeException("Unhandled body type: " + this);
         }
-        return null;
     }
 
     public float getDefaultGravityScale() {

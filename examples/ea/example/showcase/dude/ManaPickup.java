@@ -1,6 +1,5 @@
 package ea.example.showcase.dude;
 
-import ea.Scene;
 import ea.actor.Animation;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
@@ -18,7 +17,7 @@ public class ManaPickup extends Animation implements CollisionListener<PlayerCha
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
         // Ich wurde aufgesammelt!
         collisionEvent.getColliding().gotItem(Item.ManaPickup);
-        getScene().remove(this);
+        removeFromScene();
     }
 
     @Override

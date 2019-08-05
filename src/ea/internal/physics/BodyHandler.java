@@ -209,7 +209,7 @@ public class BodyHandler extends PhysicsHandler {
 
             this.type = type;
 
-            body.setType(type.convert());
+            body.setType(type.toBox2D());
             body.setActive(true);
             body.setGravityScale(type.getDefaultGravityScale());
 
@@ -221,7 +221,7 @@ public class BodyHandler extends PhysicsHandler {
                     case PASSIVE:
                         current.m_filter.categoryBits = WorldHandler.CATEGORY_PASSIVE;
                         current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
-                        ;
+                        break;
                     case STATIC:
                         current.m_filter.categoryBits = WorldHandler.CATEGORY_STATIC;
                         current.m_filter.maskBits = DEFAULT_MASK_BITS;

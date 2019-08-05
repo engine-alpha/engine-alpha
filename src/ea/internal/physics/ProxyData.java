@@ -107,7 +107,7 @@ public class ProxyData {
         bodyDef.linearVelocity = getVelocity();
         bodyDef.angularVelocity = getAngularVelocity();
 
-        bodyDef.type = getType().convert();
+        bodyDef.type = getType().toBox2D();
         bodyDef.active = true;
         bodyDef.gravityScale = getType().getDefaultGravityScale();
 

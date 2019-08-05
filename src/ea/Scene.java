@@ -34,11 +34,8 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
+import java.util.*;
 
 public class Scene {
     /**
@@ -209,20 +206,24 @@ public class Scene {
 
     @API
     final public void add(Actor... actors) {
-        for (Actor actor : actors) {
-            if (actor.getScene() != null) {
-                throw new IllegalArgumentException("Ein Actor, der an einer Scene angemeldet ist, kann nicht " + "hinzugefügt werden, bevor er abgemeldet wurde.");
+        Game.afterWorldStep(() -> {
+            for (Actor actor : actors) {
+                if (actor.getScene() != null) {
+                    throw new IllegalArgumentException("Ein Actor, der an einer Scene angemeldet ist, kann nicht " + "hinzugefügt werden, bevor er abgemeldet wurde.");
+                }
+                mainLayer.add(actor);
+                actor.setScene(this);
             }
-            mainLayer.add(actor);
-            actor.setScene(this);
-        }
+        });
     }
 
     @API
     final public void remove(Actor... actors) {
-        for (Actor actor : actors) {
-            mainLayer.remove(actor);
-        }
+        Game.afterWorldStep(() -> {
+            for (Actor actor : actors) {
+                mainLayer.remove(actor);
+            }
+        });
     }
 
     @API

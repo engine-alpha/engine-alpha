@@ -36,7 +36,7 @@ public class Coin extends Animation implements CollisionListener<PlayerCharacter
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
         //Habe mich mit PlayerCharacter kollidiert!
         collisionEvent.getColliding().gotItem(Item.Coin);
-        this.getScene().remove(this);
+        removeFromScene();
     }
 
     @Override

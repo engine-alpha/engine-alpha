@@ -116,8 +116,10 @@ public class WorldHandler implements ContactListener {
             return;
         }
 
-        synchronized (this.world) {
-            this.world.step(frameDuration / 1000, 6, 3);
+        synchronized (this) {
+            synchronized (this.world) {
+                this.world.step(frameDuration / 1000, 6, 3);
+            }
         }
     }
 
