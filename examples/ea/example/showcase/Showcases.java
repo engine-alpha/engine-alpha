@@ -171,6 +171,7 @@ public class Showcases extends Scene {
      */
     public static void main(String[] args) {
         Showcases mainscene = new Showcases();
+        mainscene.getCamera().setZoom(1);
 
         mainscene.addScene(() -> new BallThrow(mainscene), "Einfacher Ballwurf");
         mainscene.addScene(() -> new PhysicsSandbox(mainscene, WIDTH, HEIGHT), "Kräfte-Sandbox");
