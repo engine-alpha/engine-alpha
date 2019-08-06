@@ -196,10 +196,13 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         // kümmere dich um die horizontale Bewegung
         float desiredVelocity = horizontalMovement.getTargetXVelocity();
+        float impulse;
+
         if (desiredVelocity == 0) {
+            impulse = 0;
             physics.setVelocity(new Vector(velocity.x * 0.95f, velocity.y));
         } else {
-            float impulse = (desiredVelocity - velocity.x) * 4;
+            impulse = (desiredVelocity - velocity.x) * 4;
             physics.applyForce(new Vector(impulse, 0));
         }
 
