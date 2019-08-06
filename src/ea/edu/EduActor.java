@@ -165,6 +165,28 @@ public interface EduActor {
     }
 
     /**
+     * Setzt die Ebene (z-Index) des Actors.
+     *
+     * @param ebenenNummer die Ebenennummer des actors.
+     *
+     * @see #nenneEbene()
+     */
+    default void setzeEbene(int ebenenNummer) {
+        getActor().setLayer(ebenenNummer);
+    }
+
+    /**
+     * Gibt die Ebenennummer (z-Index) des Actors aus.
+     *
+     * @return die Ebenennummer
+     *
+     * @see #setzeEbene(int)
+     */
+    default int nenneEbene() {
+        return getActor().getLayer();
+    }
+
+    /**
      * Bewegt den Actor in einem Kreis um einen Angegebenen Mittelpunkt.
      *
      * @param mX            X-Koordinate des Mittelpunkts der Revolution.
