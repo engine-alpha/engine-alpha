@@ -20,6 +20,7 @@
 package ea;
 
 import ea.actor.Actor;
+import ea.event.EventListeners;
 import ea.input.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -35,7 +36,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -51,26 +55,22 @@ public class Scene {
     /**
      * Die Liste aller angemeldeten KeyListener.
      */
-    private final Collection<KeyListener> keyListeners = new HashSet<>();
-    private boolean keyIterating = false;
+    private final EventListeners<KeyListener> keyListeners = new EventListeners<>();
 
     /**
      * Die Liste aller angemeldeten MouseClickListener.
      */
-    private final Collection<MouseClickListener> mouseClickListeners = new HashSet<>();
-    private boolean mouseClickIterating = false;
+    private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>();
 
     /**
      * Die Liste aller angemeldeten MouseWheelListener.
      */
-    private final Collection<MouseWheelListener> mouseWheelListeners = new HashSet<>();
-    private boolean mouseWheelIterating = false;
+    private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>();
 
     /**
      * Die Liste aller angemeldeten FrameUpdateListener.
      */
-    private final Collection<FrameUpdateListener> frameUpdateListeners = new HashSet<>();
-    private boolean frameUpdateIterating = false;
+    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
 
     /**
      * Die Layer dieser Szene.
@@ -82,18 +82,12 @@ public class Scene {
      */
     private final Layer mainLayer;
 
-    /**
-     * Phaser für den Off-Worldstep.
-     */
-    private final Phaser offStepPhaser = new Phaser(1);
+    @SuppressWarnings ( "FieldAccessedSynchronizedAndUnsynchronized" )
+    private transient int layerCountForCurrentRender;
+    private transient final Queue<Future> layerFutures = new ConcurrentLinkedQueue<>();// (Basis-)Radius für die Visualisierung von Kreisen
 
-    /**
-     * Phaser für den On-Worldstep.
-     */
-    private final Phaser onStepPhaser = new Phaser(1);
-
-    private int layerCountForCurrentRender;
-    private final Queue<Future> layerFutures = new ConcurrentLinkedQueue<>();
+    private static final int JOINT_CIRCLE_RADIUS = 10;// (Basis-)Breite für die Visualisierung von Rechtecken
+    private static final int JOINT_RECTANGLE_SIDE = 12;
 
     public Scene() {
         this.camera = new Camera();
@@ -127,22 +121,6 @@ public class Scene {
                 layerFutures.add(future);
             }
         }
-    }
-
-    /**
-     * Gibt den World-Step Off-Phaser
-     */
-    @Internal
-    Phaser getWorldStepOffPhaser() {
-        return offStepPhaser;
-    }
-
-    /**
-     * Gibt den World-Step On-Phaser
-     */
-    @Internal
-    Phaser getOnStepPhaser() {
-        return onStepPhaser;
     }
 
     @Internal
@@ -230,9 +208,6 @@ public class Scene {
 
     @Internal
     private static void renderJoint(Joint j, Graphics2D g) {
-        final int CIRC_RAD = 10; // (Basis-)Radius für die Visualisierung von Kreisen
-        final int RECT_SID = 12; // (Basis-)Breite für die Visualisierung von Rechtecken
-
         Vec2 anchorA = new Vec2(), anchorB = new Vec2();
         j.getAnchorA(anchorA);
         j.getAnchorB(anchorB);
@@ -242,18 +217,20 @@ public class Scene {
 
         if (j instanceof RevoluteJoint) {
             g.setColor(Color.blue);
-            g.drawOval((int) aOnGrid.x - (CIRC_RAD / 2), (int) aOnGrid.y - (CIRC_RAD / 2), CIRC_RAD, CIRC_RAD);
+            g.drawOval((int) aOnGrid.x - (JOINT_CIRCLE_RADIUS / 2), (int) aOnGrid.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_CIRCLE_RADIUS, JOINT_CIRCLE_RADIUS);
         } else if (j instanceof RopeJoint) {
-            g.setColor(Color.cyan);
-            g.drawRect((int) aOnGrid.x - (CIRC_RAD / 2), (int) aOnGrid.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawRect((int) bOnGrid.x - (CIRC_RAD / 2), (int) bOnGrid.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawLine((int) aOnGrid.x, (int) aOnGrid.y, (int) bOnGrid.x, (int) bOnGrid.y);
+            renderJointRectangle(g, Color.CYAN, aOnGrid, bOnGrid);
         } else if (j instanceof DistanceJoint) {
-            g.setColor(Color.orange);
-            g.drawRect((int) aOnGrid.x - (CIRC_RAD / 2), (int) aOnGrid.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawRect((int) bOnGrid.x - (CIRC_RAD / 2), (int) bOnGrid.y - (CIRC_RAD / 2), RECT_SID, RECT_SID);
-            g.drawLine((int) aOnGrid.x, (int) aOnGrid.y, (int) bOnGrid.x, (int) bOnGrid.y);
+            renderJointRectangle(g, Color.ORANGE, aOnGrid, bOnGrid);
         }
+    }
+
+    @Internal
+    private static void renderJointRectangle(Graphics2D g, Color color, Vector a, Vector b) {
+        g.setColor(color);
+        g.drawRect((int) a.x - (JOINT_CIRCLE_RADIUS / 2), (int) a.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_RECTANGLE_SIDE, JOINT_RECTANGLE_SIDE);
+        g.drawRect((int) b.x - (JOINT_CIRCLE_RADIUS / 2), (int) b.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_RECTANGLE_SIDE, JOINT_RECTANGLE_SIDE);
+        g.drawLine((int) a.x, (int) a.y, (int) b.x, (int) b.y);
     }
 
     /**
@@ -328,180 +305,72 @@ public class Scene {
 
     @API
     final public void addMouseClickListener(MouseClickListener mouseClickListener) {
-        synchronized (mouseClickListeners) {
-            if (mouseClickIterating) {
-                Game.enqueue(() -> mouseClickListeners.add(mouseClickListener));
-            } else {
-                mouseClickListeners.add(mouseClickListener);
-            }
-        }
+        mouseClickListeners.addListener(mouseClickListener);
     }
 
     @API
     final public void removeMouseClickListener(MouseClickListener mouseClickListener) {
-        synchronized (mouseClickListeners) {
-            if (mouseClickIterating) {
-                Game.enqueue(() -> mouseClickListeners.remove(mouseClickListener));
-            } else {
-                mouseClickListeners.remove(mouseClickListener);
-            }
-        }
+        mouseClickListeners.removeListener(mouseClickListener);
     }
 
     @API
     final public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        synchronized (mouseWheelListeners) {
-            if (mouseWheelIterating) {
-                Game.enqueue(() -> mouseWheelListeners.add(mouseWheelListener));
-            } else {
-                mouseWheelListeners.add(mouseWheelListener);
-            }
-        }
+        mouseWheelListeners.addListener(mouseWheelListener);
     }
 
     @API
     final public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        synchronized (mouseWheelListeners) {
-            if (mouseWheelIterating) {
-                Game.enqueue(() -> mouseWheelListeners.remove(mouseWheelListener));
-            } else {
-                mouseWheelListeners.remove(mouseWheelListener);
-            }
-        }
+        mouseWheelListeners.removeListener(mouseWheelListener);
     }
 
     @API
     final public void addKeyListener(KeyListener keyListener) {
-        synchronized (keyListeners) {
-            if (keyIterating) {
-                Game.enqueue(() -> keyListeners.add(keyListener));
-            } else {
-                keyListeners.add(keyListener);
-            }
-        }
+        keyListeners.addListener(keyListener);
     }
 
     @API
     final public void removeKeyListener(KeyListener keyListener) {
-        synchronized (keyListeners) {
-            if (keyIterating) {
-                Game.enqueue(() -> keyListeners.remove(keyListener));
-            } else {
-                keyListeners.remove(keyListener);
-            }
-        }
+        keyListeners.removeListener(keyListener);
     }
 
     @API
     final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        synchronized (frameUpdateListeners) {
-            if (frameUpdateIterating) {
-                Game.enqueue(() -> frameUpdateListeners.add(frameUpdateListener));
-            } else {
-                frameUpdateListeners.add(frameUpdateListener);
-            }
-        }
+        frameUpdateListeners.addListener(frameUpdateListener);
     }
 
     @API
     final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        synchronized (frameUpdateListeners) {
-            if (frameUpdateIterating) {
-                Game.enqueue(() -> frameUpdateListeners.remove(frameUpdateListener));
-            } else {
-                frameUpdateListeners.remove(frameUpdateListener);
-            }
-        }
+        frameUpdateListeners.removeListener(frameUpdateListener);
     }
 
     @Internal
     final void onFrameUpdateInternal(int frameDuration) {
-        synchronized (frameUpdateListeners) {
-            try {
-                frameUpdateIterating = true;
-
-                for (FrameUpdateListener listener : frameUpdateListeners) {
-                    listener.onFrameUpdate(frameDuration);
-                }
-            } finally {
-                frameUpdateIterating = false;
-            }
-        }
+        frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(frameDuration));
     }
 
     @Internal
     final void onKeyDownInternal(KeyEvent e) {
-        synchronized (keyListeners) {
-            try {
-                keyIterating = true;
-
-                for (KeyListener listener : keyListeners) {
-                    listener.onKeyDown(e);
-                }
-            } finally {
-                keyIterating = false;
-            }
-        }
+        keyListeners.invoke(keyListener -> keyListener.onKeyDown(e));
     }
 
     @Internal
     final void onKeyUpInternal(KeyEvent e) {
-        synchronized (keyListeners) {
-            try {
-                keyIterating = true;
-
-                for (KeyListener listener : keyListeners) {
-                    listener.onKeyUp(e);
-                }
-            } finally {
-                keyIterating = false;
-            }
-        }
+        keyListeners.invoke(keyListener -> keyListener.onKeyUp(e));
     }
 
     @Internal
     final void onMouseDownInternal(Vector position, MouseButton button) {
-        synchronized (mouseClickListeners) {
-            try {
-                mouseClickIterating = true;
-
-                for (MouseClickListener listener : mouseClickListeners) {
-                    listener.onMouseDown(position, button);
-                }
-            } finally {
-                mouseClickIterating = false;
-            }
-        }
+        mouseClickListeners.invoke(mouseClickListener -> mouseClickListener.onMouseDown(position, button));
     }
 
     @Internal
     final void onMouseUpInternal(Vector position, MouseButton button) {
-        synchronized (mouseClickListeners) {
-            try {
-                mouseClickIterating = true;
-
-                for (MouseClickListener listener : mouseClickListeners) {
-                    listener.onMouseUp(position, button);
-                }
-            } finally {
-                mouseClickIterating = false;
-            }
-        }
+        mouseClickListeners.invoke(mouseClickListener -> mouseClickListener.onMouseUp(position, button));
     }
 
     @Internal
     final void onMouseWheelMoveInternal(MouseWheelEvent mouseWheelEvent) {
-        synchronized (mouseWheelListeners) {
-            try {
-                mouseWheelIterating = true;
-
-                for (MouseWheelListener listener : mouseWheelListeners) {
-                    listener.onMouseWheelMove(mouseWheelEvent);
-                }
-            } finally {
-                mouseWheelIterating = false;
-            }
-        }
+        mouseWheelListeners.invoke(mouseWheelListener -> mouseWheelListener.onMouseWheelMove(mouseWheelEvent));
     }
 
     @API

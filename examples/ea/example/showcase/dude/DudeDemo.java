@@ -1,6 +1,6 @@
 package ea.example.showcase.dude;
 
-import ea.BoundingRechteck;
+import ea.Bounds;
 import ea.Layer;
 import ea.Scene;
 import ea.Vector;
@@ -51,7 +51,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         setGravity(new Vector(0, -13));
         getCamera().setFocus(character);
         getCamera().setOffset(new Vector(0, 5));
-        getCamera().setBounds(new BoundingRechteck(-2000, -200, 20000, 20000));
+        getCamera().setBounds(new Bounds(-2000, -200, 20000, 20000));
         getCamera().setZoom(30f);
 
         setupPlayground();
