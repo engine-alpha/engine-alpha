@@ -328,4 +328,12 @@ public class Spiel {
     public void frameUpdateReagierbarAnmelden(Object o) {
         getActiveScene().addEduFrameUpdateListener(o);
     }
+
+    public float aktuelleMausPositionX() {
+        return getActiveScene().getMousePosition().x;
+    }
+
+    public float aktuelleMausPositionY() {
+        return getActiveScene().getMousePosition().y;
+    }
 }

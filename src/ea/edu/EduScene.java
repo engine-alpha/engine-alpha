@@ -138,18 +138,22 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
     @Override
     public void onMouseDown(Vector position, MouseButton button) {
-        for (KlickAuftrag ka : aufgabenKlick) {
-            if (ka.linksklick && button == MouseButton.LEFT) {
-                ka.ausfuehren((int) position.x, (int) position.y);
-            } else if (!ka.linksklick && button == MouseButton.RIGHT) {
-                ka.ausfuehren((int) position.x, (int) position.y);
-            }
-        }
+        runMouseReactions(position, button, true);
     }
 
     @Override
     public void onMouseUp(Vector position, MouseButton button) {
-        // Ignore.
+        runMouseReactions(position, button, false);
+    }
+
+    private final void runMouseReactions(Vector position, MouseButton button, boolean down) {
+        for (KlickAuftrag ka : aufgabenKlick) {
+            if (ka.linksklick && button == MouseButton.LEFT) {
+                ka.ausfuehren((int) position.x, (int) position.y, down);
+            } else if (!ka.linksklick && button == MouseButton.RIGHT) {
+                ka.ausfuehren((int) position.x, (int) position.y, down);
+            }
+        }
     }
 
     /* ~~~ Listener CLASSES ~~~ */
@@ -280,9 +284,9 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
          * @param x Die zu uebergebene X-Koordinate des Klicks.
          * @param y Die zu uebergebene Y-Koordinate des Klicks.
          */
-        private void ausfuehren(int x, int y) {
+        private void ausfuehren(int x, int y, boolean press) {
             try {
-                methode.invoke(client, new Object[] {x, y});
+                methode.invoke(client, new Object[] {x, y, press});
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             } catch (java.lang.IllegalAccessException e) {
