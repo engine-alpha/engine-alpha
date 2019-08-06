@@ -205,7 +205,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
             getScene().add(particle);
 
-            Game.enqueue(() -> particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), -2 * ((float) Math.random()))));
+            Game.enqueue(() -> particle.physics.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
         }
 
         switch (getCurrentState()) {
