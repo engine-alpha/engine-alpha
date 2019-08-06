@@ -63,7 +63,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         this.addKeyListener(this);
 
-        addFrameUpdateListener(new PeriodicTask(1000, () -> createCircle(getMousePosition(), Color.YELLOW)));
+        addFrameUpdateListener(new PeriodicTask(100, () -> createCircle(getMousePosition(), Color.YELLOW)));
 
         left.setBodyType(BodyType.STATIC);
         right.setBodyType(BodyType.STATIC);

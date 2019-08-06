@@ -1,6 +1,7 @@
 package ea.example.showcase.dude;
 
 import ea.actor.TileContainer;
+import ea.actor.TileMap;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.handle.BodyType;
@@ -22,15 +23,15 @@ public class Platform extends TileContainer implements CollisionListener<Box> {
         String basePath = "game-assets/dude/tiles/";
 
         // Tile für das linke Ende
-        setTileAt(0, 0, basePath + "platform_l.png");
+        setTile(0, 0, TileMap.createFromImage(basePath + "platform_l.png"));
 
         for (int x = 1; x < tileCount - 1; x++) {
             // Tile für alle mittleren Stücke
-            setTileAt(x, 0, basePath + "platform_m.png");
+            setTile(x, 0, TileMap.createFromImage(basePath + "platform_m.png"));
         }
 
         // Tile für das rechte Ende
-        setTileAt(tileCount - 1, 0, basePath + "platform_r.png");
+        setTile(tileCount - 1, 0, TileMap.createFromImage(basePath + "platform_r.png"));
 
         setBodyType(BodyType.STATIC);
         physics.setRestitution(0);

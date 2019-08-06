@@ -6,6 +6,7 @@ import ea.Scene;
 import ea.Vector;
 import ea.actor.Image;
 import ea.actor.TileContainer;
+import ea.actor.TileMap;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
 import ea.handle.BodyType;
@@ -130,7 +131,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         clouds.setLayerPosition(layerLevel);
         TileContainer cloudTiles = new TileContainer(NUM_TILES, 1, 384, 216);
         for (int i = 0; i < NUM_TILES; i++) {
-            cloudTiles.setTileAt(i, 0, tilePath);
+            cloudTiles.setTile(i, 0, TileMap.createFromImage(tilePath));
         }
         cloudTiles.position.set(xOffset, -GAME_HEIGHT / 2);
         clouds.add(cloudTiles);
