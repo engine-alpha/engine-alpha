@@ -259,7 +259,7 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void applyImpluse(Vector impluseInNs, Vector globalLocation) {
         synchronized (worldHandler) {
-            body.applyLinearImpulse(impluseInNs.toVec2(), globalLocation.toVec2());
+            body.applyLinearImpulse(impluseInNs.toVec2(), globalLocation.toVec2(), true);
         }
     }
 

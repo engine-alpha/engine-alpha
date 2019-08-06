@@ -9,6 +9,7 @@ import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.callbacks.QueryCallback;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
@@ -154,8 +155,9 @@ public class WorldHandler implements ContactListener {
     public Actor lookupActor(Body body) {
         Actor result = worldMap.get(body);
         if (result == null) {
-            //throw new RuntimeException("Der zu testende Body war nicht Teil der World.");
+            throw new RuntimeException("No actor found for given body");
         }
+
         return result;
     }
 
@@ -229,7 +231,7 @@ public class WorldHandler implements ContactListener {
          */
 
         //Sortieren der Bodies.
-        Body lower = null, higher = null;
+        Body lower, higher;
         if (b1.hashCode() == b2.hashCode()) {
             //Hashes sind gleich (blöde Sache!) -> beide Varianten probieren.
             List<Checkup> result1 = specificCollisionListeners.get(b1);
@@ -343,8 +345,8 @@ public class WorldHandler implements ContactListener {
     @Internal
     public Fixture[] aabbQuery(AABB aabb) {
         ArrayList<Fixture> fixtures = new ArrayList<>();
-        world.queryAABB(fixture -> fixtures.add(fixture), aabb);
-        return fixtures.toArray(new Fixture[fixtures.size()]);
+        world.queryAABB((QueryCallback) fixtures::add, aabb);
+        return fixtures.toArray(new Fixture[0]);
     }
 
     @Internal

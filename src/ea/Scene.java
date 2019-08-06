@@ -31,16 +31,16 @@ import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RopeJoint;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.*;
-import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.Phaser;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scene {
     /**
@@ -109,12 +109,19 @@ public class Scene {
      * @param deltaTime Die Echtzeit, die seit dem letzten World-Step vergangen ist.
      */
     @Internal
-    void worldStep(float deltaTime) {
+    void worldStep(float deltaTime, Phaser worldStepEndBarrier) {
         synchronized (layers) {
             layerCountForCurrentRender = layers.size();
+            AtomicInteger remainingSteps = new AtomicInteger(layerCountForCurrentRender);
 
             for (Layer layer : layers) {
-                Future future = Game.threadPoolExecutor.submit(() -> layer.step(deltaTime));
+                Future future = Game.threadPoolExecutor.submit(() -> {
+                    layer.step(deltaTime);
+
+                    if (remainingSteps.decrementAndGet() == 0) {
+                        worldStepEndBarrier.arrive();
+                    }
+                });
 
                 layerFutures.add(future);
             }
@@ -138,11 +145,13 @@ public class Scene {
     }
 
     @Internal
-    public void render(Graphics2D g, int width, int height, Phaser worldStepEndBarrier) {
+    public void render(Graphics2D g, int width, int height) {
         final AffineTransform base = g.getTransform();
 
         int current = 0;
-        while (current < layerCountForCurrentRender) {
+        int limit = this.layerCountForCurrentRender;
+
+        while (current < limit) {
             Future future = layerFutures.poll();
             if (future == null) {
                 break;
@@ -163,18 +172,10 @@ public class Scene {
                 break;
             }
 
-            if (current == layerCountForCurrentRender - 1) {
-                worldStepEndBarrier.arrive();
-            }
-
             layer.render(g, camera, width, height);
             g.setTransform(base);
 
             current++;
-        }
-
-        if (current < layerCountForCurrentRender) {
-            worldStepEndBarrier.arrive();
         }
 
         if (Game.isDebug()) {

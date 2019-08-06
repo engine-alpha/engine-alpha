@@ -21,7 +21,6 @@ package ea;
 
 import ea.input.MouseButton;
 import ea.input.MouseWheelAction;
-import ea.internal.ThreadSyncHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
@@ -192,14 +191,14 @@ public final class Game {
         Game.scene = scene;
 
         renderPanel = new RenderPanel(width, height) {
-            public void render(Graphics2D g, Phaser worldStepEndBarrier) {
+            public void render(Graphics2D g) {
                 // Absoluter Hintergrund
                 g.setColor(Color.black);
                 g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
                 AffineTransform transform = g.getTransform();
 
-                Game.scene.render(g, Game.width, Game.height, worldStepEndBarrier);
+                Game.scene.render(g, Game.width, Game.height);
 
                 g.setTransform(transform);
 
@@ -364,7 +363,7 @@ public final class Game {
             try {
                 int simulationTime = Math.min(DESIRED_FRAME_DURATION, frameDuration);
 
-                scene.worldStep(simulationTime);
+                scene.worldStep(simulationTime, worldStepEndBarrier);
 
                 frameBarrierStart.arriveAndAwaitAdvance();
                 worldStepEndBarrier.arriveAndAwaitAdvance();
@@ -424,10 +423,6 @@ public final class Game {
         frame.dispose();
 
         System.exit(0);
-    }
-
-    public static boolean isGameThread() {
-        return Thread.currentThread() == mainThread || Thread.currentThread() == renderThread || mainThread == null || ThreadSyncHelper.isSynced();
     }
 
     @Internal
@@ -804,7 +799,7 @@ public final class Game {
                                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                                 g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-                                renderPanel.render(g, worldStepEndBarrier);
+                                renderPanel.render(g);
 
                                 g.dispose();
                             } while (bufferStrategy.contentsRestored() && !isInterrupted());
