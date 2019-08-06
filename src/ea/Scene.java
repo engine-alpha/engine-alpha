@@ -205,6 +205,7 @@ public class Scene {
      *
      * @return Die sichtbare Fläche auf dem Hauptlayer
      */
+    @API
     public Bounds getVisibleArea() {
         return mainLayer.visibleArea();
     }

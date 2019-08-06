@@ -36,7 +36,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     public static final int BOTTOM_OUT = -500 / 30;
     private static final int DOUBLE_JUMP_COST = 3;
     private static final int MANA_PICKUP_BONUS = 50;
-    private static final int ROCKETCOST_PER_FRAME = 2;
+    private static final int ROCKETCOST_PER_FRAME = 5;
 
     private final boolean GODMODE = false;
 
@@ -132,8 +132,8 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             return shapeList;
         });
 
-        //physics.setMass(120000000);
         scene.add(this);
+        physics.setMass(650000000);
         scene.addKeyListener(this);
         scene.addFrameUpdateListener(this);
         physics.setMass(65);

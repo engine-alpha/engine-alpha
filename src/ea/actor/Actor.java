@@ -464,7 +464,7 @@ public abstract class Actor {
         } else if (shape instanceof CircleShape) {
             CircleShape circleShape = (CircleShape) shape;
             float diameter = (circleShape.m_radius * 2);
-            g.drawOval((int) ((circleShape.m_p.x - circleShape.m_radius) * pixelPerMeter), (int) +(((circleShape.m_p.y + circleShape.m_radius) * pixelPerMeter)), (int) (diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter));
+            g.drawOval((int) ((circleShape.m_p.x - circleShape.m_radius) * pixelPerMeter), (int) ((-circleShape.m_p.y - circleShape.m_radius) * pixelPerMeter), (int) (diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter));
         } else {
             Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");
         }
