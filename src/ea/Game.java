@@ -308,7 +308,7 @@ public final class Game {
 
         for (int x = startX - gridSizeInPixels; x < startX + windowSizeInPixels + gridSizeInPixels; x += gridSizeInPixels) {
             for (int y = startY; y < startY + windowSizeInPixels + gridSizeInPixels; y += gridSizeInPixels) {
-                g.drawString(Math.round(x / pixelPerMeter) + " / " + Math.round((-y) / gridSizeInPixels), x + 5, y - 5);
+                g.drawString(Math.round(x / pixelPerMeter) + " / " + Math.round((-y) / pixelPerMeter), x + 5, y - 5);
             }
         }
 
