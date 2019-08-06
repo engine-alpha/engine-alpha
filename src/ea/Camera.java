@@ -42,6 +42,8 @@ import ea.internal.annotations.Internal;
  * @author Michael Andonie
  */
 public final class Camera {
+    public static final float DEFAULT_ZOOM = 30;
+
     /**
      * Aktuelle Position des Mittelpunkts der Kamera.
      */
@@ -65,7 +67,7 @@ public final class Camera {
     /**
      * Der aktuelle Kamerazoom.
      */
-    private float zoom = 1;
+    private float zoom = DEFAULT_ZOOM;
 
     /**
      * Die aktuelle Drehung in Radians.
