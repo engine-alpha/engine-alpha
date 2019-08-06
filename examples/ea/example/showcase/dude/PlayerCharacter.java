@@ -20,6 +20,8 @@ import ea.sound.Sound;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
+import java.util.HashSet;
 
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
@@ -54,6 +56,8 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private boolean rocketMode = false;
 
     private final HUD hud;
+
+    private final Collection<Platform> ignoredPlatformForCollision = new HashSet<>();
 
     /**
      * Beschreibt die drei Zustände, die ein Character bezüglich seiner horizontalen Bewegung haben kann.
@@ -219,9 +223,18 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 getScene().removeFrameUpdateListener(animator);
                 particle.removeFromScene();
             });
-            getScene().addFrameUpdateListener(animator);
 
+            getScene().addFrameUpdateListener(animator);
             getScene().add(particle);
+
+            particle.addCollisionListener(e -> {
+                if (e.getColliding() instanceof Platform) {
+                    Platform platform = (Platform) e.getColliding();
+                    if (ignoredPlatformForCollision.contains(platform)) {
+                        e.ignoreCollision();
+                    }
+                }
+            });
 
             Game.enqueue(() -> particle.physics.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
         }
@@ -342,8 +355,9 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         }
 
         if (collisionEvent.getColliding() instanceof Platform) {
-            //Check if collision is to be counted
-            if (physics.getVelocity().y > 0) {
+            Platform platform = (Platform) collisionEvent.getColliding();
+            if (physics.getVelocity().y > 0 || ignoredPlatformForCollision.contains(platform)) {
+                ignoredPlatformForCollision.add(platform);
                 collisionEvent.ignoreCollision();
             }
         }
@@ -374,6 +388,14 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                     particle.setLayer(-1);
                 }
             });
+        }
+    }
+
+    @Override
+    public void onCollisionEnd(CollisionEvent<Actor> collisionEvent) {
+        if (collisionEvent.getColliding() instanceof Platform) {
+            Platform platform = (Platform) collisionEvent.getColliding();
+            ignoredPlatformForCollision.remove(platform);
         }
     }
 }
