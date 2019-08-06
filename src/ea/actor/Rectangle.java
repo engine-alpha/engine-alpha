@@ -82,20 +82,18 @@ public class Rectangle extends Geometry {
         return height;
     }
 
-    @API
-    public void setWidth(float width) {
-        this.width = width;
-    }
-
-    @API
-    public void setHeight(float height) {
-        this.height = height;
-    }
-
+    /**
+     * Setzt die Höhe und Breite des Rechtecks neu. Ändert die physikalischen Eigenschaften (Masse etc.).
+     *
+     * @param width  Neue Breite für das Rechteck.
+     * @param height Neue Höhe für das Rechteck.
+     */
     @API
     public void resetDimensions(float width, float height) {
         assertWidthAndHeight(width, height);
         this.width = width;
+        this.height = height;
+        this.setShape(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
     }
 
     @Internal
@@ -129,9 +127,17 @@ public class Rectangle extends Geometry {
         if (borderRadius == 0) {
             g.fillRect(0, -SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR);
         } else {
-            int borderRadius = (int) (Math.min(width, height) * this.borderRadius / 2);
+            float borderRadiusWidth;
+            float borderRadiusHeight;
+            if (width >= height) {
+                borderRadiusWidth = (height * this.borderRadius / width);
+                borderRadiusHeight = (height * this.borderRadius / 2);
+            } else {
+                borderRadiusHeight = (width * this.borderRadius / height);
+                borderRadiusWidth = (width * this.borderRadius / 2);
+            }
 
-            g.fillRoundRect(0, -SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, borderRadius, borderRadius);
+            g.fillRoundRect(0, -SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, (int) (borderRadiusWidth * SCALING_APPROX_FACTOR), (int) (borderRadiusHeight * SCALING_APPROX_FACTOR));
         }
     }
 }

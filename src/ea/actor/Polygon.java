@@ -1,10 +1,9 @@
 package ea.actor;
 
 import ea.Vector;
+import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
 
 import java.awt.Graphics2D;
 
@@ -16,9 +15,20 @@ import java.awt.Graphics2D;
 @API
 public class Polygon extends Geometry {
     /**
-     * Die Punkte, die das Polygon beschreiben
+     * Die Punkte, die das Polygon beschreiben.
+     * Pending Scaling
      */
-    private final int[] px, py;
+    private int[] px, py;
+
+    /**
+     * Skalierungsfaktor Breite
+     */
+    private float scaleX;
+
+    /**
+     * Skalierungsfaktor Höhe.
+     */
+    private float scaleY;
 
     /**
      * Erstellt ein neues Polygon. Seine Position ist der <b>Ursprung</b>.
@@ -27,18 +37,7 @@ public class Polygon extends Geometry {
      */
     @API
     public Polygon(Vector... points) {
-        super(() -> {
-            Vec2[] vectors = new Vec2[points.length];
-
-            for (int i = 0; i < points.length; i++) {
-                vectors[i] = points[i].toVec2();
-            }
-
-            PolygonShape shape = new PolygonShape();
-            shape.set(vectors, points.length);
-
-            return shape;
-        });
+        super(() -> ShapeBuilder.createPolygonShape(points));
 
         if (points.length < 3) {
             throw new RuntimeException("Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein gültiges Polygon zu beschreiben.");
@@ -51,6 +50,14 @@ public class Polygon extends Geometry {
             px[i] = Math.round(points[i].x);
             py[i] = -1 * Math.round(points[i].y);
         }
+    }
+
+    /**
+     * 
+     * @param points
+     */
+    private final void resetPoints(Vector... points) {
+        //
     }
 
     /**
