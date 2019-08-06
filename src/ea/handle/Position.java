@@ -54,15 +54,16 @@ public class Position {
         this.actor = actor;
     }
 
-
     /**
      * Setzt die Position des <code>Actor</code>-Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
      * gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param x neue <code>getX</code>-Koordinate
      * @param y neue <code>getY</code>-Koordinate
+     *
      * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
+     *
      * @see #set(Vector)
      * @see #setCenter(float, float)
      * @see #setX(float)
@@ -79,8 +80,10 @@ public class Position {
      * gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param p Der neue Zielpunkt
+     *
      * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
+     *
      * @see #set(float, float)
      * @see #setCenter(float, float)
      * @see #setX(float)
@@ -97,8 +100,10 @@ public class Position {
      * Methode zum
      *
      * @param v Der Vector, der die Verschiebung des Objekts angibt.
+     *
      * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
+     *
      * @see Vector
      * @see #move(float, float)
      */
@@ -112,13 +117,15 @@ public class Position {
      * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
      * <p>
      * Diese Methode arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
-     * durch den Aufruf der Methode <code>zentrum()</code>. Daher ist diese Methode in der Anwendung
+     * durch den Aufruf der Methode <code>center()</code>. Daher ist diese Methode in der Anwendung
      * auf ein ActorGroup-Objekt nicht unbedingt sinnvoll.
      *
      * @param x Die <code>getX</code>-Koordinate des neuen Mittelpunktes des Objektes
      * @param y Die <code>getY</code>-Koordinate des neuen Mittelpunktes des Objektes
+     *
      * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
+     *
      * @see #setCenter(Vector)
      * @see #move(Vector)
      * @see #set(float, float)
@@ -133,13 +140,15 @@ public class Position {
     /**
      * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.<br>
      * Diese Methode Arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
-     * durch den Aufruf der Methode <code>zentrum()</code>. Daher ist diese Methode im Anwand auf
+     * durch den Aufruf der Methode <code>center()</code>. Daher ist diese Methode im Anwand auf
      * ein ActorGroup-Objekt nicht unbedingt sinnvoll.<br> Macht dasselbe wie
      * <code>mittelPunktSetzen(p.getX, p.getY)</code>.
      *
      * @param p Der neue Mittelpunkt des Actor-Objekts
+     *
      * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
+     *
      * @see #setCenter(float, float)
      * @see #move(Vector)
      * @see #set(float, float)
@@ -157,6 +166,7 @@ public class Position {
      * <p>
      *
      * @return <code>getX</code>-Koordinate
+     *
      * @see #getY()
      * @see #get()
      */
@@ -170,8 +180,10 @@ public class Position {
      * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param x neue <code>getX</code>-Koordinate
+     *
      * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
+     *
      * @see #set(float, float)
      * @see #setCenter(float, float)
      * @see #setY(float)
@@ -189,6 +201,7 @@ public class Position {
      * TODO: Deprecate positionX() in favor of this new method?
      *
      * @return <code>getY</code>-Koordinate
+     *
      * @see #getX()
      * @see #get()
      */
@@ -206,8 +219,10 @@ public class Position {
      * <code>setCenter(int getX, int getY)</code>.
      *
      * @param y neue <code>getY</code>-Koordinate
+     *
      * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
+     *
      * @see #set(float, float)
      * @see #setCenter(float, float)
      * @see #setX(float)
@@ -222,6 +237,7 @@ public class Position {
      * Gibt den Mittelpunkt des Objektes in der Scene aus.
      *
      * @return Die Koordinaten des Mittelpunktes des Objektes
+     *
      * @see #get()
      */
     @API
@@ -236,8 +252,10 @@ public class Position {
      *
      * @param dX Die Verschiebung in Richtung X
      * @param dY Die Verschiebung in Richtung Y
+     *
      * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
+     *
      * @see #move(Vector)
      */
     @API
@@ -261,11 +279,11 @@ public class Position {
 
     /* __________________________ Rotation __________________________ */
 
-
     /**
      * Rotiert das Objekt.
      *
      * @param radians Der Winkel (in <b>Bogenmaß</b>), um den das Objekt rotiert werden soll.
+     *
      * @return Das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
      */
@@ -292,6 +310,7 @@ public class Position {
      *
      * @param degreeInRad Der Winkel (in <b>Bogenmaß</b>), um den das Objekt <b>von seiner Ausgangsposition bei
      *                    Initialisierung</b> rotiert werden soll.
+     *
      * @return Das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
      * Dokumentation der Klasse).
      */

@@ -5,7 +5,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.WorldHandler;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -213,6 +213,59 @@ public class Layer {
         }
     }
 
+    /**
+     * Gibt die derzeit sichtbare Fläche des Layers auf dem Bildschirm an.
+     *
+     * @param camera Die aktive Kamera
+     *
+     * @return Die sichtbare Fläche als Bounds Objekt <b>mit Angaben in Meter</b>
+     */
+    @Internal
+    public Bounds visibleArea(Camera camera) {
+        Vector center = camera.getPosition();
+        float pixelPerMeter = calculatePixelPerMeter(camera);
+        Bounds frameBoundsPx = Game.getFrameSizeInPx();
+        return new Bounds(0, 0, frameBoundsPx.width / pixelPerMeter, frameBoundsPx.height / pixelPerMeter).withCenterPoint(center);
+    }
+
+    /**
+     * Setzt den Kamerazoom exakt, sodass die sichtbare Breite des sichtbaren Fensters einer bestimmten Länge
+     * entspricht.
+     *
+     * @param widthInM Die Breite in Meter, auf die die Kamera im Fenster exakt zu setzen ist.
+     *
+     * @see #setVisibleHeight(float)
+     */
+    @API
+    public void setVisibleWidth(float widthInM) {
+        Bounds frameBoundsPx = Game.getFrameSizeInPx();
+
+        float desiredPixelPerMeter = frameBoundsPx.width / widthInM;
+        float desiredZoom = 1 + ((desiredPixelPerMeter - 1) / parallaxZoom);
+        parent.getCamera().setZoom(desiredZoom);
+    }
+
+    /**
+     * Setzt den Kamerazoom exakt, sodass die sichtbare HÖhe des sichtbaren Fensters einer bestimmten Länge
+     * entspricht.
+     *
+     * @param heightInM Die Höhe in Meter, auf die die Kamera im Fenster exakt zu setzen ist.
+     *
+     * @see #setVisibleWidth(float)
+     */
+    @API
+    public void setVisibleHeight(float heightInM) {
+        Bounds frameBoundsPx = Game.getFrameSizeInPx();
+
+        float desiredPixelPerMeter = frameBoundsPx.height / heightInM;
+        float desiredZoom = 1 + ((desiredPixelPerMeter - 1) / parallaxZoom);
+        parent.getCamera().setZoom(desiredZoom);
+    }
+
+    private float calculatePixelPerMeter(Camera camera) {
+        return 1 + (camera.getZoom() - 1) * parallaxZoom;
+    }
+
     @Internal
     public void render(Graphics2D g, Camera camera, int width, int height) {
         if (!visible) {
@@ -223,7 +276,7 @@ public class Layer {
         g.setClip(0, 0, width, height);
         g.translate(width / 2, height / 2);
 
-        float pixelPerMeter = 1 + (camera.getZoom() - 1) * parallaxZoom;
+        float pixelPerMeter = calculatePixelPerMeter(camera);
 
         g.rotate(rotation * parallaxRotation, 0, 0);
         g.translate((-position.x * parallaxX) * pixelPerMeter, (position.y * parallaxY) * pixelPerMeter);
@@ -232,7 +285,7 @@ public class Layer {
         int size = Math.max(width, height);
 
         for (Actor actor : actorList) {
-            actor.renderBasic(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2), pixelPerMeter);
+            actor.renderBasic(g, new Bounds(position.x - size, position.y - size, size * 2, size * 2), pixelPerMeter);
         }
     }
 

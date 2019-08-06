@@ -27,7 +27,7 @@ import ea.internal.graphics.RenderPanel;
 import ea.internal.io.ImageLoader;
 import ea.internal.physics.WorldHandler;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -78,7 +78,7 @@ public final class Game {
 
     /**
      * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
-     * Dies betrifft unter anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
+     * Dies betrifft below anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
      * diese Variable eingeführt.
      *
      * @author andonie
@@ -538,8 +538,8 @@ public final class Game {
     /**
      * Setzt die Größe des Engine-Fensters.
      *
-     * @param width  Die neue Breite des Engine-Fensters.
-     * @param height Die neue Höhe des Engine-Fensters.
+     * @param width  Die neue Breite des Engine-Fensters in px.
+     * @param height Die neue Höhe des Engine-Fensters in px.
      */
     @API
     public static void setFrameSize(int width, int height) {
@@ -549,9 +549,21 @@ public final class Game {
         if (renderPanel == null) {
             throw new RuntimeException("Fenster-Resizing ist erst möglich, nachdem Game.start ausgeführt wurde.");
         }
+        Game.width = width;
+        Game.height = height;
         renderPanel.setSize(width, height);
         renderPanel.setPreferredSize(new Dimension(width, height));
         frame.pack();
+    }
+
+    /**
+     * Gibt die Fenstergröße <b>in Pixel</b> aus.
+     *
+     * @return Ein Bounds-Objekt, dessen Höhe und Breite mit Fensterhöhe & -breite übereinstimmt.
+     */
+    @API
+    public static Bounds getFrameSizeInPx() {
+        return new Bounds(0, 0, Game.width, Game.height);
     }
 
     /**

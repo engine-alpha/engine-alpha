@@ -29,8 +29,8 @@ import ea.internal.annotations.Internal;
  * Hierbei besteht auch die Moeglichkeit, diesen Fokus in Grenzen zu halten. Und zwar durch die
  * Fokus-Bounds. Diese 4 Grenzwerte koennen individuell verstellt und aktiviert werden. auch kann
  * man den von der Kamera darzustellenden Bereich durch eine einzige Methode definieren, in dem man
- * den Bereich als BoundingRechteck beschreibt.<br> <br> <br> <br> <code> BoundingRechteck
- * grenzen = new BoundingRechteck(0, 0, 1500, 1000);<br> meineCam.setBounds(grenzen);<br>
+ * den Bereich als Bounds beschreibt.<br> <br> <br> <br> <code> Bounds
+ * grenzen = new Bounds(0, 0, 1500, 1000);<br> meineCam.setBounds(grenzen);<br>
  * </code> <br> <br> <br> Hierdurch wird automatisch der gesamte Fokusapparat (auf den Bereich
  * zwischen den Punkten (0|0) und (1500|1000) ) eingestellt. Bei spezielleren Fokuswuenschen laesst
  * sich dies ebenfalls arrangieren durch die einzelnen Methoden, mit denen alle vier Bounds (N, S,
@@ -52,7 +52,7 @@ public final class Camera {
     /**
      * Die Bounds der Kamera (sofern vorhanden), die sie in der Bewegung einschränken.
      */
-    private BoundingRechteck bounds;
+    private Bounds bounds;
 
     /**
      * Der eventuelle Fokus der Kamera.
@@ -144,7 +144,7 @@ public final class Camera {
      * @param bounds Das Rectangle, das die Grenzen der Kamera angibt.
      */
     @API
-    public void setBounds(BoundingRechteck bounds) {
+    public void setBounds(Bounds bounds) {
         this.bounds = bounds;
     }
 
@@ -249,8 +249,8 @@ public final class Camera {
             return position;
         }
 
-        float x = Math.max(this.bounds.getRealX(), Math.min(position.x, this.bounds.getRealX() + this.bounds.getRealBreite()));
-        float y = Math.max(this.bounds.getRealY(), Math.min(position.y, this.bounds.getRealY() + this.bounds.getRealHoehe()));
+        float x = Math.max(this.bounds.getX(), Math.min(position.x, this.bounds.getX() + this.bounds.getWidth()));
+        float y = Math.max(this.bounds.getY(), Math.min(position.y, this.bounds.getY() + this.bounds.getHeight()));
 
         return new Vector(x, y);
     }

@@ -8,7 +8,7 @@ import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 import org.jbox2d.common.Vec2;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 
 /**
@@ -265,7 +265,7 @@ public class Spiel {
      * Methode diesen Namens MUSS existieren!!<br> public abstract void klickReagieren(int x, int
      * y);<br> }</code>
      *
-     * @param client     Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Mausklick informiert.
+     * @param client     Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
      * @param linksklick Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
      */
     public void klickReagierbarAnmeldenSzene(Object client, boolean linksklick) {
@@ -287,7 +287,7 @@ public class Spiel {
      * angemeldet werden, die Instanzen des EDU-<code>TASTENREAGIERBARANMELDEN</code>-Interfaces
      * sind!!</i>
      *
-     * @param o Das anzumeldende Objekt. Dieses wird ab sofort ueber jeden Tastendruck informiert.
+     * @param o Das anzumeldende Objekt. Dieses wird ab sofort above jeden Tastendruck informiert.
      */
     public void tastenReagierbarAnmeldenSzene(Object o) {
         getActiveScene().addEduKeyListener(o);

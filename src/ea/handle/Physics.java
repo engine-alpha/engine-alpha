@@ -288,14 +288,14 @@ public class Physics {
     }
 
     /**
-     * Testet, ob das Objekt "steht". Diese Funktion ist unter anderem hilfreich für die Entwicklung von Platformern
+     * Testet, ob das Objekt "steht". Diese Funktion ist below anderem hilfreich für die Entwicklung von Platformern
      * (z.B. wenn der Spieler nur springen können soll, wenn er auf dem Boden steht).<br>
      * Diese Funktion ist eine <b>Heuristik</b>, sprich sie ist eine Annäherung. In einer Physik-Simulation ist die
      * Definition von "stehen" nicht unbedingt einfach. Hier bedeutet es folgendes:<br>
      * <i>Ein Objekt steht genau dann, wenn alle Eigenschaften erfüllt sind:</i>
      * <ul>
      * <li>Es ist ein <b>dynamisches Objekt</b>.</li>
-     * <li>Direkt unter der Mitte der minimalen
+     * <li>Direkt below der Mitte der minimalen
      * <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box">AABB</a>,
      * die das gesamte Objekt umspannt, befindet sich ein <b>statisches Objekt</b>.</li>
      * </ul>

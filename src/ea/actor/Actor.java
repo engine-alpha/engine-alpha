@@ -19,7 +19,7 @@
 
 package ea.actor;
 
-import ea.BoundingRechteck;
+import ea.Bounds;
 import ea.Game;
 import ea.Scene;
 import ea.Vector;
@@ -380,11 +380,11 @@ public abstract class Actor {
      * einzelnen Gliedern eines Knotens aufgerufen.
      *
      * @param g Das zeichnende Graphics-Objekt
-     * @param r Das BoundingRechteck, dass die Kameraperspektive Repraesentiert.<br> Hierbei soll zunaechst getestet
+     * @param r Das Bounds, dass die Kameraperspektive Repraesentiert.<br> Hierbei soll zunaechst getestet
      *          werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
      */
     @Internal
-    public void renderBasic(Graphics2D g, BoundingRechteck r, float pixelPerMeter) {
+    public void renderBasic(Graphics2D g, Bounds r, float pixelPerMeter) {
         if (visible && this.isWithinBounds(r)) {
             synchronized (this) {
                 float rotation = physicsHandler.getRotation();
@@ -481,7 +481,7 @@ public abstract class Actor {
      * Breichs liegt, sonst <code>false</code>.
      */
     @Internal
-    private boolean isWithinBounds(BoundingRechteck r) {
+    private boolean isWithinBounds(Bounds r) {
         // FIXME : Parameter ändern (?) und Funktionalität implementieren.
         return true;
     }
