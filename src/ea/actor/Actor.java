@@ -415,9 +415,6 @@ public abstract class Actor {
                         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                         Body body = physicsHandler.getBody();
                         if (body != null && body.m_fixtureList != null && body.m_fixtureList.m_shape != null) {
-                            g.setColor(Color.YELLOW);
-                            g.drawLine(0, 0, 0, 0);
-                            g.setColor(Color.red);
                             renderShape(body.m_fixtureList.m_shape, g);
                         }
                         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -446,23 +443,37 @@ public abstract class Actor {
      */
     @Internal
     public static void renderShape(Shape shape, Graphics2D g) {
+        AffineTransform pre = g.getTransform();
+
+        double scaleX = g.getTransform().getScaleX();
+        double scaleY = g.getTransform().getScaleY();
+
+        g.scale(1 / scaleX, 1 / scaleY);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
+        g.setColor(Color.YELLOW);
+        g.drawLine(0, 0, 0, 0);
+        g.setColor(Color.RED);
+
         if (shape instanceof PolygonShape) {
             PolygonShape polygonShape = (PolygonShape) shape;
             Vec2[] vec2s = polygonShape.getVertices();
             int[] xs = new int[polygonShape.getVertexCount()], ys = new int[polygonShape.getVertexCount()];
             for (int i = 0; i < xs.length; i++) {
-                xs[i] = (int) (vec2s[i].x);
-                ys[i] = (-1) * (int) (vec2s[i].y);
+                xs[i] = (int) (vec2s[i].x * scaleX);
+                ys[i] = (-1) * (int) (vec2s[i].y * scaleY);
             }
+
             g.drawPolygon(xs, ys, xs.length);
         } else if (shape instanceof CircleShape) {
-            int diameter = (int) (((CircleShape) shape).m_radius * 2);
-            g.drawOval(0, -diameter, diameter, diameter);
+            float diameter = (((CircleShape) shape).m_radius * 2);
+            g.drawOval(0, (int) (-diameter * scaleY), (int) (diameter * scaleX), (int) (diameter * scaleY));
         } else {
             Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");
         }
+
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setTransform(pre);
     }
 
     /**

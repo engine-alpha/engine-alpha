@@ -490,13 +490,13 @@ public class Scene {
     }
 
     @Internal
-    final void onMouseWheelMoveInternal(MouseWheelAction mouseWheelAction) {
+    final void onMouseWheelMoveInternal(MouseWheelEvent mouseWheelEvent) {
         synchronized (mouseWheelListeners) {
             try {
                 mouseWheelIterating = true;
 
                 for (MouseWheelListener listener : mouseWheelListeners) {
-                    listener.onMouseWheelMove(mouseWheelAction);
+                    listener.onMouseWheelMove(mouseWheelEvent);
                 }
             } finally {
                 mouseWheelIterating = false;

@@ -11,7 +11,7 @@ import ea.internal.annotations.Internal;
  * @author Michael Andonie
  */
 @API
-public class MouseWheelAction {
+public class MouseWheelEvent {
 
     /**
      * Die Rotation des Mausrades. Bei Mäusen mit Präzession auch in Bruchteilen eines "Clicks"
@@ -20,7 +20,7 @@ public class MouseWheelAction {
 
 
     @Internal
-    public MouseWheelAction(float wheelRotation) {
+    public MouseWheelEvent(float wheelRotation) {
         this.wheelRotation = wheelRotation;
     }
 

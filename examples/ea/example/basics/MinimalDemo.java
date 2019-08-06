@@ -8,7 +8,7 @@ import ea.actor.Rectangle;
 import ea.actor.StatefulAnimation;
 import ea.actor.Text;
 import ea.input.KeyListener;
-import ea.input.MouseWheelAction;
+import ea.input.MouseWheelEvent;
 import ea.input.MouseWheelListener;
 
 import java.awt.*;
@@ -102,8 +102,8 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     }
 
     @Override
-    public void onMouseWheelMove(MouseWheelAction mouseWheelAction) {
-        float newZoom = getCamera().getZoom() + (mouseWheelAction.getPreciseWheelRotation() * -0.2f);
+    public void onMouseWheelMove(MouseWheelEvent mouseWheelEvent) {
+        float newZoom = getCamera().getZoom() + (mouseWheelEvent.getPreciseWheelRotation() * -0.2f);
         if (newZoom > 0) getCamera().setZoom(newZoom);
     }
 

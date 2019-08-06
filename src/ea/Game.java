@@ -20,7 +20,7 @@
 package ea;
 
 import ea.input.MouseButton;
-import ea.input.MouseWheelAction;
+import ea.input.MouseWheelEvent;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
@@ -451,8 +451,8 @@ public final class Game {
      *
      * @param mouseWheelEvent das Event.
      */
-    private static void enqueueMouseWheelEvent(MouseWheelEvent mouseWheelEvent) {
-        MouseWheelAction mouseWheelAction = new MouseWheelAction((float) mouseWheelEvent.getPreciseWheelRotation());
+    private static void enqueueMouseWheelEvent(java.awt.event.MouseWheelEvent mouseWheelEvent) {
+        MouseWheelEvent mouseWheelAction = new MouseWheelEvent((float) mouseWheelEvent.getPreciseWheelRotation());
         enqueue(() -> scene.onMouseWheelMoveInternal(mouseWheelAction));
     }
 

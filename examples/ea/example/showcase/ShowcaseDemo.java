@@ -64,14 +64,17 @@ public abstract class ShowcaseDemo extends Scene {
             }
         });
 
-        addMouseWheelListener(mouseWheelAction -> {
+        addMouseWheelListener(event -> {
             if (!zoomEnabled) {
                 return;
             }
-            float newzoom = getCamera().getZoom() + (mouseWheelAction.getPreciseWheelRotation() * -0.1f);
+
+            float factor = event.getPreciseWheelRotation() > 0 ? 1 + .3f * event.getPreciseWheelRotation() : 1 / (1 - .3f * event.getPreciseWheelRotation());
+            float newzoom = getCamera().getZoom() * factor;
             if (newzoom <= 0) {
                 return;
             }
+
             getCamera().setZoom(newzoom);
         });
     }
