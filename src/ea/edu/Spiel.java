@@ -320,4 +320,12 @@ public class Spiel {
     public void tickerAbmelden(Object o) {
         getActiveScene().removeEduTicker(o);
     }
+
+    /**
+     *
+     * @param o
+     */
+    public void frameUpdateReagierbarAnmelden(Object o) {
+        getActiveScene().addEduFrameUpdateListener(o);
+    }
 }

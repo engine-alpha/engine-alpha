@@ -30,10 +30,15 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
     private final ArrayList<KlickAuftrag> aufgabenKlick = new ArrayList<>();
 
     /**
+     * Liste aller Framewise Update Aufträge
+     */
+    private final ArrayList<FrameUpdateAuftrag> frameUpdates = new ArrayList<>();
+
+    /**
      * Name der Scene. Default ist null.
      * Eine Scene mit Name wird nicht automatisch gelöscht.
      */
-    private String sceneName=null;
+    private String sceneName = null;
 
     public void setSceneName(String name) {
         this.sceneName = name;
@@ -51,7 +56,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
     /* Listener Addition */
 
-    public void addEduClickListener (Object client, boolean linksklick) {
+    public void addEduClickListener(Object client, boolean linksklick) {
         Class<?> klasse = client.getClass();
         Method[] methoden = klasse.getMethods();
         for (int i = 0; i < methoden.length; i++) {
@@ -62,7 +67,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         }
     }
 
-    public void addEduKeyListener (Object o) {
+    public void addEduKeyListener(Object o) {
         Class<?> klasse = o.getClass();
         Method[] methoden = klasse.getMethods();
         for (int i = 0; i < methoden.length; i++) {
@@ -73,7 +78,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         }
     }
 
-    public void addEduTicker (Object o, int intervall) {
+    public void addEduTicker(Object o, int intervall) {
         Class<?> klasse = o.getClass();
         Method[] methoden = klasse.getMethods();
         for (int i = 0; i < methoden.length; i++) {
@@ -84,20 +89,38 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         }
     }
 
+    public void addEduFrameUpdateListener(Object o) {
+        Class<?> klasse = o.getClass();
+        Method[] methoden = klasse.getMethods();
+        for (int i = 0; i < methoden.length; i++) {
+            if (methoden[i].getName().equals("frameUpdateReagieren")) {
+                frameUpdates.add(new FrameUpdateAuftrag(o, methoden[i]));
+                return;
+            }
+        }
+    }
+
     public void removeEduTicker(Object o) {
         ArrayList<TickerAuftrag> toRemove = new ArrayList<>();
-        for(TickerAuftrag ta : aufgabenT) {
-            if(ta.client.equals(o)) toRemove.add(ta);
+        for (TickerAuftrag ta : aufgabenT) {
+            if (ta.client.equals(o)) {
+                toRemove.add(ta);
+            }
         }
-        for(TickerAuftrag tr : toRemove) aufgabenT.remove(tr);
+        for (TickerAuftrag tr : toRemove) {
+            aufgabenT.remove(tr);
+        }
     }
 
     /* EA Listener Implementation */
 
     @Override
     public void onFrameUpdate(int frameDuration) {
-        for(TickerAuftrag ta : aufgabenT) {
+        for (TickerAuftrag ta : aufgabenT) {
             ta.accountFrame(frameDuration);
+        }
+        for (FrameUpdateAuftrag a : frameUpdates) {
+            a.forwardFrameUpdate(frameDuration);
         }
     }
 
@@ -115,11 +138,11 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
     @Override
     public void onMouseDown(Vector position, MouseButton button) {
-        for(KlickAuftrag ka : aufgabenKlick) {
-            if(ka.linksklick && button==MouseButton.LEFT) {
-                ka.ausfuehren((int)position.x, (int)position.y);
-            } else if(!ka.linksklick && button==MouseButton.RIGHT) {
-                ka.ausfuehren((int)position.x, (int)position.y);
+        for (KlickAuftrag ka : aufgabenKlick) {
+            if (ka.linksklick && button == MouseButton.LEFT) {
+                ka.ausfuehren((int) position.x, (int) position.y);
+            } else if (!ka.linksklick && button == MouseButton.RIGHT) {
+                ka.ausfuehren((int) position.x, (int) position.y);
             }
         }
     }
@@ -165,13 +188,17 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
          */
         public final void accountFrame(int millis) {
             counter -= millis;
-            if(counter > 0) return;
+            if (counter > 0) {
+                return;
+            }
             try {
                 methode.invoke(client, new Object[0]);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-            while (counter <= 0) counter +=intervall;
+            while (counter <= 0) {
+                counter += intervall;
+            }
         }
 
         /**
@@ -207,12 +234,10 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         /**
          * Erstellt einen Tastenauftrag
          *
-         * @param client
-         * 		Das Objekt, an dem der Job ausgefuehrt werden soll.
-         * @param m
-         * 		Die auszufuehrende Methode.
+         * @param client Das Objekt, an dem der Job ausgefuehrt werden soll.
+         * @param m      Die auszufuehrende Methode.
          */
-        public TastenAuftrag (Object client, Method m) {
+        public TastenAuftrag(Object client, Method m) {
             this.client = client;
             methode = m;
         }
@@ -220,10 +245,9 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         /**
          * Führt die Methode einmalig aus.
          *
-         * @param code
-         * 		Der Tastaturcode, der mitgegeben wird.
+         * @param code Der Tastaturcode, der mitgegeben wird.
          */
-        public void ausfuehren (int code) {
+        public void ausfuehren(int code) {
             try {
                 methode.invoke(client, code);
             } catch (InvocationTargetException e) {
@@ -244,7 +268,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
         private final boolean linksklick;
 
-        private KlickAuftrag (Object c, Method m, boolean linksklick) {
+        private KlickAuftrag(Object c, Method m, boolean linksklick) {
             methode = m;
             client = c;
             this.linksklick = linksklick;
@@ -253,17 +277,35 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         /**
          * Führt die Methode am Client aus.
          *
-         * @param x
-         * 		Die zu uebergebene X-Koordinate des Klicks.
-         * @param y
-         * 		Die zu uebergebene Y-Koordinate des Klicks.
+         * @param x Die zu uebergebene X-Koordinate des Klicks.
+         * @param y Die zu uebergebene Y-Koordinate des Klicks.
          */
-        private void ausfuehren (int x, int y) {
+        private void ausfuehren(int x, int y) {
             try {
                 methode.invoke(client, new Object[] {x, y});
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             } catch (java.lang.IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private final class FrameUpdateAuftrag {
+        private final Object client;
+        private final Method methode;
+
+        private FrameUpdateAuftrag(Object client, Method method) {
+            this.client = client;
+            this.methode = method;
+        }
+
+        private void forwardFrameUpdate(int frameDuration) {
+            try {
+                methode.invoke(client, frameDuration);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }

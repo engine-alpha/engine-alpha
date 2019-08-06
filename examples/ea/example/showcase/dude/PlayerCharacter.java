@@ -14,16 +14,12 @@ import ea.collision.CollisionListener;
 import ea.example.showcase.jump.Enemy;
 import ea.handle.BodyType;
 import ea.input.KeyListener;
-import ea.internal.ShapeBuilder;
 import ea.sound.Sound;
-import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
@@ -98,7 +94,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private Vector smashForce = Vector.NULL;
 
     public PlayerCharacter(DudeDemo scene, HUD hud) {
-        super(1, 1);
+        super(1.5f, 1.5f);
         this.hud = hud;
         this.master = scene;
 
@@ -122,13 +118,13 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         setMana(0);
 
-        //setShapes("C0.5,0.9,0.1&R0,0.2,0.6,0.8");
-        setShapes(() -> {
+        setShapes("C0.5,0.3,0.3&C0.5,0.6,0.3");
+        /*setShapes(() -> {
             List<Shape> shapeList = new ArrayList<>(2);
             shapeList.add(ShapeBuilder.createAxisParallelRectangularShape(0.2f, 0, 0.6f, 1f));
             shapeList.add(ShapeBuilder.createCircleShape(.3f, .3f, 0.3f));
             return shapeList;
-        });
+        });*/
 
         scene.add(this);
         physics.setMass(650000000);
