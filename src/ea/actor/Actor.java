@@ -37,6 +37,7 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.Fixture;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -414,9 +415,15 @@ public abstract class Actor {
                         // Visualisiere die Shape
                         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                         Body body = physicsHandler.getBody();
-                        if (body != null && body.m_fixtureList != null && body.m_fixtureList.m_shape != null) {
-                            renderShape(body.m_fixtureList.m_shape, g, pixelPerMeter);
+
+                        if (body != null) {
+                            Fixture fixture = body.m_fixtureList;
+                            while (fixture != null && fixture.m_shape != null) {
+                                renderShape(fixture.m_shape, g, pixelPerMeter);
+                                fixture = fixture.m_next;
+                            }
                         }
+
                         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     }
                 }
