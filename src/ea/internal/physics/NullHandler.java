@@ -172,7 +172,7 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public Vector getVelocity() {
-        throw makeNullException("das Messen einer Geschwindigkeit");
+        return Vector.NULL;
     }
 
     @Override
@@ -192,7 +192,7 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public float getTorque() {
-        throw makeNullException("das Messen eines Drehmomentes");
+        return 0;
     }
 
     @Override

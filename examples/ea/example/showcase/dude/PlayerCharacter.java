@@ -193,15 +193,19 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
             Particle particle = new Particle(0.1f, 500);
             particle.position.set(position.getCenter().subtract(new Vector((float) Math.random() * 0.1f, .45f)));
-            particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), -2 * ((float) Math.random())));
             particle.setColor(Color.RED);
             particle.setLayer(-1);
 
             ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
-            animator.addCompletionListener((value) -> getScene().removeFrameUpdateListener(animator));
+            animator.addCompletionListener((value) -> {
+                getScene().removeFrameUpdateListener(animator);
+                particle.removeFromScene();
+            });
             getScene().addFrameUpdateListener(animator);
 
             getScene().add(particle);
+
+            Game.enqueue(() -> particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), -2 * ((float) Math.random()))));
         }
 
         switch (getCurrentState()) {
