@@ -2,12 +2,12 @@ package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.Scene;
-import ea.internal.ShapeHelper;
+import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.AnimationFrame;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.HashMap;
 
 /**
@@ -49,7 +49,7 @@ public class StatefulAnimation extends Actor {
     private boolean flipVertical = false;
 
     public StatefulAnimation(float width, float height) {
-        super(() -> ShapeHelper.createRectangularShape(width, height));
+        super(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
 
         this.width = width;
         this.height = height;

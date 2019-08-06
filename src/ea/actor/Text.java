@@ -19,12 +19,15 @@
 
 package ea.actor;
 
-import ea.internal.ShapeHelper;
+import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.io.FontLoader;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
@@ -91,7 +94,7 @@ public class Text extends Actor {
             Font font = FontLoader.loadByName(fontName).deriveFont(type, size);
             FontMetrics fontMetrics = ea.internal.util.FontMetrics.get(font);
 
-            return ShapeHelper.createRectangularShape(fontMetrics.stringWidth(content), fontMetrics.getHeight());
+            return ShapeBuilder.createSimpleRectangularShape(fontMetrics.stringWidth(content), fontMetrics.getHeight());
         });
 
         this.content = content;

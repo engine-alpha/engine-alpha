@@ -19,11 +19,12 @@
 
 package ea.actor;
 
-import ea.internal.ShapeHelper;
+import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.Shape;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.function.Supplier;
 
 /**
@@ -39,24 +40,19 @@ public class Rectangle extends Geometry {
     private float width;
 
     /**
-     * Die Breite als Integer gerundet
-     */
-    private int widthInt;
-
-    /**
      * Die Höhe
      */
     private float height;
 
     /**
-     * Die Höhe als Integer gerundet
+     * Für abgerundete Ecken, Prozent der Abrundung der kleineren Seite
      */
-    private int heightInt;
+    private float borderRadius;
 
     /**
-     * Für abgerundete Ecken
+     * Faktor zur TODO
      */
-    private int borderRadius;
+    private static final int SCALING_APPROX_FACTOR = 1000;
 
     /**
      * Konstruktor.
@@ -65,16 +61,15 @@ public class Rectangle extends Geometry {
      * @param height Die Höhe des Rechtecks
      */
     public Rectangle(float width, float height) {
-        this(width, height, () -> ShapeHelper.createRectangularShape(width, height));
+        this(width, height, () -> ShapeBuilder.createSimpleRectangularShape(width, height));
     }
 
     public Rectangle(float width, float height, Supplier<Shape> shapeSupplier) {
         super(shapeSupplier);
 
+        assertWidthAndHeight(width, height);
         this.width = width;
         this.height = height;
-        this.widthInt = Math.round(width);
-        this.heightInt = Math.round(height);
     }
 
     @API
@@ -90,23 +85,37 @@ public class Rectangle extends Geometry {
     @API
     public void setWidth(float width) {
         this.width = width;
-        this.widthInt = (int) width;
     }
 
     @API
     public void setHeight(float height) {
         this.height = height;
-        this.heightInt = (int) height;
     }
 
     @API
-    public int getBorderRadius() {
+    public void resetDimensions(float width, float height) {
+        assertWidthAndHeight(width, height);
+        this.width = width;
+    }
+
+    @Internal
+    private static void assertWidthAndHeight(float width, float height) {
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Höhe und Breite dürfen nicht negativ sein! Waren: " + width + " und " + height);
+        }
+    }
+
+    @API
+    public float getBorderRadius() {
         return borderRadius;
     }
 
     @API
-    public void setBorderRadius(int borderRadius) {
-        this.borderRadius = borderRadius;
+    public void setBorderRadius(float percent) {
+        if (percent < 0 || percent > 1) {
+            throw new IllegalArgumentException("Borderradius kann nur zwischen 0 und 1 sein. War " + percent);
+        }
+        this.borderRadius = percent;
     }
 
     /**
@@ -116,10 +125,13 @@ public class Rectangle extends Geometry {
     public void render(Graphics2D g) {
         g.setColor(getColor());
 
+        g.scale(width / SCALING_APPROX_FACTOR, height / SCALING_APPROX_FACTOR);
         if (borderRadius == 0) {
-            g.fillRect(0, -heightInt, widthInt, heightInt);
+            g.fillRect(0, -SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR);
         } else {
-            g.fillRoundRect(0, -heightInt, widthInt, heightInt, borderRadius, borderRadius);
+            int borderRadius = (int) (Math.min(width, height) * this.borderRadius / 2);
+
+            g.fillRoundRect(0, -SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, borderRadius, borderRadius);
         }
     }
 }

@@ -6,7 +6,7 @@ import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 
 /**
  * Beschreibt eine beliebige polygonale geometrische Form.

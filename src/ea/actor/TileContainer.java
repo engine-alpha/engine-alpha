@@ -1,6 +1,6 @@
 package ea.actor;
 
-import ea.internal.ShapeHelper;
+import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
@@ -42,7 +42,7 @@ public class TileContainer extends Actor implements TileMap {
      */
     @API
     public TileContainer(int numX, int numY, float tileWidth, float tileHeight) {
-        super(() -> ShapeHelper.createRectangularShape(tileWidth * numX, tileHeight * numY));
+        super(() -> ShapeBuilder.createSimpleRectangularShape(tileWidth * numX, tileHeight * numY));
 
         if (numX <= 0 || numY <= 0) {
             throw new IllegalArgumentException("numX und numY müssen jeweils > 0 sein.");

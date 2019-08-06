@@ -21,7 +21,7 @@ package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.Scene;
-import ea.internal.ShapeHelper;
+import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.AnimationFrame;
@@ -29,12 +29,11 @@ import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 import ea.internal.util.GifDecoder;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 /**
  * Eine Animation ein Actor-Objekt, das aus mehreren
@@ -70,7 +69,7 @@ public class Animation extends Actor implements FrameUpdateListener {
                 throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
             }
 
-            return ShapeHelper.createRectangularShape(width, height);
+            return ShapeBuilder.createSimpleRectangularShape(width, height);
         });
 
         for (AnimationFrame frame : frames) {

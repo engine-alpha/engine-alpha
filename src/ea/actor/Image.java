@@ -19,11 +19,12 @@
 
 package ea.actor;
 
-import ea.internal.ShapeHelper;
+import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.io.ImageLoader;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
@@ -48,7 +49,7 @@ public class Image extends Actor {
      */
     @API
     public Image(String filepath, float width, float height) {
-        super(() -> ShapeHelper.createRectangularShape(width, height));
+        super(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
 
         this.width = width;
         this.height = height;

@@ -19,6 +19,7 @@
 
 package ea.internal;
 
+import ea.Vector;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -29,8 +30,15 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
-public final class ShapeHelper {
-    public static Shape createRectangularShape(float width, float height) {
+public final class ShapeBuilder {
+    /**
+     * Erstellt eine <i>einfache</i> rechteckige Shape. Einfach bedeutet: Sie beginnt immer bei (0|0) und Breite/Höhe
+     * ist parallel zu den Koordinatenaxen.
+     *
+     * @param width  Die Breite der rechteckigen Shape.
+     * @param height Die Höhe der rechteckigen Shape.
+     */
+    public static Shape createSimpleRectangularShape(float width, float height) {
         PolygonShape shape = new PolygonShape();
 
         shape.set(new Vec2[] {new Vec2(0, 0), new Vec2(0, height), new Vec2(width, height), new Vec2(width, 0)}, 4);
@@ -38,6 +46,53 @@ public final class ShapeHelper {
         shape.m_centroid.set(new Vec2(width / 2, height / 2));
 
         return shape;
+    }
+
+    /**
+     * Erschafft eine kreisförmige Shape.
+     *
+     * @param mx Der Mittelpunkt des Kreises, X-Koordinate.
+     * @param my Der Mittelpunkt des Kreises, Y-Koordinate.
+     * @param r  Der Radius des Kreises
+     */
+    public static Shape createCircleShape(float mx, float my, float r) {
+        CircleShape circleShape = new CircleShape();
+        circleShape.m_p.set(mx, my);
+        circleShape.setRadius(r);
+        return circleShape;
+    }
+
+    /**
+     * Erstellt eine polygonale Shape. Kann nur konvexe Shapes erstellen. Konkave Shapes werden automatisch zur
+     * umspannenden konvexen Shape formatiert.
+     *
+     * @param points Ein Reihe an Punkten, die nacheinander diese Shape beschreiben (mindestens 3 Punkte).
+     */
+    public static Shape createPolygonShape(Vector... points) {
+        if (points.length < 3) {
+            throw new IllegalArgumentException("Eine polygonale Shape benötigt mindestens 3 Punkte.");
+        }
+        Vec2[] vec2s = new Vec2[points.length];
+        for (int i = 0; i < points.length; i++) {
+            vec2s[i] = points[i].toVec2();
+        }
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.set(vec2s, vec2s.length);
+        return polygonShape;
+    }
+
+    /**
+     * Erstellt eine rechteckige Shape, die parallel zu den Koordinatenaxen läuft.
+     *
+     * @param sx     Linke untere Ecke, X-Koordinate.
+     * @param sy     Linke untere Ecke, Y-Koordinate.
+     * @param width  Breite der rechteckigen Shape.
+     * @param height Höhe der rechteckigen Shape.
+     */
+    public static Shape createAxisParallelRectangularShape(float sx, float sy, float width, float height) {
+        PolygonShape rectShape = new PolygonShape();
+        rectShape.set(new Vec2[] {new Vec2(sx, sy), new Vec2(sx, sy + height), new Vec2(sx + width, sy + height), new Vec2(sx + width, sy)}, 4);
+        return rectShape;
     }
 
     /**
@@ -75,13 +130,11 @@ public final class ShapeHelper {
                 if (split.length != 4) {
                     throw new IllegalArgumentException("Fehlerhafte Eingabe");
                 }
-                float x = Float.parseFloat(split[0]);
-                float y = Float.parseFloat(split[1]);
-                float w = Float.parseFloat(split[2]);
-                float h = Float.parseFloat(split[3]);
-                PolygonShape rectShape = new PolygonShape();
-                rectShape.set(new Vec2[] {new Vec2(x, y), new Vec2(x, y + h), new Vec2(x + w, y + h), new Vec2(x + w, y)}, 4);
-                return rectShape;
+                float sx = Float.parseFloat(split[0]);
+                float sy = Float.parseFloat(split[1]);
+                float width = Float.parseFloat(split[2]);
+                float height = Float.parseFloat(split[3]);
+                return createAxisParallelRectangularShape(sx, sy, width, height);
             case 'P':
                 if (split.length % 2 != 0) {
                     throw new IllegalArgumentException("Fehlerhafte Eingabe");
@@ -99,18 +152,9 @@ public final class ShapeHelper {
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Fehlerhafte Eingabe");
                 }
-                CircleShape circleShape = new CircleShape();
-                circleShape.m_p.set(Float.parseFloat(split[0]), Float.parseFloat(split[1]));
-                circleShape.setRadius(Float.parseFloat(split[2]));
-                return circleShape;
+                return createCircleShape(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
             default:
                 throw new IllegalArgumentException("Fehlerhafte Eingabe!");
         }
     }
-
-    public static void main(String[] args) {
-        //fromString("R0,0,40,10&C80,10,200");
-    }
-
-    //private static Vector nextVector()
 }

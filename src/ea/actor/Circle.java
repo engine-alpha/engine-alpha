@@ -20,10 +20,14 @@
 package ea.actor;
 
 import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.collision.shapes.Shape;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.util.function.Supplier;
 
 /**
  * Beschreibt einen Kreis.
@@ -41,13 +45,7 @@ public class Circle extends Geometry {
      * @param diameter Durchmesser des Kreises
      */
     public Circle(float diameter) {
-        super(() -> {
-            CircleShape shape = new CircleShape();
-            shape.m_radius = diameter / 2;
-            shape.m_p.set(shape.m_radius, shape.m_radius);
-
-            return shape;
-        });
+        super(createCircleSupplier(diameter));
 
         this.diameter = diameter;
         this.setColor(Color.WHITE);
@@ -80,5 +78,27 @@ public class Circle extends Geometry {
         g.setColor(getColor());
         g.fillOval(0, -1, 1, 1);
         g.setTransform(pre);
+    }
+
+    /**
+     * Setzt den Radius des Kreises neu.
+     * Ändert damit die physikalischen Eigenschaften des Objekts.
+     *
+     * @param radius Der neue Radius des Kreises.
+     */
+    @API
+    public void resetRadius(float radius) {
+        this.diameter = 2 * radius;
+        this.setShape(createCircleSupplier(this.diameter));
+    }
+
+    @Internal
+    private static Supplier<Shape> createCircleSupplier(float diameter) {
+        return () -> {
+            CircleShape shape = new CircleShape();
+            shape.m_radius = diameter / 2;
+            shape.m_p.set(shape.m_radius, shape.m_radius);
+            return shape;
+        };
     }
 }

@@ -13,7 +13,8 @@ import ea.example.showcase.jump.DinglyJump;
 import ea.input.MouseButton;
 import ea.input.MouseClickListener;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.function.Supplier;
 
 /**
@@ -66,7 +67,7 @@ public class Showcases extends Scene {
 
         public TextBox(String content, Supplier<Scene> sceneCreator, float x, float y) {
             box = new Rectangle(BOX_WIDTH, BOX_HEIGHT);
-            box.setBorderRadius(6);
+            box.setBorderRadius(1f);
             box.position.set(x, y);
             text = new Text(content, 24);
             text.setStyle(Font.BOLD);

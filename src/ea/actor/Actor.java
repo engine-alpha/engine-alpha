@@ -27,7 +27,7 @@ import ea.collision.CollisionListener;
 import ea.handle.BodyType;
 import ea.handle.Physics;
 import ea.handle.Position;
-import ea.internal.ShapeHelper;
+import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.*;
@@ -40,6 +40,7 @@ import org.jbox2d.dynamics.Body;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -335,11 +336,43 @@ public abstract class Actor {
      *
      * @param shapeCode der Shape-Code
      *
-     * @see ea.internal.ShapeHelper#fromString(String)
+     * @see ShapeBuilder#fromString(String)
+     * @see #setShape(Supplier)
+     * @see #setShapes(Supplier)
      */
     @API
     public final void setShapes(String shapeCode) {
-        this.physicsHandler.setShapes(ShapeHelper.fromString(shapeCode));
+        this.physicsHandler.setShapes(ShapeBuilder.fromString(shapeCode));
+    }
+
+    /**
+     * Ändert die Shape des Actors neu in eine alternative Shape.Alle anderen physikalischen Eigenschaften bleiben
+     * weitgehend erhalten.
+     *
+     * @param shapeSupplier Der Supplier, der die neue Shape des Objektes ausgibt.
+     *
+     * @see #setShapes(Supplier)
+     */
+    @API
+    public final void setShape(Supplier<Shape> shapeSupplier) {
+        this.physicsHandler.setShapes(() -> {
+            List<Shape> list = new ArrayList<>(1);
+            list.add(shapeSupplier.get());
+            return list;
+        });
+    }
+
+    /**
+     * Ändert die Shapes dieses Actors in eine Reihe neuer Shapes. Alle anderen physikalischen Eigenschaften bleiben
+     * weitgehend erhalten.
+     *
+     * @param shapesSupplier Ein Supplier, der eine Liste mit allen neuen Shapes für den Actor angibt.
+     *
+     * @see #setShape(Supplier)
+     */
+    @API
+    public final void setShapes(Supplier<List<Shape>> shapesSupplier) {
+        this.physicsHandler.setShapes(shapesSupplier);
     }
 
     /**
