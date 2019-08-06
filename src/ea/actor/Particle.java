@@ -23,7 +23,7 @@ import ea.FrameUpdateListener;
 import ea.handle.BodyType;
 import ea.internal.annotations.API;
 
-import java.awt.*;
+import java.awt.Color;
 
 @API
 public class Particle extends Circle implements FrameUpdateListener {
@@ -52,13 +52,13 @@ public class Particle extends Circle implements FrameUpdateListener {
         this.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
 
         if (isDead()) {
-            getScene().remove(this);
+            removeFromScene();
         }
     }
 
     @API
     public boolean isDead() {
-        return this.age > this.life;
+        return getRemainingLifetime() == 0;
     }
 
     @API

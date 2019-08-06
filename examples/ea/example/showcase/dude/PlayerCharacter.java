@@ -370,9 +370,11 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             smashForce = Vector.NULL;
 
             if (smashing) {
-                Interpolator<Float> interpolator = new SinusFloat(0, -0.4f * physics.getVelocity().y);
-                FrameUpdateListener valueAnimator = new ValueAnimator<>(100, y -> getScene().getCamera().setOffset(getScene().getCamera().getOffset().add(new Vector(0, y))), interpolator);
+                Vector originalOffset = getScene().getCamera().getOffset();
+                Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * physics.getVelocity().y);
+                ValueAnimator<Float> valueAnimator = new ValueAnimator<>(100, y -> getScene().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator);
                 getScene().addFrameUpdateListener(valueAnimator);
+                valueAnimator.addCompletionListener(value -> getScene().removeFrameUpdateListener(valueAnimator));
             }
 
             Vector speed = getPhysicsHandler().getVelocity();
@@ -380,8 +382,9 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
             Game.enqueue(() -> {
                 for (int i = 0; i < 100; i++) {
-                    Particle particle = new Particle(Random.nextInteger(2) + 2, 500);
+                    Particle particle = new Particle(Random.nextFloat() * .02f + .02f, 500);
                     getScene().add(particle);
+                    getScene().addFrameUpdateListener(particle);
                     particle.position.set(position.getCenter().add(0, -32));
                     particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
                     particle.setColor(Color.GRAY);

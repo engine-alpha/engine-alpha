@@ -276,39 +276,39 @@ public final class Game {
         g.rotate(rotation, 0, 0);
         g.translate(-position.x * pixelPerMeter, position.y * pixelPerMeter);
 
-        int gridSizeInPixels = (int) (100 * pixelPerMeter);
-        while (gridSizeInPixels > 200) {
-            gridSizeInPixels /= 2;
-        }
+        int gridSizeInMeters = Math.round(150 / pixelPerMeter);
+        float gridSizeInPixels = gridSizeInMeters * pixelPerMeter;
+        float gridSizeFactor = gridSizeInPixels / gridSizeInMeters;
 
-        while (gridSizeInPixels < 100) {
-            gridSizeInPixels *= 2;
-        }
+        if (gridSizeInMeters > 0 && gridSizeInMeters < 100000) {
+            int windowSizeInPixels = (int) Math.ceil(Math.max(width, height));
 
-        int windowSizeInPixels = (int) Math.ceil(Math.max(width, height));
+            int startX = (int) (position.x - windowSizeInPixels / 2 / pixelPerMeter);
+            int startY = (int) ((-1 * position.y) - windowSizeInPixels / 2 / pixelPerMeter);
 
-        int startX = (int) (position.x * pixelPerMeter - windowSizeInPixels / 2);
-        int startY = (int) ((-1 * position.y) * pixelPerMeter - windowSizeInPixels / 2);
+            startX -= (startX % gridSizeInMeters);
+            startY -= (startY % gridSizeInMeters);
 
-        startX -= startX % gridSizeInPixels;
-        startY -= startY % gridSizeInPixels;
+            startX -= gridSizeInMeters;
 
-        g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        g.setColor(DEBUG_GRID_COLOR);
+            int stopX = (int) (startX + windowSizeInPixels / pixelPerMeter + gridSizeInMeters);
+            int stopY = (int) (startY + windowSizeInPixels / pixelPerMeter + gridSizeInMeters);
 
-        for (int x = startX; x < startX + windowSizeInPixels + gridSizeInPixels; x += gridSizeInPixels) {
-            g.setColor(x == 0 ? DEBUG_GRID_COLOR_0 : DEBUG_GRID_COLOR);
-            g.fillRect(x - 1, startY - gridSizeInPixels, 2, windowSizeInPixels + 2 * gridSizeInPixels);
-        }
+            g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+            g.setColor(DEBUG_GRID_COLOR);
 
-        for (int y = startY; y < startY + windowSizeInPixels + gridSizeInPixels; y += gridSizeInPixels) {
-            g.setColor(y == 0 ? DEBUG_GRID_COLOR_0 : DEBUG_GRID_COLOR);
-            g.fillRect(startX - gridSizeInPixels, y - 1, windowSizeInPixels + 2 * gridSizeInPixels, 2);
-        }
+            for (int x = startX; x < stopX; x += gridSizeInMeters) {
+                g.fillRect((int) (x * gridSizeFactor) - 1, (int) ((startY - 1) * gridSizeFactor), 2, (int) (windowSizeInPixels + 2 * gridSizeInPixels));
+            }
 
-        for (int x = startX - gridSizeInPixels; x < startX + windowSizeInPixels + gridSizeInPixels; x += gridSizeInPixels) {
-            for (int y = startY; y < startY + windowSizeInPixels + gridSizeInPixels; y += gridSizeInPixels) {
-                g.drawString(Math.round(x / pixelPerMeter) + " / " + Math.round((-y) / pixelPerMeter), x + 5, y - 5);
+            for (int y = startY; y < stopY; y += gridSizeInMeters) {
+                g.fillRect((int) ((startX - 1) * gridSizeFactor), (int) (y * gridSizeFactor - 1), (int) (windowSizeInPixels + 2 * gridSizeInPixels), 2);
+            }
+
+            for (int x = startX; x < stopX; x += gridSizeInMeters) {
+                for (int y = startY; y < stopY; y += gridSizeInMeters) {
+                    g.drawString(x + " / " + -y, x * gridSizeFactor + 5, y * gridSizeFactor - 5);
+                }
             }
         }
 

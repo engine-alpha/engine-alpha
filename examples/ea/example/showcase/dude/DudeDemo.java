@@ -50,8 +50,8 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         setGravity(new Vector(0, -13));
         getCamera().setFocus(character);
-        getCamera().setOffset(new Vector(0, -100));
-        getCamera().setBounds(new BoundingRechteck(-2000, 0, 20000, 20000));
+        getCamera().setOffset(new Vector(0, 5));
+        getCamera().setBounds(new BoundingRechteck(-2000, -200, 20000, 20000));
         getCamera().setZoom(30f);
 
         setupPlayground();
