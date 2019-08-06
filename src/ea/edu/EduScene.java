@@ -149,9 +149,9 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
     private final void runMouseReactions(Vector position, MouseButton button, boolean down) {
         for (KlickAuftrag ka : aufgabenKlick) {
             if (ka.linksklick && button == MouseButton.LEFT) {
-                ka.ausfuehren((int) position.x, (int) position.y, down);
+                ka.ausfuehren(position.x, position.y, down);
             } else if (!ka.linksklick && button == MouseButton.RIGHT) {
-                ka.ausfuehren((int) position.x, (int) position.y, down);
+                ka.ausfuehren(position.x, position.y, down);
             }
         }
     }
@@ -284,7 +284,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
          * @param x Die zu uebergebene X-Koordinate des Klicks.
          * @param y Die zu uebergebene Y-Koordinate des Klicks.
          */
-        private void ausfuehren(int x, int y, boolean press) {
+        private void ausfuehren(float x, float y, boolean press) {
             try {
                 methode.invoke(client, new Object[] {x, y, press});
             } catch (InvocationTargetException e) {
