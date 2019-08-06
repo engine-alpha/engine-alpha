@@ -1,6 +1,5 @@
 package ea.edu;
 
-import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.animation.CircleAnimation;
@@ -31,15 +30,15 @@ public interface EduActor {
     }
 
     default void entfernen() {
-        Game.enqueue(() -> Spiel.getActiveScene().remove(getActor()));
+        Spiel.getActiveScene().remove(getActor());
     }
 
     default void verschieben(float dX, float dY) {
-        Game.enqueue(() -> getActor().position.move(dX, dY));
+        getActor().position.move(dX, dY);
     }
 
     default void drehen(float drehwinkelInWinkelgrad) {
-        Game.enqueue(() -> getActor().position.rotate(drehwinkelInWinkelgrad));
+        getActor().position.rotate(drehwinkelInWinkelgrad);
     }
 
     default float nenneWinkel() {
@@ -47,11 +46,11 @@ public interface EduActor {
     }
 
     default void setzeMittelpunkt(float mX, float mY) {
-        Game.enqueue(() -> getActor().position.setCenter(mX, mY));
+        getActor().position.setCenter(mX, mY);
     }
 
     default void setzeSichtbar(boolean sichtbar) {
-        Game.enqueue(() -> getActor().setVisible(sichtbar));
+        getActor().setVisible(sichtbar);
     }
 
     default boolean nenneSichtbar() {
@@ -85,31 +84,31 @@ public interface EduActor {
     /* ~~~ PHYSICS ~~~ */
 
     default void setzeRotationBlockiert(boolean blockiert) {
-        Game.enqueue(() -> getActor().physics.setRotationLocked(blockiert));
+        getActor().physics.setRotationLocked(blockiert);
     }
 
     default void wirkeImpuls(float iX, float iY) {
-        Game.enqueue(() -> getActor().physics.applyImpulse(new Vector(iX, iY)));
+        getActor().physics.applyImpulse(new Vector(iX, iY));
     }
 
     default void setzeReibung(float reibungsKoeffizient) {
-        Game.enqueue(() -> getActor().physics.setFriction(reibungsKoeffizient));
+        getActor().physics.setFriction(reibungsKoeffizient);
     }
 
     default void setzeGeschwindigkeit(float vX, float vY) {
-        Game.enqueue(() -> getActor().physics.setVelocity(new Vector(vX, vY)));
+        getActor().physics.setVelocity(new Vector(vX, vY));
     }
 
     default void setzeElastizitaet(float elastizitaetsKoeffizient) {
-        Game.enqueue(() -> getActor().physics.setRestitution(elastizitaetsKoeffizient));
+        getActor().physics.setRestitution(elastizitaetsKoeffizient);
     }
 
     default void setzeSchwerkraft(float schwerkraft) {
-        Game.enqueue(() -> getActor().getScene().setGravity(new Vector(0, -schwerkraft)));
+        getActor().getScene().setGravity(new Vector(0, -schwerkraft));
     }
 
     default void setzeMasse(float masse) {
-        Game.enqueue(() -> getActor().physics.setMass(masse));
+        getActor().physics.setMass(masse);
     }
 
     default float nenneVx() {
@@ -131,15 +130,15 @@ public interface EduActor {
     }
 
     default void macheAktiv() {
-        Game.enqueue(() -> getActor().setBodyType(BodyType.DYNAMIC));
+        getActor().setBodyType(BodyType.DYNAMIC);
     }
 
     default void machePassiv() {
-        Game.enqueue(() -> getActor().setBodyType(BodyType.STATIC));
+        getActor().setBodyType(BodyType.STATIC);
     }
 
     default void macheNeutral() {
-        Game.enqueue(() -> getActor().setBodyType(BodyType.PASSIVE));
+        getActor().setBodyType(BodyType.PASSIVE);
     }
 
     default void sprung(float staerke) {
@@ -162,7 +161,7 @@ public interface EduActor {
      *             wurde.
      */
     default void geradenAnimation(float zX, float zY, int ms, boolean loop) {
-        Game.enqueue(() -> Spiel.getActiveScene().addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), ms, loop)));
+        Spiel.getActiveScene().addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), ms, loop));
     }
 
     /**
@@ -177,6 +176,6 @@ public interface EduActor {
      *                      <code>false</code>=Das Actor-Objekt behält seine Rotation bei.
      */
     default void kreisAnimation(float mX, float mY, int ms, boolean uhrzeigersinn, boolean rotation) {
-        Game.enqueue(() -> Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), ms, uhrzeigersinn, rotation)));
+        Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), ms, uhrzeigersinn, rotation));
     }
 }
