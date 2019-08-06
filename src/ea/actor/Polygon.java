@@ -6,6 +6,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.function.Supplier;
 
 /**
@@ -65,6 +66,11 @@ public class Polygon extends Geometry {
         this.scaledPx = new int[points.length];
         this.scaledPy = new int[points.length];
 
+        for (int i = 0; i < points.length; i++) {
+            px[i] = points[i].x;
+            py[i] = points[i].y;
+        }
+
         this.setShape(() -> ShapeBuilder.createPolygonShape(points));
     }
 
@@ -79,7 +85,10 @@ public class Polygon extends Geometry {
             scaledPy[i] = (int) (py[i] * pixelPerMeter);
         }
 
+        AffineTransform at = g.getTransform();
+        g.scale(1, -1);
         g.setColor(getColor());
         g.fillPolygon(scaledPx, scaledPy, scaledPx.length);
+        g.setTransform(at);
     }
 }

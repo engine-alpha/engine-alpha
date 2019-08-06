@@ -4,10 +4,7 @@ import ea.FrameUpdateListener;
 import ea.Game;
 import ea.Random;
 import ea.Vector;
-import ea.actor.Actor;
-import ea.actor.Animation;
-import ea.actor.Particle;
-import ea.actor.StatefulAnimation;
+import ea.actor.*;
 import ea.animation.Interpolator;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.LinearInteger;
@@ -15,6 +12,7 @@ import ea.animation.interpolation.SinusFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.example.showcase.jump.Enemy;
+import ea.handle.BodyType;
 import ea.input.KeyListener;
 import ea.internal.ShapeBuilder;
 import ea.sound.Sound;
@@ -127,7 +125,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         //setShapes("C0.5,0.9,0.1&R0,0.2,0.6,0.8");
         setShapes(() -> {
             List<Shape> shapeList = new ArrayList<>(2);
-            //shapeList.add(ShapeBuilder.createAxisParallelRectangularShape(0.2f, 0, 0.6f, 1f));
+            shapeList.add(ShapeBuilder.createAxisParallelRectangularShape(0.2f, 0, 0.6f, 1f));
             shapeList.add(ShapeBuilder.createCircleShape(.3f, .3f, 0.3f));
             return shapeList;
         });
@@ -138,6 +136,12 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         scene.addFrameUpdateListener(this);
         physics.setMass(65);
         addCollisionListener(this);
+
+        Polygon polygon = new Polygon(new Vector(1, 1), new Vector(10, 10), new Vector(10, 0));
+        polygon.setColor(Color.white);
+        polygon.position.set(4, 4);
+        polygon.setBodyType(BodyType.STATIC);
+        scene.add(polygon);
     }
 
     private void setMana(int mana) {
