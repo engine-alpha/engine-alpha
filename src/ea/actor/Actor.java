@@ -27,6 +27,7 @@ import ea.collision.CollisionListener;
 import ea.handle.BodyType;
 import ea.handle.Physics;
 import ea.handle.Position;
+import ea.internal.ShapeHelper;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.*;
@@ -327,6 +328,18 @@ public abstract class Actor {
     @API
     public BodyType getBodyType() {
         return physicsHandler.getType();
+    }
+
+    /**
+     * Setzt neue Shapes für das Actor Objekt. Hat Einfluss auf die Physik (Kollisionen, Masse, etc.)
+     *
+     * @param shapeCode der Shape-Code
+     *
+     * @see ea.internal.ShapeHelper#fromString(String)
+     */
+    @API
+    public final void setShapes(String shapeCode) {
+        this.physicsHandler.setShapes(ShapeHelper.fromString(shapeCode));
     }
 
     /**

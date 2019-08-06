@@ -3,7 +3,11 @@ package ea.internal.physics;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.handle.BodyType;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Default-Handler für Operationen an Actor-Objekten, die an keiner Scene angehängt sind.
@@ -198,6 +202,11 @@ public class NullHandler extends PhysicsHandler {
     @Override
     public void setTorque(float value) {
         throw makeNullException("das Setzen eines Drehmomentes");
+    }
+
+    @Override
+    public void setShapes(Supplier<List<Shape>> shapes) {
+        proxyData.setShapes(shapes);
     }
 
     @Override

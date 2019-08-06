@@ -96,6 +96,18 @@ public class ProxyData {
     }
 
     /**
+     * Erstellt eine FixtureDef OHNE SHAPE
+     */
+    public FixtureDef createPlainFixtureDef() {
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = this.getDensity();
+        fixtureDef.friction = this.getFriction();
+        fixtureDef.restitution = this.getRestitution();
+        fixtureDef.isSensor = this.getType().isSensorType();
+        return fixtureDef;
+    }
+
+    /**
      * Erstellt eine Body-Definition für den Actor
      */
     public BodyDef createBodyDef() {

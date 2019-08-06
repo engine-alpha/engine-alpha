@@ -4,7 +4,11 @@ import ea.Vector;
 import ea.actor.Actor;
 import ea.handle.BodyType;
 import ea.internal.annotations.Internal;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Beschreibt allgemein ein Objekt, dass die physikalischen Eigenschaften eines Actor-Objektes kontrollieren kann.
@@ -223,6 +227,13 @@ public abstract class PhysicsHandler {
     public abstract float getTorque();
 
     public abstract void setTorque(float value);
+
+    /**
+     * Entfernt alle Shapes/Collider am Actor und setzt alle Shapes für dieses Objekt neu.
+     *
+     * @param shapes Die neuen Shapes als Supplier, der die Liste der Shapes ausgibt.
+     */
+    public abstract void setShapes(Supplier<List<Shape>> shapes);
 
     /**
      * Gibt die Proxy-Daten des Actors aus.

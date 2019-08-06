@@ -10,9 +10,11 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.FixtureDef;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Ein <code>Body-Handler</code> kümmert sich um die <i>physikalische Darstellung</i> eines
@@ -347,6 +349,36 @@ public class BodyHandler extends PhysicsHandler {
         synchronized (worldHandler) {
             body.m_torque = value;
         }
+    }
+
+    @Override
+    public void setShapes(Supplier<List<Shape>> shapes) {
+        synchronized (worldHandler) {
+            //remove all fixtures from body
+            ProxyData proxyData = this.getProxyData();
+            List<Fixture> fixtures = fixtureList();
+            for (Fixture fixture : fixtures) {
+                body.destroyFixture(fixture);
+            }
+
+            //Add new fixtures to body
+            FixtureDef fixtureDef = proxyData.createPlainFixtureDef();
+            List<Shape> shapeList = shapes.get();
+            for (Shape shape : shapeList) {
+                fixtureDef.shape = shape;
+                body.createFixture(fixtureDef);
+            }
+        }
+    }
+
+    private List<Fixture> fixtureList() {
+        final List<Fixture> ret = new ArrayList<>();
+        Fixture current = body.m_fixtureList;
+        while (current != null) {
+            ret.add(current);
+            current = current.m_next;
+        }
+        return ret;
     }
 
     @Override
