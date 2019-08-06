@@ -20,7 +20,7 @@ public class Layer {
     /**
      * Der Inhalt des Layers.
      */
-    private final Collection<Actor> actorList;
+    private final Collection<Actor> actors;
 
     /**
      * Parallaxen-X-Faktor
@@ -47,7 +47,10 @@ public class Layer {
      */
     private float timeDistort = 1;
 
-    private int zIndex = -2;
+    /**
+     * Bestimmt die Reihenfolge der Layer, kleinere Werte werden zuerst gerendert, sind also weiter "hinten"
+     */
+    private int layerPosition = -2;
 
     /**
      * Ob dieses Layer gerade sichtbar ist (also gerendert wird).
@@ -70,7 +73,7 @@ public class Layer {
     @API
     public Layer() {
         worldHandler = new WorldHandler();
-        actorList = new ConcurrentLinkedQueue<>();
+        actors = new ConcurrentLinkedQueue<>();
     }
 
     @Internal
@@ -78,19 +81,21 @@ public class Layer {
         if (this.parent != null) {
             throw new IllegalStateException("Das Layer wurde bereits an einer Scene angemeldet.");
         }
+
         this.parent = parent;
     }
 
     /**
      * Setzt die Position dieses Layers relativ zu anderen Layers.
      *
-     * @param sublayer Die neue Position dieses Layers. Je höher dieser Wert, desto weiter vorne ist das Layer.
+     * @param position Die neue Position dieses Layers. Je höher dieser Wert, desto weiter vorne ist das Layer.
      */
     @API
-    public void setLayerPosition(int sublayer) {
-        this.zIndex = sublayer;
+    public void setLayerPosition(int position) {
+        this.layerPosition = position;
+
         if (parent != null) {
-            parent.layersUpdated();
+            parent.sortLayers();
         }
     }
 
@@ -103,7 +108,7 @@ public class Layer {
      */
     @API
     public int getLayerPosition() {
-        return zIndex;
+        return layerPosition;
     }
 
     /**
@@ -165,9 +170,10 @@ public class Layer {
      */
     @API
     public void setTimeDistort(float timeDistort) {
-        if (timeDistort <= 0) {
-            throw new IllegalArgumentException("Zeitverzerrungsfaktor muss größer als 0 sein. War " + timeDistort);
+        if (timeDistort < 0) {
+            throw new IllegalArgumentException("Zeitverzerrungsfaktor muss größer oder gleich 0 sein, war " + timeDistort);
         }
+
         this.timeDistort = timeDistort;
     }
 
@@ -200,15 +206,20 @@ public class Layer {
 
     @API
     public void add(Actor... actors) {
-        for (Actor room : actors) {
-            this.actorList.add(room);
+        for (Actor actor : actors) {
+            if (actor.getScene() != null) {
+                throw new IllegalArgumentException("Ein Actor kann nur an einer Scene gleichzeitig angemeldet sein");
+            }
+
+            actor.setScene(this.parent);
+            this.actors.add(actor);
         }
     }
 
     @API
     final public void remove(Actor... actors) {
         for (Actor actor : actors) {
-            this.actorList.remove(actor);
+            this.actors.remove(actor);
             actor.setScene(null);
         }
     }
@@ -284,7 +295,7 @@ public class Layer {
         // TODO: Calculate optimal bounds
         int size = Math.max(width, height);
 
-        for (Actor actor : actorList) {
+        for (Actor actor : actors) {
             actor.renderBasic(g, new Bounds(position.x - size, position.y - size, size * 2, size * 2), pixelPerMeter);
         }
     }

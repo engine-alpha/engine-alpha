@@ -102,7 +102,7 @@ public class Scene {
      * @param deltaTime Die Echtzeit, die seit dem letzten World-Step vergangen ist.
      */
     @Internal
-    void worldStep(float deltaTime, Phaser worldStepEndBarrier) {
+    final void worldStep(float deltaTime, Phaser worldStepEndBarrier) {
         camera.onFrameUpdate();
 
         synchronized (layers) {
@@ -124,7 +124,7 @@ public class Scene {
     }
 
     @Internal
-    public void render(Graphics2D g, int width, int height) {
+    public final void render(Graphics2D g, int width, int height) {
         final AffineTransform base = g.getTransform();
 
         int current = 0;
@@ -168,21 +168,21 @@ public class Scene {
      * werden.
      */
     @Internal
-    void layersUpdated() {
+    final void sortLayers() {
         this.layers.sort(Comparator.comparingInt(Layer::getLayerPosition));
     }
 
     @API
-    public void addLayer(Layer layer) {
+    public final void addLayer(Layer layer) {
         synchronized (this.layers) {
             this.layers.add(layer);
             layer.setParent(this);
-            layersUpdated();
+            sortLayers();
         }
     }
 
     @API
-    public void removeLayer(Layer layer) {
+    public final void removeLayer(Layer layer) {
         synchronized (this.layers) {
             if (!this.layers.remove(layer) && Game.isVerbose()) {
                 Logger.warning("Ein Layer, das gar nicht an der Scene angehängt ist, sollte entfernt werden.", "layer");
@@ -191,7 +191,7 @@ public class Scene {
     }
 
     @API
-    public Camera getCamera() {
+    public final Camera getCamera() {
         return camera;
     }
 
@@ -239,18 +239,18 @@ public class Scene {
      * @return der Worldhandler des Main-Layers.
      */
     @Internal
-    public WorldHandler getWorldHandler() {
+    public final WorldHandler getWorldHandler() {
         return mainLayer.getWorldHandler();
     }
 
     /**
      * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb des Hauptlayers der Scene</b> wirkt.
      *
-     * @param gravityInN Die neue Schwerkraft als Vector. Die Einheit ist <b>[N]</b>.
+     * @param gravityInNewton Die neue Schwerkraft als Vector. Die Einheit ist <b>[N]</b>.
      */
     @API
-    public void setGravity(Vector gravityInN) {
-        mainLayer.getWorldHandler().getWorld().setGravity(new Vec2(gravityInN.x, gravityInN.y));
+    public void setGravity(Vector gravityInNewton) {
+        mainLayer.getWorldHandler().getWorld().setGravity(new Vec2(gravityInNewton.x, gravityInNewton.y));
     }
 
     /**
@@ -261,7 +261,7 @@ public class Scene {
      *                    Collision-Detection, keine Physik-Simulation etc., bis die Physik wieder mit
      *                    <code>setPhysicsPaused(true)</code> aktiviert wird.
      *
-     * @see #getPhysicsPaused()
+     * @see #isPhysicsPaused()
      */
     @API
     public void setPhysicsPaused(boolean worldPaused) {
@@ -277,7 +277,7 @@ public class Scene {
      * @see #setPhysicsPaused(boolean)
      */
     @API
-    public boolean getPhysicsPaused() {
+    public boolean isPhysicsPaused() {
         return mainLayer.getWorldHandler().isWorldPaused();
     }
 
@@ -285,11 +285,7 @@ public class Scene {
     final public void add(Actor... actors) {
         Game.afterWorldStep(() -> {
             for (Actor actor : actors) {
-                if (actor.getScene() != null) {
-                    throw new IllegalArgumentException("Ein Actor, der an einer Scene angemeldet ist, kann nicht " + "hinzugefügt werden, bevor er abgemeldet wurde.");
-                }
                 mainLayer.add(actor);
-                actor.setScene(this);
             }
         });
     }
