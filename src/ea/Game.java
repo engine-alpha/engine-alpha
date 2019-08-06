@@ -293,7 +293,7 @@ public final class Game {
         startX -= startX % gridSizeInPixels;
         startY -= startY % gridSizeInPixels;
 
-        g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
+        g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         g.setColor(DEBUG_GRID_COLOR);
 
         for (int x = startX; x < startX + windowSizeInPixels + gridSizeInPixels; x += gridSizeInPixels) {
