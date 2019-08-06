@@ -43,21 +43,23 @@ public class Polygon extends Geometry {
             throw new RuntimeException("Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein gültiges Polygon zu beschreiben.");
         }
 
+        resetPoints(points);
+    }
+
+    /**
+     *
+     * @param points
+     */
+    private final void resetPoints(Vector... points) {
         this.px = new int[points.length];
         this.py = new int[points.length];
+
+        //IDENTIFY SCALE FACTORS
 
         for (int i = 0; i < points.length; i++) {
             px[i] = Math.round(points[i].x);
             py[i] = -1 * Math.round(points[i].y);
         }
-    }
-
-    /**
-     * 
-     * @param points
-     */
-    private final void resetPoints(Vector... points) {
-        //
     }
 
     /**

@@ -14,7 +14,7 @@ import ea.input.KeyListener;
 import ea.input.MouseButton;
 import ea.input.MouseClickListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 /**
@@ -26,17 +26,17 @@ import java.awt.event.KeyEvent;
  * ab. Der entsprechende Vector ist sichtbar.</p>
  * <h3>Funktionen</h3>
  * <ul>
- *     <li>R Setzt die gesamte Simulation zurück. Alle Objekte verharren wieder in Ruhe an ihrer Ausgangsposition.</li>
- *     <li>S Aktiviert/Deaktiviert Schwerkraft in der Simulation.</li>
- *     <li>E Aktiviert/Deaktiviert Wände</li>
- *     <li>D Aktiviert/Deaktiviert den Debug-Modus (und stellt damit ein Raster, FPS etc. dar)</li>
- *     <li>I Aktiviert/Deaktiviert die Info-Box mit Infos zu den physikalischen Eigenschaften des zuletzt
- *     angeklickten Objekts.</li>
- *     <li>U und J erhöhen/reduzieren die Masse des zuöetzt angeklickten Objekts.</li>
- *     <li>W und Q erhöhen/reduzieren die Elastizität der Wände.</li>
- *     <li>1 und 2 zoomen rein/raus</li>
+ * <li>R Setzt die gesamte Simulation zurück. Alle Objekte verharren wieder in Ruhe an ihrer Ausgangsposition.</li>
+ * <li>S Aktiviert/Deaktiviert Schwerkraft in der Simulation.</li>
+ * <li>E Aktiviert/Deaktiviert Wände</li>
+ * <li>D Aktiviert/Deaktiviert den Debug-Modus (und stellt damit ein Raster, FPS etc. dar)</li>
+ * <li>I Aktiviert/Deaktiviert die Info-Box mit Infos zu den physikalischen Eigenschaften des zuletzt
+ * angeklickten Objekts.</li>
+ * <li>U und J erhöhen/reduzieren die Masse des zuöetzt angeklickten Objekts.</li>
+ * <li>W und Q erhöhen/reduzieren die Elastizität der Wände.</li>
+ * <li>1 und 2 zoomen rein/raus</li>
  * </ul>
- *
+ * <p>
  * Created by andonie on 05.09.15.
  */
 public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionListener<Actor>, MouseClickListener, FrameUpdateListener {
@@ -58,8 +58,9 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
 
     @Override
     public void onCollisionEnd(CollisionEvent colliding) {
-        if(attackedLast == colliding.getColliding())
+        if (attackedLast == colliding.getColliding()) {
             attackedLast = null;
+        }
     }
 
     /**
@@ -80,19 +81,16 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
     private Vector lastAttack;
     private boolean hatSchwerkraft = false;
 
-    public static int PPM=100;
+    public static int PPM = 100;
 
     /**
      * Startet ein Sandbox-Fenster.
      */
     public ForceKlickEnvironment(Scene parent, int width, int height) {
         super(parent);
-        FIELD_WIDTH=width;
-        FIELD_DEPTH=height;
-        getCamera().move(
-                width/2,
-                height/2
-        );
+        FIELD_WIDTH = width;
+        FIELD_DEPTH = height;
+        getCamera().move(width / 2, height / 2);
 
         initialisieren();
     }
@@ -115,19 +113,18 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         //Der Rest der Wände
         Rectangle links = new Rectangle(10, FIELD_DEPTH);
         Rectangle rechts = new Rectangle(10, FIELD_DEPTH);
-        rechts.position.set(FIELD_WIDTH-10, 0);
+        rechts.position.set(FIELD_WIDTH - 10, 0);
         Rectangle oben = new Rectangle(FIELD_WIDTH, 10);
         add(links, rechts, oben);
         walls[1] = links;
         walls[2] = rechts;
         walls[3] = oben;
 
-        for(int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 3; i++) {
             walls[i].setColor(Color.WHITE);
             walls[i].setVisible(false);
             walls[i].setBodyType(BodyType.PASSIVE);
         }
-
 
         //Vector-Visualisierung
         Rectangle stab = new Rectangle(100, 5);
@@ -151,16 +148,15 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         addKeyListener(new KeyListener() {
             @Override
             public void onKeyDown(KeyEvent e) {
-                switch(e.getKeyCode()) {
+                switch (e.getKeyCode()) {
                     case KeyEvent.VK_E:
                         boolean wasActive = walls[1].isVisible();
                         BodyType newType = wasActive ? BodyType.PASSIVE : BodyType.STATIC;
-                        for(int i = 0; i <= 3; i++) {
+                        for (int i = 0; i <= 3; i++) {
                             walls[i].setVisible(!wasActive);
                             walls[i].setBodyType(newType);
                         }
                         break;
-
                 }
             }
 
@@ -171,16 +167,14 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         });
     }
 
-
-
-
     /**
      * Wird bei jedem Mausklick aufgerufen.
+     *
      * @param p Point des Mausklicks auf der Zeichenebene.
      */
     @Override
     public void onMouseDown(Vector p, MouseButton mouseButton) {
-        switch(klickMode) {
+        switch (klickMode) {
             case ATTACK_POINT:
                 lastAttack = p;
 
@@ -192,12 +186,11 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
                 stange.setVisible(true);
                 stange.position.set(p);
 
-
                 klickMode = KlickMode.DIRECTION_INTENSITY;
                 break;
             case DIRECTION_INTENSITY:
 
-                if(lastAttack==null) {
+                if (lastAttack == null) {
                     klickMode = KlickMode.ATTACK_POINT;
                     return;
                 }
@@ -206,11 +199,10 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
                 stange.setVisible(false);
                 Vector distance = lastAttack.negate().add(p);
 
-                if(attackedLast != null && attackedLast.getBodyType() == BodyType.DYNAMIC) {
+                if (attackedLast != null && attackedLast.getBodyType() == BodyType.DYNAMIC) {
                     attackedLast.physics.applyImpulse(distance.multiply(1), lastAttack);
                     attackedLast = null;
                 }
-
 
                 klickMode = KlickMode.ATTACK_POINT;
 
@@ -225,21 +217,25 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
 
     /**
      * Wird für jeden Frame der Scene exakt einmal aufgerufen.
-     * @param ts    Die Zeit in Millisekunden, die seit dem letzten Frame-Update vergangen sind.
+     *
+     * @param ts Die Zeit in Millisekunden, die seit dem letzten Frame-Update vergangen sind.
      */
     @Override
     public void onFrameUpdate(int ts) {
         //Visualisiere ggf. die Vectorstange
-        if(klickMode == KlickMode.DIRECTION_INTENSITY) {
+        if (klickMode == KlickMode.DIRECTION_INTENSITY) {
             Vector pointer = getMousePosition();
-            if(pointer==null || lastAttack == null)
+            if (pointer == null || lastAttack == null) {
                 return;
-            stange.setWidth(new Vector(lastAttack, pointer).getLength());
+            }
+            stange.resetDimensions(new Vector(lastAttack, pointer).getLength(), stange.getHeight());
             float rot = Vector.RIGHT.getAngle(lastAttack.negate().add(pointer));
-            if(Float.isNaN(rot))
+            if (Float.isNaN(rot)) {
                 return;
-            if(pointer.y < lastAttack.y)
-                rot = (float)( Math.PI*2 - rot);
+            }
+            if (pointer.y < lastAttack.y) {
+                rot = (float) (Math.PI * 2 - rot);
+            }
             stange.position.setRotation(rot);
         }
     }
