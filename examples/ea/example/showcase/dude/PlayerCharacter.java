@@ -18,15 +18,15 @@ import ea.example.showcase.jump.Enemy;
 import ea.input.KeyListener;
 import ea.sound.Sound;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
     private static final float MAX_SPEED = 100;
-    public static final int JUMP_FORCE = +200;
+    public static final int JUMP_FORCE = +300;
     public static final int SMASH_FORCE = -1500;
-    public static final int BOTTOM_OUT = -500/30;
+    public static final int BOTTOM_OUT = -500 / 30;
     private static final int DOUBLE_JUMP_COST = 3;
     private static final int MANA_PICKUP_BONUS = 1;
 
@@ -104,6 +104,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         scene.add(this);
         scene.addKeyListener(this);
+        scene.addFrameUpdateListener(this);
         physics.setMass(65);
         addCollisionListener(this);
     }
@@ -184,14 +185,14 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         // kümmere dich um die horizontale Bewegung
         float desiredVelocity = horizontalMovement.getTargetXVelocity();
-        float impulse = desiredVelocity - velocity.x;
+        float impulse = (desiredVelocity - velocity.x) * 4;
         physics.applyForce(new Vector(impulse, 0));
 
         if (rocketMode) {
             physics.applyImpulse(new Vector(0, 10));
 
             Particle particle = new Particle(0.1f, 500);
-            particle.position.set(position.getCenter().subtract(new Vector((float)Math.random() * 0.1f, .45f)));
+            particle.position.set(position.getCenter().subtract(new Vector((float) Math.random() * 0.1f, .45f)));
             particle.physics.applyImpulse(new Vector(2 * ((float) Math.random() - .5f), -2 * ((float) Math.random())));
             particle.setColor(Color.RED);
             particle.setLayer(-1);
@@ -337,12 +338,11 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             Game.enqueue(() -> {
                 for (int i = 0; i < 100; i++) {
                     Particle particle = new Particle(Random.nextInteger(2) + 2, 500);
+                    getScene().add(particle);
                     particle.position.set(position.getCenter().add(0, -32));
                     particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
                     particle.setColor(Color.GRAY);
                     particle.setLayer(-1);
-
-                    getScene().add(particle);
                 }
             });
         }

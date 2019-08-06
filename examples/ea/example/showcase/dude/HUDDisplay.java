@@ -28,7 +28,7 @@ public class HUDDisplay {
      * Konstruktor für Objekte der Klasse ActorGroup
      */
     public HUDDisplay(float x, float y) {
-        background = new TileContainer(HUD_VALUE_LENGTH + 7, 4, 8, 16);
+        background = new TileContainer(HUD_VALUE_LENGTH + 7, 4, 8 * HUD_SCALE, 16 * HUD_SCALE);
 
         // Initialize Standard-Parts of backgrounds.
         for (int i = 0; i < 4; i++) {
@@ -59,7 +59,9 @@ public class HUDDisplay {
         background.setTile(3, 3, NUM_BLACK.getTile(3, 2));
 
         //LINE CONTENT
-        lines = new TileContainer(HUD_VALUE_LENGTH, 4, 8, 16);
+        lines = new TileContainer(HUD_VALUE_LENGTH, 4, 8 * HUD_SCALE, 16 * HUD_SCALE);
+        background.position.set(x, y);
+        lines.position.set(x, y);
         lines.position.move(5 * 8 * HUD_SCALE, 0);
 
         setLineValue(0, 10);

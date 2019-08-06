@@ -83,7 +83,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         makePlatform(5, 800 / 60, -100 / 60);
 
-        makeBoxes(0, 40, 5);
+        //makeBoxes(0, 40, 5);
 
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin();
@@ -109,7 +109,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         middleBackground.add(backgroundImage);
 
         Layer furtherBackground = new Layer();
-        //furtherBackground.setLayerPosition(-300);
+        furtherBackground.setLayerPosition(-300);
         furtherBackground.setParallaxPosition(0.05f, 0.05f);
 
         Image moon = new Image("game-assets/dude/moon.png", 1, 1);
