@@ -15,6 +15,7 @@ public class Partikel implements EduActor {
     public Partikel(float diameter, int life) {
         particle = new Particle(diameter, life);
         eduSetup();
+        Spiel.getActiveScene().addFrameUpdateListener(particle);
     }
 
     @Override
