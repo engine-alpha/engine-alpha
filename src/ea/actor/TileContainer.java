@@ -102,28 +102,27 @@ public class TileContainer extends Actor {
      * @param x           Der X-Index <b>in diesem Container</b> für das neu zu setzende Tile.
      * @param y           Der Y-Index <b>in diesem Container</b> für das neu zu setzende Tile.
      * @param imagePath   Der Pfad zur Bilddatei des neuen Tiles.
-     * @param imageIndexX Der X-Index des Tiles <b>in der Bilddatei</b>.
-     * @param imageIndexY Der Y-Index des Tiles <b>in der Bilddatei</b>.
+     * @param posX Der X-Index des Tiles <b>in der Bilddatei</b>.
+     * @param posY Der Y-Index des Tiles <b>in der Bilddatei</b>.
      */
     @API
-    public void setTileAt(int x, int y, String imagePath, int imageIndexX, int imageIndexY) {
+    public void setTileAt(int x, int y, String imagePath, int posX, int posY, int tileWidth, int tileHeight) {
         assertXYIndices(x, y);
+
         if (imagePath == null) {
             throw new IllegalArgumentException("Der imagePath kann nicht null sein.");
         }
 
         BufferedImage image = ImageLoader.load(imagePath);
-        int tileWidth = image.getWidth() / tiles.length;
-        int tileHeight = image.getHeight() / tiles[0].length;
 
-        String tileKey = imagePath + "|" + tileWidth + "|" + tileHeight + "|" + imageIndexX + "|" + imageIndexY;
+        String tileKey = imagePath + "|" + tileWidth + "|" + tileHeight + "|" + posX + "|" + posY;
 
         Tile newTile;
 
         // Check if Tile exists in TileAtlas
         if (!tileAtlas.containsKey(tileKey)) {
             // Load in new Tile in Atlas (issues like non-existent files are thrown as RuntimeException)
-            BufferedImage tileImage = image.getSubimage(imageIndexX * tileWidth, imageIndexY * tileHeight, tileWidth, tileHeight);
+            BufferedImage tileImage = image.getSubimage(posX * tileWidth, posY * tileHeight, tileWidth, tileHeight);
             tileAtlas.put(tileKey, new BufferedImageTile(tileImage, tileWidth, tileHeight));
         }
         newTile = tileAtlas.get(tileKey);

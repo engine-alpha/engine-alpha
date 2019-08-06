@@ -27,31 +27,31 @@ public class HUDDisplay {
 
         // Initialize Standard-Parts of backgrounds.
         for (int i = 0; i < 4; i++) {
-            background.setTileAt(0, i, "game-assets/dude/hud/orb_orange.png", 0, 0);
-            background.setTileAt(1, i, "game-assets/dude/hud/orb_orange.png", 1, 0);
-            background.setTileAt(4, i, "game-assets/dude/hud/orb_orange.png", 1, 0);
+            background.setTileAt(0, i, "game-assets/dude/hud/orb_orange.png", 0, 0, 8, 16);
+            background.setTileAt(1, i, "game-assets/dude/hud/orb_orange.png", 1, 0, 8, 16);
+            background.setTileAt(4, i, "game-assets/dude/hud/orb_orange.png", 1, 0, 8, 16);
             for (int j = 0; j < HUD_VALUE_LENGTH; j++) {
                 background.setTileAt(5 + j, i, "game-assets/dude/hud/back.png");
             }
-            background.setTileAt(HUD_VALUE_LENGTH + 5, i, "game-assets/dude/hud/orb_orange.png", 1, 0);
-            background.setTileAt(HUD_VALUE_LENGTH + 6, i, "game-assets/dude/hud/orb_orange.png", 2, 0);
+            background.setTileAt(HUD_VALUE_LENGTH + 5, i, "game-assets/dude/hud/orb_orange.png", 1, 0, 8, 16);
+            background.setTileAt(HUD_VALUE_LENGTH + 6, i, "game-assets/dude/hud/orb_orange.png", 2, 0, 8, 16);
         }
 
         //Line 0: HEALTH
-        background.setTileAt(2, 0, "game-assets/dude/hud/num_black.png", 6, 2);
-        background.setTileAt(3, 0, "game-assets/dude/hud/num_black.png", 7, 2);
+        background.setTileAt(2, 0, "game-assets/dude/hud/num_black.png", 6, 2, 8, 16);
+        background.setTileAt(3, 0, "game-assets/dude/hud/num_black.png", 7, 2, 8, 16);
 
         //Line 1: POWER
-        background.setTileAt(2, 1, "game-assets/dude/hud/num_black.png", 8, 2);
-        background.setTileAt(3, 1, "game-assets/dude/hud/num_black.png", 9, 2);
+        background.setTileAt(2, 1, "game-assets/dude/hud/num_black.png", 8, 2, 8, 16);
+        background.setTileAt(3, 1, "game-assets/dude/hud/num_black.png", 9, 2, 8, 16);
 
         //Line 2: XP
-        background.setTileAt(2, 2, "game-assets/dude/hud/num_black.png", 4, 2);
-        background.setTileAt(3, 2, "game-assets/dude/hud/num_black.png", 5, 2);
+        background.setTileAt(2, 2, "game-assets/dude/hud/num_black.png", 4, 2, 8, 16);
+        background.setTileAt(3, 2, "game-assets/dude/hud/num_black.png", 5, 2, 8, 16);
 
         //Line 3: Monneeeeyyy
-        background.setTileAt(2, 3, "game-assets/dude/hud/num_black.png", 2, 2);
-        background.setTileAt(3, 3, "game-assets/dude/hud/num_black.png", 3, 2);
+        background.setTileAt(2, 3, "game-assets/dude/hud/num_black.png", 2, 2, 8, 16);
+        background.setTileAt(3, 3, "game-assets/dude/hud/num_black.png", 3, 2, 8, 16);
 
         //LINE CONTENT
         lines = new TileContainer(HUD_VALUE_LENGTH, 4, 8, 16);
@@ -72,18 +72,18 @@ public class HUDDisplay {
         }
         int x = (numValue % 5) * 2;
         int y = numValue / 5;
-        lines.setTileAt(numIndex * 2, 3, "game-assets/dude/hud/num_black.png", x, y);
-        lines.setTileAt(numIndex * 2 + 1, 3, "game-assets/dude/hud/num_black.png", x + 1, y);
+        lines.setTileAt(numIndex * 2, 3, "game-assets/dude/hud/num_black.png", x, y, 8, 16);
+        lines.setTileAt(numIndex * 2 + 1, 3, "game-assets/dude/hud/num_black.png", x + 1, y, 8, 16);
     }
 
     private void setLineValue(int lineIndex, int lineValue) {
         for (int i = 0; i < HUD_VALUE_LENGTH; i++) {
             if (i + 1 < lineValue) {
                 //Voll ausgemaltes HUD
-                lines.setTileAt(i, lineIndex, lineSources[lineIndex], 1, 0);
+                lines.setTileAt(i, lineIndex, lineSources[lineIndex], 1, 0, 8, 16);
             } else if (i + 1 == lineValue) {
                 //Ende des Striches
-                lines.setTileAt(i, lineIndex, lineSources[lineIndex], 2, 0);
+                lines.setTileAt(i, lineIndex, lineSources[lineIndex], 2, 0, 8, 16);
             } else {
                 //Nicht gebraucht -> unsichtbar
                 lines.setTileAt(i, lineIndex, null);
