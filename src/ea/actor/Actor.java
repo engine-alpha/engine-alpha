@@ -366,13 +366,15 @@ public abstract class Actor {
                 if (Game.isDebug()) {
                     synchronized (this) {
                         // Visualisiere die Shape
+                        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                         Body body = physicsHandler.getBody();
                         if (body != null && body.m_fixtureList != null && body.m_fixtureList.m_shape != null) {
                             g.setColor(Color.YELLOW);
-                            g.fillRect(-2, -2, 4, 4);
+                            g.drawLine(0, 0, 0, 0);
                             g.setColor(Color.red);
                             renderShape(body.m_fixtureList.m_shape, g);
                         }
+                        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     }
                 }
 
