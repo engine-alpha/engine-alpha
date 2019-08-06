@@ -38,11 +38,6 @@ public class Polygon extends Geometry {
     @API
     public Polygon(Vector... points) {
         super(() -> ShapeBuilder.createPolygonShape(points));
-
-        if (points.length < 3) {
-            throw new RuntimeException("Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein gültiges Polygon zu beschreiben.");
-        }
-
         resetPoints(points);
     }
 
@@ -51,15 +46,23 @@ public class Polygon extends Geometry {
      * @param points
      */
     private final void resetPoints(Vector... points) {
+        if (points.length < 3) {
+            throw new RuntimeException("Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein gültiges Polygon zu beschreiben.");
+        }
         this.px = new int[points.length];
         this.py = new int[points.length];
 
         //IDENTIFY SCALE FACTORS
+        //TODO Identify scale factors
+        scaleX = 1;
+        scaleY = 1;
 
         for (int i = 0; i < points.length; i++) {
-            px[i] = Math.round(points[i].x);
-            py[i] = -1 * Math.round(points[i].y);
+            px[i] = Math.round(points[i].x * scaleX);
+            py[i] = -1 * Math.round(points[i].y * scaleY);
         }
+
+        this.setShape(() -> ShapeBuilder.createPolygonShape(points));
     }
 
     /**
@@ -69,6 +72,7 @@ public class Polygon extends Geometry {
     @Override
     public void render(Graphics2D g) {
         g.setColor(getColor());
+        g.scale(scaleX, scaleY);
         g.fillPolygon(px, py, px.length);
     }
 }
