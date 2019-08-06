@@ -223,19 +223,16 @@ public class Layer {
         g.setClip(0, 0, width, height);
         g.translate(width / 2, height / 2);
 
-        float layerZoom = 1 + (camera.getZoom() - 1) * parallaxZoom;
-        if (layerZoom <= 0) {
-            layerZoom = 0.05f;
-        }
-        g.scale(layerZoom, layerZoom);
+        float pixelPerMeter = 1 + (camera.getZoom() - 1) * parallaxZoom;
+
         g.rotate(rotation * parallaxRotation, 0, 0);
-        g.translate(-position.x * parallaxX, position.y * parallaxY);
+        g.translate((-position.x * parallaxX) * pixelPerMeter, (position.y * parallaxY) * pixelPerMeter);
 
         // TODO: Calculate optimal bounds
         int size = Math.max(width, height);
 
         for (Actor actor : actorList) {
-            actor.renderBasic(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2));
+            actor.renderBasic(g, new BoundingRechteck(position.x - size, position.y - size, size * 2, size * 2), pixelPerMeter);
         }
     }
 

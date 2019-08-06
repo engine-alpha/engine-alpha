@@ -16,9 +16,10 @@ import java.awt.Graphics2D;
 public class Polygon extends Geometry {
     /**
      * Die Punkte, die das Polygon beschreiben.
-     * Pending Scaling
      */
-    private int[] px, py;
+    private float[] px, py;
+
+    private int[] scaledPx, scaledPy;
 
     /**
      * Skalierungsfaktor Breite
@@ -45,22 +46,15 @@ public class Polygon extends Geometry {
      *
      * @param points
      */
-    private final void resetPoints(Vector... points) {
+    private void resetPoints(Vector... points) {
         if (points.length < 3) {
             throw new RuntimeException("Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein gültiges Polygon zu beschreiben.");
         }
-        this.px = new int[points.length];
-        this.py = new int[points.length];
 
-        //IDENTIFY SCALE FACTORS
-        //TODO Identify scale factors
-        scaleX = 1;
-        scaleY = 1;
-
-        for (int i = 0; i < points.length; i++) {
-            px[i] = Math.round(points[i].x * scaleX);
-            py[i] = -1 * Math.round(points[i].y * scaleY);
-        }
+        this.px = new float[points.length];
+        this.py = new float[points.length];
+        this.scaledPx = new int[points.length];
+        this.scaledPy = new int[points.length];
 
         this.setShape(() -> ShapeBuilder.createPolygonShape(points));
     }
@@ -70,9 +64,13 @@ public class Polygon extends Geometry {
      */
     @Internal
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics2D g, float pixelPerMeter) {
+        for (int i = 0; i < scaledPx.length; i++) {
+            scaledPx[i] = (int) (px[i] * pixelPerMeter);
+            scaledPy[i] = (int) (py[i] * pixelPerMeter);
+        }
+
         g.setColor(getColor());
-        g.scale(scaleX, scaleY);
-        g.fillPolygon(px, py, px.length);
+        g.fillPolygon(scaledPx, scaledPy, scaledPx.length);
     }
 }

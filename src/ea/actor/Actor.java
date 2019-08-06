@@ -384,7 +384,7 @@ public abstract class Actor {
      *          werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
      */
     @Internal
-    public void renderBasic(Graphics2D g, BoundingRechteck r) {
+    public void renderBasic(Graphics2D g, BoundingRechteck r, float pixelPerMeter) {
         if (visible && this.isWithinBounds(r)) {
             synchronized (this) {
                 float rotation = physicsHandler.getRotation();
@@ -394,8 +394,8 @@ public abstract class Actor {
 
                 AffineTransform transform = g.getTransform();
 
-                g.rotate(-rotation, position.x, -position.y); // TODO ist das die korrekte Rotation, Ursprung als Zentrum?
-                g.translate(position.x, -position.y);
+                g.rotate(-rotation, position.x * pixelPerMeter, -position.y * pixelPerMeter);
+                g.translate(position.x * pixelPerMeter, -position.y * pixelPerMeter);
 
                 //Opacity Update
                 if (opacity != 1) {
@@ -407,7 +407,7 @@ public abstract class Actor {
 
                 // ____ Render ____
 
-                render(g);
+                render(g, pixelPerMeter);
 
                 if (Game.isDebug()) {
                     synchronized (this) {
@@ -415,7 +415,7 @@ public abstract class Actor {
                         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                         Body body = physicsHandler.getBody();
                         if (body != null && body.m_fixtureList != null && body.m_fixtureList.m_shape != null) {
-                            renderShape(body.m_fixtureList.m_shape, g);
+                            renderShape(body.m_fixtureList.m_shape, g, pixelPerMeter);
                         }
                         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     }
@@ -442,13 +442,9 @@ public abstract class Actor {
      *              eingestellt sein. Diese Methode übernimmt nur das direkte rendern.
      */
     @Internal
-    public static void renderShape(Shape shape, Graphics2D g) {
+    public static void renderShape(Shape shape, Graphics2D g, float pixelPerMeter) {
         AffineTransform pre = g.getTransform();
 
-        double scaleX = g.getTransform().getScaleX();
-        double scaleY = g.getTransform().getScaleY();
-
-        g.scale(1 / scaleX, 1 / scaleY);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
         g.setColor(Color.YELLOW);
@@ -460,14 +456,14 @@ public abstract class Actor {
             Vec2[] vec2s = polygonShape.getVertices();
             int[] xs = new int[polygonShape.getVertexCount()], ys = new int[polygonShape.getVertexCount()];
             for (int i = 0; i < xs.length; i++) {
-                xs[i] = (int) (vec2s[i].x * scaleX);
-                ys[i] = (-1) * (int) (vec2s[i].y * scaleY);
+                xs[i] = (int) (vec2s[i].x * (double) pixelPerMeter);
+                ys[i] = (-1) * (int) (vec2s[i].y * (double) pixelPerMeter);
             }
 
             g.drawPolygon(xs, ys, xs.length);
         } else if (shape instanceof CircleShape) {
             float diameter = (((CircleShape) shape).m_radius * 2);
-            g.drawOval(0, (int) (-diameter * scaleY), (int) (diameter * scaleX), (int) (diameter * scaleY));
+            g.drawOval(0, (int) (-diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter));
         } else {
             Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");
         }
@@ -550,7 +546,7 @@ public abstract class Actor {
      * @param g Das zeichnende Graphics-Objekt
      */
     @Internal
-    public abstract void render(Graphics2D g);
+    public abstract void render(Graphics2D g, float pixelPerMeter);
 
     /**
      * Gibt die Scene aus, zu der dieser Actor gehört.

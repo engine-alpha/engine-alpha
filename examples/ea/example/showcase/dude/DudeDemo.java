@@ -121,10 +121,10 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         addLayer(middleBackground);
         addLayer(furtherBackground);
 
-        //CLOUDS
-        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_1.png", 300, 1.6f, 0.1f, -2000);
-        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_2.png", 200, 1.4f, 0.1f, -2000);
-        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_3.png", -60, 1.2f, 0.1f, -2000);
+        // CLOUDS
+        // addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_1.png", 300, 1.6f, 0.1f, -2000);
+        // addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_2.png", 200, 1.4f, 0.1f, -2000);
+        // addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_3.png", -60, 1.2f, 0.1f, -2000);
     }
 
     private void addCloudLayer(final int NUM_TILES, String tilePath, int layerLevel, float xParallax, float yParallax, float xOffset) {

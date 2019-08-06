@@ -227,7 +227,7 @@ public class Text extends Actor {
      */
     @Override
     @Internal
-    public void render(Graphics2D g) {
+    public void render(Graphics2D g, float pixelPerMeter) {
         FontMetrics fontMetrics = g.getFontMetrics(font);
 
         int x = 0;

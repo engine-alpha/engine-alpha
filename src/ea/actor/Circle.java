@@ -26,7 +26,6 @@ import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.util.function.Supplier;
 
 /**
@@ -35,7 +34,6 @@ import java.util.function.Supplier;
  * @author Michael Andonie
  * @author Niklas Keller
  */
-@SuppressWarnings ( "serial" )
 public class Circle extends Geometry {
     private float diameter;
 
@@ -72,12 +70,9 @@ public class Circle extends Geometry {
     }
 
     @Override
-    public void render(Graphics2D g) {
-        AffineTransform pre = g.getTransform();
-        g.scale(diameter, diameter);
+    public void render(Graphics2D g, float pixelPerMeter) {
         g.setColor(getColor());
-        g.fillOval(0, -1, 1, 1);
-        g.setTransform(pre);
+        g.fillOval(0, -1, (int)(diameter * pixelPerMeter), (int)(diameter * pixelPerMeter));
     }
 
     /**

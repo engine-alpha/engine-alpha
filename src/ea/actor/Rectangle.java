@@ -120,24 +120,14 @@ public class Rectangle extends Geometry {
      * {@inheritDoc}
      */
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics2D g, float pixelPerMeter) {
         g.setColor(getColor());
 
-        g.scale(width / SCALING_APPROX_FACTOR, height / SCALING_APPROX_FACTOR);
         if (borderRadius == 0) {
-            g.fillRect(0, -SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR);
+            g.fillRect(0, (int) (-height * pixelPerMeter), (int) (width * pixelPerMeter), (int) (height * pixelPerMeter));
         } else {
-            float borderRadiusWidth;
-            float borderRadiusHeight;
-            if (width >= height) {
-                borderRadiusWidth = (height * this.borderRadius / width);
-                borderRadiusHeight = (height * this.borderRadius / 2);
-            } else {
-                borderRadiusHeight = (width * this.borderRadius / height);
-                borderRadiusWidth = (width * this.borderRadius / 2);
-            }
-
-            g.fillRoundRect(0, -SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, SCALING_APPROX_FACTOR, (int) (borderRadiusWidth * SCALING_APPROX_FACTOR), (int) (borderRadiusHeight * SCALING_APPROX_FACTOR));
+            int borderRadius = (int) (Math.min(width, height) * pixelPerMeter * this.borderRadius);
+            g.fillRoundRect(0, (int) (-height * pixelPerMeter), (int) (width * pixelPerMeter), (int) (height * pixelPerMeter), borderRadius, borderRadius);
         }
     }
 }

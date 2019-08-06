@@ -172,8 +172,8 @@ public class Animation extends Actor implements FrameUpdateListener {
     }
 
     @Override
-    public void render(Graphics2D g) {
-        this.frames[currentIndex].render(g, width, height, false, false);
+    public void render(Graphics2D g, float pixelPerMeter) {
+        this.frames[currentIndex].render(g, width * pixelPerMeter, height * pixelPerMeter, false, false);
     }
 
     @API

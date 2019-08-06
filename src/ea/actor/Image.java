@@ -71,9 +71,9 @@ public class Image extends Actor {
      * {@inheritDoc}
      */
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics2D g, float pixelPerMeter) {
         AffineTransform pre = g.getTransform();
-        g.scale(width / this.image.getWidth(), height / this.image.getHeight());
+        g.scale(width * pixelPerMeter / this.image.getWidth(), height * pixelPerMeter / this.image.getHeight());
         g.drawImage(this.image, 0, -image.getHeight(), null);
         g.setTransform(pre);
     }

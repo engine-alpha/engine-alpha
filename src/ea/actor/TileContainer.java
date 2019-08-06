@@ -85,30 +85,28 @@ public class TileContainer extends Actor implements TileMap {
 
     @Internal
     @Override
-    public void render(Graphics2D g) {
-        final AffineTransform before = g.getTransform();
-        float offset = tiles[0].length * tileHeight;
+    public void render(Graphics2D g, float pixelPerMeter) {
+        final AffineTransform ore = g.getTransform();
+        float offset = tiles[0].length * tileHeight * pixelPerMeter;
 
-        try {
-            g.translate(0, -offset);
+        g.translate(0, -offset);
 
-            for (int x = 0; x < tiles.length; x++) {
-                for (int y = 0; y < tiles[0].length; y++) {
-                    if (tiles[x][y] == null) {
-                        continue;
-                    }
-
-                    float tx = tileWidth * x;
-                    float ty = tileHeight * y;
-
-                    g.translate(tx, ty);
-                    tiles[x][y].render(g, tileWidth, tileHeight);
-                    g.translate(-tx, -ty);
+        for (int x = 0; x < tiles.length; x++) {
+            for (int y = 0; y < tiles[0].length; y++) {
+                if (tiles[x][y] == null) {
+                    continue;
                 }
+
+                float tx = tileWidth * x * pixelPerMeter;
+                float ty = tileHeight * y * pixelPerMeter;
+
+                g.translate(tx, ty);
+                tiles[x][y].render(g, tileWidth * pixelPerMeter, tileHeight * pixelPerMeter);
+                g.translate(-tx, -ty);
             }
-        } finally {
-            g.setTransform(before);
         }
+
+        g.setTransform(ore);
     }
 
     @Override

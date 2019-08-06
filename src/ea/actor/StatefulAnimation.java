@@ -289,11 +289,11 @@ public class StatefulAnimation extends Actor {
 
     @Internal
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics2D g, float pixelPerMeter) {
         if (currentAnimation.length == 0) {
             return;
         }
 
-        currentAnimation[currentIndex].render(g, width, height, flipHorizontal, flipVertical);
+        currentAnimation[currentIndex].render(g, width * pixelPerMeter, height * pixelPerMeter, flipHorizontal, flipVertical);
     }
 }
