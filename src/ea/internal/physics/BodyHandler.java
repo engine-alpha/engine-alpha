@@ -213,6 +213,7 @@ public class BodyHandler extends PhysicsHandler {
 
             body.setType(type.toBox2D());
             body.setActive(true);
+            body.setAwake(true);
             body.setGravityScale(type.getDefaultGravityScale());
 
             Fixture current = this.body.m_fixtureList;
