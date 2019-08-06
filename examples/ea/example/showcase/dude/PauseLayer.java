@@ -5,7 +5,7 @@ import ea.actor.Rectangle;
 import ea.actor.Text;
 import ea.input.KeyListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 public class PauseLayer extends Layer implements KeyListener {
@@ -14,7 +14,7 @@ public class PauseLayer extends Layer implements KeyListener {
         setLayerPosition(1000);
 
         //Setup:
-        Rectangle back = new Rectangle(DudeDemo.GAME_WIDTH, DudeDemo.GAME_HEIGHT);
+        Rectangle back = new Rectangle(DudeDemo.GAME_WIDTH_PX, DudeDemo.GAME_HEIGHT_PX);
         back.setColor(new Color(100, 200, 255, 120));
         back.position.setCenter(0, 0);
         add(back);

@@ -35,8 +35,8 @@ public class TileContainer extends Actor implements TileMap {
      *
      * @param numX       Die Anzahl an Tiles in X-Richtung.
      * @param numY       Die Anzahl an Tiles in Y-Richtung.
-     * @param tileWidth  Die Breite eines Tiles in Pixel.
-     * @param tileHeight Die Höhe eines Tiles in Pixel.
+     * @param tileWidth  Die Breite eines Tiles in Meter.
+     * @param tileHeight Die Höhe eines Tiles in Meter.
      *
      * @see #setTile(int, int, Tile)
      */

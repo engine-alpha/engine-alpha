@@ -78,6 +78,16 @@ public class Scene {
     private final List<Layer> layers = new ArrayList<>();
 
     /**
+     * Gibt das Main Layer dieser Scene aus.
+     *
+     * @return Das Main Layer der Scene.
+     */
+    @API
+    public Layer getMainLayer() {
+        return mainLayer;
+    }
+
+    /**
      * Das Main-Layer (default-additions)
      */
     private final Layer mainLayer;
@@ -188,6 +198,15 @@ public class Scene {
                 Logger.warning("Ein Layer, das gar nicht an der Scene angehängt ist, sollte entfernt werden.", "layer");
             }
         }
+    }
+
+    /**
+     * Gibt die sichtbare Fläche auf dem <b>Hauptlayer</b> aus.
+     *
+     * @return Die sichtbare Fläche auf dem Hauptlayer
+     */
+    public Bounds getVisibleArea() {
+        return mainLayer.visibleArea();
     }
 
     @API

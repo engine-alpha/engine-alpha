@@ -24,7 +24,7 @@ import java.util.HashSet;
  */
 public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
-    public static final int GAME_WIDTH = Showcases.WIDTH, GAME_HEIGHT = Showcases.HEIGHT;
+    public static final int GAME_WIDTH_PX = Showcases.WIDTH, GAME_HEIGHT_PX = Showcases.HEIGHT;
 
     private PlayerCharacter character;
     private Collection<Coin> coins = new HashSet<>();
@@ -50,12 +50,14 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         setGravity(new Vector(0, -13));
         getCamera().setFocus(character);
-        getCamera().setOffset(new Vector(0, 5));
-        getCamera().setBounds(new Bounds(-2000, -200, 20000, 20000));
+        getCamera().setOffset(new Vector(0, 3));
+        getCamera().setBounds(new Bounds(-2000, -3, 20000, 20000));
         getCamera().setZoom(30f);
 
         setupPlayground();
         setupCosmeticLayers();
+
+        getMainLayer().setVisibleHeight(15);
 
         // addFrameUpdateListener(new PeriodicTask(16, () -> {
         //     Particle particle = new Particle(DudeDemo.this, Random.nextInteger(2) + 2, 3000);
@@ -94,7 +96,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
             add(coin);
         }
 
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < 30; j++) {
             ManaPickup manaPickup = new ManaPickup();
             manaPickup.position.set(-j, 1);
             manaPickup.addCollisionListener(manaPickup, character);
@@ -106,8 +108,8 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         Layer middleBackground = new Layer();
         middleBackground.setParallaxPosition(0.1f, 0.1f);
         middleBackground.setLayerPosition(-200);
-        Image backgroundImage = new Image("game-assets/dude/background/snow.png", 1, 1);
-        backgroundImage.position.set(-GAME_WIDTH / 2 - 100, -GAME_HEIGHT / 2);
+        Image backgroundImage = new Image("game-assets/dude/background/snow.png", 25f);
+        backgroundImage.position.set(-getVisibleArea().width / 2, -getVisibleArea().height / 2);
         middleBackground.add(backgroundImage);
 
         Layer furtherBackground = new Layer();
@@ -122,20 +124,21 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         addLayer(furtherBackground);
 
         // CLOUDS
-        // addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_1.png", 300, 1.6f, 0.1f, -2000);
-        // addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_2.png", 200, 1.4f, 0.1f, -2000);
-        // addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_3.png", -60, 1.2f, 0.1f, -2000);
+        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_1.png", 300, 1.6f, 1f, -100);
+        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_2.png", -50, 0.8f, 1f, -100);
+        addCloudLayer(10, "game-assets/dude/tiles/sky/clouds_MG_3.png", -60, 0.7f, 1f, -100);
     }
 
     private void addCloudLayer(final int NUM_TILES, String tilePath, int layerLevel, float xParallax, float yParallax, float xOffset) {
         Layer clouds = new Layer();
         clouds.setParallaxPosition(xParallax, yParallax);
         clouds.setLayerPosition(layerLevel);
-        TileContainer cloudTiles = new TileContainer(NUM_TILES, 1, 384, 216);
+        final float SCALE = 0.08f;
+        TileContainer cloudTiles = new TileContainer(NUM_TILES, 1, 384 * SCALE, 216 * SCALE);
         for (int i = 0; i < NUM_TILES; i++) {
             cloudTiles.setTile(i, 0, TileMap.createFromImage(tilePath));
         }
-        cloudTiles.position.set(xOffset, -GAME_HEIGHT / 2);
+        cloudTiles.position.set(xOffset, -getVisibleArea().height / 2 + 5);
         clouds.add(cloudTiles);
         addLayer(clouds);
     }

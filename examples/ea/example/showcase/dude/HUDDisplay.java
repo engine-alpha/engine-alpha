@@ -64,9 +64,9 @@ public class HUDDisplay {
         lines.position.set(x, y);
         lines.position.move(5 * 8 * HUD_SCALE, 0);
 
-        setLineValue(0, 10);
-        setLineValue(1, 7);
-        setLineValue(2, 3);
+        setLineValue(0, 10, true);
+        setLineValue(1, 0, false);
+        setLineValue(2, 0, false);
 
         for (int k = 0; k < 5; k++) {
             setNumberOf(k, 0);
@@ -83,14 +83,25 @@ public class HUDDisplay {
         lines.setTile(numIndex * 2 + 1, 3, NUM_BLACK.getTile(x + 1, y));
     }
 
-    private void setLineValue(int lineIndex, int lineValue) {
+    /**
+     * Ändert den anzuzeigenden Wert eines der Attribute im HUD.
+     *
+     * @param lineIndex    Index der zu ändernden Zeile
+     * @param lineValue    Wert der zu ändernden Zeile.
+     * @param fullCapFinal true: Soll der letzte Wert voll dargestellt werden oder halb?
+     */
+    private void setLineValue(int lineIndex, int lineValue, boolean fullCapFinal) {
         for (int i = 0; i < HUD_VALUE_LENGTH; i++) {
             if (i + 1 < lineValue) {
                 // Voll ausgemaltes HUD
                 lines.setTile(i, lineIndex, lineSources[lineIndex].getTile(1, 0));
             } else if (i + 1 == lineValue) {
                 // Ende des Striches
-                lines.setTile(i, lineIndex, lineSources[lineIndex].getTile(2, 0));
+                if (fullCapFinal) {
+                    lines.setTile(i, lineIndex, lineSources[lineIndex].getTile(1, 0));
+                } else {
+                    lines.setTile(i, lineIndex, lineSources[lineIndex].getTile(2, 0));
+                }
             } else {
                 // Nicht gebraucht -> unsichtbar
                 lines.setTile(i, lineIndex, null);
@@ -102,7 +113,8 @@ public class HUDDisplay {
         if (lineNo < 0 || lineNo > 2 || rel < 0 || rel > 1) {
             return;
         }
-        setLineValue(lineNo, (int) (rel * (HUD_VALUE_LENGTH + 1)));
+        int doublePrecision = (int) (rel * ((HUD_VALUE_LENGTH + 1) * 2));
+        setLineValue(lineNo, doublePrecision / 2, doublePrecision % 2 == 1);
     }
 
     public void setDisplayNumber(int value) {

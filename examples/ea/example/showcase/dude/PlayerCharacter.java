@@ -16,12 +16,16 @@ import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.example.showcase.jump.Enemy;
 import ea.input.KeyListener;
+import ea.internal.ShapeBuilder;
 import ea.sound.Sound;
+import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
@@ -31,7 +35,10 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     public static final int SMASH_FORCE = -1500;
     public static final int BOTTOM_OUT = -500 / 30;
     private static final int DOUBLE_JUMP_COST = 3;
-    private static final int MANA_PICKUP_BONUS = 1;
+    private static final int MANA_PICKUP_BONUS = 50;
+    private static final int ROCKETCOST_PER_FRAME = 2;
+
+    private final boolean GODMODE = false;
 
     private final DudeDemo master;
 
@@ -49,7 +56,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
      */
     private int mana = 0;
 
-    private final int MAX_MANA = 10;
+    private final int MAX_MANA = 500;
 
     private boolean didDoubleJump = false;
 
@@ -117,6 +124,15 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         setMana(0);
 
+        //setShapes("C0.5,0.9,0.1&R0,0.2,0.6,0.8");
+        setShapes(() -> {
+            List<Shape> shapeList = new ArrayList<>(2);
+            //shapeList.add(ShapeBuilder.createAxisParallelRectangularShape(0.2f, 0, 0.6f, 1f));
+            shapeList.add(ShapeBuilder.createCircleShape(.3f, .3f, 0.3f));
+            return shapeList;
+        });
+
+        //physics.setMass(120000000);
         scene.add(this);
         scene.addKeyListener(this);
         scene.addFrameUpdateListener(this);
@@ -210,7 +226,8 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             physics.applyForce(new Vector(impulse, 0));
         }
 
-        if (rocketMode) {
+        if (rocketMode && (mana > 0 || GODMODE)) {
+            setMana(mana - ROCKETCOST_PER_FRAME);
             physics.applyImpulse(new Vector(0, 10));
 
             Particle particle = new Particle(0.1f, 500);
@@ -307,7 +324,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             case KeyEvent.VK_C:
                 physics.setVelocity(physics.getVelocity());
                 break;
-            case KeyEvent.VK_R:
+            case KeyEvent.VK_SHIFT:
                 rocketMode = true;
                 break;
         }
@@ -342,7 +359,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                     }
                 }
                 break;
-            case KeyEvent.VK_R:
+            case KeyEvent.VK_SHIFT:
                 rocketMode = false;
                 break;
         }

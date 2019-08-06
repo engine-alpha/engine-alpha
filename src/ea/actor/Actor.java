@@ -456,14 +456,15 @@ public abstract class Actor {
             Vec2[] vec2s = polygonShape.getVertices();
             int[] xs = new int[polygonShape.getVertexCount()], ys = new int[polygonShape.getVertexCount()];
             for (int i = 0; i < xs.length; i++) {
-                xs[i] = (int) (vec2s[i].x * (double) pixelPerMeter);
-                ys[i] = (-1) * (int) (vec2s[i].y * (double) pixelPerMeter);
+                xs[i] = (int) (vec2s[i].x * pixelPerMeter);
+                ys[i] = (-1) * (int) (vec2s[i].y * pixelPerMeter);
             }
 
             g.drawPolygon(xs, ys, xs.length);
         } else if (shape instanceof CircleShape) {
-            float diameter = (((CircleShape) shape).m_radius * 2);
-            g.drawOval(0, (int) (-diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter));
+            CircleShape circleShape = (CircleShape) shape;
+            float diameter = (circleShape.m_radius * 2);
+            g.drawOval((int) ((circleShape.m_p.x - circleShape.m_radius) * pixelPerMeter), (int) +(((circleShape.m_p.y + circleShape.m_radius) * pixelPerMeter)), (int) (diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter));
         } else {
             Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");
         }

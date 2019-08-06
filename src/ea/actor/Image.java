@@ -21,6 +21,7 @@ package ea.actor;
 
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.io.ImageLoader;
 
 import java.awt.Dimension;
@@ -39,32 +40,93 @@ public class Image extends Actor {
      */
     private final BufferedImage image;
 
-    private final float width;
-    private final float height;
+    private float width;
+    private float height;
 
     /**
-     * Der Konstruktor lädt das Bild.
+     * Der Konstruktor für ein Bildobjekt.
      *
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
+     * @param width    Die Breite in M für das Bildobjekt
+     * @param height   Die Höhe in M für das Bildobjekt
      */
     @API
     public Image(String filepath, float width, float height) {
         super(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
+        assertViableSizes(width, height);
+        this.image = ImageLoader.load(filepath);
 
         this.width = width;
         this.height = height;
-
-        this.image = ImageLoader.load(filepath);
     }
 
+    /**
+     * Konstruktor für ein Bildobjekt.
+     *
+     * @param filepath      Der Verzeichnispfad des Bildes, das geladen werden soll.
+     * @param pixelPerMeter Der Umrechnungsfaktor für die Größe des Bildes. Gibt an, wie viele Pixel in der Bilddatei
+     *                      einem Meter in der Engine entsprechen.
+     */
     @API
-    public Dimension getSize() {
+    public Image(String filepath, final float pixelPerMeter) {
+        super(() -> ShapeBuilder.createSimpleRectangularShape(ImageLoader.load(filepath).getWidth() / pixelPerMeter, ImageLoader.load(filepath).getHeight() / pixelPerMeter));
+        assertViablePPM(pixelPerMeter);
+        this.image = ImageLoader.load(filepath);
+
+        this.width = image.getWidth() / pixelPerMeter;
+        this.height = image.getHeight() / pixelPerMeter;
+    }
+
+    @Internal
+    public Dimension getImageSizeInPx() {
         return new Dimension(this.image.getWidth(), this.image.getHeight());
     }
 
     @API
     public BufferedImage getImage() {
         return this.image;
+    }
+
+    /**
+     * Setzt die Größe des Bildes innerhalb der Physik neu. Ändert die physikalischen Eigenschaften.
+     * Das Bild füllt die neuen Maße und wird ggf. verzerrt.
+     *
+     * @param width  Die neue Breite des Objekts in M.
+     * @param height Die neue Höhe des Objekts in M.
+     *
+     * @see #resetPixelPerMeter(float)
+     */
+    public void resetImageSize(float width, float height) {
+        assertViableSizes(width, height);
+        this.width = width;
+        this.height = height;
+        this.setShape(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
+    }
+
+    /**
+     * Ändert die Größe des Bildobjektes, sodass es dem angegebenen Umrechnungsfaktor entspricht.
+     * Ändert auch die physikalischen Eigenschaften des Bildes.
+     *
+     * @param pixelPerMeter Der Umrechnungsfaktor für die Größe des Bildes. Gibt an, wie viele Pixel in der Bilddatei
+     *                      einem Meter in der Engine entsprechen.
+     *
+     * @see #resetImageSize(float, float)
+     */
+    public void resetPixelPerMeter(float pixelPerMeter) {
+        assertViablePPM(pixelPerMeter);
+        resetImageSize(image.getWidth() / pixelPerMeter, image.getHeight() / pixelPerMeter);
+    }
+
+    private void assertViableSizes(float width, float height) {
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Bildhöhe und Breite müssen größer als 0 sein.");
+        }
+    }
+
+    private void assertViablePPM(float pixelPerMeter) {
+        if (pixelPerMeter <= 0) {
+            throw new IllegalArgumentException("Die Umrechnungszahl für Pixel pro Meter darf nicht negativ sein. War " + pixelPerMeter);
+        }
     }
 
     /**

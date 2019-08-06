@@ -6,6 +6,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 import java.awt.Graphics2D;
+import java.util.function.Supplier;
 
 /**
  * Beschreibt eine beliebige polygonale geometrische Form.
@@ -43,10 +44,18 @@ public class Polygon extends Geometry {
     }
 
     /**
+     * Setzt den Streckenzug neu, der dieses Polygon beschreibt. <b>Ändert die physikalischen Eigenschaften</b> des
+     * Polygons.
+     * <i>Konkanve Streckenzüge werden durch die kleinste konvexe Körperform beschrieben, die den Streckenzug
+     * umspannt.</i>
+     * Komplexere Formen können über {@code setShapes(Supplier)} physikalisch präzise umgesetzt werden.
      *
-     * @param points
+     * @param points Neuer Streckenzug.
+     *
+     * @see ea.actor.Actor#setShapes(Supplier)
      */
-    private void resetPoints(Vector... points) {
+    @API
+    public void resetPoints(Vector... points) {
         if (points.length < 3) {
             throw new RuntimeException("Der Streckenzug muss mindestens aus 3 Punkten bestehen, um ein gültiges Polygon zu beschreiben.");
         }

@@ -227,14 +227,12 @@ public class Layer {
     /**
      * Gibt die derzeit sichtbare Fläche des Layers auf dem Bildschirm an.
      *
-     * @param camera Die aktive Kamera
-     *
      * @return Die sichtbare Fläche als Bounds Objekt <b>mit Angaben in Meter</b>
      */
     @Internal
-    public Bounds visibleArea(Camera camera) {
-        Vector center = camera.getPosition();
-        float pixelPerMeter = calculatePixelPerMeter(camera);
+    public Bounds visibleArea() {
+        Vector center = parent.getCamera().getPosition();
+        float pixelPerMeter = calculatePixelPerMeter(parent.getCamera());
         Bounds frameBoundsPx = Game.getFrameSizeInPx();
         return new Bounds(0, 0, frameBoundsPx.width / pixelPerMeter, frameBoundsPx.height / pixelPerMeter).withCenterPoint(center);
     }
