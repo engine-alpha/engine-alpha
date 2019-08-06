@@ -20,6 +20,8 @@ public class Platform extends TileContainer implements CollisionListener<Box> {
             throw new IllegalArgumentException("Number of tiles must be at least 2");
         }
 
+        setShapes("R 0, " + (TILE_SIZE - 0.5) + "," + (TILE_SIZE * tileCount) + ", 0.5");
+
         String basePath = "game-assets/dude/tiles/";
 
         // Tile für das linke Ende

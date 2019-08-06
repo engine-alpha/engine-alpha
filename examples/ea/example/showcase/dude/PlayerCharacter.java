@@ -24,6 +24,7 @@ import java.awt.event.KeyEvent;
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
     private static final float MAX_SPEED = 100;
+    private static final float THRESHOLD_SPEED = 0.5f;
     public static final int JUMP_FORCE = +300;
     public static final int SMASH_FORCE = -1500;
     public static final int BOTTOM_OUT = -500 / 30;
@@ -70,6 +71,16 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                     return 0;
                 default:
                     throw new IllegalStateException("Illegal enum state");
+            }
+        }
+
+        public boolean opposite(float xVel) {
+            if (this == LEFT) {
+                return xVel < -THRESHOLD_SPEED;
+            } else if (this == RIGHT) {
+                return xVel > THRESHOLD_SPEED;
+            } else {
+                return false;
             }
         }
     }
@@ -185,8 +196,12 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         // kümmere dich um die horizontale Bewegung
         float desiredVelocity = horizontalMovement.getTargetXVelocity();
-        float impulse = (desiredVelocity - velocity.x) * 4;
-        physics.applyForce(new Vector(impulse, 0));
+        if (desiredVelocity == 0) {
+            physics.setVelocity(new Vector(velocity.x * 0.95f, velocity.y));
+        } else {
+            float impulse = (desiredVelocity - velocity.x) * 4;
+            physics.applyForce(new Vector(impulse, 0));
+        }
 
         if (rocketMode) {
             physics.applyImpulse(new Vector(0, 10));
@@ -321,6 +336,13 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     public void onCollision(CollisionEvent<Actor> collisionEvent) {
         if (collisionEvent.getColliding() instanceof Enemy) {
             return;
+        }
+
+        if (collisionEvent.getColliding() instanceof Platform) {
+            //Check if collision is to be counted
+            if (physics.getVelocity().y > 0) {
+                collisionEvent.ignoreCollision();
+            }
         }
 
         boolean falling = getCurrentState().equals("falling");

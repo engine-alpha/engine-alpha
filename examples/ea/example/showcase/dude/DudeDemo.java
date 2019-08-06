@@ -83,7 +83,9 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         makePlatform(5, 800 / 60, -100 / 60);
 
-        //makeBoxes(0, 40, 5);
+        //makeBoxes(-100, 500, 40);
+
+        makeBoxes(0, 40, 5);
 
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin();
