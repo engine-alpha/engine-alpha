@@ -100,7 +100,6 @@ public class Scene {
         mainLayer = new Layer();
         mainLayer.setLayerPosition(0);
         addLayer(mainLayer);
-        this.addFrameUpdateListener(this.camera);
     }
 
     /**
@@ -110,6 +109,8 @@ public class Scene {
      */
     @Internal
     void worldStep(float deltaTime, Phaser worldStepEndBarrier) {
+        camera.onFrameUpdate();
+
         synchronized (layers) {
             layerCountForCurrentRender = layers.size();
             AtomicInteger remainingSteps = new AtomicInteger(layerCountForCurrentRender);

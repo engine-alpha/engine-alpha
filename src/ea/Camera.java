@@ -41,7 +41,7 @@ import ea.internal.annotations.Internal;
  *
  * @author Michael Andonie
  */
-public final class Camera implements FrameUpdateListener {
+public final class Camera {
     /**
      * Aktuelle Position des Mittelpunkts der Kamera.
      */
@@ -229,8 +229,8 @@ public final class Camera implements FrameUpdateListener {
         return moveIntoBounds(this.position.add(this.offset));
     }
 
-    @Override
-    public void onFrameUpdate(int frameDuration) {
+    // Does not implement FrameUpdateListener by design, as it's updated at a special moment
+    public void onFrameUpdate() {
         if (this.hasFocus()) {
             this.position = focus.position.getCenter();
         }
