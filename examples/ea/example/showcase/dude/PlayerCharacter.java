@@ -97,7 +97,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         setStateTransition("midair", "falling");
         setStateTransition("landing", "idle");
 
-        physics.setFriction(0);
+        physics.setFriction(0.5f);
         physics.setRestitution(0);
 
         setMana(0);

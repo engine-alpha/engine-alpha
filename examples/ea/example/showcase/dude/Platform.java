@@ -34,6 +34,7 @@ public class Platform extends TileContainer implements CollisionListener<Box> {
         setTile(tileCount - 1, 0, TileMap.createFromImage(basePath + "platform_r.png"));
 
         setBodyType(BodyType.STATIC);
+        physics.setFriction(0.5f);
         physics.setRestitution(0);
     }
 
