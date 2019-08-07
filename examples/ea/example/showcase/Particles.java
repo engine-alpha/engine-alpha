@@ -46,7 +46,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
     public Particles(Scene parent) {
         super(parent);
 
-        Game.setTitle("Marbles");
+        Game.setTitle("Particles");
 
         Rectangle left = new Rectangle(200, 10);
         left.position.set(-Showcases.WIDTH / 6 - 150, -50);
