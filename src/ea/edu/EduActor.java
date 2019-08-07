@@ -150,8 +150,8 @@ public interface EduActor {
     }
 
     @API
-    default boolean stehtAuf(Actor actor) {
-        return getActor().overlaps(actor) && getActor().isGrounded();
+    default boolean stehtAuf(EduActor actor) {
+        return getActor().overlaps(actor.getActor()) && getActor().isGrounded();
     }
 
     @API
