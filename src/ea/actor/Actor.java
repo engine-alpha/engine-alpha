@@ -22,9 +22,6 @@ package ea.actor;
 import ea.*;
 import ea.collision.CollisionListener;
 import ea.event.*;
-import ea.event.KeyListener;
-import ea.event.MouseClickListener;
-import ea.event.MouseWheelListener;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -47,6 +44,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -849,12 +847,13 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param anchorAsWorldPos Der Ankerpunkt <b>auf dem Layer</b>. Es wird davon
      *                         ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
      *
+     * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     *
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
-    public void createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
-        // TODO Sync
-        Game.afterWorldStep(() -> {
+    public Joint createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
+        return createJoint(() -> {
             assertSameWorld(other);
 
             // Definiere den Joint
@@ -864,7 +863,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
                     anchorAsWorldPos.toVec2());
             revoluteJointDef.collideConnected = false;
 
-            physicsHandler.getWorldHandler().getWorld().createJoint(revoluteJointDef);
+            return physicsHandler.getWorldHandler().getWorld().createJoint(revoluteJointDef);
         });
     }
 
@@ -881,14 +880,13 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param ropeLength Die Länge des Lassos. Dies ist ab sofort die maximale Länge, die die beiden Ankerpunkte
      *                   der Objekte voneinader entfernt sein können.
      *
-     * @return Ein <code>RopeJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
      *
      * @see org.jbox2d.dynamics.joints.RopeJoint
      */
     @API
-    public void createRopeJoint(Actor other, Vector anchorA, Vector anchorB, float ropeLength) {
-        // TODO Sync
-        Game.afterWorldStep(() -> {
+    public Joint createRopeJoint(Actor other, Vector anchorA, Vector anchorB, float ropeLength) {
+        return createJoint(() -> {
             assertSameWorld(other);
 
             RopeJointDef ropeJointDef = new RopeJointDef();
@@ -899,7 +897,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
             ropeJointDef.localAnchorB.set(anchorB.toVec2());
             ropeJointDef.maxLength = ropeLength;
 
-            physicsHandler.getWorldHandler().getWorld().createJoint(ropeJointDef);
+            return physicsHandler.getWorldHandler().getWorld().createJoint(ropeJointDef);
         });
     }
 
@@ -915,19 +913,38 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *                          Der zweite Befestigungspunkt des Joints.
      *                          Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
      *
+     * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     *
      * @see org.jbox2d.dynamics.joints.DistanceJoint
      */
     @API
-    public void createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
-        // TODO Sync
-        Game.afterWorldStep(() -> {
+    public Joint createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
+        return createJoint(() -> {
             assertSameWorld(other);
 
             DistanceJointDef distanceJointDef = new DistanceJointDef();
             distanceJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
 
-            physicsHandler.getWorldHandler().getWorld().createJoint(distanceJointDef);
+            return physicsHandler.getWorldHandler().getWorld().createJoint(distanceJointDef);
         });
+    }
+
+    private Joint createJoint(Supplier<org.jbox2d.dynamics.joints.Joint> jointSupplier) {
+        CompletableFuture<org.jbox2d.dynamics.joints.Joint> jointFuture = new CompletableFuture<>();
+
+        Game.afterWorldStep(() -> jointFuture.complete(jointSupplier.get()));
+
+        return new Joint() {
+            private CompletableFuture<org.jbox2d.dynamics.joints.Joint> future = jointFuture;
+
+            @Override
+            public void release() {
+                if (future != null) {
+                    future.thenAccept(joint -> Game.afterWorldStep(() -> org.jbox2d.dynamics.joints.Joint.destroy(joint)));
+                    future = null;
+                }
+            }
+        };
     }
 
     @API
