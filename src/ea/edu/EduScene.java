@@ -43,6 +43,15 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
      */
     private final ArrayList<MouseWheelAuftrag> sceneMouseWheelListeners = new ArrayList<>();
 
+    private static final HashMap<String, String> primitiveTranslator;
+
+    static {
+        primitiveTranslator = new HashMap<>();
+        primitiveTranslator.put("java.lang.Integer", "int");
+        primitiveTranslator.put("java.lang.Float", "float");
+        primitiveTranslator.put("java.lang.Boolean", "boolean");
+    }
+
 
     /* _____________________________ SCENE AND LAYER FIELDS _____________________________ */
 
@@ -173,10 +182,10 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
                 Class<?>[] targetParameters = toAdd.getInvocationMethodParameters();
                 Class<?>[] parameters = methods[i].getParameterTypes();
                 if (parameters.length != targetParameters.length) {
-                    throw new IllegalArgumentException("Achtung! Das übergebene Objekt hatte eine Meht");
+                    throw new IllegalArgumentException("Achtung! Das übergebene Objekt hatte eine Methode mit korrektem Namen (" + toAdd.getInvocationMethodName() + "), aber nicht die korrekte Parameteranzahl.");
                 }
                 for (int k = 0; k < targetParameters.length; k++) {
-                    if (!targetParameters[k].getName().equals(parameters[k].getName())) {
+                    if (!compareParameters(targetParameters[k], parameters[k])) {
                         //Strange Case: Correct Method Name, wrong Parameters!
                         throw new IllegalArgumentException("Achtung! Übergebenes Objekt hatte korrekten Methodennamen, " + "aber nicht die korrekte Parameter. Fehler bei " + targetParameters[k].getName() + " (erwartet) vs. " + parameters[k].getName());
                     }
@@ -187,6 +196,19 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
             }
         }
         return false;
+    }
+
+    private static final boolean compareParameters(Class<?> param1, Class<?> param2) {
+        String alt1 = primitiveTranslator.get(param1.getName());
+        if (alt1 != null && alt1.equals(param2.getName())) {
+            return true;
+        }
+        String alt2 = primitiveTranslator.get(param2.getName());
+        if (alt2 != null && alt2.equals(param1.getName())) {
+            return true;
+        }
+
+        return param1.getName().equals(param2.getName());
     }
 
     private static final <E extends Clientable> void removeFromArrayList(ArrayList<E> list, Object object) {
