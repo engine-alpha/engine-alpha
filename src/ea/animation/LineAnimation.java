@@ -30,8 +30,8 @@ public class LineAnimation extends ActorAnimation {
 
         Vector center = actor.getCenter();
 
-        ValueAnimator<Float> aX = new ValueAnimator<>(durationInSeconds, x -> actor.setCenter(x, actor.getCenter().y), new LinearFloat(center.x, endPoint.x), pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE);
-        ValueAnimator<Float> aY = new ValueAnimator<>(durationInSeconds, y -> actor.setCenter(actor.getCenter().x, y), new LinearFloat(center.y, endPoint.y), pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE);
+        ValueAnimator<Float> aX = new ValueAnimator<>(durationInSeconds, x -> actor.setCenter(x, actor.getCenter().y), new LinearFloat(center.x, endPoint.x), pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE, actor);
+        ValueAnimator<Float> aY = new ValueAnimator<>(durationInSeconds, y -> actor.setCenter(actor.getCenter().x, y), new LinearFloat(center.y, endPoint.y), pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE, actor);
 
         addAnimator(aX);
         addAnimator(aY);

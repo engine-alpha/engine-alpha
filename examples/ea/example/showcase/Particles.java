@@ -96,7 +96,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         setGravity(new Vector(0, -600));
         getCamera().setZoom(1);
 
-        this.addFrameUpdateListener(new ValueAnimator<>(5, left::setX, new ReverseEaseFloat(left.getX(), left.getX() + 200), AnimationMode.REPEATED));
+        this.addFrameUpdateListener(new ValueAnimator<>(5, left::setX, new ReverseEaseFloat(left.getX(), left.getX() + 200), AnimationMode.REPEATED, this));
     }
 
     private void createCircle(Vector position, Color color) {
@@ -108,7 +108,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
             particle.addMountListener(() -> particle.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
-            particle.addFrameUpdateListener(new ValueAnimator<>(.25f, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255)));
+            particle.addFrameUpdateListener(new ValueAnimator<>(.25f, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255), circle));
 
             add(particle);
         });

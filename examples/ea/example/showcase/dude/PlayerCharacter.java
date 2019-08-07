@@ -192,7 +192,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             particle.setPosition(getCenter().subtract(new Vector((float) Math.random() * 0.1f, .45f)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
-            particle.addFrameUpdateListener(new ValueAnimator<>(.25f, value -> particle.setColor(new Color(255, value, 0)), new LinearInteger(0, 255)));
+            particle.addFrameUpdateListener(new ValueAnimator<>(.25f, value -> particle.setColor(new Color(255, value, 0)), new LinearInteger(0, 255), particle));
             particle.addMountListener(() -> particle.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
             particle.addCollisionListener((e) -> {
                 if (e.getColliding() instanceof Platform) {
@@ -325,7 +325,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             if (smashing) {
                 Vector originalOffset = getPhysicsHandler().getWorldHandler().getLayer().getParent().getCamera().getOffset();
                 Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * getVelocity().y);
-                ValueAnimator<Float> valueAnimator = new ValueAnimator<>(.1f, y -> getLayer().getParent().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator);
+                ValueAnimator<Float> valueAnimator = new ValueAnimator<>(.1f, y -> getLayer().getParent().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator, getLayer());
                 getLayer().addFrameUpdateListener(valueAnimator);
                 valueAnimator.addCompletionListener(value -> getLayer().getFrameUpdateListeners().remove(valueAnimator));
             }
