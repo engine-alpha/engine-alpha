@@ -276,7 +276,7 @@ public interface EduActor {
      * @see ea.handle.Physics#createRevoluteJoint(Actor, Vector) e
      */
     @API
-    default void erzeugeGelenkverbindung(EduActor anderer, float aX, float aY) {
+    default void erzeugeGelenkVerbindung(EduActor anderer, float aX, float aY) {
         getActor().physics.createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
     }
 
