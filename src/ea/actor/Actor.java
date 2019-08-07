@@ -144,7 +144,25 @@ public abstract class Actor {
 
     public Actor(Supplier<Shape> shapeSupplier) {
         this.physicsHandler = new NullHandler(this, new ProxyData(shapeSupplier));
-        //this.physicsHandler = createBodyHandler(shapeSupplier.get());
+        this.autoRegisterListeners();
+    }
+
+    private void autoRegisterListeners() {
+        if (this instanceof KeyListener) {
+            getKeyListeners().add((KeyListener) this);
+        }
+
+        if (this instanceof MouseClickListener) {
+            getMouseClickListeners().add((MouseClickListener) this);
+        }
+
+        if (this instanceof MouseWheelListener) {
+            getMouseWheelListeners().add((MouseWheelListener) this);
+        }
+
+        if (this instanceof FrameUpdateListener) {
+            getFrameUpdateListeners().add((FrameUpdateListener) this);
+        }
     }
 
     @API
