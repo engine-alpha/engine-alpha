@@ -4,10 +4,7 @@ import ea.actor.Actor;
 import ea.event.EventListeners;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.physics.BodyHandler;
-import ea.internal.physics.NullHandler;
-import ea.internal.physics.ProxyData;
-import ea.internal.physics.WorldHandler;
+import ea.internal.physics.*;
 import org.jbox2d.dynamics.Body;
 
 import java.awt.Graphics2D;
@@ -237,7 +234,12 @@ public class Layer {
             this.actors.remove(actor);
 
             ProxyData proxyData = actor.getPhysicsHandler().getProxyData();
-            Body body = actor.getPhysicsHandler().getBody();
+            PhysicsHandler physicsHandler = actor.getPhysicsHandler();
+            if (physicsHandler.getWorldHandler() == null) {
+                return;
+            }
+
+            Body body = physicsHandler.getBody();
             worldHandler.removeAllInternalReferences(body);
             worldHandler.getWorld().destroyBody(body);
             actor.setPhysicsHandler(new NullHandler(actor, proxyData));

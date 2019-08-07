@@ -105,7 +105,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
     private void createCircle(Vector position, Color color) {
         Circle k = new Circle(6);
 
-        FrameUpdateListener emitter = new PeriodicTask(500, () -> {
+        FrameUpdateListener emitter = new PeriodicTask(10, () -> {
             Particle particle = new Particle(3, 500);
             particle.position.set(k.position.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);

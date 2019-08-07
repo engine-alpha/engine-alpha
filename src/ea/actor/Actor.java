@@ -408,6 +408,10 @@ public abstract class Actor {
      */
     @Internal
     public static void renderShape(Shape shape, Graphics2D g, float pixelPerMeter) {
+        if (shape == null) {
+            return;
+        }
+
         AffineTransform pre = g.getTransform();
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
