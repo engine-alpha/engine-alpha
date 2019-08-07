@@ -50,26 +50,22 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         Rectangle left = new Rectangle(200, 10);
         left.position.set(-Showcases.WIDTH / 6 - 150, -50);
-        add(left);
-
-        left.setColor(Color.white);
         left.position.rotate((float) Math.toRadians(-21));
+        left.setBodyType(BodyType.STATIC);
+        left.setColor(Color.white);
+        left.physics.setRestitution(15f);
+        add(left);
 
         Rectangle right = new Rectangle(200, 10);
         right.position.set(+Showcases.WIDTH / 6, 0);
+        right.position.rotate((float) Math.toRadians(45));
+        right.setBodyType(BodyType.STATIC);
+        right.setColor(Color.white);
+        right.physics.setRestitution(15f);
         add(right);
 
-        right.setColor(Color.white);
-        right.position.rotate((float) Math.toRadians(45));
-
-        this.addKeyListener(this);
-
+        addKeyListener(this);
         addFrameUpdateListener(new PeriodicTask(1000, () -> createCircle(getMousePosition(), Color.YELLOW)));
-
-        left.setBodyType(BodyType.STATIC);
-        right.setBodyType(BodyType.STATIC);
-        left.physics.setRestitution(15f);
-        right.physics.setRestitution(15f);
 
         Rectangle r1 = new Rectangle(Showcases.WIDTH, 10);
         r1.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
@@ -98,56 +94,37 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         r1.addCollisionListener((event) -> remove(event.getColliding()));
 
         setGravity(new Vector(0, -600));
+        getCamera().setZoom(1);
 
         this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), AnimationMode.REPEATED));
     }
 
     private void createCircle(Vector position, Color color) {
-        Circle k = new Circle(6);
+        Circle circle = new Circle(6);
 
         FrameUpdateListener emitter = new PeriodicTask(10, () -> {
             Particle particle = new Particle(3, 500);
-            particle.position.set(k.position.getCenter().subtract(new Vector(1, 1)));
+            particle.position.set(circle.position.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
+            particle.addMountListener(event -> particle.physics.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
+            particle.addFrameUpdateListener(new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255)));
 
-            ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
-            animator.addCompletionListener((value) -> {
-                removeFrameUpdateListener(animator);
-                particle.remove();
-            });
-
-            addFrameUpdateListener(animator);
             add(particle);
-
-            particle.physics.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f)));
         });
 
-        k.addMountListener(e -> k.getLayer().addFrameUpdateListener(emitter));
-        k.addUnmountListener(e -> k.getLayer().removeFrameUpdateListener(emitter));
+        circle.position.set(position);
+        circle.setBodyType(BodyType.DYNAMIC);
+        circle.setColor(color);
+        circle.addFrameUpdateListener(emitter);
 
-        k.position.set(position);
-        k.setBodyType(BodyType.DYNAMIC);
-        k.setColor(color);
-
-        add(k);
+        add(circle);
     }
 
     @Override
     public void onKeyDown(KeyEvent e) {
-        switch (e.getKeyCode()) {
-
-            case KeyEvent.VK_1: // Zoom Out
-                getCamera().setZoom(getCamera().getZoom() * .9f);
-                break;
-
-            case KeyEvent.VK_2: // Zoom In
-                getCamera().setZoom(getCamera().getZoom() * 1.1f);
-                break;
-
-            case KeyEvent.VK_LESS:
-                getCamera().rotate(0.1f);
-                break;
+        if (e.getKeyCode() == KeyEvent.VK_LESS) {
+            getCamera().rotate(0.1f);
         }
     }
 
