@@ -91,13 +91,6 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         FIELD_DEPTH = height;
         getCamera().move(width / 2, height / 2);
 
-        initialisieren();
-    }
-
-    /**
-     *
-     */
-    public void initialisieren() {
         // Info-Message
         // fenster.nachrichtSchicken("Elastizität +[W]/-[Q] | Masse +[U] / -[J] | [R]eset | [S]chwerkraft | [E]insperren");
 
@@ -140,10 +133,8 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         attack.setLayerPosition(-10);
 
         //Maus erstellen, Listener Anmelden.
-        getMouseClickListeners().add(this);
         attack.addCollisionListener(this);
 
-        getFrameUpdateListeners().add(this);
         getKeyListeners().add(e -> {
             if (e.getKeyCode() == KeyEvent.VK_E) {
                 boolean wasActive = walls[1].isVisible();

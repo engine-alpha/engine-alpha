@@ -21,7 +21,7 @@ package ea.actor;
 
 import ea.*;
 import ea.collision.CollisionListener;
-import ea.event.EventListeners;
+import ea.event.*;
 import ea.input.KeyListener;
 import ea.input.MouseClickListener;
 import ea.input.MouseWheelListener;
@@ -58,7 +58,7 @@ import java.util.function.Supplier;
  * @author Niklas Keller
  */
 @SuppressWarnings ( "OverlyComplexClass" )
-public abstract class Actor {
+public abstract class Actor implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
     private <T> Supplier<T> createParentSupplier(Function<Layer, T> supplier) {
         return () -> {
             Layer layer = getLayer();
@@ -69,11 +69,6 @@ public abstract class Actor {
             return supplier.apply(layer);
         };
     }
-
-    /**
-     * Gibt an, ob der Actor bereits zerstört wurde.
-     */
-    private boolean alive = true;
 
     /**
      * Gibt an, ob das Objekt zur Zeit überhaupt sichtbar sein soll.<br> Ist dies nicht der Fall, so wird die
@@ -95,11 +90,6 @@ public abstract class Actor {
     private float opacity = 1;
 
     /**
-     * Composite des Grafik-Objekts. Zwischenspeicherung des letzten Zustands
-     */
-    private Composite composite;
-
-    /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
     private PhysicsHandler physicsHandler;
@@ -117,30 +107,7 @@ public abstract class Actor {
 
     public Actor(Supplier<Shape> shapeSupplier) {
         this.physicsHandler = new NullHandler(new PhysicsData(() -> Collections.singletonList(shapeSupplier.get())));
-        this.autoRegisterListeners();
-    }
-
-    private void autoRegisterListeners() {
-        if (this instanceof KeyListener) {
-            getKeyListeners().add((KeyListener) this);
-        }
-
-        if (this instanceof MouseClickListener) {
-            getMouseClickListeners().add((MouseClickListener) this);
-        }
-
-        if (this instanceof MouseWheelListener) {
-            getMouseWheelListeners().add((MouseWheelListener) this);
-        }
-
-        if (this instanceof FrameUpdateListener) {
-            getFrameUpdateListeners().add((FrameUpdateListener) this);
-        }
-    }
-
-    @API
-    public boolean isAlive() {
-        return alive;
+        EventListenerHelper.autoRegisterListeners(this);
     }
 
     @API
@@ -375,7 +342,8 @@ public abstract class Actor {
                 g.rotate(-rotation, position.x * pixelPerMeter, -position.y * pixelPerMeter);
                 g.translate(position.x * pixelPerMeter, -position.y * pixelPerMeter);
 
-                //Opacity Update
+                // Opacity Update
+                Composite composite;
                 if (opacity != 1) {
                     composite = g.getComposite();
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
@@ -542,10 +510,10 @@ public abstract class Actor {
 
                 Layer layer = previousWorldHandler.getLayer();
 
-                keyListeners.invoke(listener -> layer.getKeyListeners().remove(listener));
-                mouseClickListeners.invoke(listener -> layer.getMouseClickListeners().remove(listener));
-                mouseWheelListeners.invoke(listener -> layer.getMouseWheelListeners().remove(listener));
-                frameUpdateListeners.invoke(listener -> layer.getFrameUpdateListeners().remove(listener));
+                keyListeners.invoke(layer::removeKeyListener);
+                mouseClickListeners.invoke(layer::removeMouseClickListener);
+                mouseWheelListeners.invoke(layer::removeMouseWheelListener);
+                frameUpdateListeners.invoke(layer::removeFrameUpdateListener);
 
                 unmountListeners.invoke(Runnable::run);
 
@@ -561,10 +529,10 @@ public abstract class Actor {
 
                 mountListeners.invoke(Runnable::run);
 
-                keyListeners.invoke(listener -> layer.getKeyListeners().add(listener));
-                mouseClickListeners.invoke(listener -> layer.getMouseClickListeners().add(listener));
-                mouseWheelListeners.invoke(listener -> layer.getMouseWheelListeners().add(listener));
-                frameUpdateListeners.invoke(listener -> layer.getFrameUpdateListeners().add(listener));
+                keyListeners.invoke(layer::addKeyListener);
+                mouseClickListeners.invoke(layer::addMouseClickListener);
+                mouseWheelListeners.invoke(layer::addMouseWheelListener);
+                frameUpdateListeners.invoke(layer::addFrameUpdateListener);
             }
         }
     }
@@ -998,9 +966,6 @@ public abstract class Actor {
      * gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param p Der neue Zielpunkt
-     *
-     * @return das ausführende Objekt (also <code>return this;</code>). Für <b>Chaining</b> von Methoden (siehe
-     * Dokumentation der Klasse).
      *
      * @see #setPosition(float, float)
      * @see #setCenter(float, float)

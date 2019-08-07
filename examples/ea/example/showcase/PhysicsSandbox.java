@@ -250,10 +250,6 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
             attack.addCollisionListener(testObjects[i], kr);
         }
 
-        getFrameUpdateListeners().add(this);
-        getMouseClickListeners().add(this);
-        getKeyListeners().add(this);
-
         getCamera().setZoom(2);
         resetSituation();
     }

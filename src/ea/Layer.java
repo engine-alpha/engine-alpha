@@ -1,7 +1,7 @@
 package ea;
 
 import ea.actor.Actor;
-import ea.event.EventListeners;
+import ea.event.*;
 import ea.input.KeyListener;
 import ea.input.MouseClickListener;
 import ea.input.MouseWheelListener;
@@ -22,7 +22,8 @@ import java.util.function.Supplier;
  *
  * @author Michael Andonie
  */
-public class Layer {
+@SuppressWarnings ( "OverlyCoupledClass" )
+public class Layer implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
     private <T> Supplier<T> createParentSupplier(Function<Scene, T> supplier) {
         return () -> {
             Scene scene = getParent();
@@ -65,25 +66,7 @@ public class Layer {
     public Layer() {
         worldHandler = new WorldHandler(this);
         actors = new ConcurrentLinkedQueue<>();
-        autoRegisterListeners();
-    }
-
-    private void autoRegisterListeners() {
-        if (this instanceof KeyListener) {
-            getKeyListeners().add((KeyListener) this);
-        }
-
-        if (this instanceof MouseClickListener) {
-            getMouseClickListeners().add((MouseClickListener) this);
-        }
-
-        if (this instanceof MouseWheelListener) {
-            getMouseWheelListeners().add((MouseWheelListener) this);
-        }
-
-        if (this instanceof FrameUpdateListener) {
-            getFrameUpdateListeners().add((FrameUpdateListener) this);
-        }
+        EventListenerHelper.autoRegisterListeners(this);
     }
 
     public Scene getParent() {
@@ -97,15 +80,15 @@ public class Layer {
         }
 
         if (parent != null) {
-            keyListeners.invoke(listener -> parent.getKeyListeners().add(listener));
-            mouseClickListeners.invoke(listener -> parent.getMouseClickListeners().add(listener));
-            mouseWheelListeners.invoke(listener -> parent.getMouseWheelListeners().add(listener));
-            frameUpdateListeners.invoke(listener -> parent.getFrameUpdateListeners().add(listener));
+            keyListeners.invoke(parent::addKeyListener);
+            mouseClickListeners.invoke(parent::addMouseClickListener);
+            mouseWheelListeners.invoke(parent::addMouseWheelListener);
+            frameUpdateListeners.invoke(parent::addFrameUpdateListener);
         } else {
-            keyListeners.invoke(listener -> this.parent.getKeyListeners().remove(listener));
-            mouseClickListeners.invoke(listener -> this.parent.getMouseClickListeners().remove(listener));
-            mouseWheelListeners.invoke(listener -> this.parent.getMouseWheelListeners().remove(listener));
-            frameUpdateListeners.invoke(listener -> this.parent.getFrameUpdateListeners().remove(listener));
+            keyListeners.invoke(this.parent::removeKeyListener);
+            mouseClickListeners.invoke(this.parent::removeMouseClickListener);
+            mouseWheelListeners.invoke(this.parent::removeMouseWheelListener);
+            frameUpdateListeners.invoke(this.parent::removeFrameUpdateListener);
         }
 
         this.parent = parent;

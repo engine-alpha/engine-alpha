@@ -20,7 +20,7 @@
 package ea;
 
 import ea.actor.Actor;
-import ea.event.EventListeners;
+import ea.event.*;
 import ea.input.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -45,7 +45,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Scene {
+public class Scene implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
     public static final Color REVOLUTE_JOINT_COLOR = Color.blue;
     public static final Color ROPE_JOINT_COLOR = Color.CYAN;
     public static final Color DISTANCE_JOINT_COLOR = Color.ORANGE;
@@ -88,28 +88,12 @@ public class Scene {
 
     public Scene() {
         this.camera = new Camera();
-        mainLayer = new Layer();
-        mainLayer.setLayerPosition(0);
+        this.mainLayer = new Layer();
+        this.mainLayer.setLayerPosition(0);
+
         addLayer(mainLayer);
-        autoRegisterListeners();
-    }
 
-    private void autoRegisterListeners() {
-        if (this instanceof KeyListener) {
-            getKeyListeners().add((KeyListener) this);
-        }
-
-        if (this instanceof MouseClickListener) {
-            getMouseClickListeners().add((MouseClickListener) this);
-        }
-
-        if (this instanceof MouseWheelListener) {
-            getMouseWheelListeners().add((MouseWheelListener) this);
-        }
-
-        if (this instanceof FrameUpdateListener) {
-            getFrameUpdateListeners().add((FrameUpdateListener) this);
-        }
+        EventListenerHelper.autoRegisterListeners(this);
     }
 
     /**

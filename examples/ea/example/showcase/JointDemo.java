@@ -29,8 +29,6 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
      */
     public JointDemo(Scene parent, int width, int height) {
         super(parent, width, height);
-        // initialisieren2();
-        getKeyListeners().add(this);
     }
 
     /* public void initialisieren2() {
@@ -171,11 +169,9 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
 
     @Override
     public void onKeyDown(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_S:
-                schwerkraftActive = !schwerkraftActive;
-                setGravity(schwerkraftActive ? new Vector(0, 10) : Vector.NULL);
-                break;
+        if (e.getKeyCode() == KeyEvent.VK_S) {
+            schwerkraftActive = !schwerkraftActive;
+            setGravity(schwerkraftActive ? new Vector(0, 10) : Vector.NULL);
         }
     }
 }

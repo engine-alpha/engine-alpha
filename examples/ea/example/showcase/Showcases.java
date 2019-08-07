@@ -161,8 +161,8 @@ public class Showcases extends Scene {
 
         TextBox button = new TextBox(title, sceneSupplier, left ? -500 : -150, -60 + -1 * row * (BOX_HEIGHT + 5));
         add(button.getActors());
-        getMouseClickListeners().add(button);
-        getFrameUpdateListeners().add(button);
+        addMouseClickListener(button);
+        addFrameUpdateListener(button);
     }
 
     /**

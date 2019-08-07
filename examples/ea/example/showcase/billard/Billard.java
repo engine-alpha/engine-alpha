@@ -53,8 +53,6 @@ public class Billard extends ShowcaseDemo implements KeyListener {
         whiteBall.setPosition(-200, 0);
 
         add(whiteBall);
-
-        getKeyListeners().add(this);
     }
 
     private Vector calculatePosition(int i) {

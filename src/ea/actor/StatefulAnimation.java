@@ -52,7 +52,7 @@ public class StatefulAnimation<State> extends Actor {
         this.width = width;
         this.height = height;
 
-        getFrameUpdateListeners().add(this::internalOnFrameUpdate);
+        addFrameUpdateListener(this::internalOnFrameUpdate);
 
         // TODO Check that all frames have the same size
     }

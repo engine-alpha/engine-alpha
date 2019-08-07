@@ -41,8 +41,6 @@ public class Particle extends Circle implements FrameUpdateListener {
 
         this.setBodyType(BodyType.PARTICLE);
         this.life = life;
-
-        getFrameUpdateListeners().add(this);
     }
 
     @Override

@@ -191,7 +191,7 @@ public interface EduActor {
      */
     @API
     default void geradenAnimation(float zX, float zY, int ms, boolean loop) {
-        Spiel.getActiveScene().getFrameUpdateListeners().add(new LineAnimation(getActor(), new Vector(zX, zY), ms, loop));
+        Spiel.getActiveScene().addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), ms, loop));
     }
 
     /**
@@ -231,7 +231,7 @@ public interface EduActor {
      */
     @API
     default void kreisAnimation(float mX, float mY, float sekunden, boolean uhrzeigersinn, boolean rotation) {
-        Spiel.getActiveScene().getFrameUpdateListeners().add(new CircleAnimation(getActor(), new Vector(mX, mY), sekunden, uhrzeigersinn, rotation));
+        Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), sekunden, uhrzeigersinn, rotation));
     }
 
     /**

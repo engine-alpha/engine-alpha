@@ -45,9 +45,6 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
         rectangle = new Rectangle(50, 100);
         rectangle.setColor(Color.BLUE);
         add(rectangle);
-        getKeyListeners().add(this);
-        getMouseWheelListeners().add(this);
-        getFrameUpdateListeners().add(this);
 
         Animation animation = Animation.createFromAnimatedGif("game-assets/jump/fx_explosion_b_anim.gif", 1, 1);
         animation.setPosition(200, 200);

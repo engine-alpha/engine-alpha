@@ -31,20 +31,6 @@ public class MarbleDemo
     public MarbleDemo(Scene parent) {
         super(parent);
 
-        initialisieren();
-
-        getKeyListeners().add(this);
-        getFrameUpdateListeners().add(new PeriodicTask(.1f, () -> {
-            Circle marble = makeAMarble();
-            add(marble);
-            marble.setBodyType(BodyType.DYNAMIC);
-            marble.setPosition(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150);
-            marble.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
-        }));
-    }
-
-    public void initialisieren() {
-
         //Trichter
         Rectangle lo = new Rectangle(50, 150);
         lo.setPosition(ABSTAND_LINKS, ABSTAND_OBEN);
@@ -76,6 +62,14 @@ public class MarbleDemo
 
         lm.setRotation(-45);
         rm.setRotation(45);
+
+        addFrameUpdateListener(new PeriodicTask(.1f, () -> {
+            Circle marble = makeAMarble();
+            add(marble);
+            marble.setBodyType(BodyType.DYNAMIC);
+            marble.setPosition(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150);
+            marble.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
+        }));
     }
 
     @Override
