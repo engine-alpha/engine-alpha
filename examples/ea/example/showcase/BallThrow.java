@@ -10,7 +10,7 @@ import ea.collision.CollisionListener;
 import ea.handle.BodyType;
 import ea.input.KeyListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 /**
@@ -117,11 +117,6 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
                 simulationZuruecksetzen();
                 break;
         }
-    }
-
-    @Override
-    public void onKeyUp(KeyEvent e) {
-        // Ignore
     }
 
     /**

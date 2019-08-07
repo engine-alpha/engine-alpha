@@ -46,5 +46,7 @@ public interface KeyListener {
      * @param e Das KeyEvent von AWT.
      */
     @API
-    void onKeyUp(KeyEvent e);
+    default void onKeyUp(KeyEvent e) {
+        // default empty
+    }
 }

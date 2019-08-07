@@ -27,7 +27,7 @@ import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
 import ea.input.KeyListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 public class Billard extends ShowcaseDemo implements KeyListener {
@@ -86,15 +86,8 @@ public class Billard extends ShowcaseDemo implements KeyListener {
 
     @Override
     public void onKeyDown(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_SPACE:
-                whiteBall.physics.applyImpulse(new Vector(1000, (Random.nextFloat() - .5f) * 100));
-                break;
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            whiteBall.physics.applyImpulse(new Vector(1000, (Random.nextFloat() - .5f) * 100));
         }
-    }
-
-    @Override
-    public void onKeyUp(KeyEvent e) {
-
     }
 }

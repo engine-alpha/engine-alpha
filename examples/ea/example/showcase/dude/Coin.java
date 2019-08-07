@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2019 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +28,17 @@ import ea.collision.CollisionListener;
  * kostenfreien Grafiken.
  */
 public class Coin extends Animation implements CollisionListener<PlayerCharacter> {
+
+    private static final float SIZE = .4f;
+
     public Coin() {
-        super(Animation.createFromAnimatedGif("game-assets/dude/coin.gif", .2f, .2f));
+        super(Animation.createFromAnimatedGif("game-assets/dude/coin.gif", SIZE, SIZE));
     }
 
     @Override
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
-        //Habe mich mit PlayerCharacter kollidiert!
         collisionEvent.getColliding().gotItem(Item.Coin);
+
         remove();
-    }
-
-    @Override
-    public void onCollisionEnd(CollisionEvent<PlayerCharacter> collisionEvent) {
-
     }
 }

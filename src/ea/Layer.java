@@ -65,6 +65,25 @@ public class Layer {
     public Layer() {
         worldHandler = new WorldHandler(this);
         actors = new ConcurrentLinkedQueue<>();
+        autoRegisterListeners();
+    }
+
+    private void autoRegisterListeners() {
+        if (this instanceof KeyListener) {
+            getKeyListeners().add((KeyListener) this);
+        }
+
+        if (this instanceof MouseClickListener) {
+            getMouseClickListeners().add((MouseClickListener) this);
+        }
+
+        if (this instanceof MouseWheelListener) {
+            getMouseWheelListeners().add((MouseWheelListener) this);
+        }
+
+        if (this instanceof FrameUpdateListener) {
+            getFrameUpdateListeners().add((FrameUpdateListener) this);
+        }
     }
 
     public Scene getParent() {

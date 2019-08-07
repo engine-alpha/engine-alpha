@@ -11,11 +11,8 @@ import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
 import ea.handle.BodyType;
 import ea.input.KeyListener;
-import ea.sound.Music;
 
 import java.awt.event.KeyEvent;
-import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * Eine kleine Spieldemo.
@@ -27,28 +24,24 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     public static final int GAME_WIDTH_PX = Showcases.WIDTH, GAME_HEIGHT_PX = Showcases.HEIGHT;
 
     private PlayerCharacter character;
-    private Collection<Coin> coins = new HashSet<>();
 
     private final PauseLayer pauseLayer;
-
-    private boolean isPaused = false;
-
-    private Music game_loop = new Music("game-assets/dude/audio/background_game.wav");
 
     public DudeDemo(Scene parent) {
         super(parent);
         super.setDebuggingEnabled(false);
 
-        HUD hud = new HUD(this);
+        HUD hud = new HUD();
         addLayer(hud);
 
-        character = new PlayerCharacter(this, hud);
+        character = new PlayerCharacter(hud);
         character.position.set(0, 0);
-        character.setBodyType(BodyType.DYNAMIC);
         character.physics.setRotationLocked(true);
+        character.setBodyType(BodyType.DYNAMIC);
         hud.setPlayerCharacter(character);
 
         setGravity(new Vector(0, -13));
+
         getCamera().setFocus(character);
         getCamera().setOffset(new Vector(0, 3));
         getCamera().setBounds(new Bounds(-2000, -3, 20000, 20000));
@@ -59,24 +52,9 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         getMainLayer().setVisibleHeight(15);
 
-        // addFrameUpdateListener(new PeriodicTask(16, () -> {
-        //     Particle particle = new Particle(DudeDemo.this, Random.nextInteger(2) + 2, 3000);
-        //     particle.position.set(Random.nextInteger(860) - 430, -110);
-        //     particle.physics.applyImpulse(new Vector(.5f * ((float) Math.random() - .5f), 2f * ((float) Math.random())));
-        //     particle.setColor(new Color(54, 255, 195));
-        //     particle.setLayer(-1);
-        //
-        //     add(particle);
-        // }));
-
         pauseLayer = new PauseLayer();
-        isPaused = false;
         pauseLayer.setVisible(false);
         addLayer(pauseLayer);
-
-        getKeyListeners().add(this);
-
-        //game_loop.loop();
     }
 
     private void setupPlayground() {
@@ -85,14 +63,13 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         makePlatform(5, 800 / 60, -100 / 60);
 
-        //makeBoxes(-100, 500, 40);
-
         makeBoxes(0, 40, 5);
 
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin();
             coin.position.set(6 + i, 6);
             coin.addCollisionListener(character, coin);
+
             add(coin);
         }
 
@@ -100,6 +77,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
             ManaPickup manaPickup = new ManaPickup();
             manaPickup.position.set(-j, 1);
             manaPickup.addCollisionListener(character, manaPickup);
+
             add(manaPickup);
         }
     }
@@ -108,6 +86,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         Layer middleBackground = new Layer();
         middleBackground.setParallaxPosition(0.1f, 0.1f);
         middleBackground.setLayerPosition(-200);
+
         Image backgroundImage = new Image("game-assets/dude/background/snow.png", 25f);
         backgroundImage.position.set(-getVisibleArea().width / 2, -getVisibleArea().height / 2);
         middleBackground.add(backgroundImage);
@@ -133,6 +112,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         Layer clouds = new Layer();
         clouds.setParallaxPosition(xParallax, yParallax);
         clouds.setLayerPosition(layerLevel);
+
         final float SCALE = 0.08f;
         TileContainer cloudTiles = new TileContainer(NUM_TILES, 1, 384 * SCALE, 216 * SCALE);
         for (int i = 0; i < NUM_TILES; i++) {
@@ -154,35 +134,15 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         for (int i = 0; i < amount; i++) {
             Box box = new Box();
             box.position.set(pX + i * 80, pY);
-            //box.position.set(0, 0);
+
             add(box);
         }
     }
 
     @Override
     public void onKeyDown(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_P:
-                togglePause();
-                break;
-            case KeyEvent.VK_M:
-                toggleDebug();
-                break;
+        if (e.getKeyCode() == KeyEvent.VK_M) {
+            toggleDebug();
         }
-    }
-
-    @Override
-    public void onKeyUp(KeyEvent e) {
-        //Ignore
-    }
-
-    private void togglePause() {
-        isPaused = !isPaused;
-        pauseLayer.setVisible(isPaused);
-        setPhysicsPaused(isPaused);
-    }
-
-    public boolean isPaused() {
-        return isPaused;
     }
 }

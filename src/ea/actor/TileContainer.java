@@ -56,6 +56,14 @@ public class TileContainer extends Actor implements TileMap {
         this.tiles = new Tile[numX][numY];
     }
 
+    public int getTileCountX() {
+        return tiles.length;
+    }
+
+    public int getTileCountY() {
+        return tiles[0].length;
+    }
+
     /**
      * Erstellt einen <b>leeren</b> Tile-Container für quadratische Tiles. Er ist erst "sichtbar", wenn Tiles gesetzt
      * werden.

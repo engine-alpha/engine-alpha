@@ -13,19 +13,14 @@ import java.awt.event.KeyEvent;
  * Einfaches Programm zur Demonstration von Joints in der Engine
  * Created by Michael on 12.04.2017.
  */
-public class JointDemo
-extends ForceKlickEnvironment
-implements KeyListener {
+public class JointDemo extends ForceKlickEnvironment implements KeyListener {
 
-    private boolean schwerkraftActive=false;
-
+    private boolean schwerkraftActive = false;
 
     private Rectangle wippe;
     private Polygon basis;
 
-
     private Rectangle[] kette;
-
 
     private Circle ball;
 
@@ -176,16 +171,11 @@ implements KeyListener {
 
     @Override
     public void onKeyDown(KeyEvent e) {
-        switch(e.getKeyCode()){
+        switch (e.getKeyCode()) {
             case KeyEvent.VK_S:
                 schwerkraftActive = !schwerkraftActive;
                 setGravity(schwerkraftActive ? new Vector(0, 10) : Vector.NULL);
                 break;
         }
-    }
-
-    @Override
-    public void onKeyUp(KeyEvent e) {
-
     }
 }

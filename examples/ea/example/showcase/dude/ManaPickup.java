@@ -8,20 +8,20 @@ import ea.collision.CollisionListener;
  * Danke an <a href="https://sorceressgamelab.itch.io/">SorceressGameLab</a> für die Assets!
  */
 public class ManaPickup extends Animation implements CollisionListener<PlayerCharacter> {
+    private static final float SIZE = .4f;
 
     private boolean active = true;
 
     public ManaPickup() {
-        super(Animation.createFromSpritesheet(100, "game-assets/dude/gem_blue.png", 6, 1, .4f, .4f));
+        super(Animation.createFromSpritesheet(100, "game-assets/dude/gem_blue.png", 6, 1, SIZE, SIZE));
     }
 
     @Override
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
-        //System.out.println("Collsiion");
         if (!active) {
-            //Pickup ist gerade nicht aktiv
             return;
         }
+
         // Ich wurde aufgesammelt!
         collisionEvent.getColliding().gotItem(Item.ManaPickup);
         this.setActive(false);
@@ -32,10 +32,5 @@ public class ManaPickup extends Animation implements CollisionListener<PlayerCha
     private void setActive(boolean b) {
         active = b;
         setVisible(b);
-    }
-
-    @Override
-    public void onCollisionEnd(CollisionEvent<PlayerCharacter> collisionEvent) {
-
     }
 }
