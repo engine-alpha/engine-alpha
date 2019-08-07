@@ -1,11 +1,14 @@
 package ea.handle;
 
+import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
-import org.jbox2d.dynamics.joints.*;
+import org.jbox2d.dynamics.joints.DistanceJointDef;
+import org.jbox2d.dynamics.joints.RevoluteJointDef;
+import org.jbox2d.dynamics.joints.RopeJointDef;
 
 /**
  * Jedes <code>Actor</code>-Objekt hat ein öffentlich erreichbares Objekt <code>physics</code> dieser Klasse.
@@ -337,24 +340,24 @@ public class Physics {
      * @param anchorAsWorldPos Der Ankerpunkt <b>auf dem Layer</b>. Es wird davon
      *                         ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
      *
-     * @return Ein <code>RevoluteJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
-     *
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
-    public RevoluteJoint createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
-        if (!assertSameWorld(other)) {
-            return null;
-        }
+    public void createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
+        Game.afterWorldStep(() -> {
+            if (!assertSameWorld(other)) {
+                return;
+            }
 
-        // Definiere den Joint
-        RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
-        revoluteJointDef.initialize(actor.getPhysicsHandler().getBody(), other.getPhysicsHandler().getBody(),
-                //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchorAsWorldPos)));
-                anchorAsWorldPos.toVec2());
-        revoluteJointDef.collideConnected = false;
+            // Definiere den Joint
+            RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
+            revoluteJointDef.initialize(actor.getPhysicsHandler().getBody(), other.getPhysicsHandler().getBody(),
+                    //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchorAsWorldPos)));
+                    anchorAsWorldPos.toVec2());
+            revoluteJointDef.collideConnected = false;
 
-        return (RevoluteJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(revoluteJointDef);
+            actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(revoluteJointDef);
+        });
     }
 
     /**
@@ -375,20 +378,22 @@ public class Physics {
      * @see org.jbox2d.dynamics.joints.RopeJoint
      */
     @API
-    public RopeJoint createRopeJoint(Actor other, Vector anchorA, Vector anchorB, float ropeLength) {
-        if (!assertSameWorld(other)) {
-            return null;
-        }
+    public void createRopeJoint(Actor other, Vector anchorA, Vector anchorB, float ropeLength) {
+        Game.afterWorldStep(() -> {
+            if (!assertSameWorld(other)) {
+                return;
+            }
 
-        RopeJointDef ropeJointDef = new RopeJointDef();
-        ropeJointDef.bodyA = actor.getPhysicsHandler().getBody();
-        ropeJointDef.bodyB = other.getPhysicsHandler().getBody();
+            RopeJointDef ropeJointDef = new RopeJointDef();
+            ropeJointDef.bodyA = actor.getPhysicsHandler().getBody();
+            ropeJointDef.bodyB = other.getPhysicsHandler().getBody();
 
-        ropeJointDef.localAnchorA.set(anchorA.toVec2());
-        ropeJointDef.localAnchorB.set(anchorB.toVec2());
-        ropeJointDef.maxLength = ropeLength;
+            ropeJointDef.localAnchorA.set(anchorA.toVec2());
+            ropeJointDef.localAnchorB.set(anchorB.toVec2());
+            ropeJointDef.maxLength = ropeLength;
 
-        return (RopeJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(ropeJointDef);
+            actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(ropeJointDef);
+        });
     }
 
     /**
@@ -408,15 +413,17 @@ public class Physics {
      * @see org.jbox2d.dynamics.joints.DistanceJoint
      */
     @API
-    public DistanceJoint createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
-        if (!assertSameWorld(other)) {
-            return null;
-        }
+    public void createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
+        Game.afterWorldStep(() -> {
+            if (!assertSameWorld(other)) {
+                return;
+            }
 
-        DistanceJointDef distanceJointDef = new DistanceJointDef();
-        distanceJointDef.initialize(actor.getPhysicsHandler().getBody(), other.getPhysicsHandler().getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
+            DistanceJointDef distanceJointDef = new DistanceJointDef();
+            distanceJointDef.initialize(actor.getPhysicsHandler().getBody(), other.getPhysicsHandler().getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
 
-        return (DistanceJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(distanceJointDef);
+            actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(distanceJointDef);
+        });
     }
 
     public float getTorque() {

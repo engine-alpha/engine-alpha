@@ -134,12 +134,12 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         physics.setMass(65);
         addCollisionListener(this);
 
-        Rectangle weird = new Rectangle(1f, 0.2f);
+        /*Rectangle weird = new Rectangle(1f, 0.2f);
         weird.position.set(0, 0.4f);
         scene.add(weird);
         weird.setColor(Color.red);
         weird.setBodyType(BodyType.DYNAMIC);
-        weird.physics.createRevoluteJoint(this, new Vector(0.1f, 0.2f));
+        weird.physics.createRevoluteJoint(this, new Vector(0.1f, 0.2f));*/
 
         Polygon polygon = new Polygon(new Vector(1, 1), new Vector(10, 10), new Vector(10, 0));
         polygon.setColor(Color.white);

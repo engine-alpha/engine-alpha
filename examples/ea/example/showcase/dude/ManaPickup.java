@@ -9,15 +9,29 @@ import ea.collision.CollisionListener;
  */
 public class ManaPickup extends Animation implements CollisionListener<PlayerCharacter> {
 
+    private boolean active = true;
+
     public ManaPickup() {
-        super(Animation.createFromSpritesheet(100, "game-assets/dude/gem_blue.png", 6, 1, .2f, .2f));
+        super(Animation.createFromSpritesheet(100, "game-assets/dude/gem_blue.png", 6, 1, .4f, .4f));
     }
 
     @Override
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
+        //System.out.println("Collsiion");
+        if (!active) {
+            //Pickup ist gerade nicht aktiv
+            return;
+        }
         // Ich wurde aufgesammelt!
         collisionEvent.getColliding().gotItem(Item.ManaPickup);
-        remove();
+        this.setActive(false);
+        active = false;
+        getLayer().getParent().addOneTimeCallback(5000, () -> setActive(true));
+    }
+
+    private void setActive(boolean b) {
+        active = b;
+        setVisible(b);
     }
 
     @Override
