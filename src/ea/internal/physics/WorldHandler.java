@@ -268,8 +268,8 @@ public class WorldHandler implements ContactListener {
         /*
          * ~~~~~~~~~~~~~~~~~~~~~~~ TEIL II : Allgemeine Checkups ~~~~~~~~~~~~~~~~~~~~~~~
          */
-        generalCheckup(layer, b1, b2, contact, isBegin);
-        generalCheckup(layer, b2, b1, contact, isBegin);
+        generalCheckup(b1, b2, contact, isBegin);
+        generalCheckup(b2, b1, contact, isBegin);
 
         if (!isBegin) {
             //Contact ist beendet -> Set Enabled and remove from blacklist
@@ -294,7 +294,7 @@ public class WorldHandler implements ContactListener {
     }
 
     @Internal
-    private void generalCheckup(Layer layer, Body act, Body col, Contact contact, final boolean isBegin) {
+    private void generalCheckup(Body act, Body col, Contact contact, final boolean isBegin) {
         List<CollisionListener<Actor>> list = generalCollisonListeners.get(act);
         if (list != null) {
             Actor other = worldMap.get(col);
@@ -302,7 +302,7 @@ public class WorldHandler implements ContactListener {
                 return; // Is null on async removals
             }
 
-            CollisionEvent<Actor> collisionEvent = new CollisionEvent<>(contact, other, null); // TODO Replace NULL
+            CollisionEvent<Actor> collisionEvent = new CollisionEvent<>(contact, other);
             for (CollisionListener<Actor> listener : list) {
                 if (isBegin) {
                     listener.onCollision(collisionEvent);
@@ -381,7 +381,7 @@ public class WorldHandler implements ContactListener {
 
         public void checkCollision(Body body, Contact contact, boolean isBegin) {
             if (this.body == body) {
-                CollisionEvent<E> collisionEvent = new CollisionEvent<>(contact, collidingActor, null); // TODO Replace NULL
+                CollisionEvent<E> collisionEvent = new CollisionEvent<>(contact, collidingActor);
                 if (isBegin) {
                     listener.onCollision(collisionEvent);
                 } else {
@@ -428,13 +428,15 @@ public class WorldHandler implements ContactListener {
         final WorldHandler colliderHandler = collider.getPhysicsHandler().getWorldHandler();
 
         if (colliderHandler == null) {
-            collider.addMountListener(e -> addSpecificCollisionListener(actor, collider, listener));
+            collider.addMountListener(() -> addSpecificCollisionListener(actor, collider, listener));
             return;
         } else {
-            collider.addUnmountListener(e -> {
-                e.removeListener();
-
-                collider.addMountListener(mountEvent -> addSpecificCollisionListener(actor, collider, listener));
+            collider.addUnmountListener(new Runnable() {
+                @Override
+                public void run() {
+                    collider.removeUnmountListener(this);
+                    collider.addMountListener(() -> addSpecificCollisionListener(actor, collider, listener));
+                }
             });
         }
 

@@ -22,7 +22,6 @@ package ea.actor;
 import ea.*;
 import ea.collision.CollisionListener;
 import ea.event.EventListeners;
-import ea.event.ListenerEvent;
 import ea.input.KeyListener;
 import ea.input.MouseClickListener;
 import ea.input.MouseWheelListener;
@@ -48,7 +47,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -108,8 +106,8 @@ public abstract class Actor {
 
     private final Object physicsHandlerLock = new Object();
 
-    private final EventListeners<Consumer<ListenerEvent>> mountListeners = new EventListeners<>();
-    private final EventListeners<Consumer<ListenerEvent>> unmountListeners = new EventListeners<>();
+    private final EventListeners<Runnable> mountListeners = new EventListeners<>();
+    private final EventListeners<Runnable> unmountListeners = new EventListeners<>();
     private final EventListeners<KeyListener> keyListeners = new EventListeners<>(createParentSupplier(Layer::getKeyListeners));
     private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>(createParentSupplier(Layer::getMouseClickListeners));
     private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>(createParentSupplier(Layer::getMouseWheelListeners));
@@ -146,20 +144,34 @@ public abstract class Actor {
     }
 
     @API
-    public final void addMountListener(Consumer<ListenerEvent> listener) {
+    public final void addMountListener(Runnable listener) {
         synchronized (physicsHandlerLock) {
             mountListeners.add(listener);
 
             if (physicsHandler.getWorldHandler() != null) {
-                listener.accept(() -> mountListeners.remove(listener));
+                listener.run();
             }
         }
     }
 
     @API
-    public final void addUnmountListener(Consumer<ListenerEvent> listener) {
+    public final void removeMountListener(Runnable listener) {
+        synchronized (physicsHandlerLock) {
+            mountListeners.remove(listener);
+        }
+    }
+
+    @API
+    public final void addUnmountListener(Runnable listener) {
         synchronized (physicsHandlerLock) {
             unmountListeners.add(listener);
+        }
+    }
+
+    @API
+    public final void removeUnmountListener(Runnable listener) {
+        synchronized (physicsHandlerLock) {
+            unmountListeners.remove(listener);
         }
     }
 
@@ -490,7 +502,7 @@ public abstract class Actor {
      */
     @API
     public <E extends Actor> void addCollisionListener(E collider, CollisionListener<E> listener) {
-        addMountListener(e -> WorldHandler.addSpecificCollisionListener(this, collider, listener));
+        addMountListener(() -> WorldHandler.addSpecificCollisionListener(this, collider, listener));
     }
 
     /**
@@ -504,7 +516,7 @@ public abstract class Actor {
      */
     @API
     public void addCollisionListener(CollisionListener<Actor> listener) {
-        addMountListener((e) -> WorldHandler.addGenericCollisionListener(listener, this));
+        addMountListener(() -> WorldHandler.addGenericCollisionListener(listener, this));
     }
 
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
@@ -535,7 +547,7 @@ public abstract class Actor {
                 mouseWheelListeners.invoke(listener -> layer.getMouseWheelListeners().remove(listener));
                 frameUpdateListeners.invoke(listener -> layer.getFrameUpdateListeners().remove(listener));
 
-                unmountListeners.invoke(listener -> listener.accept(() -> unmountListeners.remove(listener)));
+                unmountListeners.invoke(Runnable::run);
 
                 physicsHandler = handler;
             } else {
@@ -547,7 +559,7 @@ public abstract class Actor {
 
                 Layer layer = worldHandler.getLayer();
 
-                mountListeners.invoke(listener -> listener.accept(() -> mountListeners.remove(listener)));
+                mountListeners.invoke(Runnable::run);
 
                 keyListeners.invoke(listener -> layer.getKeyListeners().add(listener));
                 mouseClickListeners.invoke(listener -> layer.getMouseClickListeners().add(listener));

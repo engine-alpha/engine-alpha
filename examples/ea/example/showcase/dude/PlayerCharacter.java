@@ -193,7 +193,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
             particle.getFrameUpdateListeners().add(new ValueAnimator<>(.25f, value -> particle.setColor(new Color(255, value, 0)), new LinearInteger(0, 255)));
-            particle.addMountListener(e -> particle.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
+            particle.addMountListener(() -> particle.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
             particle.addCollisionListener((e) -> {
                 if (e.getColliding() instanceof Platform) {
                     Platform platform = (Platform) e.getColliding();
@@ -337,7 +337,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
                 for (int i = 0; i < 100; i++) {
                     Particle particle = new Particle(Random.nextFloat() * .02f + .02f, .5f);
                     particle.setPosition(getCenter().add(0, -32));
-                    particle.addMountListener(e -> particle.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f)));
+                    particle.addMountListener(() -> particle.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f)));
                     particle.setColor(Color.GRAY);
                     particle.setLayerPosition(-1);
 

@@ -107,7 +107,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
             particle.setPosition(circle.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
-            particle.addMountListener(event -> particle.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
+            particle.addMountListener(() -> particle.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
             particle.getFrameUpdateListeners().add(new ValueAnimator<>(.25f, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255)));
 
             add(particle);
