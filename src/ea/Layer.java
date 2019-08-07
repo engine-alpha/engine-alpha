@@ -13,6 +13,8 @@ import org.jbox2d.dynamics.Body;
 import java.awt.Graphics2D;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Layer bieten die Möglichkeit, <code>Actors</code> vor und hinter der Zeichenebene mit zusätzlichen Eigenschaften
@@ -21,6 +23,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Michael Andonie
  */
 public class Layer {
+    private <T> Supplier<T> createParentSupplier(Function<Scene, T> supplier) {
+        return () -> {
+            Scene scene = getParent();
+            if (scene == null) {
+                return null;
+            }
+
+            return supplier.apply(scene);
+        };
+    }
 
     private final Collection<Actor> actors;
 
@@ -41,10 +53,10 @@ public class Layer {
 
     private final WorldHandler worldHandler;
 
-    private final EventListeners<KeyListener> keyListeners = new EventListeners<>();
-    private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>();
-    private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>();
-    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
+    private final EventListeners<KeyListener> keyListeners = new EventListeners<>(createParentSupplier(Scene::getKeyListeners));
+    private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>(createParentSupplier(Scene::getMouseClickListeners));
+    private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>(createParentSupplier(Scene::getMouseWheelListeners));
+    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>(createParentSupplier(Scene::getFrameUpdateListeners));
 
     /**
      * Erstellt ein neues Layer.
