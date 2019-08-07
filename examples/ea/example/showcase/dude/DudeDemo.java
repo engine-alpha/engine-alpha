@@ -1,14 +1,15 @@
 package ea.example.showcase.dude;
 
-import ea.*;
-import ea.actor.Image;
-import ea.actor.TileContainer;
-import ea.actor.TileMap;
+import ea.Bounds;
+import ea.Layer;
+import ea.Scene;
+import ea.Vector;
+import ea.actor.*;
+import ea.event.KeyListener;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
-import ea.actor.BodyType;
-import ea.event.KeyListener;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 /**
@@ -36,7 +37,15 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         character.setRotationLocked(true);
         character.setBodyType(BodyType.DYNAMIC);
 
+        Rectangle weird = new Rectangle(5, 0.2f);
+        weird.setColor(Color.ORANGE);
+        weird.setBodyType(BodyType.DYNAMIC);
+        weird.setPosition(0.3f, 0.6f);
+
+        character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
+
         add(character);
+        add(weird);
 
         setGravity(new Vector(0, -13));
 

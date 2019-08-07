@@ -2,11 +2,13 @@ package ea.example.showcase;
 
 import ea.Scene;
 import ea.Vector;
+import ea.actor.BodyType;
 import ea.actor.Circle;
 import ea.actor.Polygon;
 import ea.actor.Rectangle;
 import ea.event.KeyListener;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 /**
@@ -27,145 +29,109 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
     /**
      * Erstellt das Demo-Objekt
      */
-    public JointDemo(Scene parent, int width, int height) {
-        super(parent, width, height);
+    public JointDemo(Scene parent) {
+        super(parent);
     }
 
-    /* public void initialisieren2() {
-        wippeBauen().position.set(new Vector(500, 500));
+    public void initialisieren2() {
+        wippeBauen();
 
-        ketteBauen(15).position.move(new Vector(500, 00));
+        ketteBauen(15);
 
-        leashBauen().position.move(100,100);
+        leashBauen();
 
         hoverHolderBauen();
 
-        ball = new Circle(this, 100);
+        getMainLayer().setVisibleHeight(40);
+
+        ball = new Circle(1);
         add(ball);
 
         ball.setColor(Color.BLUE);
 
-        ball.position.set(new Vector(300, 200));
-        ball.setBodyType(Physics.Type.DYNAMIC);
+        ball.setPosition(new Vector(300, 200));
+        ball.setBodyType(BodyType.DYNAMIC);
     }
 
-    private ActorGroup hoverHolderBauen() {
-        ActorGroup knoten = new ActorGroup(this);
-        add(knoten);
-
+    private void hoverHolderBauen() {
         final int FACT = 2;
 
-        Polygon halter = new Polygon(this,
-                new Vector(0*FACT,50*FACT), new Vector(25*FACT, 75*FACT),
-                new Vector(50*FACT, 75*FACT), new Vector(75*FACT, 50*FACT),
-                new Vector(75*FACT, 100*FACT), new Vector(0*FACT,100*FACT)
-        );
-        knoten.add(halter);
+        Polygon halter = new Polygon(new Vector(0 * FACT, 50 * FACT), new Vector(25 * FACT, 75 * FACT), new Vector(50 * FACT, 75 * FACT), new Vector(75 * FACT, 50 * FACT), new Vector(75 * FACT, 100 * FACT), new Vector(0 * FACT, 100 * FACT));
         halter.setColor(Color.CYAN);
-        halter.setBodyType(Physics.Type.DYNAMIC);
+        halter.setBodyType(BodyType.DYNAMIC);
 
-        Rectangle item = new Rectangle(this, 35*FACT, 20*FACT);
-        item.position.set(30*FACT, 0);
-        knoten.add(item);
+        Rectangle item = new Rectangle(35 * FACT, 20 * FACT);
+        item.setPosition(30 * FACT, 0);
         item.setColor(Color.red);
-        item.setBodyType(Physics.Type.DYNAMIC);
+        item.setBodyType(BodyType.DYNAMIC);
 
-
-        knoten.position.move(new Vector(160, 200));
-
-        halter.physics.createDistanceJoint(item, halter.position.getCenter(), item.position.getCenter());
-
-
-        return knoten;
+        halter.createDistanceJoint(item, halter.getCenter(), item.getCenter());
     }
 
-    private ActorGroup leashBauen() {
-        ActorGroup knoten = new ActorGroup(this);
-        add(knoten);
+    private void leashBauen() {
 
-        Circle kx = new Circle(this, 30);
-        knoten.add(kx);
+        Circle kx = new Circle(30);
         kx.setColor(Color.BLUE);
-        kx.setBodyType(Physics.Type.DYNAMIC);
+        kx.setBodyType(BodyType.DYNAMIC);
 
-        Circle ky = new Circle(this, 50);
-        ky.position.set(50, 0);
-        knoten.add(ky);
+        Circle ky = new Circle(50);
+        ky.setPosition(50, 0);
         ky.setColor(Color.GREEN);
-        ky.setBodyType(Physics.Type.DYNAMIC);
+        ky.setBodyType(BodyType.DYNAMIC);
 
-        knoten.position.move(-20,500);
-
-
-        kx.physics.createRopeJoint(ky,
+        kx.createRopeJoint(ky,
                 //kx.position.mittelPoint().alsVector(),
                 //ky.position.mittelPoint().alsVector(), 4);
-                new Vector(15,15),
-                new Vector(25,25), 4);
-
-        return knoten;
+                new Vector(15, 15), new Vector(25, 25), 4);
     }
 
-    private ActorGroup wippeBauen() {
-        ActorGroup bauwerk = new ActorGroup(this);
-        add(bauwerk);
+    private void wippeBauen() {
 
-        basis = new Polygon(this, new Vector(0, 100), new Vector(100, 100), new Vector(50, 0));
-        bauwerk.add(basis);
-        basis.setBodyType(Physics.Type.STATIC);
+        basis = new Polygon(new Vector(0, 100), new Vector(100, 100), new Vector(50, 0));
+        basis.setBodyType(BodyType.STATIC);
         basis.setColor(Color.WHITE);
 
-        wippe = new Rectangle(this, 500, 40);
-        bauwerk.add(wippe);
-        wippe.setBodyType(Physics.Type.DYNAMIC);
+        wippe = new Rectangle(500, 40);
+        wippe.setBodyType(BodyType.DYNAMIC);
 
-        wippe.position.setCenter(50, 0);
+        wippe.setCenter(50, 0);
 
         wippe.setColor(Color.GRAY);
 
-        Vector verzug = new Vector(100,100);
+        Vector verzug = new Vector(100, 100);
 
-        wippe.position.move(verzug);
-        basis.position.move(verzug);
+        wippe.move(verzug);
+        basis.move(verzug);
 
-        wippe.physics.createRevoluteJoint(basis, new Vector(50, 0).add(verzug));
-
-        return bauwerk;
+        wippe.createRevoluteJoint(basis, new Vector(50, 0).add(verzug));
     }
 
-    private ActorGroup ketteBauen(int kettenlaenge) {
-        ActorGroup ketteK = new ActorGroup(this);
-        add(ketteK);
+    private void ketteBauen(int kettenlaenge) {
 
         kette = new Rectangle[kettenlaenge];
-        for(int i = 0; i < kette.length; i++) {
-            kette[i] = new Rectangle(this, 50, 10);
-            Vector posrel = new Vector(45*i,30);
-            ketteK.add(kette[i]);
-            kette[i].position.move(posrel);
+        for (int i = 0; i < kette.length; i++) {
+            kette[i] = new Rectangle(50, 10);
+            Vector posrel = new Vector(45 * i, 30);
+            kette[i].move(posrel);
             kette[i].setColor(Color.GREEN);
 
-            kette[i].setBodyType(i == 0 ? Physics.Type.STATIC : Physics.Type.DYNAMIC);
+            kette[i].setBodyType(i == 0 ? BodyType.STATIC : BodyType.DYNAMIC);
 
-            if(i != 0) {
-                RevoluteJoint rj = kette[i-1].physics.createRevoluteJoint(kette[i], new Vector(0, 5).add(posrel));
-
+            if (i != 0) {
+                kette[i - 1].createRevoluteJoint(kette[i], new Vector(0, 5).add(posrel));
             }
         }
 
-        Circle gewicht = new Circle(this, 100);
-        ketteK.add(gewicht);
+        Circle gewicht = new Circle(100);
         gewicht.setColor(Color.WHITE);
 
-        gewicht.setBodyType(Physics.Type.DYNAMIC);
-        gewicht.physics.setMass(40);
+        gewicht.setBodyType(BodyType.DYNAMIC);
+        gewicht.setMass(40);
 
-        Vector vektor = new Vector(45*kette.length, 35);
-        gewicht.position.setCenter(new Vector(vektor.x, vektor.y));
-        gewicht.physics.createRevoluteJoint(kette[kette.length-1], vektor);
-
-        return ketteK;
-    } */
+        Vector vektor = new Vector(45 * kette.length, 35);
+        gewicht.setCenter(new Vector(vektor.x, vektor.y));
+        gewicht.createRevoluteJoint(kette[kette.length - 1], vektor);
+    }
 
     @Override
     public void onKeyDown(KeyEvent e) {

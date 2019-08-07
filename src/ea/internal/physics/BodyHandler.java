@@ -110,6 +110,15 @@ public class BodyHandler implements PhysicsHandler {
     }
 
     @Override
+    public void setRotation(float degree) {
+        synchronized (worldHandler) {
+            worldHandler.assertNoWorldStep();
+
+            body.setTransform(body.getPosition(), (float) Math.toRadians((double) degree));
+        }
+    }
+
+    @Override
     public void setDensity(float density) {
         synchronized (worldHandler) {
             for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {

@@ -2,9 +2,6 @@ package ea;
 
 import ea.actor.Actor;
 import ea.event.*;
-import ea.event.KeyListener;
-import ea.event.MouseClickListener;
-import ea.event.MouseWheelListener;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.*;
@@ -295,9 +292,17 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         parent.getCamera().setZoom(desiredZoom);
     }
 
-    @Internal
+    @API
     public float calculatePixelPerMeter(Camera camera) {
         return 1 + (camera.getZoom() - 1) * parallaxZoom;
+    }
+
+    @API
+    public Bounds getCameraBoundsOnLayer(Camera camera) {
+        Bounds frameSizeInPx = Game.getFrameSizeInPx();
+        float pixelPerMeter = calculatePixelPerMeter(camera);
+
+        return new Bounds(0, 0, frameSizeInPx.width * pixelPerMeter, frameSizeInPx.height * pixelPerMeter).withCenterPoint(camera.getPosition());
     }
 
     @Internal

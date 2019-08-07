@@ -84,6 +84,9 @@ public interface PhysicsHandler {
     void rotateBy(float degree);
 
     @Internal
+    void setRotation(float degree);
+
+    @Internal
     void setDensity(float density);
 
     @Internal

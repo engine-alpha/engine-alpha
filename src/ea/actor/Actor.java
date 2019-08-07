@@ -1162,7 +1162,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     @API
     public void setRotation(float degree) {
         synchronized (physicsHandlerLock) {
-            physicsHandler.rotateBy(degree - getRotation());
+            physicsHandler.setRotation(degree);
         }
     }
 

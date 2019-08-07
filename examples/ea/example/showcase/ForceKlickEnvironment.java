@@ -3,13 +3,9 @@ package ea.example.showcase;
 import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.Vector;
-import ea.actor.Actor;
-import ea.actor.Circle;
-import ea.actor.Geometry;
-import ea.actor.Rectangle;
+import ea.actor.*;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.actor.BodyType;
 import ea.event.MouseButton;
 import ea.event.MouseClickListener;
 
@@ -44,11 +40,8 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
      * Wird für die Schwerkraft-Berechnung genutzt
      */
     private static final Vector ERDBESCHLEUNIGUNG = new Vector(0, 9.81f);
-
-    /**
-     * Beschreiben die Maße des "Spielfelds"
-     */
-    private final int FIELD_WIDTH, FIELD_DEPTH;
+    public static final float FIELD_WIDTH = 85;
+    public static final float FIELD_DEPTH = 50;
 
     @Override
     public void onCollision(CollisionEvent event) {
@@ -78,36 +71,29 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
     private Rectangle stange;
     private KlickMode klickMode = KlickMode.ATTACK_POINT;
     private Vector lastAttack;
-    private boolean hatSchwerkraft = false;
-
-    public static int PPM = 100;
 
     /**
      * Startet ein Sandbox-Fenster.
      */
-    public ForceKlickEnvironment(Scene parent, int width, int height) {
+    public ForceKlickEnvironment(Scene parent) {
         super(parent);
-        FIELD_WIDTH = width;
-        FIELD_DEPTH = height;
-        getCamera().move(width / 2, height / 2);
 
         // Info-Message
         // fenster.nachrichtSchicken("Elastizität +[W]/-[Q] | Masse +[U] / -[J] | [R]eset | [S]chwerkraft | [E]insperren");
 
         // Boden
-        Rectangle boden = new Rectangle(FIELD_WIDTH, 10);
+        Rectangle boden = new Rectangle(FIELD_WIDTH, 1);
         boden.setPosition(0, FIELD_DEPTH);
-        add(boden);
         boden.setColor(Color.WHITE);
         boden.setBodyType(BodyType.STATIC);
         ground = walls[0] = boden;
 
         //Der Rest der Wände
-        Rectangle links = new Rectangle(10, FIELD_DEPTH);
-        Rectangle rechts = new Rectangle(10, FIELD_DEPTH);
-        rechts.setPosition(FIELD_WIDTH - 10, 0);
-        Rectangle oben = new Rectangle(FIELD_WIDTH, 10);
-        add(links, rechts, oben);
+        Rectangle links = new Rectangle(1, FIELD_DEPTH);
+        Rectangle rechts = new Rectangle(1, FIELD_DEPTH);
+        rechts.setPosition(FIELD_WIDTH - 1, 0);
+        Rectangle oben = new Rectangle(FIELD_WIDTH, 1);
+
         walls[1] = links;
         walls[2] = rechts;
         walls[3] = oben;
@@ -119,15 +105,13 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         }
 
         //Vector-Visualisierung
-        Rectangle stab = new Rectangle(100, 5);
-        add(stab);
+        Rectangle stab = new Rectangle(1, 0.5f);
         stab.setColor(new Color(200, 50, 50));
         stange = stab;
         stange.setLayerPosition(-10);
 
         //Attack-Visualisierung
-        Circle atv = new Circle(10);
-        add(atv);
+        Circle atv = new Circle(0.5f);
         atv.setColor(Color.RED);
         attack = atv;
         attack.setLayerPosition(-10);
@@ -145,6 +129,11 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
                 }
             }
         });
+
+        add(boden);
+        add(links, rechts, oben);
+        add(stab);
+        add(atv);
     }
 
     /**
@@ -159,7 +148,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
                 lastAttack = p;
 
                 //Visualize Attack Point
-                attack.setPosition(p.add(new Vector(-5, -5)));
+                attack.setCenter(p);
                 attack.setVisible(true);
 
                 //Prepare Vector Stick
@@ -199,16 +188,23 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
     public void onFrameUpdate(float deltaSeconds) {
         // Visualisiere ggf. die Vectorstange
         if (klickMode == KlickMode.DIRECTION_INTENSITY) {
-            Vector pointer = getMousePosition();
-            if (pointer == null || lastAttack == null) {
+            Vector currentMousePos = getMousePosition();
+            if (currentMousePos == null || lastAttack == null) {
                 return;
             }
-            stange.resetDimensions(new Vector(lastAttack, pointer).getLength(), stange.getHeight());
-            float rot = Vector.RIGHT.getAngle(lastAttack.negate().add(pointer));
+            float vectorLength = new Vector(lastAttack, currentMousePos).getLength();
+            if (vectorLength <= 0) {
+                return;
+            }
+            stange.resetDimensions(vectorLength, stange.getHeight());
+
+            //float rot = Vector.RIGHT.getAngle(lastAttack.fromThisTo(pointer).negate());
+            float rot = Vector.RIGHT.getAngle(lastAttack.fromThisTo(currentMousePos));
+            rot = Vector.RIGHT.getAngle(lastAttack.negate().add(currentMousePos));
             if (Float.isNaN(rot)) {
                 return;
             }
-            if (pointer.y < lastAttack.y) {
+            if (currentMousePos.y < lastAttack.y) {
                 rot = 360 - rot;
             }
             stange.setRotation(rot);

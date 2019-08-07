@@ -99,13 +99,6 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             return shapeList;
         });*/
 
-        /*Rectangle weird = new Rectangle(5, 0.4f);
-        weird.setColor(Color.ORANGE);
-        weird.setBodyType(BodyType.DYNAMIC);
-        addMountListener(() -> {
-            getLayer().add(weird)
-        });*/
-
         setMass(MASS);
 
         addCollisionListener(this);

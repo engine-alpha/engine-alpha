@@ -64,6 +64,11 @@ public class NullHandler implements PhysicsHandler {
     }
 
     @Override
+    public void setRotation(float degree) {
+        this.physicsData.setRotation(degree);
+    }
+
+    @Override
     public void setDensity(float density) {
         if (density <= 0) {
             throw new IllegalArgumentException("Dichte kann nicht kleiner als 0 sein. Eingabe war " + density + ".");

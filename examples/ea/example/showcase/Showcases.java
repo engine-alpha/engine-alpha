@@ -7,10 +7,10 @@ import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.Rectangle;
 import ea.actor.Text;
-import ea.example.showcase.billard.Billard;
-import ea.example.showcase.dude.DudeDemo;
 import ea.event.MouseButton;
 import ea.event.MouseClickListener;
+import ea.example.showcase.billard.Billard;
+import ea.example.showcase.dude.DudeDemo;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -174,7 +174,7 @@ public class Showcases extends Scene {
 
         mainscene.addScene(() -> new BallThrow(mainscene), "Einfacher Ballwurf");
         mainscene.addScene(() -> new PhysicsSandbox(mainscene, WIDTH, HEIGHT), "Kräfte-Sandbox");
-        mainscene.addScene(() -> new JointDemo(mainscene, WIDTH, HEIGHT), "Joints in der Engine");
+        mainscene.addScene(() -> new JointDemo(mainscene), "Joints in der Engine");
         mainscene.addScene(() -> new MarbleDemo(mainscene), "Murmel-Demo");
         mainscene.addScene(() -> new DudeDemo(mainscene), "DudeDemo");
         mainscene.addScene(() -> new Billard(mainscene), "Billard");
