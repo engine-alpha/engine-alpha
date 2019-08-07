@@ -21,6 +21,7 @@ package ea.animation;
 
 import ea.FrameUpdateListener;
 import ea.event.EventListeners;
+import ea.event.FrameUpdateListenerContainer;
 import ea.internal.annotations.API;
 
 import java.util.function.Consumer;
@@ -40,15 +41,19 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
 
     private EventListeners<Consumer<Value>> completionListeners = new EventListeners<>();
 
-    public ValueAnimator(float duration, Consumer<Value> consumer, Interpolator<Value> interpolator, AnimationMode mode) {
+    public ValueAnimator(float duration, Consumer<Value> consumer, Interpolator<Value> interpolator, AnimationMode mode, FrameUpdateListenerContainer parent) {
         this.duration = duration;
         this.consumer = consumer;
         this.interpolator = interpolator;
         this.mode = mode;
+
+        if (mode == AnimationMode.SINGLE) {
+            addCompletionListener((v) -> parent.removeFrameUpdateListener(this));
+        }
     }
 
-    public ValueAnimator(float duration, Consumer<Value> consumer, Interpolator<Value> interpolator) {
-        this(duration, consumer, interpolator, AnimationMode.SINGLE);
+    public ValueAnimator(float duration, Consumer<Value> consumer, Interpolator<Value> interpolator, FrameUpdateListenerContainer parent) {
+        this(duration, consumer, interpolator, AnimationMode.SINGLE, parent);
     }
 
     /**
