@@ -358,6 +358,10 @@ public class WorldHandler implements ContactListener {
 
     @Internal
     public static boolean isBodyCollision(Body a, Body b) {
+        if (a == null || b == null) {
+            return false;
+        }
+
         for (ContactEdge contact = a.getContactList(); contact != null; contact = contact.next) {
             if (contact.other == b) {
                 // Contact exists with other Body. Next, check if they are actually touching

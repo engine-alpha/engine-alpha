@@ -29,7 +29,7 @@ public class Hole extends Circle {
     public Hole(float x, float y) {
         super(RADIUS);
 
-        position.set(x, y);
+        setPosition(x, y);
         setColor(new Color(50, 50, 50));
     }
 }

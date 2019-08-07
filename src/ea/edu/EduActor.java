@@ -4,7 +4,7 @@ import ea.Vector;
 import ea.actor.Actor;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
@@ -26,8 +26,8 @@ public interface EduActor {
         Spiel.getActiveScene().addEduActor(getActor());
 
         //Default Physics Setup für EDU Objekte
-        getActor().physics.setRotationLocked(true);
-        getActor().physics.setRestitution(0);
+        getActor().setRotationLocked(true);
+        getActor().setRestitution(0);
     }
 
     @API
@@ -37,22 +37,22 @@ public interface EduActor {
 
     @API
     default void verschieben(float dX, float dY) {
-        getActor().position.move(dX, dY);
+        getActor().move(dX, dY);
     }
 
     @API
     default void drehen(float drehwinkelInWinkelgrad) {
-        getActor().position.rotate(drehwinkelInWinkelgrad);
+        getActor().rotateBy(drehwinkelInWinkelgrad);
     }
 
     @API
     default float nenneWinkel() {
-        return getActor().position.getRotation();
+        return getActor().getRotation();
     }
 
     @API
     default void setzeMittelpunkt(float mX, float mY) {
-        getActor().position.setCenter(mX, mY);
+        getActor().setCenter(mX, mY);
     }
 
     @API
@@ -67,12 +67,12 @@ public interface EduActor {
 
     @API
     default float nenneMx() {
-        return getActor().position.getCenter().x;
+        return getActor().getCenter().x;
     }
 
     @API
     default float nenneMy() {
-        return getActor().position.getCenter().y;
+        return getActor().getCenter().y;
     }
 
     @API
@@ -82,7 +82,7 @@ public interface EduActor {
 
     @API
     default Vector mittelPunkt() {
-        return getActor().position.getCenter();
+        return getActor().getCenter();
     }
 
     @API
@@ -99,27 +99,27 @@ public interface EduActor {
 
     @API
     default void setzeRotationBlockiert(boolean blockiert) {
-        getActor().physics.setRotationLocked(blockiert);
+        getActor().setRotationLocked(blockiert);
     }
 
     @API
     default void wirkeImpuls(float iX, float iY) {
-        getActor().physics.applyImpulse(new Vector(iX, iY));
+        getActor().applyImpulse(new Vector(iX, iY));
     }
 
     @API
     default void setzeReibung(float reibungsKoeffizient) {
-        getActor().physics.setFriction(reibungsKoeffizient);
+        getActor().setFriction(reibungsKoeffizient);
     }
 
     @API
     default void setzeGeschwindigkeit(float vX, float vY) {
-        getActor().physics.setVelocity(new Vector(vX, vY));
+        getActor().setVelocity(new Vector(vX, vY));
     }
 
     @API
     default void setzeElastizitaet(float elastizitaetsKoeffizient) {
-        getActor().physics.setRestitution(elastizitaetsKoeffizient);
+        getActor().setRestitution(elastizitaetsKoeffizient);
     }
 
     @API
@@ -129,29 +129,29 @@ public interface EduActor {
 
     @API
     default void setzeMasse(float masse) {
-        getActor().physics.setMass(masse);
+        getActor().setMass(masse);
     }
 
     @API
     default float nenneVx() {
-        return getActor().physics.getVelocity().x;
+        return getActor().getVelocity().x;
     }
 
     @API
     default float nenneVy() {
-        return getActor().physics.getVelocity().y;
+        return getActor().getVelocity().y;
     }
 
     /* ~~~ JUMP N RUN WRAPPER ~~~ */
 
     @API
     default boolean steht() {
-        return getActor().physics.isGrounded();
+        return getActor().isGrounded();
     }
 
     @API
     default boolean stehtAuf(Actor actor) {
-        return getActor().overlaps(actor) && getActor().physics.isGrounded();
+        return getActor().overlaps(actor) && getActor().isGrounded();
     }
 
     @API
@@ -166,13 +166,13 @@ public interface EduActor {
 
     @API
     default void macheNeutral() {
-        getActor().setBodyType(BodyType.PASSIVE);
+        getActor().setBodyType(BodyType.SENSOR);
     }
 
     @API
     default void sprung(float staerke) {
         if (steht()) {
-            getActor().physics.applyImpulse(new Vector(0, staerke * 1000));
+            getActor().applyImpulse(new Vector(0, staerke * 1000));
         }
     }
 
@@ -258,11 +258,11 @@ public interface EduActor {
      * @param bX      Punkt B, Koordinate X
      * @param bY      Punkt B, Koordinate Y
      *
-     * @see ea.handle.Physics#createDistanceJoint(Actor, Vector, Vector)
+     * @see ea.actor.Actor#createDistanceJoint(Actor, Vector, Vector)
      */
     @API
     default void erzeugeStabVerbindung(EduActor anderer, float aX, float aY, float bX, float bY) {
-        getActor().physics.createDistanceJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY));
+        getActor().createDistanceJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY));
     }
 
     /**
@@ -272,11 +272,11 @@ public interface EduActor {
      * @param aX      X Koordinate des Rotationspunktes
      * @param aY      Y Koordinate des Rotationspunktes
      *
-     * @see ea.handle.Physics#createRevoluteJoint(Actor, Vector) e
+     * @see ea.actor.Actor#createRevoluteJoint(Actor, Vector) e
      */
     @API
     default void erzeugeGelenkVerbindung(EduActor anderer, float aX, float aY) {
-        getActor().physics.createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
+        getActor().createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
     }
 
     /**
@@ -289,10 +289,10 @@ public interface EduActor {
      * @param bX         Punkt B, Koordinate X
      * @param bY         Punkt B, Koordinate Y
      *
-     * @see ea.handle.Physics#createRopeJoint(Actor, Vector, Vector, float)
+     * @see ea.actor.Actor#createRopeJoint(Actor, Vector, Vector, float)
      */
     @API
     default void erzeugeSeilVerbindung(EduActor anderer, float ropeLength, float aX, float aY, float bX, float bY) {
-        getActor().physics.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), ropeLength);
+        getActor().createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), ropeLength);
     }
 }

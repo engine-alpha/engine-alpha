@@ -22,7 +22,7 @@ package ea.example.showcase.billard;
 import ea.FrameUpdateListener;
 import ea.Vector;
 import ea.actor.Circle;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 
 import java.awt.*;
 
@@ -34,18 +34,17 @@ public class Ball extends Circle implements FrameUpdateListener {
 
         setColor(Color.YELLOW);
         setBodyType(BodyType.DYNAMIC);
-
-        physics.setFriction(.5f);
-        physics.setRestitution(0);
+        setFriction(.5f);
+        setRestitution(0);
     }
 
     @Override
     public void onFrameUpdate(float deltaSeconds) {
-        if (physics.getVelocity().getLength() < 0.2f) {
-            physics.setVelocity(Vector.NULL);
+        if (getVelocity().getLength() < 0.2f) {
+            setVelocity(Vector.NULL);
         } else {
-            physics.applyForce(physics.getVelocity().negate().multiply(5));
-            physics.setTorque(physics.getTorque() * 0.5f);
+            applyForce(getVelocity().negate().multiply(5));
+            setTorque(getTorque() * 0.5f);
         }
     }
 }

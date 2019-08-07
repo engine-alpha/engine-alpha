@@ -87,8 +87,8 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
         setStateTransition(PlayerState.Midair, PlayerState.Falling);
         setStateTransition(PlayerState.Landing, PlayerState.Idle);
 
-        physics.setFriction(FRICTION);
-        physics.setRestitution(RESTITUTION);
+        setFriction(FRICTION);
+        setRestitution(RESTITUTION);
 
         setShapes("C0.5,0.3,0.3&C0.5,0.6,0.3");
 
@@ -106,7 +106,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             getLayer().add(weird)
         });*/
 
-        physics.setMass(MASS);
+        setMass(MASS);
 
         addCollisionListener(this);
     }
@@ -115,15 +115,15 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
      * Wird ausgeführt, wenn ein Sprungbefehl (W) angekommen ist.
      */
     public void tryJumping() {
-        if (physics.isGrounded()) {
-            physics.applyImpulse(new Vector(0, JUMP_FORCE));
+        if (isGrounded()) {
+            applyImpulse(new Vector(0, JUMP_FORCE));
             setState(PlayerState.JumpingUp);
         } else if (!didDoubleJump && gameData.getMana() >= DOUBLE_JUMP_COST && !getCurrentState().equals("smashing")) {
             // Double Jump!
             didDoubleJump = true;
             gameData.consumeMana(DOUBLE_JUMP_COST);
-            physics.setVelocity(new Vector(physics.getVelocity().x, 0));
-            physics.applyImpulse(new Vector(0, JUMP_FORCE * 0.8f));
+            setVelocity(new Vector(getVelocity().x, 0));
+            applyImpulse(new Vector(0, JUMP_FORCE * 0.8f));
             setState(PlayerState.JumpingUp);
         }
     }
@@ -169,7 +169,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
 
     @Override
     public void onFrameUpdate(float deltaSeconds) {
-        Vector velocity = physics.getVelocity();
+        Vector velocity = getVelocity();
         gameData.setPlayerVelocity(velocity.getLength());
 
         // kümmere dich um die horizontale Bewegung
@@ -178,22 +178,22 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
 
         if (desiredVelocity == 0) {
             impulse = 0;
-            physics.setVelocity(new Vector(velocity.x * 0.95f, velocity.y));
+            setVelocity(new Vector(velocity.x * 0.95f, velocity.y));
         } else {
             impulse = (desiredVelocity - velocity.x) * 4;
-            physics.applyForce(new Vector(impulse, 0));
+            applyForce(new Vector(impulse, 0));
         }
 
         if (rocketMode && (gameData.getMana() > 0 || GOD_MODE)) {
             gameData.consumeMana(ROCKETCOST_PER_FRAME);
-            physics.applyImpulse(new Vector(0, 5));
+            applyImpulse(new Vector(0, 5));
 
             Particle particle = new Particle(0.1f, .5f);
-            particle.position.set(position.getCenter().subtract(new Vector((float) Math.random() * 0.1f, .45f)));
+            particle.setPosition(getCenter().subtract(new Vector((float) Math.random() * 0.1f, .45f)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
             particle.getFrameUpdateListeners().add(new ValueAnimator<>(.25f, value -> particle.setColor(new Color(255, value, 0)), new LinearInteger(0, 255)));
-            particle.addMountListener(e -> particle.physics.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
+            particle.addMountListener(e -> particle.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
             particle.addCollisionListener((e) -> {
                 if (e.getColliding() instanceof Platform) {
                     Platform platform = (Platform) e.getColliding();
@@ -230,11 +230,11 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
                 break;
         }
 
-        physics.applyForce(smashForce);
+        applyForce(smashForce);
 
-        if (position.getY() < BOTTOM_OUT) {
-            position.set(0, 0);
-            physics.setVelocity(Vector.NULL);
+        if (getY() < BOTTOM_OUT) {
+            resetMovement();
+            setPosition(0, 0);
             setState(PlayerState.Falling);
         }
     }
@@ -265,9 +265,6 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             case KeyEvent.VK_SPACE:
             case KeyEvent.VK_W: // Sprungbefehl
                 tryJumping();
-                break;
-            case KeyEvent.VK_C:
-                physics.setVelocity(physics.getVelocity());
                 break;
             case KeyEvent.VK_SHIFT:
                 rocketMode = true;
@@ -312,7 +309,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
     public void onCollision(CollisionEvent<Actor> collisionEvent) {
         if (collisionEvent.getColliding() instanceof Platform) {
             Platform platform = (Platform) collisionEvent.getColliding();
-            if (physics.getVelocity().y > 0 || ignoredPlatformForCollision.contains(platform)) {
+            if (getVelocity().y > 0 || ignoredPlatformForCollision.contains(platform)) {
                 ignoredPlatformForCollision.add(platform);
                 collisionEvent.ignoreCollision();
             }
@@ -321,13 +318,13 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
         boolean falling = getCurrentState() == PlayerState.Falling;
         boolean smashing = getCurrentState() == PlayerState.Smashing;
 
-        if ((falling || smashing) && physics.isGrounded()) {
+        if ((falling || smashing) && isGrounded()) {
             setState(PlayerState.Landing);
             smashForce = Vector.NULL;
 
             if (smashing) {
                 Vector originalOffset = getPhysicsHandler().getWorldHandler().getLayer().getParent().getCamera().getOffset();
-                Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * physics.getVelocity().y);
+                Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * getVelocity().y);
                 ValueAnimator<Float> valueAnimator = new ValueAnimator<>(.1f, y -> getLayer().getParent().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator);
                 getLayer().getFrameUpdateListeners().add(valueAnimator);
                 valueAnimator.addCompletionListener(value -> getLayer().getFrameUpdateListeners().remove(valueAnimator));
@@ -339,8 +336,8 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             Game.enqueue(() -> {
                 for (int i = 0; i < 100; i++) {
                     Particle particle = new Particle(Random.nextFloat() * .02f + .02f, .5f);
-                    particle.position.set(position.getCenter().add(0, -32));
-                    particle.addMountListener(e -> particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f)));
+                    particle.setPosition(getCenter().add(0, -32));
+                    particle.addMountListener(e -> particle.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f)));
                     particle.setColor(Color.GRAY);
                     particle.setLayerPosition(-1);
 

@@ -50,12 +50,12 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
         getFrameUpdateListeners().add(this);
 
         Animation animation = Animation.createFromAnimatedGif("game-assets/jump/fx_explosion_b_anim.gif", 1, 1);
-        animation.position.set(200, 200);
+        animation.setPosition(200, 200);
         //animation.setOneTimeOnly();
         add(animation);
 
         Text text = new Text("Hallo!");
-        text.position.set(-100, -100);
+        text.setPosition(-100, -100);
         text.setColor(Color.MAGENTA);
         add(text);
 
@@ -85,10 +85,10 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     public void onKeyDown(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_RIGHT:
-                rectangle.position.move(50, 0);
+                rectangle.move(50, 0);
                 break;
             case KeyEvent.VK_LEFT:
-                rectangle.position.move(-50, 0);
+                rectangle.move(-50, 0);
                 break;
             case KeyEvent.VK_C:
                 character.setState("midair");

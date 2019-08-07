@@ -67,14 +67,14 @@ public class Showcases extends Scene {
         public TextBox(String content, Supplier<Scene> sceneCreator, float x, float y) {
             box = new Rectangle(BOX_WIDTH, BOX_HEIGHT);
             box.setBorderRadius(1f);
-            box.position.set(x, y);
+            box.setPosition(x, y);
             text = new Text(content, 24);
             text.setStyle(Font.BOLD);
             text.setColor(Color.BLACK);
             box.setLayerPosition(0);
             text.setLayerPosition(1);
-            text.position.set(x, y);
-            text.position.move(20, 10);
+            text.setPosition(x, y);
+            text.move(20, 10);
 
             this.sceneCreator = sceneCreator;
             updateUI();
@@ -140,8 +140,8 @@ public class Showcases extends Scene {
         Text subtitle = new Text("Knopfdruck startet Demo. Escape-Taste bringt dich ins Menü zurück", 24);
         subtitle.setColor(Color.GRAY);
 
-        title.position.set(-500, 100);
-        subtitle.position.set(-500, 50);
+        title.setPosition(-500, 100);
+        subtitle.setPosition(-500, 50);
 
         add(title, subtitle);
     }

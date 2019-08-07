@@ -2,7 +2,7 @@ package ea.internal.physics;
 
 import ea.Vector;
 import ea.actor.Actor;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 import ea.internal.annotations.Internal;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.MassData;
@@ -44,13 +44,13 @@ public class BodyHandler extends PhysicsHandler {
      * Erstellt einen neuen Body-Handler
      */
     @Internal
-    public BodyHandler(Actor actor, ProxyData proxyData, WorldHandler worldHandler) {
+    public BodyHandler(Actor actor, PhysicsData physicsData, WorldHandler worldHandler) {
         super(actor);
 
         this.worldHandler = worldHandler;
-        this.body = proxyData.createBody(worldHandler, actor);
+        this.body = physicsData.createBody(worldHandler, actor);
 
-        setType(proxyData.getType());
+        setType(physicsData.getType());
     }
 
     public Body getBody() {
@@ -83,13 +83,10 @@ public class BodyHandler extends PhysicsHandler {
     public boolean contains(Vector vector) {
         Vec2 point = vector.toVec2();
 
-        Fixture current = body.m_fixtureList;
-        while (current != null) {
-            if (current.testPoint(point)) {
+        for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
+            if (fixture.testPoint(point)) {
                 return true;
             }
-
-            current = current.m_next;
         }
 
         return false;
@@ -106,21 +103,19 @@ public class BodyHandler extends PhysicsHandler {
     }
 
     @Override
-    public void rotateBy(float radians) {
+    public void rotateBy(float degree) {
         synchronized (worldHandler) {
             worldHandler.assertNoWorldStep();
 
-            body.setTransform(body.getPosition(), body.getAngle() + radians);
+            body.setTransform(body.getPosition(), body.getAngle() + (float) Math.toRadians(degree));
         }
     }
 
     @Override
     public void setDensity(float density) {
         synchronized (worldHandler) {
-            Fixture fixture = body.getFixtureList();
-            while (fixture != null) {
+            for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
                 fixture.setDensity(density);
-                fixture = fixture.getNext();
             }
         }
     }
@@ -133,10 +128,8 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void setFriction(float friction) {
         synchronized (worldHandler) {
-            Fixture fixture = body.getFixtureList();
-            while (fixture != null) {
+            for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
                 fixture.setFriction(friction);
-                fixture = fixture.getNext();
             }
         }
     }
@@ -149,10 +142,8 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void setRestitution(float elasticity) {
         synchronized (worldHandler) {
-            Fixture current = body.m_fixtureList;
-            while (current != null) {
-                current.setRestitution(elasticity);
-                current = current.m_next;
+            for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
+                fixture.setRestitution(elasticity);
             }
         }
     }
@@ -216,33 +207,30 @@ public class BodyHandler extends PhysicsHandler {
             body.setAwake(true);
             body.setGravityScale(type.getDefaultGravityScale());
 
-            Fixture current = this.body.m_fixtureList;
-            while (current != null) {
-                current.m_isSensor = type.isSensorType();
+            for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
+                fixture.m_isSensor = type.isSensorType();
 
                 switch (type) {
-                    case PASSIVE:
-                        current.m_filter.categoryBits = WorldHandler.CATEGORY_PASSIVE;
-                        current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
+                    case SENSOR:
+                        fixture.m_filter.categoryBits = WorldHandler.CATEGORY_PASSIVE;
+                        fixture.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
                         break;
                     case STATIC:
-                        current.m_filter.categoryBits = WorldHandler.CATEGORY_STATIC;
-                        current.m_filter.maskBits = DEFAULT_MASK_BITS;
+                        fixture.m_filter.categoryBits = WorldHandler.CATEGORY_STATIC;
+                        fixture.m_filter.maskBits = DEFAULT_MASK_BITS;
                         break;
                     case DYNAMIC:
                     case KINEMATIC:
-                        current.m_filter.categoryBits = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
-                        current.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
+                        fixture.m_filter.categoryBits = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
+                        fixture.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
                         break;
                     case PARTICLE:
-                        current.m_filter.categoryBits = WorldHandler.CATEGORY_PARTICLE;
-                        current.m_filter.maskBits = WorldHandler.CATEGORY_STATIC;
+                        fixture.m_filter.categoryBits = WorldHandler.CATEGORY_PARTICLE;
+                        fixture.m_filter.maskBits = WorldHandler.CATEGORY_STATIC;
                         break;
                     default:
                         throw new RuntimeException("Unknown body type: " + type);
                 }
-
-                current = current.m_next;
             }
         }
     }
@@ -305,11 +293,9 @@ public class BodyHandler extends PhysicsHandler {
         bodyBounds.upperBound.x = -Float.MAX_VALUE;
         bodyBounds.upperBound.y = -Float.MAX_VALUE;
 
-        Fixture current = body.m_fixtureList;
-        while (current != null) {
+        for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
             // TODO Include chain shapes (more than one child)
-            bodyBounds.combine(bodyBounds, current.getAABB(0));
-            current = current.m_next;
+            bodyBounds.combine(bodyBounds, fixture.getAABB(0));
         }
 
         return bodyBounds;
@@ -355,45 +341,30 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void setShapes(Supplier<List<Shape>> shapes) {
         synchronized (worldHandler) {
-            //remove all fixtures from body
-            ProxyData proxyData = this.getProxyData();
-            List<Fixture> fixtures = fixtureList();
-            for (Fixture fixture : fixtures) {
+            PhysicsData physicsData = this.getPhysicsData();
+
+            for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
                 body.destroyFixture(fixture);
             }
 
-            //Add new fixtures to body
-            FixtureDef fixtureDef = proxyData.createPlainFixtureDef();
-            List<Shape> shapeList = shapes.get();
-            for (Shape shape : shapeList) {
+            FixtureDef fixtureDef = physicsData.createPlainFixtureDef();
+            for (Shape shape : shapes.get()) {
                 fixtureDef.shape = shape;
                 body.createFixture(fixtureDef);
             }
         }
     }
 
-    private List<Fixture> fixtureList() {
-        final List<Fixture> ret = new ArrayList<>();
-        Fixture current = body.m_fixtureList;
-        while (current != null) {
-            ret.add(current);
-            current = current.m_next;
-        }
-        return ret;
-    }
-
     @Override
     @Internal
-    public ProxyData getProxyData() {
+    public PhysicsData getPhysicsData() {
         final List<Shape> shapeList = new ArrayList<>();
 
-        Fixture current = body.m_fixtureList;
-        while (current != null) {
-            shapeList.add(current.m_shape);
-            current = current.m_next;
+        for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
+            shapeList.add(fixture.m_shape);
         }
 
-        return new ProxyData(body, () -> shapeList, getType());
+        return PhysicsData.fromBody(body, () -> shapeList, getType());
     }
 
     @Override

@@ -20,7 +20,6 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
-import ea.handle.BodyType;
 import ea.internal.annotations.API;
 
 import java.awt.Color;

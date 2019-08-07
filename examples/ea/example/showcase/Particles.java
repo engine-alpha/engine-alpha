@@ -20,6 +20,7 @@
 package ea.example.showcase;
 
 import ea.*;
+import ea.actor.BodyType;
 import ea.actor.Circle;
 import ea.actor.Particle;
 import ea.actor.Rectangle;
@@ -27,7 +28,6 @@ import ea.animation.AnimationMode;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.ReverseEaseFloat;
-import ea.handle.BodyType;
 import ea.input.KeyListener;
 
 import java.awt.Color;
@@ -49,35 +49,35 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         Game.setTitle("Particles");
 
         Rectangle left = new Rectangle(200, 10);
-        left.position.set(-Showcases.WIDTH / 6 - 150, -50);
-        left.position.rotate((float) Math.toRadians(-21));
+        left.setPosition(-Showcases.WIDTH / 6 - 150, -50);
+        left.rotateBy(-21);
         left.setBodyType(BodyType.STATIC);
         left.setColor(Color.white);
-        left.physics.setRestitution(15f);
+        left.setRestitution(15f);
         add(left);
 
         Rectangle right = new Rectangle(200, 10);
-        right.position.set(+Showcases.WIDTH / 6, 0);
-        right.position.rotate((float) Math.toRadians(45));
+        right.setPosition(+Showcases.WIDTH / 6, 0);
+        right.rotateBy(45);
         right.setBodyType(BodyType.STATIC);
         right.setColor(Color.white);
-        right.physics.setRestitution(15f);
+        right.setRestitution(15f);
         add(right);
 
         getKeyListeners().add(this);
         getFrameUpdateListeners().add(new PeriodicTask(1, () -> createCircle(getMousePosition(), Color.YELLOW)));
 
         Rectangle r1 = new Rectangle(Showcases.WIDTH, 10);
-        r1.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
+        r1.setPosition(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
 
         Rectangle r2 = new Rectangle(10, Showcases.HEIGHT);
-        r2.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
+        r2.setPosition(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
 
         Rectangle r3 = new Rectangle(Showcases.WIDTH, 10);
-        r3.position.set(-Showcases.WIDTH / 2, Showcases.HEIGHT / 2 - 10);
+        r3.setPosition(-Showcases.WIDTH / 2, Showcases.HEIGHT / 2 - 10);
 
         Rectangle r4 = new Rectangle(10, Showcases.HEIGHT);
-        r4.position.set(Showcases.WIDTH / 2 - 10, -Showcases.HEIGHT / 2);
+        r4.setPosition(Showcases.WIDTH / 2 - 10, -Showcases.HEIGHT / 2);
 
         add(r1, r2, r3, r4);
 
@@ -96,7 +96,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         setGravity(new Vector(0, -600));
         getCamera().setZoom(1);
 
-        this.getFrameUpdateListeners().add(new ValueAnimator<>(5, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), AnimationMode.REPEATED));
+        this.getFrameUpdateListeners().add(new ValueAnimator<>(5, left::setX, new ReverseEaseFloat(left.getX(), left.getX() + 200), AnimationMode.REPEATED));
     }
 
     private void createCircle(Vector position, Color color) {
@@ -104,16 +104,16 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         FrameUpdateListener emitter = new PeriodicTask(0.01f, () -> {
             Particle particle = new Particle(3, .5f);
-            particle.position.set(circle.position.getCenter().subtract(new Vector(1, 1)));
+            particle.setPosition(circle.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
-            particle.addMountListener(event -> particle.physics.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
+            particle.addMountListener(event -> particle.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
             particle.getFrameUpdateListeners().add(new ValueAnimator<>(.25f, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255)));
 
             add(particle);
         });
 
-        circle.position.set(position);
+        circle.setPosition(position);
         circle.setBodyType(BodyType.DYNAMIC);
         circle.setColor(color);
         circle.getFrameUpdateListeners().add(emitter);

@@ -2,7 +2,7 @@ package ea.internal.physics;
 
 import ea.Vector;
 import ea.actor.Actor;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
@@ -86,13 +86,13 @@ public abstract class PhysicsHandler {
     /**
      * Rotiert das Ziel-Objekt um einen festen Winkel.
      *
-     * @param radians Der Winkel, um den das Ziel-Objekt gedreht werden soll (in <i>Radians</i>).
+     * @param degree Der Winkel, um den das Ziel-Objekt gedreht werden soll (in <i>Grad</i>).
      *                <ul>
      *                <li>Werte &gt; 0 : Drehung gegen Uhrzeigersinn</li>
      *                <li>Werte &lt; 0 : Drehung im Uhrzeigersinn</li>
      *                </ul>
      */
-    public abstract void rotateBy(float radians);
+    public abstract void rotateBy(float degree);
 
     public abstract void setDensity(float density);
 
@@ -241,5 +241,5 @@ public abstract class PhysicsHandler {
      * @return der gegenwärtige physikalische Zustand des Raum-Objekts in Proxy-Daten.
      */
     @Internal
-    public abstract ProxyData getProxyData();
+    public abstract PhysicsData getPhysicsData();
 }

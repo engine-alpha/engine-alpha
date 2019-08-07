@@ -3,7 +3,7 @@ package ea.example.showcase.dude;
 import ea.actor.Tile;
 import ea.actor.TileContainer;
 import ea.actor.TileMap;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 
 /**
  * Einfache Plattform. Herzlichen Dank an <a href="https://www.gameart2d.com/free-graveyard-platformer-tileset.html">Billard
@@ -29,9 +29,8 @@ public class Platform extends TileContainer {
         setRightTile(TileMap.createFromImage(basePath + "platform_r.png"));
 
         setBodyType(BodyType.STATIC);
-
-        physics.setFriction(FRICTION);
-        physics.setRestitution(0);
+        setFriction(FRICTION);
+        setRestitution(0);
     }
 
     private void setLeftTile(Tile tile) {

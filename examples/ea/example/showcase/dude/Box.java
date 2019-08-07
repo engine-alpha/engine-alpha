@@ -21,7 +21,7 @@ package ea.example.showcase.dude;
 
 import ea.Random;
 import ea.actor.Image;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 
 public class Box extends Image {
 
@@ -37,8 +37,8 @@ public class Box extends Image {
         super(getBoxPath(type), SIZE, SIZE);
 
         setBodyType(BodyType.DYNAMIC);
-        physics.setMass(MASS_IN_KG);
-        physics.setRestitution(RESTITUTION);
+        setMass(MASS_IN_KG);
+        setRestitution(RESTITUTION);
     }
 
     public static String getBoxPath(int type) {

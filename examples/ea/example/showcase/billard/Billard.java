@@ -44,13 +44,13 @@ public class Billard extends ShowcaseDemo implements KeyListener {
 
         for (int i = 0; i < 10; i++) {
             Ball ball = new Ball();
-            ball.position.set(calculatePosition(i));
+            ball.setPosition(calculatePosition(i));
             add(ball);
         }
 
         whiteBall = new Ball();
         whiteBall.setColor(Color.WHITE);
-        whiteBall.position.set(-200, 0);
+        whiteBall.setPosition(-200, 0);
 
         add(whiteBall);
 
@@ -87,7 +87,7 @@ public class Billard extends ShowcaseDemo implements KeyListener {
     @Override
     public void onKeyDown(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            whiteBall.physics.applyImpulse(new Vector(1000, (Random.nextFloat() - .5f) * 100));
+            whiteBall.applyImpulse(new Vector(1000, (Random.nextFloat() - .5f) * 100));
         }
     }
 }

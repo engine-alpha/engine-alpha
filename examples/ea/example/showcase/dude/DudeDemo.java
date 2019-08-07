@@ -6,7 +6,7 @@ import ea.actor.TileContainer;
 import ea.actor.TileMap;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 import ea.input.KeyListener;
 
 import java.awt.event.KeyEvent;
@@ -32,8 +32,8 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         addLayer(new HUD(gameData));
 
         character = new PlayerCharacter(gameData);
-        character.position.set(0, 0);
-        character.physics.setRotationLocked(true);
+        character.setPosition(0, 0);
+        character.setRotationLocked(true);
         character.setBodyType(BodyType.DYNAMIC);
 
         add(character);
@@ -63,7 +63,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin();
-            coin.position.set(6 + i, 6);
+            coin.setPosition(6 + i, 6);
             coin.addCollisionListener(character, coin);
 
             add(coin);
@@ -71,7 +71,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         for (int j = 0; j < 30; j++) {
             ManaPickup manaPickup = new ManaPickup();
-            manaPickup.position.set(-j, 1);
+            manaPickup.setPosition(-j, 1);
             manaPickup.addCollisionListener(character, manaPickup);
 
             add(manaPickup);
@@ -84,7 +84,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         middleBackground.setLayerPosition(-200);
 
         Image backgroundImage = new Image("game-assets/dude/background/snow.png", 25f);
-        backgroundImage.position.set(-getVisibleArea().width / 2, -getVisibleArea().height / 2);
+        backgroundImage.setPosition(-getVisibleArea().width / 2, -getVisibleArea().height / 2);
         middleBackground.add(backgroundImage);
 
         Layer furtherBackground = new Layer();
@@ -93,7 +93,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         Image moon = new Image("game-assets/dude/moon.png", 1, 1);
         furtherBackground.add(moon);
-        moon.position.set(300, 300);
+        moon.setPosition(300, 300);
 
         addLayer(middleBackground);
         addLayer(furtherBackground);
@@ -114,14 +114,14 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         for (int i = 0; i < NUM_TILES; i++) {
             cloudTiles.setTile(i, 0, TileMap.createFromImage(tilePath));
         }
-        cloudTiles.position.set(xOffset, -getVisibleArea().height / 2 + 5);
+        cloudTiles.setPosition(xOffset, -getVisibleArea().height / 2 + 5);
         clouds.add(cloudTiles);
         addLayer(clouds);
     }
 
     private void makePlatform(int length, float pX, float pY) {
         Platform platform = new Platform(length);
-        platform.position.set(pX, pY);
+        platform.setPosition(pX, pY);
 
         add(platform);
     }
@@ -129,7 +129,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     private void makeBoxes(float pX, float pY, int amount) {
         for (int i = 0; i < amount; i++) {
             Box box = new Box();
-            box.position.set(pX + i * 80, pY);
+            box.setPosition(pX + i * 80, pY);
 
             add(box);
         }

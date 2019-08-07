@@ -238,7 +238,7 @@ public class Layer {
                     throw new IllegalArgumentException("Ein Actor kann nur an einem Layer gleichzeitig angemeldet sein");
                 }
 
-                actor.setPhysicsHandler(new BodyHandler(actor, actor.getPhysicsHandler().getProxyData(), worldHandler));
+                actor.setPhysicsHandler(new BodyHandler(actor, actor.getPhysicsHandler().getPhysicsData(), worldHandler));
 
                 this.actors.add(actor);
             }
@@ -251,7 +251,7 @@ public class Layer {
             for (Actor actor : actors) {
                 this.actors.remove(actor);
 
-                ProxyData proxyData = actor.getPhysicsHandler().getProxyData();
+                PhysicsData physicsData = actor.getPhysicsHandler().getPhysicsData();
                 PhysicsHandler physicsHandler = actor.getPhysicsHandler();
                 if (physicsHandler.getWorldHandler() == null) {
                     return;
@@ -260,7 +260,7 @@ public class Layer {
                 Body body = physicsHandler.getBody();
                 worldHandler.removeAllInternalReferences(body);
                 worldHandler.getWorld().destroyBody(body);
-                actor.setPhysicsHandler(new NullHandler(actor, proxyData));
+                actor.setPhysicsHandler(new NullHandler(actor, physicsData));
             }
         });
     }
