@@ -8,9 +8,11 @@ import ea.input.KeyListener;
 import ea.input.MouseButton;
 import ea.input.MouseClickListener;
 import ea.input.MouseWheelListener;
+import ea.internal.annotations.API;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.Map;
 
 public class EduScene extends Scene {
     public static final String MAINLAYER_NAME = "Hauptebene";
@@ -21,27 +23,27 @@ public class EduScene extends Scene {
     /**
      * Die Liste aller TICKER-Aufgaben
      */
-    private final HashMap<Ticker, FrameUpdateListener> sceneTickers = new HashMap<>();
+    private final Map<Ticker, FrameUpdateListener> sceneTickers = new HashMap<>();
 
     /**
      * Die Liste aller TASTEN-Aufgaben
      */
-    private final HashMap<TastenReagierbar, KeyListener> sceneKeyListeners = new HashMap<>();
+    private final Map<TastenReagierbar, KeyListener> sceneKeyListeners = new HashMap<>();
 
     /**
      * Die Liste aller KLICK-Aufgaben
      */
-    private final HashMap<MausKlickReagierbar, MouseClickListener> sceneMouseClickListeners = new HashMap<>();
+    private final Map<MausKlickReagierbar, MouseClickListener> sceneMouseClickListeners = new HashMap<>();
 
     /**
      * Liste aller Framewise Update Aufträge
      */
-    private final HashMap<FrameUpdateReagierbar, FrameUpdateListener> sceneFrameUpdateListeners = new HashMap<>();
+    private final Map<FrameUpdateReagierbar, FrameUpdateListener> sceneFrameUpdateListeners = new HashMap<>();
 
     /**
      * Liste aller MouseWheelListener
      */
-    private final HashMap<MausRadReagierbar, MouseWheelListener> sceneMouseWheelListeners = new HashMap<>();
+    private final Map<MausRadReagierbar, MouseWheelListener> sceneMouseWheelListeners = new HashMap<>();
 
     private boolean exploreMode = false;
 
@@ -66,46 +68,44 @@ public class EduScene extends Scene {
 
     private Layer activeLayer;
 
-    private FrameUpdateListener exploreModeFrameUpdateListener = deltaSeconds -> {
-        if (!exploreMode) {
-            return;
-        }
-
-        float dX = 0, dY = 0;
-        if (Game.isKeyPressed(KeyEvent.VK_LEFT)) {
-            dX = -EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
-        } else if (Game.isKeyPressed(KeyEvent.VK_RIGHT)) {
-            dX = EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
-        }
-
-        if (Game.isKeyPressed(KeyEvent.VK_UP)) {
-            dY = EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
-        } else if (Game.isKeyPressed(KeyEvent.VK_DOWN)) {
-            dY = -EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
-        }
-
-        Vector move = new Vector(dX, dY).multiply(deltaSeconds);
-
-        getCamera().move(move.x, move.y);
-    };
-
-    private MouseWheelListener exploreModeMouseWheelListener = event -> {
-        if (!exploreMode) {
-            return;
-        }
-        float factor = event.getPreciseWheelRotation() > 0 ? 1 + .3f * event.getPreciseWheelRotation() : 1 / (1 - .3f * event.getPreciseWheelRotation());
-        float newzoom = getCamera().getZoom() * factor;
-        if (newzoom <= 0) {
-            return;
-        }
-        getCamera().setZoom(newzoom);
-    };
-
     public EduScene() {
         activeLayer = getMainLayer();
         layerHashMap.put(MAINLAYER_NAME, getMainLayer());
-        activeLayer.getFrameUpdateListeners().add(exploreModeFrameUpdateListener);
-        activeLayer.getMouseWheelListeners().add(exploreModeMouseWheelListener);
+
+        activeLayer.getFrameUpdateListeners().add(deltaSeconds -> {
+            if (!exploreMode) {
+                return;
+            }
+
+            float dX = 0, dY = 0;
+            if (Game.isKeyPressed(KeyEvent.VK_LEFT)) {
+                dX = -EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+            } else if (Game.isKeyPressed(KeyEvent.VK_RIGHT)) {
+                dX = EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+            }
+
+            if (Game.isKeyPressed(KeyEvent.VK_UP)) {
+                dY = EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+            } else if (Game.isKeyPressed(KeyEvent.VK_DOWN)) {
+                dY = -EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+            }
+
+            Vector move = new Vector(dX, dY).multiply(deltaSeconds);
+
+            getCamera().move(move.x, move.y);
+        });
+
+        activeLayer.getMouseWheelListeners().add(event -> {
+            if (!exploreMode) {
+                return;
+            }
+            float factor = event.getPreciseWheelRotation() > 0 ? 1 + .3f * event.getPreciseWheelRotation() : 1 / (1 - .3f * event.getPreciseWheelRotation());
+            float newzoom = getCamera().getZoom() * factor;
+            if (newzoom <= 0) {
+                return;
+            }
+            getCamera().setZoom(newzoom);
+        });
 
         setGravity(new Vector(0, -9.81f));
     }
@@ -120,11 +120,12 @@ public class EduScene extends Scene {
 
     /* _____________________________ Layers, Addition & Co  _____________________________ */
 
-    public String[] layerNames() {
+    @API
+    public String[] getLayerNames() {
         return (String[]) layerHashMap.keySet().toArray();
     }
 
-    private final void assertLayerHashMapContains(String key, boolean shouldContain) {
+    private void assertLayerHashMapContains(String key, boolean shouldContain) {
         if (shouldContain != layerHashMap.containsKey(key)) {
             throw new IllegalArgumentException(shouldContain ? "Diese Edu-Scene enthält keine Ebene mit dem Namen " + key : "Diese Edu-Scene enthält bereits eine Ebene mit dem Namen " + key);
         }
@@ -232,7 +233,7 @@ public class EduScene extends Scene {
         removeListener(o, sceneMouseWheelListeners, activeLayer.getMouseWheelListeners());
     }
 
-    private static <K, V> void removeListener(K eduListener, HashMap<K, V> transitionHashMap, EventListeners<V> engineListeners) {
+    private static <K, V> void removeListener(K eduListener, Map<K, V> transitionHashMap, EventListeners<V> engineListeners) {
         V fromHashMap = transitionHashMap.get(eduListener);
         if (fromHashMap == null) {
             // Wert war nicht in Liste enthalten
@@ -242,7 +243,7 @@ public class EduScene extends Scene {
         transitionHashMap.remove(eduListener);
     }
 
-    private static <K, V> void addListener(K eduListener, HashMap<K, V> transitionHashMap, EventListeners<V> engineListeners, V engineListener) {
+    private static <K, V> void addListener(K eduListener, Map<K, V> transitionHashMap, EventListeners<V> engineListeners, V engineListener) {
         transitionHashMap.put(eduListener, engineListener);
         engineListeners.add(engineListener);
     }
