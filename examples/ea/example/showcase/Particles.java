@@ -30,7 +30,7 @@ import ea.animation.interpolation.ReverseEaseFloat;
 import ea.handle.BodyType;
 import ea.input.KeyListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 @SuppressWarnings ( "MagicNumber" )
@@ -64,7 +64,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
 
         this.addKeyListener(this);
 
-        addFrameUpdateListener(new PeriodicTask(100, () -> createCircle(getMousePosition(), Color.YELLOW)));
+        addFrameUpdateListener(new PeriodicTask(1000, () -> createCircle(getMousePosition(), Color.YELLOW)));
 
         left.setBodyType(BodyType.STATIC);
         right.setBodyType(BodyType.STATIC);
@@ -105,7 +105,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
     private void createCircle(Vector position, Color color) {
         Circle k = new Circle(6);
 
-        FrameUpdateListener emitter = new PeriodicTask(10, () -> {
+        FrameUpdateListener emitter = new PeriodicTask(500, () -> {
             Particle particle = new Particle(3, 500);
             particle.position.set(k.position.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);
@@ -114,7 +114,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
             ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
             animator.addCompletionListener((value) -> {
                 removeFrameUpdateListener(animator);
-                particle.removeFromScene();
+                particle.remove();
             });
 
             addFrameUpdateListener(animator);
@@ -123,14 +123,18 @@ public class Particles extends ShowcaseDemo implements KeyListener {
             particle.physics.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f)));
         });
 
-        addFrameUpdateListener(emitter);
-        k.addUnmountListener(e -> removeFrameUpdateListener(emitter));
+        k.addMountListener(e -> k.getLayer().addFrameUpdateListener(emitter));
+        k.addUnmountListener(e -> {
+            if (k.getLayer() != null) {
+                k.getLayer().removeFrameUpdateListener(emitter);
+            }
+        });
 
         k.position.set(position);
-        k.setColor(color);
-        add(k);
-
         k.setBodyType(BodyType.DYNAMIC);
+        k.setColor(color);
+
+        add(k);
     }
 
     @Override

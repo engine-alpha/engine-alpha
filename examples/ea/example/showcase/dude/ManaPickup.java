@@ -17,7 +17,7 @@ public class ManaPickup extends Animation implements CollisionListener<PlayerCha
     public void onCollision(CollisionEvent<PlayerCharacter> collisionEvent) {
         // Ich wurde aufgesammelt!
         collisionEvent.getColliding().gotItem(Item.ManaPickup);
-        removeFromScene();
+        remove();
     }
 
     @Override

@@ -42,6 +42,13 @@ public class Particle extends Circle implements FrameUpdateListener {
 
         this.setBodyType(BodyType.PARTICLE);
         this.life = life;
+
+        addMountListener(e -> getLayer().addFrameUpdateListener(this));
+        addUnmountListener(e -> {
+            if (getLayer() != null) {
+                getLayer().removeFrameUpdateListener(this);
+            }
+        });
     }
 
     @Override
@@ -54,7 +61,7 @@ public class Particle extends Circle implements FrameUpdateListener {
         this.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
 
         if (isDead()) {
-            removeFromScene();
+            remove();
         }
     }
 

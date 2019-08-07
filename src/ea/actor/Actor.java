@@ -526,7 +526,7 @@ public abstract class Actor {
         return worldHandler.getLayer();
     }
 
-    public void removeFromScene() {
+    public void remove() {
         Layer layer = getLayer();
         if (layer != null) {
             layer.remove(this);

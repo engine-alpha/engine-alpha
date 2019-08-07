@@ -127,10 +127,10 @@ public class WorldHandler implements ContactListener {
                 // https://gamedev.stackexchange.com/q/86609/38865
                 simulationAccumulator += timeToSimulate;
 
-                while (simulationAccumulator > 8) {
+                while (simulationAccumulator >= 8) {
                     simulationAccumulator -= 8;
 
-                    this.world.step(8 / 1000, 6, 3);
+                    this.world.step(8f / 1000, 6, 3);
                 }
             }
         }

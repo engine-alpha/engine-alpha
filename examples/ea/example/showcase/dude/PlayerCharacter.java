@@ -239,7 +239,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
             animator.addCompletionListener((value) -> {
                 value.removeListener();
-                particle.removeFromScene();
+                particle.remove();
             });
 
             addFrameUpdateListener(animator);
