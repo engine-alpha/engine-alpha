@@ -4,11 +4,11 @@ import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.internal.annotations.Internal;
-import ea.internal.graphics.AnimationFrame;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,74 +21,76 @@ import java.util.ArrayList;
  */
 public class Figur implements EduActor {
 
-    private final float scale;
+    public static final float DEFAULT_PIXEL_PRO_METER = 30f;
+    public static final int DEFAULT_FRAME_DURATION = 250;
 
     private final StatefulAnimation statefulAnimation;
+    private final float pixelProMeter;
+    private final float width, height;
 
     /**
      * Einführungskonstruktor. Erstellt eine Figur mit einem ersten Zustand.
      *
-     * @param zustandsName Der Name für den ersten Zustand.
-     * @param gifBildPfad  Pfad zu einem <b>GIF Bild</b>.
+     * @param pixelProMeter Die Anzahl an Pixel in der Zieldatei, die einem Meter in der Engine entsprechen
+     * @param zustandsName  Der Name für den ersten Zustand.
+     * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>.
      */
-    public Figur(float scale, String zustandsName, String gifBildPfad) {
-        statefulAnimation = new StatefulAnimation(ImageLoader.load(gifBildPfad).getWidth(), ImageLoader.load(gifBildPfad).getHeight());
+    public Figur(float pixelProMeter, String zustandsName, String gifBildPfad) {
+        assertPixelProMeter(pixelProMeter);
+        this.pixelProMeter = pixelProMeter;
+        statefulAnimation = new StatefulAnimation(width = ImageLoader.load(gifBildPfad).getWidth() / pixelProMeter, height = ImageLoader.load(gifBildPfad).getHeight() / pixelProMeter);
 
-        if (scale <= 0) {
-            throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
-        }
-
-        this.scale = scale;
         zustandHinzufuegenVonGIF(zustandsName, gifBildPfad);
         eduSetup();
     }
 
     public Figur(String zustandsName, String gifBildPfad) {
-        this(1f, zustandsName, gifBildPfad);
+        this(DEFAULT_PIXEL_PRO_METER, zustandsName, gifBildPfad);
     }
 
     /**
      * Einführungskonstruktor. Erstellt eine Figur mit einem ersten Zustand.
      *
+     * @param pixelProMeter   Die Anzahl an Pixel in der Zieldatei, die einem Meter in der Engine entsprechen
      * @param zustandsName    Der Name für den ersten Zustand.
      * @param spriteSheetPfad Pfad zu einem <b>Spritesheet</b>.
      * @param anzahlX         Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY         Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
-    public Figur(float scale, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        statefulAnimation = new StatefulAnimation(ImageLoader.load(spriteSheetPfad).getWidth() / anzahlX, ImageLoader.load(spriteSheetPfad).getHeight() / anzahlY);
-
-        if (scale <= 0) {
-            throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
-        }
-
-        this.scale = scale;
+    public Figur(float pixelProMeter, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        assertPixelProMeter(pixelProMeter);
+        this.pixelProMeter = pixelProMeter;
+        statefulAnimation = new StatefulAnimation(width = (ImageLoader.load(spriteSheetPfad).getWidth() / anzahlX) / pixelProMeter, height = (ImageLoader.load(spriteSheetPfad).getHeight() / anzahlY) / pixelProMeter);
         zustandHinzufuegenVonSpritesheet(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
         eduSetup();
     }
 
     public Figur(String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        this(1f, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
+        this(DEFAULT_PIXEL_PRO_METER, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
     }
 
     /**
      * Erstellt eine Figur mit einem ersten Zustand. Lädt dazu alle Bilder in einem Verzeichnis ein, die zu einem
      * bestimmten Präfix passen.
      *
+     * @param pixelProMeter   Die Anzahl an Pixel in der Zieldatei, die einem Meter in der Engine entsprechen
      * @param zustandName     Name für den ersten Zustand.
      * @param verzeichnisPfad Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
-    public Figur(float scale, String zustandName, String verzeichnisPfad, String praefix) {
-        statefulAnimation = new StatefulAnimation(getWidthHeightFromPrefixed(verzeichnisPfad, praefix, true), getWidthHeightFromPrefixed(verzeichnisPfad, praefix, false));
+    public Figur(float pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
+        assertPixelProMeter(pixelProMeter);
+        this.pixelProMeter = pixelProMeter;
+        statefulAnimation = new StatefulAnimation(width = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, true), height = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, false));
 
-        if (scale <= 0) {
-            throw new RuntimeException("Skalirungsfaktor muss >0 sein. War: " + scale);
-        }
-
-        this.scale = scale;
         zustandHinzufuegenNachPraefix(zustandName, verzeichnisPfad, praefix);
         eduSetup();
+    }
+
+    private static void assertPixelProMeter(float pixelProMeter) {
+        if (pixelProMeter <= 0) {
+            throw new IllegalArgumentException("Die Pixel-Pro-Meter-Eingabe muss positiv sein. War " + pixelProMeter);
+        }
     }
 
     private static final int getWidthHeightFromPrefixed(String directoryPath, String prefix, boolean width) {
@@ -127,8 +129,8 @@ public class Figur implements EduActor {
         if (!bildpfad.toLowerCase().endsWith(".gif")) {
             throw new RuntimeException("Der agegebene Bildpfad muss eine GIF-Datei sein und auf \".gif\" enden. " + "Der angegebene Bildpfad war " + bildpfad);
         }
-        Animation animation = Animation.createFromAnimatedGif(bildpfad, .3f, .3f);
-        addStateWithScaling(zustandsName, animation);
+        Animation animation = Animation.createFromAnimatedGif(bildpfad, width, height);
+        addState(zustandsName, animation);
     }
 
     /**
@@ -141,8 +143,8 @@ public class Figur implements EduActor {
      * @param anzahlY      Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
     public void zustandHinzufuegenVonSpritesheet(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
-        Animation animation = Animation.createFromSpritesheet(250, bildpfad, anzahlX, anzahlY, .3f, .3f);
-        addStateWithScaling(zustandsName, animation);
+        Animation animation = Animation.createFromSpritesheet(DEFAULT_FRAME_DURATION, bildpfad, anzahlX, anzahlY, width, height);
+        addState(zustandsName, animation);
     }
 
     /**
@@ -152,8 +154,8 @@ public class Figur implements EduActor {
      * @param bildpfade    Die Pfade der Animationsframes in korrekter Reihenfolge.
      */
     public void zustandHinzufuegenVonBildern(String zustandsName, String... bildpfade) {
-        Animation animation = Animation.createFromImages(250, .3f, .3f, bildpfade);
-        addStateWithScaling(zustandsName, animation);
+        Animation animation = Animation.createFromImages(DEFAULT_FRAME_DURATION, width, height, bildpfade);
+        addState(zustandsName, animation);
     }
 
     /**
@@ -165,7 +167,7 @@ public class Figur implements EduActor {
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
     public void zustandHinzufuegenNachPraefix(String zustandName, String verzeichnisPfad, String praefix) {
-        Animation animation = Animation.createFromImagesPrefix(Spiel.getActiveScene(), 250, .3f, .3f, verzeichnisPfad, praefix);
+        Animation animation = Animation.createFromImagesPrefix(Spiel.getActiveScene(), DEFAULT_FRAME_DURATION, width, height, verzeichnisPfad, praefix);
         statefulAnimation.addState(zustandName, animation);
     }
 
@@ -209,20 +211,8 @@ public class Figur implements EduActor {
         return statefulAnimation;
     }
 
-    private void addStateWithScaling(String stateName, Animation animation) {
-        if (scale != 1f) {
-            AnimationFrame[] standardFrames = animation.getFrames();
-            AnimationFrame[] resizedFrames = new AnimationFrame[standardFrames.length];
-            for (int i = 0; i < standardFrames.length; i++) {
-                resizedFrames[i] = new AnimationFrame(getScaledImage(standardFrames[i].getImage(), scale), standardFrames[i].getDuration());
-            }
-            if (statefulAnimation.hasState(stateName)) {
-                throw new IllegalArgumentException("Der Zustand " + stateName + " existiert bereits in dieser Figur");
-            }
-            statefulAnimation.addStateRaw(stateName, resizedFrames);
-        } else {
-            statefulAnimation.addState(stateName, animation);
-        }
+    private void addState(String stateName, Animation animation) {
+        statefulAnimation.addState(stateName, animation);
     }
 
     /**
