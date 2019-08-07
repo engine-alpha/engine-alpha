@@ -1,16 +1,22 @@
 package ea.edu;
 
 import ea.FrameUpdateListener;
+import ea.Layer;
 import ea.Scene;
 import ea.Vector;
+import ea.actor.Actor;
 import ea.input.*;
 
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class EduScene extends Scene implements KeyListener, MouseClickListener, FrameUpdateListener, MouseWheelListener {
+    public static final String MAINLAYER_NAME = "Hauptebene";
+
+    /* _____________________________ LISTENER LISTS _____________________________ */
 
     /**
      * Die Liste aller TICKER-Aufgaben
@@ -37,6 +43,9 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
      */
     private final ArrayList<MouseWheelAuftrag> sceneMouseWheelListeners = new ArrayList<>();
 
+
+    /* _____________________________ SCENE AND LAYER FIELDS _____________________________ */
+
     /**
      * Name der Scene. Default ist null.
      * Eine Scene mit Name wird nicht automatisch gelöscht.
@@ -51,14 +60,69 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         return sceneName;
     }
 
+    private final HashMap<String, Layer> layerHashMap = new HashMap<>();
+
+    private Layer activeLayer;
+
     public EduScene() {
+        activeLayer = getMainLayer();
+        layerHashMap.put(MAINLAYER_NAME, getMainLayer());
+
+        setGravity(new Vector(0, -9.81f));
+
+        //Listener Adding
         super.addFrameUpdateListener(this);
         super.addKeyListener(this);
         super.addMouseClickListener(this);
         super.addMouseWheelListener(this);
     }
 
-    /* Listener Addition & Removal */
+    public String[] layerNames() {
+        return (String[]) layerHashMap.keySet().toArray();
+    }
+
+    private final void assertLayerHashMapContains(String key, boolean shouldContain) {
+        if (shouldContain != layerHashMap.containsKey(key)) {
+            throw new IllegalArgumentException(shouldContain ? "Diese Edu-Scene enthält keine Ebene mit dem Namen " + key : "Diese Edu-Scene enthält bereits eine Ebene mit dem Namen " + key);
+        }
+    }
+
+    public void addLayer(String layerName, int layerPosition) {
+        assertLayerHashMapContains(layerName, false);
+
+        Layer layer = new Layer();
+        layer.setLayerPosition(layerPosition);
+        layerHashMap.put(layerName, layer);
+    }
+
+    public void setLayerParallax(String layerName, float px, float py, float pz) {
+        assertLayerHashMapContains(layerName, true);
+
+        Layer layer = layerHashMap.get(layerName);
+        layer.setParallaxPosition(px, py);
+        layer.setParallaxZoom(pz);
+    }
+
+    public void setActiveLayer(String layerName) {
+        assertLayerHashMapContains(layerName, true);
+
+        activeLayer = layerHashMap.get(layerName);
+    }
+
+    public void resetToMainLayer() {
+        setActiveLayer(MAINLAYER_NAME);
+    }
+
+    /**
+     * Fügt einen EduActor der Scene hinzu. Wird am derzeit aktiven Layer geadded.
+     *
+     * @param actor zu addender Actor
+     */
+    public void addEduActor(Actor actor) {
+        activeLayer.add(actor);
+    }
+
+    /* _____________________________ Listener Addition & Removal _____________________________ */
 
     public void addEduClickListener(Object client, boolean linksklick) {
         addToClientableArrayList(sceneKlickListeners, new KlickAuftrag(client, linksklick));

@@ -23,7 +23,7 @@ public interface EduActor {
      */
     @Internal
     default void eduSetup() {
-        Spiel.getActiveScene().add(getActor());
+        Spiel.getActiveScene().addEduActor(getActor());
 
         //Default Physics Setup für EDU Objekte
         getActor().physics.setRotationLocked(true);

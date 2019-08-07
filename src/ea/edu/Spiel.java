@@ -138,15 +138,16 @@ public class Spiel {
 
     private static EduScene activeScene;
 
+    @Internal
     static EduScene getActiveScene() {
         if (activeScene == null) {
             activeScene = new EduScene();
-            activeScene.setGravity(new Vector(0, -9.81f));
             new Thread(() -> Game.start(frame_width, frame_height, activeScene)).start();
         }
         return activeScene;
     }
 
+    @Internal
     static void setActiveScene(EduScene eduScene) {
         activeScene = eduScene;
         Game.transitionToScene(activeScene);
@@ -160,6 +161,7 @@ public class Spiel {
      *
      * @see #setzeSzene(String)
      */
+    @API
     public void benenneSzene(String name) {
         if (getActiveScene().getSceneName() != null) {
             Logger.error("EDU", "Die Szene hat bereits einen Namen: " + getActiveScene().getSceneName());
@@ -178,6 +180,7 @@ public class Spiel {
      * <li>Werden alle grafischen Objekte, die ab sofort erstellt werden, in der neuen Szene eingesetzt.</li>
      * </ul>
      */
+    @API
     public void neueSzene() {
         EduScene newScene = new EduScene();
         newScene.setGravity(new Vector(0, -9.81f));
@@ -192,6 +195,7 @@ public class Spiel {
      *
      * @see #benenneSzene(String)
      */
+    @API
     public void setzeSzene(String szenenName) {
         EduScene scene = sceneMap.get(szenenName);
         if (scene == null) {
@@ -199,6 +203,34 @@ public class Spiel {
             return;
         }
         setActiveScene(scene);
+    }
+
+    /* _____________________________ LAYER CONTROLS _____________________________ */
+
+    /**
+     * Fügt der <b>derzeit aktiven Szene</b> eine neue Ebene hinzu.
+     *
+     * @param ebenenName     Der Name für die neue Ebene. Muss für die <b>derzeit aktive</b> Szene einzigartig sein.
+     * @param ebenenPosition Die Position für die neue Ebene. Bestimmt, in welcher Reihenfolge Ebenen dargestellt
+     *                       werden.
+     *                       Ebenen mit einem größeren Positionswert werden vor Ebenen mit einem kleineren Positionswert
+     *                       angezeigt.
+     *                       Die Hauptebene hat die Position 0.
+     */
+    public void macheNeueEbene(String ebenenName, int ebenenPosition) {
+        getActiveScene().addLayer(ebenenName, ebenenPosition);
+    }
+
+    public void setzeEbenenParallaxe(String ebenenName, float px, float py, float pz) {
+        getActiveScene().setLayerParallax(ebenenName, px, py, pz);
+    }
+
+    public void setzeAktiveEbene(String ebenenName) {
+        getActiveScene().setActiveLayer(ebenenName);
+    }
+
+    public void setzeAufHauptebeneZurueck() {
+        getActiveScene().resetToMainLayer();
     }
 
     /* ~~~ CAMERA CONTROL ~~~ */
