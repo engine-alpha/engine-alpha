@@ -371,7 +371,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
         @Override
         public Class<?>[] getInvocationMethodParameters() {
-            return new Class<?>[] {Integer.class};
+            return new Class<?>[] {int.class};
         }
     }
 
@@ -410,7 +410,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
         @Override
         public Class<?>[] getInvocationMethodParameters() {
-            return new Class<?>[] {Float.class, Float.class, Boolean.class};
+            return new Class<?>[] {float.class, float.class, boolean.class};
         }
     }
 
@@ -464,7 +464,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
         @Override
         public Class<?>[] getInvocationMethodParameters() {
-            return new Class[] {Float.class};
+            return new Class[] {float.class};
         }
     }
 }
