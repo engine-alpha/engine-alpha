@@ -24,38 +24,26 @@ import java.util.HashSet;
 public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
     private static final float MAX_SPEED = 100;
-    public static final int JUMP_FORCE = +300;
+    public static final int JUMP_FORCE = +100;
     public static final int SMASH_FORCE = -1500;
     public static final int BOTTOM_OUT = -500 / 30;
     private static final int DOUBLE_JUMP_COST = 3;
     private static final int MANA_PICKUP_BONUS = 50;
     private static final int ROCKETCOST_PER_FRAME = 5;
     private static final boolean GOD_MODE = true;
-    public static final float FRICTION = 0.5f;
-    public static final float RESTITUTION = 0;
-    public static final int MASS = 65;
+    private static final float FRICTION = 0.5f;
+    private static final float RESTITUTION = 0;
+    private static final int MASS = 65;
 
     /* private final Sound walk = new Sound("game-assets/dude/audio/footstep.wav");
     private final Sound jump = new Sound("game-assets/dude/audio/footstep.wav");
     private final Sound pickup_gold = new Sound("game-assets/dude/audio/pickup_gold.wav"); */
 
-    /**
-     * Guthaben.
-     */
-    private int money = 0;
-
-    /**
-     * Ability-Points
-     */
-    private int mana = 0;
-
-    private static final int MAX_MANA = 500;
-
     private boolean didDoubleJump = false;
 
     private boolean rocketMode = false;
 
-    private final HUD hud;
+    private final GameData gameData;
 
     private final Collection<Platform> ignoredPlatformForCollision = new HashSet<>();
 
@@ -79,10 +67,10 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private HorizontalMovement horizontalMovement = HorizontalMovement.IDLE;
     private Vector smashForce = Vector.NULL;
 
-    public PlayerCharacter(HUD hud) {
+    public PlayerCharacter(GameData gameData) {
         super(1, 1);
 
-        this.hud = hud;
+        this.gameData = gameData;
 
         // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         String basePath = "game-assets/dude/char/spr_m_traveler_";
@@ -102,8 +90,6 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         physics.setFriction(FRICTION);
         physics.setRestitution(RESTITUTION);
 
-        setMana(0);
-
         setShapes("C0.5,0.3,0.3&C0.5,0.6,0.3");
 
         /*setShapes(() -> {
@@ -118,17 +104,6 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         addCollisionListener(this);
     }
 
-    private void setMana(int mana) {
-        this.mana = mana;
-        if (this.mana < 0) {
-            this.mana = 0;
-        }
-        if (this.mana > MAX_MANA) {
-            this.mana = MAX_MANA;
-        }
-        hud.setManaValue((float) mana / (float) MAX_MANA);
-    }
-
     /**
      * Wird ausgeführt, wenn ein Sprungbefehl (W) angekommen ist.
      */
@@ -136,10 +111,10 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         if (physics.isGrounded()) {
             physics.applyImpulse(new Vector(0, JUMP_FORCE));
             setState("jumpingUp");
-        } else if (!didDoubleJump && mana >= DOUBLE_JUMP_COST && !getCurrentState().equals("smashing")) {
+        } else if (!didDoubleJump && gameData.getMana() >= DOUBLE_JUMP_COST && !getCurrentState().equals("smashing")) {
             // Double Jump!
             didDoubleJump = true;
-            setMana(mana - DOUBLE_JUMP_COST);
+            gameData.consumeMana(DOUBLE_JUMP_COST);
             physics.setVelocity(new Vector(physics.getVelocity().x, 0));
             physics.applyImpulse(new Vector(0, JUMP_FORCE * 0.8f));
             setState("jumpingUp");
@@ -169,12 +144,10 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     public void gotItem(Item item) {
         switch (item) {
             case Coin:
-                money++;
-                hud.setMoneyValue(money);
-                // pickup_gold.play();
+                gameData.addMoney(1);
                 break;
             case ManaPickup:
-                setMana(mana + MANA_PICKUP_BONUS);
+                gameData.addMana(MANA_PICKUP_BONUS);
                 break;
         }
     }
@@ -189,6 +162,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     @Override
     public void onFrameUpdate(float frameDuration) {
         Vector velocity = physics.getVelocity();
+        gameData.setPlayerVelocity(velocity.getLength());
 
         // kümmere dich um die horizontale Bewegung
         float desiredVelocity = horizontalMovement.getTargetXVelocity();
@@ -202,8 +176,8 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             physics.applyForce(new Vector(impulse, 0));
         }
 
-        if (rocketMode && (mana > 0 || GOD_MODE)) {
-            setMana(mana - ROCKETCOST_PER_FRAME);
+        if (rocketMode && (gameData.getMana() > 0 || GOD_MODE)) {
+            gameData.consumeMana(ROCKETCOST_PER_FRAME);
             physics.applyImpulse(new Vector(0, 10));
 
             Particle particle = new Particle(0.1f, 500);

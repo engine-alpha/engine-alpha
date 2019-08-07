@@ -1,9 +1,6 @@
 package ea.example.showcase.dude;
 
-import ea.Bounds;
-import ea.Layer;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.actor.Image;
 import ea.actor.TileContainer;
 import ea.actor.TileMap;
@@ -23,20 +20,21 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
     public static final int GAME_WIDTH_PX = Showcases.WIDTH, GAME_HEIGHT_PX = Showcases.HEIGHT;
 
-    private PlayerCharacter character;
+    private final GameData gameData;
+    private final PlayerCharacter character;
 
     public DudeDemo(Scene parent) {
         super(parent);
         super.setDebuggingEnabled(false);
 
-        HUD hud = new HUD();
-        addLayer(hud);
+        gameData = new GameData();
 
-        character = new PlayerCharacter(hud);
+        addLayer(new HUD(gameData));
+
+        character = new PlayerCharacter(gameData);
         character.position.set(0, 0);
         character.physics.setRotationLocked(true);
         character.setBodyType(BodyType.DYNAMIC);
-        hud.setPlayerCharacter(character);
 
         add(character);
 
