@@ -2,6 +2,9 @@ package ea;
 
 import ea.actor.Actor;
 import ea.event.EventListeners;
+import ea.input.KeyListener;
+import ea.input.MouseClickListener;
+import ea.input.MouseWheelListener;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.*;
@@ -19,39 +22,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class Layer {
 
-    /**
-     * Der Inhalt des Layers.
-     */
     private final Collection<Actor> actors;
 
-    /**
-     * Die Liste aller angemeldeten FrameUpdateListener.
-     */
-    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
-
-    /**
-     * Parallaxen-X-Faktor
-     */
     private float parallaxX = 1;
-
-    /**
-     * Parallaxen-Y-Faktor
-     */
     private float parallaxY = 1;
-
-    /**
-     * Parallaxen-Rotations-Faktor
-     */
     private float parallaxRotation = 1;
-
-    /**
-     * Der Parallaxen-Zoom-Faktor
-     */
     private float parallaxZoom = 1;
-
-    /**
-     * Ein Zeitverzerrungsfaktor
-     */
     private float timeDistort = 1;
 
     /**
@@ -59,20 +35,16 @@ public class Layer {
      */
     private int layerPosition = -2;
 
-    /**
-     * Ob dieses Layer gerade sichtbar ist (also gerendert wird).
-     */
     private boolean visible = true;
 
-    /**
-     * Die Physics des Layers.
-     */
+    private Scene parent;
+
     private final WorldHandler worldHandler;
 
-    /**
-     * Die Parent-Scene dieses Layers.
-     */
-    private Scene parent;
+    private final EventListeners<KeyListener> keyListeners = new EventListeners<>();
+    private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>();
+    private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>();
+    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
 
     /**
      * Erstellt ein neues Layer.
@@ -89,8 +61,20 @@ public class Layer {
 
     @Internal
     void setParent(Scene parent) {
-        if (this.parent != null) {
+        if (parent != null && this.parent != null) {
             throw new IllegalStateException("Das Layer wurde bereits an einer Scene angemeldet.");
+        }
+
+        if (parent != null) {
+            keyListeners.invoke(parent::addKeyListener);
+            mouseClickListeners.invoke(parent::addMouseClickListener);
+            mouseWheelListeners.invoke(parent::addMouseWheelListener);
+            frameUpdateListeners.invoke(parent::addFrameUpdateListener);
+        } else {
+            keyListeners.invoke(this.parent::removeKeyListener);
+            mouseClickListeners.invoke(this.parent::removeMouseClickListener);
+            mouseWheelListeners.invoke(this.parent::removeMouseWheelListener);
+            frameUpdateListeners.invoke(this.parent::removeFrameUpdateListener);
         }
 
         this.parent = parent;
@@ -324,16 +308,6 @@ public class Layer {
         }
     }
 
-    @API
-    final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.add(frameUpdateListener);
-    }
-
-    @API
-    final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.remove(frameUpdateListener);
-    }
-
     /**
      * Gibt den Worldhandler dieses Layers aus.
      *
@@ -351,6 +325,78 @@ public class Layer {
             worldHandler.step(timeToSimulate);
 
             frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(timeToSimulate));
+        }
+    }
+
+    @API
+    final public void addMouseClickListener(MouseClickListener mouseClickListener) {
+        mouseClickListeners.add(mouseClickListener);
+
+        if (parent != null) {
+            parent.addMouseClickListener(mouseClickListener);
+        }
+    }
+
+    @API
+    final public void removeMouseClickListener(MouseClickListener mouseClickListener) {
+        mouseClickListeners.remove(mouseClickListener);
+
+        if (parent != null) {
+            parent.removeMouseClickListener(mouseClickListener);
+        }
+    }
+
+    @API
+    final public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        mouseWheelListeners.add(mouseWheelListener);
+
+        if (parent != null) {
+            parent.addMouseWheelListener(mouseWheelListener);
+        }
+    }
+
+    @API
+    final public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        mouseWheelListeners.remove(mouseWheelListener);
+
+        if (parent != null) {
+            parent.removeMouseWheelListener(mouseWheelListener);
+        }
+    }
+
+    @API
+    final public void addKeyListener(KeyListener keyListener) {
+        keyListeners.add(keyListener);
+
+        if (parent != null) {
+            parent.addKeyListener(keyListener);
+        }
+    }
+
+    @API
+    final public void removeKeyListener(KeyListener keyListener) {
+        keyListeners.remove(keyListener);
+
+        if (parent != null) {
+            parent.removeKeyListener(keyListener);
+        }
+    }
+
+    @API
+    final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        frameUpdateListeners.add(frameUpdateListener);
+
+        if (parent != null) {
+            parent.addFrameUpdateListener(frameUpdateListener);
+        }
+    }
+
+    @API
+    final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        frameUpdateListeners.remove(frameUpdateListener);
+
+        if (parent != null) {
+            parent.removeFrameUpdateListener(frameUpdateListener);
         }
     }
 }

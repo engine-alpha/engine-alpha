@@ -155,16 +155,6 @@ public abstract class Actor {
         unmountListeners.add(listener);
     }
 
-    @API
-    public final void addFrameUpdateListener(FrameUpdateListener listener) {
-        frameUpdateListeners.add(listener);
-    }
-
-    @API
-    public final void removeFrameUpdateListener(FrameUpdateListener listener) {
-        frameUpdateListeners.remove(listener);
-    }
-
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
 
     /**
@@ -515,12 +505,39 @@ public abstract class Actor {
 
     @Internal
     public void setPhysicsHandler(PhysicsHandler handler) {
-        physicsHandler = handler;
+        WorldHandler worldHandler = handler.getWorldHandler();
+        WorldHandler previousWorldHandler = physicsHandler.getWorldHandler();
 
-        if (handler.getWorldHandler() == null) {
+        if (worldHandler == null) {
+            if (previousWorldHandler == null) {
+                return;
+            }
+
+            Layer layer = previousWorldHandler.getLayer();
+
+            keyListeners.invoke(layer::removeKeyListener);
+            mouseClickListeners.invoke(layer::removeMouseClickListener);
+            mouseWheelListeners.invoke(layer::removeMouseWheelListener);
+            frameUpdateListeners.invoke(layer::removeFrameUpdateListener);
+
             unmountListeners.invoke(listener -> listener.accept(() -> unmountListeners.remove(listener)));
+
+            physicsHandler = handler;
         } else {
+            if (previousWorldHandler != null) {
+                return;
+            }
+
+            physicsHandler = handler;
+
+            Layer layer = worldHandler.getLayer();
+
             mountListeners.invoke(listener -> listener.accept(() -> mountListeners.remove(listener)));
+
+            keyListeners.invoke(layer::addKeyListener);
+            mouseClickListeners.invoke(layer::addMouseClickListener);
+            mouseWheelListeners.invoke(layer::addMouseWheelListener);
+            frameUpdateListeners.invoke(layer::addFrameUpdateListener);
         }
     }
 
@@ -537,6 +554,78 @@ public abstract class Actor {
         Layer layer = getLayer();
         if (layer != null) {
             layer.remove(this);
+        }
+    }
+
+    @API
+    final public void addMouseClickListener(MouseClickListener mouseClickListener) {
+        mouseClickListeners.add(mouseClickListener);
+
+        if (getLayer() != null) {
+            getLayer().addMouseClickListener(mouseClickListener);
+        }
+    }
+
+    @API
+    final public void removeMouseClickListener(MouseClickListener mouseClickListener) {
+        mouseClickListeners.remove(mouseClickListener);
+
+        if (getLayer() != null) {
+            getLayer().removeMouseClickListener(mouseClickListener);
+        }
+    }
+
+    @API
+    final public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        mouseWheelListeners.add(mouseWheelListener);
+
+        if (getLayer() != null) {
+            getLayer().addMouseWheelListener(mouseWheelListener);
+        }
+    }
+
+    @API
+    final public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        mouseWheelListeners.remove(mouseWheelListener);
+
+        if (getLayer() != null) {
+            getLayer().removeMouseWheelListener(mouseWheelListener);
+        }
+    }
+
+    @API
+    final public void addKeyListener(KeyListener keyListener) {
+        keyListeners.add(keyListener);
+
+        if (getLayer() != null) {
+            getLayer().addKeyListener(keyListener);
+        }
+    }
+
+    @API
+    final public void removeKeyListener(KeyListener keyListener) {
+        keyListeners.remove(keyListener);
+
+        if (getLayer() != null) {
+            getLayer().removeKeyListener(keyListener);
+        }
+    }
+
+    @API
+    final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        frameUpdateListeners.add(frameUpdateListener);
+
+        if (getLayer() != null) {
+            getLayer().addFrameUpdateListener(frameUpdateListener);
+        }
+    }
+
+    @API
+    final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        frameUpdateListeners.remove(frameUpdateListener);
+
+        if (getLayer() != null) {
+            getLayer().removeFrameUpdateListener(frameUpdateListener);
         }
     }
 }

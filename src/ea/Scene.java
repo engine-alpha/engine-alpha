@@ -25,7 +25,6 @@ import ea.input.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.WorldHandler;
-import ea.internal.util.Logger;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.DistanceJoint;
 import org.jbox2d.dynamics.joints.Joint;
@@ -170,8 +169,8 @@ public class Scene {
     @API
     public final void addLayer(Layer layer) {
         synchronized (this.layers) {
-            this.layers.add(layer);
             layer.setParent(this);
+            this.layers.add(layer);
             sortLayers();
         }
     }
@@ -179,9 +178,8 @@ public class Scene {
     @API
     public final void removeLayer(Layer layer) {
         synchronized (this.layers) {
-            if (!this.layers.remove(layer) && Game.isVerbose()) {
-                Logger.warning("Ein Layer, das gar nicht an der Scene angehängt ist, sollte entfernt werden.", "layer");
-            }
+            this.layers.remove(layer);
+            layer.setParent(null);
         }
     }
 
