@@ -131,7 +131,7 @@ public class Spiel {
      *                 wird das Raster deaktiviert.
      */
     @API
-    public static void rasterSichtbarSetzen(boolean sichtbar) {
+    public void rasterSichtbarSetzen(boolean sichtbar) {
         Game.setDebug(sichtbar);
     }
 
@@ -143,7 +143,7 @@ public class Spiel {
      * @param aktiv Ob der Erkundungsmodus aktiv sein soll.
      */
     @API
-    public static void setzeErkundungsmodusAktiv(boolean aktiv) {
+    public void setzeErkundungsmodusAktiv(boolean aktiv) {
         getActiveScene().setExploreMode(aktiv);
     }
 
@@ -175,7 +175,7 @@ public class Spiel {
      * @see #setzeSzene(String)
      */
     @API
-    public static void benenneSzene(String name) {
+    public void benenneSzene(String name) {
         if (getActiveScene().getSceneName() != null) {
             Logger.error("EDU", "Die Szene hat bereits einen Namen: " + getActiveScene().getSceneName());
             return;
@@ -194,7 +194,7 @@ public class Spiel {
      * </ul>
      */
     @API
-    public static void neueSzene() {
+    public void neueSzene() {
         EduScene newScene = new EduScene();
         newScene.setGravity(new Vector(0, -9.81f));
         setActiveScene(newScene);
@@ -209,7 +209,7 @@ public class Spiel {
      * @see #benenneSzene(String)
      */
     @API
-    public static void setzeSzene(String szenenName) {
+    public void setzeSzene(String szenenName) {
         EduScene scene = sceneMap.get(szenenName);
         if (scene == null) {
             Logger.error("EDU", "Konnte keine Szene mit dem Namen " + szenenName + " finden.");
@@ -230,69 +230,69 @@ public class Spiel {
      *                       angezeigt.
      *                       Die Hauptebene hat die Position 0.
      */
-    public static void macheNeueEbene(String ebenenName, int ebenenPosition) {
+    public void macheNeueEbene(String ebenenName, int ebenenPosition) {
         getActiveScene().addLayer(ebenenName, ebenenPosition);
     }
 
-    public static void setzeEbenenParallaxe(String ebenenName, float px, float py, float pz) {
+    public void setzeEbenenParallaxe(String ebenenName, float px, float py, float pz) {
         getActiveScene().setLayerParallax(ebenenName, px, py, pz);
     }
 
-    public static void setzeAktiveEbene(String ebenenName) {
+    public void setzeAktiveEbene(String ebenenName) {
         getActiveScene().setActiveLayer(ebenenName);
     }
 
-    public static void setzeAufHauptebeneZurueck() {
+    public void setzeAufHauptebeneZurueck() {
         getActiveScene().resetToMainLayer();
     }
 
     /* ~~~ CAMERA CONTROL ~~~ */
 
-    public static void verschiebeKamera(float dX, float dY) {
+    public void verschiebeKamera(float dX, float dY) {
         getActiveScene().getCamera().move(dX, dY);
     }
 
-    public static void setzeKameraZoom(float zoom) {
+    public void setzeKameraZoom(float zoom) {
         getActiveScene().getCamera().setZoom(zoom);
     }
 
-    public static float nenneKameraZoom() {
+    public float nenneKameraZoom() {
         return getActiveScene().getCamera().getZoom();
     }
 
-    public static void setzeKameraFokus(Actor focus) {
+    public void setzeKameraFokus(Actor focus) {
         getActiveScene().getCamera().setFocus(focus);
     }
 
-    public static void rotiereKamera(float winkelInBogenmass) {
+    public void rotiereKamera(float winkelInBogenmass) {
         getActiveScene().getCamera().rotate(winkelInBogenmass);
     }
 
-    public static void setzeKameraRotation(float winkelInBogenmass) {
+    public void setzeKameraRotation(float winkelInBogenmass) {
         getActiveScene().getCamera().rotateTo(winkelInBogenmass);
     }
 
     /* ~~~ GLOBAL WORLD PHYSICS ~~~ */
 
-    public static void setzeSchwerkraft(float schwerkraft) {
+    public void setzeSchwerkraft(float schwerkraft) {
         getActiveScene().getWorldHandler().getWorld().setGravity(new Vec2(0, -schwerkraft));
     }
 
     /* ~~~ Dialogues ~~~ */
 
-    public static void nachricht(String nachricht) {
+    public void nachricht(String nachricht) {
         Game.showMessage(nachricht, DEFAULT_EDU_DIALOG_TITLE);
     }
 
-    public static boolean frageJaNein(String frage) {
+    public boolean frageJaNein(String frage) {
         return Game.requestYesNo(frage, DEFAULT_EDU_DIALOG_TITLE);
     }
 
-    public static boolean nachrichtOkAbbrechen(String frage) {
+    public boolean nachrichtOkAbbrechen(String frage) {
         return Game.requestOkCancel(frage, DEFAULT_EDU_DIALOG_TITLE);
     }
 
-    public static String eingabe(String nachricht) {
+    public String eingabe(String nachricht) {
         return Game.requestStringInput(nachricht, DEFAULT_EDU_DIALOG_TITLE);
     }
 
@@ -309,12 +309,12 @@ public class Spiel {
      * @param client Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
      */
     @API
-    public static void mausKlickReagierbarAnmelden(MausKlickReagierbar client) {
+    public void mausKlickReagierbarAnmelden(MausKlickReagierbar client) {
         getActiveScene().addEduClickListener(client);
     }
 
     @API
-    public static void mausKlickReagierbarAbmelden(MausKlickReagierbar klickReagierbar) {
+    public void mausKlickReagierbarAbmelden(MausKlickReagierbar klickReagierbar) {
         getActiveScene().removeEduClickListener(klickReagierbar);
     }
 
@@ -327,12 +327,12 @@ public class Spiel {
      * @param o Das anzumeldende Objekt. Dieses wird ab sofort above jeden Tastendruck informiert.
      */
     @API
-    public static void tastenReagierbarAnmelden(TastenReagierbar o) {
+    public void tastenReagierbarAnmelden(TastenReagierbar o) {
         getActiveScene().addEduKeyListener(o);
     }
 
     @API
-    public static void tasteReagierbarAbmelden(TastenReagierbar o) {
+    public void tasteReagierbarAbmelden(TastenReagierbar o) {
         getActiveScene().removeEduKeyListener(o);
     }
 
@@ -346,7 +346,7 @@ public class Spiel {
      * @param intervall Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
      */
     @API
-    public static void tickerAnmelden(Ticker o, int intervall) {
+    public void tickerAnmelden(Ticker o, int intervall) {
         getActiveScene().addEduTicker(o, intervall);
     }
 
@@ -358,7 +358,7 @@ public class Spiel {
      * @see #tickerAnmelden(Ticker, int)
      */
     @API
-    public static void tickerAbmelden(Ticker o) {
+    public void tickerAbmelden(Ticker o) {
         getActiveScene().removeEduTicker(o);
     }
 
@@ -374,7 +374,7 @@ public class Spiel {
      * @see #frameUpdateReagierbarAbmelden(FrameUpdateReagierbar)
      */
     @API
-    public static void frameUpdateReagierbarAnmelden(FrameUpdateReagierbar o) {
+    public void frameUpdateReagierbarAnmelden(FrameUpdateReagierbar o) {
         getActiveScene().addEduFrameUpdateListener(o);
     }
 
@@ -386,7 +386,7 @@ public class Spiel {
      * @see #frameUpdateReagierbarAnmelden(FrameUpdateReagierbar)
      */
     @API
-    public static void frameUpdateReagierbarAbmelden(FrameUpdateReagierbar o) {
+    public void frameUpdateReagierbarAbmelden(FrameUpdateReagierbar o) {
         getActiveScene().removeEduFrameUpdateListener(o);
     }
 
@@ -398,7 +398,7 @@ public class Spiel {
      * @see #mausRadReagierbarAbmelden(MausRadReagierbar)
      */
     @API
-    public static void mausRadReagierbarAnmelden(MausRadReagierbar o) {
+    public void mausRadReagierbarAnmelden(MausRadReagierbar o) {
         getActiveScene().addEduMouseWheelListener(o);
     }
 
@@ -410,7 +410,7 @@ public class Spiel {
      * @see #mausRadReagierbarAnmelden(MausRadReagierbar)
      */
     @API
-    public static void mausRadReagierbarAbmelden(MausRadReagierbar o) {
+    public void mausRadReagierbarAbmelden(MausRadReagierbar o) {
         getActiveScene().removeEduMouseWheelListener(o);
     }
 
@@ -422,7 +422,7 @@ public class Spiel {
      * @see #aktuelleMausPositionY()
      */
     @API
-    public static float aktuelleMausPositionX() {
+    public float aktuelleMausPositionX() {
         return getActiveScene().getMousePosition().x;
     }
 
@@ -434,7 +434,7 @@ public class Spiel {
      * @see #aktuelleMausPositionX()
      */
     @API
-    public static float aktuelleMausPositionY() {
+    public float aktuelleMausPositionY() {
         return getActiveScene().getMousePosition().y;
     }
 }
