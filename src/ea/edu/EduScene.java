@@ -207,8 +207,8 @@ public class EduScene extends Scene {
         removeListener(o, sceneKeyListeners, activeLayer.getKeyListeners());
     }
 
-    public void addEduTicker(Ticker o, int intervall) {
-        PeriodicTask periodicTask = new PeriodicTask(intervall, () -> o.tick());
+    public void addEduTicker(Ticker o, float intervall) {
+        FrameUpdateListener periodicTask = new PeriodicTask(intervall, o::tick);
         addListener(o, sceneTickers, activeLayer.getFrameUpdateListeners(), periodicTask);
     }
 
@@ -217,7 +217,7 @@ public class EduScene extends Scene {
     }
 
     public void addEduFrameUpdateListener(FrameUpdateReagierbar o) {
-        addListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners(), (t) -> o.frameUpdateReagieren(t));
+        addListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners(), o::frameUpdateReagieren);
     }
 
     public void removeEduFrameUpdateListener(FrameUpdateReagierbar o) {

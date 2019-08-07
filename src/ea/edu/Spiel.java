@@ -343,11 +343,11 @@ public class Spiel {
      *
      * @param o         Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br> Es <b>MUSS</b>
      *                  eine Methode <code>tick()</code> haben.
-     * @param intervall Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
+     * @param intervallInSekunden Das Intervall in Sekunden, in dem das anzumeldende Objekt aufgerufen.
      */
     @API
-    public static void tickerAnmelden(Ticker o, int intervall) {
-        getActiveScene().addEduTicker(o, intervall);
+    public static void tickerAnmelden(Ticker o, float intervallInSekunden) {
+        getActiveScene().addEduTicker(o, intervallInSekunden);
     }
 
     /**
@@ -355,7 +355,7 @@ public class Spiel {
      *
      * @param o Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
      *
-     * @see #tickerAnmelden(Ticker, int)
+     * @see #tickerAnmelden(Ticker, float)
      */
     @API
     public static void tickerAbmelden(Ticker o) {
