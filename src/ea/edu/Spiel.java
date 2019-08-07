@@ -341,8 +341,9 @@ public class Spiel {
      * Klasse anmelden!<br> Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des
      * EDU-<code>TICKER</code>-Interfaces sind!!</i>
      *
-     * @param o         Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br> Es <b>MUSS</b>
-     *                  eine Methode <code>tick()</code> haben.
+     * @param o                   Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br> Es
+     *                            <b>MUSS</b>
+     *                            eine Methode <code>tick()</code> haben.
      * @param intervallInSekunden Das Intervall in Sekunden, in dem das anzumeldende Objekt aufgerufen.
      */
     @API
