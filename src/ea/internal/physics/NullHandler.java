@@ -1,7 +1,6 @@
 package ea.internal.physics;
 
 import ea.Vector;
-import ea.actor.Actor;
 import ea.actor.BodyType;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
@@ -15,12 +14,11 @@ import java.util.function.Supplier;
  * Gibt Fehler aus, wenn Operationen ausgeführt werden, die nur mit einer Verbindung zu einer
  * Physics World funktionieren können.
  */
-public class NullHandler extends PhysicsHandler {
+public class NullHandler implements PhysicsHandler {
 
     private final PhysicsData physicsData;
 
-    public NullHandler(Actor actor, PhysicsData physicsData) {
-        super(actor);
+    public NullHandler(PhysicsData physicsData) {
         this.physicsData = physicsData;
     }
 
@@ -100,12 +98,13 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public void setMass(float mass) {
-        // TODO What to do here?
+        physicsData.setMass(mass);
     }
 
     @Override
     public float getMass() {
-        return 0;
+        Float mass = physicsData.getMass();
+        return mass == null ? 0 : mass;
     }
 
     @Override
@@ -125,7 +124,7 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void applyTorque(float rotationMomentum) {
+    public void applyTorque(float torque) {
         throw makeNullException("das Wirken eines Drehmoments");
     }
 
@@ -145,12 +144,12 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void applyForce(Vector kraftInN, Vector globalerOrt) {
+    public void applyForce(Vector kraftInN, Vector globalLocation) {
         throw makeNullException("das Wirken einer Kraft");
     }
 
     @Override
-    public void applyImpluse(Vector impulsInNS, Vector globalerOrt) {
+    public void applyImpluse(Vector impulsInNS, Vector globalLocation) {
         throw makeNullException("das Wirken eines Impulses");
     }
 
@@ -170,7 +169,7 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void setVelocity(Vector geschwindigkeitInMProS) {
+    public void setVelocity(Vector metersPerSecond) {
         throw makeNullException("das Setzen einer Geschwindigkeit");
     }
 
@@ -180,8 +179,8 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void setRotationLocked(boolean block) {
-        this.physicsData.setRotationLocked(block);
+    public void setRotationLocked(boolean locked) {
+        this.physicsData.setRotationLocked(locked);
     }
 
     @Override

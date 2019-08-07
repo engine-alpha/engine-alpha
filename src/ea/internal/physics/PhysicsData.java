@@ -2,6 +2,7 @@ package ea.internal.physics;
 
 import ea.actor.Actor;
 import ea.actor.BodyType;
+import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -15,6 +16,7 @@ import java.util.function.Supplier;
 /**
  * Diese Klasse wrappt die wesentlichen physikalischen Eigenschaften eines <code>Actor</code>-Objekts.
  */
+@Internal
 public class PhysicsData {
 
     private static final float DEFAULT_DENSITY = 30f;
@@ -32,9 +34,10 @@ public class PhysicsData {
     private float density = DEFAULT_DENSITY;
     private float friction = DEFAULT_FRICTION;
     private float restitution = DEFAULT_RESTITUTION;
-
     private float torque = 0;
     private float angularVelocity = 0;
+
+    private Float mass;
 
     private Vec2 velocity = new Vec2(0, 0);
 
@@ -141,6 +144,14 @@ public class PhysicsData {
         }
 
         return body;
+    }
+
+    public void setMass(Float mass) {
+        this.mass = mass;
+    }
+
+    public Float getMass() {
+        return mass;
     }
 
     public boolean isRotationLocked() {

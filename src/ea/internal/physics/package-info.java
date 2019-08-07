@@ -2,7 +2,7 @@
  * Dieses Paket enthält die Klassen, die innerhalb der Engine als Middleware zwischen der externen Bibliothek
  * <i>JBox2D</i> von Daniel Murhpy und der Engine-API fungieren.
  * <p>
- * Das Projekt <a href="https://github.com/jbox2d/jbox2d">JBox2D-Projekt</a> ist below der
+ * Das Projekt <a href="https://github.com/jbox2d/jbox2d">JBox2D-Projekt</a> ist unter der
  * <i>open source zlib license</i> veröffentlicht.
  *
  * <blockquote>

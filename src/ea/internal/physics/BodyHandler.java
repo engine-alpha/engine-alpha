@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * <li>Die Speicherung der <i>räumlichen Eigenschaften</i> (Position und Rotation) des respektiven Actor-Objekts.</li>
  * </ul>
  */
-public class BodyHandler extends PhysicsHandler {
+public class BodyHandler implements PhysicsHandler {
     private static final Vec2 NULL_VECTOR = new Vec2();
     private static final int DEFAULT_MASK_BITS = 0xFFFF;
 
@@ -45,8 +45,6 @@ public class BodyHandler extends PhysicsHandler {
      */
     @Internal
     public BodyHandler(Actor actor, PhysicsData physicsData, WorldHandler worldHandler) {
-        super(actor);
-
         this.worldHandler = worldHandler;
         this.body = physicsData.createBody(worldHandler, actor);
 
@@ -178,9 +176,9 @@ public class BodyHandler extends PhysicsHandler {
     }
 
     @Override
-    public void applyTorque(float rotationMomentum) {
+    public void applyTorque(float torque) {
         synchronized (worldHandler) {
-            body.applyTorque(rotationMomentum);
+            body.applyTorque(torque);
         }
     }
 
@@ -275,9 +273,9 @@ public class BodyHandler extends PhysicsHandler {
     }
 
     @Override
-    public void setRotationLocked(boolean block) {
+    public void setRotationLocked(boolean locked) {
         synchronized (worldHandler) {
-            body.setFixedRotation(block);
+            body.setFixedRotation(locked);
         }
     }
 

@@ -118,7 +118,7 @@ public abstract class Actor {
     /* _________________________ Die Handler _________________________ */
 
     public Actor(Supplier<Shape> shapeSupplier) {
-        this.physicsHandler = new NullHandler(this, new PhysicsData(() -> Collections.singletonList(shapeSupplier.get())));
+        this.physicsHandler = new NullHandler(new PhysicsData(() -> Collections.singletonList(shapeSupplier.get())));
         this.autoRegisterListeners();
     }
 

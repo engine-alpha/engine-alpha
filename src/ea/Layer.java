@@ -260,7 +260,7 @@ public class Layer {
                 Body body = physicsHandler.getBody();
                 worldHandler.removeAllInternalReferences(body);
                 worldHandler.getWorld().destroyBody(body);
-                actor.setPhysicsHandler(new NullHandler(actor, physicsData));
+                actor.setPhysicsHandler(new NullHandler(physicsData));
             }
         });
     }
