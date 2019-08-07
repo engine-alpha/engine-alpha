@@ -262,7 +262,7 @@ public interface EduActor {
      * @see ea.handle.Physics#createDistanceJoint(Actor, Vector, Vector)
      */
     @API
-    default void distanceJointEinsetzen(EduActor anderer, float aX, float aY, float bX, float bY) {
+    default void erzeugeStabVerbindung(EduActor anderer, float aX, float aY, float bX, float bY) {
         getActor().physics.createDistanceJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY));
     }
 
@@ -276,7 +276,7 @@ public interface EduActor {
      * @see ea.handle.Physics#createRevoluteJoint(Actor, Vector) e
      */
     @API
-    default void revoluteJointEinsetzen(EduActor anderer, float aX, float aY) {
+    default void erzeugeGelenkverbindung(EduActor anderer, float aX, float aY) {
         getActor().physics.createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
     }
 
@@ -293,7 +293,7 @@ public interface EduActor {
      * @see ea.handle.Physics#createRopeJoint(Actor, Vector, Vector, float)
      */
     @API
-    default void ropeJointEinsetzen(EduActor anderer, float ropeLength, float aX, float aY, float bX, float bY) {
+    default void erzeugeSeilVerbindung(EduActor anderer, float ropeLength, float aX, float aY, float bX, float bY) {
         getActor().physics.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), ropeLength);
     }
 }

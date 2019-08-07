@@ -218,6 +218,7 @@ public class Scene {
     @Internal
     private void renderJoints(Graphics2D g) {
         // Display Joints
+
         Joint j = mainLayer.getWorldHandler().getWorld().getJointList();
 
         while (j != null) {
