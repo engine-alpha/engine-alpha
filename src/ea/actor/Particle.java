@@ -22,13 +22,9 @@ package ea.actor;
 import ea.FrameUpdateListener;
 import ea.internal.annotations.API;
 
-import java.awt.Color;
-
 @API
 public class Particle extends Circle implements FrameUpdateListener {
-    private static final float MAX_ALPHA = 255f;
-
-    private float life;
+    private final float life;
     private float age = 0;
 
     /**
@@ -47,10 +43,7 @@ public class Particle extends Circle implements FrameUpdateListener {
     public void onFrameUpdate(float deltaSeconds) {
         this.age += deltaSeconds;
 
-        Color color = getColor();
-
-        int alpha = (int) (MAX_ALPHA * getRemainingLifetime() / life);
-        this.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
+        this.setOpacity(getRemainingLifetime() / life);
 
         if (isDead()) {
             remove();

@@ -44,7 +44,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -468,7 +467,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public <E extends Actor> void addCollisionListener(E collider, CollisionListener<E> listener) {
-        addMountListener(() -> WorldHandler.addSpecificCollisionListener(this, collider, listener));
+        WorldHandler.addSpecificCollisionListener(this, collider, listener);
     }
 
     /**
@@ -482,7 +481,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public void addCollisionListener(CollisionListener<Actor> listener) {
-        addMountListener(() -> WorldHandler.addGenericCollisionListener(listener, this));
+        WorldHandler.addGenericCollisionListener(listener, this);
     }
 
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
@@ -853,9 +852,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public Joint createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
-        return createJoint(() -> {
-            assertSameWorld(other);
-
+        return WorldHandler.createJoint(this, other, worldHandler -> {
             // Definiere den Joint
             RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
             revoluteJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(),
@@ -863,7 +860,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
                     anchorAsWorldPos.toVec2());
             revoluteJointDef.collideConnected = false;
 
-            return physicsHandler.getWorldHandler().getWorld().createJoint(revoluteJointDef);
+            return worldHandler.getWorld().createJoint(revoluteJointDef);
         });
     }
 
@@ -886,9 +883,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public Joint createRopeJoint(Actor other, Vector anchorA, Vector anchorB, float ropeLength) {
-        return createJoint(() -> {
-            assertSameWorld(other);
-
+        return WorldHandler.createJoint(this, other, worldHandler -> {
             RopeJointDef ropeJointDef = new RopeJointDef();
             ropeJointDef.bodyA = physicsHandler.getBody();
             ropeJointDef.bodyB = other.getPhysicsHandler().getBody();
@@ -897,7 +892,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
             ropeJointDef.localAnchorB.set(anchorB.toVec2());
             ropeJointDef.maxLength = ropeLength;
 
-            return physicsHandler.getWorldHandler().getWorld().createJoint(ropeJointDef);
+            return worldHandler.getWorld().createJoint(ropeJointDef);
         });
     }
 
@@ -919,32 +914,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public Joint createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
-        return createJoint(() -> {
-            assertSameWorld(other);
-
+        return WorldHandler.createJoint(this, other, (worldHandler) -> {
             DistanceJointDef distanceJointDef = new DistanceJointDef();
             distanceJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
 
-            return physicsHandler.getWorldHandler().getWorld().createJoint(distanceJointDef);
+            return worldHandler.getWorld().createJoint(distanceJointDef);
         });
-    }
-
-    private Joint createJoint(Supplier<org.jbox2d.dynamics.joints.Joint> jointSupplier) {
-        CompletableFuture<org.jbox2d.dynamics.joints.Joint> jointFuture = new CompletableFuture<>();
-
-        Game.afterWorldStep(() -> jointFuture.complete(jointSupplier.get()));
-
-        return new Joint() {
-            private CompletableFuture<org.jbox2d.dynamics.joints.Joint> future = jointFuture;
-
-            @Override
-            public void release() {
-                if (future != null) {
-                    future.thenAccept(joint -> Game.afterWorldStep(() -> org.jbox2d.dynamics.joints.Joint.destroy(joint)));
-                    future = null;
-                }
-            }
-        };
     }
 
     @API
@@ -1189,5 +1164,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         synchronized (physicsHandlerLock) {
             physicsHandler.rotateBy(degree - getRotation());
         }
+    }
+
+    @API
+    public boolean isMounted() {
+        return getLayer() != null;
     }
 }

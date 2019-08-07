@@ -1,7 +1,9 @@
 package ea.internal.physics;
 
+import ea.Game;
 import ea.Layer;
 import ea.actor.Actor;
+import ea.actor.Joint;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.internal.annotations.Internal;
@@ -20,8 +22,11 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Die WorldHandler-Klasse ist die (nicht objektgebundene) Middleware zwischen der JBox2D Engine und
@@ -399,19 +404,15 @@ public class WorldHandler implements ContactListener {
      */
     @Internal
     public static void addGenericCollisionListener(CollisionListener<Actor> listener, Actor actor) {
-        final WorldHandler actorHandler = actor.getPhysicsHandler().getWorldHandler();
+        actor.addMountListener(() -> {
+            Body body = actor.getPhysicsHandler().getBody();
 
-        if (actorHandler == null) {
-            return;
-        }
+            if (body == null) {
+                throw new IllegalStateException("Body is missing on an Actor with an existing WorldHandler");
+            }
 
-        Body body = actor.getPhysicsHandler().getBody();
-
-        if (body == null) {
-            throw new IllegalStateException("Body is missing on an Actor with an existing WorldHandler");
-        }
-
-        actorHandler.generalCollisonListeners.computeIfAbsent(body, key -> new CopyOnWriteArrayList<>()).add(listener);
+            actor.getPhysicsHandler().getWorldHandler().generalCollisonListeners.computeIfAbsent(body, key -> new CopyOnWriteArrayList<>()).add(listener);
+        });
     }
 
     /**
@@ -424,49 +425,86 @@ public class WorldHandler implements ContactListener {
      */
     @Internal
     public static <E extends Actor> void addSpecificCollisionListener(Actor actor, E collider, CollisionListener<E> listener) {
-        final WorldHandler actorHandler = actor.getPhysicsHandler().getWorldHandler();
-        final WorldHandler colliderHandler = collider.getPhysicsHandler().getWorldHandler();
+        addMountListener(actor, collider, (worldHandler) -> {
+            Body b1 = actor.getPhysicsHandler().getBody();
+            Body b2 = collider.getPhysicsHandler().getBody();
 
-        if (colliderHandler == null) {
-            collider.addMountListener(() -> addSpecificCollisionListener(actor, collider, listener));
-            return;
+            if (b1 == null || b2 == null) {
+                Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung angemeldet.");
+                return;
+            }
+
+            Body lower, higher;
+            if (b1.hashCode() < b2.hashCode()) {
+                lower = b1;
+                higher = b2;
+            } else {
+                lower = b2;
+                higher = b1;
+            }
+
+            Checkup<E> checkup = new Checkup<>(listener, higher, collider);
+            worldHandler.specificCollisionListeners.computeIfAbsent(lower, key -> new CopyOnWriteArrayList<>()).add(checkup);
+        });
+    }
+
+    @Internal
+    public static Joint createJoint(Actor a, Actor b, Function<WorldHandler, org.jbox2d.dynamics.joints.Joint> jointSupplier) {
+        CompletableFuture<org.jbox2d.dynamics.joints.Joint> jointFuture = new CompletableFuture<>();
+
+        addMountListener(a, b, worldHandler -> jointFuture.complete(jointSupplier.apply(worldHandler)));
+
+        return new Joint() {
+            private CompletableFuture<org.jbox2d.dynamics.joints.Joint> future = jointFuture;
+
+            @Override
+            public void release() {
+                if (future != null) {
+                    future.thenAccept(joint -> Game.afterWorldStep(() -> org.jbox2d.dynamics.joints.Joint.destroy(joint)));
+                    future = null;
+                }
+            }
+        };
+    }
+
+    @Internal
+    public static void addMountListener(Actor a, Actor b, Consumer<WorldHandler> runnable) {
+        addMountListenerWithoutExecution(a, worldHandler -> {
+            if (b.isMounted() && b.getPhysicsHandler().getWorldHandler() != worldHandler) {
+                runnable.accept(worldHandler);
+            }
+        });
+
+        addMountListenerWithoutExecution(b, worldHandler -> {
+            if (a.isMounted() && a.getPhysicsHandler().getWorldHandler() != worldHandler) {
+                runnable.accept(worldHandler);
+            }
+        });
+
+        if (a.isMounted() && b.isMounted()) {
+            runnable.accept(a.getPhysicsHandler().getWorldHandler());
+        }
+    }
+
+    private static boolean addMountListenerWithoutExecution(Actor actor, Consumer<WorldHandler> listener) {
+        final WorldHandler worldHandler = actor.getPhysicsHandler().getWorldHandler();
+        final Runnable mountListener = () -> listener.accept(actor.getPhysicsHandler().getWorldHandler());
+
+        if (worldHandler == null) {
+            actor.addMountListener(mountListener);
+
+            return false;
         } else {
-            collider.addUnmountListener(new Runnable() {
+            actor.addUnmountListener(new Runnable() {
                 @Override
                 public void run() {
-                    collider.removeUnmountListener(this);
-                    collider.addMountListener(() -> addSpecificCollisionListener(actor, collider, listener));
+                    actor.removeUnmountListener(this);
+                    actor.addMountListener(mountListener);
                 }
             });
+
+            return true;
         }
-
-        if (actorHandler == null) {
-            return; // actor will automatically re-register on setup
-        }
-
-        if (actorHandler != colliderHandler) {
-            throw new RuntimeException("Can't add collision listener for two objects registered in two different worlds");
-        }
-
-        Body b1 = actor.getPhysicsHandler().getBody();
-        Body b2 = collider.getPhysicsHandler().getBody();
-
-        if (b1 == null || b2 == null) {
-            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung angemeldet.");
-            return;
-        }
-
-        Body lower, higher;
-        if (b1.hashCode() < b2.hashCode()) {
-            lower = b1;
-            higher = b2;
-        } else {
-            lower = b2;
-            higher = b1;
-        }
-
-        Checkup<E> checkup = new Checkup<>(listener, higher, collider);
-        actorHandler.specificCollisionListeners.computeIfAbsent(lower, key -> new CopyOnWriteArrayList<>()).add(checkup);
     }
 
     private static class FixturePair {
