@@ -3,6 +3,7 @@ package ea.edu;
 import ea.actor.Actor;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
+import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
@@ -193,12 +194,14 @@ public class Figur implements EduActor {
      *
      * @return Der Name des aktuellen Zustands.
      */
+    @API
     public String nenneAktuellenZustand() {
         return statefulAnimation.getCurrentState();
     }
 
-    public void setzeAnimationsGeschwindigkeitVon(String zustandName, int frameDauerInMS) {
-        statefulAnimation.setFrameDurationsOf(zustandName, frameDauerInMS);
+    @API
+    public void setzeAnimationsGeschwindigkeitVon(String zustandName, float frameDauerInSekunden) {
+        statefulAnimation.setFrameDurationsOf(zustandName, frameDauerInSekunden);
     }
 
     @Internal
