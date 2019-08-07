@@ -1,6 +1,5 @@
 package ea.actor;
 
-import ea.FrameUpdateListener;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -38,7 +37,7 @@ public class StatefulAnimation extends Actor {
     private String currentState = null;
     private AnimationFrame[] currentAnimation = null;
 
-    private int currentTime = 0;
+    private float currentTime = 0;
     private int currentIndex = 0;
 
     private float width;
@@ -53,7 +52,7 @@ public class StatefulAnimation extends Actor {
         this.width = width;
         this.height = height;
 
-        getFrameUpdateListeners().add(frameUpdateListener);
+        getFrameUpdateListeners().add(this::internalOnFrameUpdate);
 
         // TODO Check that all frames have the same size
     }
@@ -240,8 +239,6 @@ public class StatefulAnimation extends Actor {
     }
 
     /* ~~ Internal Functions ~~ */
-
-    private final FrameUpdateListener frameUpdateListener = this::internalOnFrameUpdate;
 
     /**
      * Methode wird frameweise über einen anononymen Listener aufgerufen.
