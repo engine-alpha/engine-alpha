@@ -78,7 +78,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
     public BallThrow(Scene parent) {
         super(parent);
         initialisieren();
-        addKeyListener(this);
+        getKeyListeners().add(this);
     }
 
     public void initialisieren() {

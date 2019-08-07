@@ -300,43 +300,23 @@ public class Scene {
     }
 
     @API
-    final public void addMouseClickListener(MouseClickListener mouseClickListener) {
-        mouseClickListeners.add(mouseClickListener);
+    public EventListeners<KeyListener> getKeyListeners() {
+        return keyListeners;
     }
 
     @API
-    final public void removeMouseClickListener(MouseClickListener mouseClickListener) {
-        mouseClickListeners.remove(mouseClickListener);
+    public EventListeners<MouseClickListener> getMouseClickListeners() {
+        return mouseClickListeners;
     }
 
     @API
-    final public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        mouseWheelListeners.add(mouseWheelListener);
+    public EventListeners<MouseWheelListener> getMouseWheelListeners() {
+        return mouseWheelListeners;
     }
 
     @API
-    final public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        mouseWheelListeners.remove(mouseWheelListener);
-    }
-
-    @API
-    final public void addKeyListener(KeyListener keyListener) {
-        keyListeners.add(keyListener);
-    }
-
-    @API
-    final public void removeKeyListener(KeyListener keyListener) {
-        keyListeners.remove(keyListener);
-    }
-
-    @API
-    final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.add(frameUpdateListener);
-    }
-
-    @API
-    final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.remove(frameUpdateListener);
+    public EventListeners<FrameUpdateListener> getFrameUpdateListeners() {
+        return frameUpdateListeners;
     }
 
     private final class OneTimeCallBackHandle implements Runnable {
@@ -362,7 +342,7 @@ public class Scene {
             if (!invoked) {
                 callback.run();
                 invoked = true;
-                Scene.this.removeFrameUpdateListener(toRemove);
+                Scene.this.getFrameUpdateListeners().remove(toRemove);
             }
         }
     }
@@ -372,7 +352,7 @@ public class Scene {
         OneTimeCallBackHandle oneTimeCallBackHandle = new OneTimeCallBackHandle(callback);
         PeriodicTask periodicTask = new PeriodicTask(delayInMS, oneTimeCallBackHandle);
         oneTimeCallBackHandle.setToRemove(periodicTask);
-        this.addFrameUpdateListener(periodicTask);
+        getFrameUpdateListeners().add(periodicTask);
     }
 
     @Internal

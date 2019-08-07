@@ -74,7 +74,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         pauseLayer.setVisible(false);
         addLayer(pauseLayer);
 
-        addKeyListener(this);
+        getKeyListeners().add(this);
 
         //game_loop.loop();
     }

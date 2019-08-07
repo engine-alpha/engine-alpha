@@ -22,16 +22,36 @@ package ea.event;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public final class EventListeners<T> {
-    private Collection<T> listeners = ConcurrentHashMap.newKeySet();
+    private final Collection<T> listeners = ConcurrentHashMap.newKeySet();
+    private final Supplier<EventListeners<T>> parentSupplier;
+
+    public EventListeners() {
+        this(() -> null);
+    }
+
+    public EventListeners(Supplier<EventListeners<T>> parentSupplier) {
+        this.parentSupplier = parentSupplier;
+    }
 
     public void add(T listener) {
         listeners.add(listener);
+
+        EventListeners<T> parent = parentSupplier.get();
+        if (parent != null) {
+            parent.add(listener);
+        }
     }
 
     public void remove(T listener) {
         listeners.remove(listener);
+
+        EventListeners<T> parent = parentSupplier.get();
+        if (parent != null) {
+            parent.remove(listener);
+        }
     }
 
     public void invoke(Consumer<T> invoker) {

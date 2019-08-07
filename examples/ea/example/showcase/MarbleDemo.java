@@ -33,8 +33,8 @@ public class MarbleDemo
 
         initialisieren();
 
-        addKeyListener(this);
-        addFrameUpdateListener(new PeriodicTask(100, () -> {
+        getKeyListeners().add(this);
+        getFrameUpdateListeners().add(new PeriodicTask(100, () -> {
             Circle marble = makeAMarble();
             add(marble);
             marble.setBodyType(BodyType.DYNAMIC);

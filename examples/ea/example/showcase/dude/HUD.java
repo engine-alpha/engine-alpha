@@ -26,7 +26,7 @@ public class HUD extends Layer implements FrameUpdateListener {
         display = new HUDDisplay(-DudeDemo.GAME_WIDTH_PX / 2 + 20, DudeDemo.GAME_HEIGHT_PX / 2 - 130);
         add(display.getActors().toArray(new Actor[0]));
 
-        scene.addFrameUpdateListener(this);
+        scene.getFrameUpdateListeners().add(this);
     }
 
     public void setPlayerCharacter(PlayerCharacter playerCharacter) {

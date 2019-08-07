@@ -30,7 +30,7 @@ implements FrameUpdateListener {
             System.out.println("OVERLAP");
         }
 
-        addFrameUpdateListener(this);
+        getFrameUpdateListeners().add(this);
     }
 
 

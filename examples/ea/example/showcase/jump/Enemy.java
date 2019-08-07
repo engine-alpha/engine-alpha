@@ -31,7 +31,7 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
             this.setFlipHorizontal(true);
         }
 
-        scene.addFrameUpdateListener(enemyMover);
+        scene.getFrameUpdateListeners().add(enemyMover);
 
         this.addCollisionListener(this, pc);
     }
@@ -45,7 +45,7 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
             //Treffer!
             pc.physics.applyImpulse(new Vector(0, -2500));
 
-            getLayer().removeFrameUpdateListener(enemyMover);
+            getLayer().getFrameUpdateListeners().remove(enemyMover);
             getLayer().remove(this);
         } else {
             System.out.println("LOSE");

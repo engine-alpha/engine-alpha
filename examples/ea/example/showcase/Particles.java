@@ -64,8 +64,8 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         right.physics.setRestitution(15f);
         add(right);
 
-        addKeyListener(this);
-        addFrameUpdateListener(new PeriodicTask(1000, () -> createCircle(getMousePosition(), Color.YELLOW)));
+        getKeyListeners().add(this);
+        getFrameUpdateListeners().add(new PeriodicTask(1000, () -> createCircle(getMousePosition(), Color.YELLOW)));
 
         Rectangle r1 = new Rectangle(Showcases.WIDTH, 10);
         r1.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
@@ -96,7 +96,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         setGravity(new Vector(0, -600));
         getCamera().setZoom(1);
 
-        this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), AnimationMode.REPEATED));
+        this.getFrameUpdateListeners().add(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), AnimationMode.REPEATED));
     }
 
     private void createCircle(Vector position, Color color) {
@@ -108,7 +108,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
             particle.addMountListener(event -> particle.physics.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
-            particle.addFrameUpdateListener(new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255)));
+            particle.getFrameUpdateListeners().add(new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255)));
 
             add(particle);
         });
@@ -116,7 +116,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         circle.position.set(position);
         circle.setBodyType(BodyType.DYNAMIC);
         circle.setColor(color);
-        circle.addFrameUpdateListener(emitter);
+        circle.getFrameUpdateListeners().add(emitter);
 
         add(circle);
     }

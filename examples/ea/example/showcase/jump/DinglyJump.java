@@ -41,8 +41,8 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
         getCamera().setFocus(character);
 
-        addKeyListener(this);
-        addFrameUpdateListener(this);
+        getKeyListeners().add(this);
+        getFrameUpdateListeners().add(this);
 
         setDebuggingEnabled(false);
 
@@ -50,7 +50,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
         add(circleToAnimate);
         circleToAnimate.setColor(Color.YELLOW);
 
-        addFrameUpdateListener(new ValueAnimator<>(5000,
+        getFrameUpdateListeners().add(new ValueAnimator<>(5000,
                 circleToAnimate.position::setY,
                 new ReverseEaseFloat(500, 1000), AnimationMode.REPEATED));
 

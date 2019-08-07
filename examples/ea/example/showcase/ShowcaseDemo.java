@@ -21,7 +21,7 @@ public abstract class ShowcaseDemo extends Scene {
     private boolean debuggingEnabled = true;
 
     public ShowcaseDemo(Scene parent) {
-        addKeyListener(new KeyListener() {
+        getKeyListeners().add(new KeyListener() {
             @Override
             public void onKeyDown(KeyEvent e) {
                 switch (e.getKeyCode()) {
@@ -43,7 +43,7 @@ public abstract class ShowcaseDemo extends Scene {
             }
         });
 
-        addFrameUpdateListener((i) -> {
+        getFrameUpdateListeners().add((i) -> {
             if (!cameraControlEnabled) {
                 return;
             }
@@ -64,7 +64,7 @@ public abstract class ShowcaseDemo extends Scene {
             }
         });
 
-        addMouseWheelListener(event -> {
+        getMouseWheelListeners().add(event -> {
             if (!zoomEnabled) {
                 return;
             }

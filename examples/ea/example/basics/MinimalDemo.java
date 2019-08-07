@@ -11,7 +11,7 @@ import ea.input.KeyListener;
 import ea.input.MouseWheelEvent;
 import ea.input.MouseWheelListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 public class MinimalDemo extends Scene implements KeyListener, MouseWheelListener, FrameUpdateListener {
@@ -45,9 +45,9 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
         rectangle = new Rectangle(50, 100);
         rectangle.setColor(Color.BLUE);
         add(rectangle);
-        addKeyListener(this);
-        addMouseWheelListener(this);
-        addFrameUpdateListener(this);
+        getKeyListeners().add(this);
+        getMouseWheelListeners().add(this);
+        getFrameUpdateListeners().add(this);
 
         Animation animation = Animation.createFromAnimatedGif("game-assets/jump/fx_explosion_b_anim.gif", 1, 1);
         animation.position.set(200, 200);
@@ -104,7 +104,9 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     @Override
     public void onMouseWheelMove(MouseWheelEvent mouseWheelEvent) {
         float newZoom = getCamera().getZoom() + (mouseWheelEvent.getPreciseWheelRotation() * -0.2f);
-        if (newZoom > 0) getCamera().setZoom(newZoom);
+        if (newZoom > 0) {
+            getCamera().setZoom(newZoom);
+        }
     }
 
     @Override

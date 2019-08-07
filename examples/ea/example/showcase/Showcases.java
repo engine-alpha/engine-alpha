@@ -1,6 +1,9 @@
 package ea.example.showcase;
 
-import ea.*;
+import ea.FrameUpdateListener;
+import ea.Game;
+import ea.Scene;
+import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.Rectangle;
 import ea.actor.Text;
@@ -159,8 +162,8 @@ public class Showcases extends Scene {
 
         TextBox button = new TextBox(title, sceneSupplier, left ? -500 : -150, -60 + -1 * row * (BOX_HEIGHT + 5));
         add(button.getActors());
-        addMouseClickListener(button);
-        addFrameUpdateListener(button);
+        getMouseClickListeners().add(button);
+        getFrameUpdateListeners().add(button);
     }
 
     /**

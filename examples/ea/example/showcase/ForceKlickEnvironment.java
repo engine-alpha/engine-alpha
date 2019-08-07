@@ -141,11 +141,11 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         attack.setLayerPosition(-10);
 
         //Maus erstellen, Listener Anmelden.
-        addMouseClickListener(this);
+        getMouseClickListeners().add(this);
         attack.addCollisionListener(this);
 
-        addFrameUpdateListener(this);
-        addKeyListener(new KeyListener() {
+        getFrameUpdateListeners().add(this);
+        getKeyListeners().add(new KeyListener() {
             @Override
             public void onKeyDown(KeyEvent e) {
                 switch (e.getKeyCode()) {

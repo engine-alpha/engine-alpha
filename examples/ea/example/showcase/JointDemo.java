@@ -35,7 +35,7 @@ implements KeyListener {
     public JointDemo(Scene parent, int width, int height) {
         super(parent, width, height);
         // initialisieren2();
-        addKeyListener(this);
+        getKeyListeners().add(this);
     }
 
     /* public void initialisieren2() {

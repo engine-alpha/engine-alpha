@@ -79,11 +79,10 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
         setGravity(new Vector(0, -9.81f));
 
-        //Listener Adding
-        super.addFrameUpdateListener(this);
-        super.addKeyListener(this);
-        super.addMouseClickListener(this);
-        super.addMouseWheelListener(this);
+        super.getFrameUpdateListeners().add(this);
+        super.getKeyListeners().add(this);
+        super.getMouseClickListeners().add(this);
+        super.getMouseWheelListeners().add(this);
     }
 
     public String[] layerNames() {

@@ -129,8 +129,8 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         scene.add(this);
         physics.setMass(650000000);
-        scene.addKeyListener(this);
-        scene.addFrameUpdateListener(this);
+        scene.getKeyListeners().add(this);
+        scene.getFrameUpdateListeners().add(this);
         physics.setMass(65);
         addCollisionListener(this);
 
@@ -249,10 +249,10 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 particle.remove();
             });
 
-            addFrameUpdateListener(animator);
-            addFrameUpdateListener(particle);
+            getFrameUpdateListeners().add(animator);
+            getFrameUpdateListeners().add(particle);
 
-            getLayer().addFrameUpdateListener(animator);
+            getLayer().getFrameUpdateListeners().add(animator);
             getLayer().add(particle);
 
             particle.addCollisionListener((e) -> {
@@ -401,8 +401,8 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 Vector originalOffset = getPhysicsHandler().getWorldHandler().getLayer().getParent().getCamera().getOffset();
                 Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * physics.getVelocity().y);
                 ValueAnimator<Float> valueAnimator = new ValueAnimator<>(100, y -> getLayer().getParent().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator);
-                getLayer().addFrameUpdateListener(valueAnimator);
-                valueAnimator.addCompletionListener(value -> getLayer().removeFrameUpdateListener(valueAnimator));
+                getLayer().getFrameUpdateListeners().add(valueAnimator);
+                valueAnimator.addCompletionListener(value -> getLayer().getFrameUpdateListeners().remove(valueAnimator));
             }
 
             Vector speed = getPhysicsHandler().getVelocity();
@@ -412,7 +412,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 for (int i = 0; i < 100; i++) {
                     Particle particle = new Particle(Random.nextFloat() * .02f + .02f, 500);
                     getLayer().add(particle);
-                    getLayer().addFrameUpdateListener(particle);
+                    getLayer().getFrameUpdateListeners().add(particle);
                     particle.position.set(position.getCenter().add(0, -32));
                     particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
                     particle.setColor(Color.GRAY);

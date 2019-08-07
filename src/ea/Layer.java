@@ -66,15 +66,15 @@ public class Layer {
         }
 
         if (parent != null) {
-            keyListeners.invoke(parent::addKeyListener);
-            mouseClickListeners.invoke(parent::addMouseClickListener);
-            mouseWheelListeners.invoke(parent::addMouseWheelListener);
-            frameUpdateListeners.invoke(parent::addFrameUpdateListener);
+            keyListeners.invoke(listener -> parent.getKeyListeners().add(listener));
+            mouseClickListeners.invoke(listener -> parent.getMouseClickListeners().add(listener));
+            mouseWheelListeners.invoke(listener -> parent.getMouseWheelListeners().add(listener));
+            frameUpdateListeners.invoke(listener -> parent.getFrameUpdateListeners().add(listener));
         } else {
-            keyListeners.invoke(this.parent::removeKeyListener);
-            mouseClickListeners.invoke(this.parent::removeMouseClickListener);
-            mouseWheelListeners.invoke(this.parent::removeMouseWheelListener);
-            frameUpdateListeners.invoke(this.parent::removeFrameUpdateListener);
+            keyListeners.invoke(listener -> this.parent.getKeyListeners().remove(listener));
+            mouseClickListeners.invoke(listener -> this.parent.getMouseClickListeners().remove(listener));
+            mouseWheelListeners.invoke(listener -> this.parent.getMouseWheelListeners().remove(listener));
+            frameUpdateListeners.invoke(listener -> this.parent.getFrameUpdateListeners().remove(listener));
         }
 
         this.parent = parent;
@@ -329,74 +329,22 @@ public class Layer {
     }
 
     @API
-    final public void addMouseClickListener(MouseClickListener mouseClickListener) {
-        mouseClickListeners.add(mouseClickListener);
-
-        if (parent != null) {
-            parent.addMouseClickListener(mouseClickListener);
-        }
+    public EventListeners<KeyListener> getKeyListeners() {
+        return keyListeners;
     }
 
     @API
-    final public void removeMouseClickListener(MouseClickListener mouseClickListener) {
-        mouseClickListeners.remove(mouseClickListener);
-
-        if (parent != null) {
-            parent.removeMouseClickListener(mouseClickListener);
-        }
+    public EventListeners<MouseClickListener> getMouseClickListeners() {
+        return mouseClickListeners;
     }
 
     @API
-    final public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        mouseWheelListeners.add(mouseWheelListener);
-
-        if (parent != null) {
-            parent.addMouseWheelListener(mouseWheelListener);
-        }
+    public EventListeners<MouseWheelListener> getMouseWheelListeners() {
+        return mouseWheelListeners;
     }
 
     @API
-    final public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        mouseWheelListeners.remove(mouseWheelListener);
-
-        if (parent != null) {
-            parent.removeMouseWheelListener(mouseWheelListener);
-        }
-    }
-
-    @API
-    final public void addKeyListener(KeyListener keyListener) {
-        keyListeners.add(keyListener);
-
-        if (parent != null) {
-            parent.addKeyListener(keyListener);
-        }
-    }
-
-    @API
-    final public void removeKeyListener(KeyListener keyListener) {
-        keyListeners.remove(keyListener);
-
-        if (parent != null) {
-            parent.removeKeyListener(keyListener);
-        }
-    }
-
-    @API
-    final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.add(frameUpdateListener);
-
-        if (parent != null) {
-            parent.addFrameUpdateListener(frameUpdateListener);
-        }
-    }
-
-    @API
-    final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.remove(frameUpdateListener);
-
-        if (parent != null) {
-            parent.removeFrameUpdateListener(frameUpdateListener);
-        }
+    public EventListeners<FrameUpdateListener> getFrameUpdateListeners() {
+        return frameUpdateListeners;
     }
 }
