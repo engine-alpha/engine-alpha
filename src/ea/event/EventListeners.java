@@ -54,6 +54,10 @@ public final class EventListeners<T> {
         }
     }
 
+    public boolean contains(T listener) {
+        return listeners.contains(listener);
+    }
+
     public void invoke(Consumer<T> invoker) {
         for (T listener : listeners) {
             invoker.accept(listener);

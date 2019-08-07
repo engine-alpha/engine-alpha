@@ -247,11 +247,11 @@ public class Scene {
 
         Bounds frameSize = Game.getFrameSizeInPx();
         Vector cameraPositionInPx = new Vector(frameSize.width / 2, frameSize.height / 2);
-        Vector aInPx = camera.getPosition().fromThisTo(aInWorld).multiply(pixelPerMeter).multiplyY(-1).add(cameraPositionInPx);
+        Vector aInPx = camera.getPosition().fromThisTo(aInWorld).multiply(pixelPerMeter).multiplyY(-1).add(cameraPositionInPx.multiply(-1));
 
         if (j instanceof RevoluteJoint) {
             g.setColor(REVOLUTE_JOINT_COLOR);
-            g.drawOval((int) aInWorld.x - (JOINT_CIRCLE_RADIUS / 2), (int) aInWorld.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_CIRCLE_RADIUS, JOINT_CIRCLE_RADIUS);
+            g.drawOval((int) aInPx.x - (JOINT_CIRCLE_RADIUS / 2), (int) aInPx.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_CIRCLE_RADIUS, JOINT_CIRCLE_RADIUS);
         } else if (j instanceof RopeJoint) {
             renderJointRectangle(g, ROPE_JOINT_COLOR, aInWorld, bInWorld);
         } else if (j instanceof DistanceJoint) {

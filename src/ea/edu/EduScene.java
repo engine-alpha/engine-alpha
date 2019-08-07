@@ -1,19 +1,18 @@
 package ea.edu;
 
-import ea.FrameUpdateListener;
-import ea.Layer;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.actor.Actor;
-import ea.input.*;
+import ea.edu.event.*;
+import ea.event.EventListeners;
+import ea.input.KeyListener;
+import ea.input.MouseButton;
+import ea.input.MouseClickListener;
+import ea.input.MouseWheelListener;
 
 import java.awt.event.KeyEvent;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-public class EduScene extends Scene implements KeyListener, MouseClickListener, FrameUpdateListener, MouseWheelListener {
+public class EduScene extends Scene {
     public static final String MAINLAYER_NAME = "Hauptebene";
 
     /* _____________________________ LISTENER LISTS _____________________________ */
@@ -21,36 +20,27 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
     /**
      * Die Liste aller TICKER-Aufgaben
      */
-    private final ArrayList<TickerAuftrag> sceneTickers = new ArrayList<>();
+    private final HashMap<Ticker, FrameUpdateListener> sceneTickers = new HashMap<>();
 
     /**
      * Die Liste aller TASTEN-Aufgaben
      */
-    private final ArrayList<TastenAuftrag> sceneKeyListeners = new ArrayList<>();
+    private final HashMap<TastenReagierbar, KeyListener> sceneKeyListeners = new HashMap<>();
 
     /**
      * Die Liste aller KLICK-Aufgaben
      */
-    private final ArrayList<KlickAuftrag> sceneKlickListeners = new ArrayList<>();
+    private final HashMap<MausKlickReagierbar, MouseClickListener> sceneMouseClickListeners = new HashMap<>();
 
     /**
      * Liste aller Framewise Update Aufträge
      */
-    private final ArrayList<FrameUpdateAuftrag> sceneFrameUpdateListeners = new ArrayList<>();
+    private final HashMap<FrameUpdateReagierbar, FrameUpdateListener> sceneFrameUpdateListeners = new HashMap<>();
 
     /**
      * Liste aller MouseWheelListener
      */
-    private final ArrayList<MouseWheelAuftrag> sceneMouseWheelListeners = new ArrayList<>();
-
-    private static final HashMap<String, String> primitiveTranslator;
-
-    static {
-        primitiveTranslator = new HashMap<>();
-        primitiveTranslator.put("java.lang.Integer", "int");
-        primitiveTranslator.put("java.lang.Float", "float");
-        primitiveTranslator.put("java.lang.Boolean", "boolean");
-    }
+    private final HashMap<MausRadReagierbar, MouseWheelListener> sceneMouseWheelListeners = new HashMap<>();
 
 
     /* _____________________________ SCENE AND LAYER FIELDS _____________________________ */
@@ -78,11 +68,6 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         layerHashMap.put(MAINLAYER_NAME, getMainLayer());
 
         setGravity(new Vector(0, -9.81f));
-
-        super.getFrameUpdateListeners().add(this);
-        super.getKeyListeners().add(this);
-        super.getMouseClickListeners().add(this);
-        super.getMouseWheelListeners().add(this);
     }
 
     public String[] layerNames() {
@@ -132,355 +117,81 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
     /* _____________________________ Listener Addition & Removal _____________________________ */
 
-    public void addEduClickListener(Object client, boolean linksklick) {
-        addToClientableArrayList(sceneKlickListeners, new KlickAuftrag(client, linksklick));
-    }
-
-    public void removeEduClickListener(Object object) {
-        removeFromArrayList(sceneKlickListeners, object);
-    }
-
-    public void addEduKeyListener(Object o) {
-        addToClientableArrayList(sceneKeyListeners, new TastenAuftrag(o));
-    }
-
-    public void removeEduKeyListener(Object o) {
-        removeFromArrayList(sceneKeyListeners, o);
-    }
-
-    public void addEduTicker(Object o, int intervall) {
-        addToClientableArrayList(sceneTickers, new TickerAuftrag(o, intervall));
-    }
-
-    public void removeEduTicker(Object o) {
-        removeFromArrayList(sceneTickers, o);
-    }
-
-    public void addEduFrameUpdateListener(Object o) {
-        addToClientableArrayList(sceneFrameUpdateListeners, new FrameUpdateAuftrag(o));
-    }
-
-    public void removeEduFrameUpdateListener(Object o) {
-        removeFromArrayList(sceneFrameUpdateListeners, o);
-    }
-
-    public void addEduMouseWheelListener(Object o) {
-        addToClientableArrayList(sceneMouseWheelListeners, new MouseWheelAuftrag(o));
-    }
-
-    public void removeEduMouseWheelListener(Object o) {
-        removeFromArrayList(sceneMouseWheelListeners, o);
-    }
-
-    private static final <E extends Clientable> boolean addToClientableArrayList(ArrayList<E> targetList, E toAdd) {
-        Class<?> objectClass = toAdd.getClient().getClass();
-        Method[] methods = objectClass.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals(toAdd.getInvocationMethodName())) {
-                //Correct Name, Check for correct parameters
-                Class<?>[] targetParameters = toAdd.getInvocationMethodParameters();
-                Class<?>[] parameters = methods[i].getParameterTypes();
-                if (parameters.length != targetParameters.length) {
-                    throw new IllegalArgumentException("Achtung! Das übergebene Objekt hatte eine Methode mit korrektem Namen (" + toAdd.getInvocationMethodName() + "), aber nicht die korrekte Parameteranzahl.");
-                }
-                for (int k = 0; k < targetParameters.length; k++) {
-                    if (!compareParameters(targetParameters[k], parameters[k])) {
-                        //Strange Case: Correct Method Name, wrong Parameters!
-                        throw new IllegalArgumentException("Achtung! Übergebenes Objekt hatte korrekten Methodennamen, " + "aber nicht die korrekte Parameter. Fehler bei " + targetParameters[k].getName() + " (erwartet) vs. " + parameters[k].getName());
-                    }
-                }
-                toAdd.setMethodToInvoke(methods[i]);
-                targetList.add(toAdd);
-                return true;
+    public void addEduClickListener(MausKlickReagierbar client) {
+        addListener(client, sceneMouseClickListeners, activeLayer.getMouseClickListeners(), new MouseClickListener() {
+            @Override
+            public void onMouseDown(Vector e, MouseButton b) {
+                client.klickReagieren(e.x, e.y);
             }
-        }
-        return false;
-    }
 
-    private static final boolean compareParameters(Class<?> param1, Class<?> param2) {
-        String alt1 = primitiveTranslator.get(param1.getName());
-        if (alt1 != null && alt1.equals(param2.getName())) {
-            return true;
-        }
-        String alt2 = primitiveTranslator.get(param2.getName());
-        if (alt2 != null && alt2.equals(param1.getName())) {
-            return true;
-        }
-
-        return param1.getName().equals(param2.getName());
-    }
-
-    private static final <E extends Clientable> void removeFromArrayList(ArrayList<E> list, Object object) {
-        ArrayList<E> toRemove = new ArrayList<>();
-        for (E e : list) {
-            if (e.getClient().equals(object)) {
-                toRemove.add(e);
+            @Override
+            public void onMouseUp(Vector e, MouseButton b) {
+                client.klickLosgelassenReagieren(e.x, e.y);
             }
-        }
-        for (E e : toRemove) {
-            list.remove(e);
-        }
+        });
     }
 
-    /* EA Listener Implementation */
-
-    @Override
-    public void onFrameUpdate(float deltaSeconds) {
-        for (TickerAuftrag ta : sceneTickers) {
-            ta.accountFrame(deltaSeconds);
-        }
-        for (FrameUpdateAuftrag a : sceneFrameUpdateListeners) {
-            a.forwardFrameUpdate(deltaSeconds);
-        }
+    public void removeEduClickListener(MausKlickReagierbar object) {
+        removeListener(object, sceneMouseClickListeners, activeLayer.getMouseClickListeners());
     }
 
-    @Override
-    public void onKeyDown(KeyEvent e) {
-        for (TastenAuftrag ta : sceneKeyListeners) {
-            ta.ausfuehren(e.getKeyCode());
-        }
-    }
-
-    @Override
-    public void onMouseDown(Vector position, MouseButton button) {
-        runMouseReactions(position, button, true);
-    }
-
-    @Override
-    public void onMouseUp(Vector position, MouseButton button) {
-        runMouseReactions(position, button, false);
-    }
-
-    private final void runMouseReactions(Vector position, MouseButton button, boolean down) {
-        for (KlickAuftrag ka : sceneKlickListeners) {
-            if (ka.linksklick && button == MouseButton.LEFT) {
-                ka.ausfuehren(position.x, position.y, down);
-            } else if (!ka.linksklick && button == MouseButton.RIGHT) {
-                ka.ausfuehren(position.x, position.y, down);
+    public void addEduKeyListener(TastenReagierbar o) {
+        //addToClientableArrayList(sceneKeyListeners, new TastenAuftrag(o));
+        KeyListener keyListener = new KeyListener() {
+            @Override
+            public void onKeyDown(KeyEvent e) {
+                o.tasteReagieren(e.getKeyCode());
             }
-        }
-    }
 
-    @Override
-    public void onMouseWheelMove(MouseWheelEvent mouseWheelEvent) {
-        for (MouseWheelAuftrag mouseWheelAuftrag : sceneMouseWheelListeners) {
-            mouseWheelAuftrag.forwardMouseWheelEvent(mouseWheelEvent);
-        }
-    }
-
-    /* ~~~ Listener CLASSES ~~~ */
-
-    private interface Clientable {
-        Object getClient();
-        void setMethodToInvoke(Method methodToInvoke);
-        String getInvocationMethodName();
-        Class<?>[] getInvocationMethodParameters();
-    }
-
-    private abstract class Auftrag implements Clientable {
-
-        protected Method method;
-        protected final Object client;
-
-        public Auftrag(Object client) {
-            this.client = client;
-        }
-
-        @Override
-        public Object getClient() {
-            return client;
-        }
-
-        @Override
-        public void setMethodToInvoke(Method methodToInvoke) {
-            this.method = methodToInvoke;
-        }
-    }
-
-    /**
-     * Ein TickerAuftrag regelt je einen Fake-Ticker.
-     */
-    private final class TickerAuftrag extends Auftrag {
-
-        /**
-         * Das Intervall
-         */
-        private final float intervall;
-
-        private float counter;
-
-        public TickerAuftrag(Object client, float intervall) {
-            super(client);
-            this.intervall = intervall;
-            this.counter = intervall;
-        }
-
-        /**
-         * Frameweise Abarbeitung
-         */
-        public final void accountFrame(float seconds) {
-            counter -= seconds;
-            if (counter > 0) {
-                return;
+            @Override
+            public void onKeyUp(KeyEvent e) {
+                o.tasteLosgelassenReagieren(e.getKeyCode());
             }
-            try {
-                method.invoke(client, new Object[0]);
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            while (counter <= 0) {
-                counter += intervall;
-            }
-        }
-
-        /**
-         * @return Das Intervall des gelagerten Objektes
-         */
-        public float intervall() {
-            return intervall;
-        }
-
-        @Override
-        public String getInvocationMethodName() {
-            return "tick";
-        }
-
-        @Override
-        public Class<?>[] getInvocationMethodParameters() {
-            return new Class<?>[] {};
-        }
+        };
+        addListener(o, sceneKeyListeners, activeLayer.getKeyListeners(), keyListener);
     }
 
-    /**
-     * Ein TastenAuftrag regelt den Aufruf eines TastenReaktions-Interface.
-     */
-    private final class TastenAuftrag extends Auftrag {
-
-        /**
-         * Erstellt einen Tastenauftrag
-         *
-         * @param client Das Objekt, an dem der Job ausgefuehrt werden soll.
-         */
-        public TastenAuftrag(Object client) {
-            super(client);
-        }
-
-        /**
-         * Führt die Methode einmalig aus.
-         *
-         * @param code Der Tastaturcode, der mitgegeben wird.
-         */
-        public void ausfuehren(int code) {
-            try {
-                method.invoke(client, code);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (java.lang.IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public String getInvocationMethodName() {
-            return "tasteReagieren";
-        }
-
-        @Override
-        public Class<?>[] getInvocationMethodParameters() {
-            return new Class<?>[] {int.class};
-        }
+    public void removeEduKeyListener(TastenReagierbar o) {
+        removeListener(o, sceneKeyListeners, activeLayer.getKeyListeners());
     }
 
-    /**
-     * Auftrag für einen Klick-Listener
-     */
-    private class KlickAuftrag extends Auftrag {
-
-        private final boolean linksklick;
-
-        private KlickAuftrag(Object c, boolean linksklick) {
-            super(c);
-            this.linksklick = linksklick;
-        }
-
-        /**
-         * Führt die Methode am Client aus.
-         *
-         * @param x Die zu uebergebene X-Koordinate des Klicks.
-         * @param y Die zu uebergebene Y-Koordinate des Klicks.
-         */
-        private void ausfuehren(float x, float y, boolean press) {
-            try {
-                method.invoke(client, new Object[] {x, y, press});
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (java.lang.IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public String getInvocationMethodName() {
-            return "klickReagieren";
-        }
-
-        @Override
-        public Class<?>[] getInvocationMethodParameters() {
-            return new Class<?>[] {float.class, float.class, boolean.class};
-        }
+    public void addEduTicker(Ticker o, int intervall) {
+        PeriodicTask periodicTask = new PeriodicTask(intervall, () -> o.tick());
+        addListener(o, sceneTickers, activeLayer.getFrameUpdateListeners(), periodicTask);
     }
 
-    private final class FrameUpdateAuftrag extends Auftrag {
-
-        private FrameUpdateAuftrag(Object client) {
-            super(client);
-        }
-
-        private void forwardFrameUpdate(float frameDuration) {
-            try {
-                method.invoke(client, frameDuration);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public String getInvocationMethodName() {
-            return "frameUpdateReagieren";
-        }
-
-        @Override
-        public Class<?>[] getInvocationMethodParameters() {
-            return new Class<?>[] {float.class};
-        }
+    public void removeEduTicker(Ticker o) {
+        removeListener(o, sceneTickers, activeLayer.getFrameUpdateListeners());
     }
 
-    private final class MouseWheelAuftrag extends Auftrag {
+    public void addEduFrameUpdateListener(FrameUpdateReagierbar o) {
+        addListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners(), (t) -> o.frameUpdateReagieren(t));
+    }
 
-        public MouseWheelAuftrag(Object client) {
-            super(client);
-        }
+    public void removeEduFrameUpdateListener(FrameUpdateReagierbar o) {
+        removeListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners());
+    }
 
-        private void forwardMouseWheelEvent(MouseWheelEvent mouseWheelEvent) {
-            try {
-                method.invoke(client, new Object[] {mouseWheelEvent.getPreciseWheelRotation()});
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
+    public void addEduMouseWheelListener(MausRadReagierbar o) {
+        addListener(o, sceneMouseWheelListeners, activeLayer.getMouseWheelListeners(), (mwe) -> o.mausRadReagieren(mwe.getPreciseWheelRotation()));
+    }
 
-        @Override
-        public String getInvocationMethodName() {
-            return "mausRadReagieren";
-        }
+    public void removeEduMouseWheelListener(MausRadReagierbar o) {
+        removeListener(o, sceneMouseWheelListeners, activeLayer.getMouseWheelListeners());
+    }
 
-        @Override
-        public Class<?>[] getInvocationMethodParameters() {
-            return new Class[] {float.class};
+    private static <K, V> void removeListener(K eduListener, HashMap<K, V> transitionHashMap, EventListeners<V> engineListeners) {
+        V fromHashMap = transitionHashMap.get(eduListener);
+        if (fromHashMap == null) {
+            // Wert war nicht in Liste enthalten
+            throw new IllegalArgumentException("Ein Reagierbar-Objekt sollte entfernt werden, war aber nicht an diesem Layer in dieser Szene angemeldet.");
         }
+        engineListeners.remove(fromHashMap);
+        transitionHashMap.remove(eduListener);
+    }
+
+    private static <K, V> void addListener(K eduListener, HashMap<K, V> transitionHashMap, EventListeners<V> engineListeners, V engineListener) {
+        transitionHashMap.put(eduListener, engineListener);
+        engineListeners.add(engineListener);
     }
 }
