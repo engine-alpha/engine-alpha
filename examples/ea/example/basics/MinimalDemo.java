@@ -97,11 +97,6 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     }
 
     @Override
-    public void onKeyUp(KeyEvent e) {
-
-    }
-
-    @Override
     public void onMouseWheelMove(MouseWheelEvent mouseWheelEvent) {
         float newZoom = getCamera().getZoom() + (mouseWheelEvent.getPreciseWheelRotation() * -0.2f);
         if (newZoom > 0) {

@@ -52,5 +52,7 @@ public interface MouseClickListener {
      * @param button   Die Maustaste, die gedrückt wurde.
      */
     @API
-    void onMouseUp(Vector position, MouseButton button);
+    default void onMouseUp(Vector position, MouseButton button) {
+        // empty by default
+    }
 }

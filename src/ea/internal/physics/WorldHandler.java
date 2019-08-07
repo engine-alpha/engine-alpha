@@ -459,7 +459,7 @@ public class WorldHandler implements ContactListener {
         Body b2 = collider.getPhysicsHandler().getBody();
 
         if (b1 == null || b2 == null) {
-            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung" + " angemeldet.");
+            Logger.error("Kollision", "Ein Actor-Objekt ohne physikalischen Body wurde zur Kollisionsüberwachung angemeldet.");
             return;
         }
 

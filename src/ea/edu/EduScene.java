@@ -242,11 +242,6 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
     }
 
     @Override
-    public void onKeyUp(KeyEvent e) {
-        // Ignore.
-    }
-
-    @Override
     public void onMouseDown(Vector position, MouseButton button) {
         runMouseReactions(position, button, true);
     }

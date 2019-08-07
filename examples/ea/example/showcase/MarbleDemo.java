@@ -80,16 +80,14 @@ public class MarbleDemo
 
     @Override
     public void onKeyDown(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_X: // Boden togglen
-                if (boden.getBodyType() == BodyType.STATIC) {
-                    boden.setBodyType(BodyType.PASSIVE);
-                    boden.setColor(new Color(255, 255, 255, 100));
-                } else {
-                    boden.setBodyType(BodyType.STATIC);
-                    boden.setColor(new Color(255, 255, 255));
-                }
-                break;
+        if (e.getKeyCode() == KeyEvent.VK_X) { // Boden togglen
+            if (boden.getBodyType() == BodyType.STATIC) {
+                boden.setBodyType(BodyType.PASSIVE);
+                boden.setColor(new Color(255, 255, 255, 100));
+            } else {
+                boden.setBodyType(BodyType.STATIC);
+                boden.setColor(new Color(255, 255, 255));
+            }
         }
     }
 

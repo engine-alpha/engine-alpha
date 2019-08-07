@@ -2,7 +2,6 @@ package ea.example.showcase;
 
 import ea.Game;
 import ea.Scene;
-import ea.input.KeyListener;
 
 import java.awt.event.KeyEvent;
 
@@ -21,25 +20,17 @@ public abstract class ShowcaseDemo extends Scene {
     private boolean debuggingEnabled = true;
 
     public ShowcaseDemo(Scene parent) {
-        getKeyListeners().add(new KeyListener() {
-            @Override
-            public void onKeyDown(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_ESCAPE:
-                        Game.setDebug(false);
-                        Game.transitionToScene(parent);
-                        break;
-                    case KeyEvent.VK_D: //Toggle Debug
-                        if (debuggingEnabled) {
-                            toggleDebug();
-                        }
-                        break;
-                }
-            }
-
-            @Override
-            public void onKeyUp(KeyEvent e) {
-                // NADA
+        getKeyListeners().add(e -> {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_ESCAPE:
+                    Game.setDebug(false);
+                    Game.transitionToScene(parent);
+                    break;
+                case KeyEvent.VK_D: //Toggle Debug
+                    if (debuggingEnabled) {
+                        toggleDebug();
+                    }
+                    break;
             }
         });
 

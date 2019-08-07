@@ -127,9 +127,4 @@ public class Particles extends ShowcaseDemo implements KeyListener {
             getCamera().rotate(0.1f);
         }
     }
-
-    @Override
-    public void onKeyUp(KeyEvent e) {
-        // do nothing
-    }
 }

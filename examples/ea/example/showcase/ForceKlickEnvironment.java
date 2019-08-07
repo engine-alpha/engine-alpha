@@ -10,7 +10,6 @@ import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.handle.BodyType;
-import ea.input.KeyListener;
 import ea.input.MouseButton;
 import ea.input.MouseClickListener;
 
@@ -145,24 +144,14 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         attack.addCollisionListener(this);
 
         getFrameUpdateListeners().add(this);
-        getKeyListeners().add(new KeyListener() {
-            @Override
-            public void onKeyDown(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_E:
-                        boolean wasActive = walls[1].isVisible();
-                        BodyType newType = wasActive ? BodyType.PASSIVE : BodyType.STATIC;
-                        for (int i = 0; i <= 3; i++) {
-                            walls[i].setVisible(!wasActive);
-                            walls[i].setBodyType(newType);
-                        }
-                        break;
+        getKeyListeners().add(e -> {
+            if (e.getKeyCode() == KeyEvent.VK_E) {
+                boolean wasActive = walls[1].isVisible();
+                BodyType newType = wasActive ? BodyType.PASSIVE : BodyType.STATIC;
+                for (int i = 0; i <= 3; i++) {
+                    walls[i].setVisible(!wasActive);
+                    walls[i].setBodyType(newType);
                 }
-            }
-
-            @Override
-            public void onKeyUp(KeyEvent e) {
-                // DONT CARE
             }
         });
     }

@@ -341,11 +341,6 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         }
     }
 
-    @Override
-    public void onKeyUp(KeyEvent e) {
-        // Ignore.
-    }
-
     /**
      * Ändert die Masse vom letzten Objekt, was im Attack-Point war/ist.
      * @param deltaM Die Masseänderung (positiv=mehr Masse, negativ=weniger Masse).
@@ -397,11 +392,6 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
 
                 break;
         }
-    }
-
-    @Override
-    public void onMouseUp(Vector point, MouseButton mouseButton) {
-        // Ignore.
     }
 
     /**
