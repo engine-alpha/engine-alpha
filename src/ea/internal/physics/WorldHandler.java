@@ -470,13 +470,13 @@ public class WorldHandler implements ContactListener {
     @Internal
     public static void addMountListener(Actor a, Actor b, Consumer<WorldHandler> runnable) {
         addMountListenerWithoutExecution(a, worldHandler -> {
-            if (b.isMounted() && b.getPhysicsHandler().getWorldHandler() != worldHandler) {
+            if (b.isMounted() && b.getPhysicsHandler().getWorldHandler() == worldHandler) {
                 runnable.accept(worldHandler);
             }
         });
 
         addMountListenerWithoutExecution(b, worldHandler -> {
-            if (a.isMounted() && a.getPhysicsHandler().getWorldHandler() != worldHandler) {
+            if (a.isMounted() && a.getPhysicsHandler().getWorldHandler() == worldHandler) {
                 runnable.accept(worldHandler);
             }
         });
