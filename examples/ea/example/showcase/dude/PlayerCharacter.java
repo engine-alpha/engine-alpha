@@ -11,7 +11,6 @@ import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.SinusFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.example.showcase.jump.Enemy;
 import ea.handle.BodyType;
 import ea.input.KeyListener;
 import ea.sound.Sound;
@@ -378,10 +377,6 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
     @Override
     public void onCollision(CollisionEvent<Actor> collisionEvent) {
-        if (collisionEvent.getColliding() instanceof Enemy) {
-            return;
-        }
-
         if (collisionEvent.getColliding() instanceof Platform) {
             Platform platform = (Platform) collisionEvent.getColliding();
             if (physics.getVelocity().y > 0 || ignoredPlatformForCollision.contains(platform)) {

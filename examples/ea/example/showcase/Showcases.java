@@ -9,7 +9,6 @@ import ea.actor.Rectangle;
 import ea.actor.Text;
 import ea.example.showcase.billard.Billard;
 import ea.example.showcase.dude.DudeDemo;
-import ea.example.showcase.jump.DinglyJump;
 import ea.input.MouseButton;
 import ea.input.MouseClickListener;
 
@@ -177,7 +176,6 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new PhysicsSandbox(mainscene, WIDTH, HEIGHT), "Kräfte-Sandbox");
         mainscene.addScene(() -> new JointDemo(mainscene, WIDTH, HEIGHT), "Joints in der Engine");
         mainscene.addScene(() -> new MarbleDemo(mainscene), "Murmel-Demo");
-        mainscene.addScene(() -> new DinglyJump(mainscene), "Dingly Jump");
         mainscene.addScene(() -> new DudeDemo(mainscene), "DudeDemo");
         mainscene.addScene(() -> new Billard(mainscene), "Billard");
         mainscene.addScene(() -> new Particles(mainscene), "Particles");
