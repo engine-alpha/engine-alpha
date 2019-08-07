@@ -4,7 +4,7 @@ import ea.*;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
 import ea.actor.BodyType;
-import ea.input.KeyListener;
+import ea.event.KeyListener;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

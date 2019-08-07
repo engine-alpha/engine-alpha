@@ -4,10 +4,10 @@ import ea.*;
 import ea.actor.Actor;
 import ea.edu.event.*;
 import ea.event.EventListeners;
-import ea.input.KeyListener;
-import ea.input.MouseButton;
-import ea.input.MouseClickListener;
-import ea.input.MouseWheelListener;
+import ea.event.KeyListener;
+import ea.event.MouseButton;
+import ea.event.MouseClickListener;
+import ea.event.MouseWheelListener;
 import ea.internal.annotations.API;
 
 import java.awt.event.KeyEvent;

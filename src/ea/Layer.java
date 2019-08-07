@@ -2,9 +2,9 @@ package ea;
 
 import ea.actor.Actor;
 import ea.event.*;
-import ea.input.KeyListener;
-import ea.input.MouseClickListener;
-import ea.input.MouseWheelListener;
+import ea.event.KeyListener;
+import ea.event.MouseClickListener;
+import ea.event.MouseWheelListener;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.*;

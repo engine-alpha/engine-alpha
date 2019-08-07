@@ -21,16 +21,11 @@ package ea.event;
 
 import ea.internal.annotations.API;
 
-public interface MouseWheelListenerContainer {
-    EventListeners<MouseWheelListener> getMouseWheelListeners();
+@API
+public enum MouseButton {
+    @API
+    LEFT,
 
     @API
-    default void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        getMouseWheelListeners().add(mouseWheelListener);
-    }
-
-    @API
-    default void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        getMouseWheelListeners().remove(mouseWheelListener);
-    }
+    RIGHT
 }

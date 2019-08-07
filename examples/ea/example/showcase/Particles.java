@@ -28,7 +28,7 @@ import ea.animation.AnimationMode;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.ReverseEaseFloat;
-import ea.input.KeyListener;
+import ea.event.KeyListener;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;

@@ -19,8 +19,6 @@
 
 package ea.event;
 
-import ea.input.MouseClickListener;
-
 public interface MouseClickListenerContainer {
     EventListeners<MouseClickListener> getMouseClickListeners();
 

@@ -20,9 +20,6 @@
 package ea.event;
 
 import ea.FrameUpdateListener;
-import ea.input.KeyListener;
-import ea.input.MouseClickListener;
-import ea.input.MouseWheelListener;
 
 public class EventListenerHelper {
     public static void autoRegisterListeners(Object target) {

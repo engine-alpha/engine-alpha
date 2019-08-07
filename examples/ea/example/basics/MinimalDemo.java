@@ -7,9 +7,9 @@ import ea.actor.Animation;
 import ea.actor.Rectangle;
 import ea.actor.StatefulAnimation;
 import ea.actor.Text;
-import ea.input.KeyListener;
-import ea.input.MouseWheelEvent;
-import ea.input.MouseWheelListener;
+import ea.event.KeyListener;
+import ea.event.MouseWheelEvent;
+import ea.event.MouseWheelListener;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
