@@ -43,6 +43,7 @@ public interface CollisionListener<E extends Actor> {
      *
      * @param collisionEvent Ein {@link CollisionEvent}-Objekt, dass alle Informationen der
      *                       Kollision beschreibt.
+     *
      * @see CollisionEvent
      */
     @API
@@ -53,7 +54,6 @@ public interface CollisionListener<E extends Actor> {
      * hiermit angemeldeten Actors mit einem (relevanten) Actor-Objekt beendet ist.
      *
      * @param collisionEvent Ein {@link CollisionEvent}-Objekt, dass alle Informationen der
-     *                       Kollision beschreibt.
      */
     @API
     default void onCollisionEnd(CollisionEvent<E> collisionEvent) {

@@ -13,7 +13,7 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
     private final Vector velocity;
     FrameUpdateListener enemyMover = new FrameUpdateListener() {
         @Override
-        public void onFrameUpdate(int frameDuration) {
+        public void onFrameUpdate(float frameDuration) {
             Enemy.this.physics.setVelocity(velocity);
         }
     };
@@ -45,8 +45,8 @@ public class Enemy extends StatefulAnimation implements CollisionListener<Player
             //Treffer!
             pc.physics.applyImpulse(new Vector(0, -2500));
 
-            getScene().removeFrameUpdateListener(enemyMover);
-            getScene().remove(this);
+            getLayer().removeFrameUpdateListener(enemyMover);
+            getLayer().remove(this);
         } else {
             System.out.println("LOSE");
             //Verletzt

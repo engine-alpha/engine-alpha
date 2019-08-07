@@ -60,7 +60,7 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void moveBy(Vector meters) {
         synchronized (worldHandler) {
-            WorldHandler.assertNoWorldStep();
+            worldHandler.assertNoWorldStep();
 
             Vec2 vector = meters.toVec2();
             body.setTransform(vector.addLocal(body.getPosition()), body.getAngle());
@@ -108,7 +108,7 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void rotateBy(float radians) {
         synchronized (worldHandler) {
-            WorldHandler.assertNoWorldStep();
+            worldHandler.assertNoWorldStep();
 
             body.setTransform(body.getPosition(), body.getAngle() + radians);
         }
@@ -165,7 +165,7 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void setMass(float mass) {
         synchronized (worldHandler) {
-            WorldHandler.assertNoWorldStep();
+            worldHandler.assertNoWorldStep();
 
             MassData massData = new MassData();
             body.getMassData(massData);
@@ -203,7 +203,7 @@ public class BodyHandler extends PhysicsHandler {
     @Override
     public void setType(BodyType type) {
         synchronized (worldHandler) {
-            WorldHandler.assertNoWorldStep();
+            worldHandler.assertNoWorldStep();
 
             if (type == this.type) {
                 return;
@@ -329,7 +329,7 @@ public class BodyHandler extends PhysicsHandler {
         testAABB.lowerBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 - epsilon, bodyBounds.lowerBound.y);
         testAABB.upperBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 + epsilon, bodyBounds.lowerBound.y + 2 * epsilon);
 
-        Fixture[] groundCandidates = worldHandler.aabbQuery(testAABB);
+        Fixture[] groundCandidates = worldHandler.queryAABB(testAABB);
         for (Fixture fixture : groundCandidates) {
             Actor corresponding = worldHandler.lookupActor(fixture.m_body);
             if (corresponding != null && corresponding.getBodyType() == BodyType.STATIC) {

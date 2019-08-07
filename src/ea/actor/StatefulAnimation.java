@@ -1,7 +1,6 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
-import ea.Scene;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -54,18 +53,14 @@ public class StatefulAnimation extends Actor {
         this.width = width;
         this.height = height;
 
+        addMountListener(e -> getLayer().addFrameUpdateListener(frameUpdateListener));
+        addUnmountListener(e -> {
+            if (getLayer() != null) {
+                getLayer().removeFrameUpdateListener(frameUpdateListener);
+            }
+        });
+
         // TODO Check that all frames have the same size
-    }
-
-    @Override
-    public void setScene(Scene scene) {
-        if (scene != null) {
-            scene.addFrameUpdateListener(frameUpdateListener);
-        } else {
-            getScene().removeFrameUpdateListener(frameUpdateListener);
-        }
-
-        super.setScene(scene);
     }
 
     /**
@@ -257,7 +252,7 @@ public class StatefulAnimation extends Actor {
      * Methode wird frameweise über einen anononymen Listener aufgerufen.
      */
     @Internal
-    private void internalOnFrameUpdate(int frameDuration) {
+    private void internalOnFrameUpdate(float frameDuration) {
         if (currentAnimation == null) {
             return; // we don't have a state yet
         }
@@ -270,7 +265,7 @@ public class StatefulAnimation extends Actor {
             this.currentTime -= currentFrame.getDuration();
 
             if (this.currentIndex + 1 == this.currentAnimation.length) {
-                //Animation cycle has ended. -> Transition to next state
+                // Animation cycle has ended. -> Transition to next state
                 currentIndex = 0;
 
                 String nextState = stateTransitions.get(currentState);
@@ -279,7 +274,7 @@ public class StatefulAnimation extends Actor {
                 currentState = nextState;
                 currentAnimation = nextAnimation;
             } else {
-                //Animation cycle has not ended -> simply move on to next frame
+                // Animation cycle has not ended -> simply move on to next frame
                 this.currentIndex++;
             }
         }

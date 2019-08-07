@@ -124,7 +124,7 @@ public interface EduActor {
 
     @API
     default void setzeSchwerkraft(float schwerkraft) {
-        getActor().getScene().setGravity(new Vector(0, -schwerkraft));
+        getActor().getLayer().getParent().setGravity(new Vector(0, -schwerkraft));
     }
 
     @API
@@ -203,7 +203,7 @@ public interface EduActor {
      */
     @API
     default void setzeEbene(int ebenenNummer) {
-        getActor().setLayer(ebenenNummer);
+        getActor().setLayerPosition(ebenenNummer);
     }
 
     /**
@@ -215,7 +215,7 @@ public interface EduActor {
      */
     @API
     default int nenneEbene() {
-        return getActor().getLayer();
+        return getActor().getLayerPosition();
     }
 
     /**

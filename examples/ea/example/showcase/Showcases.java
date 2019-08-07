@@ -1,9 +1,6 @@
 package ea.example.showcase;
 
-import ea.FrameUpdateListener;
-import ea.Game;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.actor.Actor;
 import ea.actor.Rectangle;
 import ea.actor.Text;
@@ -72,8 +69,8 @@ public class Showcases extends Scene {
             text = new Text(content, 24);
             text.setStyle(Font.BOLD);
             text.setColor(Color.BLACK);
-            box.setLayer(0);
-            text.setLayer(1);
+            box.setLayerPosition(0);
+            text.setLayerPosition(1);
             text.position.set(x, y);
             text.position.move(20, 10);
 
@@ -115,7 +112,7 @@ public class Showcases extends Scene {
         }
 
         @Override
-        public void onFrameUpdate(int i) {
+        public void onFrameUpdate(float i) {
             Vector mousePosition = Showcases.this.getMousePosition();
 
             if (box.contains(mousePosition)) {

@@ -1,6 +1,7 @@
 package ea.collision;
 
 import ea.actor.Actor;
+import ea.event.ListenerEvent;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import org.jbox2d.dynamics.contacts.Contact;
@@ -8,7 +9,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 /**
  * Ein Objekt der Klasse <code>CollisionEvent</code> repräsentiert eine <b>Kollision zwischen zwei Actor-Objekten</b>.
  * Nur Actor-Objekte, mit denen ein CollisionListener verkmnüpft ist, generieren <code>CollisionEvent</code>s.
- *
+ * <p>
  * Das CollisionEvent wird verwendet als
  * <ul>
  *     <li>
@@ -25,9 +26,10 @@ import org.jbox2d.dynamics.contacts.Contact;
  *         oder ignoriert werden soll. Hiermit lassen sich zum Beispiel einseitige Sperren/Wände umsetzen.
  *     </li>
  * </ul>
+ *
  * @see CollisionListener
  */
-public class CollisionEvent<E extends Actor> {
+public class CollisionEvent<E extends Actor> implements ListenerEvent {
     /**
      * Der JBox2D-Contact. Zur Manipulation der Kollision und zur Abfrage.
      */
@@ -38,24 +40,29 @@ public class CollisionEvent<E extends Actor> {
      */
     private final E colliding;
 
+    private final Runnable removeListener;
+
     /**
      * Konstruktor. Erstellt ein Collision-Event.
+     *
      * @param contact   Das JBox2D-Contact-Objekt zur direkten Manipulation der Kollisionsauflösung (und zur Abfrage von
      *                  Informationen).
      * @param colliding Das kollidierende Actor-Objekt. Das zweite Objekt der Kollision ist implizit durch die
      *                  Anmeldung am entsprechenden Actor gegeben.
      */
     @Internal
-    public CollisionEvent(Contact contact, E colliding) {
+    public CollisionEvent(Contact contact, E colliding, Runnable removeListener) {
         this.contact = contact;
         this.colliding = colliding;
+        this.removeListener = removeListener;
     }
 
     /**
      * Gibt das <code>Actor</code>-Objekt aus, dass mit dem <code>Actor</code> kollidiert,
      * an dem der Listener angemeldet wurde.
+     *
      * @return Das kollidierende Actor-Objekt. Das zweite Objekt der Kollision ist implizit durch die
-     *         Anmeldung am entsprechenden Actor gegeben.
+     * Anmeldung am entsprechenden Actor gegeben.
      */
     @API
     public E getColliding() {
@@ -77,5 +84,10 @@ public class CollisionEvent<E extends Actor> {
     public void ignoreCollision() {
         contact.setEnabled(false);
         colliding.getPhysicsHandler().getWorldHandler().addContactToBlacklist(contact);
+    }
+
+    @Override
+    public void removeListener() {
+        removeListener.run();
     }
 }

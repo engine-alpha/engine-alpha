@@ -1,7 +1,6 @@
 package ea.internal.physics;
 
-import ea.Game;
-import ea.Scene;
+import ea.Layer;
 import ea.actor.Actor;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
@@ -37,25 +36,14 @@ public class WorldHandler implements ContactListener {
     public static final int CATEGORY_PARTICLE = 8;
 
     /**
+     * Das Layer, zu dem der WorldHandler gehört.
+     */
+    private final Layer layer;
+
+    /**
      * Gibt an, ob die World/Physics gerade pausiert sind.
      */
     private boolean worldPaused = false;
-
-    /**
-     * Assertion-Methode, die sicherstellt, dass die (JBox2D-)World der gerade aktiven Szene nicht im World-Step ist.
-     * Dies ist wichtig für die Manipulation von Actors (Manipulation vieler physikalischen Eigenschaften während
-     * des World-Steps führt zu Inkonsistenzen).
-     *
-     * @throws RuntimeException Wenn die World sich gerade im World-Step befindet. Ist dies nicht der Fall, passiert
-     *                          nichts (und es wird keine Exception geworfen).
-     */
-    @Internal
-    public static void assertNoWorldStep() {
-        Scene scene = Game.getActiveScene();
-        if (scene != null && scene.getWorldHandler().getWorld().isLocked()) {
-            throw new RuntimeException("Die Operation kann nicht während des World-Step ausgeführt werden. " + "Ggf. mit Game.afterWorldStep wrappen.");
-        }
-    }
 
     /**
      * Die World dieses Handlers. Hierin laufen globale Einstellungen (z.B. Schwerkraft) ein.
@@ -83,11 +71,14 @@ public class WorldHandler implements ContactListener {
      */
     private final Collection<FixturePair> contactsToIgnore = new ArrayList<>();
 
+    private float simulationAccumulator = 0;
+
     /**
      * Erstellt eine neue standardisierte Physik ohne Schwerkraft.
      */
     @Internal
-    public WorldHandler() {
+    public WorldHandler(Layer layer) {
+        this.layer = layer;
         this.world = new World(new Vec2());
         this.world.setContactListener(this);
     }
@@ -110,6 +101,21 @@ public class WorldHandler implements ContactListener {
         return this.worldPaused;
     }
 
+    /**
+     * Assertion-Methode, die sicherstellt, dass die (JBox2D-)World der gerade nicht im World-Step ist.
+     * Dies ist wichtig für die Manipulation von Actors (Manipulation vieler physikalischen Eigenschaften während
+     * des World-Steps führt zu Inkonsistenzen).
+     *
+     * @throws RuntimeException Wenn die World sich gerade im World-Step befindet. Ist dies nicht der Fall, passiert
+     *                          nichts (und es wird keine Exception geworfen).
+     */
+    @Internal
+    public void assertNoWorldStep() {
+        if (getWorld().isLocked()) {
+            throw new RuntimeException("Die Operation kann nicht während des World-Step ausgeführt werden. " + "Ggf. mit Game.afterWorldStep wrappen.");
+        }
+    }
+
     public void step(float timeToSimulate) {
         if (worldPaused) {
             return;
@@ -117,7 +123,15 @@ public class WorldHandler implements ContactListener {
 
         synchronized (this) {
             synchronized (this.world) {
-                this.world.step(timeToSimulate / 1000, 6, 3);
+                // We use constant time frames for consistency
+                // https://gamedev.stackexchange.com/q/86609/38865
+                simulationAccumulator += timeToSimulate;
+
+                while (simulationAccumulator > 8) {
+                    simulationAccumulator -= 8;
+
+                    this.world.step(8 / 1000, 6, 3);
+                }
             }
         }
     }
@@ -220,8 +234,9 @@ public class WorldHandler implements ContactListener {
     private void processContact(final Contact contact, boolean isBegin) {
         final Body b1 = contact.getFixtureA().getBody();
         final Body b2 = contact.getFixtureB().getBody();
+
         if (b1 == b2) {
-            //Gleicher Body, don't care
+            // Gleicher Body, don't care
             Logger.error("Collision", "Inter-Body Collision!");
             return;
         }
@@ -267,8 +282,8 @@ public class WorldHandler implements ContactListener {
         /*
          * ~~~~~~~~~~~~~~~~~~~~~~~ TEIL II : Allgemeine Checkups ~~~~~~~~~~~~~~~~~~~~~~~
          */
-        generalCheckup(b1, b2, contact, isBegin);
-        generalCheckup(b2, b1, contact, isBegin);
+        generalCheckup(layer, b1, b2, contact, isBegin);
+        generalCheckup(layer, b2, b1, contact, isBegin);
 
         if (!isBegin) {
             //Contact ist beendet -> Set Enabled and remove from blacklist
@@ -280,21 +295,20 @@ public class WorldHandler implements ContactListener {
 
     private void removeFromBlacklist(Contact contact) {
         FixturePair fixturePair = null;
-        for (FixturePair fp : contactsToIgnore) {
-            if (fp.matches(contact.m_fixtureA, contact.m_fixtureB)) {
-                //MATCH
-                fixturePair = fp;
+        for (FixturePair ignoredPair : contactsToIgnore) {
+            if (ignoredPair.matches(contact.m_fixtureA, contact.m_fixtureB)) {
+                fixturePair = ignoredPair;
                 break;
             }
         }
+
         if (fixturePair != null) {
             contactsToIgnore.remove(fixturePair);
-            //System.out.println("REAL REMOVE");
         }
     }
 
     @Internal
-    private void generalCheckup(Body act, Body col, Contact contact, final boolean isBegin) {
+    private void generalCheckup(Layer layer, Body act, Body col, Contact contact, final boolean isBegin) {
         List<CollisionListener<Actor>> list = generalCollisonListeners.get(act);
         if (list != null) {
             Actor other = worldMap.get(col);
@@ -302,12 +316,12 @@ public class WorldHandler implements ContactListener {
                 return; // Is null on async removals
             }
 
-            CollisionEvent<Actor> collisionEvent = new CollisionEvent<>(contact, other);
-            for (CollisionListener<Actor> kr : list) {
+            CollisionEvent<Actor> collisionEvent = new CollisionEvent<>(contact, other, null); // TODO Replace NULL
+            for (CollisionListener<Actor> listener : list) {
                 if (isBegin) {
-                    kr.onCollision(collisionEvent);
+                    listener.onCollision(collisionEvent);
                 } else {
-                    kr.onCollisionEnd(collisionEvent);
+                    listener.onCollisionEnd(collisionEvent);
                 }
             }
         }
@@ -315,87 +329,73 @@ public class WorldHandler implements ContactListener {
 
     @Override
     public void preSolve(Contact contact, Manifold manifold) {
-        //contact.setEnabled(false);
-        //System.out.println("Blacklist Size: " + contactsToIgnore.size());
-        //System.out.println("Pre-Solve");
-        //if("Ground".equals(contact.m_fixtureA.m_userData) || "Ground".equals(contact.m_fixtureB.m_userData)) {
-        //    System.out.println("GROUND");
-        //    return;
-        //}
-        for (FixturePair bP : contactsToIgnore) {
-
-            if (bP.matches(contact.m_fixtureA, contact.m_fixtureB)) {
-                //MATCH
-                //System.out.println("MATCH");
+        for (FixturePair ignoredPair : contactsToIgnore) {
+            if (ignoredPair.matches(contact.m_fixtureA, contact.m_fixtureB)) {
                 contact.setEnabled(false);
             }
         }
-        //System.out.println("Contact is enabled: "+ contact.isEnabled());
-        //System.out.println("PRE");
     }
 
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
-        //Ignore that shit.
+        // Ignore that shit.
     }
 
+    public Layer getLayer() {
+        return layer;
+    }
 
     /* ____________ On-Request Collision Checkups ____________ */
 
     @Internal
-    public Fixture[] aabbQuery(AABB aabb) {
+    public Fixture[] queryAABB(AABB aabb) {
         ArrayList<Fixture> fixtures = new ArrayList<>();
         world.queryAABB((QueryCallback) fixtures::add, aabb);
         return fixtures.toArray(new Fixture[0]);
     }
 
     @Internal
-    public static boolean bodyCollisionCheckup(Body b1, Body b2) {
-        ContactEdge b1Contacts = b1.getContactList();
-        for (ContactEdge ce = b1Contacts; ce != null; ce = ce.next) {
-            if (ce.other == b2) {
-                //Contact exists with other Body. Next, check if they are actually touching
-                if (ce.contact.isTouching()) {
-                    //TOUCHING!
+    public static boolean isBodyCollision(Body a, Body b) {
+        for (ContactEdge contact = a.getContactList(); contact != null; contact = contact.next) {
+            if (contact.other == b) {
+                // Contact exists with other Body. Next, check if they are actually touching
+                if (contact.contact.isTouching()) {
                     return true;
                 }
             }
         }
-        //PolygonShape s1 =
+
         return false;
     }
-
-
-    /* ____________ APPENDIX - Inner Classes ____________ */
 
     /**
      * Speichert ein Korrespondierendes Body-Objekt sowie
      */
     private static class Checkup<E extends Actor> {
-        private final CollisionListener<E> reagierbar;  //Aufzurufen
-        private final Body body2;                       //Der zweite Body (erster Body ist Hashmap-Schlüssel)
-        private final E collidingActor;                       //Das Actor-Objekt, das neben dem Actor angemeldet wurde
+        private final CollisionListener<E> listener;  // Aufzurufen
+        private final Body body;                      // Der zweite Body (erster Body ist Hashmap-Schlüssel)
+        private final E collidingActor;               // Das Actor-Objekt, das neben dem Actor angemeldet wurde
 
         /**
          * Erstellt das Checkup-Objekt
          *
-         * @param reagierbar     Das aufzurufende KR
-         * @param body2          Der zweite Body für den Checkup
+         * @param listener       Das aufzurufende KR
+         * @param body           Der zweite Body für den Checkup
          * @param collidingActor Der zugehörige Collider für diesen Checkup
          */
-        private Checkup(CollisionListener<E> reagierbar, Body body2, E collidingActor) {
-            this.reagierbar = reagierbar;
-            this.body2 = body2;
+        private Checkup(CollisionListener<E> listener, Body body, E collidingActor) {
+            this.listener = listener;
+            this.body = body;
             this.collidingActor = collidingActor;
         }
 
-        public void checkCollision(Body secondBodyOfActualCollision, Contact contact, boolean isBegin) {
-            if (body2 == secondBodyOfActualCollision) {
-                CollisionEvent<E> collisionEvent = new CollisionEvent<>(contact, collidingActor);
+        public void checkCollision(Body body, Contact contact, boolean isBegin) {
+            if (this.body == body) {
+                CollisionEvent<E> collisionEvent = new CollisionEvent<>(contact, collidingActor, null); // TODO Replace NULL
                 if (isBegin) {
-                    reagierbar.onCollision(collisionEvent);
+                    listener.onCollision(collisionEvent);
                 } else {
-                    reagierbar.onCollisionEnd(collisionEvent);
+                    listener.onCollisionEnd(collisionEvent);
                 }
             }
         }
@@ -433,12 +433,18 @@ public class WorldHandler implements ContactListener {
      * @param <E>      Der Type des Colliders.
      */
     @Internal
-    public static <E extends Actor> void addSpecificCollisionListener(CollisionListener<E> listener, Actor actor, E collider) {
+    public static <E extends Actor> void addSpecificCollisionListener(Actor actor, E collider, CollisionListener<E> listener) {
         final WorldHandler actorHandler = actor.getPhysicsHandler().getWorldHandler();
         final WorldHandler colliderHandler = collider.getPhysicsHandler().getWorldHandler();
 
         if (colliderHandler == null) {
-            collider.addOnetimeSetupListener(() -> addSpecificCollisionListener(listener, actor, collider));
+            collider.addMountListener(e -> addSpecificCollisionListener(actor, collider, listener));
+        } else {
+            collider.addUnmountListener(e -> {
+                e.removeListener();
+
+                collider.addMountListener(mountEvent -> addSpecificCollisionListener(actor, collider, listener));
+            });
         }
 
         if (actorHandler == null) {

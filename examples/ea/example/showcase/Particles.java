@@ -23,6 +23,7 @@ import ea.*;
 import ea.actor.Circle;
 import ea.actor.Particle;
 import ea.actor.Rectangle;
+import ea.animation.AnimationMode;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.ReverseEaseFloat;
@@ -94,11 +95,11 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         r3.setColor(Color.DARK_GRAY);
         r4.setColor(Color.DARK_GRAY);
 
-        r1.addCollisionListener(event -> remove(event.getColliding()));
+        r1.addCollisionListener((event) -> remove(event.getColliding()));
 
         setGravity(new Vector(0, -600));
 
-        this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), ValueAnimator.Mode.REPEATED));
+        this.addFrameUpdateListener(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), AnimationMode.REPEATED));
     }
 
     private void createCircle(Vector position, Color color) {
@@ -108,7 +109,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
             Particle particle = new Particle(3, 500);
             particle.position.set(k.position.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);
-            particle.setLayer(-1);
+            particle.setLayerPosition(-1);
 
             ValueAnimator<Integer> animator = new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255));
             animator.addCompletionListener((value) -> {
@@ -123,7 +124,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         });
 
         addFrameUpdateListener(emitter);
-        k.addDestructionListener(() -> removeFrameUpdateListener(emitter));
+        k.addUnmountListener(e -> removeFrameUpdateListener(emitter));
 
         k.position.set(position);
         k.setColor(color);

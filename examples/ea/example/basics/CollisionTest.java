@@ -1,9 +1,6 @@
 package ea.example.basics;
 
-import ea.FrameUpdateListener;
-import ea.Game;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
 
@@ -27,7 +24,7 @@ implements FrameUpdateListener {
 
         add(wall, ball);
 
-        ball.addCollisionListener(collisionEvent -> System.out.println("COLLISION"), wall);
+        ball.addCollisionListener(wall, (collisionEvent) -> System.out.println("COLLISION"));
 
         if(ball.overlaps(wall)) {
             System.out.println("OVERLAP");
@@ -42,7 +39,7 @@ implements FrameUpdateListener {
     }
 
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
 
         //ball.position.move(BALLSPEED_PER_MS.multiply(frameDuration));
 

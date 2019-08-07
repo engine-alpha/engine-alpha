@@ -40,7 +40,7 @@ public class Ball extends Circle implements FrameUpdateListener {
     }
 
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         if (physics.getVelocity().getLength() < 0.2f) {
             physics.setVelocity(Vector.NULL);
         } else {

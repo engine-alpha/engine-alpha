@@ -1,9 +1,14 @@
 package ea;
 
 import ea.actor.Actor;
+import ea.event.EventListeners;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
+import ea.internal.physics.BodyHandler;
+import ea.internal.physics.NullHandler;
+import ea.internal.physics.ProxyData;
 import ea.internal.physics.WorldHandler;
+import org.jbox2d.dynamics.Body;
 
 import java.awt.Graphics2D;
 import java.util.Collection;
@@ -21,6 +26,11 @@ public class Layer {
      * Der Inhalt des Layers.
      */
     private final Collection<Actor> actors;
+
+    /**
+     * Die Liste aller angemeldeten FrameUpdateListener.
+     */
+    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
 
     /**
      * Parallaxen-X-Faktor
@@ -72,8 +82,12 @@ public class Layer {
      */
     @API
     public Layer() {
-        worldHandler = new WorldHandler();
+        worldHandler = new WorldHandler(this);
         actors = new ConcurrentLinkedQueue<>();
+    }
+
+    public Scene getParent() {
+        return parent;
     }
 
     @Internal
@@ -207,11 +221,12 @@ public class Layer {
     @API
     public void add(Actor... actors) {
         for (Actor actor : actors) {
-            if (actor.getScene() != null) {
-                throw new IllegalArgumentException("Ein Actor kann nur an einer Scene gleichzeitig angemeldet sein");
+            if (actor.getPhysicsHandler().getBody() != null) {
+                throw new IllegalArgumentException("Ein Actor kann nur an einem Layer gleichzeitig angemeldet sein");
             }
 
-            actor.setScene(this.parent);
+            actor.setPhysicsHandler(new BodyHandler(actor, actor.getPhysicsHandler().getProxyData(), worldHandler));
+
             this.actors.add(actor);
         }
     }
@@ -220,7 +235,12 @@ public class Layer {
     final public void remove(Actor... actors) {
         for (Actor actor : actors) {
             this.actors.remove(actor);
-            actor.setScene(null);
+
+            ProxyData proxyData = actor.getPhysicsHandler().getProxyData();
+            Body body = actor.getPhysicsHandler().getBody();
+            worldHandler.removeAllInternalReferences(body);
+            worldHandler.getWorld().destroyBody(body);
+            actor.setPhysicsHandler(new NullHandler(actor, proxyData));
         }
     }
 
@@ -298,6 +318,16 @@ public class Layer {
         }
     }
 
+    @API
+    final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        frameUpdateListeners.addListener(frameUpdateListener);
+    }
+
+    @API
+    final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
+        frameUpdateListeners.removeListener(frameUpdateListener);
+    }
+
     /**
      * Gibt den Worldhandler dieses Layers aus.
      *
@@ -310,7 +340,11 @@ public class Layer {
 
     public void step(float deltaTime) {
         synchronized (worldHandler) {
-            worldHandler.step(deltaTime * timeDistort);
+            float timeToSimulate = deltaTime * timeDistort;
+
+            worldHandler.step(timeToSimulate);
+
+            frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(timeToSimulate));
         }
     }
 }

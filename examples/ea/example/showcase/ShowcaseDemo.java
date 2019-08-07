@@ -43,7 +43,7 @@ public abstract class ShowcaseDemo extends Scene {
             }
         });
 
-        addFrameUpdateListener(i -> {
+        addFrameUpdateListener((i) -> {
             if (!cameraControlEnabled) {
                 return;
             }

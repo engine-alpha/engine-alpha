@@ -108,7 +108,7 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     }
 
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         if (Game.isKeyPressed(KeyEvent.VK_W)) {
             //W ist gedrückt -> Kamera nach oben bewegen.
             getCamera().move(0, CAM_SPEED * frameDuration);

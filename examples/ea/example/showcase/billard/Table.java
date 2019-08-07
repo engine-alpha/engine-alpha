@@ -57,7 +57,7 @@ public class Table {
 
     private void createHoles() {
         Hole hole;
-        CollisionListener<Actor> collisionListener = collisionEvent -> {
+        CollisionListener<Actor> collisionListener = (collisionEvent) -> {
             if (collisionEvent.getColliding() instanceof Ball) {
                 Game.enqueue(() -> collisionEvent.getColliding().removeFromScene());
             }

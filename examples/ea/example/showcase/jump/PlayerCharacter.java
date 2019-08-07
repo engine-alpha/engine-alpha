@@ -87,7 +87,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
      * Wird frameweise aufgerufen: Checkt den aktuellen state des Characters und macht ggf. Änderungen
      */
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         Vector velocity = physics.getVelocity();
         //boolean standing = physics.testStanding();
 

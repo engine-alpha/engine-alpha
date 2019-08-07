@@ -47,7 +47,7 @@ public class HUD extends Layer implements FrameUpdateListener {
      * @param frameDuration Die Zeit <b>in Millisekunden</b>, die seit dem letzten Update vergangen
      */
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         if (playerCharacter == null) {
             return;
         }

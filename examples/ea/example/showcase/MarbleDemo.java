@@ -72,7 +72,7 @@ public class MarbleDemo
             r.setBodyType(BodyType.STATIC);
         }
 
-        lm.getScene().setGravity(new Vector(0, 15));
+        lm.getLayer().getParent().setGravity(new Vector(0, 15));
 
         lm.position.setRotation(-(float) Math.PI / 4);
         rm.position.setRotation((float) Math.PI / 4);
@@ -112,7 +112,7 @@ public class MarbleDemo
             }
 
             @Override
-            public void onFrameUpdate(int i) {
+            public void onFrameUpdate(float i) {
                 if (this.position.getCenter().getLength() > 1000) {
                     MarbleDemo.this.remove(this);
                 }

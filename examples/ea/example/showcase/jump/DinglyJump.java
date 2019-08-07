@@ -3,6 +3,7 @@ package ea.example.showcase.jump;
 import ea.*;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
+import ea.animation.AnimationMode;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.ReverseEaseFloat;
 import ea.example.showcase.ShowcaseDemo;
@@ -51,7 +52,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
 
         addFrameUpdateListener(new ValueAnimator<>(5000,
                 circleToAnimate.position::setY,
-                new ReverseEaseFloat(500, 1000), ValueAnimator.Mode.REPEATED));
+                new ReverseEaseFloat(500, 1000), AnimationMode.REPEATED));
 
         createPlatforms();
         createRandomParcour(50);
@@ -161,7 +162,7 @@ public class DinglyJump extends ShowcaseDemo implements KeyListener, FrameUpdate
     }
 
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         character.onFrameUpdate(frameDuration);
     }
 }

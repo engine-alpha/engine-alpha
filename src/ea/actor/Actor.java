@@ -19,18 +19,20 @@
 
 package ea.actor;
 
-import ea.Bounds;
-import ea.Game;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.collision.CollisionListener;
+import ea.event.EventListeners;
+import ea.event.ListenerEvent;
 import ea.handle.BodyType;
 import ea.handle.Physics;
 import ea.handle.Position;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.physics.*;
+import ea.internal.physics.NullHandler;
+import ea.internal.physics.PhysicsHandler;
+import ea.internal.physics.ProxyData;
+import ea.internal.physics.WorldHandler;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -42,9 +44,8 @@ import org.jbox2d.dynamics.Fixture;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -55,11 +56,6 @@ import java.util.function.Supplier;
  * @author Niklas Keller
  */
 public abstract class Actor {
-    /**
-     * Szene, zu der der Actor gehört.
-     */
-    private Scene scene;
-
     /**
      * Gibt an, ob der Actor bereits zerstört wurde.
      */
@@ -74,7 +70,7 @@ public abstract class Actor {
     /**
      * Z-Index des Raumes, je höher, desto weiter oben wird der Actor gezeichnet
      */
-    private int layer = 1;
+    private int layerPosition = 1;
 
     /**
      * Opacity = Durchsichtigkeit des Raumes
@@ -94,11 +90,9 @@ public abstract class Actor {
      */
     private PhysicsHandler physicsHandler;
 
-    private final List<Runnable> setupFunctions = new CopyOnWriteArrayList<>();
-
-    private final List<Runnable> onetimeSetupFunctions = new CopyOnWriteArrayList<>();
-
-    private final Collection<Runnable> destructionListeners = new CopyOnWriteArrayList<>();
+    private final EventListeners<Consumer<ListenerEvent>> mountListeners = new EventListeners<>();
+    private final EventListeners<Consumer<ListenerEvent>> unmountListeners = new EventListeners<>();
+    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
 
     /* _________________________ Die Handler _________________________ */
 
@@ -135,73 +129,37 @@ public abstract class Actor {
         //this.physicsHandler = createBodyHandler(shapeSupplier.get());
     }
 
-    /**
-     * Setzt die Scene für diesen Actor.
-     *
-     * @param scene Die neu anzumeldende Scene. Ist der Wert <code>null</code>, wird der zugehörige Body zerstört.
-     *              Ist der Wert eine Scene, so wird die Scene
-     */
-    @Internal
-    public synchronized void setScene(Scene scene) {
-        ProxyData proxyData = physicsHandler.getProxyData();
-        if (scene == null) {
-            if (this.scene == null) {
-                return; // already removed, so we're fine
-            }
-
-            // Von Scene entfernen
-            synchronized (this.scene.getWorldHandler()) {
-                for (Runnable destructionListener : destructionListeners) {
-                    destructionListener.run();
-                }
-
-                destructionListeners.clear();
-
-                Body body = physicsHandler.getBody();
-                this.scene.getWorldHandler().removeAllInternalReferences(body);
-                this.scene.getWorldHandler().getWorld().destroyBody(body);
-                this.scene = null;
-                this.physicsHandler = new NullHandler(this, proxyData);
-            }
-        } else {
-            // An Scene anmelden
-            synchronized (scene.getWorldHandler()) {
-                if (this.scene != null) {
-                    throw new IllegalStateException("Kann einen Actor nicht an mehr als einer Scene angemeldet haben.");
-                }
-
-                physicsHandler = new BodyHandler(this, proxyData, scene.getWorldHandler());
-                this.scene = scene;
-
-                for (Runnable listener : onetimeSetupFunctions) {
-                    listener.run();
-                }
-
-                onetimeSetupFunctions.clear();
-
-                for (Runnable listener : setupFunctions) {
-                    listener.run();
-                }
-            }
-        }
-    }
-
-    public final synchronized void addOnetimeSetupListener(Runnable runnable) {
-        if (this.scene != null) {
-            runnable.run();
-        } else {
-            onetimeSetupFunctions.add(runnable);
-        }
-    }
-
     @API
     public boolean isAlive() {
         return alive;
     }
 
     @API
-    public final void addDestructionListener(Runnable listener) {
-        destructionListeners.add(listener);
+    public final void addMountListener(Consumer<ListenerEvent> listener) {
+        mountListeners.addListener(listener);
+
+        if (physicsHandler.getWorldHandler() != null) {
+            listener.accept(() -> mountListeners.removeListener(listener));
+        }
+    }
+
+    @API
+    public final void addUnmountListener(Consumer<ListenerEvent> listener) {
+        unmountListeners.addListener(listener);
+
+        if (physicsHandler.getWorldHandler() == null) {
+            listener.accept(() -> unmountListeners.removeListener(listener));
+        }
+    }
+
+    @API
+    public final void addFrameUpdateListener(FrameUpdateListener listener) {
+        frameUpdateListeners.addListener(listener);
+    }
+
+    @API
+    public final void removeFrameUpdateListener(FrameUpdateListener listener) {
+        frameUpdateListeners.removeListener(listener);
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
@@ -211,11 +169,11 @@ public abstract class Actor {
      * <b>Diese Methode muss ausgeführt werden, bevor der Actor zu einer ActorGroup hinzugefügt
      * wird.</b>
      *
-     * @param layer Layer-Index
+     * @param position Layer-Index
      */
     @API
-    public void setLayer(int layer) {
-        this.layer = layer;
+    public void setLayerPosition(int position) {
+        this.layerPosition = position;
     }
 
     /**
@@ -224,8 +182,8 @@ public abstract class Actor {
      * @return Layer-Index
      */
     @API
-    public int getLayer() {
-        return this.layer;
+    public int getLayerPosition() {
+        return this.layerPosition;
     }
 
     /**
@@ -293,7 +251,7 @@ public abstract class Actor {
      * die internen <b>Collider</b> genutzt. Je nach Genauigkeit der Collider kann die Überprüfung unterschiedlich
      * befriedigend ausfallen. Die Collider können im <b>Debug-Modus</b> der Engine eingesehen werden.
      *
-     * @param another Ein weiteres Actor-Objekt.
+     * @param other Ein weiteres Actor-Objekt.
      *
      * @return <code>true</code>, wenn dieses Actor-Objekt sich mit <code>another</code> schneidet. Sonst
      * <code>false</code>.
@@ -301,8 +259,8 @@ public abstract class Actor {
      * @see ea.Game#setDebug(boolean)
      */
     @API
-    public final boolean overlaps(Actor another) {
-        return WorldHandler.bodyCollisionCheckup(physicsHandler.getBody(), another.getPhysicsHandler().getBody());
+    public final boolean overlaps(Actor other) {
+        return WorldHandler.isBodyCollision(physicsHandler.getBody(), other.getPhysicsHandler().getBody());
     }
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
@@ -520,12 +478,8 @@ public abstract class Actor {
      * @see #addCollisionListener(CollisionListener)
      */
     @API
-    public synchronized <E extends Actor> void addCollisionListener(CollisionListener<E> listener, E collider) {
-        setupFunctions.add(() -> WorldHandler.addSpecificCollisionListener(listener, this, collider));
-
-        if (this.scene != null) {
-            WorldHandler.addSpecificCollisionListener(listener, this, collider);
-        }
+    public <E extends Actor> void addCollisionListener(E collider, CollisionListener<E> listener) {
+        addMountListener(e -> WorldHandler.addSpecificCollisionListener(this, collider, listener));
     }
 
     /**
@@ -535,15 +489,11 @@ public abstract class Actor {
      * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
      *                 allen anderen Objekten der Scene erlebt.
      *
-     * @see #addCollisionListener(CollisionListener, Actor)
+     * @see #addCollisionListener(Actor, CollisionListener)
      */
     @API
-    public synchronized void addCollisionListener(CollisionListener<Actor> listener) {
-        setupFunctions.add(() -> WorldHandler.addGenericCollisionListener(listener, this));
-
-        if (this.scene != null) {
-            WorldHandler.addGenericCollisionListener(listener, this);
-        }
+    public void addCollisionListener(CollisionListener<Actor> listener) {
+        addMountListener((e) -> WorldHandler.addGenericCollisionListener(listener, this));
     }
 
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
@@ -556,20 +506,30 @@ public abstract class Actor {
     @Internal
     public abstract void render(Graphics2D g, float pixelPerMeter);
 
-    /**
-     * Gibt die Scene aus, zu der dieser Actor gehört.
-     *
-     * @return Das Scene-Objekt, zu dem dieser Actor gehört.
-     */
-    public Scene getScene() {
-        return scene;
+    @Internal
+    public void setPhysicsHandler(PhysicsHandler handler) {
+        physicsHandler = handler;
+
+        if (handler.getWorldHandler() == null) {
+            unmountListeners.invoke(listener -> listener.accept(() -> unmountListeners.removeListener(listener)));
+        } else {
+            mountListeners.invoke(listener -> listener.accept(() -> mountListeners.removeListener(listener)));
+        }
     }
 
-    @API
+    public Layer getLayer() {
+        WorldHandler worldHandler = physicsHandler.getWorldHandler();
+        if (worldHandler == null) {
+            return null;
+        }
+
+        return worldHandler.getLayer();
+    }
+
     public void removeFromScene() {
-        Scene scene = this.scene;
-        if (scene != null) {
-            scene.remove(this);
+        Layer layer = getLayer();
+        if (layer != null) {
+            layer.remove(this);
         }
     }
 }

@@ -99,7 +99,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         boden.setBodyType(BodyType.STATIC);
 
         //Kollision zwischen Ball und Boden beobachten (Code ist uns egal, wir kennen nur einen Kollisionsfall)
-        ball.addCollisionListener(this, boden);
+        ball.addCollisionListener(boden, this);
     }
 
     /**

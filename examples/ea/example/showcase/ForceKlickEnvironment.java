@@ -131,14 +131,14 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         add(stab);
         stab.setColor(new Color(200, 50, 50));
         stange = stab;
-        stange.setLayer(-10);
+        stange.setLayerPosition(-10);
 
         //Attack-Visualisierung
         Circle atv = new Circle(10);
         add(atv);
         atv.setColor(Color.RED);
         attack = atv;
-        attack.setLayer(-10);
+        attack.setLayerPosition(-10);
 
         //Maus erstellen, Listener Anmelden.
         addMouseClickListener(this);
@@ -221,7 +221,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
      * @param ts Die Zeit in Millisekunden, die seit dem letzten Frame-Update vergangen sind.
      */
     @Override
-    public void onFrameUpdate(int ts) {
+    public void onFrameUpdate(float ts) {
         //Visualisiere ggf. die Vectorstange
         if (klickMode == KlickMode.DIRECTION_INTENSITY) {
             Vector pointer = getMousePosition();

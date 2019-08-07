@@ -221,14 +221,14 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         add(stab);
         stab.setColor(new Color(200, 50, 50));
         stange = stab;
-        stange.setLayer(3);
+        stange.setLayerPosition(3);
 
         //Attack-Visualisierung
         Circle atv = new Circle(10);
         add(atv);
         atv.setColor(Color.RED);
         attack = atv;
-        attack.setLayer(4);
+        attack.setLayerPosition(4);
 
         /* box = new InfoBox(this);
         add(box);
@@ -249,7 +249,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                     isInAttackRange[key] = false;
                 }
             };
-            attack.addCollisionListener(kr, testObjects[i]);
+            attack.addCollisionListener(testObjects[i], kr);
         }
 
         //Alle Listener-Funktionen aktivieren.
@@ -296,7 +296,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
             case KeyEvent.VK_S: // SCHWERKRAFT-TOGGLE
                 hatSchwerkraft = !hatSchwerkraft;
                 for(Actor testObject : testObjects) {
-                    testObject.getScene().setGravity(hatSchwerkraft ?
+                    testObject.getLayer().getParent().setGravity(hatSchwerkraft ?
                             ERDBESCHLEUNIGUNG : Vector.NULL);
                 }
                 //System.out.println("Schwerkraft: " + hatSchwerkraft + " - ");
@@ -411,7 +411,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
      * @param ts    Die Zeit in Sekunden, die seit dem letzten Frame-Update vergangen sind.
      */
     @Override
-    public void onFrameUpdate(int ts) {
+    public void onFrameUpdate(float ts) {
         //Visualisiere ggf. die Vectorstange
         if(klickMode == KlickMode.DIRECTION_INTENSITY) {
             Vector pointer = getMousePosition();
@@ -422,7 +422,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
             stange = new Rectangle(new Vector(lastAttack, pointer).getLength(), 5);
             System.out.println("new Rectangle: " + stange);
             stange.setColor(new Color(200, 50, 50));
-            stange.setLayer(-10);
+            stange.setLayerPosition(-10);
             stange.position.set(pos);
             add(stange);
             float rot = Vector.RIGHT.getAngle(lastAttack.negate().add(pointer));

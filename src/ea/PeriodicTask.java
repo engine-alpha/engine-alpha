@@ -82,7 +82,7 @@ public final class PeriodicTask implements FrameUpdateListener {
      */
     @Override
     @Internal
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         countdown -= frameDuration;
 
         while (this.countdown < 0) {

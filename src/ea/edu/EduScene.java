@@ -226,7 +226,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
     /* EA Listener Implementation */
 
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         for (TickerAuftrag ta : sceneTickers) {
             ta.accountFrame(frameDuration);
         }
@@ -324,7 +324,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         /**
          * Frameweise Abarbeitung
          */
-        public final void accountFrame(int millis) {
+        public final void accountFrame(float millis) {
             counter -= millis;
             if (counter > 0) {
                 return;
@@ -442,7 +442,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
             super(client);
         }
 
-        private void forwardFrameUpdate(int frameDuration) {
+        private void forwardFrameUpdate(float frameDuration) {
             try {
                 method.invoke(client, frameDuration);
             } catch (IllegalAccessException e) {

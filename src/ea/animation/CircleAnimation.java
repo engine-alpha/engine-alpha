@@ -39,11 +39,11 @@ extends ActorAnimation {
         ValueAnimator<Float> aX = new ValueAnimator<>(durationInMS,
                 x->actor.position.setCenter(x, actor.position.getCenter().y),
                 new CosinusFloat(rightPoint.x, radius),
-                ValueAnimator.Mode.REPEATED );
+                AnimationMode.REPEATED );
         ValueAnimator<Float> aY = new ValueAnimator<>(durationInMS,
                 y->actor.position.setCenter(actor.position.getCenter().x, y),
                 new SinusFloat(rotationCenter.y, circleClockwise ? -radius : radius),
-                ValueAnimator.Mode.REPEATED);
+                AnimationMode.REPEATED);
 
 
         //Winkel zwischen gewünschtem Startpunkt und aktueller Actor-Position (immer in [0;PI])
@@ -69,7 +69,7 @@ extends ActorAnimation {
             ValueAnimator<Float> aR = new ValueAnimator<>(durationInMS,
                     actor.position::setRotation,
                     new LinearFloat(-angle, -angle + ((float)(Math.PI*2) * (circleClockwise ? -1 : 1))),
-                    ValueAnimator.Mode.REPEATED);
+                    AnimationMode.REPEATED);
             aR.setProgress(actualProgress);
             addAnimator(aR);
         }

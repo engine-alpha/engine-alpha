@@ -21,6 +21,7 @@ package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.Scene;
+import ea.event.EventListeners;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -55,13 +56,13 @@ public class Animation extends Actor implements FrameUpdateListener {
     private final float width;
     private final float height;
 
-    private transient int currentTime;
+    private transient float currentTime;
     private transient int currentIndex;
 
     /**
      * Liste aller Dispatchables, die beim Abschließen des Loops ausgeführt werden.
      */
-    private Collection<Runnable> onCompleteListeners = new ArrayList<>();
+    private EventListeners<Runnable> onCompleteListeners = new EventListeners<>();
 
     private Animation(AnimationFrame[] frames, float width, float height) {
         super(() -> {
@@ -78,7 +79,7 @@ public class Animation extends Actor implements FrameUpdateListener {
             }
         }
 
-        this.frames = frames;
+        this.frames = frames.clone();
         this.width = width;
         this.height = height;
 
@@ -92,7 +93,9 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @param animation Animation.
      */
     public Animation(Animation animation) {
-        this(animation.getFrames(), animation.getWidth(), animation.getHeight());
+        this(animation.frames, animation.width, animation.height);
+
+        animation.onCompleteListeners.invoke(this::addOnCompleteListener);
     }
 
     /**
@@ -138,21 +141,12 @@ public class Animation extends Actor implements FrameUpdateListener {
      */
     @API
     public void addOnCompleteListener(Runnable listener) {
-        onCompleteListeners.add(listener);
-    }
-
-    /**
-     * Wenn diese Methode ausgeführt wird, wird die Animation nach sich selbstständig nach einmaligem Durchlaufen von
-     * der Scene abmelden.
-     */
-    @API
-    public void setOneTimeOnly() {
-        addOnCompleteListener(() -> getScene().remove(Animation.this));
+        onCompleteListeners.addListener(listener);
     }
 
     @Internal
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         this.currentTime += frameDuration;
 
         AnimationFrame currentFrame = this.frames[currentIndex];
@@ -160,10 +154,7 @@ public class Animation extends Actor implements FrameUpdateListener {
         while (this.currentTime > currentFrame.getDuration()) {
             this.currentTime -= currentFrame.getDuration();
             if (this.currentIndex + 1 == this.frames.length) {
-                //Round finished --> Inform Listeners
-                for (Runnable listener : onCompleteListeners) {
-                    listener.run();
-                }
+                onCompleteListeners.invoke(Runnable::run);
                 this.currentIndex = 0;
             } else {
                 this.currentIndex += 1;

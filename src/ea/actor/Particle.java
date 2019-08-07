@@ -27,6 +27,8 @@ import java.awt.Color;
 
 @API
 public class Particle extends Circle implements FrameUpdateListener {
+    private static final float MAX_ALPHA = 255f;
+
     private int life;
     private int age = 0;
 
@@ -43,12 +45,12 @@ public class Particle extends Circle implements FrameUpdateListener {
     }
 
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         this.age += frameDuration;
 
         Color color = getColor();
 
-        int alpha = (int) (255f * getRemainingLifetime() / life);
+        int alpha = (int) (MAX_ALPHA * getRemainingLifetime() / life);
         this.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
 
         if (isDead()) {

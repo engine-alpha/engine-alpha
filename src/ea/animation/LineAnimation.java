@@ -29,11 +29,11 @@ extends ActorAnimation {
         ValueAnimator<Float> aX = new ValueAnimator<>(durationInMS,
                 x->actor.position.setCenter(x, actor.position.getCenter().y),
                 new LinearFloat(center.x, endPoint.x),
-                pingpong ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
+                pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE);
         ValueAnimator<Float> aY = new ValueAnimator<>(durationInMS,
                 y->actor.position.setCenter(actor.position.getCenter().x, y),
                 new LinearFloat(center.y, endPoint.y),
-                pingpong ? ValueAnimator.Mode.PINGPONG : ValueAnimator.Mode.SINGLE);
+                pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE);
         addAnimator(aX);
         addAnimator(aY);
     }

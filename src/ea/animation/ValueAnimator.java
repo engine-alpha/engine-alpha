@@ -20,75 +20,74 @@
 package ea.animation;
 
 import ea.FrameUpdateListener;
+import ea.event.EventListeners;
 import ea.internal.annotations.API;
 
-import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
-public class ValueAnimator<V> implements FrameUpdateListener {
-    private Consumer<V> consumer;
-    private Interpolator<V> interpolator;
-    private Mode mode;
+public class ValueAnimator<Value> implements FrameUpdateListener {
+    private Consumer<Value> consumer;
+    private Interpolator<Value> interpolator;
+    private AnimationMode mode;
     private int currentTime = 0;
     private int duration;
     private boolean complete = false;
 
     /**
      * Hilfsvariable für PINGPONG-Mode.
-     * @author Michael Andonie
      */
     private boolean goingBackwards = false;
 
-    private Collection<Consumer<V>> completionListeners = new ConcurrentLinkedQueue<>();
+    private EventListeners<Consumer<CompletionEvent<Value>>> completionListeners = new EventListeners<>();
 
-    public ValueAnimator(int duration, Consumer<V> consumer, Interpolator<V> interpolator, Mode mode) {
+    public ValueAnimator(int duration, Consumer<Value> consumer, Interpolator<Value> interpolator, AnimationMode mode) {
         this.duration = duration;
         this.consumer = consumer;
         this.interpolator = interpolator;
         this.mode = mode;
     }
 
-    public ValueAnimator(int duration, Consumer<V> consumer, Interpolator<V> interpolator) {
-        this(duration, consumer, interpolator, Mode.SINGLE);
+    public ValueAnimator(int duration, Consumer<Value> consumer, Interpolator<Value> interpolator) {
+        this(duration, consumer, interpolator, AnimationMode.SINGLE);
     }
 
     /**
      * Setzt den aktuellen Fortschritt des Animators händisch.
-     * @param progress  Der Fortschritt, zu dem der Animator gesetzt werden soll. <code>0</code> ist <b>Anfang der
-     *                  Animation</b>, <code>1</code> ist <b>Ende der Animation</b>. Werte kleiner 0 bzw. größer als 1
-     *                  sind nicht erlaubt.
+     *
+     * @param progress Der Fortschritt, zu dem der Animator gesetzt werden soll. <code>0</code> ist <b>Anfang der
+     *                 Animation</b>, <code>1</code> ist <b>Ende der Animation</b>. Werte kleiner 0 bzw. größer als 1
+     *                 sind nicht erlaubt.
      */
     @API
     public void setProgress(float progress) {
-        if(progress < 0 || progress > 1) {
+        if (progress < 0 || progress > 1) {
             throw new IllegalArgumentException("Der eingegebene Progess muss zwischen 0 und 1 liegen. War " + progress);
         }
-        this.currentTime = (int) (duration*progress);
+        this.currentTime = (int) (duration * progress);
         goingBackwards = false;
         this.interpolator.interpolate(progress);
     }
 
     @Override
-    public void onFrameUpdate(int frameDuration) {
+    public void onFrameUpdate(float frameDuration) {
         float progress;
-        if(!goingBackwards) {
+        if (!goingBackwards) {
             this.currentTime += frameDuration;
             if (this.currentTime > this.duration) {
 
-                switch(this.mode) {
+                switch (this.mode) {
                     case REPEATED:
                         this.currentTime %= this.duration;
                         progress = (float) this.currentTime / this.duration;
                         break;
                     case SINGLE:
                         this.currentTime = this.duration;
-
-                        for (Consumer<V> listener : completionListeners) {
-                            listener.accept(this.interpolator.interpolate(1));
-                        }
                         progress = 1;
                         complete = true;
+
+                        Value finalValue = this.interpolator.interpolate(1);
+                        completionListeners.invoke(listener -> listener.accept(new CompletionEvent<>(finalValue, () -> completionListeners.removeListener(listener))));
+
                         break;
                     case PINGPONG:
                         //Ging bisher vorwärts -> Jetzt Rückwärts
@@ -105,7 +104,7 @@ public class ValueAnimator<V> implements FrameUpdateListener {
         } else {
             //Ping-Pong-Backwards Strategy
             this.currentTime -= frameDuration;
-            if(this.currentTime < 0) {
+            if (this.currentTime < 0) {
                 //PINGPONG backwards ist fertig -> Jetzt wieder vorwärts
                 goingBackwards = false;
                 progress = 0;
@@ -114,21 +113,17 @@ public class ValueAnimator<V> implements FrameUpdateListener {
             }
         }
 
-
         this.consumer.accept(interpolator.interpolate(progress));
     }
 
-    public ValueAnimator<V> addCompletionListener(Consumer<V> listener) {
+    public ValueAnimator<Value> addCompletionListener(Consumer<CompletionEvent<Value>> listener) {
         if (this.complete) {
-            listener.accept(this.interpolator.interpolate(1));
+            Value finalValue = this.interpolator.interpolate(1);
+            listener.accept(new CompletionEvent<>(finalValue, () -> completionListeners.removeListener(listener)));
         } else {
-            this.completionListeners.add(listener);
+            this.completionListeners.addListener(listener);
         }
 
         return this;
-    }
-
-    public enum Mode {
-        SINGLE, REPEATED, PINGPONG
     }
 }
