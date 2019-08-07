@@ -124,11 +124,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         });
 
         k.addMountListener(e -> k.getLayer().addFrameUpdateListener(emitter));
-        k.addUnmountListener(e -> {
-            if (k.getLayer() != null) {
-                k.getLayer().removeFrameUpdateListener(emitter);
-            }
-        });
+        k.addUnmountListener(e -> k.getLayer().removeFrameUpdateListener(emitter));
 
         k.position.set(position);
         k.setBodyType(BodyType.DYNAMIC);

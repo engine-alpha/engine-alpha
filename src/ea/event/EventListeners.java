@@ -26,11 +26,11 @@ import java.util.function.Consumer;
 public final class EventListeners<T> {
     private Collection<T> listeners = ConcurrentHashMap.newKeySet();
 
-    public void addListener(T listener) {
+    public void add(T listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(T listener) {
+    public void remove(T listener) {
         listeners.remove(listener);
     }
 

@@ -217,33 +217,37 @@ public class Layer {
 
     @API
     public void add(Actor... actors) {
-        for (Actor actor : actors) {
-            if (actor.getPhysicsHandler().getBody() != null) {
-                throw new IllegalArgumentException("Ein Actor kann nur an einem Layer gleichzeitig angemeldet sein");
+        Game.afterWorldStep(() -> {
+            for (Actor actor : actors) {
+                if (actor.getPhysicsHandler().getBody() != null) {
+                    throw new IllegalArgumentException("Ein Actor kann nur an einem Layer gleichzeitig angemeldet sein");
+                }
+
+                actor.setPhysicsHandler(new BodyHandler(actor, actor.getPhysicsHandler().getProxyData(), worldHandler));
+
+                this.actors.add(actor);
             }
-
-            actor.setPhysicsHandler(new BodyHandler(actor, actor.getPhysicsHandler().getProxyData(), worldHandler));
-
-            this.actors.add(actor);
-        }
+        });
     }
 
     @API
     final public void remove(Actor... actors) {
-        for (Actor actor : actors) {
-            this.actors.remove(actor);
+        Game.afterWorldStep(() -> {
+            for (Actor actor : actors) {
+                this.actors.remove(actor);
 
-            ProxyData proxyData = actor.getPhysicsHandler().getProxyData();
-            PhysicsHandler physicsHandler = actor.getPhysicsHandler();
-            if (physicsHandler.getWorldHandler() == null) {
-                return;
+                ProxyData proxyData = actor.getPhysicsHandler().getProxyData();
+                PhysicsHandler physicsHandler = actor.getPhysicsHandler();
+                if (physicsHandler.getWorldHandler() == null) {
+                    return;
+                }
+
+                Body body = physicsHandler.getBody();
+                worldHandler.removeAllInternalReferences(body);
+                worldHandler.getWorld().destroyBody(body);
+                actor.setPhysicsHandler(new NullHandler(actor, proxyData));
             }
-
-            Body body = physicsHandler.getBody();
-            worldHandler.removeAllInternalReferences(body);
-            worldHandler.getWorld().destroyBody(body);
-            actor.setPhysicsHandler(new NullHandler(actor, proxyData));
-        }
+        });
     }
 
     /**
@@ -322,12 +326,12 @@ public class Layer {
 
     @API
     final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.addListener(frameUpdateListener);
+        frameUpdateListeners.add(frameUpdateListener);
     }
 
     @API
     final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.removeListener(frameUpdateListener);
+        frameUpdateListeners.remove(frameUpdateListener);
     }
 
     /**

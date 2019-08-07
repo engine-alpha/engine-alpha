@@ -54,11 +54,7 @@ public class StatefulAnimation extends Actor {
         this.height = height;
 
         addMountListener(e -> getLayer().addFrameUpdateListener(frameUpdateListener));
-        addUnmountListener(e -> {
-            if (getLayer() != null) {
-                getLayer().removeFrameUpdateListener(frameUpdateListener);
-            }
-        });
+        addUnmountListener(e -> getLayer().removeFrameUpdateListener(frameUpdateListener));
 
         // TODO Check that all frames have the same size
     }

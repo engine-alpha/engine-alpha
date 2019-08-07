@@ -141,7 +141,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      */
     @API
     public void addOnCompleteListener(Runnable listener) {
-        onCompleteListeners.addListener(listener);
+        onCompleteListeners.add(listener);
     }
 
     @Internal

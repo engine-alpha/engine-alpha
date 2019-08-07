@@ -44,11 +44,7 @@ public class Particle extends Circle implements FrameUpdateListener {
         this.life = life;
 
         addMountListener(e -> getLayer().addFrameUpdateListener(this));
-        addUnmountListener(e -> {
-            if (getLayer() != null) {
-                getLayer().removeFrameUpdateListener(this);
-            }
-        });
+        addUnmountListener(e -> getLayer().removeFrameUpdateListener(this));
     }
 
     @Override

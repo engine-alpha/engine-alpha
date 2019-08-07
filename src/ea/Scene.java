@@ -52,24 +52,9 @@ public class Scene {
      */
     private final Camera camera;
 
-    /**
-     * Die Liste aller angemeldeten KeyListener.
-     */
     private final EventListeners<KeyListener> keyListeners = new EventListeners<>();
-
-    /**
-     * Die Liste aller angemeldeten MouseClickListener.
-     */
     private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>();
-
-    /**
-     * Die Liste aller angemeldeten MouseWheelListener.
-     */
     private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>();
-
-    /**
-     * Die Liste aller angemeldeten FrameUpdateListener.
-     */
     private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
 
     /**
@@ -304,60 +289,56 @@ public class Scene {
 
     @API
     final public void add(Actor... actors) {
-        Game.afterWorldStep(() -> {
-            for (Actor actor : actors) {
-                mainLayer.add(actor);
-            }
-        });
+        for (Actor actor : actors) {
+            mainLayer.add(actor);
+        }
     }
 
     @API
     final public void remove(Actor... actors) {
-        Game.afterWorldStep(() -> {
-            for (Actor actor : actors) {
-                mainLayer.remove(actor);
-            }
-        });
+        for (Actor actor : actors) {
+            mainLayer.remove(actor);
+        }
     }
 
     @API
     final public void addMouseClickListener(MouseClickListener mouseClickListener) {
-        mouseClickListeners.addListener(mouseClickListener);
+        mouseClickListeners.add(mouseClickListener);
     }
 
     @API
     final public void removeMouseClickListener(MouseClickListener mouseClickListener) {
-        mouseClickListeners.removeListener(mouseClickListener);
+        mouseClickListeners.remove(mouseClickListener);
     }
 
     @API
     final public void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        mouseWheelListeners.addListener(mouseWheelListener);
+        mouseWheelListeners.add(mouseWheelListener);
     }
 
     @API
     final public void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
-        mouseWheelListeners.removeListener(mouseWheelListener);
+        mouseWheelListeners.remove(mouseWheelListener);
     }
 
     @API
     final public void addKeyListener(KeyListener keyListener) {
-        keyListeners.addListener(keyListener);
+        keyListeners.add(keyListener);
     }
 
     @API
     final public void removeKeyListener(KeyListener keyListener) {
-        keyListeners.removeListener(keyListener);
+        keyListeners.remove(keyListener);
     }
 
     @API
     final public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.addListener(frameUpdateListener);
+        frameUpdateListeners.add(frameUpdateListener);
     }
 
     @API
     final public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
-        frameUpdateListeners.removeListener(frameUpdateListener);
+        frameUpdateListeners.remove(frameUpdateListener);
     }
 
     @Internal

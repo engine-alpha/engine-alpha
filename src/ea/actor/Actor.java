@@ -26,6 +26,9 @@ import ea.event.ListenerEvent;
 import ea.handle.BodyType;
 import ea.handle.Physics;
 import ea.handle.Position;
+import ea.input.KeyListener;
+import ea.input.MouseClickListener;
+import ea.input.MouseWheelListener;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -92,6 +95,10 @@ public abstract class Actor {
 
     private final EventListeners<Consumer<ListenerEvent>> mountListeners = new EventListeners<>();
     private final EventListeners<Consumer<ListenerEvent>> unmountListeners = new EventListeners<>();
+
+    private final EventListeners<KeyListener> keyListeners = new EventListeners<>();
+    private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>();
+    private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>();
     private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
 
     /* _________________________ Die Handler _________________________ */
@@ -136,30 +143,26 @@ public abstract class Actor {
 
     @API
     public final void addMountListener(Consumer<ListenerEvent> listener) {
-        mountListeners.addListener(listener);
+        mountListeners.add(listener);
 
         if (physicsHandler.getWorldHandler() != null) {
-            listener.accept(() -> mountListeners.removeListener(listener));
+            listener.accept(() -> mountListeners.remove(listener));
         }
     }
 
     @API
     public final void addUnmountListener(Consumer<ListenerEvent> listener) {
-        unmountListeners.addListener(listener);
-
-        if (physicsHandler.getWorldHandler() == null) {
-            listener.accept(() -> unmountListeners.removeListener(listener));
-        }
+        unmountListeners.add(listener);
     }
 
     @API
     public final void addFrameUpdateListener(FrameUpdateListener listener) {
-        frameUpdateListeners.addListener(listener);
+        frameUpdateListeners.add(listener);
     }
 
     @API
     public final void removeFrameUpdateListener(FrameUpdateListener listener) {
-        frameUpdateListeners.removeListener(listener);
+        frameUpdateListeners.remove(listener);
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
@@ -515,9 +518,9 @@ public abstract class Actor {
         physicsHandler = handler;
 
         if (handler.getWorldHandler() == null) {
-            unmountListeners.invoke(listener -> listener.accept(() -> unmountListeners.removeListener(listener)));
+            unmountListeners.invoke(listener -> listener.accept(() -> unmountListeners.remove(listener)));
         } else {
-            mountListeners.invoke(listener -> listener.accept(() -> mountListeners.removeListener(listener)));
+            mountListeners.invoke(listener -> listener.accept(() -> mountListeners.remove(listener)));
         }
     }
 

@@ -86,7 +86,7 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
                         complete = true;
 
                         Value finalValue = this.interpolator.interpolate(1);
-                        completionListeners.invoke(listener -> listener.accept(new CompletionEvent<>(finalValue, () -> completionListeners.removeListener(listener))));
+                        completionListeners.invoke(listener -> listener.accept(new CompletionEvent<>(finalValue, () -> completionListeners.remove(listener))));
 
                         break;
                     case PINGPONG:
@@ -119,9 +119,9 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
     public ValueAnimator<Value> addCompletionListener(Consumer<CompletionEvent<Value>> listener) {
         if (this.complete) {
             Value finalValue = this.interpolator.interpolate(1);
-            listener.accept(new CompletionEvent<>(finalValue, () -> completionListeners.removeListener(listener)));
+            listener.accept(new CompletionEvent<>(finalValue, () -> completionListeners.remove(listener)));
         } else {
-            this.completionListeners.addListener(listener);
+            this.completionListeners.add(listener);
         }
 
         return this;
