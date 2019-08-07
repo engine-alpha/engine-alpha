@@ -41,11 +41,11 @@ public class Table {
 
     public Table() {
         Rectangle border = new Rectangle(2 * Edge.WIDTH + 2 * GAP + 2 * DIAGONAL_GAP + BORDER * 2, Edge.WIDTH + 2 * DIAGONAL_GAP + BORDER * 2);
-        border.position.set(-Edge.WIDTH - GAP - DIAGONAL_GAP - BORDER, -Edge.WIDTH / 2 - DIAGONAL_GAP - BORDER);
+        border.setPosition(-Edge.WIDTH - GAP - DIAGONAL_GAP - BORDER, -Edge.WIDTH / 2 - DIAGONAL_GAP - BORDER);
         border.setColor(new Color(226, 228, 231));
 
         Rectangle background = new Rectangle(2 * Edge.WIDTH + 2 * GAP + 2 * DIAGONAL_GAP, Edge.WIDTH + 2 * DIAGONAL_GAP);
-        background.position.set(-Edge.WIDTH - GAP - DIAGONAL_GAP, -Edge.WIDTH / 2 - DIAGONAL_GAP);
+        background.setPosition(-Edge.WIDTH - GAP - DIAGONAL_GAP, -Edge.WIDTH / 2 - DIAGONAL_GAP);
         background.setColor(new Color(68, 121, 43));
 
         actors.add(border);
@@ -96,11 +96,11 @@ public class Table {
 
     private void createEdges() {
         Edge topLeft = new Edge(-GAP, +Edge.WIDTH / 2 + DIAGONAL_GAP);
-        topLeft.position.rotate((float) Math.PI);
+        topLeft.rotateBy(180);
         actors.add(topLeft);
 
         Edge topRight = new Edge(Edge.WIDTH + GAP, +Edge.WIDTH / 2 + DIAGONAL_GAP);
-        topRight.position.rotate((float) Math.PI);
+        topRight.rotateBy(180);
         actors.add(topRight);
 
         Edge bottomLeft = new Edge(-GAP - Edge.WIDTH, -Edge.WIDTH / 2 - DIAGONAL_GAP);
@@ -110,11 +110,11 @@ public class Table {
         actors.add(bottomRight);
 
         Edge left = new Edge(-Edge.WIDTH - GAP - DIAGONAL_GAP, +Edge.WIDTH / 2);
-        left.position.rotate((float) -Math.PI / 2);
+        left.rotateBy(-90);
         actors.add(left);
 
         Edge right = new Edge(+Edge.WIDTH + GAP + DIAGONAL_GAP, -Edge.WIDTH / 2);
-        right.position.rotate((float) Math.PI / 2);
+        right.rotateBy(90);
         actors.add(right);
     }
 }

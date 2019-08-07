@@ -19,6 +19,19 @@
 
 package ea.event;
 
-public interface ListenerEvent {
-    void removeListener();
+import ea.input.KeyListener;
+import ea.internal.annotations.API;
+
+public interface KeyListenerContainer {
+    EventListeners<KeyListener> getKeyListeners();
+
+    @API
+    default void addKeyListener(KeyListener keyListener) {
+        getKeyListeners().add(keyListener);
+    }
+
+    @API
+    default void removeKeyListener(KeyListener keyListener) {
+        getKeyListeners().remove(keyListener);
+    }
 }

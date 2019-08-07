@@ -17,25 +17,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.animation;
+package ea.event;
 
-import ea.event.ListenerEvent;
+import ea.input.MouseClickListener;
 
-public class CompletionEvent<Value> implements ListenerEvent {
-    private Value value;
-    private Runnable removeListener;
+public interface MouseClickListenerContainer {
+    EventListeners<MouseClickListener> getMouseClickListeners();
 
-    public CompletionEvent(Value value, Runnable removeListener) {
-        this.value = value;
-        this.removeListener = removeListener;
+    default void addMouseClickListener(MouseClickListener mouseClickListener) {
+        getMouseClickListeners().add(mouseClickListener);
     }
 
-    public Value getValue() {
-        return value;
-    }
-
-    @Override
-    public void removeListener() {
-        this.removeListener.run();
+    default void removeMouseClickListener(MouseClickListener mouseClickListener) {
+        getMouseClickListeners().remove(mouseClickListener);
     }
 }

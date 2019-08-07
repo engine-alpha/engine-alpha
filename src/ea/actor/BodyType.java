@@ -17,9 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.handle;
+package ea.actor;
 
-import ea.actor.Actor;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
@@ -65,7 +64,7 @@ import ea.internal.annotations.Internal;
  */
 @API
 public enum BodyType {
-    STATIC(1), DYNAMIC(1), KINEMATIC(1), PASSIVE(0), PARTICLE(0);
+    STATIC(1), DYNAMIC(1), KINEMATIC(1), SENSOR(0), PARTICLE(0);
 
     private float defaultGravityScale;
 
@@ -84,7 +83,7 @@ public enum BodyType {
             case STATIC:
                 return org.jbox2d.dynamics.BodyType.STATIC;
             case DYNAMIC:
-            case PASSIVE:
+            case SENSOR:
             case PARTICLE:
                 return org.jbox2d.dynamics.BodyType.DYNAMIC;
             case KINEMATIC:
@@ -99,6 +98,6 @@ public enum BodyType {
     }
 
     public boolean isSensorType() {
-        return this == PASSIVE;
+        return this == SENSOR;
     }
 }

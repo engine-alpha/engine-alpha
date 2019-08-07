@@ -7,7 +7,7 @@ import ea.actor.Circle;
 import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 import ea.input.KeyListener;
 
 import java.awt.Color;
@@ -78,7 +78,6 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
     public BallThrow(Scene parent) {
         super(parent);
         initialisieren();
-        getKeyListeners().add(this);
     }
 
     public void initialisieren() {
@@ -86,14 +85,14 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         add(ball);
         ball.setColor(Color.RED);
         ball.setBodyType(BodyType.DYNAMIC);
-        ball.physics.setMass(MASSE);
-        ball.position.setCenter(ABSTAND_LINKS, BODEN_TIEFE - (HOEHE_UEBER_BODEN * PIXELPROMETER + 0.5f * DURCHMESSER * PIXELPROMETER));
+        ball.setMass(MASSE);
+        ball.setCenter(ABSTAND_LINKS, BODEN_TIEFE - (HOEHE_UEBER_BODEN * PIXELPROMETER + 0.5f * DURCHMESSER * PIXELPROMETER));
 
         //kamera.fokusSetzen(ball);
 
         //Den Boden erstellen
         boden = new Rectangle(20000, 20);
-        boden.position.set(0, BODEN_TIEFE);
+        boden.setPosition(0, BODEN_TIEFE);
         add(boden);
         boden.setColor(Color.WHITE);
         boden.setBodyType(BodyType.STATIC);
@@ -129,9 +128,9 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         //Schwerkraft auf den Ball wirken lassen
         setGravity(new Vector(0, 9.81f));
 
-        //Impuls berechnen und auf den Ball wirken lassen
+        // Impuls berechnen und auf den Ball wirken lassen
         Vector impuls = new Vector((float) Math.cos(Math.toRadians(WINKEL)) * IMPULS, (float) -Math.sin(Math.toRadians(WINKEL)) * IMPULS);
-        ball.physics.applyImpulse(impuls);
+        ball.applyImpulse(impuls);
     }
 
     /**
@@ -139,10 +138,10 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
      * zurückgesetzt und der Ball wird in Ruhe versetzt.
      */
     private void simulationZuruecksetzen() {
-        setGravity(new Vector(0, 0)); //Schwerkraft deaktivieren
-        ball.position.setCenter(ABSTAND_LINKS, //Ballposition zurücksetzen
+        setGravity(new Vector(0, 0)); // Schwerkraft deaktivieren
+        ball.setCenter(ABSTAND_LINKS, // Ballposition zurücksetzen
                 BODEN_TIEFE - (HOEHE_UEBER_BODEN * PIXELPROMETER + 0.5f * DURCHMESSER * PIXELPROMETER));
-        ball.physics.cancelAll(); //Ball in Ruhe versetzen
+        ball.resetMovement(); // Ball in Ruhe versetzen
     }
 
     /**
@@ -156,7 +155,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         long zeitdifferenz = endzeit - startzeit;
 
         //Zurückgelegte Distanz seit Simulationsstart ausmessen (Pixel-Differenz ausrechnen und auf Meter umrechnen)
-        float distanz = (ball.position.getCenter().x - ABSTAND_LINKS) / PIXELPROMETER;
+        float distanz = (ball.getCenter().x - ABSTAND_LINKS) / PIXELPROMETER;
 
         //Messungen angeben
         System.out.println("Der Ball ist auf dem Boden aufgeschlagen. Seit Simulationsstart sind " + +(zeitdifferenz / 1000) + " Sekunden und " + (zeitdifferenz % 1000) + " Millisekunden vergangen.\n" + "Der Ball diese Distanz zurückgelegt: " + distanz + " m");

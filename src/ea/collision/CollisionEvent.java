@@ -1,7 +1,6 @@
 package ea.collision;
 
 import ea.actor.Actor;
-import ea.event.ListenerEvent;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import org.jbox2d.dynamics.contacts.Contact;
@@ -29,7 +28,7 @@ import org.jbox2d.dynamics.contacts.Contact;
  *
  * @see CollisionListener
  */
-public class CollisionEvent<E extends Actor> implements ListenerEvent {
+public class CollisionEvent<E extends Actor> {
     /**
      * Der JBox2D-Contact. Zur Manipulation der Kollision und zur Abfrage.
      */
@@ -40,8 +39,6 @@ public class CollisionEvent<E extends Actor> implements ListenerEvent {
      */
     private final E colliding;
 
-    private final Runnable removeListener;
-
     /**
      * Konstruktor. Erstellt ein Collision-Event.
      *
@@ -51,10 +48,9 @@ public class CollisionEvent<E extends Actor> implements ListenerEvent {
      *                  Anmeldung am entsprechenden Actor gegeben.
      */
     @Internal
-    public CollisionEvent(Contact contact, E colliding, Runnable removeListener) {
+    public CollisionEvent(Contact contact, E colliding) {
         this.contact = contact;
         this.colliding = colliding;
-        this.removeListener = removeListener;
     }
 
     /**
@@ -84,10 +80,5 @@ public class CollisionEvent<E extends Actor> implements ListenerEvent {
     public void ignoreCollision() {
         contact.setEnabled(false);
         colliding.getPhysicsHandler().getWorldHandler().addContactToBlacklist(contact);
-    }
-
-    @Override
-    public void removeListener() {
-        removeListener.run();
     }
 }

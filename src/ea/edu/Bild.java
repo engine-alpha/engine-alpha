@@ -2,7 +2,9 @@ package ea.edu;
 
 import ea.actor.Actor;
 import ea.actor.Image;
+import ea.internal.annotations.API;
 
+@API
 public class Bild implements EduActor {
 
     /**
@@ -20,7 +22,7 @@ public class Bild implements EduActor {
     public Bild(float x, float y, String filepath) {
         image = new Image(filepath, 1, 1); // TODO width, height
         eduSetup();
-        image.position.set(x, y);
+        image.setPosition(x, y);
     }
 
     @Override

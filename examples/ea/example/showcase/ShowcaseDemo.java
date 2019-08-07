@@ -20,7 +20,7 @@ public abstract class ShowcaseDemo extends Scene {
     private boolean debuggingEnabled = true;
 
     public ShowcaseDemo(Scene parent) {
-        getKeyListeners().add(e -> {
+        addKeyListener(e -> {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_ESCAPE:
                     Game.setDebug(false);
@@ -34,7 +34,7 @@ public abstract class ShowcaseDemo extends Scene {
             }
         });
 
-        getFrameUpdateListeners().add((i) -> {
+        addFrameUpdateListener((i) -> {
             if (!cameraControlEnabled) {
                 return;
             }
@@ -55,7 +55,7 @@ public abstract class ShowcaseDemo extends Scene {
             }
         });
 
-        getMouseWheelListeners().add(event -> {
+        addMouseWheelListener(event -> {
             if (!zoomEnabled) {
                 return;
             }

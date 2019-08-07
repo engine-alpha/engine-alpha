@@ -407,11 +407,11 @@ public final class Vector implements Cloneable {
      *
      * @param other Ein zweiter Vector.
      *
-     * @return Der Winkel zwischen diesem Vector und dem zweiten. Ist zwischen 0 und PI.
+     * @return Der Winkel zwischen diesem Vector und dem zweiten. Ist zwischen 0 und 180.
      */
     @API
     public float getAngle(Vector other) {
-        return (float) Math.acos((double) (this.getScalarProduct(other) / (this.getLength() * other.getLength())));
+        return (float) Math.toDegrees(Math.acos(this.getScalarProduct(other) / (this.getLength() * other.getLength())));
     }
 
     @Internal

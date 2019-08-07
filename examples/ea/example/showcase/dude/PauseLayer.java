@@ -15,11 +15,11 @@ public class PauseLayer extends Layer {
 
         Rectangle back = new Rectangle(DudeDemo.GAME_WIDTH_PX, DudeDemo.GAME_HEIGHT_PX);
         back.setColor(BACKGROUND_COLOR);
-        back.position.setCenter(0, 0);
+        back.setCenter(0, 0);
         add(back);
 
         Text announce = new Text("Pause.", "Monospaced", TEXT_SIZE, 0);
-        announce.position.setCenter(0, 0);
+        announce.setCenter(0, 0);
         add(announce);
 
         setParallaxPosition(0, 0);

@@ -255,7 +255,7 @@ public final class Camera {
     // Does not implement FrameUpdateListener by design, as it's updated at a special moment
     public void onFrameUpdate() {
         if (this.hasFocus()) {
-            this.position = focus.position.getCenter();
+            this.position = focus.getCenter();
         }
 
         this.position = moveIntoBounds(this.position);

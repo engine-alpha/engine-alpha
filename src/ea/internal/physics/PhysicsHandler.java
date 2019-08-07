@@ -1,8 +1,7 @@
 package ea.internal.physics;
 
 import ea.Vector;
-import ea.actor.Actor;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
@@ -20,24 +19,8 @@ import java.util.function.Supplier;
  * </ul>
  * Created by andonie on 16.02.15.
  */
-public abstract class PhysicsHandler {
-
-    /**
-     * Das eine Actor-Objekt, das dieser Handler kontrolliert.
-     */
-    protected final Actor actor;
-
-    /**
-     * Initialisiert den Physics-Handler.
-     *
-     * @param actor Das eine Actor-Objekt, das dieser Handler kontrolliert.
-     */
-    protected PhysicsHandler(Actor actor) {
-        this.actor = actor;
-    }
-
-    /* __________________________ Kontrakt: Abstrakte Methoden/Funktionen der Physics __________________________ */
-
+@Internal
+public interface PhysicsHandler {
     /**
      * Verschiebt das Ziel-Objekt um einen spezifischen Wert auf der Zeichenebene. Die Ausführung hat <b>erst (ggf.) im
      * kommenden Frame</b> einfluss auf die Physics und <b>ändert keine physikalischen Eigenschaften</b> des
@@ -47,14 +30,16 @@ public abstract class PhysicsHandler {
      * @param v Ein Vector, um den das Ziel-Objekt verschoben werden soll. Dies ändert seine Position, jedoch sonst
      *          keine weiteren Eigenschaften.
      */
-    public abstract void moveBy(Vector v);
+    @Internal
+    void moveBy(Vector v);
 
     /**
      * Gibt den <b>Gewichtsmittelpunkt</b> dieses <code>Actor</code>-Objekts aus.
      *
      * @return der aktuelle <b>Gewichtsmittelpunkt</b> des Ziel-Objekts als <i>Point auf der Zeichenebene</i>.
      */
-    public abstract Vector getCenter();
+    @Internal
+    Vector getCenter();
 
     /**
      * Gibt an, ob ein bestimmter Point auf der Zeichenebene innerhalb des Ziel-Objekts liegt.
@@ -65,7 +50,8 @@ public abstract class PhysicsHandler {
      * Das Ergebnis kann (abhängig von der implementierenden Klasse) verschieden sicher richtige Ergebnisse
      * liefern.
      */
-    public abstract boolean contains(Vector p);
+    @Internal
+    boolean contains(Vector p);
 
     /**
      * Gibt die aktuelle Position des Ziel-Objekts an.
@@ -73,7 +59,8 @@ public abstract class PhysicsHandler {
      * @return Die aktuelle Position des Ziel-Objekts. Diese ist bei Erstellung des Objekts zunächst immer
      * <code>(0|0)</code> und wird mit Rotation und Verschiebung verändert.
      */
-    public abstract Vector getPosition();
+    @Internal
+    Vector getPosition();
 
     /**
      * Gibt die aktuelle Rotation des Ziel-Objekts in <i>Radians</i> an. Bei Erstellung eines
@@ -81,44 +68,54 @@ public abstract class PhysicsHandler {
      *
      * @return die aktuelle Rotation des Ziel-Objekts in <i>Radians</i>.
      */
-    public abstract float getRotation();
+    @Internal
+    float getRotation();
 
     /**
      * Rotiert das Ziel-Objekt um einen festen Winkel.
      *
-     * @param radians Der Winkel, um den das Ziel-Objekt gedreht werden soll (in <i>Radians</i>).
-     *                <ul>
-     *                <li>Werte &gt; 0 : Drehung gegen Uhrzeigersinn</li>
-     *                <li>Werte &lt; 0 : Drehung im Uhrzeigersinn</li>
-     *                </ul>
+     * @param degree Der Winkel, um den das Ziel-Objekt gedreht werden soll (in <i>Grad</i>).
+     *               <ul>
+     *               <li>Werte &gt; 0 : Drehung gegen Uhrzeigersinn</li>
+     *               <li>Werte &lt; 0 : Drehung im Uhrzeigersinn</li>
+     *               </ul>
      */
-    public abstract void rotateBy(float radians);
+    @Internal
+    void rotateBy(float degree);
 
-    public abstract void setDensity(float density);
+    @Internal
+    void setDensity(float density);
 
-    public abstract float getDensity();
+    @Internal
+    float getDensity();
 
-    public abstract void setFriction(float friction);
+    @Internal
+    void setFriction(float friction);
 
-    public abstract float getFriction();
+    @Internal
+    float getFriction();
 
-    public abstract void setRestitution(float elasticity);
+    @Internal
+    void setRestitution(float elasticity);
 
-    public abstract float getRestitution();
+    @Internal
+    float getRestitution();
 
     /**
      * Setzt die Masse für das Ziel-Objekt.
      *
      * @param mass Die Masse, die das Ziel-Objekt einnehmen soll. In [kg]
      */
-    public abstract void setMass(float mass);
+    @Internal
+    void setMass(float mass);
 
     /**
      * Gibt die Masse des Ziel-Objekts aus.
      *
      * @return Die Masse des Ziel-Objekts in [kg].
      */
-    public abstract float getMass();
+    @Internal
+    float getMass();
 
     /**
      * Uebt eine Kraft auf das Ziel-Objekt (im Massenschwerpunkt) aus (sofern möglich).
@@ -126,40 +123,47 @@ public abstract class PhysicsHandler {
      * @param force Die Kraft, die auf den Massenschwerpunkt angewandt werden soll. <b>Nicht in [px]</b>, sondern in
      *              [N] = [m / s^2].
      */
-    public abstract void applyForce(Vector force);
+    @Internal
+    void applyForce(Vector force);
 
     /**
      * Wirkt einen Drehmoment auf das Ziel-Objekt.
      *
-     * @param rotationMomentum der Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
+     * @param torque der Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
      */
-    public abstract void applyTorque(float rotationMomentum);
+    @Internal
+    void applyTorque(float torque);
 
     /**
      * Wirkt einen Drehimpuls auf das Ziel-Objekt.
      *
      * @param rotationImpulse der Drehimpuls, der auf das Ziel-Objekt wirken soll. in [kg*m*m/s]
      */
-    public abstract void applyRotationImpulse(float rotationImpulse);
+    @Internal
+    void applyRotationImpulse(float rotationImpulse);
 
     /**
      * Macht ein Type-Update für diesen Handler.
      *
      * @param type Der neue Type.
      */
-    public abstract void setType(BodyType type);
+    @Internal
+    void setType(BodyType type);
 
-    public abstract BodyType getType();
+    @Internal
+    BodyType getType();
 
-    public abstract void applyForce(Vector kraftInN, Vector globalerOrt);
+    @Internal
+    void applyForce(Vector kraftInN, Vector globalLocation);
 
     /**
      * Wirkt einen Impuls auf einem Welt-Point.
      *
-     * @param impulsInNS  Ein Impuls (in [Ns]).
-     * @param globalerOrt Der
+     * @param impulsInNS     Ein Impuls (in [Ns]).
+     * @param globalLocation TODO
      */
-    public abstract void applyImpluse(Vector impulsInNS, Vector globalerOrt);
+    @Internal
+    void applyImpluse(Vector impulsInNS, Vector globalLocation);
 
     /**
      * Gibt den WorldHandler aus, der die Welt handelt, in der sich der Klient
@@ -167,7 +171,8 @@ public abstract class PhysicsHandler {
      *
      * @return Der World-Handler, der zu diesem Physics-Handler gehört.
      */
-    public abstract WorldHandler getWorldHandler();
+    @Internal
+    WorldHandler getWorldHandler();
 
     /**
      * Wird intern zum Debuggen benutzt. Gibt den korrespondierenden Body aus.
@@ -175,22 +180,22 @@ public abstract class PhysicsHandler {
      * @return Der korrespondierende Body.
      */
     @Internal
-    public abstract Body getBody();
+    Body getBody();
 
     /**
      * Setzt die Wirkung aller physikalischer Bewegungen (Geschwindigkeit und Drehung) zurück.
      * Hiernach ist das Objekt in Ruhe.
      */
     @Internal
-    public abstract void resetMovement();
+    void resetMovement();
 
     /**
      * Setzt die Geschwindigkeit für das Handler-Objekt.
      *
-     * @param geschwindigkeitInMProS Setzt die Geschwindigkeit, mit der sich das Zielobjekt bewegen soll.
+     * @param metersPerSecond Setzt die Geschwindigkeit, mit der sich das Zielobjekt bewegen soll.
      */
     @Internal
-    public abstract void setVelocity(Vector geschwindigkeitInMProS);
+    void setVelocity(Vector metersPerSecond);
 
     /**
      * Gibt die aktuelle Geschwindigkeit aus.
@@ -198,19 +203,19 @@ public abstract class PhysicsHandler {
      * @return Die aktuelle Geschwindigkeit.
      */
     @Internal
-    public abstract Vector getVelocity();
+    Vector getVelocity();
 
     /**
      * Setzt, ob die Rotation blockiert sein soll.
      */
     @Internal
-    public abstract void setRotationLocked(boolean block);
+    void setRotationLocked(boolean locked);
 
     /**
-     * @return ob die Rotation des Objekts blockiert ist.
+     * @return Ob die Rotation des Objekts blockiert ist.
      */
     @Internal
-    public abstract boolean isRotationLocked();
+    boolean isRotationLocked();
 
     /**
      * Testet, ob das Objekt below sich festen Boden hat. Dies ist der Fall, wenn direkt below dem Objekt ein
@@ -222,18 +227,21 @@ public abstract class PhysicsHandler {
      * @return <code>true</code>, wenn direkt below dem Objekt ein passives Objekt ist. Sonst <code>false</code>.
      */
     @Internal
-    public abstract boolean isGrounded();
+    boolean isGrounded();
 
-    public abstract float getTorque();
+    @Internal
+    float getTorque();
 
-    public abstract void setTorque(float value);
+    @Internal
+    void setTorque(float value);
 
     /**
      * Entfernt alle Shapes/Collider am Actor und setzt alle Shapes für dieses Objekt neu.
      *
      * @param shapes Die neuen Shapes als Supplier, der die Liste der Shapes ausgibt.
      */
-    public abstract void setShapes(Supplier<List<Shape>> shapes);
+    @Internal
+    void setShapes(Supplier<List<Shape>> shapes);
 
     /**
      * Gibt die Proxy-Daten des Actors aus.
@@ -241,5 +249,5 @@ public abstract class PhysicsHandler {
      * @return der gegenwärtige physikalische Zustand des Raum-Objekts in Proxy-Daten.
      */
     @Internal
-    public abstract ProxyData getProxyData();
+    PhysicsData getPhysicsData();
 }

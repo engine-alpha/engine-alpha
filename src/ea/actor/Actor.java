@@ -21,11 +21,7 @@ package ea.actor;
 
 import ea.*;
 import ea.collision.CollisionListener;
-import ea.event.EventListeners;
-import ea.event.ListenerEvent;
-import ea.handle.BodyType;
-import ea.handle.Physics;
-import ea.handle.Position;
+import ea.event.*;
 import ea.input.KeyListener;
 import ea.input.MouseClickListener;
 import ea.input.MouseWheelListener;
@@ -33,8 +29,8 @@ import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.NullHandler;
+import ea.internal.physics.PhysicsData;
 import ea.internal.physics.PhysicsHandler;
-import ea.internal.physics.ProxyData;
 import ea.internal.physics.WorldHandler;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.CircleShape;
@@ -43,12 +39,14 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.joints.DistanceJointDef;
+import org.jbox2d.dynamics.joints.RevoluteJointDef;
+import org.jbox2d.dynamics.joints.RopeJointDef;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -59,7 +57,8 @@ import java.util.function.Supplier;
  * @author Michael Andonie
  * @author Niklas Keller
  */
-public abstract class Actor {
+@SuppressWarnings ( "OverlyComplexClass" )
+public abstract class Actor implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
     private <T> Supplier<T> createParentSupplier(Function<Layer, T> supplier) {
         return () -> {
             Layer layer = getLayer();
@@ -70,11 +69,6 @@ public abstract class Actor {
             return supplier.apply(layer);
         };
     }
-
-    /**
-     * Gibt an, ob der Actor bereits zerstört wurde.
-     */
-    private boolean alive = true;
 
     /**
      * Gibt an, ob das Objekt zur Zeit überhaupt sichtbar sein soll.<br> Ist dies nicht der Fall, so wird die
@@ -96,17 +90,14 @@ public abstract class Actor {
     private float opacity = 1;
 
     /**
-     * Composite des Grafik-Objekts. Zwischenspeicherung des letzten Zustands
-     */
-    private Composite composite;
-
-    /**
      * Der JB2D-Handler für dieses spezifische Objekt.
      */
     private PhysicsHandler physicsHandler;
 
-    private final EventListeners<Consumer<ListenerEvent>> mountListeners = new EventListeners<>();
-    private final EventListeners<Consumer<ListenerEvent>> unmountListeners = new EventListeners<>();
+    private final Object physicsHandlerLock = new Object();
+
+    private final EventListeners<Runnable> mountListeners = new EventListeners<>();
+    private final EventListeners<Runnable> unmountListeners = new EventListeners<>();
     private final EventListeners<KeyListener> keyListeners = new EventListeners<>(createParentSupplier(Layer::getKeyListeners));
     private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>(createParentSupplier(Layer::getMouseClickListeners));
     private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>(createParentSupplier(Layer::getMouseWheelListeners));
@@ -114,74 +105,41 @@ public abstract class Actor {
 
     /* _________________________ Die Handler _________________________ */
 
-    /**
-     * Über das <code>position</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt die
-     * Position dieses <code>Actor</code>-Objekts betreffen. Dazu gehört: <ul> <li>Das Abfragen der aktuellen
-     * Position.</li> <li>Das Setzen einer Position das move.</li>
-     * <li>Das Rotieren um einen Winkel.</li> </ul>
-     * <p>
-     * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
-     *
-     * @see Position
-     */
-    @API
-    public final Position position = new Position(this);
-
-    /**
-     * Über das <code>physics</code>-Objekt lassen sich alle Operationen und Abfragen ausführen, die direkt die
-     * physikalischen Eigenschaften und Ümstände dieses <code>Actor</code>-Objekts betreffen. Dazu gehört: <ul> <li>Das
-     * Abfragen und Setzen von physikalischen Eigenschaften des Objekt, wie zum Beispiel der <i>Masse</i> oder der
-     * <i>Elastizität</i>.</li> <li>Das Anwenden von physikalischen Effekten (z.B. <i>Kräfte</i> oder <i>Impulse</i>)
-     * auf das Objekt.</li>
-     * <li>Das Ändern des <i>physikalischen Verhaltens</i> des Objekts.</li> </ul>
-     * <p>
-     * Die zugehörige Dokumentation gibt hierzu detaillierte Informationen.
-     *
-     * @see Position
-     */
-    @API
-    public final Physics physics = new Physics(this);
-
     public Actor(Supplier<Shape> shapeSupplier) {
-        this.physicsHandler = new NullHandler(this, new ProxyData(shapeSupplier));
-        this.autoRegisterListeners();
+        this.physicsHandler = new NullHandler(new PhysicsData(() -> Collections.singletonList(shapeSupplier.get())));
+        EventListenerHelper.autoRegisterListeners(this);
     }
 
-    private void autoRegisterListeners() {
-        if (this instanceof KeyListener) {
-            getKeyListeners().add((KeyListener) this);
-        }
+    @API
+    public final void addMountListener(Runnable listener) {
+        synchronized (physicsHandlerLock) {
+            mountListeners.add(listener);
 
-        if (this instanceof MouseClickListener) {
-            getMouseClickListeners().add((MouseClickListener) this);
-        }
-
-        if (this instanceof MouseWheelListener) {
-            getMouseWheelListeners().add((MouseWheelListener) this);
-        }
-
-        if (this instanceof FrameUpdateListener) {
-            getFrameUpdateListeners().add((FrameUpdateListener) this);
+            if (physicsHandler.getWorldHandler() != null) {
+                listener.run();
+            }
         }
     }
 
     @API
-    public boolean isAlive() {
-        return alive;
-    }
-
-    @API
-    public final void addMountListener(Consumer<ListenerEvent> listener) {
-        mountListeners.add(listener);
-
-        if (physicsHandler.getWorldHandler() != null) {
-            listener.accept(() -> mountListeners.remove(listener));
+    public final void removeMountListener(Runnable listener) {
+        synchronized (physicsHandlerLock) {
+            mountListeners.remove(listener);
         }
     }
 
     @API
-    public final void addUnmountListener(Consumer<ListenerEvent> listener) {
-        unmountListeners.add(listener);
+    public final void addUnmountListener(Runnable listener) {
+        synchronized (physicsHandlerLock) {
+            unmountListeners.add(listener);
+        }
+    }
+
+    @API
+    public final void removeUnmountListener(Runnable listener) {
+        synchronized (physicsHandlerLock) {
+            unmountListeners.remove(listener);
+        }
     }
 
     /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
@@ -265,7 +223,9 @@ public abstract class Actor {
      */
     @API
     public final boolean contains(Vector p) {
-        return physicsHandler.contains(p);
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.contains(p);
+        }
     }
 
     /**
@@ -282,7 +242,9 @@ public abstract class Actor {
      */
     @API
     public final boolean overlaps(Actor other) {
-        return WorldHandler.isBodyCollision(physicsHandler.getBody(), other.getPhysicsHandler().getBody());
+        synchronized (physicsHandlerLock) {
+            return WorldHandler.isBodyCollision(physicsHandler.getBody(), other.getPhysicsHandler().getBody());
+        }
     }
 
     /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
@@ -297,7 +259,9 @@ public abstract class Actor {
      */
     @API
     public void setBodyType(BodyType type) {
-        this.physicsHandler.setType(type);
+        synchronized (physicsHandlerLock) {
+            this.physicsHandler.setType(type);
+        }
     }
 
     /**
@@ -309,7 +273,9 @@ public abstract class Actor {
      */
     @API
     public BodyType getBodyType() {
-        return physicsHandler.getType();
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getType();
+        }
     }
 
     /**
@@ -323,7 +289,7 @@ public abstract class Actor {
      */
     @API
     public final void setShapes(String shapeCode) {
-        this.physicsHandler.setShapes(ShapeBuilder.fromString(shapeCode));
+        this.setShapes(ShapeBuilder.fromString(shapeCode));
     }
 
     /**
@@ -336,11 +302,7 @@ public abstract class Actor {
      */
     @API
     public final void setShape(Supplier<Shape> shapeSupplier) {
-        this.physicsHandler.setShapes(() -> {
-            List<Shape> list = new ArrayList<>(1);
-            list.add(shapeSupplier.get());
-            return list;
-        });
+        this.setShapes(() -> Collections.singletonList(shapeSupplier.get()));
     }
 
     /**
@@ -353,7 +315,9 @@ public abstract class Actor {
      */
     @API
     public final void setShapes(Supplier<List<Shape>> shapesSupplier) {
-        this.physicsHandler.setShapes(shapesSupplier);
+        synchronized (physicsHandlerLock) {
+            this.physicsHandler.setShapes(shapesSupplier);
+        }
     }
 
     /**
@@ -367,7 +331,7 @@ public abstract class Actor {
     @Internal
     public void renderBasic(Graphics2D g, Bounds r, float pixelPerMeter) {
         if (visible && this.isWithinBounds(r)) {
-            synchronized (this) {
+            synchronized (physicsHandlerLock) {
                 float rotation = physicsHandler.getRotation();
                 Vector position = physicsHandler.getPosition();
 
@@ -378,7 +342,8 @@ public abstract class Actor {
                 g.rotate(-rotation, position.x * pixelPerMeter, -position.y * pixelPerMeter);
                 g.translate(position.x * pixelPerMeter, -position.y * pixelPerMeter);
 
-                //Opacity Update
+                // Opacity Update
+                Composite composite;
                 if (opacity != 1) {
                     composite = g.getComposite();
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
@@ -505,7 +470,7 @@ public abstract class Actor {
      */
     @API
     public <E extends Actor> void addCollisionListener(E collider, CollisionListener<E> listener) {
-        addMountListener(e -> WorldHandler.addSpecificCollisionListener(this, collider, listener));
+        addMountListener(() -> WorldHandler.addSpecificCollisionListener(this, collider, listener));
     }
 
     /**
@@ -519,7 +484,7 @@ public abstract class Actor {
      */
     @API
     public void addCollisionListener(CollisionListener<Actor> listener) {
-        addMountListener((e) -> WorldHandler.addGenericCollisionListener(listener, this));
+        addMountListener(() -> WorldHandler.addGenericCollisionListener(listener, this));
     }
 
     /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
@@ -534,49 +499,53 @@ public abstract class Actor {
 
     @Internal
     public void setPhysicsHandler(PhysicsHandler handler) {
-        WorldHandler worldHandler = handler.getWorldHandler();
-        WorldHandler previousWorldHandler = physicsHandler.getWorldHandler();
+        synchronized (physicsHandlerLock) {
+            WorldHandler worldHandler = handler.getWorldHandler();
+            WorldHandler previousWorldHandler = physicsHandler.getWorldHandler();
 
-        if (worldHandler == null) {
-            if (previousWorldHandler == null) {
-                return;
+            if (worldHandler == null) {
+                if (previousWorldHandler == null) {
+                    return;
+                }
+
+                Layer layer = previousWorldHandler.getLayer();
+
+                keyListeners.invoke(layer::removeKeyListener);
+                mouseClickListeners.invoke(layer::removeMouseClickListener);
+                mouseWheelListeners.invoke(layer::removeMouseWheelListener);
+                frameUpdateListeners.invoke(layer::removeFrameUpdateListener);
+
+                unmountListeners.invoke(Runnable::run);
+
+                physicsHandler = handler;
+            } else {
+                if (previousWorldHandler != null) {
+                    return;
+                }
+
+                physicsHandler = handler;
+
+                Layer layer = worldHandler.getLayer();
+
+                mountListeners.invoke(Runnable::run);
+
+                keyListeners.invoke(layer::addKeyListener);
+                mouseClickListeners.invoke(layer::addMouseClickListener);
+                mouseWheelListeners.invoke(layer::addMouseWheelListener);
+                frameUpdateListeners.invoke(layer::addFrameUpdateListener);
             }
-
-            Layer layer = previousWorldHandler.getLayer();
-
-            keyListeners.invoke(listener -> layer.getKeyListeners().remove(listener));
-            mouseClickListeners.invoke(listener -> layer.getMouseClickListeners().remove(listener));
-            mouseWheelListeners.invoke(listener -> layer.getMouseWheelListeners().remove(listener));
-            frameUpdateListeners.invoke(listener -> layer.getFrameUpdateListeners().remove(listener));
-
-            unmountListeners.invoke(listener -> listener.accept(() -> unmountListeners.remove(listener)));
-
-            physicsHandler = handler;
-        } else {
-            if (previousWorldHandler != null) {
-                return;
-            }
-
-            physicsHandler = handler;
-
-            Layer layer = worldHandler.getLayer();
-
-            mountListeners.invoke(listener -> listener.accept(() -> mountListeners.remove(listener)));
-
-            keyListeners.invoke(listener -> layer.getKeyListeners().add(listener));
-            mouseClickListeners.invoke(listener -> layer.getMouseClickListeners().add(listener));
-            mouseWheelListeners.invoke(listener -> layer.getMouseWheelListeners().add(listener));
-            frameUpdateListeners.invoke(listener -> layer.getFrameUpdateListeners().add(listener));
         }
     }
 
     public Layer getLayer() {
-        WorldHandler worldHandler = physicsHandler.getWorldHandler();
-        if (worldHandler == null) {
-            return null;
-        }
+        synchronized (physicsHandlerLock) {
+            WorldHandler worldHandler = physicsHandler.getWorldHandler();
+            if (worldHandler == null) {
+                return null;
+            }
 
-        return worldHandler.getLayer();
+            return worldHandler.getLayer();
+        }
     }
 
     public void remove() {
@@ -604,5 +573,604 @@ public abstract class Actor {
     @API
     public EventListeners<FrameUpdateListener> getFrameUpdateListeners() {
         return frameUpdateListeners;
+    }
+
+    /**
+     * Setzt, ob <i>im Rahmen der physikalischen Simulation</i> die Rotation dieses Objekts
+     * blockiert werden soll. <br>
+     * Das Objekt kann in jedem Fall weiterhin über einen direkten Methodenaufruf rotiert
+     * werden. Der folgende Code ist immer wirksam, unabhängig davon, ob die Rotation
+     * im Rahmen der physikalischen Simulation blockiert ist:<br>
+     * <code>
+     * actor.getPosition.rotate(4.31f);
+     * </code>
+     *
+     * @param rotationLocked Ist dieser Wert <code>true</code>, rotiert sich dieses
+     *                       Objekts innerhalb der physikalischen Simulation <b>nicht mehr</b>.
+     *                       Ist dieser Wert <code>false</code>, rotiert sich dieses
+     *                       Objekt innerhalb der physikalsichen Simulation.
+     *
+     * @see #isRotationLocked()
+     */
+    @API
+    public void setRotationLocked(boolean rotationLocked) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setRotationLocked(rotationLocked);
+        }
+    }
+
+    /**
+     * Gibt an, ob die Rotation dieses Objekts derzeit innerhalb der physikalischen Simulation
+     * blockiert ist.
+     *
+     * @return <code>true</code>, wenn die Rotation dieses Objekts derzeit innerhalb der
+     * physikalischen Simulation blockiert ist.
+     *
+     * @see #setRotationLocked(boolean)
+     */
+    @API
+    public boolean isRotationLocked() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.isRotationLocked();
+        }
+    }
+
+    /**
+     * Setzt die Masse des Objekts neu. Hat Einfluss auf das physikalische Verhalten des Objekts.
+     *
+     * @param massInKG Die neue Masse für das Objekt in <b>[kg]</b>.
+     */
+    @API
+    public void setMass(float massInKG) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setMass(massInKG);
+        }
+    }
+
+    /**
+     * Gibt die aktuelle Masse des Ziel-Objekts aus. Die Form bleibt unverändert, daher ändert sich
+     * die <b>Dichte</b> in der Regel.
+     *
+     * @return Die Masse des Ziel-Objekts in <b>[kg]</b>.
+     */
+    @API
+    public float getMass() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getMass();
+        }
+    }
+
+    /**
+     * Setzt die Dichte des Objekts neu. Die Form bleibt dabei unverändert, daher ändert sich die
+     * <b>Masse</b> in der Regel.
+     *
+     * @param densityInKgProQM die neue Dichte des Objekts in <b>[kg/m^2]</b>
+     */
+    @API
+    public void setDensity(float densityInKgProQM) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setDensity(densityInKgProQM);
+        }
+    }
+
+    /**
+     * Gibt die aktuelle Dichte des Objekts an.
+     *
+     * @return Die aktuelle Dichte des Objekts in <b>[kg/m^2]</b>.
+     */
+    @API
+    public float getDensity() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getDensity();
+        }
+    }
+
+    /**
+     * Setzt den Reibungskoeffizient für das Objekt. Hat Einfluss auf
+     * die Bewegung des Objekts.
+     *
+     * @param coefficientOfElasticity Der Reibungskoeffizient. In der Regel im Bereich <b>[0; 1]</b>.
+     */
+    @API
+    public void setFriction(float coefficientOfElasticity) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setFriction(coefficientOfElasticity);
+        }
+    }
+
+    /**
+     * Gibt den Reibungskoeffizienten für dieses Objekt aus.
+     *
+     * @return Der Reibungskoeffizient des Objekts. Ist in der Regel (in der Realität)
+     * ein Wert im Bereich <b>[0; 1]</b>.
+     */
+    @API
+    public float getFriction() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getFriction();
+        }
+    }
+
+    /**
+     * Setzt die Geschwindigkeit "hart" für dieses Objekt. Damit wird die aktuelle
+     * Bewegung (nicht aber die Rotation) des Objekts ignoriert und hart auf den
+     * übergebenen Wert gesetzt.
+     *
+     * @param velocityInMPerS Die Geschwindigkeit, mit der sich dieses Objekt ab sofort
+     *                        bewegen soll. In <b>[m / s]</b>
+     */
+    @API
+    public void setVelocity(Vector velocityInMPerS) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setVelocity(velocityInMPerS);
+        }
+    }
+
+    /**
+     * Gibt die Geschwindigkeit aus, mit der sich dieses Objekt gerade (also in diesem Frame) bewegt.
+     *
+     * @return Die Geschwindigkeit, mit der sich dieses Objekt gerade (also in diesem Frame) bewegt.
+     * In <b>[m / s]</b>
+     */
+    @API
+    public Vector getVelocity() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getVelocity();
+        }
+    }
+
+    @API
+    public void setRestitution(float elasticity) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setRestitution(elasticity);
+        }
+    }
+
+    @API
+    public float getRestitution() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getRestitution();
+        }
+    }
+
+    /* _________________________ Doers : Direkter Effekt auf Simulation _________________________ */
+
+    /**
+     * Wirkt eine Kraft auf den <i>Schwerpunkt</i> des Objekts.
+     *
+     * @param force Ein Kraft-Vector. Einheit ist <b>nicht [px], sonder [N]</b>.
+     */
+    @API
+    public void applyForce(Vector force) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.applyForce(force);
+        }
+    }
+
+    /**
+     * Wirkt eine Kraft auf einem bestimmten <i>Point in der Welt</i>.
+     *
+     * @param kraftInN    Eine Kraft. Einheit ist <b>[N]</b>
+     * @param globalPoint Der Ort auf der <i>Zeichenebene</i>, an dem die Kraft wirken soll.
+     */
+    @API
+    public void applyForce(Vector kraftInN, Vector globalPoint) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.applyForce(kraftInN, globalPoint);
+        }
+    }
+
+    /**
+     * Wirkt einen Impuls auf den <i>Schwerpunkt</i> des Objekts.
+     *
+     * @param impulseInNS Der Impuls, der auf den Schwerpunkt wirken soll. Einheit ist <b>[Ns]</b>
+     */
+    @API
+    public void applyImpulse(Vector impulseInNS) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.applyImpluse(impulseInNS, physicsHandler.getCenter());
+        }
+    }
+
+    /**
+     * Wirkt einen Impuls an einem bestimmten <i>Point in der Welt</i>.
+     *
+     * @param impulseInNS Ein Impuls. Einheit ist <b>[Ns]</b>
+     * @param globalPoint Der Ort auf der <i>Zeichenebene</i>, an dem der Impuls wirken soll.
+     */
+    @API
+    public void applyImpulse(Vector impulseInNS, Vector globalPoint) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.applyImpluse(impulseInNS, globalPoint);
+        }
+    }
+
+    /**
+     * Versetzt das Objekt - unabhängig von aktuellen Kräften und Geschwindigkeiten -
+     * <i>in Ruhe</i>. Damit werden alle (physikalischen) Bewegungen des Objektes zurückgesetzt.
+     * Sollte eine konstante <i>Schwerkraft</i> (oder etwas Vergleichbares) exisitieren, wo
+     * wird dieses Objekt jedoch möglicherweise aus der Ruhelage wieder in Bewegung versetzt.
+     */
+    @API
+    public void resetMovement() {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.resetMovement();
+        }
+    }
+
+    /**
+     * Testet, ob das Objekt "steht". Diese Funktion ist below anderem hilfreich für die Entwicklung von Platformern
+     * (z.B. wenn der Spieler nur springen können soll, wenn er auf dem Boden steht).<br>
+     * Diese Funktion ist eine <b>Heuristik</b>, sprich sie ist eine Annäherung. In einer Physik-Simulation ist die
+     * Definition von "stehen" nicht unbedingt einfach. Hier bedeutet es folgendes:<br>
+     * <i>Ein Objekt steht genau dann, wenn alle Eigenschaften erfüllt sind:</i>
+     * <ul>
+     * <li>Es ist ein <b>dynamisches Objekt</b>.</li>
+     * <li>Direkt below der Mitte der minimalen
+     * <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box">AABB</a>,
+     * die das gesamte Objekt umspannt, befindet sich ein <b>statisches Objekt</b>.</li>
+     * </ul>
+     */
+    @API
+    public boolean isGrounded() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.isGrounded();
+        }
+    }
+
+    /* _________________________ JOINTS _________________________ */
+
+    /**
+     * Prüft ob das zugehörige <code>Actor</code>-Objekt in der selben JB2D World liegt wie das übergebene Objekt.
+     * Diese Logik ist ausgelagert, um den Code etwas schöner zu machen.
+     *
+     * @param other ein zweites <code>Actor</code>-Objekt zum testen.
+     */
+    @Internal
+    private void assertSameWorld(Actor other) {
+        synchronized (physicsHandlerLock) {
+            PhysicsHandler otherHandler = other.getPhysicsHandler();
+            if (otherHandler.getWorldHandler() != this.physicsHandler.getWorldHandler()) {
+                throw new RuntimeException("Die Actor-Objekte sind nicht an der selben Wurzel angemeldet. Sie können deshalb (noch) nicht physikalisch verbunden werden.");
+            }
+        }
+    }
+
+    /**
+     * Erstellt einen Revolute-Joint zwischen dem zugehörigen <code>Actor</code>-Objekt und einem weiteren.
+     *
+     * <h3>Definition Revolute-Joint</h3>
+     * <p>Verbindet zwei <code>Actor</code>-Objekte <b>untrennbar an einem Anchor-Point</b>. Die Objekte können sich
+     * ab sofort nur noch <b>relativ zueinander drehen</b>.</p>
+     *
+     * @param other            Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                         <code>Actor</code>-Objekt
+     *                         über einen <code>RevoluteJoint</code> verbunden sein soll.
+     * @param anchorAsWorldPos Der Ankerpunkt <b>auf dem Layer</b>. Es wird davon
+     *                         ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
+     *
+     * @see org.jbox2d.dynamics.joints.RevoluteJoint
+     */
+    @API
+    public void createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
+        // TODO Sync
+        Game.afterWorldStep(() -> {
+            assertSameWorld(other);
+
+            // Definiere den Joint
+            RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
+            revoluteJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(),
+                    //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchorAsWorldPos)));
+                    anchorAsWorldPos.toVec2());
+            revoluteJointDef.collideConnected = false;
+
+            physicsHandler.getWorldHandler().getWorld().createJoint(revoluteJointDef);
+        });
+    }
+
+    /**
+     * Erstellt einen Rope-Joint zwischen diesem und einem weiteren <code>Actor</code>-Objekt.
+     *
+     * @param other      Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                   <code>Actor</code>-Objekt
+     *                   über einen <code>RopeJoint</code> verbunden sein soll.
+     * @param anchorA    Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste Befestigungspunkt
+     *                   des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
+     * @param anchorB    Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
+     *                   Der zweite Befestigungspunkt des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
+     * @param ropeLength Die Länge des Lassos. Dies ist ab sofort die maximale Länge, die die beiden Ankerpunkte
+     *                   der Objekte voneinader entfernt sein können.
+     *
+     * @return Ein <code>RopeJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     *
+     * @see org.jbox2d.dynamics.joints.RopeJoint
+     */
+    @API
+    public void createRopeJoint(Actor other, Vector anchorA, Vector anchorB, float ropeLength) {
+        // TODO Sync
+        Game.afterWorldStep(() -> {
+            assertSameWorld(other);
+
+            RopeJointDef ropeJointDef = new RopeJointDef();
+            ropeJointDef.bodyA = physicsHandler.getBody();
+            ropeJointDef.bodyB = other.getPhysicsHandler().getBody();
+
+            ropeJointDef.localAnchorA.set(anchorA.toVec2());
+            ropeJointDef.localAnchorB.set(anchorB.toVec2());
+            ropeJointDef.maxLength = ropeLength;
+
+            physicsHandler.getWorldHandler().getWorld().createJoint(ropeJointDef);
+        });
+    }
+
+    /**
+     * Erstellt einen Distance-Joint zwischen diesem und einem weiteren <code>Actor</code>-Objekt.
+     *
+     * @param other             Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                          <code>Actor</code>-Objekt
+     *                          über einen <code>DistanceJoint</code> verbunden sein soll.
+     * @param anchorAAsWorldPos Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste Befestigungspunkt
+     *                          des Joints. Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
+     * @param anchorBAsWorldPos Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
+     *                          Der zweite Befestigungspunkt des Joints.
+     *                          Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
+     *
+     * @see org.jbox2d.dynamics.joints.DistanceJoint
+     */
+    @API
+    public void createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
+        // TODO Sync
+        Game.afterWorldStep(() -> {
+            assertSameWorld(other);
+
+            DistanceJointDef distanceJointDef = new DistanceJointDef();
+            distanceJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
+
+            physicsHandler.getWorldHandler().getWorld().createJoint(distanceJointDef);
+        });
+    }
+
+    @API
+    public float getTorque() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getTorque();
+        }
+    }
+
+    @API
+    public void setTorque(float value) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setTorque(value);
+        }
+    }
+
+    /**
+     * Setzt die Position des <code>Actor</code>-Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
+     * gesehen eine Verschiebung von der aktuellen Position an die neue.
+     *
+     * @param x neue <code>getX</code>-Koordinate
+     * @param y neue <code>getY</code>-Koordinate
+     *
+     * @see #setPosition(Vector)
+     * @see #setCenter(float, float)
+     * @see #setX(float)
+     * @see #setY(float)
+     */
+    @API
+    public void setPosition(float x, float y) {
+        this.setPosition(new Vector(x, y));
+    }
+
+    /**
+     * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
+     * gesehen eine Verschiebung von der aktuellen Position an die neue.
+     *
+     * @param p Der neue Zielpunkt
+     *
+     * @see #setPosition(float, float)
+     * @see #setCenter(float, float)
+     * @see #setX(float)
+     * @see #setY(float)
+     */
+    @API
+    public void setPosition(Vector p) {
+        this.move(new Vector(p.x - this.getX(), p.y - this.getY()));
+    }
+
+    /**
+     * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene. Dies ist die <b>zentrale</b>
+     * Methode zum
+     *
+     * @param v Der Vector, der die Verschiebung des Objekts angibt.
+     *
+     * @see Vector
+     * @see #move(float, float)
+     */
+    @API
+    public void move(Vector v) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.moveBy(v);
+        }
+    }
+
+    /**
+     * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
+     * <p>
+     * Diese Methode arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
+     * durch den Aufruf der Methode <code>center()</code>. Daher ist diese Methode in der Anwendung
+     * auf ein ActorGroup-Objekt nicht unbedingt sinnvoll.
+     *
+     * @param x Die <code>getX</code>-Koordinate des neuen Mittelpunktes des Objektes
+     * @param y Die <code>getY</code>-Koordinate des neuen Mittelpunktes des Objektes
+     *
+     * @see #setCenter(Vector)
+     * @see #move(Vector)
+     * @see #setPosition(float, float)
+     * @see #setPosition(Vector)
+     * @see #getCenter()
+     */
+    @API
+    public void setCenter(float x, float y) {
+        this.setCenter(new Vector(x, y));
+    }
+
+    /**
+     * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.<br>
+     * Diese Methode Arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
+     * durch den Aufruf der Methode <code>center()</code>. Daher ist diese Methode im Anwand auf
+     * ein ActorGroup-Objekt nicht unbedingt sinnvoll.<br> Macht dasselbe wie
+     * <code>mittelPunktSetzen(p.getX, p.getY)</code>.
+     *
+     * @param p Der neue Mittelpunkt des Actor-Objekts
+     *
+     * @see #setCenter(float, float)
+     * @see #move(Vector)
+     * @see #setPosition(float, float)
+     * @see #getCenter()
+     */
+    @API
+    public void setCenter(Vector p) {
+        this.move(this.getCenter().negate().add(p));
+    }
+
+    /**
+     * Gibt die X-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+     * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
+     * <p>
+     *
+     * @return <code>getX</code>-Koordinate
+     *
+     * @see #getY()
+     * @see #getPosition()
+     */
+    @API
+    public float getX() {
+        return this.getPosition().x;
+    }
+
+    /**
+     * Setzt die getX-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
+     * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue.
+     *
+     * @param x neue <code>getX</code>-Koordinate
+     *
+     * @see #setPosition(float, float)
+     * @see #setCenter(float, float)
+     * @see #setY(float)
+     */
+    @API
+    public void setX(float x) {
+        this.move(x - getX(), 0);
+    }
+
+    /**
+     * Gibt die getY-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+     * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
+     *
+     * @return <code>getY</code>-Koordinate
+     *
+     * @see #getX()
+     * @see #getPosition()
+     */
+    @API
+    public float getY() {
+        return this.getPosition().y;
+    }
+
+    /**
+     * Setzt die getY-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
+     * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br>
+     * <br> <b>Achtung!</b><br> Bei <b>allen</b> Objekten ist die eingegebene Position die
+     * linke, obere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
+     * Kreisen z.B. <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
+     * <code>setCenter(int getX, int getY)</code>.
+     *
+     * @param y neue <code>getY</code>-Koordinate
+     *
+     * @see #setPosition(float, float)
+     * @see #setCenter(float, float)
+     * @see #setX(float)
+     */
+    @API
+    public void setY(float y) {
+        this.move(0, y - getY());
+    }
+
+    /**
+     * Gibt den Mittelpunkt des Objektes in der Scene aus.
+     *
+     * @return Die Koordinaten des Mittelpunktes des Objektes
+     *
+     * @see #getPosition()
+     */
+    @API
+    public Vector getCenter() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getCenter();
+        }
+    }
+
+    /**
+     * Verschiebt das Objekt.<br> Hierbei wird nichts anderes gemacht, als <code>move(new
+     * Vector(getDX, getDY))</code> auszufuehren. Insofern ist diese Methode dafuer gut, sich nicht mit
+     * der Klasse Vector auseinandersetzen zu muessen.
+     *
+     * @param dX Die Verschiebung in Richtung X
+     * @param dY Die Verschiebung in Richtung Y
+     *
+     * @see #move(Vector)
+     */
+    @API
+    public void move(float dX, float dY) {
+        this.move(new Vector(dX, dY));
+    }
+
+    /**
+     * Gibt die Position dieses Actor-Objekts aus.
+     *
+     * @return die aktuelle Position dieses <code>Actor</code>-Objekts.
+     */
+    @API
+    public Vector getPosition() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getPosition();
+        }
+    }
+
+    /**
+     * Rotiert das Objekt.
+     *
+     * @param degree Der Winkel (in <b>Grad</b>), um den das Objekt rotiert werden soll.
+     */
+    @API
+    public void rotateBy(float degree) {
+        physicsHandler.rotateBy(degree);
+    }
+
+    /**
+     * Gibt den Winkel aus, um den das Objekt derzeit rotiert ist.
+     *
+     * @return Der Winkel (in <b>Bogenmaß</b>), um den das Objekt derzeit rotiert ist. Jedes Objekt ist bei
+     * Initialisierung nicht rotiert (<code>getRotation()</code> gibt direkt vectorFromThisTo Initialisierung
+     * <code>0</code> zurück).
+     */
+    @API
+    public float getRotation() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getRotation();
+        }
+    }
+
+    /**
+     * Setzt den Rotationswert des Objekts.
+     *
+     * @param degree Der Winkel (in <b>Grad</b>), um den das Objekt <b>von seiner Ausgangsposition bei
+     *               Initialisierung</b> rotiert werden soll.
+     */
+    @API
+    public void setRotation(float degree) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.rotateBy(degree - getRotation());
+        }
     }
 }

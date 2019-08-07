@@ -20,7 +20,6 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
-import ea.handle.BodyType;
 import ea.internal.annotations.API;
 
 import java.awt.Color;
@@ -42,8 +41,6 @@ public class Particle extends Circle implements FrameUpdateListener {
 
         this.setBodyType(BodyType.PARTICLE);
         this.life = life;
-
-        getFrameUpdateListeners().add(this);
     }
 
     @Override

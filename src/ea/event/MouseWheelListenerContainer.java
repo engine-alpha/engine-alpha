@@ -19,6 +19,19 @@
 
 package ea.event;
 
-public class FrameUpdateEvent {
+import ea.input.MouseWheelListener;
+import ea.internal.annotations.API;
 
+public interface MouseWheelListenerContainer {
+    EventListeners<MouseWheelListener> getMouseWheelListeners();
+
+    @API
+    default void addMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        getMouseWheelListeners().add(mouseWheelListener);
+    }
+
+    @API
+    default void removeMouseWheelListener(MouseWheelListener mouseWheelListener) {
+        getMouseWheelListeners().remove(mouseWheelListener);
+    }
 }

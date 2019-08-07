@@ -1,8 +1,7 @@
 package ea.internal.physics;
 
 import ea.Vector;
-import ea.actor.Actor;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
 
@@ -15,19 +14,18 @@ import java.util.function.Supplier;
  * Gibt Fehler aus, wenn Operationen ausgeführt werden, die nur mit einer Verbindung zu einer
  * Physics World funktionieren können.
  */
-public class NullHandler extends PhysicsHandler {
+public class NullHandler implements PhysicsHandler {
 
-    private final ProxyData proxyData;
+    private final PhysicsData physicsData;
 
-    public NullHandler(Actor actor, ProxyData proxyData) {
-        super(actor);
-        this.proxyData = proxyData;
+    public NullHandler(PhysicsData physicsData) {
+        this.physicsData = physicsData;
     }
 
     @Override
     public void moveBy(Vector v) {
-        this.proxyData.setX(this.proxyData.getX() + v.x);
-        this.proxyData.setY(this.proxyData.getY() + v.y);
+        this.physicsData.setX(this.physicsData.getX() + v.x);
+        this.physicsData.setY(this.physicsData.getY() + v.y);
     }
 
     /**
@@ -52,17 +50,17 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public Vector getPosition() {
-        return new Vector(this.proxyData.getX(), this.proxyData.getY());
+        return new Vector(this.physicsData.getX(), this.physicsData.getY());
     }
 
     @Override
     public float getRotation() {
-        return this.proxyData.getRotation();
+        return this.physicsData.getRotation();
     }
 
     @Override
-    public void rotateBy(float radians) {
-        this.proxyData.setRotation(this.proxyData.getRotation() + radians);
+    public void rotateBy(float degree) {
+        this.physicsData.setRotation(this.physicsData.getRotation() + degree);
     }
 
     @Override
@@ -70,42 +68,43 @@ public class NullHandler extends PhysicsHandler {
         if (density <= 0) {
             throw new IllegalArgumentException("Dichte kann nicht kleiner als 0 sein. Eingabe war " + density + ".");
         }
-        this.proxyData.setDensity(density);
+        this.physicsData.setDensity(density);
     }
 
     @Override
     public float getDensity() {
-        return this.proxyData.getDensity();
+        return this.physicsData.getDensity();
     }
 
     @Override
     public void setFriction(float friction) {
-        this.proxyData.setFriction(friction);
+        this.physicsData.setFriction(friction);
     }
 
     @Override
     public float getFriction() {
-        return this.proxyData.getFriction();
+        return this.physicsData.getFriction();
     }
 
     @Override
     public void setRestitution(float elasticity) {
-        this.proxyData.setRestitution(elasticity);
+        this.physicsData.setRestitution(elasticity);
     }
 
     @Override
     public float getRestitution() {
-        return this.proxyData.getRestitution();
+        return this.physicsData.getRestitution();
     }
 
     @Override
     public void setMass(float mass) {
-        // TODO What to do here?
+        physicsData.setMass(mass);
     }
 
     @Override
     public float getMass() {
-        return 0;
+        Float mass = physicsData.getMass();
+        return mass == null ? 0 : mass;
     }
 
     @Override
@@ -125,7 +124,7 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void applyTorque(float rotationMomentum) {
+    public void applyTorque(float torque) {
         throw makeNullException("das Wirken eines Drehmoments");
     }
 
@@ -136,21 +135,21 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public void setType(BodyType type) {
-        this.proxyData.setType(type);
+        this.physicsData.setType(type);
     }
 
     @Override
     public BodyType getType() {
-        return proxyData.getType();
+        return physicsData.getType();
     }
 
     @Override
-    public void applyForce(Vector kraftInN, Vector globalerOrt) {
+    public void applyForce(Vector kraftInN, Vector globalLocation) {
         throw makeNullException("das Wirken einer Kraft");
     }
 
     @Override
-    public void applyImpluse(Vector impulsInNS, Vector globalerOrt) {
+    public void applyImpluse(Vector impulsInNS, Vector globalLocation) {
         throw makeNullException("das Wirken eines Impulses");
     }
 
@@ -170,7 +169,7 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void setVelocity(Vector geschwindigkeitInMProS) {
+    public void setVelocity(Vector metersPerSecond) {
         throw makeNullException("das Setzen einer Geschwindigkeit");
     }
 
@@ -180,13 +179,13 @@ public class NullHandler extends PhysicsHandler {
     }
 
     @Override
-    public void setRotationLocked(boolean block) {
-        this.proxyData.setRotationLocked(block);
+    public void setRotationLocked(boolean locked) {
+        this.physicsData.setRotationLocked(locked);
     }
 
     @Override
     public boolean isRotationLocked() {
-        return this.proxyData.isRotationLocked();
+        return this.physicsData.isRotationLocked();
     }
 
     @Override
@@ -206,11 +205,11 @@ public class NullHandler extends PhysicsHandler {
 
     @Override
     public void setShapes(Supplier<List<Shape>> shapes) {
-        proxyData.setShapes(shapes);
+        physicsData.setShapes(shapes);
     }
 
     @Override
-    public ProxyData getProxyData() {
-        return this.proxyData;
+    public PhysicsData getPhysicsData() {
+        return this.physicsData;
     }
 }

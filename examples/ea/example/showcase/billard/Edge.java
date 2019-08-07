@@ -21,7 +21,7 @@ package ea.example.showcase.billard;
 
 import ea.Vector;
 import ea.actor.Polygon;
-import ea.handle.BodyType;
+import ea.actor.BodyType;
 
 import java.awt.*;
 
@@ -32,7 +32,7 @@ public class Edge extends Polygon {
     public Edge(float x, float y) {
         super(new Vector(0, 0), new Vector(HEIGHT, HEIGHT), new Vector(WIDTH- HEIGHT, HEIGHT), new Vector(WIDTH, 0));
 
-        position.set(x, y);
+        setPosition(x, y);
         setColor(new Color(45, 90, 40));
         setBodyType(BodyType.STATIC);
     }

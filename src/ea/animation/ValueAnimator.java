@@ -38,7 +38,7 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
      */
     private boolean goingBackwards = false;
 
-    private EventListeners<Consumer<CompletionEvent<Value>>> completionListeners = new EventListeners<>();
+    private EventListeners<Consumer<Value>> completionListeners = new EventListeners<>();
 
     public ValueAnimator(float duration, Consumer<Value> consumer, Interpolator<Value> interpolator, AnimationMode mode) {
         this.duration = duration;
@@ -88,7 +88,7 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
                         complete = true;
 
                         Value finalValue = this.interpolator.interpolate(1);
-                        completionListeners.invoke(listener -> listener.accept(new CompletionEvent<>(finalValue, () -> completionListeners.remove(listener))));
+                        completionListeners.invoke(listener -> listener.accept(finalValue));
 
                         break;
                     case PINGPONG:
@@ -118,10 +118,9 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
         this.consumer.accept(interpolator.interpolate(progress));
     }
 
-    public ValueAnimator<Value> addCompletionListener(Consumer<CompletionEvent<Value>> listener) {
+    public ValueAnimator<Value> addCompletionListener(Consumer<Value> listener) {
         if (this.complete) {
-            Value finalValue = this.interpolator.interpolate(1);
-            listener.accept(new CompletionEvent<>(finalValue, () -> completionListeners.remove(listener)));
+            listener.accept(this.interpolator.interpolate(1));
         } else {
             this.completionListeners.add(listener);
         }
