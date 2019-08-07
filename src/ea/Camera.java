@@ -23,6 +23,8 @@ import ea.actor.Actor;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
+import java.awt.Point;
+
 /**
  * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene;
  * das, was im Window dargestellt wird.<br> Sie kann ein Objekt fokussieren und ihm so folgen.
@@ -229,6 +231,25 @@ public final class Camera {
     @API
     public Vector getPosition() {
         return moveIntoBounds(this.position.add(this.offset));
+    }
+
+    /**
+     * Gibt die Position eines Punktes in der World an, relativ zu seiner aktuell zu zeichnenden Position und in Px.
+     *
+     * @param locationInWorld Ein Punkt in der Welt
+     * @param pixelPerMeter   Umrechnungsfaktor pixelPerMeter
+     *
+     * @return Die zu zeichnende Position des Punktes in Px
+     */
+    @Internal
+    public Point toOnScreenPxLocation(Vector locationInWorld, float pixelPerMeter) {
+        //Punktposition relativ zur aktuellen Kameraposition
+        Vector locationInWorldCameraRelative = position.fromThisTo(locationInWorld);
+        Vector cameraRelativeLocInPx = position.multiply(pixelPerMeter);
+
+        Bounds frameSize = Game.getFrameSizeInPx();
+
+        return new Point((int) (frameSize.width / 2 + cameraRelativeLocInPx.x), (int) (frameSize.height / 2 + cameraRelativeLocInPx.y));
     }
 
     // Does not implement FrameUpdateListener by design, as it's updated at a special moment

@@ -46,6 +46,9 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scene {
+    public static final Color REVOLUTE_JOINT_COLOR = Color.blue;
+    public static final Color ROPE_JOINT_COLOR = Color.CYAN;
+    public static final Color DISTANCE_JOINT_COLOR = Color.ORANGE;
     /**
      * Die Kamera des Spiels. Hiermit kann der sichtbare Ausschnitt der Zeichenebene bestimmt und manipuliert werden.
      */
@@ -152,7 +155,7 @@ public class Scene {
         }
 
         if (Game.isDebug()) {
-            renderJoints(g);
+            renderJoints(g, camera);
         }
     }
 
@@ -199,33 +202,37 @@ public class Scene {
     }
 
     @Internal
-    private void renderJoints(Graphics2D g) {
+    private void renderJoints(Graphics2D g, Camera camera) {
         // Display Joints
 
-        Joint j = mainLayer.getWorldHandler().getWorld().getJointList();
+        for (Layer layer : layers) {
+            Joint j = layer.getWorldHandler().getWorld().getJointList();
 
-        while (j != null) {
-            renderJoint(j, g);
-            j = j.m_next;
+            while (j != null) {
+                renderJoint(j, g, layer, camera);
+                j = j.m_next;
+            }
         }
     }
 
     @Internal
-    private static void renderJoint(Joint j, Graphics2D g) {
+    private static void renderJoint(Joint j, Graphics2D g, Layer layer, Camera camera) {
         Vec2 anchorA = new Vec2(), anchorB = new Vec2();
         j.getAnchorA(anchorA);
         j.getAnchorB(anchorB);
 
-        Vector aOnGrid = Vector.of(anchorA);
-        Vector bOnGrid = Vector.of(anchorB);
+        Vector aInWorld = Vector.of(anchorA);
+        Vector bInWorld = Vector.of(anchorB);
+
+        final float pixelPerMeter = layer.calculatePixelPerMeter(camera);
 
         if (j instanceof RevoluteJoint) {
-            g.setColor(Color.blue);
-            g.drawOval((int) aOnGrid.x - (JOINT_CIRCLE_RADIUS / 2), (int) aOnGrid.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_CIRCLE_RADIUS, JOINT_CIRCLE_RADIUS);
+            g.setColor(REVOLUTE_JOINT_COLOR);
+            g.drawOval((int) aInWorld.x - (JOINT_CIRCLE_RADIUS / 2), (int) aInWorld.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_CIRCLE_RADIUS, JOINT_CIRCLE_RADIUS);
         } else if (j instanceof RopeJoint) {
-            renderJointRectangle(g, Color.CYAN, aOnGrid, bOnGrid);
+            renderJointRectangle(g, ROPE_JOINT_COLOR, aInWorld, bInWorld);
         } else if (j instanceof DistanceJoint) {
-            renderJointRectangle(g, Color.ORANGE, aOnGrid, bOnGrid);
+            renderJointRectangle(g, DISTANCE_JOINT_COLOR, aInWorld, bInWorld);
         }
     }
 

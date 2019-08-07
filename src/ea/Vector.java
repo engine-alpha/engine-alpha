@@ -226,6 +226,19 @@ public final class Vector implements Cloneable {
     }
 
     /**
+     * Gibt den Vektor an, der den Punkt, den dieser Vektor beschreibt, zu dem Punkt verschieben würde, den ein
+     * weiterer Vektor beschreibt.
+     *
+     * @param v Ein weiterer Vektor.
+     *
+     * @return Der Vektor, der <code>(this.x|this.y)</code> verschieben würde zu <code>(v.x|v.y)</code>.
+     */
+    @API
+    public Vector fromThisTo(Vector v) {
+        return v.subtract(this);
+    }
+
+    /**
      * Multipliziert die effektiven Längen beider Anteile des Vektors (<code>getX</code> und
      * <code>getY</code>) mit einem festen Faktor. <br> Dadurch entsteht ein neuer Vector mit anderen
      * Werten, welcher zurückgegeben wird.

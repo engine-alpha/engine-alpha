@@ -10,8 +10,8 @@ public interface FrameUpdateListener {
     /**
      * Diese Methode wird bei einem (angemeldeten) Objekt jeden Frame erneut aufgerufen.
      *
-     * @param frameDuration Die Zeit <b>in Millisekunden</b>, die seit dem letzten Update vergangen
+     * @param frameDurationInSec Die Zeit <b>in Sekunden</b>, die seit dem letzten Update vergangen
      */
     @API
-    void onFrameUpdate(float frameDuration);
+    void onFrameUpdate(float frameDurationInSec);
 }

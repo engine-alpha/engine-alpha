@@ -458,7 +458,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
         @Override
         public Class<?>[] getInvocationMethodParameters() {
-            return new Class<?>[] {Integer.class};
+            return new Class<?>[] {float.class};
         }
     }
 

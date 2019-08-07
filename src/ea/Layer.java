@@ -293,7 +293,8 @@ public class Layer {
         parent.getCamera().setZoom(desiredZoom);
     }
 
-    private float calculatePixelPerMeter(Camera camera) {
+    @Internal
+    public float calculatePixelPerMeter(Camera camera) {
         return 1 + (camera.getZoom() - 1) * parallaxZoom;
     }
 
