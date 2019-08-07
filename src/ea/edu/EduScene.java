@@ -3,36 +3,39 @@ package ea.edu;
 import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.Vector;
-import ea.input.KeyListener;
-import ea.input.MouseButton;
-import ea.input.MouseClickListener;
+import ea.input.*;
 
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-public class EduScene extends Scene implements KeyListener, MouseClickListener, FrameUpdateListener {
+public class EduScene extends Scene implements KeyListener, MouseClickListener, FrameUpdateListener, MouseWheelListener {
 
     /**
      * Die Liste aller TICKER-Aufgaben
      */
-    private final ArrayList<TickerAuftrag> aufgabenT = new ArrayList<>();
+    private final ArrayList<TickerAuftrag> sceneTickers = new ArrayList<>();
 
     /**
      * Die Liste aller TASTEN-Aufgaben
      */
-    private final ArrayList<TastenAuftrag> aufgaben = new ArrayList<>();
+    private final ArrayList<TastenAuftrag> sceneKeyListeners = new ArrayList<>();
 
     /**
      * Die Liste aller KLICK-Aufgaben
      */
-    private final ArrayList<KlickAuftrag> aufgabenKlick = new ArrayList<>();
+    private final ArrayList<KlickAuftrag> sceneKlickListeners = new ArrayList<>();
 
     /**
      * Liste aller Framewise Update Aufträge
      */
-    private final ArrayList<FrameUpdateAuftrag> frameUpdates = new ArrayList<>();
+    private final ArrayList<FrameUpdateAuftrag> sceneFrameUpdateListeners = new ArrayList<>();
+
+    /**
+     * Liste aller MouseWheelListener
+     */
+    private final ArrayList<MouseWheelAuftrag> sceneMouseWheelListeners = new ArrayList<>();
 
     /**
      * Name der Scene. Default ist null.
@@ -52,63 +55,85 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         super.addFrameUpdateListener(this);
         super.addKeyListener(this);
         super.addMouseClickListener(this);
+        super.addMouseWheelListener(this);
     }
 
-    /* Listener Addition */
+    /* Listener Addition & Removal */
 
     public void addEduClickListener(Object client, boolean linksklick) {
-        Class<?> klasse = client.getClass();
-        Method[] methoden = klasse.getMethods();
-        for (int i = 0; i < methoden.length; i++) {
-            if (methoden[i].getName().equals("klickReagieren")) {
-                aufgabenKlick.add(new KlickAuftrag(client, methoden[i], linksklick));
-                return;
-            }
-        }
+        addToClientableArrayList(sceneKlickListeners, new KlickAuftrag(client, linksklick));
+    }
+
+    public void removeEduClickListener(Object object) {
+        removeFromArrayList(sceneKlickListeners, object);
     }
 
     public void addEduKeyListener(Object o) {
-        Class<?> klasse = o.getClass();
-        Method[] methoden = klasse.getMethods();
-        for (int i = 0; i < methoden.length; i++) {
-            if (methoden[i].getName().equals("tasteReagieren")) {
-                aufgaben.add(new TastenAuftrag(o, methoden[i]));
-                return;
-            }
-        }
+        addToClientableArrayList(sceneKeyListeners, new TastenAuftrag(o));
+    }
+
+    public void removeEduKeyListener(Object o) {
+        removeFromArrayList(sceneKeyListeners, o);
     }
 
     public void addEduTicker(Object o, int intervall) {
-        Class<?> klasse = o.getClass();
-        Method[] methoden = klasse.getMethods();
-        for (int i = 0; i < methoden.length; i++) {
-            if (methoden[i].getName().equals("tick")) {
-                aufgabenT.add(new TickerAuftrag(o, methoden[i], intervall));
-                return;
-            }
-        }
-    }
-
-    public void addEduFrameUpdateListener(Object o) {
-        Class<?> klasse = o.getClass();
-        Method[] methoden = klasse.getMethods();
-        for (int i = 0; i < methoden.length; i++) {
-            if (methoden[i].getName().equals("frameUpdateReagieren")) {
-                frameUpdates.add(new FrameUpdateAuftrag(o, methoden[i]));
-                return;
-            }
-        }
+        addToClientableArrayList(sceneTickers, new TickerAuftrag(o, intervall));
     }
 
     public void removeEduTicker(Object o) {
-        ArrayList<TickerAuftrag> toRemove = new ArrayList<>();
-        for (TickerAuftrag ta : aufgabenT) {
-            if (ta.client.equals(o)) {
-                toRemove.add(ta);
+        removeFromArrayList(sceneTickers, o);
+    }
+
+    public void addEduFrameUpdateListener(Object o) {
+        addToClientableArrayList(sceneFrameUpdateListeners, new FrameUpdateAuftrag(o));
+    }
+
+    public void removeEduFrameUpdateListener(Object o) {
+        removeFromArrayList(sceneFrameUpdateListeners, o);
+    }
+
+    public void addMouseWheelListener(Object o) {
+        addToClientableArrayList(sceneMouseWheelListeners, new MouseWheelAuftrag(o));
+    }
+
+    public void removeMouseWheelListener(Object o) {
+        removeFromArrayList(sceneMouseWheelListeners, o);
+    }
+
+    private static final <E extends Clientable> boolean addToClientableArrayList(ArrayList<E> targetList, E toAdd) {
+        Class<?> objectClass = toAdd.getClient().getClass();
+        Method[] methods = objectClass.getMethods();
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].getName().equals(toAdd.getInvocationMethodName())) {
+                //Correct Name, Check for correct parameters TODO
+                Class<?>[] targetParameters = toAdd.getInvocationMethodParameters();
+                Class<?>[] parameters = methods[i].getParameterTypes();
+                if (parameters.length != targetParameters.length) {
+                    throw new IllegalArgumentException("Achtung! Das übergebene Objekt hatte eine Meht");
+                }
+                for (int k = 0; k < targetParameters.length; k++) {
+                    if (!targetParameters[k].getName().equals(parameters[k].getName())) {
+                        //Strange Case: Correct Method Name, wrong Parameters!
+                        throw new IllegalArgumentException("Achtung! Übergebenes Objekt hatte korrekten Methodennamen, " + "aber nicht die korrekte Parameter. Fehler bei " + targetParameters[k].getName() + " (erwartet) vs. " + parameters[k].getName());
+                    }
+                }
+                toAdd.setMethodToInvoke(methods[i]);
+                targetList.add(toAdd);
+                return true;
             }
         }
-        for (TickerAuftrag tr : toRemove) {
-            aufgabenT.remove(tr);
+        return false;
+    }
+
+    private static final <E extends Clientable> void removeFromArrayList(ArrayList<E> list, Object object) {
+        ArrayList<E> toRemove = new ArrayList<>();
+        for (E e : list) {
+            if (e.getClient().equals(object)) {
+                toRemove.add(e);
+            }
+        }
+        for (E e : toRemove) {
+            list.remove(e);
         }
     }
 
@@ -116,17 +141,17 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
     @Override
     public void onFrameUpdate(int frameDuration) {
-        for (TickerAuftrag ta : aufgabenT) {
+        for (TickerAuftrag ta : sceneTickers) {
             ta.accountFrame(frameDuration);
         }
-        for (FrameUpdateAuftrag a : frameUpdates) {
+        for (FrameUpdateAuftrag a : sceneFrameUpdateListeners) {
             a.forwardFrameUpdate(frameDuration);
         }
     }
 
     @Override
     public void onKeyDown(KeyEvent e) {
-        for (TastenAuftrag ta : aufgaben) {
+        for (TastenAuftrag ta : sceneKeyListeners) {
             ta.ausfuehren(e.getKeyCode());
         }
     }
@@ -147,7 +172,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
     }
 
     private final void runMouseReactions(Vector position, MouseButton button, boolean down) {
-        for (KlickAuftrag ka : aufgabenKlick) {
+        for (KlickAuftrag ka : sceneKlickListeners) {
             if (ka.linksklick && button == MouseButton.LEFT) {
                 ka.ausfuehren(position.x, position.y, down);
             } else if (!ka.linksklick && button == MouseButton.RIGHT) {
@@ -156,12 +181,46 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         }
     }
 
+    @Override
+    public void onMouseWheelMove(MouseWheelEvent mouseWheelEvent) {
+        for (MouseWheelAuftrag mouseWheelAuftrag : sceneMouseWheelListeners) {
+            mouseWheelAuftrag.forwardMouseWheelEvent(mouseWheelEvent);
+        }
+    }
+
     /* ~~~ Listener CLASSES ~~~ */
+
+    private interface Clientable {
+        Object getClient();
+        void setMethodToInvoke(Method methodToInvoke);
+        String getInvocationMethodName();
+        Class<?>[] getInvocationMethodParameters();
+    }
+
+    private abstract class Auftrag implements Clientable {
+
+        protected Method method;
+        protected final Object client;
+
+        public Auftrag(Object client) {
+            this.client = client;
+        }
+
+        @Override
+        public Object getClient() {
+            return client;
+        }
+
+        @Override
+        public void setMethodToInvoke(Method methodToInvoke) {
+            this.method = methodToInvoke;
+        }
+    }
 
     /**
      * Ein TickerAuftrag regelt je einen Fake-Ticker.
      */
-    private static final class TickerAuftrag {
+    private final class TickerAuftrag extends Auftrag {
 
         /**
          * Das Intervall
@@ -170,21 +229,10 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
 
         private int counter;
 
-        /**
-         * Der Client, an dem der Tick aufgerufen wird
-         */
-        private final Object client;
-
-        /**
-         * Die aufzurufende TICK-MEthode
-         */
-        private final Method methode;
-
-        public TickerAuftrag(Object client, Method tick, int intervall) {
+        public TickerAuftrag(Object client, int intervall) {
+            super(client);
             this.intervall = intervall;
             this.counter = intervall;
-            this.client = client;
-            methode = tick;
         }
 
         /**
@@ -196,7 +244,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
                 return;
             }
             try {
-                methode.invoke(client, new Object[0]);
+                method.invoke(client, new Object[0]);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -212,38 +260,29 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
             return intervall;
         }
 
-        /**
-         * @return Das Objekt, das als "Client"-Ticker immer wieder aufgerufen wird.
-         */
-        public Object client() {
-            return client;
+        @Override
+        public String getInvocationMethodName() {
+            return "tick";
+        }
+
+        @Override
+        public Class<?>[] getInvocationMethodParameters() {
+            return new Class<?>[] {};
         }
     }
 
     /**
      * Ein TastenAuftrag regelt den Aufruf eines TastenReaktions-Interface.
      */
-    private static final class TastenAuftrag {
-
-        /**
-         * Die aufzurufende Methode
-         */
-        private final Method methode;
-
-        /**
-         * Das Objekt, an dem diese Methode ausgefuehrt werden soll!
-         */
-        private final Object client;
+    private final class TastenAuftrag extends Auftrag {
 
         /**
          * Erstellt einen Tastenauftrag
          *
          * @param client Das Objekt, an dem der Job ausgefuehrt werden soll.
-         * @param m      Die auszufuehrende Methode.
          */
-        public TastenAuftrag(Object client, Method m) {
-            this.client = client;
-            methode = m;
+        public TastenAuftrag(Object client) {
+            super(client);
         }
 
         /**
@@ -253,28 +292,34 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
          */
         public void ausfuehren(int code) {
             try {
-                methode.invoke(client, code);
+                method.invoke(client, code);
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             } catch (java.lang.IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
+
+        @Override
+        public String getInvocationMethodName() {
+            return "tasteReagieren";
+        }
+
+        @Override
+        public Class<?>[] getInvocationMethodParameters() {
+            return new Class<?>[] {Integer.class};
+        }
     }
 
     /**
      * Auftrag für einen Klick-Listener
      */
-    private final class KlickAuftrag {
-        private final Method methode;
-
-        private final Object client;
+    private class KlickAuftrag extends Auftrag {
 
         private final boolean linksklick;
 
-        private KlickAuftrag(Object c, Method m, boolean linksklick) {
-            methode = m;
-            client = c;
+        private KlickAuftrag(Object c, boolean linksklick) {
+            super(c);
             this.linksklick = linksklick;
         }
 
@@ -286,32 +331,76 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
          */
         private void ausfuehren(float x, float y, boolean press) {
             try {
-                methode.invoke(client, new Object[] {x, y, press});
+                method.invoke(client, new Object[] {x, y, press});
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             } catch (java.lang.IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
+
+        @Override
+        public String getInvocationMethodName() {
+            return "klickReagieren";
+        }
+
+        @Override
+        public Class<?>[] getInvocationMethodParameters() {
+            return new Class<?>[] {Float.class, Float.class, Boolean.class};
+        }
     }
 
-    private final class FrameUpdateAuftrag {
-        private final Object client;
-        private final Method methode;
+    private final class FrameUpdateAuftrag extends Auftrag {
 
-        private FrameUpdateAuftrag(Object client, Method method) {
-            this.client = client;
-            this.methode = method;
+        private FrameUpdateAuftrag(Object client) {
+            super(client);
         }
 
         private void forwardFrameUpdate(int frameDuration) {
             try {
-                methode.invoke(client, frameDuration);
+                method.invoke(client, frameDuration);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
+        }
+
+        @Override
+        public String getInvocationMethodName() {
+            return "frameUpdateReagieren";
+        }
+
+        @Override
+        public Class<?>[] getInvocationMethodParameters() {
+            return new Class<?>[] {Integer.class};
+        }
+    }
+
+    private final class MouseWheelAuftrag extends Auftrag {
+
+        public MouseWheelAuftrag(Object client) {
+            super(client);
+        }
+
+        private void forwardMouseWheelEvent(MouseWheelEvent mouseWheelEvent) {
+            try {
+                method.invoke(client, new Object[] {mouseWheelEvent.getPreciseWheelRotation()});
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public String getInvocationMethodName() {
+            return "mausRadReagieren";
+        }
+
+        @Override
+        public Class<?>[] getInvocationMethodParameters() {
+            return new Class[] {Float.class};
         }
     }
 }

@@ -233,10 +233,6 @@ public class Spiel {
         getActiveScene().getWorldHandler().getWorld().setGravity(new Vec2(0, -schwerkraft));
     }
 
-    public void setzePixelProMeter(float pixelProMeter) {
-        // TODO getActiveScene().getWorldHandler().setPixelPerMeter(pixelProMeter);
-    }
-
     /* ~~~ Dialogues ~~~ */
 
     public void nachricht(String nachricht) {
@@ -268,17 +264,12 @@ public class Spiel {
      * @param client     Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
      * @param linksklick Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
      */
-    public void klickReagierbarAnmeldenSzene(Object client, boolean linksklick) {
+    public void klickReagierbarAnmelden(Object client, boolean linksklick) {
         getActiveScene().addEduClickListener(client, linksklick);
     }
 
-    /**
-     *
-     * @param client
-     * @param linksklick
-     */
-    public void klickReagierbarAnmelden(Object client, boolean linksklick) {
-        klickReagierbarAnmeldenSzene(client, linksklick);
+    public void klickReagierbarAbmelden(Object klickReagierbar) {
+        getActiveScene().removeEduClickListener(klickReagierbar);
     }
 
     /**
@@ -289,12 +280,12 @@ public class Spiel {
      *
      * @param o Das anzumeldende Objekt. Dieses wird ab sofort above jeden Tastendruck informiert.
      */
-    public void tastenReagierbarAnmeldenSzene(Object o) {
+    public void tastenReagierbarAnmelden(Object o) {
         getActiveScene().addEduKeyListener(o);
     }
 
-    public void tastenReagierbarAnmelden(Object o) {
-        getActiveScene().addEduKeyListener(o);
+    public void tasteReagierbarAbmelden(Object o) {
+        getActiveScene().removeEduKeyListener(o);
     }
 
     /**
@@ -322,17 +313,51 @@ public class Spiel {
     }
 
     /**
+     * Meldet ein Objekt an, dass zu jedem Frame-Update <b>in der aktuell aktiven Szene</b> durch Aufruf der Methode
+     * <code>frameUpdateReagieren(int ms)</code> informiert wird (Parameter gibt die Anzahl an Millisekunden an,
+     * die seit dem letzten Frame-Update vergangen sind.
      *
-     * @param o
+     * @param o Ein beliebiges Objekt. Hat das Objekt keine Methode mit der Signatur
+     *          <code>frameUpdateReagieren(int)</code>, so passiert nichts. Andernfalls wird ab sofort zu jedem
+     *          Frame-Update der <b>aktuellen</b> Szene die Methode ausgeführt.
+     *
+     * @see #frameUpdateReagierbarAbmelden(Object)
      */
+    @API
     public void frameUpdateReagierbarAnmelden(Object o) {
         getActiveScene().addEduFrameUpdateListener(o);
     }
 
+    /**
+     * Entfernt einen pro-forma Frameupdate-Listener von der <b>aktiven</b> Szene.
+     *
+     * @param o Das zu entfernende Objekt. War es nie angemeldet, so passiert nichts.
+     *
+     * @see #frameUpdateReagierbarAnmelden(Object)
+     */
+    @API
+    public void frameUpdateReagierbarAbmelden(Object o) {
+        getActiveScene().removeEduFrameUpdateListener(o);
+    }
+
+    /**
+     * Gibt die X-Koordinate der Maus auf der Spielebene an.
+     *
+     * @return Die X-Koordinate der Maus auf der Spielebene (in Meter)
+     *
+     * @see #aktuelleMausPositionY()
+     */
     public float aktuelleMausPositionX() {
         return getActiveScene().getMousePosition().x;
     }
 
+    /**
+     * Gibt die Y-Koordinate der Maus auf der Spielebene an.
+     *
+     * @return Die Y-Koordinate der Maus auf der Spielebene (in Meter)
+     *
+     * @see #aktuelleMausPositionX()
+     */
     public float aktuelleMausPositionY() {
         return getActiveScene().getMousePosition().y;
     }

@@ -331,17 +331,18 @@ public class Physics {
      * <p>Verbindet zwei <code>Actor</code>-Objekte <b>untrennbar an einem Anchor-Point</b>. Die Objekte können sich
      * ab sofort nur noch <b>relativ zueinander drehen</b>.</p>
      *
-     * @param other  Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen <code>Actor</code>-Objekt
-     *               über einen <code>RevoluteJoint</code> verbunden sein soll.
-     * @param anchor Der Ankerpunkt <b>auf der Zeichenebene</b>. Es wird davon
-     *               ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
+     * @param other            Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                         <code>Actor</code>-Objekt
+     *                         über einen <code>RevoluteJoint</code> verbunden sein soll.
+     * @param anchorAsWorldPos Der Ankerpunkt <b>auf dem Layer</b>. Es wird davon
+     *                         ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
      *
      * @return Ein <code>RevoluteJoint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
      *
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
-    public RevoluteJoint createRevoluteJoint(Actor other, Vector anchor) {
+    public RevoluteJoint createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
         if (!assertSameWorld(other)) {
             return null;
         }
@@ -349,8 +350,8 @@ public class Physics {
         // Definiere den Joint
         RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
         revoluteJointDef.initialize(actor.getPhysicsHandler().getBody(), other.getPhysicsHandler().getBody(),
-                //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchor)));
-                anchor.toVec2());
+                //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchorAsWorldPos)));
+                anchorAsWorldPos.toVec2());
         revoluteJointDef.collideConnected = false;
 
         return (RevoluteJoint) actor.getPhysicsHandler().getWorldHandler().getWorld().createJoint(revoluteJointDef);

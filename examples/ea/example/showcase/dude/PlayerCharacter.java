@@ -32,7 +32,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private static final int MANA_PICKUP_BONUS = 50;
     private static final int ROCKETCOST_PER_FRAME = 5;
 
-    private final boolean GODMODE = false;
+    private final boolean GODMODE = true;
 
     private final DudeDemo master;
 
@@ -94,7 +94,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private Vector smashForce = Vector.NULL;
 
     public PlayerCharacter(DudeDemo scene, HUD hud) {
-        super(1.5f, 1.5f);
+        super(1f, 1f);
         this.hud = hud;
         this.master = scene;
 
@@ -119,6 +119,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         setMana(0);
 
         setShapes("C0.5,0.3,0.3&C0.5,0.6,0.3");
+
         /*setShapes(() -> {
             List<Shape> shapeList = new ArrayList<>(2);
             shapeList.add(ShapeBuilder.createAxisParallelRectangularShape(0.2f, 0, 0.6f, 1f));
