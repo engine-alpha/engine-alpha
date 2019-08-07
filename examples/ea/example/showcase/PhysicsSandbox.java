@@ -40,8 +40,6 @@ import java.awt.event.KeyEvent;
  */
 public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, FrameUpdateListener, KeyListener {
 
-
-
     /**
      * Textbox für Infos
      */
@@ -396,10 +394,10 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
 
     /**
      * Wird jeden Frame des Spiels exakt einmal aufgerufen.
-     * @param ts    Die Zeit in Sekunden, die seit dem letzten Frame-Update vergangen sind.
+     * @param deltaSeconds    Die Zeit in Sekunden, die seit dem letzten Frame-Update vergangen sind.
      */
     @Override
-    public void onFrameUpdate(float ts) {
+    public void onFrameUpdate(float deltaSeconds) {
         //Visualisiere ggf. die Vectorstange
         if(klickMode == KlickMode.DIRECTION_INTENSITY) {
             Vector pointer = getMousePosition();

@@ -50,8 +50,8 @@ import java.util.concurrent.Phaser;
 @SuppressWarnings ( "StaticVariableOfConcreteClass" )
 public final class Game {
 
-    private static final int DESIRED_FRAME_DURATION = 16;
-    private static final int NANOSECONDS_PER_MILLISECOND = 1000000;
+    private static final float DESIRED_FRAME_DURATION = 0.016f;
+    private static final int NANOSECONDS_PER_SECOND = 1000000000;
     private static final Color COLOR_FPS_BACKGROUND = new Color(255, 255, 255, 50);
     private static final Color COLOR_FPS_BORDER = new Color(0, 106, 214);
     private static final Color COLOR_BODY_COUNT_BORDER = new Color(0, 214, 84);
@@ -150,7 +150,7 @@ public final class Game {
      */
     private static java.awt.Point mousePosition;
 
-    private static int frameDuration;
+    private static float frameDuration;
 
     /**
      * Setzt den Titel des Spielfensters.
@@ -328,7 +328,7 @@ public final class Game {
         Rectangle2D bounds;
         int y = 10;
 
-        String fpsMessage = "FPS: " + (frameDuration == 0 ? "∞" : 1000 / frameDuration);
+        String fpsMessage = "FPS: " + (frameDuration == 0 ? "∞" : 1 / frameDuration);
         bounds = fm.getStringBounds(fpsMessage, g);
 
         g.setColor(COLOR_FPS_BORDER);
@@ -370,14 +370,14 @@ public final class Game {
             }
 
             try {
-                int simulationTime = Math.min(DESIRED_FRAME_DURATION, frameDuration);
+                float deltaSeconds = Math.min(2 * DESIRED_FRAME_DURATION, frameDuration);
 
-                scene.worldStep(simulationTime, worldStepEndBarrier);
+                scene.worldStep(deltaSeconds, worldStepEndBarrier);
 
                 frameBarrierStart.arriveAndAwaitAdvance();
                 worldStepEndBarrier.arriveAndAwaitAdvance();
 
-                scene.onFrameUpdateInternal(simulationTime);
+                scene.onFrameUpdateInternal(deltaSeconds);
 
                 Runnable runnable = dispatchableQueue.poll();
                 while (runnable != null) {
@@ -388,11 +388,11 @@ public final class Game {
                 frameBarrierEnd.arriveAndAwaitAdvance();
 
                 frameEnd = System.nanoTime();
-                int duration = (int) (frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND;
+                float duration = (float) (frameEnd - frameStart) / NANOSECONDS_PER_SECOND;
 
                 if (duration < DESIRED_FRAME_DURATION) {
                     try {
-                        Thread.sleep(DESIRED_FRAME_DURATION - duration);
+                        Thread.sleep((int) (1000 * (DESIRED_FRAME_DURATION - duration)));
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;
@@ -400,9 +400,7 @@ public final class Game {
                 }
 
                 frameEnd = System.nanoTime();
-
-                // Avoid very long frames. It lags then, but doesn't jump around
-                frameDuration = (int) ((frameEnd - frameStart) / NANOSECONDS_PER_MILLISECOND);
+                frameDuration = ((float) (frameEnd - frameStart) / NANOSECONDS_PER_SECOND);
 
                 frameStart = frameEnd;
             } catch (Exception e) {

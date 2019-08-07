@@ -115,10 +115,10 @@ public class Scene {
     /**
      * Führt an allen Layern <b>parallelisiert</b> den World-Step aus.
      *
-     * @param deltaTime Die Echtzeit, die seit dem letzten World-Step vergangen ist.
+     * @param deltaSeconds Die Echtzeit, die seit dem letzten World-Step vergangen ist.
      */
     @Internal
-    final void worldStep(float deltaTime, Phaser worldStepEndBarrier) {
+    final void worldStep(float deltaSeconds, Phaser worldStepEndBarrier) {
         camera.onFrameUpdate();
 
         synchronized (layers) {
@@ -127,7 +127,7 @@ public class Scene {
 
             for (Layer layer : layers) {
                 Future future = Game.threadPoolExecutor.submit(() -> {
-                    layer.step(deltaTime);
+                    layer.step(deltaSeconds);
 
                     if (remainingSteps.decrementAndGet() == 0) {
                         worldStepEndBarrier.arrive();
@@ -378,16 +378,16 @@ public class Scene {
     }
 
     @API
-    final public void addOneTimeCallback(int delayInMS, Runnable callback) {
+    final public void addOneTimeCallback(float delayInSeconds, Runnable callback) {
         OneTimeCallBackHandle oneTimeCallBackHandle = new OneTimeCallBackHandle(callback);
-        PeriodicTask periodicTask = new PeriodicTask(delayInMS, oneTimeCallBackHandle);
+        PeriodicTask periodicTask = new PeriodicTask(delayInSeconds, oneTimeCallBackHandle);
         oneTimeCallBackHandle.setToRemove(periodicTask);
         getFrameUpdateListeners().add(periodicTask);
     }
 
     @Internal
-    final void onFrameUpdateInternal(int frameDuration) {
-        frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(frameDuration));
+    final void onFrameUpdateInternal(float deltaSeconds) {
+        frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(deltaSeconds));
     }
 
     @Internal

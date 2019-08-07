@@ -1,16 +1,13 @@
 package ea.example.basics;
 
-import ea.*;
+import ea.Game;
+import ea.Scene;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
 
-import java.awt.*;
+import java.awt.Color;
 
-public class CollisionTest
-extends Scene
-implements FrameUpdateListener {
-
-    Vector BALLSPEED_PER_MS = new Vector(0.2f, -0.002f);
+public class CollisionTest extends Scene {
 
     Rectangle wall = new Rectangle(20, 300);
     Circle ball = new Circle(20);
@@ -26,22 +23,12 @@ implements FrameUpdateListener {
 
         ball.addCollisionListener(wall, (collisionEvent) -> System.out.println("COLLISION"));
 
-        if(ball.overlaps(wall)) {
+        if (ball.overlaps(wall)) {
             System.out.println("OVERLAP");
         }
-
-        getFrameUpdateListeners().add(this);
     }
-
 
     public static void main(String[] args) {
-        Game.start(500,500, new CollisionTest());
-    }
-
-    @Override
-    public void onFrameUpdate(float frameDuration) {
-
-        //ball.position.move(BALLSPEED_PER_MS.multiply(frameDuration));
-
+        Game.start(500, 500, new CollisionTest());
     }
 }

@@ -225,12 +225,12 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
     /* EA Listener Implementation */
 
     @Override
-    public void onFrameUpdate(float frameDuration) {
+    public void onFrameUpdate(float deltaSeconds) {
         for (TickerAuftrag ta : sceneTickers) {
-            ta.accountFrame(frameDuration);
+            ta.accountFrame(deltaSeconds);
         }
         for (FrameUpdateAuftrag a : sceneFrameUpdateListeners) {
-            a.forwardFrameUpdate(frameDuration);
+            a.forwardFrameUpdate(deltaSeconds);
         }
     }
 
@@ -305,11 +305,11 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         /**
          * Das Intervall
          */
-        private final int intervall;
+        private final float intervall;
 
-        private int counter;
+        private float counter;
 
-        public TickerAuftrag(Object client, int intervall) {
+        public TickerAuftrag(Object client, float intervall) {
             super(client);
             this.intervall = intervall;
             this.counter = intervall;
@@ -318,8 +318,8 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         /**
          * Frameweise Abarbeitung
          */
-        public final void accountFrame(float millis) {
-            counter -= millis;
+        public final void accountFrame(float seconds) {
+            counter -= seconds;
             if (counter > 0) {
                 return;
             }
@@ -336,7 +336,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         /**
          * @return Das Intervall des gelagerten Objektes
          */
-        public int intervall() {
+        public float intervall() {
             return intervall;
         }
 

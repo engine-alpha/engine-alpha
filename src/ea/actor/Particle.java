@@ -29,15 +29,15 @@ import java.awt.Color;
 public class Particle extends Circle implements FrameUpdateListener {
     private static final float MAX_ALPHA = 255f;
 
-    private int life;
-    private int age = 0;
+    private float life;
+    private float age = 0;
 
     /**
      * Konstruktor.
      *
      * @param diameter Durchmesser des Kreises
      */
-    public Particle(float diameter, int life) {
+    public Particle(float diameter, float life) {
         super(diameter);
 
         this.setBodyType(BodyType.PARTICLE);
@@ -47,8 +47,8 @@ public class Particle extends Circle implements FrameUpdateListener {
     }
 
     @Override
-    public void onFrameUpdate(float frameDuration) {
-        this.age += frameDuration;
+    public void onFrameUpdate(float deltaSeconds) {
+        this.age += deltaSeconds;
 
         Color color = getColor();
 
@@ -66,7 +66,7 @@ public class Particle extends Circle implements FrameUpdateListener {
     }
 
     @API
-    public int getRemainingLifetime() {
+    public float getRemainingLifetime() {
         return Math.max(0, this.life - this.age);
     }
 }

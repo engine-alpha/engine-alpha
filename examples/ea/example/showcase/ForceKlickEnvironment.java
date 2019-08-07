@@ -204,14 +204,9 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
         // Ignore
     }
 
-    /**
-     * Wird für jeden Frame der Scene exakt einmal aufgerufen.
-     *
-     * @param ts Die Zeit in Millisekunden, die seit dem letzten Frame-Update vergangen sind.
-     */
     @Override
-    public void onFrameUpdate(float ts) {
-        //Visualisiere ggf. die Vectorstange
+    public void onFrameUpdate(float deltaSeconds) {
+        // Visualisiere ggf. die Vectorstange
         if (klickMode == KlickMode.DIRECTION_INTENSITY) {
             Vector pointer = getMousePosition();
             if (pointer == null || lastAttack == null) {

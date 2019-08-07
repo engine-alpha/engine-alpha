@@ -37,9 +37,9 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     private StatefulAnimation character;
 
     /**
-     * Die Geschwindigkeit, in der sich die Kamera bewegt (pro Millisekunde)
+     * Die Geschwindigkeit, in der sich die Kamera bewegt (pro Sekunde)
      */
-    private final float CAM_SPEED = 0.6f;
+    private final float CAM_SPEED = 600;
 
     public MinimalDemo() {
         rectangle = new Rectangle(50, 100);
@@ -105,19 +105,19 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     }
 
     @Override
-    public void onFrameUpdate(float frameDuration) {
+    public void onFrameUpdate(float deltaSeconds) {
         if (Game.isKeyPressed(KeyEvent.VK_W)) {
             //W ist gedrückt -> Kamera nach oben bewegen.
-            getCamera().move(0, CAM_SPEED * frameDuration);
+            getCamera().move(0, CAM_SPEED * deltaSeconds);
         }
         if (Game.isKeyPressed(KeyEvent.VK_S)) {
-            getCamera().move(0, -CAM_SPEED * frameDuration);
+            getCamera().move(0, -CAM_SPEED * deltaSeconds);
         }
         if (Game.isKeyPressed(KeyEvent.VK_A)) {
-            getCamera().move(-CAM_SPEED * frameDuration, 0);
+            getCamera().move(-CAM_SPEED * deltaSeconds, 0);
         }
         if (Game.isKeyPressed(KeyEvent.VK_D)) {
-            getCamera().move(CAM_SPEED * frameDuration, 0);
+            getCamera().move(CAM_SPEED * deltaSeconds, 0);
         }
     }
 }

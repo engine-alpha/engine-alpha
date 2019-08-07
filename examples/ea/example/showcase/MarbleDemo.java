@@ -34,7 +34,7 @@ public class MarbleDemo
         initialisieren();
 
         getKeyListeners().add(this);
-        getFrameUpdateListeners().add(new PeriodicTask(100, () -> {
+        getFrameUpdateListeners().add(new PeriodicTask(.1f, () -> {
             Circle marble = makeAMarble();
             add(marble);
             marble.setBodyType(BodyType.DYNAMIC);
@@ -110,7 +110,7 @@ public class MarbleDemo
             }
 
             @Override
-            public void onFrameUpdate(float i) {
+            public void onFrameUpdate(float deltaSeconds) {
                 if (this.position.getCenter().getLength() > 1000) {
                     MarbleDemo.this.remove(this);
                 }

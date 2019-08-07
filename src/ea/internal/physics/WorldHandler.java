@@ -35,6 +35,8 @@ public class WorldHandler implements ContactListener {
     public static final int CATEGORY_DYNAMIC_OR_KINEMATIC = 4;
     public static final int CATEGORY_PARTICLE = 8;
 
+    public static final float STEP_TIME = 8f / 1000;
+
     /**
      * Das Layer, zu dem der WorldHandler gehört.
      */
@@ -116,7 +118,7 @@ public class WorldHandler implements ContactListener {
         }
     }
 
-    public void step(float timeToSimulate) {
+    public void step(float deltaSeconds) {
         if (worldPaused) {
             return;
         }
@@ -125,12 +127,12 @@ public class WorldHandler implements ContactListener {
             synchronized (this.world) {
                 // We use constant time frames for consistency
                 // https://gamedev.stackexchange.com/q/86609/38865
-                simulationAccumulator += timeToSimulate;
+                simulationAccumulator += deltaSeconds;
 
-                while (simulationAccumulator >= 8) {
-                    simulationAccumulator -= 8;
+                while (simulationAccumulator >= STEP_TIME) {
+                    simulationAccumulator -= STEP_TIME;
 
-                    this.world.step(8f / 1000, 6, 3);
+                    this.world.step(STEP_TIME, 6, 3);
                 }
             }
         }

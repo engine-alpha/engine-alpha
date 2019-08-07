@@ -65,7 +65,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         add(right);
 
         getKeyListeners().add(this);
-        getFrameUpdateListeners().add(new PeriodicTask(1000, () -> createCircle(getMousePosition(), Color.YELLOW)));
+        getFrameUpdateListeners().add(new PeriodicTask(1, () -> createCircle(getMousePosition(), Color.YELLOW)));
 
         Rectangle r1 = new Rectangle(Showcases.WIDTH, 10);
         r1.position.set(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
@@ -96,19 +96,19 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         setGravity(new Vector(0, -600));
         getCamera().setZoom(1);
 
-        this.getFrameUpdateListeners().add(new ValueAnimator<>(5000, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), AnimationMode.REPEATED));
+        this.getFrameUpdateListeners().add(new ValueAnimator<>(5, left.position::setX, new ReverseEaseFloat(left.position.getX(), left.position.getX() + 200), AnimationMode.REPEATED));
     }
 
     private void createCircle(Vector position, Color color) {
         Circle circle = new Circle(6);
 
-        FrameUpdateListener emitter = new PeriodicTask(10, () -> {
-            Particle particle = new Particle(3, 500);
+        FrameUpdateListener emitter = new PeriodicTask(0.01f, () -> {
+            Particle particle = new Particle(3, .5f);
             particle.position.set(circle.position.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
             particle.addMountListener(event -> particle.physics.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
-            particle.getFrameUpdateListeners().add(new ValueAnimator<>(250, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255)));
+            particle.getFrameUpdateListeners().add(new ValueAnimator<>(.25f, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255)));
 
             add(particle);
         });

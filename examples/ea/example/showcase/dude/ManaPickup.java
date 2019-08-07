@@ -13,7 +13,7 @@ public class ManaPickup extends Animation implements CollisionListener<PlayerCha
     private boolean active = true;
 
     public ManaPickup() {
-        super(Animation.createFromSpritesheet(100, "game-assets/dude/gem_blue.png", 6, 1, SIZE, SIZE));
+        super(Animation.createFromSpritesheet(.1f, "game-assets/dude/gem_blue.png", 6, 1, SIZE, SIZE));
     }
 
     @Override
@@ -26,7 +26,7 @@ public class ManaPickup extends Animation implements CollisionListener<PlayerCha
         collisionEvent.getColliding().gotItem(Item.ManaPickup);
         this.setActive(false);
         active = false;
-        getLayer().getParent().addOneTimeCallback(5000, () -> setActive(true));
+        getLayer().getParent().addOneTimeCallback(5, () -> setActive(true));
     }
 
     private void setActive(boolean b) {

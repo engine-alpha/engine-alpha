@@ -74,8 +74,8 @@ public class Animation extends Actor implements FrameUpdateListener {
         });
 
         for (AnimationFrame frame : frames) {
-            if (frame.getDuration() < 1) {
-                throw new RuntimeException("Ein Frame muss mindestens eine Millisekunde lang sein.");
+            if (frame.getDuration() <= 0) {
+                throw new RuntimeException("Ein Frame muss länger als 0 Sekunden sein");
             }
         }
 
@@ -146,8 +146,8 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     @Internal
     @Override
-    public void onFrameUpdate(float frameDuration) {
-        this.currentTime += frameDuration;
+    public void onFrameUpdate(float deltaSeconds) {
+        this.currentTime += deltaSeconds;
 
         AnimationFrame currentFrame = this.frames[currentIndex];
 
@@ -168,9 +168,9 @@ public class Animation extends Actor implements FrameUpdateListener {
     }
 
     @API
-    public static Animation createFromSpritesheet(int frameDuration, String filepath, int x, int y, float width, float height) {
-        if (frameDuration < 1) {
-            throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
+    public static Animation createFromSpritesheet(float frameDuration, String filepath, int x, int y, float width, float height) {
+        if (frameDuration <= 0) {
+            throw new RuntimeException("Frame-Länge muss größer als 0 sein");
         }
 
         BufferedImage image = ImageLoader.load(filepath);
@@ -198,7 +198,7 @@ public class Animation extends Actor implements FrameUpdateListener {
     }
 
     @API
-    public static Animation createFromImages(int frameDuration, float width, float height, String... filepaths) {
+    public static Animation createFromImages(float frameDuration, float width, float height, String... filepaths) {
         if (frameDuration < 1) {
             throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
         }
@@ -225,7 +225,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @author Michael Andonie
      */
     @API
-    public static Animation createFromImagesPrefix(Scene scene, int frameDuration, float width, float height, String directoryPath, String prefix) {
+    public static Animation createFromImagesPrefix(Scene scene, float frameDuration, float width, float height, String directoryPath, String prefix) {
         // Liste mit den Pfaden aller qualifizierten Dateien
         ArrayList<String> allPaths = new ArrayList<>();
 
@@ -268,7 +268,7 @@ public class Animation extends Actor implements FrameUpdateListener {
         for (int i = 0; i < frameCount; i++) {
             BufferedImage frame = gifDecoder.getFrame(i);
             int durationInMillis = gifDecoder.getDelay(i);
-            frames[i] = new AnimationFrame(frame, durationInMillis);
+            frames[i] = new AnimationFrame(frame, durationInMillis / 1000f);
         }
 
         return new Animation(frames, width, height);

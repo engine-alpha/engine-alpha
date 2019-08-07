@@ -160,7 +160,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     }
 
     @Override
-    public void onFrameUpdate(float frameDuration) {
+    public void onFrameUpdate(float deltaSeconds) {
         Vector velocity = physics.getVelocity();
         gameData.setPlayerVelocity(velocity.getLength());
 
@@ -180,11 +180,11 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             gameData.consumeMana(ROCKETCOST_PER_FRAME);
             physics.applyImpulse(new Vector(0, 10));
 
-            Particle particle = new Particle(0.1f, 500);
+            Particle particle = new Particle(0.1f, .5f);
             particle.position.set(position.getCenter().subtract(new Vector((float) Math.random() * 0.1f, .45f)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
-            particle.getFrameUpdateListeners().add(new ValueAnimator<>(250, value -> particle.setColor(new Color(255, value, 0)), new LinearInteger(0, 255)));
+            particle.getFrameUpdateListeners().add(new ValueAnimator<>(.25f, value -> particle.setColor(new Color(255, value, 0)), new LinearInteger(0, 255)));
             particle.addMountListener(e -> particle.physics.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
             particle.addCollisionListener((e) -> {
                 if (e.getColliding() instanceof Platform) {
@@ -320,7 +320,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             if (smashing) {
                 Vector originalOffset = getPhysicsHandler().getWorldHandler().getLayer().getParent().getCamera().getOffset();
                 Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * physics.getVelocity().y);
-                ValueAnimator<Float> valueAnimator = new ValueAnimator<>(100, y -> getLayer().getParent().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator);
+                ValueAnimator<Float> valueAnimator = new ValueAnimator<>(.1f, y -> getLayer().getParent().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator);
                 getLayer().getFrameUpdateListeners().add(valueAnimator);
                 valueAnimator.addCompletionListener(value -> getLayer().getFrameUpdateListeners().remove(valueAnimator));
             }
@@ -330,7 +330,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
             Game.enqueue(() -> {
                 for (int i = 0; i < 100; i++) {
-                    Particle particle = new Particle(Random.nextFloat() * .02f + .02f, 500);
+                    Particle particle = new Particle(Random.nextFloat() * .02f + .02f, .5f);
                     particle.position.set(position.getCenter().add(0, -32));
                     particle.addMountListener(e -> particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f)));
                     particle.setColor(Color.GRAY);

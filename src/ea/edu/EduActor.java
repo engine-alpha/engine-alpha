@@ -223,15 +223,15 @@ public interface EduActor {
      *
      * @param mX            X-Koordinate des Mittelpunkts der Revolution.
      * @param mY            Y-Koordinate des Mittelpunkts der Revolution.
-     * @param ms            Dauer in Millisekunden, die eine komplette Umdrehung benötigt.
+     * @param sekunden            Dauer in Sekunden, die eine komplette Umdrehung benötigt.
      * @param uhrzeigersinn <code>true</code>= Drehung findet im Uhrzeigersinn statt. <code>false</code>: Gegen den
      *                      Uhrzeigersinn
      * @param rotation      <code>true</code>=Das Actor-Objekt wird auch entsprechend seiner Kreis-Position rotiert.
      *                      <code>false</code>=Das Actor-Objekt behält seine Rotation bei.
      */
     @API
-    default void kreisAnimation(float mX, float mY, int ms, boolean uhrzeigersinn, boolean rotation) {
-        Spiel.getActiveScene().getFrameUpdateListeners().add(new CircleAnimation(getActor(), new Vector(mX, mY), ms, uhrzeigersinn, rotation));
+    default void kreisAnimation(float mX, float mY, float sekunden, boolean uhrzeigersinn, boolean rotation) {
+        Spiel.getActiveScene().getFrameUpdateListeners().add(new CircleAnimation(getActor(), new Vector(mX, mY), sekunden, uhrzeigersinn, rotation));
     }
 
     /**

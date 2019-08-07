@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class Figur implements EduActor {
 
     public static final float DEFAULT_PIXEL_PRO_METER = 30f;
-    public static final int DEFAULT_FRAME_DURATION = 250;
+    public static final float DEFAULT_FRAME_DURATION = 0.25f;
 
     private final StatefulAnimation statefulAnimation;
     private final float width, height;

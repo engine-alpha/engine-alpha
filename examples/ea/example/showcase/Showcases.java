@@ -114,17 +114,17 @@ public class Showcases extends Scene {
         }
 
         @Override
-        public void onFrameUpdate(float i) {
+        public void onFrameUpdate(float deltaSeconds) {
             Vector mousePosition = Showcases.this.getMousePosition();
 
             if (box.contains(mousePosition)) {
-                //HOVER?
                 if (state != TextboxState.PRESSED) {
                     state = TextboxState.HOVER;
                 }
             } else {
                 state = TextboxState.NORMAL;
             }
+
             updateUI();
         }
     }

@@ -29,8 +29,8 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
     private Consumer<Value> consumer;
     private Interpolator<Value> interpolator;
     private AnimationMode mode;
-    private int currentTime = 0;
-    private int duration;
+    private float currentTime = 0;
+    private float duration;
     private boolean complete = false;
 
     /**
@@ -40,14 +40,14 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
 
     private EventListeners<Consumer<CompletionEvent<Value>>> completionListeners = new EventListeners<>();
 
-    public ValueAnimator(int duration, Consumer<Value> consumer, Interpolator<Value> interpolator, AnimationMode mode) {
+    public ValueAnimator(float duration, Consumer<Value> consumer, Interpolator<Value> interpolator, AnimationMode mode) {
         this.duration = duration;
         this.consumer = consumer;
         this.interpolator = interpolator;
         this.mode = mode;
     }
 
-    public ValueAnimator(int duration, Consumer<Value> consumer, Interpolator<Value> interpolator) {
+    public ValueAnimator(float duration, Consumer<Value> consumer, Interpolator<Value> interpolator) {
         this(duration, consumer, interpolator, AnimationMode.SINGLE);
     }
 
@@ -63,22 +63,24 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
         if (progress < 0 || progress > 1) {
             throw new IllegalArgumentException("Der eingegebene Progess muss zwischen 0 und 1 liegen. War " + progress);
         }
-        this.currentTime = (int) (duration * progress);
-        goingBackwards = false;
+
+        this.goingBackwards = false;
+        this.currentTime = duration * progress;
         this.interpolator.interpolate(progress);
     }
 
     @Override
-    public void onFrameUpdate(float frameDuration) {
+    public void onFrameUpdate(float deltaSeconds) {
         float progress;
-        if (!goingBackwards) {
-            this.currentTime += frameDuration;
-            if (this.currentTime > this.duration) {
 
+        if (!goingBackwards) {
+            this.currentTime += deltaSeconds;
+
+            if (this.currentTime > this.duration) {
                 switch (this.mode) {
                     case REPEATED:
                         this.currentTime %= this.duration;
-                        progress = (float) this.currentTime / this.duration;
+                        progress = this.currentTime / this.duration;
                         break;
                     case SINGLE:
                         this.currentTime = this.duration;
@@ -99,17 +101,17 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
                         break;
                 }
             } else {
-                progress = (float) this.currentTime / this.duration;
+                progress = this.currentTime / this.duration;
             }
         } else {
             //Ping-Pong-Backwards Strategy
-            this.currentTime -= frameDuration;
+            this.currentTime -= deltaSeconds;
             if (this.currentTime < 0) {
                 //PINGPONG backwards ist fertig -> Jetzt wieder vorwärts
                 goingBackwards = false;
                 progress = 0;
             } else {
-                progress = (float) this.currentTime / this.duration;
+                progress = this.currentTime / this.duration;
             }
         }
 

@@ -12,7 +12,7 @@ public class Partikel implements EduActor {
 
     private final Particle particle;
 
-    public Partikel(float diameter, int life) {
+    public Partikel(float diameter, float life) {
         particle = new Particle(diameter, life);
         eduSetup();
     }

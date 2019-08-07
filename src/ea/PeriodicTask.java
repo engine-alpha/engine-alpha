@@ -29,14 +29,14 @@ import ea.internal.annotations.Internal;
  */
 public final class PeriodicTask implements FrameUpdateListener {
     /**
-     * Intervall in Millisekunden.
+     * Intervall in Sekunden.
      */
-    private int interval;
+    private float interval;
 
     /**
      * Aktuelle Zeit bis zur nächsten Ausführung.
      */
-    private int countdown;
+    private float countdown;
 
     /**
      * Code, der alle X Millisekunden ausgeführt wird.
@@ -46,48 +46,51 @@ public final class PeriodicTask implements FrameUpdateListener {
     /**
      * Konstruktor.
      *
-     * @param interval Zeit zwischen den Ausführungen in Millisekunden.
+     * @param intervalInSeconds Zeit zwischen den Ausführungen in Millisekunden.
      */
-    public PeriodicTask(int interval, Runnable runnable) {
-        setInterval(interval);
-        this.countdown = interval;
+    public PeriodicTask(float intervalInSeconds, Runnable runnable) {
+        setInterval(intervalInSeconds);
+
+        this.countdown = intervalInSeconds;
         this.runnable = runnable;
     }
 
     /**
-     * Setzt das intervall dieses Periodischen Tasks neu.
-     * @param interval  Das neue Intervall. Zeit zwischen den Ausführungen in Millisekunden.
-     *                  Muss größer als 0 sein.
+     * Setzt das intervall dieses periodischen Tasks neu.
+     *
+     * @param interval Das neue Intervall. Zeit zwischen den Ausführungen in Sekunden.
+     *                 Muss größer als 0 sein.
      */
     @API
-    public void setInterval(int interval) {
-        if(interval <= 0) {
-            throw new RuntimeException("Das Interval eines Periodischen Tasks muss größer als 0 sein. Eingabe war "
-             + interval + ".");
+    public void setInterval(float interval) {
+        if (interval <= 0) {
+            throw new RuntimeException("Das Interval eines periodischen Tasks muss größer als 0 sein, war " + interval);
         }
+
         this.interval = interval;
     }
 
     /**
      * Gibt das aktuelle Intervall des periodischen Tasks aus.
-     * @return  Das aktuelle Intervall. Zeit zwischen den Ausführungen in Millisekunden.
+     *
+     * @return Das aktuelle Intervall. Zeit zwischen den Ausführungen in Sekunden.
      */
     @API
-    public int getInterval() {
+    public float getInterval() {
         return interval;
     }
 
     /**
-     * @param frameDuration Die Zeit in Millisekunden, die seit dem letzten Update vergangen
+     * @param deltaSeconds Die Zeit in Millisekunden, die seit dem letzten Update vergangen
      */
     @Override
     @Internal
-    public void onFrameUpdate(float frameDuration) {
-        countdown -= frameDuration;
+    public void onFrameUpdate(float deltaSeconds) {
+        countdown -= deltaSeconds;
 
         while (this.countdown < 0) {
             countdown += interval;
-            Game.enqueue(runnable);
+            runnable.run();
         }
     }
 }

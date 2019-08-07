@@ -28,9 +28,9 @@ public abstract class ActorAnimation implements FrameUpdateListener {
     }
 
     @Override
-    public void onFrameUpdate(float ms) {
+    public void onFrameUpdate(float deltaSeconds) {
         for (ValueAnimator<?> animator : animators) {
-            animator.onFrameUpdate(ms);
+            animator.onFrameUpdate(deltaSeconds);
         }
         if (animators.isEmpty()) {
             //ICH BIN FERTIG --> TODO Remove implementation

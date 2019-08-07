@@ -350,13 +350,12 @@ public class Layer {
         return worldHandler;
     }
 
-    public void step(float deltaTime) {
+    public void step(float deltaSeconds) {
         synchronized (worldHandler) {
-            float timeToSimulate = deltaTime * timeDistort;
+            float scaledDeltaSeconds = deltaSeconds * timeDistort;
 
-            worldHandler.step(timeToSimulate);
-
-            frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(timeToSimulate));
+            worldHandler.step(scaledDeltaSeconds);
+            frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(scaledDeltaSeconds));
         }
     }
 

@@ -19,9 +19,9 @@ public final class AnimationFrame {
      */
     private final BufferedImage image;
     /**
-     * Die Dauer (in ms), die dieser Frame aktiv bleibt.
+     * Die Dauer in Sekunden, die dieser Frame aktiv bleibt.
      */
-    private int duration;
+    private float duration;
 
     /**
      * Erstellt einen Frame.
@@ -29,13 +29,13 @@ public final class AnimationFrame {
      * @param duration  Die Dauer, die dieser Frame aktiv bleibt.
      */
     @Internal
-    public AnimationFrame(BufferedImage image, int duration) {
+    public AnimationFrame(BufferedImage image, float duration) {
         this.image = image;
         this.duration = duration;
     }
 
     @Internal
-    public void setDuration(int duration) {
+    public void setDuration(float duration) {
         this.duration = duration;
     }
 
@@ -45,7 +45,7 @@ public final class AnimationFrame {
     }
 
     @Internal
-    public int getDuration() {
+    public float getDuration() {
         return duration;
     }
 
