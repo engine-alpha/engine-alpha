@@ -10,8 +10,8 @@ import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.actor.BodyType;
-import ea.input.MouseButton;
-import ea.input.MouseClickListener;
+import ea.event.MouseButton;
+import ea.event.MouseClickListener;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;

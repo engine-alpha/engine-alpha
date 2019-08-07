@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2019 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.input;
+package ea.event;
 
 import ea.internal.annotations.API;
 
+/**
+ * Implementierende Klassen können auf das Drehen des Mausrades reagieren.
+ * @see MouseWheelEvent
+ * @author Michael Andonie
+ */
 @API
-public enum MouseButton {
-    @API
-    LEFT,
+public interface MouseWheelListener {
 
-    @API
-    RIGHT
+    /**
+     * Diese Methode wird immer dann aufgerufen, wenn das <b>Mausrad gedreht</b> wurde.
+     * @param mouseWheelEvent  Das MouseWheelAction-Objekt beschreibt, wie das Mausrad gedreht wurde.
+     * @see MouseWheelEvent
+     */
+    void onMouseWheelMove(MouseWheelEvent mouseWheelEvent);
 }

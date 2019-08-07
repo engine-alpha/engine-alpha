@@ -19,8 +19,8 @@
 
 package ea;
 
-import ea.input.MouseButton;
-import ea.input.MouseWheelEvent;
+import ea.event.MouseButton;
+import ea.event.MouseWheelEvent;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;

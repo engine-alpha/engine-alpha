@@ -9,8 +9,8 @@ import ea.actor.Rectangle;
 import ea.actor.Text;
 import ea.example.showcase.billard.Billard;
 import ea.example.showcase.dude.DudeDemo;
-import ea.input.MouseButton;
-import ea.input.MouseClickListener;
+import ea.event.MouseButton;
+import ea.event.MouseClickListener;
 
 import java.awt.Color;
 import java.awt.Font;

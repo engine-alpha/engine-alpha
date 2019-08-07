@@ -25,7 +25,7 @@ import ea.Scene;
 import ea.Vector;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
-import ea.input.KeyListener;
+import ea.event.KeyListener;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;

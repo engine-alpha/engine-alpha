@@ -14,7 +14,7 @@ import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.SinusFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.input.KeyListener;
+import ea.event.KeyListener;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;

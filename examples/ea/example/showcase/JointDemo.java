@@ -5,7 +5,7 @@ import ea.Vector;
 import ea.actor.Circle;
 import ea.actor.Polygon;
 import ea.actor.Rectangle;
-import ea.input.KeyListener;
+import ea.event.KeyListener;
 
 import java.awt.event.KeyEvent;
 

@@ -7,7 +7,7 @@ import ea.actor.TileMap;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
 import ea.actor.BodyType;
-import ea.input.KeyListener;
+import ea.event.KeyListener;
 
 import java.awt.event.KeyEvent;
 

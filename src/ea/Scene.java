@@ -21,7 +21,6 @@ package ea;
 
 import ea.actor.Actor;
 import ea.event.*;
-import ea.input.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.WorldHandler;

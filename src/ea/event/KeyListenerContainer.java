@@ -19,7 +19,6 @@
 
 package ea.event;
 
-import ea.input.KeyListener;
 import ea.internal.annotations.API;
 
 public interface KeyListenerContainer {
