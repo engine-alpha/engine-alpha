@@ -32,7 +32,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     private static final int ROCKETCOST_PER_FRAME = 5;
     private static final boolean GOD_MODE = true;
     public static final float FRICTION = 0.5f;
-    public static final float RESTITUTION = 0.5f;
+    public static final float RESTITUTION = 0;
     public static final int MASS = 65;
 
     /* private final Sound walk = new Sound("game-assets/dude/audio/footstep.wav");
@@ -358,7 +358,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
                 for (int i = 0; i < 100; i++) {
                     Particle particle = new Particle(Random.nextFloat() * .02f + .02f, 500);
                     particle.position.set(position.getCenter().add(0, -32));
-                    particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
+                    particle.addMountListener(e -> particle.physics.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f)));
                     particle.setColor(Color.GRAY);
                     particle.setLayerPosition(-1);
 

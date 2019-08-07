@@ -91,6 +91,25 @@ public class Scene {
         mainLayer = new Layer();
         mainLayer.setLayerPosition(0);
         addLayer(mainLayer);
+        autoRegisterListeners();
+    }
+
+    private void autoRegisterListeners() {
+        if (this instanceof KeyListener) {
+            getKeyListeners().add((KeyListener) this);
+        }
+
+        if (this instanceof MouseClickListener) {
+            getMouseClickListeners().add((MouseClickListener) this);
+        }
+
+        if (this instanceof MouseWheelListener) {
+            getMouseWheelListeners().add((MouseWheelListener) this);
+        }
+
+        if (this instanceof FrameUpdateListener) {
+            getFrameUpdateListeners().add((FrameUpdateListener) this);
+        }
     }
 
     /**

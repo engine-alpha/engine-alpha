@@ -25,8 +25,6 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
     private PlayerCharacter character;
 
-    private final PauseLayer pauseLayer;
-
     public DudeDemo(Scene parent) {
         super(parent);
         super.setDebuggingEnabled(false);
@@ -40,6 +38,8 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         character.setBodyType(BodyType.DYNAMIC);
         hud.setPlayerCharacter(character);
 
+        add(character);
+
         setGravity(new Vector(0, -13));
 
         getCamera().setFocus(character);
@@ -52,7 +52,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         getMainLayer().setVisibleHeight(15);
 
-        pauseLayer = new PauseLayer();
+        PauseLayer pauseLayer = new PauseLayer();
         pauseLayer.setVisible(false);
         addLayer(pauseLayer);
     }
@@ -60,9 +60,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     private void setupPlayground() {
         makePlatform(7, -450 / 60, -200 / 60);
         makePlatform(3, 200 / 60, 0);
-
         makePlatform(5, 800 / 60, -100 / 60);
-
         makeBoxes(0, 40, 5);
 
         for (int i = 0; i < 15; i++) {

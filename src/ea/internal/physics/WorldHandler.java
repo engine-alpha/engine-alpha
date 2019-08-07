@@ -439,6 +439,7 @@ public class WorldHandler implements ContactListener {
 
         if (colliderHandler == null) {
             collider.addMountListener(e -> addSpecificCollisionListener(actor, collider, listener));
+            return;
         } else {
             collider.addUnmountListener(e -> {
                 e.removeListener();
