@@ -92,14 +92,14 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin();
             coin.position.set(6 + i, 6);
-            coin.addCollisionListener(coin, character);
+            coin.addCollisionListener(character, coin);
             add(coin);
         }
 
         for (int j = 0; j < 30; j++) {
             ManaPickup manaPickup = new ManaPickup();
             manaPickup.position.set(-j, 1);
-            manaPickup.addCollisionListener(manaPickup, character);
+            manaPickup.addCollisionListener(character, manaPickup);
             add(manaPickup);
         }
     }
