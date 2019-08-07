@@ -249,6 +249,8 @@ public class StatefulAnimation extends Actor {
             return; // we don't have a state yet
         }
 
+        System.out.println("Internal Frame Update " + frameDuration + " frameDur, " + currentTime + " currentTime");
+
         currentTime += frameDuration;
 
         AnimationFrame currentFrame = currentAnimation[currentIndex];

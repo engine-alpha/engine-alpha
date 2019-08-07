@@ -25,7 +25,6 @@ public class Figur implements EduActor {
     public static final int DEFAULT_FRAME_DURATION = 250;
 
     private final StatefulAnimation statefulAnimation;
-    private final float pixelProMeter;
     private final float width, height;
 
     /**
@@ -37,7 +36,6 @@ public class Figur implements EduActor {
      */
     public Figur(float pixelProMeter, String zustandsName, String gifBildPfad) {
         assertPixelProMeter(pixelProMeter);
-        this.pixelProMeter = pixelProMeter;
         statefulAnimation = new StatefulAnimation(width = ImageLoader.load(gifBildPfad).getWidth() / pixelProMeter, height = ImageLoader.load(gifBildPfad).getHeight() / pixelProMeter);
 
         zustandHinzufuegenVonGIF(zustandsName, gifBildPfad);
@@ -59,7 +57,6 @@ public class Figur implements EduActor {
      */
     public Figur(float pixelProMeter, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
         assertPixelProMeter(pixelProMeter);
-        this.pixelProMeter = pixelProMeter;
         statefulAnimation = new StatefulAnimation(width = (ImageLoader.load(spriteSheetPfad).getWidth() / anzahlX) / pixelProMeter, height = (ImageLoader.load(spriteSheetPfad).getHeight() / anzahlY) / pixelProMeter);
         zustandHinzufuegenVonSpritesheet(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
         eduSetup();
@@ -80,7 +77,6 @@ public class Figur implements EduActor {
      */
     public Figur(float pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
         assertPixelProMeter(pixelProMeter);
-        this.pixelProMeter = pixelProMeter;
         statefulAnimation = new StatefulAnimation(width = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, true), height = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, false));
 
         zustandHinzufuegenNachPraefix(zustandName, verzeichnisPfad, praefix);

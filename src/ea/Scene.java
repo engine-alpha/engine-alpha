@@ -245,6 +245,10 @@ public class Scene {
 
         final float pixelPerMeter = layer.calculatePixelPerMeter(camera);
 
+        Bounds frameSize = Game.getFrameSizeInPx();
+        Vector cameraPositionInPx = new Vector(frameSize.width / 2, frameSize.height / 2);
+        Vector aInPx = camera.getPosition().fromThisTo(aInWorld).multiply(pixelPerMeter).multiplyY(-1).add(cameraPositionInPx);
+
         if (j instanceof RevoluteJoint) {
             g.setColor(REVOLUTE_JOINT_COLOR);
             g.drawOval((int) aInWorld.x - (JOINT_CIRCLE_RADIUS / 2), (int) aInWorld.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_CIRCLE_RADIUS, JOINT_CIRCLE_RADIUS);
