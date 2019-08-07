@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 public class EduScene extends Scene {
     public static final String MAINLAYER_NAME = "Hauptebene";
+    private static final float EXPLORE_BASE_MOVE_PER_SEC = 1f;
 
     /* _____________________________ LISTENER LISTS _____________________________ */
 
@@ -42,6 +43,8 @@ public class EduScene extends Scene {
      */
     private final HashMap<MausRadReagierbar, MouseWheelListener> sceneMouseWheelListeners = new HashMap<>();
 
+    private boolean exploreMode = false;
+
 
     /* _____________________________ SCENE AND LAYER FIELDS _____________________________ */
 
@@ -63,12 +66,59 @@ public class EduScene extends Scene {
 
     private Layer activeLayer;
 
+    private FrameUpdateListener exploreModeFrameUpdateListener = deltaSeconds -> {
+        if (!exploreMode) {
+            return;
+        }
+
+        float dX = 0, dY = 0;
+        if (Game.isKeyPressed(KeyEvent.VK_LEFT)) {
+            dX = -EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+        } else if (Game.isKeyPressed(KeyEvent.VK_RIGHT)) {
+            dX = EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+        }
+
+        if (Game.isKeyPressed(KeyEvent.VK_UP)) {
+            dY = EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+        } else if (Game.isKeyPressed(KeyEvent.VK_DOWN)) {
+            dY = -EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+        }
+
+        Vector move = new Vector(dX, dY).multiply(deltaSeconds);
+
+        getCamera().move(move.x, move.y);
+    };
+
+    private MouseWheelListener exploreModeMouseWheelListener = event -> {
+        if (!exploreMode) {
+            return;
+        }
+        float factor = event.getPreciseWheelRotation() > 0 ? 1 + .3f * event.getPreciseWheelRotation() : 1 / (1 - .3f * event.getPreciseWheelRotation());
+        float newzoom = getCamera().getZoom() * factor;
+        if (newzoom <= 0) {
+            return;
+        }
+        getCamera().setZoom(newzoom);
+    };
+
     public EduScene() {
         activeLayer = getMainLayer();
         layerHashMap.put(MAINLAYER_NAME, getMainLayer());
+        activeLayer.getFrameUpdateListeners().add(exploreModeFrameUpdateListener);
+        activeLayer.getMouseWheelListeners().add(exploreModeMouseWheelListener);
 
         setGravity(new Vector(0, -9.81f));
     }
+
+    public void setExploreMode(boolean aktiv) {
+        exploreMode = aktiv;
+    }
+
+
+
+
+
+    /* _____________________________ Layers, Addition & Co  _____________________________ */
 
     public String[] layerNames() {
         return (String[]) layerHashMap.keySet().toArray();
@@ -114,6 +164,8 @@ public class EduScene extends Scene {
     public void addEduActor(Actor actor) {
         activeLayer.add(actor);
     }
+
+
 
     /* _____________________________ Listener Addition & Removal _____________________________ */
 
