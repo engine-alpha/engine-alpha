@@ -264,10 +264,12 @@ public class Spiel {
      * @param client     Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
      * @param linksklick Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
      */
+    @API
     public void klickReagierbarAnmelden(Object client, boolean linksklick) {
         getActiveScene().addEduClickListener(client, linksklick);
     }
 
+    @API
     public void klickReagierbarAbmelden(Object klickReagierbar) {
         getActiveScene().removeEduClickListener(klickReagierbar);
     }
@@ -280,10 +282,12 @@ public class Spiel {
      *
      * @param o Das anzumeldende Objekt. Dieses wird ab sofort above jeden Tastendruck informiert.
      */
+    @API
     public void tastenReagierbarAnmelden(Object o) {
         getActiveScene().addEduKeyListener(o);
     }
 
+    @API
     public void tasteReagierbarAbmelden(Object o) {
         getActiveScene().removeEduKeyListener(o);
     }
@@ -297,6 +301,7 @@ public class Spiel {
      *                  eine Methode <code>tick()</code> haben.
      * @param intervall Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
      */
+    @API
     public void tickerAnmelden(Object o, int intervall) {
         getActiveScene().addEduTicker(o, intervall);
     }
@@ -308,6 +313,7 @@ public class Spiel {
      *
      * @see #tickerAnmelden(Object, int)
      */
+    @API
     public void tickerAbmelden(Object o) {
         getActiveScene().removeEduTicker(o);
     }
@@ -341,12 +347,37 @@ public class Spiel {
     }
 
     /**
+     * Meldet einen MausRad-Listener an der <b>aktiven</b> Szene an.
+     *
+     * @param o Ein Objekt mit einer Methode mit Signatur <code>mausRadReagieren(float)</code>
+     *
+     * @see #mausRadReagierbarAbmelden(Object)
+     */
+    @API
+    public void mausRadReagierbarAnmelden(Object o) {
+        getActiveScene().addEduMouseWheelListener(o);
+    }
+
+    /**
+     * Meldet einen MausRad-Listener an der <b>aktiven</b> Szene ab.
+     *
+     * @param o Der abzumeldende Mausrad-Listener
+     *
+     * @see #mausRadReagierbarAnmelden(Object)
+     */
+    @API
+    public void mausRadReagierbarAbmelden(Object o) {
+        getActiveScene().removeEduMouseWheelListener(o);
+    }
+
+    /**
      * Gibt die X-Koordinate der Maus auf der Spielebene an.
      *
      * @return Die X-Koordinate der Maus auf der Spielebene (in Meter)
      *
      * @see #aktuelleMausPositionY()
      */
+    @API
     public float aktuelleMausPositionX() {
         return getActiveScene().getMousePosition().x;
     }
@@ -358,6 +389,7 @@ public class Spiel {
      *
      * @see #aktuelleMausPositionX()
      */
+    @API
     public float aktuelleMausPositionY() {
         return getActiveScene().getMousePosition().y;
     }

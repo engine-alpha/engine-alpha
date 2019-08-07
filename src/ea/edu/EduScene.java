@@ -92,11 +92,11 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         removeFromArrayList(sceneFrameUpdateListeners, o);
     }
 
-    public void addMouseWheelListener(Object o) {
+    public void addEduMouseWheelListener(Object o) {
         addToClientableArrayList(sceneMouseWheelListeners, new MouseWheelAuftrag(o));
     }
 
-    public void removeMouseWheelListener(Object o) {
+    public void removeEduMouseWheelListener(Object o) {
         removeFromArrayList(sceneMouseWheelListeners, o);
     }
 
@@ -105,7 +105,7 @@ public class EduScene extends Scene implements KeyListener, MouseClickListener, 
         Method[] methods = objectClass.getMethods();
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().equals(toAdd.getInvocationMethodName())) {
-                //Correct Name, Check for correct parameters TODO
+                //Correct Name, Check for correct parameters
                 Class<?>[] targetParameters = toAdd.getInvocationMethodParameters();
                 Class<?>[] parameters = methods[i].getParameterTypes();
                 if (parameters.length != targetParameters.length) {
