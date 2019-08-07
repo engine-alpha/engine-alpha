@@ -96,6 +96,8 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         setGravity(new Vector(0, -600));
         getCamera().setZoom(1);
 
+        left.animateColor(5, Color.YELLOW);
+
         this.addFrameUpdateListener(new ValueAnimator<>(5, left::setX, new ReverseEaseFloat(left.getX(), left.getX() + 200), AnimationMode.REPEATED, this));
     }
 

@@ -7,7 +7,7 @@ import ea.animation.interpolation.LinearFloat;
 /**
  * Eine Animation, die ein Actor-Objekt in einer Linie animiert.
  */
-public class LineAnimation extends ActorAnimation {
+public class LineAnimation extends AggregateFrameUpdateListener {
 
     /**
      * Erstellt eine neue Linien-Animation.
@@ -26,14 +26,9 @@ public class LineAnimation extends ActorAnimation {
      *                          endet nicht von sich aus.
      */
     public LineAnimation(Actor actor, Vector endPoint, float durationInSeconds, boolean pingpong) {
-        super(actor);
-
         Vector center = actor.getCenter();
 
-        ValueAnimator<Float> aX = new ValueAnimator<>(durationInSeconds, x -> actor.setCenter(x, actor.getCenter().y), new LinearFloat(center.x, endPoint.x), pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE, actor);
-        ValueAnimator<Float> aY = new ValueAnimator<>(durationInSeconds, y -> actor.setCenter(actor.getCenter().x, y), new LinearFloat(center.y, endPoint.y), pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE, actor);
-
-        addAnimator(aX);
-        addAnimator(aY);
+        addFrameUpdateListener(new ValueAnimator<>(durationInSeconds, x -> actor.setCenter(x, actor.getCenter().y), new LinearFloat(center.x, endPoint.x), pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE, this));
+        addFrameUpdateListener(new ValueAnimator<>(durationInSeconds, y -> actor.setCenter(actor.getCenter().x, y), new LinearFloat(center.y, endPoint.y), pingpong ? AnimationMode.PINGPONG : AnimationMode.SINGLE, this));
     }
 }

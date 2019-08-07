@@ -22,6 +22,7 @@ package ea.event;
 import ea.FrameUpdateListener;
 import ea.internal.annotations.API;
 
+@API
 public interface FrameUpdateListenerContainer {
     EventListeners<FrameUpdateListener> getFrameUpdateListeners();
 

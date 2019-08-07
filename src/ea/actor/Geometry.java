@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2014 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2019 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,13 @@
 
 package ea.actor;
 
+import ea.animation.AnimationMode;
+import ea.animation.ValueAnimator;
+import ea.animation.interpolation.LinearFloat;
+import ea.internal.annotations.API;
 import org.jbox2d.collision.shapes.Shape;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.function.Supplier;
 
 /**
@@ -29,6 +33,7 @@ import java.util.function.Supplier;
  *
  * @author Michael Andonie
  */
+@API
 public abstract class Geometry extends Actor {
     /**
      * Die Farbe dieses Geometry-Objekts.
@@ -38,6 +43,7 @@ public abstract class Geometry extends Actor {
     /**
      * Konstruktor.
      */
+    @API
     public Geometry(Supplier<Shape> shapeSupplier) {
         super(shapeSupplier);
     }
@@ -48,6 +54,7 @@ public abstract class Geometry extends Actor {
      *
      * @param color Die neue Farbe.
      */
+    @API
     public void setColor(Color color) {
         this.color = color;
     }
@@ -57,7 +64,26 @@ public abstract class Geometry extends Actor {
      *
      * @return Die Farbe des Objekts.
      */
+    @API
     public Color getColor() {
         return color;
+    }
+
+    @API
+    public ValueAnimator<Float> animateColor(float duration, Color color) {
+        Color originalColor = getColor();
+
+        ValueAnimator<Float> animator = new ValueAnimator<>(duration, progress -> setColor(calculateIntermediateColor(originalColor, color, progress)), new LinearFloat(0, 1), AnimationMode.SINGLE, this);
+        addFrameUpdateListener(animator);
+
+        return animator;
+    }
+
+    private Color calculateIntermediateColor(Color original, Color target, float progress) {
+        int r = original.getRed() - (int) ((original.getRed() - target.getRed()) * progress);
+        int g = original.getGreen() - (int) ((original.getGreen() - target.getGreen()) * progress);
+        int b = original.getBlue() - (int) ((original.getBlue() - target.getBlue()) * progress);
+
+        return new Color(r, g, b);
     }
 }

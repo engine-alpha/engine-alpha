@@ -63,4 +63,8 @@ public final class EventListeners<T> {
             invoker.accept(listener);
         }
     }
+
+    public boolean isEmpty() {
+        return listeners.isEmpty();
+    }
 }
