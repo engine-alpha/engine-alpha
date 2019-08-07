@@ -24,7 +24,7 @@ public class Figur implements EduActor {
     public static final float DEFAULT_PIXEL_PRO_METER = 30f;
     public static final float DEFAULT_FRAME_DURATION = 0.25f;
 
-    private final StatefulAnimation statefulAnimation;
+    private final StatefulAnimation<String> statefulAnimation;
     private final float width, height;
 
     /**
@@ -36,7 +36,7 @@ public class Figur implements EduActor {
      */
     public Figur(float pixelProMeter, String zustandsName, String gifBildPfad) {
         assertPixelProMeter(pixelProMeter);
-        statefulAnimation = new StatefulAnimation(width = ImageLoader.load(gifBildPfad).getWidth() / pixelProMeter, height = ImageLoader.load(gifBildPfad).getHeight() / pixelProMeter);
+        statefulAnimation = new StatefulAnimation<>(width = ImageLoader.load(gifBildPfad).getWidth() / pixelProMeter, height = ImageLoader.load(gifBildPfad).getHeight() / pixelProMeter);
 
         zustandHinzufuegenVonGIF(zustandsName, gifBildPfad);
         eduSetup();
@@ -57,7 +57,7 @@ public class Figur implements EduActor {
      */
     public Figur(float pixelProMeter, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
         assertPixelProMeter(pixelProMeter);
-        statefulAnimation = new StatefulAnimation(width = (ImageLoader.load(spriteSheetPfad).getWidth() / anzahlX) / pixelProMeter, height = (ImageLoader.load(spriteSheetPfad).getHeight() / anzahlY) / pixelProMeter);
+        statefulAnimation = new StatefulAnimation<>(width = (ImageLoader.load(spriteSheetPfad).getWidth() / anzahlX) / pixelProMeter, height = (ImageLoader.load(spriteSheetPfad).getHeight() / anzahlY) / pixelProMeter);
         zustandHinzufuegenVonSpritesheet(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
         eduSetup();
     }
@@ -77,7 +77,7 @@ public class Figur implements EduActor {
      */
     public Figur(float pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
         assertPixelProMeter(pixelProMeter);
-        statefulAnimation = new StatefulAnimation(width = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, true), height = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, false));
+        statefulAnimation = new StatefulAnimation<>(width = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, true), height = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, false));
 
         zustandHinzufuegenNachPraefix(zustandName, verzeichnisPfad, praefix);
         eduSetup();

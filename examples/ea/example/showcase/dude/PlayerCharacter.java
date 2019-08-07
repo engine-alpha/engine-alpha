@@ -21,10 +21,10 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class PlayerCharacter extends StatefulAnimation implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
+public class PlayerCharacter extends StatefulAnimation<PlayerState> implements CollisionListener<Actor>, FrameUpdateListener, KeyListener {
 
     private static final float MAX_SPEED = 100;
-    public static final int JUMP_FORCE = +100;
+    public static final int JUMP_FORCE = +150;
     public static final int SMASH_FORCE = -1500;
     public static final int BOTTOM_OUT = -500 / 30;
     private static final int DOUBLE_JUMP_COST = 3;
@@ -75,17 +75,17 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         // Alle einzuladenden Dateien teilen den Großteil des Paths (Ordner sowie gemeinsame Dateipräfixe)
         String basePath = "game-assets/dude/char/spr_m_traveler_";
 
-        addState("idle", Animation.createFromAnimatedGif(basePath + "idle_anim.gif", 1, 1));
-        addState("walking", Animation.createFromAnimatedGif(basePath + "walk_anim.gif", 1, 1));
-        addState("running", Animation.createFromAnimatedGif(basePath + "run_anim.gif", 1, 1));
-        addState("jumpingUp", Animation.createFromAnimatedGif(basePath + "jump_1up_anim.gif", 1, 1));
-        addState("midair", Animation.createFromAnimatedGif(basePath + "jump_2midair_anim.gif", 1, 1));
-        addState("falling", Animation.createFromAnimatedGif(basePath + "jump_3down_anim.gif", 1, 1));
-        addState("landing", Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif", 1, 1));
-        addState("smashing", Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif", 1, 1));
+        addState(PlayerState.Idle, Animation.createFromAnimatedGif(basePath + "idle_anim.gif", 1, 1));
+        addState(PlayerState.Walking, Animation.createFromAnimatedGif(basePath + "walk_anim.gif", 1, 1));
+        addState(PlayerState.Running, Animation.createFromAnimatedGif(basePath + "run_anim.gif", 1, 1));
+        addState(PlayerState.JumpingUp, Animation.createFromAnimatedGif(basePath + "jump_1up_anim.gif", 1, 1));
+        addState(PlayerState.Midair, Animation.createFromAnimatedGif(basePath + "jump_2midair_anim.gif", 1, 1));
+        addState(PlayerState.Falling, Animation.createFromAnimatedGif(basePath + "jump_3down_anim.gif", 1, 1));
+        addState(PlayerState.Landing, Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif", 1, 1));
+        addState(PlayerState.Smashing, Animation.createFromAnimatedGif(basePath + "jump_4land_anim.gif", 1, 1));
 
-        setStateTransition("midair", "falling");
-        setStateTransition("landing", "idle");
+        setStateTransition(PlayerState.Midair, PlayerState.Falling);
+        setStateTransition(PlayerState.Landing, PlayerState.Idle);
 
         physics.setFriction(FRICTION);
         physics.setRestitution(RESTITUTION);
@@ -110,14 +110,14 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     public void tryJumping() {
         if (physics.isGrounded()) {
             physics.applyImpulse(new Vector(0, JUMP_FORCE));
-            setState("jumpingUp");
+            setState(PlayerState.JumpingUp);
         } else if (!didDoubleJump && gameData.getMana() >= DOUBLE_JUMP_COST && !getCurrentState().equals("smashing")) {
             // Double Jump!
             didDoubleJump = true;
             gameData.consumeMana(DOUBLE_JUMP_COST);
             physics.setVelocity(new Vector(physics.getVelocity().x, 0));
             physics.applyImpulse(new Vector(0, JUMP_FORCE * 0.8f));
-            setState("jumpingUp");
+            setState(PlayerState.JumpingUp);
         }
     }
 
@@ -153,8 +153,9 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
     }
 
     public void smash() {
-        if (getCurrentState().equals("falling") || getCurrentState().equals("jumpingUp") || getCurrentState().equals("midair")) {
-            setState("smashing");
+        PlayerState currentState = getCurrentState();
+        if (currentState == PlayerState.Falling || currentState == PlayerState.JumpingUp || currentState == PlayerState.Midair) {
+            setState(PlayerState.Smashing);
             smashForce = new Vector(0, SMASH_FORCE);
         }
     }
@@ -178,7 +179,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
 
         if (rocketMode && (gameData.getMana() > 0 || GOD_MODE)) {
             gameData.consumeMana(ROCKETCOST_PER_FRAME);
-            physics.applyImpulse(new Vector(0, 10));
+            physics.applyImpulse(new Vector(0, 5));
 
             Particle particle = new Particle(0.1f, .5f);
             particle.position.set(position.getCenter().subtract(new Vector((float) Math.random() * 0.1f, .45f)));
@@ -199,24 +200,24 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         }
 
         switch (getCurrentState()) {
-            case "jumpingUp":
+            case JumpingUp:
                 if (velocity.y < 0) {
-                    setState("midair");
+                    setState(PlayerState.Midair);
                 }
                 break;
-            case "idle":
-            case "running":
-            case "walking":
+            case Idle:
+            case Running:
+            case Walking:
                 //if(standing) {
                 didDoubleJump = false;
                 if (velocity.y > 0.1f) {
-                    setState("midair");
+                    setState(PlayerState.Midair);
                 } else if (Math.abs(velocity.x) > 5.5f) {
-                    changeState("running");
+                    changeState(PlayerState.Running);
                 } else if (Math.abs(velocity.x) > .1f) {
-                    changeState("walking");
+                    changeState(PlayerState.Walking);
                 } else {
-                    changeState("idle");
+                    changeState(PlayerState.Idle);
                 }
                 //}
                 break;
@@ -227,7 +228,7 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
         if (position.getY() < BOTTOM_OUT) {
             position.set(0, 0);
             physics.setVelocity(Vector.NULL);
-            setState("falling");
+            setState(PlayerState.Falling);
         }
     }
 
@@ -310,11 +311,11 @@ public class PlayerCharacter extends StatefulAnimation implements CollisionListe
             }
         }
 
-        boolean falling = getCurrentState().equals("falling");
-        boolean smashing = getCurrentState().equals("smashing");
+        boolean falling = getCurrentState() == PlayerState.Falling;
+        boolean smashing = getCurrentState() == PlayerState.Smashing;
 
         if ((falling || smashing) && physics.isGrounded()) {
-            setState("landing");
+            setState(PlayerState.Landing);
             smashForce = Vector.NULL;
 
             if (smashing) {
