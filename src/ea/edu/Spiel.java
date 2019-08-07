@@ -3,6 +3,7 @@ package ea.edu;
 import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
+import ea.edu.event.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
@@ -293,16 +294,15 @@ public class Spiel {
      * Methode diesen Namens MUSS existieren!!<br> public abstract void klickReagieren(int x, int
      * y);<br> }</code>
      *
-     * @param client     Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
-     * @param linksklick Falls auf Linksklicks reagiert werden soll <code>true</code>, sonst <code>false</code>
+     * @param client Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
      */
     @API
-    public void klickReagierbarAnmelden(Object client, boolean linksklick) {
-        getActiveScene().addEduClickListener(client, linksklick);
+    public void mausKlickReagierbarAnmelden(MausKlickReagierbar client) {
+        getActiveScene().addEduClickListener(client);
     }
 
     @API
-    public void klickReagierbarAbmelden(Object klickReagierbar) {
+    public void mausKlickReagierbarAbmelden(MausKlickReagierbar klickReagierbar) {
         getActiveScene().removeEduClickListener(klickReagierbar);
     }
 
@@ -315,12 +315,12 @@ public class Spiel {
      * @param o Das anzumeldende Objekt. Dieses wird ab sofort above jeden Tastendruck informiert.
      */
     @API
-    public void tastenReagierbarAnmelden(Object o) {
+    public void tastenReagierbarAnmelden(TastenReagierbar o) {
         getActiveScene().addEduKeyListener(o);
     }
 
     @API
-    public void tasteReagierbarAbmelden(Object o) {
+    public void tasteReagierbarAbmelden(TastenReagierbar o) {
         getActiveScene().removeEduKeyListener(o);
     }
 
@@ -334,7 +334,7 @@ public class Spiel {
      * @param intervall Das Intervall in Millisekunden, in dem das anzumeldende Objekt aufgerufen.
      */
     @API
-    public void tickerAnmelden(Object o, int intervall) {
+    public void tickerAnmelden(Ticker o, int intervall) {
         getActiveScene().addEduTicker(o, intervall);
     }
 
@@ -343,10 +343,10 @@ public class Spiel {
      *
      * @param o Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
      *
-     * @see #tickerAnmelden(Object, int)
+     * @see #tickerAnmelden(Ticker, int)
      */
     @API
-    public void tickerAbmelden(Object o) {
+    public void tickerAbmelden(Ticker o) {
         getActiveScene().removeEduTicker(o);
     }
 
@@ -359,10 +359,10 @@ public class Spiel {
      *          <code>frameUpdateReagieren(int)</code>, so passiert nichts. Andernfalls wird ab sofort zu jedem
      *          Frame-Update der <b>aktuellen</b> Szene die Methode ausgeführt.
      *
-     * @see #frameUpdateReagierbarAbmelden(Object)
+     * @see #frameUpdateReagierbarAbmelden(FrameUpdateReagierbar)
      */
     @API
-    public void frameUpdateReagierbarAnmelden(Object o) {
+    public void frameUpdateReagierbarAnmelden(FrameUpdateReagierbar o) {
         getActiveScene().addEduFrameUpdateListener(o);
     }
 
@@ -371,10 +371,10 @@ public class Spiel {
      *
      * @param o Das zu entfernende Objekt. War es nie angemeldet, so passiert nichts.
      *
-     * @see #frameUpdateReagierbarAnmelden(Object)
+     * @see #frameUpdateReagierbarAnmelden(FrameUpdateReagierbar)
      */
     @API
-    public void frameUpdateReagierbarAbmelden(Object o) {
+    public void frameUpdateReagierbarAbmelden(FrameUpdateReagierbar o) {
         getActiveScene().removeEduFrameUpdateListener(o);
     }
 
@@ -383,10 +383,10 @@ public class Spiel {
      *
      * @param o Ein Objekt mit einer Methode mit Signatur <code>mausRadReagieren(float)</code>
      *
-     * @see #mausRadReagierbarAbmelden(Object)
+     * @see #mausRadReagierbarAbmelden(MausRadReagierbar)
      */
     @API
-    public void mausRadReagierbarAnmelden(Object o) {
+    public void mausRadReagierbarAnmelden(MausRadReagierbar o) {
         getActiveScene().addEduMouseWheelListener(o);
     }
 
@@ -395,10 +395,10 @@ public class Spiel {
      *
      * @param o Der abzumeldende Mausrad-Listener
      *
-     * @see #mausRadReagierbarAnmelden(Object)
+     * @see #mausRadReagierbarAnmelden(MausRadReagierbar)
      */
     @API
-    public void mausRadReagierbarAbmelden(Object o) {
+    public void mausRadReagierbarAbmelden(MausRadReagierbar o) {
         getActiveScene().removeEduMouseWheelListener(o);
     }
 
