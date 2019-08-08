@@ -32,7 +32,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
     public Figur(float pixelProMeter, String zustandsName, String gifBildPfad) {
         super(new StatefulAnimation<>(ImageLoader.load(gifBildPfad).getWidth() / pixelProMeter, ImageLoader.load(gifBildPfad).getHeight() / pixelProMeter));
 
-        fuegeZustandMitGifHinzu(zustandsName, gifBildPfad);
+        fuegeZustandVonGifHinzu(zustandsName, gifBildPfad);
     }
 
     @API
@@ -53,7 +53,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
     public Figur(float pixelProMeter, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
         super(new StatefulAnimation<>(ImageLoader.load(spriteSheetPfad).getWidth() / pixelProMeter / anzahlX, ImageLoader.load(spriteSheetPfad).getHeight() / pixelProMeter / anzahlY));
 
-        fuegeZustandMitSpritesheetHinzu(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
+        fuegeZustandVonSpritesheetHinzu(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
     }
 
     @API
@@ -74,7 +74,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
     public Figur(float pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
         super(new StatefulAnimation<>(getWidthHeightFromPrefixed(verzeichnisPfad, praefix).width, getWidthHeightFromPrefixed(verzeichnisPfad, praefix).height));
 
-        fuegeZustandMitPraefixHinzu(zustandName, verzeichnisPfad, praefix);
+        fuegeZustandVonPraefixHinzu(zustandName, verzeichnisPfad, praefix);
     }
 
     @API
@@ -89,7 +89,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      * @param bildpfad     Pfad zum GIF, das zu diesem Zustand animiert wird.
      */
     @API
-    public void fuegeZustandMitGifHinzu(String zustandsName, String bildpfad) {
+    public void fuegeZustandVonGifHinzu(String zustandsName, String bildpfad) {
         if (!bildpfad.toLowerCase().endsWith(".gif")) {
             throw new RuntimeException("Der agegebene Bildpfad muss eine GIF-Datei sein und auf \".gif\" enden. Der angegebene Bildpfad war: " + bildpfad);
         }
@@ -107,7 +107,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      * @param anzahlY      Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
     @API
-    public void fuegeZustandMitSpritesheetHinzu(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
+    public void fuegeZustandVonSpritesheetHinzu(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
         addState(zustandsName, Animation.createFromSpritesheet(DEFAULT_FRAME_DURATION, bildpfad, anzahlX, anzahlY, getActor().getWidth(), getActor().getHeight()));
     }
 
@@ -118,7 +118,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      * @param bildpfade    Die Pfade der Animationsframes in korrekter Reihenfolge.
      */
     @API
-    public void fuegeZustandMitEinzelbildernHinzu(String zustandsName, String... bildpfade) {
+    public void fuegeZustandVonEinzelbildernHinzu(String zustandsName, String... bildpfade) {
         addState(zustandsName, Animation.createFromImages(DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), bildpfade));
     }
 
@@ -131,7 +131,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
     @API
-    public void fuegeZustandMitPraefixHinzu(String zustandName, String verzeichnisPfad, String praefix) {
+    public void fuegeZustandVonPraefixHinzu(String zustandName, String verzeichnisPfad, String praefix) {
         getActor().addState(zustandName, Animation.createFromImagesPrefix(Spiel.getActiveScene(), DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), verzeichnisPfad, praefix));
     }
 

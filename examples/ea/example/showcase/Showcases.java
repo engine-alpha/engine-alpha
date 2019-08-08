@@ -182,7 +182,7 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new Particles(mainscene), "Particles");
         mainscene.addScene(() -> new CarDemo(mainscene), "Car Demo");
 
-        Game.setDebug(false);
+        Game.setDebug(true);
         Game.setExitOnEsc(false);
         Game.setTitle("Engine Alpha: Feature Showcase");
 
