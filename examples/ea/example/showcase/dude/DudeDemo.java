@@ -23,6 +23,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
     private final GameData gameData;
     private final PlayerCharacter character;
+    private final Rectangle weird;
 
     public DudeDemo(Scene parent) {
         super(parent);
@@ -37,7 +38,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         character.setRotationLocked(true);
         character.setBodyType(BodyType.DYNAMIC);
 
-        Rectangle weird = new Rectangle(5, 0.2f);
+        weird = new Rectangle(5, 0.2f);
         weird.setColor(Color.ORANGE);
         weird.setBodyType(BodyType.DYNAMIC);
         weird.setPosition(0.3f, 0.6f);
@@ -148,6 +149,12 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     public void onKeyDown(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_M) {
             toggleDebug();
+        } else if (e.getKeyCode() == KeyEvent.VK_J) {
+            if (weird.isMounted()) {
+                remove(weird);
+            } else {
+                add(weird);
+            }
         }
     }
 }
