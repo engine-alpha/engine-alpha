@@ -58,7 +58,7 @@ public class Spiel {
     public static Color stringToColor(String t) {
         Color res = stringToColor.get(t.toLowerCase());
         if (res == null) {
-            return Color.BLACK;
+            throw new IllegalArgumentException("Eine Farbe mit dem Namen " + t + " ist der Engine nicht bekannt.");
         } else {
             return res;
         }
@@ -79,12 +79,20 @@ public class Spiel {
 
     /* ~~~ STEUERUNG & KAPSELUNG ~~~*/
 
+    public static final Color COLOR_LILA = new Color(145, 19, 255);
+    public static final Color COLOR_ORANGE = new Color(255, 116, 0);
+    public static final Color COLOR_BRAUN = new Color(119, 77, 50);
+    public static final Color COLOR_HELLBLAU = new Color(0, 194, 255);
+    public static final Color COLOR_DUNKELBLAU = new Color(21, 0, 137);
+    public static final Color COLOR_HELLGRUEN = new Color(157, 255, 0);
+    public static final Color COLOR_DUNKELGRUEN = new Color(11, 71, 0);
+
     static {
         //Fülle alle Farbzuweisungen hinzu
         addC("gelb", Color.YELLOW);
         addC("weiss", Color.WHITE);
         stringToColor.put("weiß", Color.WHITE);
-        addC("orange", Color.ORANGE);
+        addC("orange", COLOR_ORANGE);
         addC("grau", Color.GRAY);
         addC("gruen", Color.GREEN);
         stringToColor.put("grün", Color.GREEN);
@@ -92,13 +100,20 @@ public class Spiel {
         addC("rot", Color.RED);
         addC("pink", Color.PINK);
         addC("magenta", Color.MAGENTA);
-        stringToColor.put("lila", Color.MAGENTA);
+        addC("lila", COLOR_LILA);
         addC("cyan", Color.CYAN);
         stringToColor.put("tuerkis", Color.CYAN);
         stringToColor.put("türkis", Color.CYAN);
         addC("dunkelgrau", Color.DARK_GRAY);
         addC("hellgrau", Color.LIGHT_GRAY);
-        addC("braun", new Color(110, 68, 14));
+        addC("braun", COLOR_BRAUN);
+        addC("schwarz", Color.BLACK);
+        addC("hellblau", COLOR_HELLBLAU);
+        addC("dunkelblau", COLOR_DUNKELBLAU);
+        addC("hellgruen", COLOR_HELLGRUEN);
+        stringToColor.put("hellgrün", COLOR_HELLGRUEN);
+        addC("dunkelgruen", COLOR_DUNKELGRUEN);
+        stringToColor.put("dunkelgrün", COLOR_DUNKELGRUEN);
 
         //Startup-Game
 
@@ -230,68 +245,88 @@ public class Spiel {
      *                       angezeigt.
      *                       Die Hauptebene hat die Position 0.
      */
+    @API
     public void macheNeueEbene(String ebenenName, int ebenenPosition) {
         getActiveScene().addLayer(ebenenName, ebenenPosition);
     }
 
+    @API
     public void setzeEbenenParallaxe(String ebenenName, float px, float py, float pz) {
         getActiveScene().setLayerParallax(ebenenName, px, py, pz);
     }
 
+    @API
+    public void setzeEbenenZeitVerzerrung(String ebenenName, float zeitverzerrung) {
+        getActiveScene().setLayerTimeDistort(ebenenName, zeitverzerrung);
+    }
+
+    @API
     public void setzeAktiveEbene(String ebenenName) {
         getActiveScene().setActiveLayer(ebenenName);
     }
 
+    @API
     public void setzeAufHauptebeneZurueck() {
         getActiveScene().resetToMainLayer();
     }
 
     /* ~~~ CAMERA CONTROL ~~~ */
 
+    @API
     public void verschiebeKamera(float dX, float dY) {
         getActiveScene().getCamera().move(dX, dY);
     }
 
+    @API
     public void setzeKameraZoom(float zoom) {
         getActiveScene().getCamera().setZoom(zoom);
     }
 
+    @API
     public float nenneKameraZoom() {
         return getActiveScene().getCamera().getZoom();
     }
 
+    @API
     public void setzeKameraFokus(Actor focus) {
         getActiveScene().getCamera().setFocus(focus);
     }
 
+    @API
     public void rotiereKamera(float winkelInBogenmass) {
         getActiveScene().getCamera().rotate(winkelInBogenmass);
     }
 
+    @API
     public void setzeKameraRotation(float winkelInBogenmass) {
         getActiveScene().getCamera().rotateTo(winkelInBogenmass);
     }
 
     /* ~~~ GLOBAL WORLD PHYSICS ~~~ */
 
+    @API
     public void setzeSchwerkraft(float schwerkraft) {
         getActiveScene().getWorldHandler().getWorld().setGravity(new Vec2(0, -schwerkraft));
     }
 
     /* ~~~ Dialogues ~~~ */
 
+    @API
     public void nachricht(String nachricht) {
         Game.showMessage(nachricht, DEFAULT_EDU_DIALOG_TITLE);
     }
 
+    @API
     public boolean frageJaNein(String frage) {
         return Game.requestYesNo(frage, DEFAULT_EDU_DIALOG_TITLE);
     }
 
+    @API
     public boolean nachrichtOkAbbrechen(String frage) {
         return Game.requestOkCancel(frage, DEFAULT_EDU_DIALOG_TITLE);
     }
 
+    @API
     public String eingabe(String nachricht) {
         return Game.requestStringInput(nachricht, DEFAULT_EDU_DIALOG_TITLE);
     }

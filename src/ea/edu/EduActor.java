@@ -123,6 +123,21 @@ public interface EduActor {
     }
 
     @API
+    default float nenneMasse() {
+        return getActor().getMass();
+    }
+
+    @API
+    default float nenneElastizitaet() {
+        return getActor().getRestitution();
+    }
+
+    @API
+    default float nenneReibung() {
+        return getActor().getFriction();
+    }
+
+    @API
     default void setzeSchwerkraft(float schwerkraft) {
         getActor().getLayer().getParent().setGravity(new Vector(0, -schwerkraft));
     }
@@ -184,19 +199,21 @@ public interface EduActor {
     /**
      * Bewegt den Actor anhand einer Gerade.
      *
-     * @param zX   X-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
-     * @param zY   Y-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
-     * @param ms   Zeit in Millisekunden, die der Actor von Beginn der Animation benötigt, bis er am angegebenen
-     *             Endpunkt angekommen ist.
-     * @param loop <code>true</code>: Der Actor "ping pongt" zwischen dem impliziten Startpunkt und dem angegebenen
-     *             Endpunkt hin und her. Die Strecke in eine Richtung benötigt jeweils <code>ms</code> Millisekunden
-     *             Zeit. <br>
-     *             <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal) erreicht
-     *             wurde.
+     * @param zX       X-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
+     * @param zY       Y-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
+     * @param sekunden Zeit in Sekunden, die der Actor von Beginn der Animation benötigt, bis er am angegebenen
+     *                 Endpunkt angekommen ist.
+     * @param loop     <code>true</code>: Der Actor "ping pongt" zwischen dem impliziten Startpunkt und dem angegebenen
+     *                 Endpunkt hin und her. Die Strecke in eine Richtung benötigt jeweils <code>ms</code>
+     *                 Millisekunden
+     *                 Zeit. <br>
+     *                 <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal)
+     *                 erreicht
+     *                 wurde.
      */
     @API
-    default void geradenAnimation(float zX, float zY, int ms, boolean loop) {
-        Spiel.getActiveScene().addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), ms, loop));
+    default void geradenAnimation(float zX, float zY, float sekunden, boolean loop) {
+        getActor().addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), sekunden, loop));
     }
 
     /**
@@ -236,7 +253,7 @@ public interface EduActor {
      */
     @API
     default void kreisAnimation(float mX, float mY, float sekunden, boolean uhrzeigersinn, boolean rotation) {
-        Spiel.getActiveScene().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), sekunden, uhrzeigersinn, rotation));
+        getActor().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), sekunden, uhrzeigersinn, rotation));
     }
 
     /**

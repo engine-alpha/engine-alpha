@@ -3,11 +3,7 @@ package ea.edu;
 import ea.*;
 import ea.actor.Actor;
 import ea.edu.event.*;
-import ea.event.EventListeners;
-import ea.event.KeyListener;
-import ea.event.MouseButton;
-import ea.event.MouseClickListener;
-import ea.event.MouseWheelListener;
+import ea.event.*;
 import ea.internal.annotations.API;
 
 import java.awt.event.KeyEvent;
@@ -16,7 +12,7 @@ import java.util.Map;
 
 public class EduScene extends Scene {
     public static final String MAINLAYER_NAME = "Hauptebene";
-    private static final float EXPLORE_BASE_MOVE_PER_SEC = 1f;
+    private static final float EXPLORE_BASE_MOVE_PER_SEC = 20f;
 
     /* _____________________________ LISTENER LISTS _____________________________ */
 
@@ -145,6 +141,13 @@ public class EduScene extends Scene {
         Layer layer = layerHashMap.get(layerName);
         layer.setParallaxPosition(px, py);
         layer.setParallaxZoom(pz);
+    }
+
+    public void setLayerTimeDistort(String layerName, float tpx) {
+        assertLayerHashMapContains(layerName, true);
+
+        Layer layer = layerHashMap.get(layerName);
+        layer.setTimeDistort(tpx);
     }
 
     public void setActiveLayer(String layerName) {
