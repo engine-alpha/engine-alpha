@@ -22,7 +22,6 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -450,21 +449,15 @@ public class WorldHandler implements ContactListener {
 
     @Internal
     public static Joint createJoint(Actor a, Actor b, Function<WorldHandler, org.jbox2d.dynamics.joints.Joint> jointSupplier) {
-        CompletableFuture<org.jbox2d.dynamics.joints.Joint> jointFuture = new CompletableFuture<>();
+        List<org.jbox2d.dynamics.joints.Joint> jointList = new ArrayList<>();
 
-        addMountListener(a, b, worldHandler -> jointFuture.complete(jointSupplier.apply(worldHandler)));
+        addMountListener(a, b, worldHandler -> jointList.add(jointSupplier.apply(worldHandler)));
 
-        return new Joint() {
-            private CompletableFuture<org.jbox2d.dynamics.joints.Joint> future = jointFuture;
-
-            @Override
-            public void release() {
-                if (future != null) {
-                    future.thenAccept(joint -> Game.afterWorldStep(() -> org.jbox2d.dynamics.joints.Joint.destroy(joint)));
-                    future = null;
-                }
+        return () -> Game.afterWorldStep(() -> {
+            while (!jointList.isEmpty()) {
+                org.jbox2d.dynamics.joints.Joint.destroy(jointList.remove(0));
             }
-        };
+        });
     }
 
     @Internal
