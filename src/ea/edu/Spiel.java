@@ -410,7 +410,7 @@ public class Spiel {
      * @param intervallInSekunden Das Intervall in Sekunden, in dem das anzumeldende Objekt aufgerufen.
      */
     @API
-    public void registriereTicket(float intervallInSekunden, Ticker ticker) {
+    public void registriereTicker(float intervallInSekunden, Ticker ticker) {
         getActiveScene().addEduTicker(intervallInSekunden, ticker);
     }
 
@@ -419,7 +419,7 @@ public class Spiel {
      *
      * @param ticket Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
      *
-     * @see #registriereTicket(float, Ticker)
+     * @see #registriereTicker(float, Ticker)
      */
     @API
     public void entferneTicker(Ticker ticket) {
