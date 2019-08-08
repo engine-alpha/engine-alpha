@@ -21,7 +21,7 @@ package ea.actor;
 
 import ea.*;
 import ea.animation.ValueAnimator;
-import ea.animation.interpolation.LinearFloat;
+import ea.animation.interpolation.EaseInOutFloat;
 import ea.collision.CollisionListener;
 import ea.event.*;
 import ea.internal.ShapeBuilder;
@@ -1194,9 +1194,29 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     public ValueAnimator<Float> animateParticle(float lifetime) {
         setBodyType(BodyType.PARTICLE);
 
-        ValueAnimator<Float> animator = new ValueAnimator<>(lifetime, this::setOpacity, new LinearFloat(1, 0), this);
+        setOpacity(1);
+        ValueAnimator<Float> animator = animateOpacity(lifetime, 0);
         animator.addCompletionListener(value -> remove());
 
+        return animator;
+    }
+
+    /**
+     * Animiert die Opacity dieses Actors über einen festen Zeitraum: Beginnend von der aktuellen Opacity, ändert sie
+     * sich "smooth" (mit {@code EaseInOutFloat} Interpolation) vom aktuellen Opacity-Wert (die Ausgabe von
+     * {@code getOpacity()} bis hin zum angebebenen Opacity-Wert.
+     *
+     * @param time           Die Animationszeit in Sekunden
+     * @param toOpacityValue Der Opacity-Wert, zu dem innerhalb von {@code time} zu interpolieren ist.
+     *
+     * @return Ein {@code ValueAnimator}, der diese Animation ausführt. Der Animator ist bereits aktiv, es muss nichts
+     * an dem Objekt getan werden, um die Animation auszuführen.
+     *
+     * @see ea.animation.interpolation.EaseInOutFloat
+     */
+    @API
+    public ValueAnimator<Float> animateOpacity(float time, float toOpacityValue) {
+        ValueAnimator<Float> animator = new ValueAnimator<>(time, this::setOpacity, new EaseInOutFloat(getOpacity(), toOpacityValue), this);
         addFrameUpdateListener(animator);
 
         return animator;

@@ -1,6 +1,7 @@
 package ea.example.showcase.dude;
 
 import ea.actor.Animation;
+import ea.animation.ValueAnimator;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 
@@ -9,6 +10,7 @@ import ea.collision.CollisionListener;
  */
 public class ManaPickup extends Animation implements CollisionListener<PlayerCharacter> {
     private static final float SIZE = .4f;
+    private static final float PICKUP_DELAY = 5;
 
     private boolean active = true;
 
@@ -26,11 +28,13 @@ public class ManaPickup extends Animation implements CollisionListener<PlayerCha
         collisionEvent.getColliding().gotItem(Item.ManaPickup);
         this.setActive(false);
         active = false;
-        getLayer().getParent().addOneTimeCallback(5, () -> setActive(true));
+        getLayer().getParent().addOneTimeCallback(3, () -> setActive(true));
+
+        ValueAnimator<Float> opacityAnimation = animateOpacity(2, 0.3f);
     }
 
     private void setActive(boolean b) {
         active = b;
-        setVisible(b);
+        setOpacity(b ? 1 : 0);
     }
 }

@@ -38,10 +38,17 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         character.setRotationLocked(true);
         character.setBodyType(BodyType.DYNAMIC);
 
-        weird = new Rectangle(5, 0.2f);
+        weird = new Rectangle(2, 0.2f);
         weird.setColor(Color.ORANGE);
         weird.setBodyType(BodyType.DYNAMIC);
         weird.setPosition(0.3f, 0.6f);
+
+        Rectangle weird2 = new Rectangle(2, 0.2f);
+        weird2.setColor(Color.GREEN);
+        weird2.setBodyType(BodyType.DYNAMIC);
+        weird2.setPosition(2, 0.6f);
+        weird2.createRevoluteJoint(weird, new Vector(0.1f, 0.1f));
+        add(weird2);
 
         Rectangle boxy = new Rectangle(0.2f, 0.2f);
         boxy.setColor(Color.WHITE);
@@ -50,10 +57,10 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         //boxy.move(10, 10);
 
         add(character);
-        //add(weird);
+        add(weird);
         add(boxy);
 
-        //character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
+        character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
         character.createRopeJoint(boxy, new Vector(0.3f, 0.3f), new Vector(0.1f, 0.1f), 4);
         //character.createDistanceJoint(boxy, new Vector(0.3f, 0.3f), new Vector(0.1f, 0.1f));
 

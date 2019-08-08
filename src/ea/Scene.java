@@ -212,7 +212,7 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
 
             while (j != null) {
                 renderJoint(j, g, layer);
-                j = j.m_next;
+                j = j.getNext();
             }
         }
     }
