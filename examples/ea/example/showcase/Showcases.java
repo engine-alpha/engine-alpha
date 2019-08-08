@@ -75,7 +75,7 @@ public class Showcases extends Scene {
             box.setLayerPosition(0);
             text.setLayerPosition(1);
             text.setPosition(x, y);
-            text.move(20, 10);
+            text.moveBy(20, 10);
 
             this.sceneCreator = sceneCreator;
             updateUI();

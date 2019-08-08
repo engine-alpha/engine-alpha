@@ -6,10 +6,10 @@ public interface EduGeometrie
 extends EduActor {
 
     default void setzeFarbe(String farbe) {
-        ((Geometry)getActor()).setColor(Spiel.stringToColor(farbe));
+        ((Geometry)getActor()).setColor(Spiel.konvertiereVonFarbname(farbe));
     }
 
     default String nenneFarbe() {
-        return Spiel.colorToString(((Geometry)getActor()).getColor());
+        return Spiel.konvertiereZuFarbname(((Geometry)getActor()).getColor());
     }
 }

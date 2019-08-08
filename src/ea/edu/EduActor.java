@@ -75,7 +75,7 @@ public interface EduActor {
 
     @API
     default void verschieben(float dX, float dY) {
-        getActor().move(dX, dY);
+        getActor().moveBy(dX, dY);
     }
 
     @API

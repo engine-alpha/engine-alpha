@@ -88,7 +88,7 @@ public class EduScene extends Scene {
 
             Vector move = new Vector(dX, dY).multiply(deltaSeconds);
 
-            getCamera().move(move.x, move.y);
+            getCamera().moveBy(move.x, move.y);
         });
 
         activeLayer.getMouseWheelListeners().add(event -> {
@@ -137,12 +137,12 @@ public class EduScene extends Scene {
         layerHashMap.put(layerName, layer);
     }
 
-    public void setLayerParallax(String layerName, float px, float py, float pz) {
+    public void setLayerParallax(String layerName, float x, float y, float zoom) {
         assertLayerHashMapContains(layerName, true);
 
         Layer layer = layerHashMap.get(layerName);
-        layer.setParallaxPosition(px, py);
-        layer.setParallaxZoom(pz);
+        layer.setParallaxPosition(x, y);
+        layer.setParallaxZoom(zoom);
     }
 
     public void setLayerTimeDistort(String layerName, float tpx) {
@@ -156,6 +156,10 @@ public class EduScene extends Scene {
         assertLayerHashMapContains(layerName, true);
 
         activeLayer = layerHashMap.get(layerName);
+    }
+
+    public Layer getActiveLayer() {
+        return activeLayer;
     }
 
     public void resetToMainLayer() {
@@ -213,9 +217,9 @@ public class EduScene extends Scene {
         removeListener(o, sceneKeyListeners, activeLayer.getKeyListeners());
     }
 
-    public void addEduTicker(Ticker o, float intervall) {
-        FrameUpdateListener periodicTask = new PeriodicTask(intervall, o::tick);
-        addListener(o, sceneTickers, activeLayer.getFrameUpdateListeners(), periodicTask);
+    public void addEduTicker(float intervall, Ticker ticket) {
+        FrameUpdateListener periodicTask = new PeriodicTask(intervall, ticket::tick);
+        addListener(ticket, sceneTickers, activeLayer.getFrameUpdateListeners(), periodicTask);
     }
 
     public void removeEduTicker(Ticker o) {

@@ -184,6 +184,16 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     /**
+     * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb des Hauptlayers der Scene</b> wirkt.
+     *
+     * @param gravityInNewton Die neue Schwerkraft als Vector. Die Einheit ist <b>[N]</b>.
+     */
+    @API
+    public void setGravity(Vector gravityInNewton) {
+        this.worldHandler.getWorld().setGravity(gravityInNewton.toVec2());
+    }
+
+    /**
      * Setzt, ob dieses Layer sichtbar sein soll.
      *
      * @param visible <code>true</code>: Das Layer ist sichtbar, wenn es an einer Szene angemeldet ist.

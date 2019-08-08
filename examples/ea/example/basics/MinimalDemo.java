@@ -82,10 +82,10 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     public void onKeyDown(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_RIGHT:
-                rectangle.move(50, 0);
+                rectangle.moveBy(50, 0);
                 break;
             case KeyEvent.VK_LEFT:
-                rectangle.move(-50, 0);
+                rectangle.moveBy(-50, 0);
                 break;
             case KeyEvent.VK_C:
                 character.setState("midair");
@@ -105,16 +105,16 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     public void onFrameUpdate(float deltaSeconds) {
         if (Game.isKeyPressed(KeyEvent.VK_W)) {
             //W ist gedrückt -> Kamera nach oben bewegen.
-            getCamera().move(0, CAM_SPEED * deltaSeconds);
+            getCamera().moveBy(0, CAM_SPEED * deltaSeconds);
         }
         if (Game.isKeyPressed(KeyEvent.VK_S)) {
-            getCamera().move(0, -CAM_SPEED * deltaSeconds);
+            getCamera().moveBy(0, -CAM_SPEED * deltaSeconds);
         }
         if (Game.isKeyPressed(KeyEvent.VK_A)) {
-            getCamera().move(-CAM_SPEED * deltaSeconds, 0);
+            getCamera().moveBy(-CAM_SPEED * deltaSeconds, 0);
         }
         if (Game.isKeyPressed(KeyEvent.VK_D)) {
-            getCamera().move(CAM_SPEED * deltaSeconds, 0);
+            getCamera().moveBy(CAM_SPEED * deltaSeconds, 0);
         }
     }
 }

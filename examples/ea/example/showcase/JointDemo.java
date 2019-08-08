@@ -100,8 +100,8 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
 
         Vector verzug = new Vector(100, 100);
 
-        wippe.move(verzug);
-        basis.move(verzug);
+        wippe.moveBy(verzug);
+        basis.moveBy(verzug);
 
         wippe.createRevoluteJoint(basis, new Vector(50, 0).add(verzug));
     }
@@ -112,7 +112,7 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
         for (int i = 0; i < kette.length; i++) {
             kette[i] = new Rectangle(50, 10);
             Vector posrel = new Vector(45 * i, 30);
-            kette[i].move(posrel);
+            kette[i].moveBy(posrel);
             kette[i].setColor(Color.GREEN);
 
             kette[i].setBodyType(i == 0 ? BodyType.STATIC : BodyType.DYNAMIC);

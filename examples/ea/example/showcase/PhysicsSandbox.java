@@ -138,7 +138,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         super(parent);
         this.FRAME_WIDHT = frame_width;
         this.FRAME_HEIGHT = frame_height;
-        getCamera().move(
+        getCamera().moveBy(
                 FRAME_WIDHT/4,
                 FRAME_HEIGHT/4
         );

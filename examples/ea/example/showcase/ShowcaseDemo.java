@@ -51,7 +51,7 @@ public abstract class ShowcaseDemo extends Scene {
                 dX = CAMERA_SPEED * i;
             }
             if (dX != 0 || dY != 0) {
-                getCamera().move(dX, dY);
+                getCamera().moveBy(dX, dY);
             }
         });
 

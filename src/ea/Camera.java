@@ -197,7 +197,7 @@ public final class Camera {
      * @param y Die Verschiebung in <code>getY</code>-Richtung.
      */
     @API
-    public void move(float x, float y) {
+    public void moveBy(float x, float y) {
         this.position = this.position.add(new Vector(x, y));
     }
 
@@ -214,7 +214,7 @@ public final class Camera {
     }
 
     @API
-    public void rotate(float radians) {
+    public void rotateBy(float radians) {
         this.rotation += radians;
     }
 

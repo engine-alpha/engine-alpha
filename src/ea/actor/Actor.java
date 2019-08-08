@@ -970,7 +970,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public void setPosition(Vector p) {
-        this.move(new Vector(p.x - this.getX(), p.y - this.getY()));
+        this.moveBy(new Vector(p.x - this.getX(), p.y - this.getY()));
     }
 
     /**
@@ -980,10 +980,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param v Der Vector, der die Verschiebung des Objekts angibt.
      *
      * @see Vector
-     * @see #move(float, float)
+     * @see #moveBy(float, float)
      */
     @API
-    public void move(Vector v) {
+    public void moveBy(Vector v) {
         synchronized (physicsHandlerLock) {
             physicsHandler.moveBy(v);
         }
@@ -1000,7 +1000,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param y Die <code>getY</code>-Koordinate des neuen Mittelpunktes des Objektes
      *
      * @see #setCenter(Vector)
-     * @see #move(Vector)
+     * @see #moveBy(Vector)
      * @see #setPosition(float, float)
      * @see #setPosition(Vector)
      * @see #getCenter()
@@ -1020,13 +1020,13 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param p Der neue Mittelpunkt des Actor-Objekts
      *
      * @see #setCenter(float, float)
-     * @see #move(Vector)
+     * @see #moveBy(Vector)
      * @see #setPosition(float, float)
      * @see #getCenter()
      */
     @API
     public void setCenter(Vector p) {
-        this.move(this.getCenter().negate().add(p));
+        this.moveBy(this.getCenter().negate().add(p));
     }
 
     /**
@@ -1056,7 +1056,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public void setX(float x) {
-        this.move(x - getX(), 0);
+        this.moveBy(x - getX(), 0);
     }
 
     /**
@@ -1089,7 +1089,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public void setY(float y) {
-        this.move(0, y - getY());
+        this.moveBy(0, y - getY());
     }
 
     /**
@@ -1119,11 +1119,11 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param dX Die Verschiebung in Richtung X
      * @param dY Die Verschiebung in Richtung Y
      *
-     * @see #move(Vector)
+     * @see #moveBy(Vector)
      */
     @API
-    public void move(float dX, float dY) {
-        this.move(new Vector(dX, dY));
+    public void moveBy(float dX, float dY) {
+        this.moveBy(new Vector(dX, dY));
     }
 
     /**

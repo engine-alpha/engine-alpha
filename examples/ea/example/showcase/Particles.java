@@ -123,7 +123,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
     @Override
     public void onKeyDown(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LESS) {
-            getCamera().rotate(0.1f);
+            getCamera().rotateBy(0.1f);
         }
     }
 }

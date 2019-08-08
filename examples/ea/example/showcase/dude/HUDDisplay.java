@@ -64,7 +64,7 @@ public class HUDDisplay {
         lines = new TileContainer(VALUE_LENGTH, 4, 8 * SCALE, 16 * SCALE);
         background.setPosition(x, y);
         lines.setPosition(x, y);
-        lines.move(5 * 8 * SCALE, 0);
+        lines.moveBy(5 * 8 * SCALE, 0);
 
         setLineValue(0, 10, true);
         setLineValue(1, 0, false);

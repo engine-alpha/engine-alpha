@@ -264,7 +264,7 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      */
     @API
     public void setGravity(Vector gravityInNewton) {
-        mainLayer.getWorldHandler().getWorld().setGravity(new Vec2(gravityInNewton.x, gravityInNewton.y));
+        mainLayer.setGravity(gravityInNewton);
     }
 
     /**

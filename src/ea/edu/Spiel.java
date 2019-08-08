@@ -6,11 +6,12 @@ import ea.actor.Actor;
 import ea.edu.event.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.util.Logger;
-import org.jbox2d.common.Vec2;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Diese Klasse steuert die EDU-Version. Sie ist Schnittstelle für:
@@ -20,21 +21,44 @@ import java.util.HashMap;
  * </ul>
  *
  * @author Michael Andonie
+ * @author Niklas Keller
  */
 public class Spiel {
 
-    private static final HashMap<String, Color> stringToColor = new HashMap<>();
-    private static final HashMap<Color, String> colorToString = new HashMap<>();
+    public static final String STANDARD_TITEL = "Engine Alpha - EDU Version";
+    public static final int STANDARD_BREITE = 800;
+    public static final int STANDARD_HOEHE = 600;
+
     static final HashMap<Actor, EduActor> actorToInterfaceMap = new HashMap<>();
 
-    private static final HashMap<String, EduScene> sceneMap = new HashMap<>();
+    private static final HashMap<String, Color> farben = new HashMap<>();
+    private static final HashMap<String, EduScene> szenen = new HashMap<>();
 
-    public static final String DEFAULT_EDU_DIALOG_TITLE = "Engine Alpha - EDU Version";
+    private static final Color COLOR_LILA = new Color(145, 19, 255);
+    private static final Color COLOR_ORANGE = new Color(255, 116, 0);
+    private static final Color COLOR_BRAUN = new Color(119, 77, 50);
+    private static final Color COLOR_HELLBLAU = new Color(0, 194, 255);
+    private static final Color COLOR_DUNKELBLAU = new Color(21, 0, 137);
+    private static final Color COLOR_HELLGRUEN = new Color(157, 255, 0);
+    private static final Color COLOR_DUNKELGRUEN = new Color(11, 71, 0);
 
-    private static int frame_width = 800;
-    private static int frame_height = 600;
+    private static int fensterBreite = STANDARD_BREITE;
+    private static int fensterHoehe = STANDARD_HOEHE;
 
-    /* ~~~ EDU-UTILITY ~~~*/
+    @API
+    public static void parallel(Runnable runnable) {
+        new Thread(runnable).start();
+    }
+
+    @API
+    public static <T> void parallel(Consumer<T> runnable, T argument) {
+        parallel(() -> runnable.accept(argument));
+    }
+
+    @API
+    public static <T1, T2> void parallel(BiConsumer<T1, T2> runnable, T1 argument1, T2 argument2) {
+        parallel(() -> runnable.accept(argument1, argument2));
+    }
 
     /**
      * Fügt eine String-awt/Color-Zuordnung zu.
@@ -42,88 +66,71 @@ public class Spiel {
      * @param string Ein String (lowercase)
      * @param color  Eine Color
      */
-    private static void addC(String string, Color color) {
-        stringToColor.put(string, color);
-        colorToString.put(color, string);
+    private static void farbeHinzufuegen(String string, Color color) {
+        farben.put(string, color);
     }
 
     /**
      * Diese Methode ordnet einem String ein Color-Objekt zu.<br> Hierdurch ist in den Klassen
      * außerhalb der Engine keine awt-Klasse nötig.
      *
-     * @param t Der Name der Farbe.
+     * @param farbname Der Name der Farbe.
      *
      * @return Das Farbobjekt zum String; ist Color.black bei unzuordnembaren String
      */
     @Internal
-    public static Color stringToColor(String t) {
-        Color res = stringToColor.get(t.toLowerCase());
-        if (res == null) {
-            throw new IllegalArgumentException("Eine Farbe mit dem Namen " + t + " ist der Engine nicht bekannt.");
-        } else {
-            return res;
+    public static Color konvertiereVonFarbname(String farbname) {
+        Color color = farben.get(farbname.toLowerCase());
+        if (color == null) {
+            throw new IllegalArgumentException("Eine Farbe mit dem Namen " + farbname + " ist der Engine nicht bekannt");
         }
+
+        return color;
     }
 
     /**
-     * Reverse-Lookup für Farbzuordnung
+     * Reverse-Lookup für Farbzuordnung.
      */
-    public static String colorToString(Color color) {
-        String res = colorToString.get(color);
-        if (res == null) {
-            return "unbekannt";
-        } else {
-            return res;
-        }
+    @Internal
+    public static String konvertiereZuFarbname(Color color) {
+        return farben.entrySet().stream() //
+                .filter(entry -> entry.getValue().equals(color)) //
+                .map(Map.Entry::getKey) //
+                .findFirst() //
+                .orElse("unbekannt");
     }
-
-
-    /* ~~~ STEUERUNG & KAPSELUNG ~~~*/
-
-    public static final Color COLOR_LILA = new Color(145, 19, 255);
-    public static final Color COLOR_ORANGE = new Color(255, 116, 0);
-    public static final Color COLOR_BRAUN = new Color(119, 77, 50);
-    public static final Color COLOR_HELLBLAU = new Color(0, 194, 255);
-    public static final Color COLOR_DUNKELBLAU = new Color(21, 0, 137);
-    public static final Color COLOR_HELLGRUEN = new Color(157, 255, 0);
-    public static final Color COLOR_DUNKELGRUEN = new Color(11, 71, 0);
 
     static {
-        //Fülle alle Farbzuweisungen hinzu
-        addC("gelb", Color.YELLOW);
-        addC("weiss", Color.WHITE);
-        stringToColor.put("weiß", Color.WHITE);
-        addC("orange", COLOR_ORANGE);
-        addC("grau", Color.GRAY);
-        addC("gruen", Color.GREEN);
-        stringToColor.put("grün", Color.GREEN);
-        addC("blau", Color.BLUE);
-        addC("rot", Color.RED);
-        addC("pink", Color.PINK);
-        addC("magenta", Color.MAGENTA);
-        addC("lila", COLOR_LILA);
-        addC("cyan", Color.CYAN);
-        stringToColor.put("tuerkis", Color.CYAN);
-        stringToColor.put("türkis", Color.CYAN);
-        addC("dunkelgrau", Color.DARK_GRAY);
-        addC("hellgrau", Color.LIGHT_GRAY);
-        addC("braun", COLOR_BRAUN);
-        addC("schwarz", Color.BLACK);
-        addC("hellblau", COLOR_HELLBLAU);
-        addC("dunkelblau", COLOR_DUNKELBLAU);
-        addC("hellgruen", COLOR_HELLGRUEN);
-        stringToColor.put("hellgrün", COLOR_HELLGRUEN);
-        addC("dunkelgruen", COLOR_DUNKELGRUEN);
-        stringToColor.put("dunkelgrün", COLOR_DUNKELGRUEN);
-
-        //Startup-Game
-
+        // Fülle alle Farbzuweisungen hinzu
+        farbeHinzufuegen("gelb", Color.YELLOW);
+        farbeHinzufuegen("weiss", Color.WHITE);
+        farbeHinzufuegen("weiß", Color.WHITE);
+        farbeHinzufuegen("orange", COLOR_ORANGE);
+        farbeHinzufuegen("grau", Color.GRAY);
+        farbeHinzufuegen("gruen", Color.GREEN);
+        farbeHinzufuegen("grün", Color.GREEN);
+        farbeHinzufuegen("blau", Color.BLUE);
+        farbeHinzufuegen("rot", Color.RED);
+        farbeHinzufuegen("pink", Color.PINK);
+        farbeHinzufuegen("magenta", Color.MAGENTA);
+        farbeHinzufuegen("lila", COLOR_LILA);
+        farbeHinzufuegen("cyan", Color.CYAN);
+        farbeHinzufuegen("tuerkis", Color.CYAN);
+        farbeHinzufuegen("türkis", Color.CYAN);
+        farbeHinzufuegen("dunkelgrau", Color.DARK_GRAY);
+        farbeHinzufuegen("hellgrau", Color.LIGHT_GRAY);
+        farbeHinzufuegen("braun", COLOR_BRAUN);
+        farbeHinzufuegen("schwarz", Color.BLACK);
+        farbeHinzufuegen("hellblau", COLOR_HELLBLAU);
+        farbeHinzufuegen("dunkelblau", COLOR_DUNKELBLAU);
+        farbeHinzufuegen("hellgruen", COLOR_HELLGRUEN);
+        farbeHinzufuegen("hellgrün", COLOR_HELLGRUEN);
+        farbeHinzufuegen("dunkelgruen", COLOR_DUNKELGRUEN);
+        farbeHinzufuegen("dunkelgrün", COLOR_DUNKELGRUEN);
     }
 
-    /* ~~ Game Frame ~~ */
-
     /**
-     * Setzt die Groesse des Engine-Fensters.
+     * Setzt die Größe des Engine-Fensters.
      *
      * @param breite Fenster-Breite
      * @param hoehe  Fenster-Hoehe
@@ -131,23 +138,25 @@ public class Spiel {
     @API
     public static void setzeFensterGroesse(int breite, int hoehe) {
         if (activeScene != null) {
-            throw new RuntimeException("setzeFensterGroesse kann nur aufgerufen werden, bevor " + "das erste grafische Objekt erzeugt wurde.");
+            throw new RuntimeException("setzeFensterGroesse() kann nur aufgerufen werden, bevor das erste grafische Objekt erzeugt wurde");
         }
-        if (breite < 0 || hoehe < 0) {
-            throw new RuntimeException("Die Fenstergroesse (Breite sowie Höhe) muss jeweils > 0 sein. " + "Eingabe war: " + breite + " Breite und " + hoehe + " Höhe");
+
+        if (breite <= 0 || hoehe <= 0) {
+            throw new RuntimeException("Die Fenstermaße (Breite sowie Höhe) müssen jeweils größer als 0 sein. Eingabe war: " + breite + " Breite und " + hoehe + " Höhe");
         }
-        frame_width = breite;
-        frame_height = hoehe;
+
+        fensterBreite = breite;
+        fensterHoehe = hoehe;
     }
 
     /**
-     * Stellt, ob das Hilfs-Raster, das die Koordinatenachsen visualisiert, dargestellt werden soll.
+     * Setzt, ob das Hilfs-Raster, das die Koordinatenachsen visualisiert, dargestellt werden soll.
      *
      * @param sichtbar ist dieser Wert <code>true</code>, wird das Raster dargestellt. Ist er <code>false</code>,
      *                 wird das Raster deaktiviert.
      */
     @API
-    public void rasterSichtbarSetzen(boolean sichtbar) {
+    public void setzeRasterSichtbar(boolean sichtbar) {
         Game.setDebug(sichtbar);
     }
 
@@ -163,16 +172,16 @@ public class Spiel {
         getActiveScene().setExploreMode(aktiv);
     }
 
-    /* ~~ Scene Transitions ~~ */
-
+    @SuppressWarnings ( "StaticVariableOfConcreteClass" )
     private static EduScene activeScene;
 
     @Internal
     static EduScene getActiveScene() {
         if (activeScene == null) {
             activeScene = new EduScene();
-            new Thread(() -> Game.start(frame_width, frame_height, activeScene)).start();
+            parallel(() -> Game.start(fensterBreite, fensterHoehe, activeScene));
         }
+
         return activeScene;
     }
 
@@ -188,16 +197,17 @@ public class Spiel {
      *
      * @param name Der Name für die Szene.
      *
-     * @see #setzeSzene(String)
+     * @see #setzeAktiveSzene(String)
      */
     @API
-    public void benenneSzene(String name) {
-        if (getActiveScene().getSceneName() != null) {
-            Logger.error("EDU", "Die Szene hat bereits einen Namen: " + getActiveScene().getSceneName());
-            return;
+    public void benenneAktiveSzene(String name) {
+        EduScene activeScene = getActiveScene();
+        if (activeScene.getSceneName() != null) {
+            throw new RuntimeException("Die Szene hat bereits einen Namen: " + activeScene.getSceneName());
         }
+
         activeScene.setSceneName(name);
-        sceneMap.put(name, activeScene);
+        szenen.put(name, activeScene);
     }
 
     /**
@@ -209,30 +219,28 @@ public class Spiel {
      * <li>Werden alle grafischen Objekte, die ab sofort erstellt werden, in der neuen Szene eingesetzt.</li>
      * </ul>
      *
-     * @see #benenneSzene(String)
+     * @see #benenneAktiveSzene(String)
      */
     @API
-    public void neueSzene() {
-        EduScene newScene = new EduScene();
-        newScene.setGravity(new Vector(0, -9.81f));
-        setActiveScene(newScene);
+    public void erstelleNeueSzene() {
+        setActiveScene(new EduScene());
     }
 
     /**
      * Setzt die aktive Szene. Wurde eine Szene benannt, so bleibt sie gespeichert und kann wieder aktiv gesetzt
      * werden.
      *
-     * @param szenenName der Name der aktiv zu setzenden Szene.
+     * @param name der Name der aktiv zu setzenden Szene.
      *
-     * @see #benenneSzene(String)
+     * @see #benenneAktiveSzene(String)
      */
     @API
-    public void setzeSzene(String szenenName) {
-        EduScene scene = sceneMap.get(szenenName);
+    public void setzeAktiveSzene(String name) {
+        EduScene scene = szenen.get(name);
         if (scene == null) {
-            Logger.error("EDU", "Konnte keine Szene mit dem Namen " + szenenName + " finden.");
-            return;
+            throw new RuntimeException("Konnte keine Szene mit dem Namen '" + name + "' finden");
         }
+
         setActiveScene(scene);
     }
 
@@ -242,15 +250,13 @@ public class Spiel {
      * @return Ein String Array. Jeder Eintrag entspricht dem Namen einer der gespeicherten Szenen des Spiels.
      * Szenen, die nicht benannt wurden, haben keinen Namen und werden daher nicht mit aufgelistet.
      *
-     * @see #neueSzene()
-     * @see #benenneSzene(String)
+     * @see #erstelleNeueSzene()
+     * @see #benenneAktiveSzene(String)
      */
     @API
     public String[] nenneSzenenNamen() {
-        return (String[]) sceneMap.keySet().toArray();
+        return szenen.keySet().toArray(new String[0]);
     }
-
-    /* _____________________________ LAYER CONTROLS _____________________________ */
 
     /**
      * Fügt der <b>derzeit aktiven Szene</b> eine neue Ebene hinzu.
@@ -263,17 +269,17 @@ public class Spiel {
      *                       Die Hauptebene hat die Position 0.
      */
     @API
-    public void macheNeueEbene(String ebenenName, int ebenenPosition) {
+    public void erstelleNeueEbene(String ebenenName, int ebenenPosition) {
         getActiveScene().addLayer(ebenenName, ebenenPosition);
     }
 
     @API
-    public void setzeEbenenParallaxe(String ebenenName, float px, float py, float pz) {
-        getActiveScene().setLayerParallax(ebenenName, px, py, pz);
+    public void setzeEbenenParallaxe(String ebenenName, float x, float y, float zoom) {
+        getActiveScene().setLayerParallax(ebenenName, x, y, zoom);
     }
 
     @API
-    public void setzeEbenenZeitVerzerrung(String ebenenName, float zeitverzerrung) {
+    public void setzeEbenenZeitverzerrung(String ebenenName, float zeitverzerrung) {
         getActiveScene().setLayerTimeDistort(ebenenName, zeitverzerrung);
     }
 
@@ -283,7 +289,7 @@ public class Spiel {
     }
 
     @API
-    public void setzeAufHauptebeneZurueck() {
+    public void setzeAktiveEbeneAufHauptebene() {
         getActiveScene().resetToMainLayer();
     }
 
@@ -292,19 +298,17 @@ public class Spiel {
      *
      * @return Ein String Array. Jeder Eintrag entspricht dem Namen einer Ebene in der aktiven Szene des Spiels.
      *
-     * @see #macheNeueEbene(String, int)
-     * @see #setzeSzene(String)
+     * @see #erstelleNeueEbene(String, int)
+     * @see #setzeAktiveSzene(String)
      */
     @API
-    public String[] nenneEbenenNamenDerAktivenSzene() {
+    public String[] nenneEbenennamenVonAktiverSzene() {
         return getActiveScene().getLayerNames();
     }
 
-    /* ~~~ CAMERA CONTROL ~~~ */
-
     @API
-    public void verschiebeKamera(float dX, float dY) {
-        getActiveScene().getCamera().move(dX, dY);
+    public void verschiebeKamera(float x, float y) {
+        getActiveScene().getCamera().moveBy(x, y);
     }
 
     @API
@@ -318,50 +322,44 @@ public class Spiel {
     }
 
     @API
-    public void setzeKameraFokus(EduActor focus) {
-        getActiveScene().getCamera().setFocus(focus.getActor());
+    public void setzeKameraFokus(EduActor fokus) {
+        getActiveScene().getCamera().setFocus(fokus.getActor());
     }
 
     @API
-    public void rotiereKamera(float winkelInBogenmass) {
-        getActiveScene().getCamera().rotate(winkelInBogenmass);
+    public void rotiereKamera(float winkelInGrad) {
+        getActiveScene().getCamera().rotateBy(winkelInGrad);
     }
 
     @API
-    public void setzeKameraRotation(float winkelInBogenmass) {
-        getActiveScene().getCamera().rotateTo(winkelInBogenmass);
+    public void setzeKameraRotation(float winkelInGrad) {
+        getActiveScene().getCamera().rotateTo(winkelInGrad);
     }
-
-    /* ~~~ GLOBAL WORLD PHYSICS ~~~ */
 
     @API
     public void setzeSchwerkraft(float schwerkraft) {
-        getActiveScene().getWorldHandler().getWorld().setGravity(new Vec2(0, -schwerkraft));
-    }
-
-    /* ~~~ Dialogues ~~~ */
-
-    @API
-    public void nachricht(String nachricht) {
-        Game.showMessage(nachricht, DEFAULT_EDU_DIALOG_TITLE);
+        getActiveScene().getActiveLayer().setGravity(new Vector(0, -schwerkraft));
     }
 
     @API
-    public boolean frageJaNein(String frage) {
-        return Game.requestYesNo(frage, DEFAULT_EDU_DIALOG_TITLE);
+    public void zeigeNachricht(String nachricht) {
+        Game.showMessage(nachricht, STANDARD_TITEL);
     }
 
     @API
-    public boolean nachrichtOkAbbrechen(String frage) {
-        return Game.requestOkCancel(frage, DEFAULT_EDU_DIALOG_TITLE);
+    public boolean zeigeNachrichtMitBestaetigung(String frage) {
+        return Game.requestOkCancel(frage, STANDARD_TITEL);
     }
 
     @API
-    public String eingabe(String nachricht) {
-        return Game.requestStringInput(nachricht, DEFAULT_EDU_DIALOG_TITLE);
+    public boolean zeigeNachrichtMitJaNein(String frage) {
+        return Game.requestYesNo(frage, STANDARD_TITEL);
     }
 
-    /* ~~~ Listener Addition ~~~ */
+    @API
+    public String zeigeNachrichtMitEingabe(String nachricht) {
+        return Game.requestStringInput(nachricht, STANDARD_TITEL);
+    }
 
     /**
      * Meldet ein Objekt an, das ab sofort auf Mausklicks reagieren wird.<br> Intern laesst sich
@@ -371,16 +369,16 @@ public class Spiel {
      * Methode diesen Namens MUSS existieren!!<br> public abstract void klickReagieren(int x, int
      * y);<br> }</code>
      *
-     * @param client Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
+     * @param mausKlickReagierbar Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
      */
     @API
-    public void mausKlickReagierbarAnmelden(MausKlickReagierbar client) {
-        getActiveScene().addEduClickListener(client);
+    public void registriereMausKlickReagierbar(MausKlickReagierbar mausKlickReagierbar) {
+        getActiveScene().addEduClickListener(mausKlickReagierbar);
     }
 
     @API
-    public void mausKlickReagierbarAbmelden(MausKlickReagierbar klickReagierbar) {
-        getActiveScene().removeEduClickListener(klickReagierbar);
+    public void entferneMausKlickReagierbar(MausKlickReagierbar mausKlickReagierbar) {
+        getActiveScene().removeEduClickListener(mausKlickReagierbar);
     }
 
     /**
@@ -389,16 +387,16 @@ public class Spiel {
      * angemeldet werden, die Instanzen des EDU-<code>TASTENREAGIERBARANMELDEN</code>-Interfaces
      * sind!!</i>
      *
-     * @param o Das anzumeldende Objekt. Dieses wird ab sofort above jeden Tastendruck informiert.
+     * @param tastenReagierbar Das anzumeldende Objekt. Dieses wird ab sofort above jeden Tastendruck informiert.
      */
     @API
-    public void tastenReagierbarAnmelden(TastenReagierbar o) {
-        getActiveScene().addEduKeyListener(o);
+    public void registriereTastenReagierbar(TastenReagierbar tastenReagierbar) {
+        getActiveScene().addEduKeyListener(tastenReagierbar);
     }
 
     @API
-    public void tasteReagierbarAbmelden(TastenReagierbar o) {
-        getActiveScene().removeEduKeyListener(o);
+    public void entferneTastenReagierbar(TastenReagierbar tastenReagierbar) {
+        getActiveScene().removeEduKeyListener(tastenReagierbar);
     }
 
     /**
@@ -406,26 +404,26 @@ public class Spiel {
      * Klasse anmelden!<br> Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des
      * EDU-<code>TICKER</code>-Interfaces sind!!</i>
      *
-     * @param o                   Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br> Es
+     * @param ticker              Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br> Es
      *                            <b>MUSS</b>
      *                            eine Methode <code>tick()</code> haben.
      * @param intervallInSekunden Das Intervall in Sekunden, in dem das anzumeldende Objekt aufgerufen.
      */
     @API
-    public void tickerAnmelden(Ticker o, float intervallInSekunden) {
-        getActiveScene().addEduTicker(o, intervallInSekunden);
+    public void registriereTicket(float intervallInSekunden, Ticker ticker) {
+        getActiveScene().addEduTicker(intervallInSekunden, ticker);
     }
 
     /**
      * Meldet einen "Ticker" ab.
      *
-     * @param o Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
+     * @param ticket Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
      *
-     * @see #tickerAnmelden(Ticker, float)
+     * @see #registriereTicket(float, Ticker)
      */
     @API
-    public void tickerAbmelden(Ticker o) {
-        getActiveScene().removeEduTicker(o);
+    public void entferneTicker(Ticker ticket) {
+        getActiveScene().removeEduTicker(ticket);
     }
 
     /**
@@ -433,51 +431,52 @@ public class Spiel {
      * <code>bildAktualisierungReagieren(int ms)</code> informiert wird (Parameter gibt die Anzahl an Millisekunden an,
      * die seit dem letzten Frame-Update vergangen sind.
      *
-     * @param o Ein beliebiges Objekt. Hat das Objekt keine Methode mit der Signatur
-     *          <code>bildAktualisierungReagieren(int)</code>, so passiert nichts. Andernfalls wird ab sofort zu jedem
-     *          Frame-Update der <b>aktuellen</b> Szene die Methode ausgeführt.
+     * @param bildAktualisierungReagierbar Ein beliebiges Objekt. Hat das Objekt keine Methode mit der Signatur
+     *                                     <code>bildAktualisierungReagieren(int)</code>, so passiert nichts.
+     *                                     Andernfalls wird ab sofort zu jedem
+     *                                     Frame-Update der <b>aktuellen</b> Szene die Methode ausgeführt.
      *
-     * @see #bildAktualisierungReagierbarAbmelden(BildAktualisierungReagierbar)
+     * @see #entferneBildAktualisierungReagierbar(BildAktualisierungReagierbar)
      */
     @API
-    public void bildAktualisierungReagierbarAnmelden(BildAktualisierungReagierbar o) {
-        getActiveScene().addEduFrameUpdateListener(o);
+    public void registriereBildAktualisierungReagierbar(BildAktualisierungReagierbar bildAktualisierungReagierbar) {
+        getActiveScene().addEduFrameUpdateListener(bildAktualisierungReagierbar);
     }
 
     /**
      * Entfernt einen pro-forma Frameupdate-Listener von der <b>aktiven</b> Szene.
      *
-     * @param o Das zu entfernende Objekt. War es nie angemeldet, so passiert nichts.
+     * @param bildAktualisierungReagierbar Das zu entfernende Objekt. War es nie angemeldet, so passiert nichts.
      *
-     * @see #bildAktualisierungReagierbarAnmelden(BildAktualisierungReagierbar)
+     * @see #registriereBildAktualisierungReagierbar(BildAktualisierungReagierbar)
      */
     @API
-    public void bildAktualisierungReagierbarAbmelden(BildAktualisierungReagierbar o) {
-        getActiveScene().removeEduFrameUpdateListener(o);
+    public void entferneBildAktualisierungReagierbar(BildAktualisierungReagierbar bildAktualisierungReagierbar) {
+        getActiveScene().removeEduFrameUpdateListener(bildAktualisierungReagierbar);
     }
 
     /**
      * Meldet einen MausRad-Listener an der <b>aktiven</b> Szene an.
      *
-     * @param o Ein Objekt mit einer Methode mit Signatur <code>mausRadReagieren(float)</code>
+     * @param mausRadReagierbar Ein Objekt mit einer Methode mit Signatur <code>mausRadReagieren(float)</code>
      *
-     * @see #mausRadReagierbarAbmelden(MausRadReagierbar)
+     * @see #entferneMausRadReagierbar(MausRadReagierbar)
      */
     @API
-    public void mausRadReagierbarAnmelden(MausRadReagierbar o) {
-        getActiveScene().addEduMouseWheelListener(o);
+    public void registriereMausRadReagierbar(MausRadReagierbar mausRadReagierbar) {
+        getActiveScene().addEduMouseWheelListener(mausRadReagierbar);
     }
 
     /**
      * Meldet einen MausRad-Listener an der <b>aktiven</b> Szene ab.
      *
-     * @param o Der abzumeldende Mausrad-Listener
+     * @param mausRadReagierbar Der abzumeldende Mausrad-Listener
      *
-     * @see #mausRadReagierbarAnmelden(MausRadReagierbar)
+     * @see #registriereMausRadReagierbar(MausRadReagierbar)
      */
     @API
-    public void mausRadReagierbarAbmelden(MausRadReagierbar o) {
-        getActiveScene().removeEduMouseWheelListener(o);
+    public void entferneMausRadReagierbar(MausRadReagierbar mausRadReagierbar) {
+        getActiveScene().removeEduMouseWheelListener(mausRadReagierbar);
     }
 
     /**
@@ -485,10 +484,10 @@ public class Spiel {
      *
      * @return Die X-Koordinate der Maus auf der Spielebene (in Meter)
      *
-     * @see #aktuelleMausPositionY()
+     * @see #nenneMausPositionY()
      */
     @API
-    public float aktuelleMausPositionX() {
+    public float nenneMausPositionX() {
         return getActiveScene().getMousePosition().x;
     }
 
@@ -497,10 +496,10 @@ public class Spiel {
      *
      * @return Die Y-Koordinate der Maus auf der Spielebene (in Meter)
      *
-     * @see #aktuelleMausPositionX()
+     * @see #nenneMausPositionX()
      */
     @API
-    public float aktuelleMausPositionY() {
+    public float nenneMausPositionY() {
         return getActiveScene().getMousePosition().y;
     }
 }

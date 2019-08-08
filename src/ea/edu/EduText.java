@@ -16,7 +16,7 @@ public class EduText extends Text implements EduActor {
     }
 
     public void setzeFarbe(String farbe) {
-        super.setColor(Spiel.stringToColor(farbe));
+        super.setColor(Spiel.konvertiereVonFarbname(farbe));
     }
 
     public void setzeGroesse(int groesse) {
