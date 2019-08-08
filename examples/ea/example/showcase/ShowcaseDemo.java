@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 public abstract class ShowcaseDemo extends Scene {
 
     /**
-     * Geschwindigkeit der Camerabewegung pro Frame
+     * Geschwindigkeit der Camerabewegung pro Sekunde
      */
     private static final float CAMERA_SPEED = 7f;
 
@@ -41,14 +41,14 @@ public abstract class ShowcaseDemo extends Scene {
             //Smooth Camera Movement
             float dX = 0, dY = 0;
             if (Game.isKeyPressed(KeyEvent.VK_UP)) {
-                dY = CAMERA_SPEED;
+                dY = CAMERA_SPEED * i;
             } else if (Game.isKeyPressed(KeyEvent.VK_DOWN)) {
-                dY = -CAMERA_SPEED;
+                dY = -CAMERA_SPEED * i;
             }
             if (Game.isKeyPressed(KeyEvent.VK_LEFT)) {
-                dX = -CAMERA_SPEED;
+                dX = -CAMERA_SPEED * i;
             } else if (Game.isKeyPressed(KeyEvent.VK_RIGHT)) {
-                dX = CAMERA_SPEED;
+                dX = CAMERA_SPEED * i;
             }
             if (dX != 0 || dY != 0) {
                 getCamera().move(dX, dY);

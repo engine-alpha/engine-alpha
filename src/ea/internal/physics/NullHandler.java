@@ -2,7 +2,9 @@ package ea.internal.physics;
 
 import ea.Vector;
 import ea.actor.BodyType;
+import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
@@ -32,12 +34,25 @@ public class NullHandler implements PhysicsHandler {
         this.physicsData.setY(this.physicsData.getY() + v.y);
     }
 
-    /**
-     * Zentrum eines Objekts ohne Physik ist seine Positon
-     */
     @Override
     public Vector getCenter() {
-        return getPosition();
+        AABB bounds = null;
+        AABB shapeBounds = new AABB();
+        Transform transform = new Transform();
+
+        for (Shape shape : physicsData.getShapes().get()) {
+            transform.set(getPosition().toVec2(), (float) Math.toRadians(getRotation()));
+            shape.computeAABB(shapeBounds, transform, 0);
+
+            if (bounds != null) {
+                bounds.combine(shapeBounds);
+            } else {
+                bounds = new AABB();
+                bounds.set(shapeBounds);
+            }
+        }
+
+        return Vector.of(bounds.getCenter());
     }
 
     /**

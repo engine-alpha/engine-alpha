@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Die WorldHandler-Klasse ist die (nicht objektgebundene) Middleware zwischen der JBox2D Engine und
@@ -449,19 +448,27 @@ public class WorldHandler implements ContactListener {
     }
 
     @Internal
-    public static Joint createJoint(Actor a, Actor b, Function<WorldHandler, org.jbox2d.dynamics.joints.Joint> jointSupplier) {
+    public static Joint createJoint(Actor a, Actor b, JointBuilder jointBuilder) {
         List<org.jbox2d.dynamics.joints.Joint> jointList = new ArrayList<>();
+        Runnable destroyJoints = () -> {
+            while (!jointList.isEmpty()) {
+                org.jbox2d.dynamics.joints.Joint.destroy(jointList.remove(0));
+            }
+        };
 
-        List<Runnable> releases = addMountListener(a, b, worldHandler -> jointList.add(jointSupplier.apply(worldHandler)));
+        a.addUnmountListener(destroyJoints);
+        b.addUnmountListener(destroyJoints);
+
+        Collection<Runnable> releases = new ArrayList<>(addMountListener(a, b, worldHandler -> jointList.add(jointBuilder.createJoint(worldHandler.getWorld(), a.getPhysicsHandler().getBody(), b.getPhysicsHandler().getBody()))));
+        releases.add(() -> a.removeUnmountListener(destroyJoints));
+        releases.add(() -> b.removeUnmountListener(destroyJoints));
 
         return () -> Game.afterWorldStep(() -> {
             for (Runnable release : releases) {
                 release.run();
             }
 
-            while (!jointList.isEmpty()) {
-                org.jbox2d.dynamics.joints.Joint.destroy(jointList.remove(0));
-            }
+            destroyJoints.run();
         });
     }
 

@@ -44,8 +44,6 @@ public class Particles extends ShowcaseDemo implements KeyListener {
     public Particles(Scene parent) {
         super(parent);
 
-        Game.setTitle("Particles");
-
         Rectangle left = new Rectangle(200, 10);
         left.setPosition(-Showcases.WIDTH / 6 - 150, -50);
         left.rotateBy(-21);

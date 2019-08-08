@@ -10,6 +10,7 @@ import ea.actor.Text;
 import ea.event.MouseButton;
 import ea.event.MouseClickListener;
 import ea.example.showcase.billard.Billard;
+import ea.example.showcase.car.CarDemo;
 import ea.example.showcase.dude.DudeDemo;
 
 import java.awt.Color;
@@ -179,6 +180,7 @@ public class Showcases extends Scene {
         mainscene.addScene(() -> new DudeDemo(mainscene), "DudeDemo");
         mainscene.addScene(() -> new Billard(mainscene), "Billard");
         mainscene.addScene(() -> new Particles(mainscene), "Particles");
+        mainscene.addScene(() -> new CarDemo(mainscene), "Car Demo");
 
         Game.setDebug(false);
         Game.setExitOnEsc(false);

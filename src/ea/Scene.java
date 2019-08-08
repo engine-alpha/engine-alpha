@@ -25,10 +25,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.WorldHandler;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.joints.DistanceJoint;
-import org.jbox2d.dynamics.joints.Joint;
-import org.jbox2d.dynamics.joints.RevoluteJoint;
-import org.jbox2d.dynamics.joints.RopeJoint;
+import org.jbox2d.dynamics.joints.*;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -45,9 +42,11 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scene implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
-    public static final Color REVOLUTE_JOINT_COLOR = Color.blue;
+    public static final Color REVOLUTE_JOINT_COLOR = Color.BLUE;
     public static final Color ROPE_JOINT_COLOR = Color.CYAN;
     public static final Color DISTANCE_JOINT_COLOR = Color.ORANGE;
+    public static final Color PRISMATIC_JOINT_COLOR = Color.GREEN;
+
     /**
      * Die Kamera des Spiels. Hiermit kann der sichtbare Ausschnitt der Zeichenebene bestimmt und manipuliert werden.
      */
@@ -233,6 +232,8 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
             renderJointRectangle(g, ROPE_JOINT_COLOR, aInPx, bInPx, layer.calculatePixelPerMeter());
         } else if (j instanceof DistanceJoint) {
             renderJointRectangle(g, DISTANCE_JOINT_COLOR, aInPx, bInPx, layer.calculatePixelPerMeter());
+        } else if (j instanceof PrismaticJoint) {
+            renderJointRectangle(g, PRISMATIC_JOINT_COLOR, aInPx, bInPx, layer.calculatePixelPerMeter());
         }
     }
 

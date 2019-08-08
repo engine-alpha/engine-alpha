@@ -38,7 +38,7 @@ public abstract class Geometry extends Actor {
     /**
      * Die Farbe dieses Geometry-Objekts.
      */
-    private Color color;
+    private Color color = Color.WHITE;
 
     /**
      * Konstruktor.
