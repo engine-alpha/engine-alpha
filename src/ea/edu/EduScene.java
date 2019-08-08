@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class EduScene extends Scene {
     public static final String MAINLAYER_NAME = "Hauptebene";
-    private static final float EXPLORE_BASE_MOVE_PER_SEC = 20f;
+    private static final float EXPLORE_BASE_MOVE_PER_SEC = 100f;
 
     /* _____________________________ LISTENER LISTS _____________________________ */
 
@@ -95,7 +95,8 @@ public class EduScene extends Scene {
             if (!exploreMode) {
                 return;
             }
-            float factor = event.getPreciseWheelRotation() > 0 ? 1 + .3f * event.getPreciseWheelRotation() : 1 / (1 - .3f * event.getPreciseWheelRotation());
+            float wheelie = -event.getPreciseWheelRotation();
+            float factor = wheelie > 0 ? 1 + .3f * wheelie : 1 / (1 - .3f * wheelie);
             float newzoom = getCamera().getZoom() * factor;
             if (newzoom <= 0) {
                 return;
@@ -132,6 +133,7 @@ public class EduScene extends Scene {
 
         Layer layer = new Layer();
         layer.setLayerPosition(layerPosition);
+        addLayer(layer);
         layerHashMap.put(layerName, layer);
     }
 

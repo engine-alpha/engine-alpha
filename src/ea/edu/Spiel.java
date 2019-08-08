@@ -2,7 +2,6 @@ package ea.edu;
 
 import ea.Game;
 import ea.Vector;
-import ea.actor.Actor;
 import ea.edu.event.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -288,8 +287,8 @@ public class Spiel {
     }
 
     @API
-    public void setzeKameraFokus(Actor focus) {
-        getActiveScene().getCamera().setFocus(focus);
+    public void setzeKameraFokus(EduActor focus) {
+        getActiveScene().getCamera().setFocus(focus.getActor());
     }
 
     @API
