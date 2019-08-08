@@ -1,29 +1,22 @@
 package ea.edu;
 
-import ea.actor.Actor;
 import ea.actor.Circle;
+import ea.internal.annotations.API;
 
 /**
  * EDU-Variante von {@link Circle}.
  *
  * @author Michael Andonie
  */
-public class Kreis implements EduGeometrie {
-
-    private final Circle circle;
-
+@API
+public class Kreis extends EduGeometrie<Circle> {
     /**
      * Konstruktor. Erstellt einen Kreis.
      *
      * @param radius Durchmesser des Kreises
      */
+    @API
     public Kreis(float radius) {
-        circle = new Circle(radius * 2);
-        eduSetup();
-    }
-
-    @Override
-    public Actor getActor() {
-        return circle;
+        super(new Circle(radius * 2));
     }
 }

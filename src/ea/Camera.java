@@ -198,7 +198,12 @@ public final class Camera {
      */
     @API
     public void moveBy(float x, float y) {
-        this.position = this.position.add(new Vector(x, y));
+        this.moveBy(new Vector(x, y));
+    }
+
+    @API
+    public void moveBy(Vector vector) {
+        this.position = this.position.add(vector);
     }
 
     /**
@@ -210,7 +215,12 @@ public final class Camera {
      */
     @API
     public void moveTo(int x, int y) {
-        this.position = new Vector(x, y);
+        this.moveTo(new Vector(x, y));
+    }
+
+    @API
+    public void moveTo(Vector vector) {
+        this.position = vector;
     }
 
     @API

@@ -63,10 +63,10 @@ public interface PhysicsHandler {
     Vector getPosition();
 
     /**
-     * Gibt die aktuelle Rotation des Ziel-Objekts in <i>Radians</i> an. Bei Erstellung eines
+     * Gibt die aktuelle Rotation des Ziel-Objekts in <i>Grad</i> an. Bei Erstellung eines
      * <code>Actor</code>-Objekts ist seine Rotation stets 0.
      *
-     * @return die aktuelle Rotation des Ziel-Objekts in <i>Radians</i>.
+     * @return die aktuelle Rotation des Ziel-Objekts in <i>Grad</i>.
      */
     @Internal
     float getRotation();

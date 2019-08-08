@@ -57,6 +57,16 @@ public class StatefulAnimation<State> extends Actor {
         // TODO Check that all frames have the same size
     }
 
+    @API
+    public float getWidth() {
+        return width;
+    }
+
+    @API
+    public float getHeight() {
+        return height;
+    }
+
     /**
      * Fügt dieser Animation einen neuen Zustand zu hinzu.
      *
@@ -223,7 +233,7 @@ public class StatefulAnimation<State> extends Actor {
      *                      States verweilen soll, bis der Frame gewechselt wird.
      */
     @API
-    public void setFrameDurationsOf(State state, float frameDuration) {
+    public void setFrameDuration(State state, float frameDuration) {
         if (!states.containsKey(state)) {
             throw new RuntimeException("Der Zustand ist nicht bekannt: " + state);
         }

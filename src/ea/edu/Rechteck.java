@@ -1,19 +1,13 @@
 package ea.edu;
 
-import ea.actor.Actor;
 import ea.actor.Rectangle;
+import ea.internal.annotations.API;
 
-public class Rechteck implements EduGeometrie {
+@API
+public class Rechteck extends EduGeometrie<Rectangle> {
 
-    private final Rectangle rectangle;
-
+    @API
     public Rechteck(float breite, float hoehe) {
-        rectangle = new Rectangle(breite, hoehe);
-        eduSetup();
-    }
-
-    @Override
-    public Actor getActor() {
-        return rectangle;
+        super(new Rectangle(breite, hoehe));
     }
 }

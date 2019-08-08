@@ -1,7 +1,6 @@
 package ea.edu;
 
 import ea.*;
-import ea.actor.Actor;
 import ea.edu.event.*;
 import ea.event.*;
 import ea.internal.PeriodicTask;
@@ -12,10 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EduScene extends Scene {
-    public static final String MAINLAYER_NAME = "Hauptebene";
-    private static final float EXPLORE_BASE_MOVE_PER_SEC = 100f;
-
-    /* _____________________________ LISTENER LISTS _____________________________ */
+    private static final String MAINLAYER_NAME = "Hauptebene";
+    private static final float EXPLORE_BASE_MOVE_PER_SEC = 100;
+    private static final float DEFAULT_GRAVITY = -9.81f;
+    public static final float EXPLORE_ZOOM_FACTOR = .3f;
 
     /**
      * Die Liste aller TICKER-Aufgaben
@@ -44,119 +43,106 @@ public class EduScene extends Scene {
 
     private boolean exploreMode = false;
 
-
-    /* _____________________________ SCENE AND LAYER FIELDS _____________________________ */
-
     /**
      * Name der Scene. Default ist null.
      * Eine Scene mit Name wird nicht automatisch gelöscht.
      */
-    private String sceneName = null;
+    private String name = null;
 
-    public void setSceneName(String name) {
-        this.sceneName = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getSceneName() {
-        return sceneName;
+    public String getName() {
+        return name;
     }
 
-    private final HashMap<String, Layer> layerHashMap = new HashMap<>();
+    private final Map<String, Layer> layers = new HashMap<>();
 
     private Layer activeLayer;
 
     public EduScene() {
         activeLayer = getMainLayer();
-        layerHashMap.put(MAINLAYER_NAME, getMainLayer());
+        layers.put(MAINLAYER_NAME, getMainLayer());
 
-        activeLayer.getFrameUpdateListeners().add(deltaSeconds -> {
+        activeLayer.addFrameUpdateListener(deltaSeconds -> {
             if (!exploreMode) {
                 return;
             }
 
             float dX = 0, dY = 0;
             if (Game.isKeyPressed(KeyEvent.VK_LEFT)) {
-                dX = -EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+                dX -= EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
             } else if (Game.isKeyPressed(KeyEvent.VK_RIGHT)) {
-                dX = EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+                dX += EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
             }
 
             if (Game.isKeyPressed(KeyEvent.VK_UP)) {
-                dY = EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+                dY += EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
             } else if (Game.isKeyPressed(KeyEvent.VK_DOWN)) {
-                dY = -EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
+                dY -= EXPLORE_BASE_MOVE_PER_SEC / getCamera().getZoom();
             }
 
-            Vector move = new Vector(dX, dY).multiply(deltaSeconds);
-
-            getCamera().moveBy(move.x, move.y);
+            getCamera().moveBy(new Vector(dX, dY).multiply(deltaSeconds));
         });
 
-        activeLayer.getMouseWheelListeners().add(event -> {
+        activeLayer.addMouseWheelListener(event -> {
             if (!exploreMode) {
                 return;
             }
-            float wheelie = -event.getPreciseWheelRotation();
-            float factor = wheelie > 0 ? 1 + .3f * wheelie : 1 / (1 - .3f * wheelie);
-            float newzoom = getCamera().getZoom() * factor;
-            if (newzoom <= 0) {
+
+            float rotation = -event.getPreciseWheelRotation();
+            float factor = rotation > 0 ? 1 + EXPLORE_ZOOM_FACTOR * rotation : 1 / (1 - EXPLORE_ZOOM_FACTOR * rotation);
+            float zoom = getCamera().getZoom() * factor;
+
+            if (zoom <= 0) {
                 return;
             }
-            getCamera().setZoom(newzoom);
+
+            getCamera().setZoom(zoom);
         });
 
-        setGravity(new Vector(0, -9.81f));
+        setGravity(new Vector(0, DEFAULT_GRAVITY));
     }
 
+    @API
     public void setExploreMode(boolean aktiv) {
         exploreMode = aktiv;
     }
 
-
-
-
-
-    /* _____________________________ Layers, Addition & Co  _____________________________ */
-
     @API
     public String[] getLayerNames() {
-        return (String[]) layerHashMap.keySet().toArray();
-    }
-
-    private void assertLayerHashMapContains(String key, boolean shouldContain) {
-        if (shouldContain != layerHashMap.containsKey(key)) {
-            throw new IllegalArgumentException(shouldContain ? "Diese Edu-Scene enthält keine Ebene mit dem Namen " + key : "Diese Edu-Scene enthält bereits eine Ebene mit dem Namen " + key);
-        }
+        return layers.keySet().toArray(new String[0]);
     }
 
     public void addLayer(String layerName, int layerPosition) {
-        assertLayerHashMapContains(layerName, false);
+        assertLayerMapDoesNotContain(layerName);
 
         Layer layer = new Layer();
         layer.setLayerPosition(layerPosition);
         addLayer(layer);
-        layerHashMap.put(layerName, layer);
+        layers.put(layerName, layer);
     }
 
     public void setLayerParallax(String layerName, float x, float y, float zoom) {
-        assertLayerHashMapContains(layerName, true);
+        assertLayerMapContains(layerName);
 
-        Layer layer = layerHashMap.get(layerName);
+        Layer layer = layers.get(layerName);
         layer.setParallaxPosition(x, y);
         layer.setParallaxZoom(zoom);
     }
 
     public void setLayerTimeDistort(String layerName, float tpx) {
-        assertLayerHashMapContains(layerName, true);
+        assertLayerMapContains(layerName);
 
-        Layer layer = layerHashMap.get(layerName);
+        Layer layer = layers.get(layerName);
         layer.setTimeDistort(tpx);
     }
 
     public void setActiveLayer(String layerName) {
-        assertLayerHashMapContains(layerName, true);
+        assertLayerMapContains(layerName);
 
-        activeLayer = layerHashMap.get(layerName);
+        activeLayer = layers.get(layerName);
     }
 
     public Layer getActiveLayer() {
@@ -172,13 +158,9 @@ public class EduScene extends Scene {
      *
      * @param actor zu addender Actor
      */
-    public void addEduActor(Actor actor) {
-        activeLayer.add(actor);
+    public void addEduActor(EduActor actor) {
+        activeLayer.add(actor.getActor());
     }
-
-
-
-    /* _____________________________ Listener Addition & Removal _____________________________ */
 
     public void addEduClickListener(MausKlickReagierbar client) {
         addListener(client, sceneMouseClickListeners, activeLayer.getMouseClickListeners(), new MouseClickListener() {
@@ -199,8 +181,7 @@ public class EduScene extends Scene {
     }
 
     public void addEduKeyListener(TastenReagierbar o) {
-        //addToClientableArrayList(sceneKeyListeners, new TastenAuftrag(o));
-        KeyListener keyListener = new KeyListener() {
+        addListener(o, sceneKeyListeners, activeLayer.getKeyListeners(), new KeyListener() {
             @Override
             public void onKeyDown(KeyEvent e) {
                 o.tasteReagieren(e.getKeyCode());
@@ -210,51 +191,62 @@ public class EduScene extends Scene {
             public void onKeyUp(KeyEvent e) {
                 o.tasteLosgelassenReagieren(e.getKeyCode());
             }
-        };
-        addListener(o, sceneKeyListeners, activeLayer.getKeyListeners(), keyListener);
+        });
     }
 
     public void removeEduKeyListener(TastenReagierbar o) {
         removeListener(o, sceneKeyListeners, activeLayer.getKeyListeners());
     }
 
-    public void addEduTicker(float intervall, Ticker ticker) {
-        FrameUpdateListener periodicTask = new PeriodicTask(intervall, ticker::tick);
+    public void addEduTicker(float interval, Ticker ticker) {
+        FrameUpdateListener periodicTask = new PeriodicTask(interval, ticker::tick);
         addListener(ticker, sceneTickers, activeLayer.getFrameUpdateListeners(), periodicTask);
     }
 
-    public void removeEduTicker(Ticker o) {
-        removeListener(o, sceneTickers, activeLayer.getFrameUpdateListeners());
+    public void removeEduTicker(Ticker ticker) {
+        removeListener(ticker, sceneTickers, activeLayer.getFrameUpdateListeners());
     }
 
-    public void addEduFrameUpdateListener(BildAktualisierungReagierbar o) {
-        addListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners(), o::bildAktualisierungReagieren);
+    public void addEduFrameUpdateListener(BildAktualisierungReagierbar bildAktualisierungReagierbar) {
+        addListener(bildAktualisierungReagierbar, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners(), bildAktualisierungReagierbar::bildAktualisierungReagieren);
     }
 
-    public void removeEduFrameUpdateListener(BildAktualisierungReagierbar o) {
-        removeListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners());
+    public void removeEduFrameUpdateListener(BildAktualisierungReagierbar bildAktualisierungReagierbar) {
+        removeListener(bildAktualisierungReagierbar, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners());
     }
 
-    public void addEduMouseWheelListener(MausRadReagierbar o) {
-        addListener(o, sceneMouseWheelListeners, activeLayer.getMouseWheelListeners(), (mwe) -> o.mausRadReagieren(mwe.getPreciseWheelRotation()));
+    public void addEduMouseWheelListener(MausRadReagierbar mausRadReagierbar) {
+        addListener(mausRadReagierbar, sceneMouseWheelListeners, activeLayer.getMouseWheelListeners(), (mwe) -> mausRadReagierbar.mausRadReagieren(mwe.getPreciseWheelRotation()));
     }
 
-    public void removeEduMouseWheelListener(MausRadReagierbar o) {
-        removeListener(o, sceneMouseWheelListeners, activeLayer.getMouseWheelListeners());
+    public void removeEduMouseWheelListener(MausRadReagierbar mausRadReagierbar) {
+        removeListener(mausRadReagierbar, sceneMouseWheelListeners, activeLayer.getMouseWheelListeners());
     }
 
-    private static <K, V> void removeListener(K eduListener, Map<K, V> transitionHashMap, EventListeners<V> engineListeners) {
-        V fromHashMap = transitionHashMap.get(eduListener);
+    private static <K, V> void removeListener(K eduListener, Map<K, V> transitionMap, EventListeners<V> engineListeners) {
+        V fromHashMap = transitionMap.get(eduListener);
         if (fromHashMap == null) {
-            // Wert war nicht in Liste enthalten
             throw new IllegalArgumentException("Ein Reagierbar-Objekt sollte entfernt werden, war aber nicht an diesem Layer in dieser Szene angemeldet.");
         }
+
         engineListeners.remove(fromHashMap);
-        transitionHashMap.remove(eduListener);
+        transitionMap.remove(eduListener);
     }
 
     private static <K, V> void addListener(K eduListener, Map<K, V> transitionHashMap, EventListeners<V> engineListeners, V engineListener) {
         transitionHashMap.put(eduListener, engineListener);
         engineListeners.add(engineListener);
+    }
+
+    private void assertLayerMapContains(String key) {
+        if (!layers.containsKey(key)) {
+            throw new IllegalArgumentException("Diese Edu-Scene enthält keine Ebene mit dem Namen " + key);
+        }
+    }
+
+    private void assertLayerMapDoesNotContain(String key) {
+        if (layers.containsKey(key)) {
+            throw new IllegalArgumentException("Diese Edu-Scene enthält bereits eine Ebene mit dem Namen " + key);
+        }
     }
 }

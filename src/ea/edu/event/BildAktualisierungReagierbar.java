@@ -1,5 +1,9 @@
 package ea.edu.event;
 
+import ea.internal.annotations.API;
+
+@API
 public interface BildAktualisierungReagierbar {
-    void bildAktualisierungReagieren(float framedauerInSec);
+    @API
+    void bildAktualisierungReagieren(float verganeneSekunden);
 }

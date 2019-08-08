@@ -2,7 +2,6 @@ package ea.edu;
 
 import ea.Game;
 import ea.Vector;
-import ea.actor.Actor;
 import ea.edu.event.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -10,8 +9,6 @@ import ea.internal.annotations.Internal;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Diese Klasse steuert die EDU-Version. Sie ist Schnittstelle für:
@@ -28,8 +25,6 @@ public class Spiel {
     public static final String STANDARD_TITEL = "Engine Alpha - EDU Version";
     public static final int STANDARD_BREITE = 800;
     public static final int STANDARD_HOEHE = 600;
-
-    static final HashMap<Actor, EduActor> actorToInterfaceMap = new HashMap<>();
 
     private static final HashMap<String, Color> farben = new HashMap<>();
     private static final HashMap<String, EduScene> szenen = new HashMap<>();
@@ -192,11 +187,11 @@ public class Spiel {
     @API
     public void benenneAktiveSzene(String name) {
         EduScene activeScene = getActiveScene();
-        if (activeScene.getSceneName() != null) {
-            throw new RuntimeException("Die Szene hat bereits einen Namen: " + activeScene.getSceneName());
+        if (activeScene.getName() != null) {
+            throw new RuntimeException("Die Szene hat bereits einen Namen: " + activeScene.getName());
         }
 
-        activeScene.setSceneName(name);
+        activeScene.setName(name);
         szenen.put(name, activeScene);
     }
 
@@ -212,7 +207,7 @@ public class Spiel {
      * @see #benenneAktiveSzene(String)
      */
     @API
-    public void erstelleNeueSzene() {
+    public void erzeugeNeueSzene() {
         setActiveScene(new EduScene());
     }
 
@@ -240,7 +235,7 @@ public class Spiel {
      * @return Ein String Array. Jeder Eintrag entspricht dem Namen einer der gespeicherten Szenen des Spiels.
      * Szenen, die nicht benannt wurden, haben keinen Namen und werden daher nicht mit aufgelistet.
      *
-     * @see #erstelleNeueSzene()
+     * @see #erzeugeNeueSzene()
      * @see #benenneAktiveSzene(String)
      */
     @API
@@ -259,7 +254,7 @@ public class Spiel {
      *                       Die Hauptebene hat die Position 0.
      */
     @API
-    public void erstelleNeueEbene(String ebenenName, int ebenenPosition) {
+    public void erzeugeNeueEbene(String ebenenName, int ebenenPosition) {
         getActiveScene().addLayer(ebenenName, ebenenPosition);
     }
 
@@ -288,7 +283,7 @@ public class Spiel {
      *
      * @return Ein String Array. Jeder Eintrag entspricht dem Namen einer Ebene in der aktiven Szene des Spiels.
      *
-     * @see #erstelleNeueEbene(String, int)
+     * @see #erzeugeNeueEbene(String, int)
      * @see #setzeAktiveSzene(String)
      */
     @API

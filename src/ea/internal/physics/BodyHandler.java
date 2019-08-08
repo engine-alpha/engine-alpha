@@ -97,7 +97,7 @@ public class BodyHandler implements PhysicsHandler {
 
     @Override
     public float getRotation() {
-        return body.getAngle();
+        return (float) Math.toDegrees(body.getAngle());
     }
 
     @Override

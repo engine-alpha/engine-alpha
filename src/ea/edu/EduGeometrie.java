@@ -1,15 +1,23 @@
 package ea.edu;
 
 import ea.actor.Geometry;
+import ea.internal.annotations.API;
 
-public interface EduGeometrie
-extends EduActor {
+@API
+public abstract class EduGeometrie<T extends Geometry> extends EduActor<T> {
 
-    default void setzeFarbe(String farbe) {
-        ((Geometry)getActor()).setColor(Spiel.konvertiereVonFarbname(farbe));
+    @API
+    public EduGeometrie(T actor) {
+        super(actor);
     }
 
-    default String nenneFarbe() {
-        return Spiel.konvertiereZuFarbname(((Geometry)getActor()).getColor());
+    @API
+    public void setzeFarbe(String farbe) {
+        getActor().setColor(Spiel.konvertiereVonFarbname(farbe));
+    }
+
+    @API
+    public String nenneFarbe() {
+        return Spiel.konvertiereZuFarbname(getActor().getColor());
     }
 }

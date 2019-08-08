@@ -1,17 +1,10 @@
 package ea.edu;
 
-import ea.actor.Actor;
 import ea.actor.Image;
 import ea.internal.annotations.API;
 
 @API
-public class Bild implements EduActor {
-
-    /**
-     * Gewrapptes Image Objekt
-     */
-    private final Image image;
-
+public class Bild extends EduActor<Image> {
     /**
      * Der Konstruktor lädt das Image und erlaubt die Nutung von Spritesheets.
      *
@@ -19,14 +12,10 @@ public class Bild implements EduActor {
      * @param y        Y-Koordinate (linke obere Ecke des Bildes)
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
-    public Bild(float x, float y, String filepath) {
-        image = new Image(filepath, 1, 1); // TODO width, height
-        eduSetup();
-        image.setPosition(x, y);
-    }
+    @API
+    public Bild(float x, float y, float breite, float hoehe, String filepath) {
+        super(new Image(filepath, breite, hoehe));
 
-    @Override
-    public Actor getActor() {
-        return image;
+        getActor().setPosition(x, y);
     }
 }

@@ -1,32 +1,25 @@
 package ea.edu;
 
-import ea.actor.Actor;
+import ea.Camera;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.internal.annotations.API;
-import ea.internal.annotations.Internal;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * EDU-Variante der {@link StatefulAnimation}.
  *
  * @author Michael Andonie
  */
-public class Figur implements EduActor {
-
-    public static final float DEFAULT_PIXEL_PRO_METER = 30f;
-    public static final float DEFAULT_FRAME_DURATION = 0.25f;
-
-    private final StatefulAnimation<String> statefulAnimation;
-    private final float width, height;
+@API
+public class Figur extends EduActor<StatefulAnimation<String>> {
+    private static final float DEFAULT_FRAME_DURATION = 0.25f;
 
     /**
      * Einführungskonstruktor. Erstellt eine Figur mit einem ersten Zustand.
@@ -35,16 +28,16 @@ public class Figur implements EduActor {
      * @param zustandsName  Der Name für den ersten Zustand.
      * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>.
      */
+    @API
     public Figur(float pixelProMeter, String zustandsName, String gifBildPfad) {
-        assertPixelProMeter(pixelProMeter);
-        statefulAnimation = new StatefulAnimation<>(width = ImageLoader.load(gifBildPfad).getWidth() / pixelProMeter, height = ImageLoader.load(gifBildPfad).getHeight() / pixelProMeter);
+        super(new StatefulAnimation<>(ImageLoader.load(gifBildPfad).getWidth() / pixelProMeter, ImageLoader.load(gifBildPfad).getHeight() / pixelProMeter));
 
-        zustandHinzufuegenVonGIF(zustandsName, gifBildPfad);
-        eduSetup();
+        fuegeZustandMitGifHinzu(zustandsName, gifBildPfad);
     }
 
+    @API
     public Figur(String zustandsName, String gifBildPfad) {
-        this(DEFAULT_PIXEL_PRO_METER, zustandsName, gifBildPfad);
+        this(Camera.DEFAULT_ZOOM, zustandsName, gifBildPfad);
     }
 
     /**
@@ -56,15 +49,16 @@ public class Figur implements EduActor {
      * @param anzahlX         Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY         Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
+    @API
     public Figur(float pixelProMeter, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        assertPixelProMeter(pixelProMeter);
-        statefulAnimation = new StatefulAnimation<>(width = (ImageLoader.load(spriteSheetPfad).getWidth() / anzahlX) / pixelProMeter, height = (ImageLoader.load(spriteSheetPfad).getHeight() / anzahlY) / pixelProMeter);
-        zustandHinzufuegenVonSpritesheet(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
-        eduSetup();
+        super(new StatefulAnimation<>(ImageLoader.load(spriteSheetPfad).getWidth() / pixelProMeter / anzahlX, ImageLoader.load(spriteSheetPfad).getHeight() / pixelProMeter / anzahlY));
+
+        fuegeZustandMitSpritesheetHinzu(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
     }
 
+    @API
     public Figur(String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        this(DEFAULT_PIXEL_PRO_METER, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
+        this(Camera.DEFAULT_ZOOM, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
     }
 
     /**
@@ -76,42 +70,14 @@ public class Figur implements EduActor {
      * @param verzeichnisPfad Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
+    @API
     public Figur(float pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
-        assertPixelProMeter(pixelProMeter);
-        statefulAnimation = new StatefulAnimation<>(width = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, true), height = getWidthHeightFromPrefixed(verzeichnisPfad, praefix, false));
+        super(new StatefulAnimation<>(getWidthHeightFromPrefixed(verzeichnisPfad, praefix).width, getWidthHeightFromPrefixed(verzeichnisPfad, praefix).height));
 
-        zustandHinzufuegenNachPraefix(zustandName, verzeichnisPfad, praefix);
-        eduSetup();
+        fuegeZustandMitPraefixHinzu(zustandName, verzeichnisPfad, praefix);
     }
 
-    private static void assertPixelProMeter(float pixelProMeter) {
-        if (pixelProMeter <= 0) {
-            throw new IllegalArgumentException("Die Pixel-Pro-Meter-Eingabe muss positiv sein. War " + pixelProMeter);
-        }
-    }
-
-    private static final int getWidthHeightFromPrefixed(String directoryPath, String prefix, boolean width) {
-        //Liste mit den Pfaden aller qualifizierten Dateien
-        ArrayList<String> allPaths = new ArrayList<>();
-
-        File directory;
-        try {
-            directory = ResourceLoader.loadAsFile(directoryPath);
-        } catch (IOException e) {
-            throw new RuntimeException("Fehler beim Einladen des Verzeichnisses: " + e.getMessage());
-        }
-        if (!directory.isDirectory()) {
-            throw new RuntimeException("Der angegebene Pfad war kein Verzeichnis: " + directoryPath);
-        }
-        File[] childs = directory.listFiles();
-        for (File file : childs) {
-            if (!file.isDirectory() && file.getName().startsWith(prefix)) {
-                return width ? ImageLoader.load(file.getAbsolutePath()).getWidth() : ImageLoader.load(file.getAbsolutePath()).getHeight();
-            }
-        }
-        throw new RuntimeException("Es gab kein Bild im Verzeichnis " + directoryPath + " mit Präfix " + prefix);
-    }
-
+    @API
     public Figur(String zustandName, String verzeichnisPfad, String praefix) {
         this(1f, zustandName, verzeichnisPfad, praefix);
     }
@@ -122,12 +88,13 @@ public class Figur implements EduActor {
      * @param zustandsName Name des Zustands.
      * @param bildpfad     Pfad zum GIF, das zu diesem Zustand animiert wird.
      */
-    public void zustandHinzufuegenVonGIF(String zustandsName, String bildpfad) {
+    @API
+    public void fuegeZustandMitGifHinzu(String zustandsName, String bildpfad) {
         if (!bildpfad.toLowerCase().endsWith(".gif")) {
-            throw new RuntimeException("Der agegebene Bildpfad muss eine GIF-Datei sein und auf \".gif\" enden. " + "Der angegebene Bildpfad war " + bildpfad);
+            throw new RuntimeException("Der agegebene Bildpfad muss eine GIF-Datei sein und auf \".gif\" enden. Der angegebene Bildpfad war: " + bildpfad);
         }
-        Animation animation = Animation.createFromAnimatedGif(bildpfad, width, height);
-        addState(zustandsName, animation);
+
+        addState(zustandsName, Animation.createFromAnimatedGif(bildpfad, getActor().getWidth(), getActor().getHeight()));
     }
 
     /**
@@ -139,9 +106,9 @@ public class Figur implements EduActor {
      * @param anzahlX      Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY      Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
-    public void zustandHinzufuegenVonSpritesheet(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
-        Animation animation = Animation.createFromSpritesheet(DEFAULT_FRAME_DURATION, bildpfad, anzahlX, anzahlY, width, height);
-        addState(zustandsName, animation);
+    @API
+    public void fuegeZustandMitSpritesheetHinzu(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
+        addState(zustandsName, Animation.createFromSpritesheet(DEFAULT_FRAME_DURATION, bildpfad, anzahlX, anzahlY, getActor().getWidth(), getActor().getHeight()));
     }
 
     /**
@@ -150,9 +117,9 @@ public class Figur implements EduActor {
      * @param zustandsName Der Name des Zustands.
      * @param bildpfade    Die Pfade der Animationsframes in korrekter Reihenfolge.
      */
-    public void zustandHinzufuegenVonBildern(String zustandsName, String... bildpfade) {
-        Animation animation = Animation.createFromImages(DEFAULT_FRAME_DURATION, width, height, bildpfade);
-        addState(zustandsName, animation);
+    @API
+    public void fuegeZustandMitEinzelbildernHinzu(String zustandsName, String... bildpfade) {
+        addState(zustandsName, Animation.createFromImages(DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), bildpfade));
     }
 
     /**
@@ -163,9 +130,9 @@ public class Figur implements EduActor {
      * @param verzeichnisPfad Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
-    public void zustandHinzufuegenNachPraefix(String zustandName, String verzeichnisPfad, String praefix) {
-        Animation animation = Animation.createFromImagesPrefix(Spiel.getActiveScene(), DEFAULT_FRAME_DURATION, width, height, verzeichnisPfad, praefix);
-        statefulAnimation.addState(zustandName, animation);
+    @API
+    public void fuegeZustandMitPraefixHinzu(String zustandName, String verzeichnisPfad, String praefix) {
+        getActor().addState(zustandName, Animation.createFromImagesPrefix(Spiel.getActiveScene(), DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), verzeichnisPfad, praefix));
     }
 
     /**
@@ -174,8 +141,9 @@ public class Figur implements EduActor {
      * @param zustandsName Der Name des zu setzenden Zustands. Unter diesem Namen muss ein Zustand in dieser
      *                     Figur existieren.
      */
-    public void zustandSetzen(String zustandsName) {
-        statefulAnimation.setState(zustandsName);
+    @API
+    public void setzeZustand(String zustandsName) {
+        getActor().setState(zustandsName);
     }
 
     /**
@@ -185,8 +153,9 @@ public class Figur implements EduActor {
      * @param zustandNach Der Zustand, zu dem die Figur automatisch übergehen soll, nachdem der Von-Zustand einmal
      *                    bis zum Ende durchgelaufen ist.
      */
-    public void automatischenUebergangSetzen(String zustandVon, String zustandNach) {
-        statefulAnimation.setStateTransition(zustandVon, zustandNach);
+    @API
+    public void setzeAutomatischenUebergang(String zustandVon, String zustandNach) {
+        getActor().setStateTransition(zustandVon, zustandNach);
     }
 
     /**
@@ -195,40 +164,39 @@ public class Figur implements EduActor {
      * @return Der Name des aktuellen Zustands.
      */
     @API
-    public String nenneAktuellenZustand() {
-        return statefulAnimation.getCurrentState();
+    public String nenneAktivenZustand() {
+        return getActor().getCurrentState();
     }
 
     @API
-    public void setzeAnimationsGeschwindigkeitVon(String zustandName, float frameDauerInSekunden) {
-        statefulAnimation.setFrameDurationsOf(zustandName, frameDauerInSekunden);
-    }
-
-    @Internal
-    @Override
-    public Actor getActor() {
-        return statefulAnimation;
+    public void setzeAnimationsgeschwindigkeit(String zustandName, float dauerInSekunden) {
+        getActor().setFrameDuration(zustandName, dauerInSekunden);
     }
 
     private void addState(String stateName, Animation animation) {
-        statefulAnimation.addState(stateName, animation);
+        getActor().addState(stateName, animation);
     }
 
-    /**
-     * Resizes an image using a Graphics2D object backed by a BufferedImage.
-     *
-     * @param srcImg - source image to scale
-     * @param scale  scaling factor
-     *
-     * @return - the new resized image
-     */
-    private static BufferedImage getScaledImage(BufferedImage srcImg, float scale) {
-        int w = (int) (srcImg.getWidth() * scale), h = (int) (srcImg.getHeight() * scale);
-        BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
-        Graphics2D g2 = resizedImg.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.drawImage(srcImg, 0, 0, w, h, null);
-        g2.dispose();
-        return resizedImg;
+    private static Dimension getWidthHeightFromPrefixed(String directoryPath, String prefix) {
+        try {
+            File directory = ResourceLoader.loadAsFile(directoryPath);
+            if (!directory.isDirectory()) {
+                throw new RuntimeException("Der angegebene Pfad war kein Verzeichnis: " + directoryPath);
+            }
+
+            File[] children = directory.listFiles();
+            if (children != null) {
+                for (File file : children) {
+                    if (!file.isDirectory() && file.getName().startsWith(prefix)) {
+                        BufferedImage image = ImageLoader.load(file.getAbsolutePath());
+                        return new Dimension(image.getWidth(), image.getHeight());
+                    }
+                }
+            }
+
+            throw new RuntimeException("Es gab kein Bild im Verzeichnis " + directoryPath + " mit Präfix " + prefix);
+        } catch (IOException e) {
+            throw new RuntimeException("Fehler beim Einladen des Verzeichnisses: " + e.getMessage());
+        }
     }
 }

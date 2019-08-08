@@ -7,29 +7,35 @@ import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
 import ea.edu.event.KollisionsReagierbar;
 import ea.internal.annotations.API;
-import ea.internal.annotations.Internal;
 
-public interface EduActor {
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public abstract class EduActor<T extends Actor> {
+    private static final Map<Actor, EduActor> actorMap = new ConcurrentHashMap<>();
+
+    private final T actor;
+
+    public EduActor(T actor) {
+        this.actor = actor;
+
+        // public Physics Setup für EDU Objekte
+        this.actor.setRotationLocked(true);
+        this.actor.setRestitution(0);
+
+        actorMap.put(getActor(), this);
+
+        Spiel.getActiveScene().addEduActor(this);
+    }
 
     /**
      * Gibt das Engine-interne Actor-Objekt zurück.
      *
      * @return Das Core-Engine-Actor-Objekt
      */
-    @Internal
-    Actor getActor();
-
-    /**
-     * Standard-Ausführung im Konstruktor. Meldet das Objekt unmittelbar in der aktuell aktiven Szene an.
-     */
-    @Internal
-    default void eduSetup() {
-        Spiel.getActiveScene().addEduActor(getActor());
-
-        //Default Physics Setup für EDU Objekte
-        getActor().setRotationLocked(true);
-        getActor().setRestitution(0);
-        Spiel.actorToInterfaceMap.put(getActor(), this);
+    @API
+    protected final T getActor() {
+        return this.actor;
     }
 
     /**
@@ -41,11 +47,12 @@ public interface EduActor {
      * @see #nenneTransparenz()
      */
     @API
-    default void setzeTransparenz(float transparenz) {
+    public void setzeTransparenz(float transparenz) {
         if (transparenz < 0 || transparenz > 1) {
             throw new IllegalArgumentException("Fehlerhafte Transparenzeingabe. Muss zwischen 0 und 1 sein. War " + transparenz);
         }
-        getActor().setOpacity(1 - transparenz);
+
+        this.actor.setOpacity(1 - transparenz);
     }
 
     /**
@@ -56,8 +63,8 @@ public interface EduActor {
      * @see #setzeTransparenz(float)
      */
     @API
-    default float nenneTransparenz() {
-        return 1 - getActor().getOpacity();
+    public float nenneTransparenz() {
+        return 1 - this.actor.getOpacity();
     }
 
     /**
@@ -69,85 +76,83 @@ public interface EduActor {
      * </ul>
      */
     @API
-    default void entfernen() {
-        getActor().remove();
+    public void entfernen() {
+        this.actor.remove();
     }
 
     @API
-    default void verschieben(float dX, float dY) {
-        getActor().moveBy(dX, dY);
+    public void verschieben(float dX, float dY) {
+        this.actor.moveBy(dX, dY);
     }
 
     @API
-    default void drehen(float drehwinkelInWinkelgrad) {
-        getActor().rotateBy(drehwinkelInWinkelgrad);
+    public void drehen(float grad) {
+        this.actor.rotateBy(grad);
     }
 
     @API
-    default float nenneWinkel() {
-        return getActor().getRotation();
+    public void setzeDrehwinkel(float grad) {
+        this.actor.setRotation(grad);
     }
 
     @API
-    default void setzeMittelpunkt(float mX, float mY) {
-        getActor().setCenter(mX, mY);
+    public float nenneDrehwinkel() {
+        return this.actor.getRotation();
     }
 
     @API
-    default void setzeSichtbar(boolean sichtbar) {
-        getActor().setVisible(sichtbar);
+    public void setzeMittelpunkt(float mX, float mY) {
+        this.actor.setCenter(mX, mY);
     }
 
     @API
-    default boolean nenneSichtbar() {
-        return getActor().isVisible();
+    public Vector nenneMittelpunkt() {
+        return this.actor.getCenter();
     }
 
     @API
-    default float nenneMx() {
-        return getActor().getCenter().x;
+    public float nenneMittelpunktX() {
+        return this.actor.getCenter().x;
     }
 
     @API
-    default float nenneMy() {
-        return getActor().getCenter().y;
+    public float nenneMittelpunktY() {
+        return this.actor.getCenter().y;
     }
 
     @API
-    default boolean beinhaltetPunkt(float pX, float pY) {
-        return getActor().contains(new Vector(pX, pY));
+    public void setzeSichtbar(boolean sichtbar) {
+        this.actor.setVisible(sichtbar);
     }
 
     @API
-    default Vector mittelPunkt() {
-        return getActor().getCenter();
+    public boolean istSichtbar() {
+        return this.actor.isVisible();
     }
 
     @API
-    default Vector zentrum() {
-        return mittelPunkt();
+    public boolean beinhaltetPunkt(float pX, float pY) {
+        return this.actor.contains(new Vector(pX, pY));
     }
 
     @API
-    default boolean schneidet(EduActor other) {
-        return other.getActor().overlaps(getActor());
+    public boolean schneidet(EduActor objekt) {
+        return objekt.actor.overlaps(getActor());
     }
 
-    /* ~~~ PHYSICS ~~~ */
-
     @API
-    default void kollisionsReagierbarAnmelden(EduActor anderer, KollisionsReagierbar reagierbar) {
-        this.getActor().addCollisionListener(anderer.getActor(), collisionEvent -> {
-            if (!reagierbar.kollisionReagieren(anderer)) {
+    public <X extends EduActor> void registriereKollisionsReagierbar(X anderer, KollisionsReagierbar<X> kollisionsReagierbar) {
+        this.actor.addCollisionListener(anderer.getActor(), collisionEvent -> {
+            if (!kollisionsReagierbar.kollisionReagieren(anderer)) {
                 collisionEvent.ignoreCollision();
             }
         });
     }
 
     @API
-    default void kollisionsReagierbarAnmelden(KollisionsReagierbar reagierbar) {
-        this.getActor().addCollisionListener(collisionEvent -> {
-            EduActor other = Spiel.actorToInterfaceMap.get(collisionEvent.getColliding());
+    public void registriereKollisionsReagierbar(KollisionsReagierbar<EduActor> reagierbar) {
+        this.actor.addCollisionListener(collisionEvent -> {
+            EduActor other = actorMap.get(collisionEvent.getColliding());
             if (!reagierbar.kollisionReagieren(other)) {
                 collisionEvent.ignoreCollision();
             }
@@ -155,134 +160,107 @@ public interface EduActor {
     }
 
     @API
-    default void setzeRotationBlockiert(boolean blockiert) {
-        getActor().setRotationLocked(blockiert);
+    public void setzeRotationBlockiert(boolean blockiert) {
+        this.actor.setRotationLocked(blockiert);
     }
 
     @API
-    default void wirkeImpuls(float iX, float iY) {
-        getActor().applyImpulse(new Vector(iX, iY));
+    public void wirkeImpuls(float iX, float iY) {
+        this.actor.applyImpulse(new Vector(iX, iY));
     }
 
     @API
-    default void setzeReibung(float reibungsKoeffizient) {
-        getActor().setFriction(reibungsKoeffizient);
+    public void setzeReibung(float reibungsKoeffizient) {
+        this.actor.setFriction(reibungsKoeffizient);
     }
 
     @API
-    default void setzeGeschwindigkeit(float vX, float vY) {
-        getActor().setVelocity(new Vector(vX, vY));
+    public float nenneReibung() {
+        return this.actor.getFriction();
     }
 
     @API
-    default void setzeElastizitaet(float elastizitaetsKoeffizient) {
-        getActor().setRestitution(elastizitaetsKoeffizient);
+    public void setzeGeschwindigkeit(float vX, float vY) {
+        this.actor.setVelocity(new Vector(vX, vY));
     }
 
     @API
-    default float nenneMasse() {
-        return getActor().getMass();
+    public float nenneGeschwindigkeitX() {
+        return this.actor.getVelocity().x;
     }
 
     @API
-    default float nenneElastizitaet() {
-        return getActor().getRestitution();
+    public float nenneGeschwindigkeitY() {
+        return this.actor.getVelocity().y;
     }
 
     @API
-    default float nenneReibung() {
-        return getActor().getFriction();
+    public void setzeElastizitaet(float elastizitaetsKoeffizient) {
+        this.actor.setRestitution(elastizitaetsKoeffizient);
     }
 
     @API
-    default void setzeSchwerkraft(float schwerkraft) {
-        getActor().getLayer().getParent().setGravity(new Vector(0, -schwerkraft));
+    public float nenneElastizitaet() {
+        return this.actor.getRestitution();
     }
 
     @API
-    default void setzeMasse(float masse) {
-        getActor().setMass(masse);
+    public float nenneMasse() {
+        return this.actor.getMass();
     }
 
     @API
-    default float nenneVx() {
-        return getActor().getVelocity().x;
+    public void setzeMasse(float masse) {
+        this.actor.setMass(masse);
     }
 
     @API
-    default float nenneVy() {
-        return getActor().getVelocity().y;
-    }
-
-    /* ~~~ JUMP N RUN WRAPPER ~~~ */
-
-    @API
-    default boolean steht() {
-        return getActor().isGrounded();
+    public boolean steht() {
+        return this.actor.isGrounded();
     }
 
     @API
-    default boolean stehtAuf(EduActor actor) {
-        return getActor().overlaps(actor.getActor()) && getActor().isGrounded();
+    public boolean stehtAuf(EduActor actor) {
+        return this.actor.overlaps(actor.getActor()) && this.actor.isGrounded();
     }
 
     @API
-    default void macheAktiv() {
-        getActor().setBodyType(BodyType.DYNAMIC);
+    public void macheAktiv() {
+        this.actor.setBodyType(BodyType.DYNAMIC);
     }
 
     @API
-    default void machePassiv() {
-        getActor().setBodyType(BodyType.STATIC);
+    public void machePassiv() {
+        this.actor.setBodyType(BodyType.STATIC);
     }
 
     @API
-    default void macheNeutral() {
-        getActor().setBodyType(BodyType.SENSOR);
+    public void macheNeutral() {
+        this.actor.setBodyType(BodyType.SENSOR);
     }
 
     @API
-    default void machePartikel(float lebenszeit) {
-        getActor().animateParticle(lebenszeit);
+    public void machePartikel(float lebenszeit) {
+        this.actor.animateParticle(lebenszeit);
     }
 
     @API
-    default void sprung(float staerke) {
+    public void springe(float staerke) {
         if (steht()) {
-            getActor().applyImpulse(new Vector(0, staerke * 1000));
+            this.actor.applyImpulse(new Vector(0, staerke * nenneMasse()));
         }
-    }
-
-    /**
-     * Bewegt den Actor anhand einer Gerade.
-     *
-     * @param zX       X-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
-     * @param zY       Y-Koordinate des Mittelpunkts des Actors nach <code>ms</code> Millisekunden
-     * @param sekunden Zeit in Sekunden, die der Actor von Beginn der Animation benötigt, bis er am angegebenen
-     *                 Endpunkt angekommen ist.
-     * @param loop     <code>true</code>: Der Actor "ping pongt" zwischen dem impliziten Startpunkt und dem angegebenen
-     *                 Endpunkt hin und her. Die Strecke in eine Richtung benötigt jeweils <code>ms</code>
-     *                 Millisekunden
-     *                 Zeit. <br>
-     *                 <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal)
-     *                 erreicht
-     *                 wurde.
-     */
-    @API
-    default void geradenAnimation(float zX, float zY, float sekunden, boolean loop) {
-        getActor().addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), sekunden, loop));
     }
 
     /**
      * Setzt die Ebene (z-Index) des Actors.
      *
-     * @param ebenenNummer die Ebenennummer des actors.
+     * @param position die Ebenennummer des Actors.
      *
-     * @see #nenneEbene()
+     * @see #nenneEbenenPosition()
      */
     @API
-    default void setzeEbene(int ebenenNummer) {
-        getActor().setLayerPosition(ebenenNummer);
+    public void setzeEbenenPosition(int position) {
+        this.actor.setLayerPosition(position);
     }
 
     /**
@@ -290,21 +268,16 @@ public interface EduActor {
      *
      * @return die Ebenennummer
      *
-     * @see #setzeEbene(int)
+     * @see #setzeEbenenPosition(int)
      */
     @API
-    default int nenneEbene() {
-        return getActor().getLayerPosition();
+    public int nenneEbenenPosition() {
+        return this.actor.getLayerPosition();
     }
-
-
-
-    /* ____________________ ANIMATION  ____________________*/
 
     /**
      * Animiert flüssig die Transparenz dieses Actors von einem bestimmten Wert zu einem bestimmten Wert.
      *
-     * @param transparenzVon  Die Starttransparenz
      * @param transparenzNach Die Endtransparenz
      * @param zeitInSekunden  Die Zeit in Sekunden, die vergehen, bis der Transparenzwert des Actors
      *                        von <code>transparenzVon</code> bis <code>transparenzNach</code> animiert.
@@ -312,12 +285,12 @@ public interface EduActor {
      * @see #setzeTransparenz(float)
      */
     @API
-    default void animiereTransparenz(float transparenzVon, float transparenzNach, float zeitInSekunden) {
-        if (transparenzVon < 0 || transparenzNach < 0 || transparenzVon > 1 || transparenzNach > 1) {
-            throw new IllegalArgumentException("Transparenzen müssen stets zwischen 0 und 1 sein.");
+    public void animiereTransparenz(float zeitInSekunden, float transparenzNach) {
+        if (transparenzNach < 0 || transparenzNach > 1) {
+            throw new IllegalArgumentException("Transparenzen müssen stets zwischen 0 und 1 sein");
         }
-        getActor().setOpacity(1 - transparenzVon);
-        getActor().animateOpacity(zeitInSekunden, 1 - transparenzNach);
+
+        this.actor.animateOpacity(zeitInSekunden, 1 - transparenzNach);
     }
 
     /**
@@ -332,8 +305,28 @@ public interface EduActor {
      *                      <code>false</code>=Das Actor-Objekt behält seine Rotation bei.
      */
     @API
-    default void kreisAnimation(float mX, float mY, float sekunden, boolean uhrzeigersinn, boolean rotation) {
-        getActor().addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), sekunden, uhrzeigersinn, rotation));
+    public void animiereKreis(float sekunden, float mX, float mY, boolean uhrzeigersinn, boolean rotation) {
+        this.actor.addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), sekunden, uhrzeigersinn, rotation));
+    }
+
+    /**
+     * Bewegt den Actor anhand einer Gerade.
+     *
+     * @param zX       X-Koordinate des Mittelpunkts des Actors nach <code>s</code> Sekunden
+     * @param zY       Y-Koordinate des Mittelpunkts des Actors nach <code>s</code> Sekunden
+     * @param sekunden Zeit in Sekunden, die der Actor von Beginn der Animation benötigt, bis er am angegebenen
+     *                 Endpunkt angekommen ist.
+     * @param loop     <code>true</code>: Der Actor "ping pongt" zwischen dem impliziten Startpunkt und dem angegebenen
+     *                 Endpunkt hin und her. Die Strecke in eine Richtung benötigt jeweils <code>s</code>
+     *                 Sekunden
+     *                 Zeit. <br>
+     *                 <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal)
+     *                 erreicht
+     *                 wurde.
+     */
+    @API
+    public void animiereGerade(float sekunden, float zX, float zY, boolean loop) {
+        this.actor.addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), sekunden, loop));
     }
 
     /**
@@ -344,12 +337,9 @@ public interface EduActor {
      * @see ea.internal.ShapeBuilder#fromString(String)
      */
     @API
-    default void setzeKollisionsFormen(String kollisionsFormenCode) {
-        getActor().setShapes(kollisionsFormenCode);
+    public void setzeKollisionsFormen(String kollisionsFormenCode) {
+        this.actor.setShapes(kollisionsFormenCode);
     }
-
-
-    /* ____________________ JOINTS  ____________________*/
 
     /**
      * Setzt einen Distance Joint an diesem und einem weiteren Actor.
@@ -363,8 +353,8 @@ public interface EduActor {
      * @see ea.actor.Actor#createDistanceJoint(Actor, Vector, Vector)
      */
     @API
-    default void erzeugeStabVerbindung(EduActor anderer, float aX, float aY, float bX, float bY) {
-        getActor().createDistanceJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY));
+    public void erzeugeStabverbindung(EduActor anderer, float aX, float aY, float bX, float bY) {
+        this.actor.createDistanceJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY));
     }
 
     /**
@@ -377,8 +367,8 @@ public interface EduActor {
      * @see ea.actor.Actor#createRevoluteJoint(Actor, Vector) e
      */
     @API
-    default void erzeugeGelenkVerbindung(EduActor anderer, float aX, float aY) {
-        getActor().createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
+    public void erzeugeGelenkverbindung(EduActor anderer, float aX, float aY) {
+        this.actor.createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
     }
 
     /**
@@ -394,7 +384,7 @@ public interface EduActor {
      * @see ea.actor.Actor#createRopeJoint(Actor, Vector, Vector, float)
      */
     @API
-    default void erzeugeSeilVerbindung(EduActor anderer, float ropeLength, float aX, float aY, float bX, float bY) {
-        getActor().createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), ropeLength);
+    public void erzeugeSeilverbindung(EduActor anderer, float ropeLength, float aX, float aY, float bX, float bY) {
+        this.actor.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), ropeLength);
     }
 }
