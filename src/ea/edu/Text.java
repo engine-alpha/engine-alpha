@@ -3,7 +3,7 @@ package ea.edu;
 import ea.internal.annotations.API;
 
 @API
-public class Text extends EduActor<ea.actor.Text> {
+public class Text extends EduGeometrie<ea.actor.Text> {
 
     @API
     public Text(String inhalt, float hoehe) {
