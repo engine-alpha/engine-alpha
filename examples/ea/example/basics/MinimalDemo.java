@@ -51,7 +51,7 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
         //animation.setOneTimeOnly();
         add(animation);
 
-        Text text = new Text("Hallo!");
+        Text text = new Text("Hallo!", 2);
         text.setPosition(-100, -100);
         text.setColor(Color.MAGENTA);
         add(text);

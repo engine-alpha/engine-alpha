@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2017 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2019 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,29 +23,36 @@ import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.io.FontLoader;
+import org.jbox2d.collision.shapes.Shape;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 /**
  * Zur Darstellung von Texten im Programmbildschirm.
- * <p>
- * TODO: Review der ganzen Klasse (v.a. der Dokumentation)
- * <p>
- * TODO: Allow Custom Colors
  *
  * @author Michael Andonie
  * @author Niklas Keller
  */
-public class Text extends Actor {
-    private static final int DEFAULT_SIZE = 12;
+public class Text extends Geometry {
+    private static final int SIZE = 92;
+
+    @Internal
+    private static Shape createShape(String content, float height, Font font) {
+        FontMetrics fontMetrics = ea.internal.util.FontMetrics.get(font);
+
+        int widthInPixels = fontMetrics.stringWidth(content);
+        int heightInPixels = fontMetrics.getHeight();
+
+        return ShapeBuilder.createSimpleRectangularShape(widthInPixels * height / heightInPixels, height);
+    }
 
     /**
-     * Die Schriftgröße des Textes
+     * Höhe des Textes.
      */
-    private int size;
+    private float height;
 
     /**
      * Die Schriftart (<b>fett, kursiv, oder fett & kursiv</b>).<br> Dies wird dargestellt als int.Wert:<br> 0:
@@ -64,11 +71,6 @@ public class Text extends Actor {
     private Font font;
 
     /**
-     * Die Farbe, in der der Text dargestellt wird.
-     */
-    private Color color = Color.WHITE;
-
-    /**
      * Textanker: links, mittig oder rechts
      */
     private Anchor anchor = Anchor.LEFT;
@@ -82,30 +84,19 @@ public class Text extends Actor {
      *                 Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu empfehlen</b>, muss
      *                 der Name der Schriftart hier ebenfalls einfach nur eingegeben werden, <b>nicht der Name der
      *                 schriftart-Datei!</b>
-     * @param size     Die Groesse, in der die Schrift dargestellt werden soll
-     * @param type     Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br> 0: Normaler Text<br>
+     * @param height   Die Breite
+     * @param style    Die Schriftart dieses Textes. Folgende Werte entsprechen folgendem:<br> 0: Normaler Text<br>
      *                 1: Fett<br> 2: Kursiv<br> 3: Fett &amp; Kursiv <br> <br> Alles andere sorgt nur für einen
      *                 normalen Text.
      */
     @API
-    public Text(String content, String fontName, int size, int type) {
-        // TODO Correct size after pixel per meter removal
-        super(() -> {
-            Font font = FontLoader.loadByName(fontName).deriveFont(type, size);
-            FontMetrics fontMetrics = ea.internal.util.FontMetrics.get(font);
+    public Text(String content, float height, String fontName, int style) {
+        super(() -> createShape(content == null ? "" : content, height, FontLoader.loadByName(fontName).deriveFont(style, SIZE)));
 
-            return ShapeBuilder.createSimpleRectangularShape(fontMetrics.stringWidth(content), fontMetrics.getHeight());
-        });
+        this.content = content == null ? "" : content;
+        this.height = height;
 
-        this.content = content;
-        this.size = size;
-
-        if (type >= 0 && type <= 3) {
-            this.fontStyle = type;
-        } else {
-            this.fontStyle = 0;
-        }
-
+        setStyle(style);
         setFont(fontName);
     }
 
@@ -113,11 +104,12 @@ public class Text extends Actor {
      * Erstellt einen Text mit spezifischem Inhalt und Font. Der Text ist in Schriftgröße 12, nicht fett, nicht kursiv.
      *
      * @param content  Der Inhalt, der dargestellt wird
+     * @param height   Die Höhe
      * @param fontName Der Font, in dem der Text dargestellt werden soll.
      */
     @API
-    public Text(String content, String fontName) {
-        this(content, fontName, DEFAULT_SIZE, 0);
+    public Text(String content, float height, String fontName) {
+        this(content, height, fontName, 0);
     }
 
     /**
@@ -125,22 +117,11 @@ public class Text extends Actor {
      * (Serifenfrei), nicht fett, nicht kursiv.
      *
      * @param content Der Inhalt, der dargestellt wird
-     * @param size    Die Schriftgröße
+     * @param height  Die Höhe
      */
     @API
-    public Text(String content, int size) {
-        this(content, Font.SANS_SERIF, size, 0);
-    }
-
-    /**
-     * Erstellt einen Text mit spezifischem Inhalt und spezifischer Größe. Die Schriftart ist ein Standard-Font
-     * (Serifenfrei), Größe 12, nicht fett, nicht kursiv.
-     *
-     * @param content Der Inhalt, der dargestellt wird
-     */
-    @API
-    public Text(String content) {
-        this(content, DEFAULT_SIZE);
+    public Text(String content, float height) {
+        this(content, height, Font.SANS_SERIF, 0);
     }
 
     /**
@@ -150,8 +131,8 @@ public class Text extends Actor {
      */
     @API
     public void setFont(String fontName) {
-        this.font = FontLoader.loadByName(fontName);
-        aktualisieren();
+        this.font = FontLoader.loadByName(fontName).deriveFont(fontStyle, SIZE);
+        this.update();
     }
 
     /**
@@ -161,7 +142,15 @@ public class Text extends Actor {
      */
     @API
     public void setContent(String content) {
-        this.content = content;
+        String normalizedContent = content;
+        if (normalizedContent == null) {
+            normalizedContent = "";
+        }
+
+        if (!this.content.equals(normalizedContent)) {
+            this.content = normalizedContent;
+            this.update();
+        }
     }
 
     /**
@@ -172,75 +161,52 @@ public class Text extends Actor {
      *              geändert.
      */
     public void setStyle(int style) {
-        if (style >= 0 && style <= 3) {
+        if (style >= 0 && style <= 3 && style != this.fontStyle) {
             fontStyle = style;
-            aktualisieren();
+            font = font.deriveFont(style, SIZE);
+            this.update();
         }
     }
 
-    /**
-     * Klasseninterne Methode zum aktualisieren des Font-Objektes
-     */
+    public void setHeight(float height) {
+        if (this.height != height) {
+            this.height = height;
+            this.update();
+        }
+    }
+
     @Internal
-    private void aktualisieren() {
-        this.font = this.font.deriveFont(fontStyle, size);
+    private void update() {
+        setShape(() -> createShape(content, height, font));
     }
 
-    /**
-     * Setzt die Füllfarbe des Textes.
-     *
-     * @param color Die Farbe, in der der Text dargestellt werden soll.
-     */
-    @API
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    /**
-     * Setzt die Schriftgroesse, in der der Text dargestellt werden soll.
-     *
-     * @param size Die neue Schriftgroesse
-     */
-    @API
-    public void setSize(int size) {
-        if (size <= 0) {
-            throw new RuntimeException("Die Schriftgröße muss größer als 0 sein. Sie war " + size + ".");
-        }
-        this.size = size;
-        aktualisieren();
-    }
-
-    /**
-     * Diese Methode gibt die aktuelle Groesse des Textes aus
-     *
-     * @return Die aktuelle Schriftgroesse des Textes
-     *
-     * @see #setSize(int)
-     */
-    @API
-    public int getSize() {
-        return size;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @Internal
     public void render(Graphics2D g, float pixelPerMeter) {
         FontMetrics fontMetrics = g.getFontMetrics(font);
 
+        int widthInPixels = fontMetrics.stringWidth(content);
+
         int x = 0;
 
         if (anchor == Anchor.CENTER) {
-            x = -fontMetrics.stringWidth(content) / 2;
+            x = -widthInPixels / 2;
         } else if (anchor == Anchor.RIGHT) {
-            x = -fontMetrics.stringWidth(content);
+            x = -widthInPixels;
         }
 
-        g.setColor(color);
+        AffineTransform pre = g.getTransform();
+        Font preFont = g.getFont();
+
+        float scaleFactor = height * pixelPerMeter / SIZE;
+
+        g.setColor(getColor());
+        g.scale(scaleFactor, scaleFactor);
         g.setFont(font);
-        g.drawString(content, x, -fontMetrics.getHeight() + size);
+        g.drawString(content, x, -fontMetrics.getDescent());
+
+        g.setFont(preFont);
+        g.setTransform(pre);
     }
 
     /**

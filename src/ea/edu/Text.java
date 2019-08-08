@@ -6,8 +6,8 @@ import ea.internal.annotations.API;
 public class Text extends EduActor<ea.actor.Text> {
 
     @API
-    public Text(String content) {
-        super(new ea.actor.Text(content));
+    public Text(String inhalt, float hoehe) {
+        super(new ea.actor.Text(inhalt, hoehe));
     }
 
     @API
@@ -18,10 +18,5 @@ public class Text extends EduActor<ea.actor.Text> {
     @API
     public void setzeFarbe(String farbe) {
         getActor().setColor(Spiel.konvertiereVonFarbname(farbe));
-    }
-
-    @API
-    public void setzeGroesse(int groesse) {
-        getActor().setSize(groesse);
     }
 }

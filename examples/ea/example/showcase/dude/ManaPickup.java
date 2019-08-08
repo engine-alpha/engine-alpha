@@ -1,7 +1,6 @@
 package ea.example.showcase.dude;
 
 import ea.actor.Animation;
-import ea.animation.ValueAnimator;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 
@@ -28,9 +27,9 @@ public class ManaPickup extends Animation implements CollisionListener<PlayerCha
         collisionEvent.getColliding().gotItem(Item.ManaPickup);
         this.setActive(false);
         active = false;
-        getLayer().getParent().addOneTimeCallback(3, () -> setActive(true));
 
-        ValueAnimator<Float> opacityAnimation = animateOpacity(2, 1f);
+        delay(3, () -> setActive(true));
+        animateOpacity(2, 1f);
     }
 
     private void setActive(boolean b) {

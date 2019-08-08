@@ -8,7 +8,6 @@ import java.awt.Color;
 
 public class PauseLayer extends Layer {
     private static final Color BACKGROUND_COLOR = new Color(100, 200, 255, 120);
-    private static final int TEXT_SIZE = 120;
 
     public PauseLayer() {
         setLayerPosition(1000);
@@ -18,7 +17,7 @@ public class PauseLayer extends Layer {
         back.setCenter(0, 0);
         add(back);
 
-        Text announce = new Text("Pause.", "Monospaced", TEXT_SIZE, 0);
+        Text announce = new Text("Pause.", 10, "Monospaced");
         announce.setCenter(0, 0);
         add(announce);
 

@@ -91,8 +91,10 @@ public class Rectangle extends Geometry {
     @API
     public void resetDimensions(float width, float height) {
         assertWidthAndHeight(width, height);
+
         this.width = width;
         this.height = height;
+
         this.setShape(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
     }
 
