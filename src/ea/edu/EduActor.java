@@ -2,9 +2,9 @@ package ea.edu;
 
 import ea.Vector;
 import ea.actor.Actor;
+import ea.actor.BodyType;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
-import ea.actor.BodyType;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
@@ -170,6 +170,11 @@ public interface EduActor {
     }
 
     @API
+    default void machePartikel(float lebenszeit) {
+        getActor().animateParticle(lebenszeit);
+    }
+
+    @API
     default void sprung(float staerke) {
         if (steht()) {
             getActor().applyImpulse(new Vector(0, staerke * 1000));
@@ -223,7 +228,7 @@ public interface EduActor {
      *
      * @param mX            X-Koordinate des Mittelpunkts der Revolution.
      * @param mY            Y-Koordinate des Mittelpunkts der Revolution.
-     * @param sekunden            Dauer in Sekunden, die eine komplette Umdrehung benötigt.
+     * @param sekunden      Dauer in Sekunden, die eine komplette Umdrehung benötigt.
      * @param uhrzeigersinn <code>true</code>= Drehung findet im Uhrzeigersinn statt. <code>false</code>: Gegen den
      *                      Uhrzeigersinn
      * @param rotation      <code>true</code>=Das Actor-Objekt wird auch entsprechend seiner Kreis-Position rotiert.

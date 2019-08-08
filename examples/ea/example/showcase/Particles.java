@@ -22,11 +22,9 @@ package ea.example.showcase;
 import ea.*;
 import ea.actor.BodyType;
 import ea.actor.Circle;
-import ea.actor.Particle;
 import ea.actor.Rectangle;
 import ea.animation.AnimationMode;
 import ea.animation.ValueAnimator;
-import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.ReverseEaseFloat;
 import ea.event.KeyListener;
 
@@ -105,12 +103,13 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         Circle circle = new Circle(6);
 
         FrameUpdateListener emitter = new PeriodicTask(0.01f, () -> {
-            Particle particle = new Particle(3, .5f);
+            Circle particle = new Circle(3);
             particle.setPosition(circle.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
+            particle.animateParticle(.5f);
+            particle.animateColor(.25f, Color.YELLOW);
             particle.addMountListener(() -> particle.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
-            particle.addFrameUpdateListener(new ValueAnimator<>(.25f, yellow -> particle.setColor(new Color(255, yellow, 0)), new LinearInteger(0, 255), circle));
 
             add(particle);
         });

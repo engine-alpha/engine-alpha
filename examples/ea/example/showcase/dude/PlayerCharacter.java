@@ -6,11 +6,10 @@ import ea.Random;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.Animation;
-import ea.actor.Particle;
+import ea.actor.Circle;
 import ea.actor.StatefulAnimation;
 import ea.animation.Interpolator;
 import ea.animation.ValueAnimator;
-import ea.animation.interpolation.LinearInteger;
 import ea.animation.interpolation.SinusFloat;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
@@ -181,11 +180,12 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             gameData.consumeMana(ROCKETCOST_PER_FRAME);
             applyImpulse(new Vector(0, 5));
 
-            Particle particle = new Particle(0.1f, .5f);
+            Circle particle = new Circle(0.1f);
             particle.setPosition(getCenter().subtract(new Vector((float) Math.random() * 0.1f, .45f)));
             particle.setColor(Color.RED);
             particle.setLayerPosition(-1);
-            particle.addFrameUpdateListener(new ValueAnimator<>(.25f, value -> particle.setColor(new Color(255, value, 0)), new LinearInteger(0, 255), particle));
+            particle.animateParticle(.5f);
+            particle.animateColor(.25f, Color.YELLOW);
             particle.addMountListener(() -> particle.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
             particle.addCollisionListener((e) -> {
                 if (e.getColliding() instanceof Platform) {
@@ -328,11 +328,12 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
 
             Game.enqueue(() -> {
                 for (int i = 0; i < 100; i++) {
-                    Particle particle = new Particle(Random.nextFloat() * .02f + .02f, .5f);
+                    Circle particle = new Circle(Random.nextFloat() * .02f + .02f);
                     particle.setPosition(getCenter().add(0, -32));
                     particle.addMountListener(() -> particle.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f)));
                     particle.setColor(Color.GRAY);
                     particle.setLayerPosition(-1);
+                    particle.animateParticle(.5f);
 
                     getLayer().add(particle);
                 }
