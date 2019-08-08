@@ -160,6 +160,7 @@ public class Text extends Geometry {
      *              3: Fett &amp; Kursiv<br> <br> Ist die Eingabe nicht eine dieser 4 Zahlen, so wird nichts
      *              geändert.
      */
+    @API
     public void setStyle(int style) {
         if (style >= 0 && style <= 3 && style != this.fontStyle) {
             fontStyle = style;
@@ -168,6 +169,7 @@ public class Text extends Geometry {
         }
     }
 
+    @API
     public void setHeight(float height) {
         if (this.height != height) {
             this.height = height;

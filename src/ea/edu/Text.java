@@ -19,4 +19,9 @@ public class Text extends EduActor<ea.actor.Text> {
     public void setzeFarbe(String farbe) {
         getActor().setColor(Spiel.konvertiereVonFarbname(farbe));
     }
+
+    @API
+    public void setzeHoehe(float height) {
+        getActor().setHeight(height);
+    }
 }
