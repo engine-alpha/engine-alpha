@@ -19,7 +19,10 @@
 
 package ea.example.showcase;
 
-import ea.*;
+import ea.FrameUpdateListener;
+import ea.Game;
+import ea.Scene;
+import ea.Vector;
 import ea.actor.BodyType;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
@@ -61,7 +64,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
         add(right);
 
         addKeyListener(this);
-        addFrameUpdateListener(new PeriodicTask(1, () -> createCircle(getMousePosition(), Color.YELLOW)));
+        repeat(1, () -> createCircle(getMousePosition(), Color.YELLOW));
 
         Rectangle r1 = new Rectangle(Showcases.WIDTH, 10);
         r1.setPosition(-Showcases.WIDTH / 2, -Showcases.HEIGHT / 2);
@@ -100,7 +103,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
     private void createCircle(Vector position, Color color) {
         Circle circle = new Circle(6);
 
-        FrameUpdateListener emitter = new PeriodicTask(0.01f, () -> {
+        FrameUpdateListener emitter = repeat(0.01f, () -> {
             Circle particle = new Circle(3);
             particle.setPosition(circle.getCenter().subtract(new Vector(1, 1)));
             particle.setColor(Color.RED);

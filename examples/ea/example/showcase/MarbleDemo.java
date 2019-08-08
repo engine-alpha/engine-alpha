@@ -1,12 +1,15 @@
 package ea.example.showcase;
 
-import ea.*;
+import ea.FrameUpdateListener;
+import ea.Random;
+import ea.Scene;
+import ea.Vector;
+import ea.actor.BodyType;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
-import ea.actor.BodyType;
 import ea.event.KeyListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 /**
@@ -14,9 +17,7 @@ import java.awt.event.KeyEvent;
  * <p>
  * Created by Michael on 11.04.2017.
  */
-public class MarbleDemo
-        extends ShowcaseDemo
-        implements KeyListener {
+public class MarbleDemo extends ShowcaseDemo implements KeyListener {
 
     /**
      * Konstanten zur Beschreibung der Position des Trichters.
@@ -48,9 +49,7 @@ public class MarbleDemo
         boden = new Rectangle(230, 40);
         boden.setPosition(ABSTAND_LINKS + 125, ABSTAND_OBEN + 375);
 
-        Rectangle[] allRectangles = new Rectangle[] {
-                lo, lm, ro, rm, lu, ru, boden
-        };
+        Rectangle[] allRectangles = new Rectangle[] {lo, lm, ro, rm, lu, ru, boden};
 
         for (Rectangle r : allRectangles) {
             r.setColor(Color.WHITE);
@@ -63,13 +62,13 @@ public class MarbleDemo
         lm.setRotation(-45);
         rm.setRotation(45);
 
-        addFrameUpdateListener(new PeriodicTask(.1f, () -> {
+        repeat(.1f, () -> {
             Circle marble = makeAMarble();
             add(marble);
             marble.setBodyType(BodyType.DYNAMIC);
             marble.setPosition(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150);
             marble.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
-        }));
+        });
     }
 
     @Override
@@ -114,8 +113,7 @@ public class MarbleDemo
         Circle murmel = new Marble(Random.nextInteger(50) + 10);
         murmel.setBodyType(BodyType.DYNAMIC);
         murmel.setMass(4);
-        murmel.setColor(new Color(
-                Random.nextInteger(255), Random.nextInteger(255), Random.nextInteger(255)));
+        murmel.setColor(new Color(Random.nextInteger(255), Random.nextInteger(255), Random.nextInteger(255)));
 
         return murmel;
     }

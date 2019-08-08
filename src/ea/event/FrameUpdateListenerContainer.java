@@ -20,6 +20,8 @@
 package ea.event;
 
 import ea.FrameUpdateListener;
+import ea.internal.PeriodicTask;
+import ea.internal.SingleTask;
 import ea.internal.annotations.API;
 
 @API
@@ -34,5 +36,37 @@ public interface FrameUpdateListenerContainer {
     @API
     default void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
         getFrameUpdateListeners().remove(frameUpdateListener);
+    }
+
+    /**
+     * Führt das übergebene Runnable mit Verzögerung aus.
+     *
+     * @param timeInSeconds Zeitverzögerung
+     * @param runnable      Wird nach Ablauf der Verzögerung ausgeführt
+     *
+     * @return Listener, der manuell abgemeldet werden kann, falls die Ausführung abgebrochen werden soll.
+     */
+    @API
+    default FrameUpdateListener delay(float timeInSeconds, Runnable runnable) {
+        // Später können wir den Return-Type auf SingleTask ändern, falls das notwendig werden sollte
+        FrameUpdateListener singleTask = new SingleTask(timeInSeconds, runnable, this);
+        addFrameUpdateListener(singleTask);
+        return singleTask;
+    }
+
+    /**
+     * Führt das übergebene Runnable mit Verzögerung wiederholend aus.
+     *
+     * @param intervalInSeconds Zeitverzögerung
+     * @param runnable          Wird immer wieder nach Ablauf der Verzögerung ausgeführt
+     *
+     * @return Listener, der manuell abgemeldet werden kann, falls die Ausführung abgebrochen werden soll.
+     */
+    @API
+    default FrameUpdateListener repeat(float intervalInSeconds, Runnable runnable) {
+        // Später können wir den Return-Type auf PeriodicTask ändern, falls das notwendig werden sollte
+        FrameUpdateListener periodicTask = new PeriodicTask(intervalInSeconds, runnable);
+        addFrameUpdateListener(periodicTask);
+        return periodicTask;
     }
 }

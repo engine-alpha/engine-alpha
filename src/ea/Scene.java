@@ -329,42 +329,6 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
         return frameUpdateListeners;
     }
 
-    private final class OneTimeCallBackHandle implements Runnable {
-        /**
-         * Speichert invoked-state, um sicherzustellen, dass der One Time Callback nicht mehrfach ausgeführt wird.
-         *
-         * @see ea.PeriodicTask#onFrameUpdate(float)
-         */
-        private boolean invoked = false;
-        private final Runnable callback;
-        private PeriodicTask toRemove;
-
-        public OneTimeCallBackHandle(Runnable runnable) {
-            this.callback = runnable;
-        }
-
-        private void setToRemove(PeriodicTask toRemove) {
-            this.toRemove = toRemove;
-        }
-
-        @Override
-        public void run() {
-            if (!invoked) {
-                callback.run();
-                invoked = true;
-                Scene.this.getFrameUpdateListeners().remove(toRemove);
-            }
-        }
-    }
-
-    @API
-    final public void addOneTimeCallback(float delayInSeconds, Runnable callback) {
-        OneTimeCallBackHandle oneTimeCallBackHandle = new OneTimeCallBackHandle(callback);
-        PeriodicTask periodicTask = new PeriodicTask(delayInSeconds, oneTimeCallBackHandle);
-        oneTimeCallBackHandle.setToRemove(periodicTask);
-        getFrameUpdateListeners().add(periodicTask);
-    }
-
     @Internal
     final void onFrameUpdateInternal(float deltaSeconds) {
         frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(deltaSeconds));

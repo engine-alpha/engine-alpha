@@ -4,6 +4,7 @@ import ea.*;
 import ea.actor.Actor;
 import ea.edu.event.*;
 import ea.event.*;
+import ea.internal.PeriodicTask;
 import ea.internal.annotations.API;
 
 import java.awt.event.KeyEvent;
@@ -217,9 +218,9 @@ public class EduScene extends Scene {
         removeListener(o, sceneKeyListeners, activeLayer.getKeyListeners());
     }
 
-    public void addEduTicker(float intervall, Ticker ticket) {
-        FrameUpdateListener periodicTask = new PeriodicTask(intervall, ticket::tick);
-        addListener(ticket, sceneTickers, activeLayer.getFrameUpdateListeners(), periodicTask);
+    public void addEduTicker(float intervall, Ticker ticker) {
+        FrameUpdateListener periodicTask = new PeriodicTask(intervall, ticker::tick);
+        addListener(ticker, sceneTickers, activeLayer.getFrameUpdateListeners(), periodicTask);
     }
 
     public void removeEduTicker(Ticker o) {

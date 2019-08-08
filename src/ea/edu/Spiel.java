@@ -50,16 +50,6 @@ public class Spiel {
         new Thread(runnable).start();
     }
 
-    @API
-    public static <T> void parallel(Consumer<T> runnable, T argument) {
-        parallel(() -> runnable.accept(argument));
-    }
-
-    @API
-    public static <T1, T2> void parallel(BiConsumer<T1, T2> runnable, T1 argument1, T2 argument2) {
-        parallel(() -> runnable.accept(argument1, argument2));
-    }
-
     /**
      * Fügt eine String-awt/Color-Zuordnung zu.
      *
