@@ -20,4 +20,9 @@ public abstract class EduGeometrie<T extends Geometry> extends EduActor<T> {
     public String nenneFarbe() {
         return Spiel.konvertiereZuFarbname(getActor().getColor());
     }
+
+    @API
+    public void animiereFarbe(float dauerInSekunden, String farbe) {
+        getActor().animateColor(dauerInSekunden, Spiel.konvertiereVonFarbname(farbe));
+    }
 }
