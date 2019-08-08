@@ -230,18 +230,20 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
             g.setColor(REVOLUTE_JOINT_COLOR);
             g.drawOval((int) aInPx.x - (JOINT_CIRCLE_RADIUS / 2), (int) aInPx.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_CIRCLE_RADIUS, JOINT_CIRCLE_RADIUS);
         } else if (j instanceof RopeJoint) {
-            renderJointRectangle(g, ROPE_JOINT_COLOR, aInPx, bInPx);
+            renderJointRectangle(g, ROPE_JOINT_COLOR, aInPx, bInPx, layer.calculatePixelPerMeter());
         } else if (j instanceof DistanceJoint) {
-            renderJointRectangle(g, DISTANCE_JOINT_COLOR, aInPx, bInPx);
+            renderJointRectangle(g, DISTANCE_JOINT_COLOR, aInPx, bInPx, layer.calculatePixelPerMeter());
         }
     }
 
     @Internal
-    private static void renderJointRectangle(Graphics2D g, Color color, Vector a, Vector b) {
+    private static void renderJointRectangle(Graphics2D g, Color color, Vector a, Vector b, float pixelPerMeter) {
         g.setColor(color);
         g.drawRect((int) a.x - (JOINT_CIRCLE_RADIUS / 2), (int) a.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_RECTANGLE_SIDE, JOINT_RECTANGLE_SIDE);
         g.drawRect((int) b.x - (JOINT_CIRCLE_RADIUS / 2), (int) b.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_RECTANGLE_SIDE, JOINT_RECTANGLE_SIDE);
         g.drawLine((int) a.x, (int) a.y, (int) b.x, (int) b.y);
+        Vector middle = a.add(b).divide(2);
+        g.drawString("Distance: " + a.fromThisTo(b).divide(pixelPerMeter).getLength(), middle.x, middle.y);
     }
 
     /**

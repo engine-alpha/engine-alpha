@@ -888,6 +888,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
             ropeJointDef.bodyB = other.getPhysicsHandler().getBody();
 
             ropeJointDef.localAnchorA.set(anchorA.toVec2());
+            ropeJointDef.collideConnected = true;
             ropeJointDef.localAnchorB.set(anchorB.toVec2());
             ropeJointDef.maxLength = ropeLength;
 

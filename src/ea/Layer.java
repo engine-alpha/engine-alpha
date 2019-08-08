@@ -253,7 +253,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     @Internal
     public Bounds visibleArea() {
         Vector center = parent.getCamera().getPosition();
-        float pixelPerMeter = calculatePixelPerMeter(parent.getCamera());
+        float pixelPerMeter = calculatePixelPerMeter();
         Bounds frameBoundsPx = Game.getFrameSizeInPx();
         return new Bounds(0, 0, frameBoundsPx.width / pixelPerMeter, frameBoundsPx.height / pixelPerMeter).withCenterPoint(center);
     }
@@ -268,7 +268,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
      */
     @Internal
     public Vector translateWorldPointToFramePxCoordinates(Vector worldPoint) {
-        float pixelPerMeter = calculatePixelPerMeter(parent.getCamera());
+        float pixelPerMeter = calculatePixelPerMeter();
         Bounds frameSize = Game.getFrameSizeInPx();
         Vector cameraPositionInPx = new Vector(frameSize.width / 2, frameSize.height / 2);
         Vector fromCamToPointInWorld = parent.getCamera().getPosition().multiplyX(parallaxX).multiplyY(parallaxY).fromThisTo(worldPoint);
@@ -310,14 +310,14 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     @API
-    public float calculatePixelPerMeter(Camera camera) {
-        return 1 + (camera.getZoom() - 1) * parallaxZoom;
+    public float calculatePixelPerMeter() {
+        return 1 + (parent.getCamera().getZoom() - 1) * parallaxZoom;
     }
 
     @API
     public Bounds getCameraBoundsOnLayer(Camera camera) {
         Bounds frameSizeInPx = Game.getFrameSizeInPx();
-        float pixelPerMeter = calculatePixelPerMeter(camera);
+        float pixelPerMeter = calculatePixelPerMeter();
 
         return new Bounds(0, 0, frameSizeInPx.width * pixelPerMeter, frameSizeInPx.height * pixelPerMeter).withCenterPoint(camera.getPosition());
     }
@@ -332,7 +332,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         g.setClip(0, 0, width, height);
         g.translate(width / 2, height / 2);
 
-        float pixelPerMeter = calculatePixelPerMeter(camera);
+        float pixelPerMeter = calculatePixelPerMeter();
 
         g.rotate(rotation * parallaxRotation, 0, 0);
         g.translate((-position.x * parallaxX) * pixelPerMeter, (position.y * parallaxY) * pixelPerMeter);

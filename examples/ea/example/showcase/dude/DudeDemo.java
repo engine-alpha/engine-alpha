@@ -43,10 +43,18 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         weird.setBodyType(BodyType.DYNAMIC);
         weird.setPosition(0.3f, 0.6f);
 
+        Rectangle boxy = new Rectangle(0.2f, 0.2f);
+        boxy.setColor(Color.WHITE);
+        //boxy.setBodyType(BodyType.DYNAMIC);
+        boxy.setPosition(3, 2);
+
         add(character);
         add(weird);
+        add(boxy);
 
-        character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
+        //character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
+        //character.createRopeJoint(boxy, new Vector(0.3f, 0.3f), new Vector(3.1f, 2.1f), 5);
+        character.createDistanceJoint(boxy, new Vector(0.3f, 0.3f), new Vector(3.1f, 2.1f));
 
         setGravity(new Vector(0, -13));
 
@@ -69,7 +77,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         makePlatform(7, -450 / 60, -200 / 60);
         makePlatform(3, 200 / 60, 0);
         makePlatform(5, 800 / 60, -100 / 60);
-        makeBoxes(0, 40, 5);
+        //makeBoxes(0, 40, 5);
 
         for (int i = 0; i < 15; i++) {
             Coin coin = new Coin();
