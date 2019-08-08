@@ -853,7 +853,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     @API
     public Joint createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
         return WorldHandler.createJoint(this, other, worldHandler -> {
-            // Definiere den Joint
             RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
             revoluteJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(),
                     //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchorAsWorldPos)));
@@ -916,7 +915,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     public Joint createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
         return WorldHandler.createJoint(this, other, (worldHandler) -> {
             DistanceJointDef distanceJointDef = new DistanceJointDef();
-            distanceJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
+            distanceJointDef.initialize(physicsHandler.getBody(), other.physicsHandler.getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
 
             return worldHandler.getWorld().createJoint(distanceJointDef);
         });
