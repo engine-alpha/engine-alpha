@@ -5,6 +5,7 @@ import ea.actor.Actor;
 import ea.animation.interpolation.CosinusFloat;
 import ea.animation.interpolation.LinearFloat;
 import ea.animation.interpolation.SinusFloat;
+import ea.event.AggregateFrameUpdateListener;
 import ea.internal.annotations.API;
 
 /**
