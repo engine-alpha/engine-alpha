@@ -20,6 +20,7 @@
 package ea;
 
 import ea.actor.Actor;
+import ea.internal.Bounds;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 

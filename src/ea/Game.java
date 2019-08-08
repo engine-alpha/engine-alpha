@@ -21,6 +21,7 @@ package ea;
 
 import ea.event.MouseButton;
 import ea.event.MouseWheelEvent;
+import ea.internal.Bounds;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;

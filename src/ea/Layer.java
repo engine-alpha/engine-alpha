@@ -2,6 +2,7 @@ package ea;
 
 import ea.actor.Actor;
 import ea.event.*;
+import ea.internal.Bounds;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.*;

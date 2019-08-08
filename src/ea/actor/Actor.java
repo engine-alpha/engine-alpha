@@ -24,6 +24,7 @@ import ea.animation.ValueAnimator;
 import ea.animation.interpolation.EaseInOutFloat;
 import ea.collision.CollisionListener;
 import ea.event.*;
+import ea.internal.Bounds;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;

@@ -1,6 +1,6 @@
 package ea.example.showcase.dude;
 
-import ea.Bounds;
+import ea.internal.Bounds;
 import ea.Layer;
 import ea.Scene;
 import ea.Vector;
