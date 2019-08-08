@@ -343,7 +343,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
                 Composite composite;
                 if (opacity != 1) {
                     composite = g.getComposite();
-                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
+                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 } else {
                     composite = null;
                 }
