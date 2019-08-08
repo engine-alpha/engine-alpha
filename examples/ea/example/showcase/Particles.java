@@ -109,7 +109,7 @@ public class Particles extends ShowcaseDemo implements KeyListener {
             particle.setLayerPosition(-1);
             particle.animateParticle(.5f);
             particle.animateColor(.25f, Color.YELLOW);
-            particle.addMountListener(() -> particle.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f))));
+            particle.applyImpulse(new Vector(6000 * ((float) Math.random() - .5f), 6000 * ((float) Math.random() - .5f)));
 
             add(particle);
         });

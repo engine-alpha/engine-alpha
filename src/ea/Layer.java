@@ -214,11 +214,14 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     public void add(Actor... actors) {
         Game.afterWorldStep(() -> {
             for (Actor actor : actors) {
-                if (actor.getPhysicsHandler().getBody() != null) {
+                if (actor.isMounted()) {
                     throw new IllegalArgumentException("Ein Actor kann nur an einem Layer gleichzeitig angemeldet sein");
                 }
 
-                actor.setPhysicsHandler(new BodyHandler(actor, actor.getPhysicsHandler().getPhysicsData(), worldHandler));
+                PhysicsHandler oldHandler = actor.getPhysicsHandler();
+                PhysicsHandler newHandler = new BodyHandler(actor, oldHandler.getPhysicsData(), worldHandler);
+                actor.setPhysicsHandler(newHandler);
+                oldHandler.applyMountCallbacks(newHandler);
 
                 this.actors.add(actor);
             }

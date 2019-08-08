@@ -186,7 +186,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             particle.setLayerPosition(-1);
             particle.animateParticle(.5f);
             particle.animateColor(.25f, Color.YELLOW);
-            particle.addMountListener(() -> particle.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random()))));
+            particle.applyImpulse(new Vector(0.005f * -impulse + ((float) Math.random() - 0.5f), -2 * ((float) Math.random())));
             particle.addCollisionListener((e) -> {
                 if (e.getColliding() instanceof Platform) {
                     Platform platform = (Platform) e.getColliding();
@@ -330,7 +330,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
                 for (int i = 0; i < 100; i++) {
                     Circle particle = new Circle(Random.nextFloat() * .02f + .02f);
                     particle.setPosition(getCenter().add(0, -32));
-                    particle.addMountListener(() -> particle.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f)));
+                    particle.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
                     particle.setColor(Color.GRAY);
                     particle.setLayerPosition(-1);
                     particle.animateParticle(.5f);

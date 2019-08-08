@@ -375,6 +375,11 @@ public class BodyHandler implements PhysicsHandler {
     }
 
     @Override
+    public void applyMountCallbacks(PhysicsHandler otherHandler) {
+        // nothing to do
+    }
+
+    @Override
     public WorldHandler getWorldHandler() {
         return worldHandler;
     }
