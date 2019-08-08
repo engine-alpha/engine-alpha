@@ -112,7 +112,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         synchronized (physicsHandlerLock) {
             mountListeners.add(listener);
 
-            if (physicsHandler.getWorldHandler() != null) {
+            if (isMounted()) {
                 listener.run();
             }
         }

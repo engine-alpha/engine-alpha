@@ -24,6 +24,7 @@ import org.jbox2d.dynamics.contacts.ContactEdge;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -451,9 +452,13 @@ public class WorldHandler implements ContactListener {
     public static Joint createJoint(Actor a, Actor b, Function<WorldHandler, org.jbox2d.dynamics.joints.Joint> jointSupplier) {
         List<org.jbox2d.dynamics.joints.Joint> jointList = new ArrayList<>();
 
-        addMountListener(a, b, worldHandler -> jointList.add(jointSupplier.apply(worldHandler)));
+        List<Runnable> releases = addMountListener(a, b, worldHandler -> jointList.add(jointSupplier.apply(worldHandler)));
 
         return () -> Game.afterWorldStep(() -> {
+            for (Runnable release : releases) {
+                release.run();
+            }
+
             while (!jointList.isEmpty()) {
                 org.jbox2d.dynamics.joints.Joint.destroy(jointList.remove(0));
             }
@@ -461,43 +466,38 @@ public class WorldHandler implements ContactListener {
     }
 
     @Internal
-    public static void addMountListener(Actor a, Actor b, Consumer<WorldHandler> runnable) {
-        addMountListenerWithoutExecution(a, worldHandler -> {
-            if (b.isMounted() && b.getPhysicsHandler().getWorldHandler() == worldHandler) {
-                runnable.accept(worldHandler);
-            }
-        });
+    public static List<Runnable> addMountListener(Actor a, Actor b, Consumer<WorldHandler> runnable) {
+        List<Runnable> releases = new ArrayList<>();
 
-        addMountListenerWithoutExecution(b, worldHandler -> {
-            if (a.isMounted() && a.getPhysicsHandler().getWorldHandler() == worldHandler) {
+        AtomicBoolean skipListener = new AtomicBoolean(true);
+
+        Runnable listenerA = () -> {
+            WorldHandler worldHandler = a.getPhysicsHandler().getWorldHandler();
+            if (!skipListener.get() && b.isMounted() && b.getPhysicsHandler().getWorldHandler() == worldHandler) {
                 runnable.accept(worldHandler);
             }
-        });
+        };
+
+        Runnable listenerB = () -> {
+            WorldHandler worldHandler = b.getPhysicsHandler().getWorldHandler();
+            if (!skipListener.get() && a.isMounted() && a.getPhysicsHandler().getWorldHandler() == worldHandler) {
+                runnable.accept(worldHandler);
+            }
+        };
+
+        a.addMountListener(listenerA);
+        b.addMountListener(listenerB);
+
+        skipListener.set(false);
+
+        releases.add(() -> a.removeMountListener(listenerA));
+        releases.add(() -> b.removeMountListener(listenerB));
 
         if (a.isMounted() && b.isMounted()) {
             runnable.accept(a.getPhysicsHandler().getWorldHandler());
         }
-    }
 
-    private static boolean addMountListenerWithoutExecution(Actor actor, Consumer<WorldHandler> listener) {
-        final WorldHandler worldHandler = actor.getPhysicsHandler().getWorldHandler();
-        final Runnable mountListener = () -> listener.accept(actor.getPhysicsHandler().getWorldHandler());
-
-        if (worldHandler == null) {
-            actor.addMountListener(mountListener);
-
-            return false;
-        } else {
-            actor.addUnmountListener(new Runnable() {
-                @Override
-                public void run() {
-                    actor.removeUnmountListener(this);
-                    actor.addMountListener(mountListener);
-                }
-            });
-
-            return true;
-        }
+        return releases;
     }
 
     private static class FixturePair {
