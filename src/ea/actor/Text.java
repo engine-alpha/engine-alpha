@@ -37,7 +37,7 @@ import java.awt.geom.AffineTransform;
  * @author Niklas Keller
  */
 public class Text extends Geometry {
-    private static final int SIZE = 92;
+    private static final int SIZE = 16;
 
     @Internal
     private static Shape createShape(String content, float height, Font font) {

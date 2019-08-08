@@ -339,7 +339,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
                 AffineTransform transform = g.getTransform();
 
-                g.rotate(-rotation, position.x * pixelPerMeter, -position.y * pixelPerMeter);
+                g.rotate(-Math.toRadians(rotation), position.x * pixelPerMeter, -position.y * pixelPerMeter);
                 g.translate(position.x * pixelPerMeter, -position.y * pixelPerMeter);
 
                 // Opacity Update
