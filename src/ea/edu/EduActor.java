@@ -30,6 +30,27 @@ public interface EduActor {
         getActor().setRestitution(0);
     }
 
+    /**
+     * Setzt die Transparenz dieses Actors.
+     *
+     * @param transparenz Die Transparenz dieses Actors. Ein Wert von 0 entspricht voll sichtbar.
+     *                    Ein Wert von 1 entspricht voll unsichtbar.
+     *
+     * @see #nenneTransparenz()
+     */
+    @API
+    default void setzeTransparenz(float transparenz) {
+        if (transparenz < 0 || transparenz > 1) {
+            throw new IllegalArgumentException("Fehlerhafte Transparenzeingabe. Muss zwischen 0 und 1 sein. War " + transparenz);
+        }
+        getActor().setOpacity(1 - transparenz);
+    }
+
+    @API
+    default float nenneTransparenz() {
+        return 1 - getActor().getOpacity();
+    }
+
     @API
     default void entfernen() {
         Spiel.getActiveScene().remove(getActor());
@@ -238,6 +259,29 @@ public interface EduActor {
     @API
     default int nenneEbene() {
         return getActor().getLayerPosition();
+    }
+
+
+
+    /* ____________________ ANIMATION  ____________________*/
+
+    /**
+     * Animiert flüssig die Transparenz dieses Actors von einem bestimmten Wert zu einem bestimmten Wert.
+     *
+     * @param transparenzVon  Die Starttransparenz
+     * @param transparenzNach Die Endtransparenz
+     * @param zeitInSekunden  Die Zeit in Sekunden, die vergehen, bis der Transparenzwert des Actors
+     *                        von <code>transparenzVon</code> bis <code>transparenzNach</code> animiert.
+     *
+     * @see #setzeTransparenz(float)
+     */
+    @API
+    default void animiereTransparenz(float transparenzVon, float transparenzNach, float zeitInSekunden) {
+        if (transparenzVon < 0 || transparenzNach < 0 || transparenzVon > 1 || transparenzNach > 1) {
+            throw new IllegalArgumentException("Transparenzen müssen stets zwischen 0 und 1 sein.");
+        }
+        getActor().setOpacity(1 - transparenzVon);
+        getActor().animateOpacity(zeitInSekunden, 1 - transparenzNach);
     }
 
     /**

@@ -30,7 +30,7 @@ public class ManaPickup extends Animation implements CollisionListener<PlayerCha
         active = false;
         getLayer().getParent().addOneTimeCallback(3, () -> setActive(true));
 
-        ValueAnimator<Float> opacityAnimation = animateOpacity(2, 0.3f);
+        ValueAnimator<Float> opacityAnimation = animateOpacity(2, 1f);
     }
 
     private void setActive(boolean b) {

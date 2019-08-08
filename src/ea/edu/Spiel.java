@@ -206,6 +206,8 @@ public class Spiel {
      * <li>Geht die vorige Szene "verloren", wenn sie nicht mit benannt wurde.</li>
      * <li>Werden alle grafischen Objekte, die ab sofort erstellt werden, in der neuen Szene eingesetzt.</li>
      * </ul>
+     *
+     * @see #benenneSzene(String)
      */
     @API
     public void neueSzene() {
@@ -230,6 +232,20 @@ public class Spiel {
             return;
         }
         setActiveScene(scene);
+    }
+
+    /**
+     * Gibt die Namen aller gespeicherten Szenen aus.
+     *
+     * @return Ein String Array. Jeder Eintrag entspricht dem Namen einer der gespeicherten Szenen des Spiels.
+     * Szenen, die nicht benannt wurden, haben keinen Namen und werden daher nicht mit aufgelistet.
+     *
+     * @see #neueSzene()
+     * @see #benenneSzene(String)
+     */
+    @API
+    public String[] nenneSzenenNamen() {
+        return (String[]) sceneMap.keySet().toArray();
     }
 
     /* _____________________________ LAYER CONTROLS _____________________________ */
@@ -267,6 +283,19 @@ public class Spiel {
     @API
     public void setzeAufHauptebeneZurueck() {
         getActiveScene().resetToMainLayer();
+    }
+
+    /**
+     * Gibt die Namen aller Layer der <b>aktiven</b> Szene aus.
+     *
+     * @return Ein String Array. Jeder Eintrag entspricht dem Namen einer Ebene in der aktiven Szene des Spiels.
+     *
+     * @see #macheNeueEbene(String, int)
+     * @see #setzeSzene(String)
+     */
+    @API
+    public String[] nenneEbenenNamenDerAktivenSzene() {
+        return getActiveScene().getLayerNames();
     }
 
     /* ~~~ CAMERA CONTROL ~~~ */
