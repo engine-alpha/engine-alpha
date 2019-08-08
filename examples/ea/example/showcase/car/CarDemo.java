@@ -19,22 +19,28 @@
 
 package ea.example.showcase.car;
 
+import ea.FrameUpdateListener;
 import ea.Game;
 import ea.Scene;
 import ea.Vector;
-import ea.actor.BodyType;
-import ea.actor.Circle;
-import ea.actor.Rectangle;
+import ea.actor.*;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 
-public class CarDemo extends ShowcaseDemo {
+public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
     public static void main(String[] args) {
         Game.setDebug(true);
         Game.start(Showcases.WIDTH, Showcases.HEIGHT, new CarDemo(null));
     }
+
+    private Actor carBody;
+    private PrismaticJoint springFront;
+    private PrismaticJoint springBack;
+    private RevoluteJoint motorFront;
+    private RevoluteJoint motorBack;
 
     public CarDemo(Scene parent) {
         super(parent);
@@ -43,8 +49,9 @@ public class CarDemo extends ShowcaseDemo {
         ground.setPosition(-20, -11);
         ground.setColor(Color.YELLOW);
         ground.setBodyType(BodyType.STATIC);
+        ground.setFriction(.5f);
 
-        Rectangle carBody = new Rectangle(4, 1);
+        carBody = new Rectangle(4, 1);
         carBody.setPosition(-2, -8);
         carBody.setBodyType(BodyType.DYNAMIC);
 
@@ -52,25 +59,33 @@ public class CarDemo extends ShowcaseDemo {
         axleFront.setCenter(1.5f, -7.5f);
         axleFront.setBodyType(BodyType.DYNAMIC);
         axleFront.setColor(Color.PINK);
-        axleFront.createPrismaticJoint(carBody, axleFront.getCenterRelative(), 90);
+        springFront = axleFront.createPrismaticJoint(carBody, axleFront.getCenterRelative(), 90);
+        springFront.setLimits(-.5f, .5f);
 
         Circle wheelFront = new Circle(1);
         wheelFront.setCenter(1.5f, -8);
         wheelFront.setBodyType(BodyType.DYNAMIC);
         wheelFront.setColor(Color.GRAY);
-        wheelFront.createRevoluteJoint(axleFront, wheelFront.getCenterRelative());
+        wheelFront.setFriction(.5f);
+        motorFront = wheelFront.createRevoluteJoint(axleFront, wheelFront.getCenterRelative());
+        motorFront.setMotorEnabled(true);
+        motorFront.setMaxMotorForce(100);
 
         Rectangle axleBack = new Rectangle(.4f, .8f);
         axleBack.setCenter(-1.5f, -7.5f);
         axleBack.setBodyType(BodyType.DYNAMIC);
         axleBack.setColor(Color.PINK);
-        axleBack.createPrismaticJoint(carBody, axleBack.getCenterRelative(), 90);
+        springBack = axleBack.createPrismaticJoint(carBody, axleBack.getCenterRelative(), 90);
+        springBack.setLimits(-.5f, .5f);
 
         Circle wheelBack = new Circle(1);
         wheelBack.setCenter(-1.5f, -8);
         wheelBack.setBodyType(BodyType.DYNAMIC);
         wheelBack.setColor(Color.GRAY);
-        wheelBack.createRevoluteJoint(axleBack, wheelBack.getCenterRelative());
+        wheelBack.setFriction(.5f);
+        motorBack = wheelBack.createRevoluteJoint(axleBack, wheelBack.getCenterRelative());
+        motorBack.setMotorEnabled(true);
+        motorBack.setMaxMotorForce(100);
 
         add(ground);
         add(carBody);
@@ -80,5 +95,19 @@ public class CarDemo extends ShowcaseDemo {
         add(wheelBack);
 
         setGravity(new Vector(0, -9f));
+    }
+
+    @Override
+    public void onFrameUpdate(float deltaSeconds) {
+        boolean left = Game.isKeyPressed(KeyEvent.VK_J);
+        boolean right = Game.isKeyPressed(KeyEvent.VK_L);
+
+        if (left ^ right) {
+            motorFront.setMotorSpeed(right ? 2 : -2);
+            motorBack.setMotorSpeed(right ? 2 : -2);
+        } else {
+            motorFront.setMotorSpeed(0);
+            motorBack.setMotorSpeed(0);
+        }
     }
 }

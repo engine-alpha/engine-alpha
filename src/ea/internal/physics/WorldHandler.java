@@ -1,6 +1,5 @@
 package ea.internal.physics;
 
-import ea.Game;
 import ea.Layer;
 import ea.actor.Actor;
 import ea.actor.Joint;
@@ -448,28 +447,11 @@ public class WorldHandler implements ContactListener {
     }
 
     @Internal
-    public static Joint createJoint(Actor a, Actor b, JointBuilder jointBuilder) {
-        List<org.jbox2d.dynamics.joints.Joint> jointList = new ArrayList<>();
-        Runnable destroyJoints = () -> {
-            while (!jointList.isEmpty()) {
-                org.jbox2d.dynamics.joints.Joint.destroy(jointList.remove(0));
-            }
-        };
+    public static <JointType extends org.jbox2d.dynamics.joints.Joint, Wrapper extends Joint<JointType>> Wrapper createJoint(Actor a, Actor b, JointBuilder<JointType> jointBuilder, Wrapper wrapper) {
+        List<Runnable> releaseCallbacks = addMountListener(a, b, worldHandler -> wrapper.setJoint(jointBuilder.createJoint(worldHandler.getWorld(), a.getPhysicsHandler().getBody(), b.getPhysicsHandler().getBody()), worldHandler));
+        releaseCallbacks.forEach(wrapper::addReleaseListener);
 
-        a.addUnmountListener(destroyJoints);
-        b.addUnmountListener(destroyJoints);
-
-        Collection<Runnable> releases = new ArrayList<>(addMountListener(a, b, worldHandler -> jointList.add(jointBuilder.createJoint(worldHandler.getWorld(), a.getPhysicsHandler().getBody(), b.getPhysicsHandler().getBody()))));
-        releases.add(() -> a.removeUnmountListener(destroyJoints));
-        releases.add(() -> b.removeUnmountListener(destroyJoints));
-
-        return () -> Game.afterWorldStep(() -> {
-            for (Runnable release : releases) {
-                release.run();
-            }
-
-            destroyJoints.run();
-        });
+        return wrapper;
     }
 
     @Internal

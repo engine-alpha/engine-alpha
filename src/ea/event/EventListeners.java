@@ -19,6 +19,8 @@
 
 package ea.event;
 
+import ea.internal.annotations.API;
+
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -36,6 +38,7 @@ public final class EventListeners<T> {
         this.parentSupplier = parentSupplier;
     }
 
+    @API
     public void add(T listener) {
         listeners.add(listener);
 
@@ -45,6 +48,7 @@ public final class EventListeners<T> {
         }
     }
 
+    @API
     public void remove(T listener) {
         listeners.remove(listener);
 
@@ -54,17 +58,25 @@ public final class EventListeners<T> {
         }
     }
 
+    @API
     public boolean contains(T listener) {
         return listeners.contains(listener);
     }
 
+    @API
     public void invoke(Consumer<T> invoker) {
         for (T listener : listeners) {
             invoker.accept(listener);
         }
     }
 
+    @API
     public boolean isEmpty() {
         return listeners.isEmpty();
+    }
+
+    @API
+    public void clear() {
+        listeners.clear();
     }
 }

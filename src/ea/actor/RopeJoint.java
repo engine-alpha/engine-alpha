@@ -17,12 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ea.internal.physics;
+package ea.actor;
 
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.joints.Joint;
+public final class RopeJoint extends Joint<org.jbox2d.dynamics.joints.RopeJoint> {
+    @Override
+    protected void updateJoint(org.jbox2d.dynamics.joints.RopeJoint joint) {
 
-public interface JointBuilder<JointType extends Joint> {
-    JointType createJoint(World world, Body a, Body b);
+    }
 }

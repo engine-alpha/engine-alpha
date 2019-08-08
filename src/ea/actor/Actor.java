@@ -720,9 +720,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     @API
-    public void setRestitution(float elasticity) {
+    public void setRestitution(float restitution) {
         synchronized (physicsHandlerLock) {
-            physicsHandler.setRestitution(elasticity);
+            physicsHandler.setRestitution(restitution);
         }
     }
 
@@ -838,14 +838,14 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
-    public Joint createRevoluteJoint(Actor other, Vector relativeAnchor) {
+    public RevoluteJoint createRevoluteJoint(Actor other, Vector relativeAnchor) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
             RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
             revoluteJointDef.initialize(a, b, getPosition().add(relativeAnchor).toVec2());
             revoluteJointDef.collideConnected = false;
 
-            return world.createJoint(revoluteJointDef);
-        });
+            return (org.jbox2d.dynamics.joints.RevoluteJoint) world.createJoint(revoluteJointDef);
+        }, new RevoluteJoint());
     }
 
     /**
@@ -869,33 +869,29 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see org.jbox2d.dynamics.joints.RopeJoint
      */
     @API
-    public Joint createRopeJoint(Actor other, Vector relativeAnchor, Vector relativeAnchorOther, float ropeLength) {
+    public RopeJoint createRopeJoint(Actor other, Vector relativeAnchor, Vector relativeAnchorOther, float ropeLength) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
             RopeJointDef ropeJointDef = new RopeJointDef();
             ropeJointDef.bodyA = a;
             ropeJointDef.bodyB = b;
-
             ropeJointDef.localAnchorA.set(relativeAnchor.toVec2());
-            ropeJointDef.collideConnected = true;
             ropeJointDef.localAnchorB.set(relativeAnchorOther.toVec2());
+            ropeJointDef.collideConnected = true;
             ropeJointDef.maxLength = ropeLength;
 
-            return world.createJoint(ropeJointDef);
-        });
+            return (org.jbox2d.dynamics.joints.RopeJoint) world.createJoint(ropeJointDef);
+        }, new RopeJoint());
     }
 
     @API
-    public Joint createPrismaticJoint(Actor other, Vector anchor, float axisAngle) {
+    public PrismaticJoint createPrismaticJoint(Actor other, Vector anchor, float axisAngle) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
             PrismaticJointDef prismaticJointDef = new PrismaticJointDef();
             prismaticJointDef.initialize(a, b, getPosition().add(anchor).toVec2(), new Vec2((float) Math.cos(Math.toRadians(axisAngle)), (float) Math.sin(Math.toRadians(axisAngle))));
             prismaticJointDef.collideConnected = false;
-            prismaticJointDef.enableLimit = true;
-            prismaticJointDef.lowerTranslation = -0.3f;
-            prismaticJointDef.upperTranslation = 0.5f;
 
-            return world.createJoint(prismaticJointDef);
-        });
+            return (org.jbox2d.dynamics.joints.PrismaticJoint) world.createJoint(prismaticJointDef);
+        }, new PrismaticJoint());
     }
 
     /**
@@ -915,7 +911,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see org.jbox2d.dynamics.joints.DistanceJoint
      */
     @API
-    public Joint createDistanceJoint(Actor other, Vector anchorRelativeToThis, Vector anchorRelativeToOther) {
+    public DistanceJoint createDistanceJoint(Actor other, Vector anchorRelativeToThis, Vector anchorRelativeToOther) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
             DistanceJointDef distanceJointDef = new DistanceJointDef();
 
@@ -926,8 +922,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
             Vector distanceBetweenBothActors = (this.getPosition().add(anchorRelativeToThis)).fromThisTo(other.getPosition().add(anchorRelativeToOther));
             distanceJointDef.length = distanceBetweenBothActors.getLength();
 
-            return world.createJoint(distanceJointDef);
-        });
+            return (org.jbox2d.dynamics.joints.DistanceJoint) world.createJoint(distanceJointDef);
+        }, new DistanceJoint());
     }
 
     @API
