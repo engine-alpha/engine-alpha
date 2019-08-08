@@ -387,4 +387,15 @@ public abstract class EduActor<T extends Actor> {
     public void erzeugeSeilverbindung(EduActor anderer, float ropeLength, float aX, float aY, float bX, float bY) {
         this.actor.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), ropeLength);
     }
+
+    /**
+     * Führt ein Runnable verzögert aus.
+     *
+     * @param verzoegerungInSekunden Spielzeit-Verzögerung
+     * @param runnable               Runnable, dass dann ausgeführt wird
+     */
+    @API
+    public void verzoegere(float verzoegerungInSekunden, Runnable runnable) {
+        this.actor.delay(verzoegerungInSekunden, runnable);
+    }
 }
