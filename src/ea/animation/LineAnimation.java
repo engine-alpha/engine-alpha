@@ -3,6 +3,7 @@ package ea.animation;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.animation.interpolation.LinearFloat;
+import ea.event.AggregateFrameUpdateListener;
 
 /**
  * Eine Animation, die ein Actor-Objekt in einer Linie animiert.

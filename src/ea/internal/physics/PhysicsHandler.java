@@ -253,4 +253,6 @@ public interface PhysicsHandler {
      */
     @Internal
     PhysicsData getPhysicsData();
+
+    void applyMountCallbacks(PhysicsHandler otherHandler);
 }

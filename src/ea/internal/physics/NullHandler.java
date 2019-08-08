@@ -3,9 +3,12 @@ package ea.internal.physics;
 import ea.Vector;
 import ea.actor.BodyType;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -17,6 +20,7 @@ import java.util.function.Supplier;
 public class NullHandler implements PhysicsHandler {
 
     private final PhysicsData physicsData;
+    private final List<Consumer<PhysicsHandler>> mountCallbacks = new ArrayList<>();
 
     public NullHandler(PhysicsData physicsData) {
         this.physicsData = physicsData;
@@ -114,28 +118,17 @@ public class NullHandler implements PhysicsHandler {
 
     @Override
     public void applyForce(Vector force) {
-        throw makeNullException("das Wirken einer Kraft");
-    }
-
-    /**
-     * Gibt eine Exception aus, die alle Fehlverhalten aufgrund Nichtanmeldung an einer Scene betrifft.
-     *
-     * @param ex Beispiel für den Fehlertext
-     *
-     * @return Die Exception, ready to throw.
-     */
-    private IllegalStateException makeNullException(String ex) {
-        return new IllegalStateException("Physikalische Manipulation (wie zum Beispiel " + ex + ") " + "können nur an Objekten ausgeführt werden, die in einer Scene aktiv sind.");
+        mountCallbacks.add(physicsHandler -> physicsHandler.applyForce(force));
     }
 
     @Override
     public void applyTorque(float torque) {
-        throw makeNullException("das Wirken eines Drehmoments");
+        mountCallbacks.add(physicsHandler -> physicsHandler.applyTorque(torque));
     }
 
     @Override
     public void applyRotationImpulse(float rotationImpulse) {
-        throw makeNullException("das Wirken eines Drehimpulses");
+        mountCallbacks.add(physicsHandler -> physicsHandler.applyRotationImpulse(rotationImpulse));
     }
 
     @Override
@@ -149,13 +142,13 @@ public class NullHandler implements PhysicsHandler {
     }
 
     @Override
-    public void applyForce(Vector kraftInN, Vector globalLocation) {
-        throw makeNullException("das Wirken einer Kraft");
+    public void applyForce(Vector force, Vector globalLocation) {
+        mountCallbacks.add(physicsHandler -> physicsHandler.applyForce(force, globalLocation));
     }
 
     @Override
-    public void applyImpluse(Vector impulsInNS, Vector globalLocation) {
-        throw makeNullException("das Wirken eines Impulses");
+    public void applyImpluse(Vector impulse, Vector globalLocation) {
+        mountCallbacks.add(physicsHandler -> physicsHandler.applyImpluse(impulse, globalLocation));
     }
 
     @Override
@@ -170,12 +163,13 @@ public class NullHandler implements PhysicsHandler {
 
     @Override
     public void resetMovement() {
-        //nichts zu tun
+        physicsData.setVelocity(new Vec2());
+        physicsData.setAngularVelocity(0);
     }
 
     @Override
     public void setVelocity(Vector metersPerSecond) {
-        throw makeNullException("das Setzen einer Geschwindigkeit");
+        mountCallbacks.add(physicsHandler -> physicsHandler.setVelocity(metersPerSecond));
     }
 
     @Override
@@ -195,7 +189,7 @@ public class NullHandler implements PhysicsHandler {
 
     @Override
     public boolean isGrounded() {
-        throw makeNullException("das Prüfen auf Stehen");
+        return false;
     }
 
     @Override
@@ -205,7 +199,7 @@ public class NullHandler implements PhysicsHandler {
 
     @Override
     public void setTorque(float value) {
-        throw makeNullException("das Setzen eines Drehmomentes");
+        mountCallbacks.add(physicsHandler -> physicsHandler.setTorque(value));
     }
 
     @Override
@@ -216,5 +210,14 @@ public class NullHandler implements PhysicsHandler {
     @Override
     public PhysicsData getPhysicsData() {
         return this.physicsData;
+    }
+
+    @Override
+    public void applyMountCallbacks(PhysicsHandler otherHandler) {
+        for (Consumer<PhysicsHandler> mountCallback : mountCallbacks) {
+            mountCallback.accept(otherHandler);
+        }
+
+        mountCallbacks.clear();
     }
 }

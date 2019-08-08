@@ -20,6 +20,8 @@
 package ea.actor;
 
 import ea.*;
+import ea.animation.ValueAnimator;
+import ea.animation.interpolation.LinearFloat;
 import ea.collision.CollisionListener;
 import ea.event.*;
 import ea.internal.ShapeBuilder;
@@ -1180,5 +1182,23 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     @API
     public boolean isMounted() {
         return getLayer() != null;
+    }
+
+    /**
+     * Setzt den BodyType auf PARTICLE und animiert das Partikel, sodass es ausblasst und nach der Lebenszeit komplett
+     * verschwindet.
+     *
+     * @param lifetime Lebenszeit in Sekunden
+     */
+    @API
+    public ValueAnimator<Float> animateParticle(float lifetime) {
+        setBodyType(BodyType.PARTICLE);
+
+        ValueAnimator<Float> animator = new ValueAnimator<>(lifetime, this::setOpacity, new LinearFloat(1, 0), this);
+        animator.addCompletionListener(value -> remove());
+
+        addFrameUpdateListener(animator);
+
+        return animator;
     }
 }
