@@ -2,6 +2,7 @@ package ea.edu;
 
 import ea.Game;
 import ea.Vector;
+import ea.actor.Actor;
 import ea.edu.event.*;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -24,6 +25,7 @@ public class Spiel {
 
     private static final HashMap<String, Color> stringToColor = new HashMap<>();
     private static final HashMap<Color, String> colorToString = new HashMap<>();
+    static final HashMap<Actor, EduActor> actorToInterfaceMap = new HashMap<>();
 
     private static final HashMap<String, EduScene> sceneMap = new HashMap<>();
 
@@ -428,17 +430,17 @@ public class Spiel {
 
     /**
      * Meldet ein Objekt an, dass zu jedem Frame-Update <b>in der aktuell aktiven Szene</b> durch Aufruf der Methode
-     * <code>frameUpdateReagieren(int ms)</code> informiert wird (Parameter gibt die Anzahl an Millisekunden an,
+     * <code>bildAktualisierungReagieren(int ms)</code> informiert wird (Parameter gibt die Anzahl an Millisekunden an,
      * die seit dem letzten Frame-Update vergangen sind.
      *
      * @param o Ein beliebiges Objekt. Hat das Objekt keine Methode mit der Signatur
-     *          <code>frameUpdateReagieren(int)</code>, so passiert nichts. Andernfalls wird ab sofort zu jedem
+     *          <code>bildAktualisierungReagieren(int)</code>, so passiert nichts. Andernfalls wird ab sofort zu jedem
      *          Frame-Update der <b>aktuellen</b> Szene die Methode ausgeführt.
      *
-     * @see #frameUpdateReagierbarAbmelden(FrameUpdateReagierbar)
+     * @see #bildAktualisierungReagierbarAbmelden(BildAktualisierungReagierbar)
      */
     @API
-    public void frameUpdateReagierbarAnmelden(FrameUpdateReagierbar o) {
+    public void bildAktualisierungReagierbarAnmelden(BildAktualisierungReagierbar o) {
         getActiveScene().addEduFrameUpdateListener(o);
     }
 
@@ -447,10 +449,10 @@ public class Spiel {
      *
      * @param o Das zu entfernende Objekt. War es nie angemeldet, so passiert nichts.
      *
-     * @see #frameUpdateReagierbarAnmelden(FrameUpdateReagierbar)
+     * @see #bildAktualisierungReagierbarAnmelden(BildAktualisierungReagierbar)
      */
     @API
-    public void frameUpdateReagierbarAbmelden(FrameUpdateReagierbar o) {
+    public void bildAktualisierungReagierbarAbmelden(BildAktualisierungReagierbar o) {
         getActiveScene().removeEduFrameUpdateListener(o);
     }
 

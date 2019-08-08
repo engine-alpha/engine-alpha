@@ -5,6 +5,7 @@ import ea.actor.Actor;
 import ea.actor.BodyType;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
+import ea.edu.event.KollisionsReagierbar;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
@@ -28,6 +29,7 @@ public interface EduActor {
         //Default Physics Setup für EDU Objekte
         getActor().setRotationLocked(true);
         getActor().setRestitution(0);
+        Spiel.actorToInterfaceMap.put(getActor(), this);
     }
 
     /**
@@ -46,14 +48,29 @@ public interface EduActor {
         getActor().setOpacity(1 - transparenz);
     }
 
+    /**
+     * Gibt den Transparenzwert des EDU Actors aus.
+     *
+     * @return Der Transparenzwert des EDU Actors. Zwischen 0 und 1.
+     *
+     * @see #setzeTransparenz(float)
+     */
     @API
     default float nenneTransparenz() {
         return 1 - getActor().getOpacity();
     }
 
+    /**
+     * Entfernt den Actor von allen Funktionen der Engine:
+     * <ul>
+     * <li>Der Actor ist nicht mehr sichtbar und wird nicht mehr gerendert.</li>
+     * <li>Der Physics-Body des Actors wird entfernt und hat keinen Einfluss mehr auf die Physics.</li>
+     * <li>Alle Listener, die mit diesem Actor zusammenhängen, werden nicht mehr informiert.</li>
+     * </ul>
+     */
     @API
     default void entfernen() {
-        Spiel.getActiveScene().remove(getActor());
+        getActor().remove();
     }
 
     @API
@@ -117,6 +134,25 @@ public interface EduActor {
     }
 
     /* ~~~ PHYSICS ~~~ */
+
+    @API
+    default void kollisionsReagierbarAnmelden(EduActor anderer, KollisionsReagierbar reagierbar) {
+        this.getActor().addCollisionListener(anderer.getActor(), collisionEvent -> {
+            if (!reagierbar.kollisionReagieren(anderer)) {
+                collisionEvent.ignoreCollision();
+            }
+        });
+    }
+
+    @API
+    default void kollisionsReagierbarAnmelden(KollisionsReagierbar reagierbar) {
+        this.getActor().addCollisionListener(collisionEvent -> {
+            EduActor other = Spiel.actorToInterfaceMap.get(collisionEvent.getColliding());
+            if (!reagierbar.kollisionReagieren(other)) {
+                collisionEvent.ignoreCollision();
+            }
+        });
+    }
 
     @API
     default void setzeRotationBlockiert(boolean blockiert) {

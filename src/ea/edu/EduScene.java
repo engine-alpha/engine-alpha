@@ -34,7 +34,7 @@ public class EduScene extends Scene {
     /**
      * Liste aller Framewise Update Aufträge
      */
-    private final Map<FrameUpdateReagierbar, FrameUpdateListener> sceneFrameUpdateListeners = new HashMap<>();
+    private final Map<BildAktualisierungReagierbar, FrameUpdateListener> sceneFrameUpdateListeners = new HashMap<>();
 
     /**
      * Liste aller MouseWheelListener
@@ -222,11 +222,11 @@ public class EduScene extends Scene {
         removeListener(o, sceneTickers, activeLayer.getFrameUpdateListeners());
     }
 
-    public void addEduFrameUpdateListener(FrameUpdateReagierbar o) {
-        addListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners(), o::frameUpdateReagieren);
+    public void addEduFrameUpdateListener(BildAktualisierungReagierbar o) {
+        addListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners(), o::bildAktualisierungReagieren);
     }
 
-    public void removeEduFrameUpdateListener(FrameUpdateReagierbar o) {
+    public void removeEduFrameUpdateListener(BildAktualisierungReagierbar o) {
         removeListener(o, sceneFrameUpdateListeners, activeLayer.getFrameUpdateListeners());
     }
 
