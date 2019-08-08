@@ -42,10 +42,10 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         weird.setBodyType(BodyType.DYNAMIC);
         weird.setPosition(0.3f, 0.6f);
 
-        character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
-
         add(character);
         add(weird);
+
+        character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
 
         setGravity(new Vector(0, -13));
 

@@ -157,7 +157,7 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
         }
 
         if (Game.isDebug()) {
-            renderJoints(g, camera);
+            renderJoints(g);
         }
     }
 
@@ -204,41 +204,35 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     @Internal
-    private void renderJoints(Graphics2D g, Camera camera) {
+    private void renderJoints(Graphics2D g) {
         // Display Joints
 
         for (Layer layer : layers) {
             Joint j = layer.getWorldHandler().getWorld().getJointList();
 
             while (j != null) {
-                renderJoint(j, g, layer, camera);
+                renderJoint(j, g, layer);
                 j = j.m_next;
             }
         }
     }
 
     @Internal
-    private static void renderJoint(Joint j, Graphics2D g, Layer layer, Camera camera) {
+    private static void renderJoint(Joint j, Graphics2D g, Layer layer) {
         Vec2 anchorA = new Vec2(), anchorB = new Vec2();
         j.getAnchorA(anchorA);
         j.getAnchorB(anchorB);
 
-        Vector aInWorld = Vector.of(anchorA);
-        Vector bInWorld = Vector.of(anchorB);
-
-        final float pixelPerMeter = layer.calculatePixelPerMeter(camera);
-
-        Bounds frameSize = Game.getFrameSizeInPx();
-        Vector cameraPositionInPx = new Vector(frameSize.width / 2, frameSize.height / 2);
-        Vector aInPx = camera.getPosition().fromThisTo(aInWorld).multiply(pixelPerMeter).multiplyY(-1).add(cameraPositionInPx.multiply(-1));
+        Vector aInPx = layer.translateWorldPointToFramePxCoordinates(Vector.of(anchorA));
+        Vector bInPx = layer.translateWorldPointToFramePxCoordinates(Vector.of(anchorB));
 
         if (j instanceof RevoluteJoint) {
             g.setColor(REVOLUTE_JOINT_COLOR);
             g.drawOval((int) aInPx.x - (JOINT_CIRCLE_RADIUS / 2), (int) aInPx.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_CIRCLE_RADIUS, JOINT_CIRCLE_RADIUS);
         } else if (j instanceof RopeJoint) {
-            renderJointRectangle(g, ROPE_JOINT_COLOR, aInWorld, bInWorld);
+            renderJointRectangle(g, ROPE_JOINT_COLOR, aInPx, bInPx);
         } else if (j instanceof DistanceJoint) {
-            renderJointRectangle(g, DISTANCE_JOINT_COLOR, aInWorld, bInWorld);
+            renderJointRectangle(g, DISTANCE_JOINT_COLOR, aInPx, bInPx);
         }
     }
 

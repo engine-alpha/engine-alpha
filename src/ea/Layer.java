@@ -259,6 +259,23 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     /**
+     * Übersetzt einen Punkt auf diesem Layer zu der analogen, aktuellen Pixelkoordinate im zeichnenden Frame.
+     *
+     * @param worldPoint Ein Punkt auf dem Layer
+     *
+     * @return Ein Vektor <b>in Pixelkoordinaten</b> (nicht Meter, Y-Achse ist umgekehrt), der mit der
+     * aktuellen Kameraeinstellung dem angegebenen <code>worldPoint</code> entspricht
+     */
+    @Internal
+    public Vector translateWorldPointToFramePxCoordinates(Vector worldPoint) {
+        float pixelPerMeter = calculatePixelPerMeter(parent.getCamera());
+        Bounds frameSize = Game.getFrameSizeInPx();
+        Vector cameraPositionInPx = new Vector(frameSize.width / 2, frameSize.height / 2);
+        Vector fromCamToPointInWorld = parent.getCamera().getPosition().multiplyX(parallaxX).multiplyY(parallaxY).fromThisTo(worldPoint);
+        return cameraPositionInPx.add(fromCamToPointInWorld.multiplyY(-1).multiply(pixelPerMeter * parallaxZoom));
+    }
+
+    /**
      * Setzt den Kamerazoom exakt, sodass die sichtbare Breite des sichtbaren Fensters einer bestimmten Länge
      * entspricht.
      *
