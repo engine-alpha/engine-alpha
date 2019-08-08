@@ -45,16 +45,17 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
         Rectangle boxy = new Rectangle(0.2f, 0.2f);
         boxy.setColor(Color.WHITE);
-        //boxy.setBodyType(BodyType.DYNAMIC);
-        boxy.setPosition(3, 2);
+        boxy.setBodyType(BodyType.DYNAMIC);
+        boxy.setPosition(3, 0);
+        //boxy.move(10, 10);
 
         add(character);
-        add(weird);
+        //add(weird);
         add(boxy);
 
         //character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
-        //character.createRopeJoint(boxy, new Vector(0.3f, 0.3f), new Vector(3.1f, 2.1f), 5);
-        character.createDistanceJoint(boxy, new Vector(0.3f, 0.3f), new Vector(3.1f, 2.1f));
+        character.createRopeJoint(boxy, new Vector(0.3f, 0.3f), new Vector(0.1f, 0.1f), 4);
+        //character.createDistanceJoint(boxy, new Vector(0.3f, 0.3f), new Vector(0.1f, 0.1f));
 
         setGravity(new Vector(0, -13));
 

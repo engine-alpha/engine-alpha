@@ -243,7 +243,7 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
         g.drawRect((int) b.x - (JOINT_CIRCLE_RADIUS / 2), (int) b.y - (JOINT_CIRCLE_RADIUS / 2), JOINT_RECTANGLE_SIDE, JOINT_RECTANGLE_SIDE);
         g.drawLine((int) a.x, (int) a.y, (int) b.x, (int) b.y);
         Vector middle = a.add(b).divide(2);
-        g.drawString("Distance: " + a.fromThisTo(b).divide(pixelPerMeter).getLength(), middle.x, middle.y);
+        g.drawString("" + a.fromThisTo(b).divide(pixelPerMeter).getLength(), middle.x, middle.y);
     }
 
     /**

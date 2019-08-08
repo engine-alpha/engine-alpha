@@ -343,7 +343,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
                 Composite composite;
                 if (opacity != 1) {
                     composite = g.getComposite();
-                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, opacity));
+                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 } else {
                     composite = null;
                 }
@@ -840,23 +840,24 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * <p>Verbindet zwei <code>Actor</code>-Objekte <b>untrennbar an einem Anchor-Point</b>. Die Objekte können sich
      * ab sofort nur noch <b>relativ zueinander drehen</b>.</p>
      *
-     * @param other            Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
-     *                         <code>Actor</code>-Objekt
-     *                         über einen <code>RevoluteJoint</code> verbunden sein soll.
-     * @param anchorAsWorldPos Der Ankerpunkt <b>auf dem Layer</b>. Es wird davon
-     *                         ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
+     * @param other                Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                             <code>Actor</code>-Objekt
+     *                             über einen <code>RevoluteJoint</code> verbunden sein soll.
+     * @param anchorRelativeToThis Der Ankerpunkt <b>relativ zu diesem Actor</b>. Es wird davon
+     *                             ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
      *
      * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
      *
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
-    public Joint createRevoluteJoint(Actor other, Vector anchorAsWorldPos) {
+    public Joint createRevoluteJoint(Actor other, Vector anchorRelativeToThis) {
         return WorldHandler.createJoint(this, other, worldHandler -> {
             RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
-            revoluteJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(),
-                    //actor.physicsHandler.getWorldHandler().fromVektor(actor.getPosition.get().asVector().add(anchorAsWorldPos)));
-                    anchorAsWorldPos.toVec2());
+            revoluteJointDef.initialize(physicsHandler.getBody(), other.getPhysicsHandler().getBody(), anchorRelativeToThis.toVec2());
+            revoluteJointDef.localAnchorA = anchorRelativeToThis.toVec2();
+            revoluteJointDef.localAnchorB = other.getPosition().fromThisTo(this.getPosition()).add(anchorRelativeToThis).toVec2();
+
             revoluteJointDef.collideConnected = false;
 
             return worldHandler.getWorld().createJoint(revoluteJointDef);
@@ -866,30 +867,33 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Erstellt einen Rope-Joint zwischen diesem und einem weiteren <code>Actor</code>-Objekt.
      *
-     * @param other      Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
-     *                   <code>Actor</code>-Objekt
-     *                   über einen <code>RopeJoint</code> verbunden sein soll.
-     * @param anchorA    Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste Befestigungspunkt
-     *                   des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
-     * @param anchorB    Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
-     *                   Der zweite Befestigungspunkt des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
-     * @param ropeLength Die Länge des Lassos. Dies ist ab sofort die maximale Länge, die die beiden Ankerpunkte
-     *                   der Objekte voneinader entfernt sein können.
+     * @param other                 Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                              <code>Actor</code>-Objekt
+     *                              über einen <code>RopeJoint</code> verbunden sein soll.
+     * @param anchorRelativeToThis  Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste
+     *                              Befestigungspunkt
+     *                              des Lassos. Angabe relativ zur Position vom zugehörigen Objekt.
+     * @param anchorRelativeToOther Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
+     *                              Der zweite Befestigungspunkt des Lassos. Angabe relativ zur Position vom zugehörigen
+     *                              Objekt.
+     * @param ropeLength            Die Länge des Lassos. Dies ist ab sofort die maximale Länge, die die beiden
+     *                              Ankerpunkte
+     *                              der Objekte voneinader entfernt sein können.
      *
      * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
      *
      * @see org.jbox2d.dynamics.joints.RopeJoint
      */
     @API
-    public Joint createRopeJoint(Actor other, Vector anchorA, Vector anchorB, float ropeLength) {
+    public Joint createRopeJoint(Actor other, Vector anchorRelativeToThis, Vector anchorRelativeToOther, float ropeLength) {
         return WorldHandler.createJoint(this, other, worldHandler -> {
             RopeJointDef ropeJointDef = new RopeJointDef();
             ropeJointDef.bodyA = physicsHandler.getBody();
             ropeJointDef.bodyB = other.getPhysicsHandler().getBody();
 
-            ropeJointDef.localAnchorA.set(anchorA.toVec2());
+            ropeJointDef.localAnchorA.set(anchorRelativeToThis.toVec2());
             ropeJointDef.collideConnected = true;
-            ropeJointDef.localAnchorB.set(anchorB.toVec2());
+            ropeJointDef.localAnchorB.set(anchorRelativeToOther.toVec2());
             ropeJointDef.maxLength = ropeLength;
 
             return worldHandler.getWorld().createJoint(ropeJointDef);
@@ -899,24 +903,31 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Erstellt einen Distance-Joint zwischen diesem und einem weiteren <code>Actor</code>-Objekt.
      *
-     * @param other             Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
-     *                          <code>Actor</code>-Objekt
-     *                          über einen <code>DistanceJoint</code> verbunden sein soll.
-     * @param anchorAAsWorldPos Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste Befestigungspunkt
-     *                          des Joints. Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
-     * @param anchorBAsWorldPos Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
-     *                          Der zweite Befestigungspunkt des Joints.
-     *                          Angabe als <b>Position auf der Zeichenebene</b>, also absolut.
+     * @param other                 Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                              <code>Actor</code>-Objekt
+     *                              über einen <code>DistanceJoint</code> verbunden sein soll.
+     * @param anchorRelativeToThis  Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste
+     *                              Befestigungspunkt
+     *                              des Joints. Angabe relativ zu <code>this</code> also absolut.
+     * @param anchorRelativeToOther Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
+     *                              Der zweite Befestigungspunkt des Joints. Angabe relativ zu <code>other</code>
      *
      * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
      *
      * @see org.jbox2d.dynamics.joints.DistanceJoint
      */
     @API
-    public Joint createDistanceJoint(Actor other, Vector anchorAAsWorldPos, Vector anchorBAsWorldPos) {
+    public Joint createDistanceJoint(Actor other, Vector anchorRelativeToThis, Vector anchorRelativeToOther) {
         return WorldHandler.createJoint(this, other, (worldHandler) -> {
             DistanceJointDef distanceJointDef = new DistanceJointDef();
-            distanceJointDef.initialize(physicsHandler.getBody(), other.physicsHandler.getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
+
+            distanceJointDef.bodyA = this.getPhysicsHandler().getBody();
+            distanceJointDef.bodyB = other.getPhysicsHandler().getBody();
+            distanceJointDef.localAnchorA.set(anchorRelativeToThis.toVec2());
+            distanceJointDef.localAnchorB.set(anchorRelativeToOther.toVec2());
+            Vector distanceBetweenBothActors = (this.getPosition().add(anchorRelativeToThis)).fromThisTo(other.getPosition().add(anchorRelativeToOther));
+            distanceJointDef.length = distanceBetweenBothActors.getLength();
+            //distanceJointDef.initialize(physicsHandler.getBody(), other.physicsHandler.getBody(), anchorAAsWorldPos.toVec2(), anchorBAsWorldPos.toVec2());
 
             return worldHandler.getWorld().createJoint(distanceJointDef);
         });
