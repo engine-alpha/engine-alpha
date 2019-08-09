@@ -410,7 +410,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
             float rot = Vector.RIGHT.getAngle(lastAttack.negate().add(pointer));
             if(Float.isNaN(rot))
                 return;
-            if(pointer.y < lastAttack.y)
+            if(pointer.getY() < lastAttack.getY())
                 rot = (float)( Math.PI*2 - rot);
             stange.setRotation(rot);
         }
@@ -420,9 +420,9 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
 
         //Update für die Textbox
         Vector vel = testObjects[lastAttackTarget].getVelocity();
-        String vx = Float.toString(vel.x), vy = Float.toString(vel.y);
-        vx = vx.substring(0, vx.length() > 4 ? 4 : vx.length());
-        vy = vy.substring(0, vy.length() > 4 ? 4 : vy.length());
+        String vx = Float.toString(vel.getX()), vy = Float.toString(vel.getY());
+        vx = vx.substring(0, Math.min(vx.length(), 4));
+        vy = vy.substring(0, Math.min(vy.length(), 4));
         /* box.setTexts(
                 "Objekt: " + (lastAttackTarget+1),
                 "Masse: " + testObjects[lastAttackTarget].physics.getMass(),

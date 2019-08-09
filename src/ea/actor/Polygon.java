@@ -67,8 +67,8 @@ public class Polygon extends Geometry {
         this.scaledPy = new int[points.length];
 
         for (int i = 0; i < points.length; i++) {
-            px[i] = points[i].x;
-            py[i] = points[i].y;
+            px[i] = points[i].getX();
+            py[i] = points[i].getY();
         }
 
         this.setShape(() -> ShapeBuilder.createPolygonShape(points));

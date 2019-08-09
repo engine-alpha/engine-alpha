@@ -71,14 +71,12 @@ public final class Vector implements Cloneable {
     /**
      * Der kontinuierliche DeltaX-Wert des Punktes. Die anderen Koordinaten sind ggf. nur gerundet.
      */
-    @API
-    public final float x;
+    private final float x;
 
     /**
      * Der kontinuierliche DeltaY-Wert des Punktes. Die anderen Koordinaten sind ggf. nur gerundet.
      */
-    @API
-    public final float y;
+    private final float y;
 
     /**
      * Konstruktor.
@@ -107,6 +105,16 @@ public final class Vector implements Cloneable {
     public Vector(Vector start, Vector end) {
         this.x = end.x - start.x;
         this.y = end.y - start.y;
+    }
+
+    @API
+    public float getX() {
+        return x;
+    }
+
+    @API
+    public float getY() {
+        return y;
     }
 
     /**
@@ -363,6 +371,10 @@ public final class Vector implements Cloneable {
     @API
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
         if (o instanceof Vector) {
             Vector v = (Vector) o;
 

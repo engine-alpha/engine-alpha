@@ -491,7 +491,7 @@ public class Spiel {
      */
     @API
     public double nenneMausPositionX() {
-        return getActiveScene().getMousePosition().x;
+        return getActiveScene().getMousePosition().getX();
     }
 
     /**
@@ -503,6 +503,6 @@ public class Spiel {
      */
     @API
     public double nenneMausPositionY() {
-        return getActiveScene().getMousePosition().y;
+        return getActiveScene().getMousePosition().getY();
     }
 }

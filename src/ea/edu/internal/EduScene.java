@@ -195,12 +195,12 @@ public class EduScene extends Scene {
         addListener(client, sceneMouseClickListeners, activeLayer.getMouseClickListeners(), new MouseClickListener() {
             @Override
             public void onMouseDown(Vector e, MouseButton b) {
-                client.klickReagieren(e.x, e.y);
+                client.klickReagieren(e.getX(), e.getY());
             }
 
             @Override
             public void onMouseUp(Vector e, MouseButton b) {
-                client.klickLosgelassenReagieren(e.x, e.y);
+                client.klickLosgelassenReagieren(e.getX(), e.getY());
             }
         });
     }

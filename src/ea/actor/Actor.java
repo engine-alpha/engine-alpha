@@ -19,7 +19,10 @@
 
 package ea.actor;
 
-import ea.*;
+import ea.FrameUpdateListener;
+import ea.Game;
+import ea.Layer;
+import ea.Vector;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.EaseInOutFloat;
 import ea.collision.CollisionListener;
@@ -340,8 +343,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
                 AffineTransform transform = g.getTransform();
 
-                g.rotate(-Math.toRadians(rotation), position.x * pixelPerMeter, -position.y * pixelPerMeter);
-                g.translate(position.x * pixelPerMeter, -position.y * pixelPerMeter);
+                g.rotate(-Math.toRadians(rotation), position.getX() * pixelPerMeter, -position.getY() * pixelPerMeter);
+                g.translate(position.getX() * pixelPerMeter, -position.getY() * pixelPerMeter);
 
                 // Opacity Update
                 Composite composite;
@@ -971,7 +974,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public void setPosition(Vector p) {
-        this.moveBy(new Vector(p.x - this.getX(), p.y - this.getY()));
+        this.moveBy(new Vector(p.getX() - this.getX(), p.getY() - this.getY()));
     }
 
     /**
@@ -1042,7 +1045,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public float getX() {
-        return this.getPosition().x;
+        return this.getPosition().getX();
     }
 
     /**
@@ -1071,7 +1074,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public float getY() {
-        return this.getPosition().y;
+        return this.getPosition().getY();
     }
 
     /**

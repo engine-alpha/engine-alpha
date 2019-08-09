@@ -111,18 +111,13 @@ public abstract class EduActor<T extends Actor> {
     }
 
     @API
-    public Vector nenneMittelpunkt() {
-        return this.actor.getCenter();
-    }
-
-    @API
     public double nenneMittelpunktX() {
-        return this.actor.getCenter().x;
+        return this.actor.getCenter().getX();
     }
 
     @API
     public double nenneMittelpunktY() {
-        return this.actor.getCenter().y;
+        return this.actor.getCenter().getY();
     }
 
     @API
@@ -191,12 +186,12 @@ public abstract class EduActor<T extends Actor> {
 
     @API
     public double nenneGeschwindigkeitX() {
-        return this.actor.getVelocity().x;
+        return this.actor.getVelocity().getX();
     }
 
     @API
     public double nenneGeschwindigkeitY() {
-        return this.actor.getVelocity().y;
+        return this.actor.getVelocity().getY();
     }
 
     @API

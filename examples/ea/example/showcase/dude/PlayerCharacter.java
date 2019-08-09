@@ -114,7 +114,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             // Double Jump!
             didDoubleJump = true;
             gameData.consumeMana(DOUBLE_JUMP_COST);
-            setVelocity(new Vector(getVelocity().x, 0));
+            setVelocity(new Vector(getVelocity().getX(), 0));
             applyImpulse(new Vector(0, JUMP_FORCE * 0.8f));
             setState(PlayerState.JumpingUp);
         }
@@ -170,9 +170,9 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
 
         if (desiredVelocity == 0) {
             impulse = 0;
-            setVelocity(new Vector(velocity.x * 0.95f, velocity.y));
+            setVelocity(new Vector(velocity.getX() * 0.95f, velocity.getY()));
         } else {
-            impulse = (desiredVelocity - velocity.x) * 4;
+            impulse = (desiredVelocity - velocity.getX()) * 4;
             applyForce(new Vector(impulse, 0));
         }
 
@@ -201,7 +201,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
 
         switch (getCurrentState()) {
             case JumpingUp:
-                if (velocity.y < 0) {
+                if (velocity.getY() < 0) {
                     setState(PlayerState.Midair);
                 }
                 break;
@@ -210,11 +210,11 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             case Walking:
                 //if(standing) {
                 didDoubleJump = false;
-                if (velocity.y > 0.1f) {
+                if (velocity.getY() > 0.1f) {
                     setState(PlayerState.Midair);
-                } else if (Math.abs(velocity.x) > 5.5f) {
+                } else if (Math.abs(velocity.getX()) > 5.5f) {
                     changeState(PlayerState.Running);
-                } else if (Math.abs(velocity.x) > .1f) {
+                } else if (Math.abs(velocity.getX()) > .1f) {
                     changeState(PlayerState.Walking);
                 } else {
                     changeState(PlayerState.Idle);
@@ -302,7 +302,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
     public void onCollision(CollisionEvent<Actor> collisionEvent) {
         if (collisionEvent.getColliding() instanceof Platform) {
             Platform platform = (Platform) collisionEvent.getColliding();
-            if (getVelocity().y > 0 || ignoredPlatformForCollision.contains(platform)) {
+            if (getVelocity().getY() > 0 || ignoredPlatformForCollision.contains(platform)) {
                 ignoredPlatformForCollision.add(platform);
                 collisionEvent.ignoreCollision();
             }
@@ -317,14 +317,14 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
 
             if (smashing) {
                 Vector originalOffset = getPhysicsHandler().getWorldHandler().getLayer().getParent().getCamera().getOffset();
-                Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * getVelocity().y);
+                Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * getVelocity().getY());
                 ValueAnimator<Float> valueAnimator = new ValueAnimator<>(.1f, y -> getLayer().getParent().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator, getLayer());
                 getLayer().addFrameUpdateListener(valueAnimator);
                 valueAnimator.addCompletionListener(value -> getLayer().getFrameUpdateListeners().remove(valueAnimator));
             }
 
             Vector speed = getPhysicsHandler().getVelocity();
-            Vector transformedSpeed = Math.abs(speed.x) < .1f ? speed.add(100f * ((float) Math.random() - .5f), 0) : speed;
+            Vector transformedSpeed = Math.abs(speed.getX()) < .1f ? speed.add(100f * ((float) Math.random() - .5f), 0) : speed;
 
             Game.enqueue(() -> {
                 for (int i = 0; i < 100; i++) {

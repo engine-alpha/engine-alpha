@@ -32,36 +32,36 @@ public final class Bounds {
     /**
      * <b>Reelle</b> <code>getX</code>-Position des Rechtecks
      */
-    public final float x;
+    private final float x;
 
     /**
      * <b>Reelle</b> <code>getY</code>-Position des Rechtecks
      */
-    public final float y;
+    private final float y;
 
     /**
      * <b>Reelle</b> Breite des Rechtecks
      */
-    public final float width;
+    private final float width;
 
     /**
      * <b>Reelle</b> Höhe des Rechtecks
      */
-    public final float height;
+    private final float height;
 
     /**
      * Konstruktor mit <b>reellen</b> Werten.
      *
-     * @param x  Die <code>getX</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
-     * @param y  Die <code>getY</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
-     * @param dX Die Breite des Bounding-Rechtecks
-     * @param dY Die Höhe des Bounding-Rechtecks
+     * @param x      Die <code>getX</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
+     * @param y      Die <code>getY</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
+     * @param width  Die Breite des Bounding-Rechtecks
+     * @param height Die Höhe des Bounding-Rechtecks
      */
-    public Bounds(float x, float y, float dX, float dY) {
+    public Bounds(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
-        this.width = dX;
-        this.height = dY;
+        this.width = width;
+        this.height = height;
     }
 
     /**
@@ -70,7 +70,7 @@ public final class Bounds {
      * @param r Das Bounds, an dessen Mitte auch die dieses Rechtecks sein soll.
      */
     public Bounds withCenterAtBoundsCenter(Bounds r) {
-        return this.withCenterPoint(r.center());
+        return this.withCenterPoint(r.getCenter());
     }
 
     /**
@@ -83,8 +83,7 @@ public final class Bounds {
      * verschoben, dass es mit seiner Mitte im angegebenen Zentrum liegt.
      */
     public Bounds withCenterPoint(Vector p) {
-        Vector z = this.center();
-        return this.moveBy(new Vector(p.x - z.x, p.y - z.y));
+        return this.moveBy(p.subtract(this.getCenter()));
     }
 
     /**
@@ -93,7 +92,7 @@ public final class Bounds {
      * @return Der Point mit den Koordinaten, der im Zentrum des Rechtecks liegt (bei ungeraden
      * Koordinaten mit Abrundung)
      */
-    public Vector center() {
+    public Vector getCenter() {
         return new Vector(x + ((width) / 2), y + ((height) / 2));
     }
 
@@ -107,7 +106,7 @@ public final class Bounds {
      * jedoch um die entsprechende Verschiebung verschoben ist.
      */
     public Bounds moveBy(Vector v) {
-        return new Bounds(x + v.x, y + v.y, width, height);
+        return new Bounds(x + v.getX(), y + v.getY(), width, height);
     }
 
     /**
@@ -241,7 +240,7 @@ public final class Bounds {
      * @return true, wenn der Point in dem Bounds ist
      */
     public boolean contains(Vector v) {
-        return (v.x >= this.x && v.y >= this.y && v.x <= (x + width) && v.y <= (y + height));
+        return (v.getX() >= this.x && v.getY() >= this.y && v.getX() <= (x + width) && v.getY() <= (y + height));
     }
 
     /**

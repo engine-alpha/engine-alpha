@@ -253,14 +253,14 @@ public final class Camera {
      * @return Die zu zeichnende Position des Punktes in Px
      */
     @Internal
-    public Point toOnScreenPxLocation(Vector locationInWorld, float pixelPerMeter) {
+    public Point toScreenPixelLocation(Vector locationInWorld, float pixelPerMeter) {
         //Punktposition relativ zur aktuellen Kameraposition
         Vector locationInWorldCameraRelative = position.fromThisTo(locationInWorld);
         Vector cameraRelativeLocInPx = position.multiply(pixelPerMeter);
 
-        Bounds frameSize = Game.getFrameSizeInPx();
+        Bounds frameSize = Game.getFrameSizeInPixels();
 
-        return new Point((int) (frameSize.width / 2 + cameraRelativeLocInPx.x), (int) (frameSize.height / 2 + cameraRelativeLocInPx.y));
+        return new Point((int) (frameSize.getWidth() / 2 + cameraRelativeLocInPx.getX()), (int) (frameSize.getHeight() / 2 + cameraRelativeLocInPx.getY()));
     }
 
     // Does not implement FrameUpdateListener by design, as it's updated at a special moment
@@ -281,8 +281,8 @@ public final class Camera {
             return position;
         }
 
-        float x = Math.max(this.bounds.getX(), Math.min(position.x, this.bounds.getX() + this.bounds.getWidth()));
-        float y = Math.max(this.bounds.getY(), Math.min(position.y, this.bounds.getY() + this.bounds.getHeight()));
+        float x = Math.max(this.bounds.getX(), Math.min(position.getX(), this.bounds.getX() + this.bounds.getWidth()));
+        float y = Math.max(this.bounds.getY(), Math.min(position.getY(), this.bounds.getY() + this.bounds.getHeight()));
 
         return new Vector(x, y);
     }

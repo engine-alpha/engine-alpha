@@ -30,8 +30,8 @@ public class NullHandler implements PhysicsHandler {
 
     @Override
     public void moveBy(Vector v) {
-        this.physicsData.setX(this.physicsData.getX() + v.x);
-        this.physicsData.setY(this.physicsData.getY() + v.y);
+        this.physicsData.setX(this.physicsData.getX() + v.getX());
+        this.physicsData.setY(this.physicsData.getY() + v.getY());
     }
 
     @Override

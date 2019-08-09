@@ -129,7 +129,7 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
         gewicht.setMass(40);
 
         Vector vektor = new Vector(45 * kette.length, 35);
-        gewicht.setCenter(new Vector(vektor.x, vektor.y));
+        gewicht.setCenter(new Vector(vektor.getX(), vektor.getY()));
         gewicht.createRevoluteJoint(kette[kette.length - 1], vektor);
     }
 

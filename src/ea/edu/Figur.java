@@ -74,7 +74,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      */
     @API
     public Figur(double pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
-        super(new StatefulAnimation<>(getWidthHeightFromPrefixed(verzeichnisPfad, praefix).x / (float) pixelProMeter, getWidthHeightFromPrefixed(verzeichnisPfad, praefix).y / (float) pixelProMeter));
+        super(new StatefulAnimation<>(getWidthHeightFromPrefixed(verzeichnisPfad, praefix).getX() / (float) pixelProMeter, getWidthHeightFromPrefixed(verzeichnisPfad, praefix).getY() / (float) pixelProMeter));
 
         fuegeZustandVonPraefixHinzu(zustandName, verzeichnisPfad, praefix);
     }

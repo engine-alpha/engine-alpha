@@ -275,7 +275,7 @@ public final class Game {
         float pixelPerMeter = camera.getZoom();
 
         g.rotate(rotation, 0, 0);
-        g.translate(-position.x * pixelPerMeter, position.y * pixelPerMeter);
+        g.translate(-position.getX() * pixelPerMeter, position.getY() * pixelPerMeter);
 
         int gridSizeInMeters = Math.round(150 / pixelPerMeter);
         float gridSizeInPixels = gridSizeInMeters * pixelPerMeter;
@@ -284,8 +284,8 @@ public final class Game {
         if (gridSizeInMeters > 0 && gridSizeInMeters < 100000) {
             int windowSizeInPixels = (int) Math.ceil(Math.max(width, height));
 
-            int startX = (int) (position.x - windowSizeInPixels / 2 / pixelPerMeter);
-            int startY = (int) ((-1 * position.y) - windowSizeInPixels / 2 / pixelPerMeter);
+            int startX = (int) (position.getX() - windowSizeInPixels / 2 / pixelPerMeter);
+            int startY = (int) ((-1 * position.getY()) - windowSizeInPixels / 2 / pixelPerMeter);
 
             startX -= (startX % gridSizeInMeters);
             startY -= (startY % gridSizeInMeters);
@@ -441,7 +441,7 @@ public final class Game {
         float rotation = scene.getCamera().getRotation();
         Vector position = scene.getCamera().getPosition();
 
-        return new Vector(position.x + (((float) Math.cos(Math.toRadians(rotation)) * (mousePosition.x - width / 2f) + (float) Math.sin(Math.toRadians(rotation)) * (mousePosition.y - height / 2f))) / zoom, position.y + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom);
+        return new Vector(position.getX() + (((float) Math.cos(Math.toRadians(rotation)) * (mousePosition.x - width / 2f) + (float) Math.sin(Math.toRadians(rotation)) * (mousePosition.y - height / 2f))) / zoom, position.getY() + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom);
     }
 
     /**
@@ -561,7 +561,7 @@ public final class Game {
      * @return Ein Bounds-Objekt, dessen Höhe und Breite mit Fensterhöhe & -breite übereinstimmt.
      */
     @API
-    public static Bounds getFrameSizeInPx() {
+    public static Bounds getFrameSizeInPixels() {
         return new Bounds(0, 0, Game.width, Game.height);
     }
 

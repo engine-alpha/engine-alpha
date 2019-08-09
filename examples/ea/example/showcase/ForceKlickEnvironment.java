@@ -204,7 +204,7 @@ public class ForceKlickEnvironment extends ShowcaseDemo implements CollisionList
             if (Float.isNaN(rot)) {
                 return;
             }
-            if (currentMousePos.y < lastAttack.y) {
+            if (currentMousePos.getY() < lastAttack.getY()) {
                 rot = 360 - rot;
             }
             stange.setRotation(rot);

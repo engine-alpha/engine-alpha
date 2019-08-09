@@ -268,8 +268,8 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     public Bounds visibleArea() {
         Vector center = parent.getCamera().getPosition();
         float pixelPerMeter = calculatePixelPerMeter();
-        Bounds frameBoundsPx = Game.getFrameSizeInPx();
-        return new Bounds(0, 0, frameBoundsPx.width / pixelPerMeter, frameBoundsPx.height / pixelPerMeter).withCenterPoint(center);
+        Bounds frameBoundsPx = Game.getFrameSizeInPixels();
+        return new Bounds(0, 0, frameBoundsPx.getWidth() / pixelPerMeter, frameBoundsPx.getHeight() / pixelPerMeter).withCenterPoint(center);
     }
 
     /**
@@ -283,8 +283,8 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     @Internal
     public Vector translateWorldPointToFramePxCoordinates(Vector worldPoint) {
         float pixelPerMeter = calculatePixelPerMeter();
-        Bounds frameSize = Game.getFrameSizeInPx();
-        Vector cameraPositionInPx = new Vector(frameSize.width / 2, frameSize.height / 2);
+        Bounds frameSize = Game.getFrameSizeInPixels();
+        Vector cameraPositionInPx = new Vector(frameSize.getWidth() / 2, frameSize.getHeight() / 2);
         Vector fromCamToPointInWorld = parent.getCamera().getPosition().multiplyX(parallaxX).multiplyY(parallaxY).fromThisTo(worldPoint);
         return cameraPositionInPx.add(fromCamToPointInWorld.multiplyY(-1).multiply(pixelPerMeter * parallaxZoom));
     }
@@ -299,9 +299,9 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
      */
     @API
     public void setVisibleWidth(float widthInM) {
-        Bounds frameBoundsPx = Game.getFrameSizeInPx();
+        Bounds frameBoundsPx = Game.getFrameSizeInPixels();
 
-        float desiredPixelPerMeter = frameBoundsPx.width / widthInM;
+        float desiredPixelPerMeter = frameBoundsPx.getWidth() / widthInM;
         float desiredZoom = 1 + ((desiredPixelPerMeter - 1) / parallaxZoom);
         parent.getCamera().setZoom(desiredZoom);
     }
@@ -316,9 +316,9 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
      */
     @API
     public void setVisibleHeight(float heightInM) {
-        Bounds frameBoundsPx = Game.getFrameSizeInPx();
+        Bounds frameBoundsPx = Game.getFrameSizeInPixels();
 
-        float desiredPixelPerMeter = frameBoundsPx.height / heightInM;
+        float desiredPixelPerMeter = frameBoundsPx.getHeight() / heightInM;
         float desiredZoom = 1 + ((desiredPixelPerMeter - 1) / parallaxZoom);
         parent.getCamera().setZoom(desiredZoom);
     }
@@ -330,10 +330,10 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
 
     @API
     public Bounds getCameraBoundsOnLayer(Camera camera) {
-        Bounds frameSizeInPx = Game.getFrameSizeInPx();
+        Bounds frameSizeInPx = Game.getFrameSizeInPixels();
         float pixelPerMeter = calculatePixelPerMeter();
 
-        return new Bounds(0, 0, frameSizeInPx.width * pixelPerMeter, frameSizeInPx.height * pixelPerMeter).withCenterPoint(camera.getPosition());
+        return new Bounds(0, 0, frameSizeInPx.getWidth() * pixelPerMeter, frameSizeInPx.getHeight() * pixelPerMeter).withCenterPoint(camera.getPosition());
     }
 
     @Internal
@@ -349,13 +349,13 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         float pixelPerMeter = calculatePixelPerMeter();
 
         g.rotate(rotation * parallaxRotation, 0, 0);
-        g.translate((-position.x * parallaxX) * pixelPerMeter, (position.y * parallaxY) * pixelPerMeter);
+        g.translate((-position.getX() * parallaxX) * pixelPerMeter, (position.getY() * parallaxY) * pixelPerMeter);
 
         // TODO: Calculate optimal bounds
         int size = Math.max(width, height);
 
         for (Actor actor : actors) {
-            actor.renderBasic(g, new Bounds(position.x - size, position.y - size, size * 2, size * 2), pixelPerMeter);
+            actor.renderBasic(g, new Bounds(position.getX() - size, position.getY() - size, size * 2, size * 2), pixelPerMeter);
         }
     }
 

@@ -155,7 +155,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         long zeitdifferenz = endzeit - startzeit;
 
         //Zurückgelegte Distanz seit Simulationsstart ausmessen (Pixel-Differenz ausrechnen und auf Meter umrechnen)
-        float distanz = (ball.getCenter().x - ABSTAND_LINKS) / PIXELPROMETER;
+        float distanz = (ball.getCenter().getX() - ABSTAND_LINKS) / PIXELPROMETER;
 
         //Messungen angeben
         System.out.println("Der Ball ist auf dem Boden aufgeschlagen. Seit Simulationsstart sind " + +(zeitdifferenz / 1000) + " Sekunden und " + (zeitdifferenz % 1000) + " Millisekunden vergangen.\n" + "Der Ball diese Distanz zurückgelegt: " + distanz + " m");

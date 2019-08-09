@@ -44,7 +44,7 @@ public class Text extends Geometry {
     private static Shape createShape(String content, float height, Font font) {
         Vector sizeInPixels = ea.internal.util.FontMetrics.getSize(content, font);
 
-        return ShapeBuilder.createSimpleRectangularShape(sizeInPixels.x * height / sizeInPixels.y, height);
+        return ShapeBuilder.createSimpleRectangularShape(sizeInPixels.getX() * height / sizeInPixels.getY(), height);
     }
 
     /**
