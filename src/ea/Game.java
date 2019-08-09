@@ -61,7 +61,6 @@ public final class Game {
     private static final int DEBUG_INFO_LEFT = 10;
     private static final int DEBUG_INFO_TEXT_OFFSET = 16;
     private static final Color DEBUG_GRID_COLOR = new Color(255, 255, 255, 100);
-    private static final Color DEBUG_GRID_COLOR_0 = new Color(255, 255, 255, 150);
 
     static {
         System.setProperty("sun.java2d.opengl", "true"); // ok
@@ -545,14 +544,31 @@ public final class Game {
         if (width <= 0 || height <= 0) {
             throw new RuntimeException("Die Fenstergröße kann nicht kleiner/gleich 0 sein. " + "Eingabe war: " + width + " - " + height + ".");
         }
+
         if (renderPanel == null) {
             throw new RuntimeException("Fenster-Resizing ist erst möglich, nachdem Game.start ausgeführt wurde.");
         }
+
         Game.width = width;
         Game.height = height;
+
         renderPanel.setSize(width, height);
         renderPanel.setPreferredSize(new Dimension(width, height));
+
         frame.pack();
+    }
+
+    /**
+     * Setzt die Fenster-Position auf dem Bildschirm.
+     * <p>
+     * Standard ist mittig.
+     *
+     * @param x X-Position
+     * @param y Y-Position
+     */
+    @API
+    public static void setFramePosition(int x, int y) {
+        frame.setLocation(x, y);
     }
 
     /**

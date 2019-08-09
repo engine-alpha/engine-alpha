@@ -19,350 +19,179 @@
 
 package ea;
 
+import ea.actor.*;
+import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.util.Logger;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.IOException;
+import java.awt.Color;
 import java.net.JarURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
 /**
  * Diese Klasse definiert Versions-Konstanten und sorgt für eine About-Box beim Ausführen der
  * .jar-Datei.
- * <p>
- * TODO: Commit-ID in Jar packen und mit aktueller ID auf GitHub vergleichen
  *
  * @author Niklas Keller {@literal <me@kelunik.com>}
  */
 @Internal
-public final class EngineAlpha extends Frame {
+public final class EngineAlpha {
 
-	/**
-	 * Der Versionscode des aktuellen Release.<br>
-	 * Rechnung:<br>
-	 * <code>
-	 * 10000 * major + 100 * minor + 1 * bugfix
-	 * </code>
-	 */
-	public static final int VERSION_CODE = 30003;
+    @SuppressWarnings ( "MagicNumber" )
+    public static void main(String[] args) {
+        Game.start(800, 600, new Scene() {
+            {
+                setGravity(new Vector(0, -9.81f));
 
-	/**
-	 * Format: v(major).(minor).(bugfix)
-	 * Beispiel: v3.1.2
-	 */
-	public static final String VERSION_STRING = "v3.0.3";
+                Rectangle ground = new Rectangle(20, .2f);
+                ground.setCenter(0, -6);
+                ground.setRestitution(.8f);
+                ground.setBodyType(BodyType.STATIC);
+                add(ground);
 
-	/**
-	 * Gibt an, ob dieser Release in .jar - Form vorliegt. Ist das der Fall,
-	 * ist dieser Wert <code>true</code>, sonst ist er <code>false</code>.
-	 */
-	public static final boolean IS_JAR;
+                Rectangle a = new Rectangle(1, 1);
+                a.setPosition(-5, -2);
+                a.setRestitution(.8f);
+                a.setBodyType(BodyType.DYNAMIC);
+                a.setColor(new Color(26, 113, 156));
+                a.setRotation(30);
+                add(a);
 
-	/**
-	 * Zeitpunkt, an dem diese Jar-Datei erzeugt wurde, falls als Jar-Datei ausgeführt, sonst die
-	 * aktuelle Zeit in Sekunden seit dem 01.01.1970 (Unix Timestamp)
-	 */
-	public static final long BUILD_TIME;
+                Circle b = new Circle(1);
+                b.setPosition(5, -1);
+                b.setRestitution(.8f);
+                b.setBodyType(BodyType.DYNAMIC);
+                b.setColor(new Color(158, 5, 5));
+                b.applyImpulse(new Vector(-100, 0));
+                add(b);
 
-	/*
-	 * Statischer Konstruktor.
-	 * Ermittelt <code>IS_JAR</code> und <code>BUILD_TIME</code>.
-	 */
-	static {
-		IS_JAR = isJar();
-		BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;
-	}
+                Polygon c = new Polygon(new Vector(0, 0), new Vector(1, 0), new Vector(.5, 1));
+                c.setPosition(-1, 5);
+                c.setRestitution(.8f);
+                c.setBodyType(BodyType.DYNAMIC);
+                c.setColor(new Color(25, 159, 69));
+                c.setRotation(-20);
+                add(c);
 
-	/**
-	 * Panel, das den Fensterinhalt zeichnet.
-	 */
-	private EngineAlphaPromotion promo;
+                Date date = new Date(BUILD_TIME * 1000);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-	public EngineAlpha () {
-		super("Engine Alpha " + VERSION_STRING);
+                Text text = new Text("Build #" + VERSION_CODE + "   " + sdf.format(date), .5f);
+                text.setPosition(-10, -7f);
+                text.setColor(Color.WHITE);
+                add(text);
 
-		try {
-			setIconImage(ImageIO.read(getClass().getResourceAsStream("/assets/favicon.png")));
-		} catch (IOException e) {
-			Logger.error("IO", e.getLocalizedMessage());
-		}
+                addFrameUpdateListener(time -> {
+                    for (Actor item : Arrays.asList(a, b, c)) {
+                        if (item.getCenter().getY() < -10) {
+                            item.resetMovement();
+                            item.setCenter(0, 0);
+                        }
+                    }
+                });
+            }
+        });
 
-		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing (WindowEvent e) {
-				promo.shutdown();
+        Game.setExitOnEsc(true);
+        Game.setTitle("Engine Alpha " + VERSION_STRING);
+    }
 
-				setVisible(false);
-				dispose();
+    /**
+     * Der Versionscode des aktuellen Release.<br>
+     * Rechnung:<br>
+     * <code>
+     * 10000 * major + 100 * minor + 1 * bugfix
+     * </code>
+     */
+    public static final int VERSION_CODE = 40000;
 
-				System.exit(0);
-			}
-		});
+    /**
+     * Format: v(major).(minor).(bugfix)
+     * Beispiel: v3.1.2
+     */
+    public static final String VERSION_STRING = "v4.0.0-dev";
 
-		promo = new EngineAlphaPromotion();
-	}
+    /**
+     * Gibt an, ob dieser Release in .jar - Form vorliegt. Ist das der Fall,
+     * ist dieser Wert <code>true</code>, sonst ist er <code>false</code>.
+     */
+    public static final boolean IS_JAR;
 
-	/**
-	 * Main-Methode der Engine Alpha. Diese öffnet ein Window, das einen Versionsabgleich der
-	 * aktuellen Version mit der aktuell verfügbaren Version macht.
-	 */
-	public static void main (String[] args) {
-		new EngineAlpha();
-	}
+    /**
+     * Zeitpunkt, an dem diese Jar-Datei erzeugt wurde, falls als Jar-Datei ausgeführt, sonst die
+     * aktuelle Zeit in Sekunden seit dem 01.01.1970 (Unix Timestamp)
+     */
+    public static final long BUILD_TIME;
 
-	/**
-	 * Gibt an, ob das Programm gerade aus einer Jar heraus gestartet wurde.
-	 * @return <code>true</code>, falls ja, sonst <code>false</code>.
-	 */
-	public static boolean isJar () {
-		String className = EngineAlpha.class.getName().replace('.', '/');
-		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
+    /*
+     * Statischer Konstruktor.
+     * Ermittelt <code>IS_JAR</code> und <code>BUILD_TIME</code>.
+     */
+    static {
+        IS_JAR = isJar();
+        BUILD_TIME = IS_JAR ? getBuildTime() / 1000 : System.currentTimeMillis() / 1000;
+    }
 
-		return classJar.startsWith("jar:");
-	}
+    /**
+     * Gibt an, ob das Programm gerade aus einer Jar heraus gestartet wurde.
+     *
+     * @return <code>true</code>, falls ja, sonst <code>false</code>.
+     */
+    @API
+    public static boolean isJar() {
+        String className = EngineAlpha.class.getName().replace('.', '/');
+        String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
 
-	/**
-	 * Gibt den Namen der Jar-Datei zurück, die gerade ausgeführt wird.
-	 *
-	 * @return Dateiname der Jar-Datei oder <code>null</code>, falls das Programm nicht über eine
-	 * Jar-Datei ausgeführt wird.
-	 */
-	@SuppressWarnings ( "unused" )
-	public static String getJarName () {
-		String className = EngineAlpha.class.getName().replace('.', '/');
-		String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
+        return classJar.startsWith("jar:");
+    }
 
-		if (classJar.startsWith("jar:")) {
-			String vals[] = classJar.split("/");
+    /**
+     * Gibt den Namen der Jar-Datei zurück, die gerade ausgeführt wird.
+     *
+     * @return Dateiname der Jar-Datei oder <code>null</code>, falls das Programm nicht über eine
+     * Jar-Datei ausgeführt wird.
+     */
+    @API
+    public static String getJarName() {
+        String className = EngineAlpha.class.getName().replace('.', '/');
+        String classJar = EngineAlpha.class.getResource("/" + className + ".class").toString();
 
-			for (String val : vals) {
-				if (val.contains("!")) {
-					try {
-						return java.net.URLDecoder.decode(val.substring(0, val.length() - 1), "UTF-8");
-					} catch (Exception e) {
-						return null;
-					}
-				}
-			}
-		}
+        if (classJar.startsWith("jar:")) {
+            String[] values = classJar.split("/");
 
-		return null;
-	}
+            for (String value : values) {
+                if (value.contains("!")) {
+                    try {
+                        return java.net.URLDecoder.decode(value.substring(0, value.length() - 1), "UTF-8");
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+            }
+        }
 
-	/**
-	 * Gibt an, wann die Jar-Datei erzeugt wurde.
-	 *
-	 * @return Erzeugungsdatum der Jar-Datei in Sekunden seit dem 01.01.1970 (Unix Timestamp) oder
-	 * den aktuellen Timestamp, falls nicht von einer Jar-Datei ausgeführt.
-	 */
-	public static long getBuildTime () {
-		try {
-			String uri = EngineAlpha.class.getName().replace('.', '/') + ".class";
-			JarURLConnection j = (JarURLConnection) ClassLoader.getSystemResource(uri).openConnection();
+        return null;
+    }
 
-			long time = j.getJarFile().getEntry("META-INF/MANIFEST.MF").getTime();
-			return time > 0 ? time : System.currentTimeMillis() / 1000;
-		} catch (Exception e) {
-			return System.currentTimeMillis() / 1000;
-		}
-	}
+    /**
+     * Gibt an, wann die Jar-Datei erzeugt wurde.
+     *
+     * @return Erzeugungsdatum der Jar-Datei in Sekunden seit dem 01.01.1970 (Unix Timestamp) oder
+     * den aktuellen Timestamp, falls nicht von einer Jar-Datei ausgeführt.
+     */
+    @API
+    public static long getBuildTime() {
+        try {
+            String uri = EngineAlpha.class.getName().replace('.', '/') + ".class";
+            JarURLConnection j = (JarURLConnection) ClassLoader.getSystemResource(uri).openConnection();
 
-	private static String getUrlBody (String uri) {
-		// workaround, make sure this is set to false
-		// see http://stackoverflow.com/a/14884941/2373138
-		System.setProperty("jsse.enableSNIExtension", "false");
-
-		BufferedInputStream bis = null;
-		URL url;
-
-		try {
-			url = new URL(uri);
-			bis = new BufferedInputStream(url.openStream());
-
-			StringBuilder builder = new StringBuilder();
-			byte[] data = new byte[1024];
-			int read;
-
-			while ((read = bis.read(data)) != -1) {
-				builder.append(new String(data, 0, read));
-			}
-
-			return builder.toString();
-		} catch (Exception e) {
-			// client may have no internet connection
-		} finally {
-			if (bis != null) {
-				try {
-					bis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private class EngineAlphaPromotion extends Canvas implements Runnable {
-		private Thread thread;
-
-		private BufferedImage logo;
-
-		private double alpha = 0;
-
-		private boolean loading = true;
-
-		private boolean alive = true;
-
-		private int version_stable = -1;
-
-		private int version_dev = -1;
-
-		public EngineAlphaPromotion () {
-			EngineAlpha parent = EngineAlpha.this;
-
-			try {
-				logo = ImageIO.read(getClass().getResource("/assets/logo.png"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			setSize(400, 300);
-			setPreferredSize(getSize());
-			parent.add(this);
-			parent.pack();
-
-			Dimension screen = getToolkit().getScreenSize();
-			parent.setLocation((screen.width - parent.getWidth()) / 2, (screen.height - parent.getHeight()) / 2);
-
-			parent.setVisible(true);
-
-			thread = new Thread(this) {{
-				setDaemon(true);
-			}};
-			thread.start();
-
-			new Thread() {
-				{
-					setDaemon(true);
-				}
-
-				public void run () {
-					try {
-						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_STABLE").trim();
-						version_stable = Integer.parseInt(body);
-					} catch (Exception e) {
-						version_stable = -1;
-					}
-
-					try {
-						String body = getUrlBody("https://raw.githubusercontent.com/engine-alpha/engine-alpha/master/VERSION_DEVELOPMENT").trim();
-						version_dev = Integer.parseInt(body);
-					} catch (Exception e) {
-						version_dev = -1;
-					}
-
-					loading = false;
-				}
-			}.start();
-		}
-
-		public void run () {
-			createBufferStrategy(2);
-			BufferStrategy bs = getBufferStrategy();
-			Graphics2D g = (Graphics2D) bs.getDrawGraphics();
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			long lastTime, currTime = System.currentTimeMillis();
-
-			while (alive) {
-				lastTime = currTime;
-				currTime = System.currentTimeMillis();
-
-				update(currTime - lastTime);
-
-				render(g);
-				bs.show();
-
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		private void update (long passedTime) {
-			alpha += passedTime * .01;
-			alpha %= 360;
-		}
-
-		public void render (Graphics2D g) {
-			g.setFont(new Font("SansSerif", Font.ITALIC, 14));
-			FontMetrics fm = g.getFontMetrics();
-
-			g.setColor(new Color(250, 250, 250));
-			g.fillRect(0, 0, getWidth(), getHeight());
-
-			g.drawImage(logo, (getWidth() - logo.getWidth()) / 2, 45, null);
-
-			if (loading) {
-				g.setColor(new Color(0, 0, 0, 150));
-				g.fillOval((int) (getWidth() / 2 + 8 * Math.cos(alpha)) - 2, (int) (getHeight() - 80 + 8 * Math.sin(alpha)) - 2, 4, 4);
-				g.fillOval((int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)) - 2, (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)) - 2, 4, 4);
-				g.drawLine((int) (getWidth() / 2 + 8 * Math.cos(alpha)), (int) (getHeight() - 80 + 8 * Math.sin(alpha)), (int) (getWidth() / 2 + 8 * Math.cos(180 + alpha)), (int) (getHeight() - 80 + 8 * Math.sin(180 + alpha)));
-			} else {
-				String message;
-				Color color = new Color(30, 30, 30);
-
-				if (version_stable == -1) {
-					message = "Server für Versionsabgleich nicht erreichbar.";
-				} else if (version_stable == VERSION_CODE) {
-					message = "Dies ist die aktuelle Stable-Version.";
-					color = new Color(50, 200, 25);
-				} else if (VERSION_CODE < version_stable) {
-					message = "Es ist eine neue Stable-Version verfügbar!";
-					color = new Color(200, 50, 0);
-				} else if (version_dev == VERSION_CODE) {
-					message = "Dies ist die aktuelle Dev-Version.";
-					color = new Color(0, 100, 150);
-				} else if (VERSION_CODE < version_dev) {
-					message = "Es ist eine neue Dev-Version verfügbar!";
-					color = new Color(200, 50, 0);
-				} else {
-					message = "";
-				}
-
-				g.setColor(color);
-				g.drawString(message, (getWidth() - fm.stringWidth(message)) / 2, getHeight() - 70);
-			}
-
-			Date date = new Date(BUILD_TIME * 1000);
-			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
-			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-			g.setColor(new Color(100, 100, 100));
-			String str = "Build #" + VERSION_CODE + "   " + sdf.format(date);
-			g.drawString(str, (getWidth() - fm.stringWidth(str)) / 2, getHeight() - 40);
-		}
-
-		public void shutdown () {
-			this.alive = false;
-
-			try {
-				thread.join();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+            long time = j.getJarFile().getEntry("META-INF/MANIFEST.MF").getTime();
+            return time > 0 ? time : System.currentTimeMillis() / 1000;
+        } catch (Exception e) {
+            return System.currentTimeMillis() / 1000;
+        }
+    }
 }

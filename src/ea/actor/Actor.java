@@ -263,6 +263,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public void setBodyType(BodyType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("BodyType darf nicht null sein");
+        }
+
         synchronized (physicsHandlerLock) {
             this.physicsHandler.setType(type);
         }
