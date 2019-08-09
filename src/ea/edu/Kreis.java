@@ -9,7 +9,7 @@ import ea.internal.annotations.API;
  * @author Michael Andonie
  */
 @API
-public class Kreis extends EduGeometrie<Circle> {
+public class Kreis extends Geometrie<Circle> {
     /**
      * Konstruktor. Erstellt einen Kreis.
      *

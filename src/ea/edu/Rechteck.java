@@ -4,7 +4,7 @@ import ea.actor.Rectangle;
 import ea.internal.annotations.API;
 
 @API
-public class Rechteck extends EduGeometrie<Rectangle> {
+public class Rechteck extends Geometrie<Rectangle> {
 
     @API
     public Rechteck(double breite, double hoehe) {

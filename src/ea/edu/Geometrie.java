@@ -4,10 +4,10 @@ import ea.actor.Geometry;
 import ea.internal.annotations.API;
 
 @API
-public abstract class EduGeometrie<T extends Geometry> extends EduActor<T> {
+public abstract class Geometrie<T extends Geometry> extends EduActor<T> {
 
     @API
-    public EduGeometrie(T actor) {
+    public Geometrie(T actor) {
         super(actor);
     }
 
