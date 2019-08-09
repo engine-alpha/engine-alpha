@@ -24,6 +24,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.net.JarURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,6 +98,12 @@ public final class EngineAlpha {
                         if (item.getCenter().getY() < -10) {
                             spawnItem(item);
                         }
+                    }
+                });
+
+                addKeyListener(e -> {
+                    if (e.getKeyCode() == KeyEvent.VK_D) {
+                        Game.setDebug(!Game.isDebug());
                     }
                 });
             }

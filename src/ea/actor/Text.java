@@ -198,7 +198,7 @@ public class Text extends Geometry {
         AffineTransform pre = g.getTransform();
         Font preFont = g.getFont();
 
-        float scaleFactor = height * pixelPerMeter / SIZE;
+        float scaleFactor = height * pixelPerMeter / fontMetrics.getHeight();
 
         g.setColor(getColor());
         g.scale(scaleFactor, scaleFactor);
