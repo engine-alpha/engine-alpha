@@ -28,8 +28,8 @@ import java.awt.geom.Rectangle2D;
 public final class FontMetrics {
     private static final ThreadLocal<Canvas> canvas = ThreadLocal.withInitial(Canvas::new);
 
-    public static java.awt.FontMetrics get(Font font) {
-        return canvas.get().getFontMetrics(font);
+    public static int getDescent(Font font) {
+        return canvas.get().getFontMetrics(font).getDescent();
     }
 
     public static Vector getSize(String content, Font font) {

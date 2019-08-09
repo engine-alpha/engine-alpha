@@ -24,10 +24,10 @@ import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.io.FontLoader;
+import ea.internal.util.FontMetrics;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
@@ -38,7 +38,8 @@ import java.awt.geom.AffineTransform;
  * @author Niklas Keller
  */
 public class Text extends Geometry {
-    private static final int SIZE = 16;
+    // Needs to be large enough so we don't have rounding errors due to integers in font metrics
+    private static final int SIZE = 1000;
 
     @Internal
     private static Shape createShape(String content, float height, Font font) {
@@ -68,10 +69,8 @@ public class Text extends Geometry {
      */
     private Font font;
 
-    /**
-     * Textanker: links, mittig oder rechts
-     */
-    private Anchor anchor = Anchor.LEFT;
+    private transient int cachedDescent;
+    private transient float cachedScaleFactor;
 
     /**
      * Konstruktor für Objekte der Klasse Text<br> Möglich ist es auch, Fonts zu laden, die im Projektordner sind.
@@ -129,8 +128,18 @@ public class Text extends Geometry {
      */
     @API
     public void setFont(String fontName) {
-        this.font = FontLoader.loadByName(fontName).deriveFont(fontStyle, SIZE);
+        this.setFont(FontLoader.loadByName(fontName));
+    }
+
+    @API
+    public void setFont(Font font) {
+        this.font = font.deriveFont(fontStyle, SIZE);
         this.update();
+    }
+
+    @API
+    public Font getFont() {
+        return font;
     }
 
     /**
@@ -151,6 +160,11 @@ public class Text extends Geometry {
         }
     }
 
+    @API
+    public String getContent() {
+        return content;
+    }
+
     /**
      * Setzt den Stil der Schriftart (Fett/Kursiv/Fett&amp;Kursiv/Normal).
      *
@@ -168,6 +182,11 @@ public class Text extends Geometry {
     }
 
     @API
+    public int getStyle() {
+        return fontStyle;
+    }
+
+    @API
     public void setHeight(float height) {
         if (this.height != height) {
             this.height = height;
@@ -175,84 +194,44 @@ public class Text extends Geometry {
         }
     }
 
+    @API
+    public float getHeight() {
+        return height;
+    }
+
+    @API
+    public float getWidth() {
+        Vector sizeInPixels = ea.internal.util.FontMetrics.getSize(content, font);
+        return sizeInPixels.getX() * height / sizeInPixels.getY();
+    }
+
+    @API
+    public void setWidth(float width) {
+        Vector sizeInPixels = ea.internal.util.FontMetrics.getSize(content, font);
+        this.setHeight(width / sizeInPixels.getX() * sizeInPixels.getY());
+    }
+
     @Internal
     private void update() {
+        Vector size = FontMetrics.getSize(content, font);
+        cachedScaleFactor = height / size.getY();
+        cachedDescent = FontMetrics.getDescent(font);
+
         setShape(() -> createShape(content, height, font));
     }
 
     @Override
     @Internal
     public void render(Graphics2D g, float pixelPerMeter) {
-        FontMetrics fontMetrics = g.getFontMetrics(font);
-
-        int widthInPixels = fontMetrics.stringWidth(content);
-
-        int x = 0;
-
-        if (anchor == Anchor.CENTER) {
-            x = -widthInPixels / 2;
-        } else if (anchor == Anchor.RIGHT) {
-            x = -widthInPixels;
-        }
-
         AffineTransform pre = g.getTransform();
         Font preFont = g.getFont();
 
-        float scaleFactor = height * pixelPerMeter / fontMetrics.getHeight();
-
         g.setColor(getColor());
-        g.scale(scaleFactor, scaleFactor);
+        g.scale(cachedScaleFactor * pixelPerMeter, cachedScaleFactor * pixelPerMeter);
         g.setFont(font);
-        g.drawString(content, x, -fontMetrics.getDescent());
+        g.drawString(content, 0, -cachedDescent);
 
         g.setFont(preFont);
         g.setTransform(pre);
-    }
-
-    /**
-     * Gibt den aktuellen Anchor zurück.
-     *
-     * @return aktueller Anchor
-     *
-     * @see Anchor
-     * @see #setAnchor(Anchor)
-     */
-    @API
-    public Anchor getAnchor() {
-        return anchor;
-    }
-
-    /**
-     * Setzt den Textanker. Dies beschreibt, wo sich der Text relativ zur getX-Koordinate befindet. Möglich sind:
-     * <ul>
-     * <li>{@code Text.Anchor.LEFT},</li>
-     * <li>{@code Text.Anchor.CENTER},</li>
-     * <li>{@code Text.Anchor.RIGHT}.</li>
-     * </ul><br><b>Hinweis</b>: {@code null} wird wie {@code
-     * Anchor.LEFT} behandelt!
-     *
-     * @param anchor neuer Anchor
-     *
-     * @see Anchor
-     * @see #getAnchor()
-     */
-    @API
-    public void setAnchor(Anchor anchor) {
-        this.anchor = anchor;
-    }
-
-    /**
-     * Ein Textanker beschreibt, wo sich der Text relativ zu seiner getX-Koordinate befindet. Möglich sind:
-     * <ul>
-     * <li>{@code Anchor.LEFT},</li>
-     * <li>{@code Anchor.CENTER},</li>
-     * <li>{@code Anchor.RIGHT}.</li>
-     * </ul>
-     *
-     * @see #setAnchor(Anchor)
-     * @see #getAnchor()
-     */
-    public enum Anchor {
-        LEFT, CENTER, RIGHT
     }
 }
