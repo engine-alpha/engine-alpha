@@ -3,19 +3,19 @@
  * keinen Vorkenntnissen in Java, Programmierung und Softwaredesign ermöglichen, Funktionen der Engine zu nutzen.
  * Diese Version ist die EDU-Variante der Engine Alpha.</p>
  * <p>
- * Die EDU-Variante ermöglicht die Nutzung der Engine ohne Kenntnisse über (below Anderem) die folgenden Konzepte:
+ * Die EDU-Variante ermöglicht die Nutzung der Engine ohne Kenntnisse über (unter Anderem) die folgenden Konzepte:
  * </p>
  * <ul>
- * <li>Frame-weise Abarbeitung einer Spielumgebung</li>
+ * <li>Frameweise Abarbeitung einer Spielumgebung</li>
  * <li>Nebenläufigkeiten und Parallelität</li>
  * <li>Vererbung</li>
- * <li>Gängige Software-Muster, below anderem:
+ * <li>Gängige Software-Muster, unter anderem:
  * <ul>
  * <li>Observer (bzw. Listener)</li>
  * <li>Model-View-Control</li>
  * <li>Adapter</li>
  * <li>Fassade</li>
- * <li>Strategy</li>
+ * <li>Strategie</li>
  * </ul>
  * </li>
  * <li>IO</li>

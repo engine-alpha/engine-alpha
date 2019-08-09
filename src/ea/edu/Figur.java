@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Eine Figur ist eine animierbare Darstellung eines Bildes.
+ * <p>
  * EDU-Variante der {@link StatefulAnimation}.
  *
  * @author Michael Andonie
@@ -170,7 +172,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
 
     @API
     public void setzeAnimationsgeschwindigkeit(String zustandName, double dauerInSekunden) {
-        getActor().setFrameDuration(zustandName, (float)dauerInSekunden);
+        getActor().setFrameDuration(zustandName, (float) dauerInSekunden);
     }
 
     private void addState(String stateName, Animation animation) {

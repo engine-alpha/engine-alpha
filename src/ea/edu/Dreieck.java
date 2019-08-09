@@ -6,6 +6,8 @@ import ea.internal.annotations.API;
 
 /**
  * Ein einfaches Dreieck.
+ * <p>
+ * EDU-Variante von {@link Polygon}.
  */
 @API
 public class Dreieck extends Geometrie<Polygon> {
@@ -22,5 +24,6 @@ public class Dreieck extends Geometrie<Polygon> {
     @API
     public Dreieck(double x1, double y1, double x2, double y2, double x3, double y3) {
         super(new Polygon(new Vector(x1, y1), new Vector(x2, y2), new Vector(x3, y3)));
+        setzeFarbe("rot");
     }
 }

@@ -7,6 +7,8 @@ import ea.internal.annotations.API;
  * Ein einfaches Bild.
  * <p>
  * Für Animationen kann {@link Figur} verwendet werden.
+ * <p>
+ * EDU-Variante von {@link Image}.
  */
 @API
 public class Bild extends EduActor<Image> {

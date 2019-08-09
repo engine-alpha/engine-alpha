@@ -7,6 +7,8 @@ import java.awt.Color;
 
 /**
  * Oberklasse aller Geometrie-Objekte ({@link Dreieck}, {@link Kreis}, {@link Rechteck},  {@link Text}).
+ * <p>
+ * EDU-Variante von {@link Geometry}.
  */
 @API
 public abstract class Geometrie<Actor extends Geometry> extends EduActor<Actor> {
