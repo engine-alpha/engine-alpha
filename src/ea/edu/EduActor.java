@@ -1,11 +1,13 @@
 package ea.edu;
 
+import ea.Game;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.BodyType;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
 import ea.edu.event.KollisionsReagierbar;
+import ea.edu.internal.EduScene;
 import ea.internal.annotations.API;
 
 import java.util.Map;
@@ -19,13 +21,16 @@ public abstract class EduActor<T extends Actor> {
     public EduActor(T actor) {
         this.actor = actor;
 
-        // public Physics Setup für EDU Objekte
+        // Default Physics Setup für EDU Objekte
         this.actor.setRotationLocked(true);
         this.actor.setRestitution(0);
+        this.actor.setCenter(0, 0);
 
-        actorMap.put(getActor(), this);
+        this.actor.addMountListener(() -> actorMap.put(this.actor, this));
+        this.actor.addUnmountListener(() -> actorMap.remove(this.actor));
 
-        Spiel.getActiveScene().addEduActor(this.getActor());
+        EduScene activeScene = Spiel.getActiveScene();
+        Game.enqueue(() -> activeScene.addEduActor(this.getActor()));
     }
 
     /**
@@ -226,21 +231,37 @@ public abstract class EduActor<T extends Actor> {
 
     @API
     public void macheAktiv() {
+        if (!this.actor.isMounted()) {
+            Spiel.getActiveScene().addEduActor(this.getActor());
+        }
+
         this.actor.setBodyType(BodyType.DYNAMIC);
     }
 
     @API
     public void machePassiv() {
+        if (!this.actor.isMounted()) {
+            Spiel.getActiveScene().addEduActor(this.getActor());
+        }
+
         this.actor.setBodyType(BodyType.STATIC);
     }
 
     @API
     public void macheNeutral() {
+        if (!this.actor.isMounted()) {
+            Spiel.getActiveScene().addEduActor(this.getActor());
+        }
+
         this.actor.setBodyType(BodyType.SENSOR);
     }
 
     @API
     public void machePartikel(double lebenszeit) {
+        if (!this.actor.isMounted()) {
+            Spiel.getActiveScene().addEduActor(this.getActor());
+        }
+
         this.actor.animateParticle((float) lebenszeit);
     }
 

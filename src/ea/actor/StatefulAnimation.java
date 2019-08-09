@@ -6,7 +6,8 @@ import ea.internal.annotations.Internal;
 import ea.internal.graphics.AnimationFrame;
 
 import java.awt.Graphics2D;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Ein animierter Actor, der mehrere Zustände haben kann (laufen (links/rechts), stehen(links/rechts), springen
@@ -26,13 +27,13 @@ public class StatefulAnimation<State> extends Actor {
     /**
      * Speichert die Frames (= "Animation") zu jedem State
      */
-    private final HashMap<State, AnimationFrame[]> states = new HashMap<>();
+    private final Map<State, AnimationFrame[]> states = new ConcurrentHashMap<>();
 
     /**
      * Speichert den Übergang zum Folgestate von jedem State. Ordnet standardmäßig jedem State sich selbst als
      * Folge-State zu ("loop"). Kann jedoch über {@link #setStateTransition(State, State)} angepasst werden.
      */
-    private final HashMap<State, State> stateTransitions = new HashMap<>();
+    private final Map<State, State> stateTransitions = new ConcurrentHashMap<>();
 
     private State currentState = null;
     private AnimationFrame[] currentAnimation = null;
@@ -53,8 +54,6 @@ public class StatefulAnimation<State> extends Actor {
         this.height = height;
 
         addFrameUpdateListener(this::internalOnFrameUpdate);
-
-        // TODO Check that all frames have the same size
     }
 
     @API
@@ -242,8 +241,6 @@ public class StatefulAnimation<State> extends Actor {
             frame.setDuration(frameDuration);
         }
     }
-
-    /* ~~ Internal Functions ~~ */
 
     /**
      * Methode wird frameweise über einen anononymen Listener aufgerufen.
