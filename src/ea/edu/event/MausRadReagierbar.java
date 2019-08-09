@@ -6,5 +6,5 @@ import ea.internal.annotations.API;
 public interface MausRadReagierbar {
 
     @API
-    void mausRadReagieren(float drehung);
+    void mausRadReagieren(double drehung);
 }

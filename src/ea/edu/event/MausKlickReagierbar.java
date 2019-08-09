@@ -6,10 +6,10 @@ import ea.internal.annotations.API;
 public interface MausKlickReagierbar {
 
     @API
-    void klickReagieren(float mx, float my);
+    void klickReagieren(double mx, double my);
 
     @API
-    default void klickLosgelassenReagieren(float mx, float my) {
+    default void klickLosgelassenReagieren(double mx, double my) {
         // default empty
     }
 }

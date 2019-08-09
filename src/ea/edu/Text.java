@@ -6,8 +6,8 @@ import ea.internal.annotations.API;
 public class Text extends EduGeometrie<ea.actor.Text> {
 
     @API
-    public Text(String inhalt, float hoehe) {
-        super(new ea.actor.Text(inhalt, hoehe));
+    public Text(String inhalt, double hoehe) {
+        super(new ea.actor.Text(inhalt, (float) hoehe));
     }
 
     @API
@@ -21,7 +21,7 @@ public class Text extends EduGeometrie<ea.actor.Text> {
     }
 
     @API
-    public void setzeHoehe(float height) {
-        getActor().setHeight(height);
+    public void setzeHoehe(double height) {
+        getActor().setHeight((float) height);
     }
 }

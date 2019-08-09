@@ -25,7 +25,7 @@ public abstract class EduActor<T extends Actor> {
 
         actorMap.put(getActor(), this);
 
-        Spiel.getActiveScene().addEduActor(this);
+        Spiel.getActiveScene().addEduActor(this.getActor());
     }
 
     /**
@@ -47,12 +47,12 @@ public abstract class EduActor<T extends Actor> {
      * @see #nenneTransparenz()
      */
     @API
-    public void setzeTransparenz(float transparenz) {
+    public void setzeTransparenz(double transparenz) {
         if (transparenz < 0 || transparenz > 1) {
             throw new IllegalArgumentException("Fehlerhafte Transparenzeingabe. Muss zwischen 0 und 1 sein. War " + transparenz);
         }
 
-        this.actor.setOpacity(1 - transparenz);
+        this.actor.setOpacity((float) (1 - transparenz));
     }
 
     /**
@@ -60,10 +60,10 @@ public abstract class EduActor<T extends Actor> {
      *
      * @return Der Transparenzwert des EDU Actors. Zwischen 0 und 1.
      *
-     * @see #setzeTransparenz(float)
+     * @see #setzeTransparenz(double)
      */
     @API
-    public float nenneTransparenz() {
+    public double nenneTransparenz() {
         return 1 - this.actor.getOpacity();
     }
 
@@ -81,28 +81,28 @@ public abstract class EduActor<T extends Actor> {
     }
 
     @API
-    public void verschieben(float dX, float dY) {
-        this.actor.moveBy(dX, dY);
+    public void verschieben(double dX, double dY) {
+        this.actor.moveBy(new Vector(dX, dY));
     }
 
     @API
-    public void drehen(float grad) {
-        this.actor.rotateBy(grad);
+    public void drehen(double grad) {
+        this.actor.rotateBy((float) grad);
     }
 
     @API
-    public void setzeDrehwinkel(float grad) {
-        this.actor.setRotation(grad);
+    public void setzeDrehwinkel(double grad) {
+        this.actor.setRotation((float) grad);
     }
 
     @API
-    public float nenneDrehwinkel() {
+    public double nenneDrehwinkel() {
         return this.actor.getRotation();
     }
 
     @API
-    public void setzeMittelpunkt(float mX, float mY) {
-        this.actor.setCenter(mX, mY);
+    public void setzeMittelpunkt(double mX, double mY) {
+        this.actor.setCenter(new Vector(mX, mY));
     }
 
     @API
@@ -111,12 +111,12 @@ public abstract class EduActor<T extends Actor> {
     }
 
     @API
-    public float nenneMittelpunktX() {
+    public double nenneMittelpunktX() {
         return this.actor.getCenter().x;
     }
 
     @API
-    public float nenneMittelpunktY() {
+    public double nenneMittelpunktY() {
         return this.actor.getCenter().y;
     }
 
@@ -131,7 +131,7 @@ public abstract class EduActor<T extends Actor> {
     }
 
     @API
-    public boolean beinhaltetPunkt(float pX, float pY) {
+    public boolean beinhaltetPunkt(double pX, double pY) {
         return this.actor.contains(new Vector(pX, pY));
     }
 
@@ -165,53 +165,53 @@ public abstract class EduActor<T extends Actor> {
     }
 
     @API
-    public void wirkeImpuls(float iX, float iY) {
+    public void wirkeImpuls(double iX, double iY) {
         this.actor.applyImpulse(new Vector(iX, iY));
     }
 
     @API
-    public void setzeReibung(float reibungsKoeffizient) {
-        this.actor.setFriction(reibungsKoeffizient);
+    public void setzeReibung(double reibungsKoeffizient) {
+        this.actor.setFriction((float) reibungsKoeffizient);
     }
 
     @API
-    public float nenneReibung() {
+    public double nenneReibung() {
         return this.actor.getFriction();
     }
 
     @API
-    public void setzeGeschwindigkeit(float vX, float vY) {
+    public void setzeGeschwindigkeit(double vX, double vY) {
         this.actor.setVelocity(new Vector(vX, vY));
     }
 
     @API
-    public float nenneGeschwindigkeitX() {
+    public double nenneGeschwindigkeitX() {
         return this.actor.getVelocity().x;
     }
 
     @API
-    public float nenneGeschwindigkeitY() {
+    public double nenneGeschwindigkeitY() {
         return this.actor.getVelocity().y;
     }
 
     @API
-    public void setzeElastizitaet(float elastizitaetsKoeffizient) {
-        this.actor.setRestitution(elastizitaetsKoeffizient);
+    public void setzeElastizitaet(double elastizitaetsKoeffizient) {
+        this.actor.setRestitution((float) elastizitaetsKoeffizient);
     }
 
     @API
-    public float nenneElastizitaet() {
+    public double nenneElastizitaet() {
         return this.actor.getRestitution();
     }
 
     @API
-    public float nenneMasse() {
+    public double nenneMasse() {
         return this.actor.getMass();
     }
 
     @API
-    public void setzeMasse(float masse) {
-        this.actor.setMass(masse);
+    public void setzeMasse(double masse) {
+        this.actor.setMass((float) masse);
     }
 
     @API
@@ -240,12 +240,12 @@ public abstract class EduActor<T extends Actor> {
     }
 
     @API
-    public void machePartikel(float lebenszeit) {
-        this.actor.animateParticle(lebenszeit);
+    public void machePartikel(double lebenszeit) {
+        this.actor.animateParticle((float) lebenszeit);
     }
 
     @API
-    public void springe(float staerke) {
+    public void springe(double staerke) {
         if (steht()) {
             this.actor.applyImpulse(new Vector(0, staerke * nenneMasse()));
         }
@@ -256,10 +256,10 @@ public abstract class EduActor<T extends Actor> {
      *
      * @param position die Ebenennummer des Actors.
      *
-     * @see #nenneEbenenPosition()
+     * @see #nenneEbenenposition()
      */
     @API
-    public void setzeEbenenPosition(int position) {
+    public void setzeEbenenposition(int position) {
         this.actor.setLayerPosition(position);
     }
 
@@ -268,29 +268,29 @@ public abstract class EduActor<T extends Actor> {
      *
      * @return die Ebenennummer
      *
-     * @see #setzeEbenenPosition(int)
+     * @see #setzeEbenenposition(int)
      */
     @API
-    public int nenneEbenenPosition() {
+    public int nenneEbenenposition() {
         return this.actor.getLayerPosition();
     }
 
     /**
      * Animiert flüssig die Transparenz dieses Actors von einem bestimmten Wert zu einem bestimmten Wert.
      *
-     * @param transparenzNach Die Endtransparenz
+     * @param nachTransparenz Die Endtransparenz
      * @param zeitInSekunden  Die Zeit in Sekunden, die vergehen, bis der Transparenzwert des Actors
      *                        von <code>transparenzVon</code> bis <code>transparenzNach</code> animiert.
      *
-     * @see #setzeTransparenz(float)
+     * @see #setzeTransparenz(double)
      */
     @API
-    public void animiereTransparenz(float zeitInSekunden, float transparenzNach) {
-        if (transparenzNach < 0 || transparenzNach > 1) {
+    public void animiereTransparenz(double zeitInSekunden, double nachTransparenz) {
+        if (nachTransparenz < 0 || nachTransparenz > 1) {
             throw new IllegalArgumentException("Transparenzen müssen stets zwischen 0 und 1 sein");
         }
 
-        this.actor.animateOpacity(zeitInSekunden, 1 - transparenzNach);
+        this.actor.animateOpacity((float) zeitInSekunden, (float) (1 - nachTransparenz));
     }
 
     /**
@@ -305,8 +305,8 @@ public abstract class EduActor<T extends Actor> {
      *                      <code>false</code>=Das Actor-Objekt behält seine Rotation bei.
      */
     @API
-    public void animiereKreis(float sekunden, float mX, float mY, boolean uhrzeigersinn, boolean rotation) {
-        this.actor.addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), sekunden, uhrzeigersinn, rotation));
+    public void animiereKreis(double sekunden, double mX, double mY, boolean uhrzeigersinn, boolean rotation) {
+        this.actor.addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), (float) sekunden, uhrzeigersinn, rotation));
     }
 
     /**
@@ -325,8 +325,8 @@ public abstract class EduActor<T extends Actor> {
      *                 wurde.
      */
     @API
-    public void animiereGerade(float sekunden, float zX, float zY, boolean loop) {
-        this.actor.addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), sekunden, loop));
+    public void animiereGerade(double sekunden, double zX, double zY, boolean loop) {
+        this.actor.addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), (float) sekunden, loop));
     }
 
     /**
@@ -353,7 +353,7 @@ public abstract class EduActor<T extends Actor> {
      * @see ea.actor.Actor#createDistanceJoint(Actor, Vector, Vector)
      */
     @API
-    public void erzeugeStabverbindung(EduActor anderer, float aX, float aY, float bX, float bY) {
+    public void erzeugeStabverbindung(EduActor anderer, double aX, double aY, double bX, double bY) {
         this.actor.createDistanceJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY));
     }
 
@@ -367,7 +367,7 @@ public abstract class EduActor<T extends Actor> {
      * @see ea.actor.Actor#createRevoluteJoint(Actor, Vector) e
      */
     @API
-    public void erzeugeGelenkverbindung(EduActor anderer, float aX, float aY) {
+    public void erzeugeGelenkverbindung(EduActor anderer, double aX, double aY) {
         this.actor.createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
     }
 
@@ -384,8 +384,8 @@ public abstract class EduActor<T extends Actor> {
      * @see ea.actor.Actor#createRopeJoint(Actor, Vector, Vector, float)
      */
     @API
-    public void erzeugeSeilverbindung(EduActor anderer, float ropeLength, float aX, float aY, float bX, float bY) {
-        this.actor.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), ropeLength);
+    public void erzeugeSeilverbindung(EduActor anderer, double ropeLength, double aX, double aY, double bX, double bY) {
+        this.actor.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), (float) ropeLength);
     }
 
     /**
@@ -395,7 +395,7 @@ public abstract class EduActor<T extends Actor> {
      * @param runnable               Runnable, dass dann ausgeführt wird
      */
     @API
-    public void verzoegere(float verzoegerungInSekunden, Runnable runnable) {
-        this.actor.delay(verzoegerungInSekunden, runnable);
+    public void verzoegere(double verzoegerungInSekunden, Runnable runnable) {
+        this.actor.delay((float) verzoegerungInSekunden, runnable);
     }
 }

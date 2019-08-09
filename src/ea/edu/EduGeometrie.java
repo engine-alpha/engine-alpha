@@ -22,7 +22,7 @@ public abstract class EduGeometrie<T extends Geometry> extends EduActor<T> {
     }
 
     @API
-    public void animiereFarbe(float dauerInSekunden, String farbe) {
-        getActor().animateColor(dauerInSekunden, Spiel.konvertiereVonFarbname(farbe));
+    public void animiereFarbe(double dauerInSekunden, String farbe) {
+        getActor().animateColor((float) dauerInSekunden, Spiel.konvertiereVonFarbname(farbe));
     }
 }

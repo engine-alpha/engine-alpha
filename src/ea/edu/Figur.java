@@ -1,13 +1,13 @@
 package ea.edu;
 
 import ea.Camera;
+import ea.Vector;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.internal.annotations.API;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +29,8 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>.
      */
     @API
-    public Figur(float pixelProMeter, String zustandsName, String gifBildPfad) {
-        super(new StatefulAnimation<>(ImageLoader.load(gifBildPfad).getWidth() / pixelProMeter, ImageLoader.load(gifBildPfad).getHeight() / pixelProMeter));
+    public Figur(double pixelProMeter, String zustandsName, String gifBildPfad) {
+        super(new StatefulAnimation<>(ImageLoader.load(gifBildPfad).getWidth() / (float) pixelProMeter, ImageLoader.load(gifBildPfad).getHeight() / (float) pixelProMeter));
 
         fuegeZustandVonGifHinzu(zustandsName, gifBildPfad);
     }
@@ -50,8 +50,8 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      * @param anzahlY         Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
     @API
-    public Figur(float pixelProMeter, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        super(new StatefulAnimation<>(ImageLoader.load(spriteSheetPfad).getWidth() / pixelProMeter / anzahlX, ImageLoader.load(spriteSheetPfad).getHeight() / pixelProMeter / anzahlY));
+    public Figur(double pixelProMeter, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        super(new StatefulAnimation<>(ImageLoader.load(spriteSheetPfad).getWidth() / (float) pixelProMeter / anzahlX, ImageLoader.load(spriteSheetPfad).getHeight() / (float) pixelProMeter / anzahlY));
 
         fuegeZustandVonSpritesheetHinzu(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
     }
@@ -71,15 +71,15 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
     @API
-    public Figur(float pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
-        super(new StatefulAnimation<>(getWidthHeightFromPrefixed(verzeichnisPfad, praefix).width, getWidthHeightFromPrefixed(verzeichnisPfad, praefix).height));
+    public Figur(double pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
+        super(new StatefulAnimation<>(getWidthHeightFromPrefixed(verzeichnisPfad, praefix).x / (float) pixelProMeter, getWidthHeightFromPrefixed(verzeichnisPfad, praefix).y / (float) pixelProMeter));
 
         fuegeZustandVonPraefixHinzu(zustandName, verzeichnisPfad, praefix);
     }
 
     @API
     public Figur(String zustandName, String verzeichnisPfad, String praefix) {
-        this(1f, zustandName, verzeichnisPfad, praefix);
+        this(Camera.DEFAULT_ZOOM, zustandName, verzeichnisPfad, praefix);
     }
 
     /**
@@ -169,15 +169,15 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
     }
 
     @API
-    public void setzeAnimationsgeschwindigkeit(String zustandName, float dauerInSekunden) {
-        getActor().setFrameDuration(zustandName, dauerInSekunden);
+    public void setzeAnimationsgeschwindigkeit(String zustandName, double dauerInSekunden) {
+        getActor().setFrameDuration(zustandName, (float)dauerInSekunden);
     }
 
     private void addState(String stateName, Animation animation) {
         getActor().addState(stateName, animation);
     }
 
-    private static Dimension getWidthHeightFromPrefixed(String directoryPath, String prefix) {
+    private static Vector getWidthHeightFromPrefixed(String directoryPath, String prefix) {
         try {
             File directory = ResourceLoader.loadAsFile(directoryPath);
             if (!directory.isDirectory()) {
@@ -189,7 +189,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
                 for (File file : children) {
                     if (!file.isDirectory() && file.getName().startsWith(prefix)) {
                         BufferedImage image = ImageLoader.load(file.getAbsolutePath());
-                        return new Dimension(image.getWidth(), image.getHeight());
+                        return new Vector(image.getWidth(), image.getHeight());
                     }
                 }
             }

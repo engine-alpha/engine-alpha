@@ -16,7 +16,7 @@ public class Kreis extends EduGeometrie<Circle> {
      * @param radius Durchmesser des Kreises
      */
     @API
-    public Kreis(float radius) {
-        super(new Circle(radius * 2));
+    public Kreis(double radius) {
+        super(new Circle((float)radius * 2));
     }
 }

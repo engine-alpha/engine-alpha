@@ -7,7 +7,7 @@ import ea.internal.annotations.API;
 public class Rechteck extends EduGeometrie<Rectangle> {
 
     @API
-    public Rechteck(float breite, float hoehe) {
-        super(new Rectangle(breite, hoehe));
+    public Rechteck(double breite, double hoehe) {
+        super(new Rectangle((float)breite, (float)hoehe));
     }
 }

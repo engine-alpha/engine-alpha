@@ -5,5 +5,5 @@ import ea.internal.annotations.API;
 @API
 public interface BildAktualisierungReagierbar {
     @API
-    void bildAktualisierungReagieren(float verganeneSekunden);
+    void bildAktualisierungReagieren(double verganeneSekunden);
 }

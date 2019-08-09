@@ -3,6 +3,7 @@ package ea.edu;
 import ea.Game;
 import ea.Vector;
 import ea.edu.event.*;
+import ea.edu.internal.EduScene;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
@@ -259,13 +260,13 @@ public class Spiel {
     }
 
     @API
-    public void setzeEbenenParallaxe(String ebenenName, float x, float y, float zoom) {
-        getActiveScene().setLayerParallax(ebenenName, x, y, zoom);
+    public void setzeEbenenParallaxe(String ebenenName, double x, double y, double zoom) {
+        getActiveScene().setLayerParallax(ebenenName, (float) x, (float) y, (float) zoom);
     }
 
     @API
-    public void setzeEbenenZeitverzerrung(String ebenenName, float zeitverzerrung) {
-        getActiveScene().setLayerTimeDistort(ebenenName, zeitverzerrung);
+    public void setzeEbenenZeitverzerrung(String ebenenName, double zeitverzerrung) {
+        getActiveScene().setLayerTimeDistort(ebenenName, (float) zeitverzerrung);
     }
 
     @API
@@ -292,37 +293,37 @@ public class Spiel {
     }
 
     @API
-    public void verschiebeKamera(float x, float y) {
-        getActiveScene().getCamera().moveBy(x, y);
+    public void verschiebeKamera(double x, double y) {
+        getActiveScene().getCamera().moveBy(new Vector(x, y));
     }
 
     @API
-    public void setzeKameraZoom(float zoom) {
-        getActiveScene().getCamera().setZoom(zoom);
+    public void setzeKamerazoom(double zoom) {
+        getActiveScene().getCamera().setZoom((float) zoom);
     }
 
     @API
-    public float nenneKameraZoom() {
+    public double nenneKamerazoom() {
         return getActiveScene().getCamera().getZoom();
     }
 
     @API
-    public void setzeKameraFokus(EduActor fokus) {
+    public void setzeKamerafokus(EduActor fokus) {
         getActiveScene().getCamera().setFocus(fokus.getActor());
     }
 
     @API
-    public void rotiereKamera(float winkelInGrad) {
-        getActiveScene().getCamera().rotateBy(winkelInGrad);
+    public void rotiereKamera(double grad) {
+        getActiveScene().getCamera().rotateBy((float) grad);
     }
 
     @API
-    public void setzeKameraRotation(float winkelInGrad) {
-        getActiveScene().getCamera().rotateTo(winkelInGrad);
+    public void setzeKamerarotation(double grad) {
+        getActiveScene().getCamera().rotateTo((float) grad);
     }
 
     @API
-    public void setzeSchwerkraft(float schwerkraft) {
+    public void setzeSchwerkraft(double schwerkraft) {
         getActiveScene().getActiveLayer().setGravity(new Vector(0, -schwerkraft));
     }
 
@@ -395,20 +396,20 @@ public class Spiel {
      * @param intervallInSekunden Das Intervall in Sekunden, in dem das anzumeldende Objekt aufgerufen.
      */
     @API
-    public void registriereTicker(float intervallInSekunden, Ticker ticker) {
-        getActiveScene().addEduTicker(intervallInSekunden, ticker);
+    public void registriereTicker(double intervallInSekunden, Ticker ticker) {
+        getActiveScene().addEduTicker((float) intervallInSekunden, ticker);
     }
 
     /**
      * Meldet einen "Ticker" ab.
      *
-     * @param ticket Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
+     * @param ticker Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
      *
-     * @see #registriereTicker(float, Ticker)
+     * @see #registriereTicker(double, Ticker)
      */
     @API
-    public void entferneTicker(Ticker ticket) {
-        getActiveScene().removeEduTicker(ticket);
+    public void entferneTicker(Ticker ticker) {
+        getActiveScene().removeEduTicker(ticker);
     }
 
     /**
@@ -472,7 +473,7 @@ public class Spiel {
      * @see #nenneMausPositionY()
      */
     @API
-    public float nenneMausPositionX() {
+    public double nenneMausPositionX() {
         return getActiveScene().getMousePosition().x;
     }
 
@@ -484,7 +485,7 @@ public class Spiel {
      * @see #nenneMausPositionX()
      */
     @API
-    public float nenneMausPositionY() {
+    public double nenneMausPositionY() {
         return getActiveScene().getMousePosition().y;
     }
 }

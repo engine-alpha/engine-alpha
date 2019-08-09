@@ -13,9 +13,9 @@ public class Bild extends EduActor<Image> {
      * @param filepath Der Verzeichnispfad des Bildes, das geladen werden soll.
      */
     @API
-    public Bild(float x, float y, float breite, float hoehe, String filepath) {
-        super(new Image(filepath, breite, hoehe));
+    public Bild(double x, double y, double breite, double hoehe, String filepath) {
+        super(new Image(filepath, (float) breite, (float) hoehe));
 
-        getActor().setPosition(x, y);
+        getActor().setPosition((float) x, (float) y);
     }
 }
