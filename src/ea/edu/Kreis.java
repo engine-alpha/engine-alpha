@@ -17,6 +17,6 @@ public class Kreis extends Geometrie<Circle> {
      */
     @API
     public Kreis(double radius) {
-        super(new Circle((float)radius * 2));
+        super(new Circle((float) radius * 2));
     }
 }

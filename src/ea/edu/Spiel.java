@@ -21,6 +21,7 @@ import java.util.Map;
  * @author Michael Andonie
  * @author Niklas Keller
  */
+@API
 public class Spiel {
 
     public static final String STANDARD_TITEL = "Engine Alpha - EDU Version";
@@ -41,6 +42,14 @@ public class Spiel {
     private static int fensterBreite = STANDARD_BREITE;
     private static int fensterHoehe = STANDARD_HOEHE;
 
+    @SuppressWarnings ( "StaticVariableOfConcreteClass" )
+    private static EduScene activeScene;
+
+    /**
+     * Führt das übergebene Runnable parallel aus.
+     * <p>
+     * Die einfachste Verwendung ist über eine Methodenreferenz: {@code Spiel.parallel(this::schalteAmpel)}
+     */
     @API
     public static void parallel(Runnable runnable) {
         new Thread(runnable).start();
@@ -49,11 +58,20 @@ public class Spiel {
     /**
      * Fügt eine String-awt/Color-Zuordnung zu.
      *
-     * @param string Ein String (lowercase)
-     * @param color  Eine Color
+     * @param string Farbname (Groß-/Kleinschreibung egal)
+     * @param color  Entsprechendes Java-AWT-Color-Objekt
      */
-    private static void farbeHinzufuegen(String string, Color color) {
-        farben.put(string, color);
+    @API
+    public static void registriereFarbe(String string, Color color) {
+        farben.put(string.toLowerCase(), color);
+    }
+
+    /**
+     * @return Listet alle verfügbaren Farbnamen.
+     */
+    @API
+    public static String[] nenneFarben() {
+        return farben.keySet().toArray(new String[0]);
     }
 
     /**
@@ -88,31 +106,31 @@ public class Spiel {
 
     static {
         // Fülle alle Farbzuweisungen hinzu
-        farbeHinzufuegen("gelb", Color.YELLOW);
-        farbeHinzufuegen("weiss", Color.WHITE);
-        farbeHinzufuegen("weiß", Color.WHITE);
-        farbeHinzufuegen("orange", COLOR_ORANGE);
-        farbeHinzufuegen("grau", Color.GRAY);
-        farbeHinzufuegen("gruen", Color.GREEN);
-        farbeHinzufuegen("grün", Color.GREEN);
-        farbeHinzufuegen("blau", Color.BLUE);
-        farbeHinzufuegen("rot", Color.RED);
-        farbeHinzufuegen("pink", Color.PINK);
-        farbeHinzufuegen("magenta", Color.MAGENTA);
-        farbeHinzufuegen("lila", COLOR_LILA);
-        farbeHinzufuegen("cyan", Color.CYAN);
-        farbeHinzufuegen("tuerkis", Color.CYAN);
-        farbeHinzufuegen("türkis", Color.CYAN);
-        farbeHinzufuegen("dunkelgrau", Color.DARK_GRAY);
-        farbeHinzufuegen("hellgrau", Color.LIGHT_GRAY);
-        farbeHinzufuegen("braun", COLOR_BRAUN);
-        farbeHinzufuegen("schwarz", Color.BLACK);
-        farbeHinzufuegen("hellblau", COLOR_HELLBLAU);
-        farbeHinzufuegen("dunkelblau", COLOR_DUNKELBLAU);
-        farbeHinzufuegen("hellgruen", COLOR_HELLGRUEN);
-        farbeHinzufuegen("hellgrün", COLOR_HELLGRUEN);
-        farbeHinzufuegen("dunkelgruen", COLOR_DUNKELGRUEN);
-        farbeHinzufuegen("dunkelgrün", COLOR_DUNKELGRUEN);
+        registriereFarbe("gelb", Color.YELLOW);
+        registriereFarbe("weiss", Color.WHITE);
+        registriereFarbe("weiß", Color.WHITE);
+        registriereFarbe("orange", COLOR_ORANGE);
+        registriereFarbe("grau", Color.GRAY);
+        registriereFarbe("gruen", Color.GREEN);
+        registriereFarbe("grün", Color.GREEN);
+        registriereFarbe("blau", Color.BLUE);
+        registriereFarbe("rot", Color.RED);
+        registriereFarbe("pink", Color.PINK);
+        registriereFarbe("magenta", Color.MAGENTA);
+        registriereFarbe("lila", COLOR_LILA);
+        registriereFarbe("cyan", Color.CYAN);
+        registriereFarbe("tuerkis", Color.CYAN);
+        registriereFarbe("türkis", Color.CYAN);
+        registriereFarbe("dunkelgrau", Color.DARK_GRAY);
+        registriereFarbe("hellgrau", Color.LIGHT_GRAY);
+        registriereFarbe("braun", COLOR_BRAUN);
+        registriereFarbe("schwarz", Color.BLACK);
+        registriereFarbe("hellblau", COLOR_HELLBLAU);
+        registriereFarbe("dunkelblau", COLOR_DUNKELBLAU);
+        registriereFarbe("hellgruen", COLOR_HELLGRUEN);
+        registriereFarbe("hellgrün", COLOR_HELLGRUEN);
+        registriereFarbe("dunkelgruen", COLOR_DUNKELGRUEN);
+        registriereFarbe("dunkelgrün", COLOR_DUNKELGRUEN);
     }
 
     /**
@@ -133,6 +151,22 @@ public class Spiel {
 
         fensterBreite = breite;
         fensterHoehe = hoehe;
+    }
+
+    @Internal
+    static EduScene getActiveScene() {
+        if (activeScene == null) {
+            activeScene = new EduScene();
+            parallel(() -> Game.start(fensterBreite, fensterHoehe, activeScene));
+        }
+
+        return activeScene;
+    }
+
+    @Internal
+    private static void setActiveScene(EduScene eduScene) {
+        activeScene = eduScene;
+        Game.transitionToScene(activeScene);
     }
 
     /**
@@ -156,25 +190,6 @@ public class Spiel {
     @API
     public void setzeErkundungsmodusAktiv(boolean aktiv) {
         getActiveScene().setExploreMode(aktiv);
-    }
-
-    @SuppressWarnings ( "StaticVariableOfConcreteClass" )
-    private static EduScene activeScene;
-
-    @Internal
-    static EduScene getActiveScene() {
-        if (activeScene == null) {
-            activeScene = new EduScene();
-            parallel(() -> Game.start(fensterBreite, fensterHoehe, activeScene));
-        }
-
-        return activeScene;
-    }
-
-    @Internal
-    static void setActiveScene(EduScene eduScene) {
-        activeScene = eduScene;
-        Game.transitionToScene(activeScene);
     }
 
     /**
@@ -240,7 +255,7 @@ public class Spiel {
      * @see #benenneAktiveSzene(String)
      */
     @API
-    public String[] nenneSzenenNamen() {
+    public String[] nenneSzenennamen() {
         return szenen.keySet().toArray(new String[0]);
     }
 
@@ -260,12 +275,12 @@ public class Spiel {
     }
 
     @API
-    public void setzeEbenenParallaxe(String ebenenName, double x, double y, double zoom) {
+    public void setzeEbenenparallaxe(String ebenenName, double x, double y, double zoom) {
         getActiveScene().setLayerParallax(ebenenName, (float) x, (float) y, (float) zoom);
     }
 
     @API
-    public void setzeEbenenZeitverzerrung(String ebenenName, double zeitverzerrung) {
+    public void setzeEbenenzeitverzerrung(String ebenenName, double zeitverzerrung) {
         getActiveScene().setLayerTimeDistort(ebenenName, (float) zeitverzerrung);
     }
 
@@ -348,38 +363,40 @@ public class Spiel {
     }
 
     /**
-     * Meldet ein Objekt an, das ab sofort auf Mausklicks reagieren wird.<br> Intern laesst sich
-     * theoretisch ein Objekt <b>JEDER</b> Klasse anmelden!<br> Deshalb <i>sollten nur Objekte
-     * angemeldet werden, die Instanzen eines interfaces EDU-<code>KLICKREAGIERBAR</code>-Interfaces
-     * sind!!</i><br> <br> <br> Example:<br> <br> <code>KLICKREAGIERBAR { <br> //Eine
-     * Methode diesen Namens MUSS existieren!!<br> public abstract void klickReagieren(int x, int
-     * y);<br> }</code>
+     * Meldet ein Objekt an, das ab sofort auf Mausklicks reagieren wird.
      *
-     * @param mausKlickReagierbar Das anzumeldende Objekt. Dieses wird ab sofort above jeden Mausklick informiert.
+     * @param mausKlickReagierbar Das anzumeldende Objekt.
      */
     @API
     public void registriereMausKlickReagierbar(MausKlickReagierbar mausKlickReagierbar) {
         getActiveScene().addEduClickListener(mausKlickReagierbar);
     }
 
+    /**
+     * Entfernt ein Objekt wieder, sodass es nicht mehr auf Mausklicks reagiert.
+     *
+     * @param mausKlickReagierbar Das abzumeldende Objekt.
+     */
     @API
     public void entferneMausKlickReagierbar(MausKlickReagierbar mausKlickReagierbar) {
         getActiveScene().removeEduClickListener(mausKlickReagierbar);
     }
 
     /**
-     * Meldet ein Objekt an, das ab sofort auf Tastendruck reagieren wird.<br> Intern laesst sich
-     * theoretisch ein Objekt <b>JEDER</b> Klasse anmelden!<br> Deshalb <i>sollten nur Objekte
-     * angemeldet werden, die Instanzen des EDU-<code>TASTENREAGIERBARANMELDEN</code>-Interfaces
-     * sind!!</i>
+     * Meldet ein Objekt an, das ab sofort auf Tasten reagieren wird.
      *
-     * @param tastenReagierbar Das anzumeldende Objekt. Dieses wird ab sofort above jeden Tastendruck informiert.
+     * @param tastenReagierbar Das anzumeldende Objekt.
      */
     @API
     public void registriereTastenReagierbar(TastenReagierbar tastenReagierbar) {
         getActiveScene().addEduKeyListener(tastenReagierbar);
     }
 
+    /**
+     * Entfernt ein Objekt wieder, sodass es nicht mehr auf Tasten reagiert.
+     *
+     * @param tastenReagierbar Das abzumeldende Objekt.
+     */
     @API
     public void entferneTastenReagierbar(TastenReagierbar tastenReagierbar) {
         getActiveScene().removeEduKeyListener(tastenReagierbar);

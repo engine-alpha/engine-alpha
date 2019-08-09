@@ -337,7 +337,7 @@ public abstract class EduActor<T extends Actor> {
      * @see ea.internal.ShapeBuilder#fromString(String)
      */
     @API
-    public void setzeKollisionsFormen(String kollisionsFormenCode) {
+    public void setzeKollisionsformen(String kollisionsFormenCode) {
         this.actor.setShapes(kollisionsFormenCode);
     }
 
