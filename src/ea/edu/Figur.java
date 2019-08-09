@@ -79,65 +79,65 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
     /**
      * Fügt einen Zustand mit GIF-Visualisierung ein.
      *
-     * @param zustandsName Name des Zustands.
+     * @param zustandsname Name des Zustands.
      * @param bildpfad     Pfad zum GIF, das zu diesem Zustand animiert wird.
      */
     @API
-    public void fuegeZustandVonGifHinzu(String zustandsName, String bildpfad) {
+    public void fuegeZustandVonGifHinzu(String zustandsname, String bildpfad) {
         if (!bildpfad.toLowerCase().endsWith(".gif")) {
             throw new RuntimeException("Der agegebene Bildpfad muss eine GIF-Datei sein und auf \".gif\" enden. Der angegebene Bildpfad war: " + bildpfad);
         }
 
-        getActor().addState(zustandsName, Animation.createFromAnimatedGif(bildpfad, getActor().getWidth(), getActor().getHeight()));
+        getActor().addState(zustandsname, Animation.createFromAnimatedGif(bildpfad, getActor().getWidth(), getActor().getHeight()));
     }
 
     /**
      * Fügt Zustand mit Spritesheet-Animation ein. Das Spritesheet muss <b>aus Kacheln gleicher Größe</b> bestehen.
      * "leere" Kacheln werden als leere Animationsframes mit einbezogen.
      *
-     * @param zustandsName Der Name des Zustands.
+     * @param zustandsname Der Name des Zustands.
      * @param bildpfad     Pfad zum Spritesheet.
      * @param anzahlX      Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY      Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
     @API
-    public void fuegeZustandVonSpritesheetHinzu(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
-        getActor().addState(zustandsName, Animation.createFromSpritesheet(DEFAULT_FRAME_DURATION, bildpfad, anzahlX, anzahlY, getActor().getWidth(), getActor().getHeight()));
+    public void fuegeZustandVonSpritesheetHinzu(String zustandsname, String bildpfad, int anzahlX, int anzahlY) {
+        getActor().addState(zustandsname, Animation.createFromSpritesheet(DEFAULT_FRAME_DURATION, bildpfad, anzahlX, anzahlY, getActor().getWidth(), getActor().getHeight()));
     }
 
     /**
      * Fügt einen Zustand über Einzelframes als Bilder ein.
      *
-     * @param zustandsName Der Name des Zustands.
+     * @param zustandsname Der Name des Zustands.
      * @param bildpfade    Die Pfade der Animationsframes in korrekter Reihenfolge.
      */
     @API
-    public void fuegeZustandVonEinzelbildernHinzu(String zustandsName, String... bildpfade) {
-        getActor().addState(zustandsName, Animation.createFromImages(DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), bildpfade));
+    public void fuegeZustandVonEinzelbildernHinzu(String zustandsname, String... bildpfade) {
+        getActor().addState(zustandsname, Animation.createFromImages(DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), bildpfade));
     }
 
     /**
      * Fügt einen Zustand hinzu. Lädt dazu alle Bilder in einem Verzeichnis ein, die zu einem
      * bestimmten Präfix passen.
      *
-     * @param zustandName     Name für den ersten Zustand.
-     * @param verzeichnisPfad Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
+     * @param zustandsname     Name für den ersten Zustand.
+     * @param verzeichnis Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
     @API
-    public void fuegeZustandVonPraefixHinzu(String zustandName, String verzeichnisPfad, String praefix) {
-        getActor().addState(zustandName, Animation.createFromImagesPrefix(Spiel.getActiveScene(), DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), verzeichnisPfad, praefix));
+    public void fuegeZustandVonPraefixHinzu(String zustandsname, String verzeichnis, String praefix) {
+        getActor().addState(zustandsname, Animation.createFromImagesPrefix(Spiel.getActiveScene(), DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), verzeichnis, praefix));
     }
 
     /**
      * Setzt den Zustand der Figur neu. In jedem Fall wird dabei der Animationsloop zurückgesetzt.
      *
-     * @param zustandsName Der Name des zu setzenden Zustands. Unter diesem Namen muss ein Zustand in dieser
+     * @param zustandsname Der Name des zu setzenden Zustands. Unter diesem Namen muss ein Zustand in dieser
      *                     Figur existieren.
      */
     @API
-    public void setzeZustand(String zustandsName) {
-        getActor().setState(zustandsName);
+    public void setzeZustand(String zustandsname) {
+        getActor().setState(zustandsname);
     }
 
     /**
@@ -163,8 +163,8 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
     }
 
     @API
-    public void setzeAnimationsgeschwindigkeit(String zustandName, double dauerInSekunden) {
-        getActor().setFrameDuration(zustandName, (float) dauerInSekunden);
+    public void setzeAnimationsgeschwindigkeit(String zustandsname, double dauerInSekunden) {
+        getActor().setFrameDuration(zustandsname, (float) dauerInSekunden);
     }
 
     private static Vector getWidthHeightFromPrefixed(String directoryPath, String prefix) {
