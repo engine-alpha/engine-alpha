@@ -282,6 +282,18 @@ public class BodyHandler implements PhysicsHandler {
     }
 
     @Override
+    public void setAngularVelocity(float rotationsPerSecond) {
+        synchronized (worldHandler) {
+            body.setAngularVelocity((float) Math.toRadians(rotationsPerSecond * 360));
+        }
+    }
+
+    @Override
+    public float getAngularVelocity() {
+        return (float) Math.toDegrees(body.getAngularVelocity()) / 360;
+    }
+
+    @Override
     public void setRotationLocked(boolean locked) {
         synchronized (worldHandler) {
             body.setFixedRotation(locked);

@@ -727,6 +727,27 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         }
     }
 
+    /**
+     * Setzt die Drehgeschwindigkeit "hart" für dieses Objekt. Damit wird die aktuelle
+     * Rotation des Objekts ignoriert und hart auf den übergebenen Wert gesetzt.
+     *
+     * @param rotationsPerSecond Die Geschwindigkeit, mit der sich dieses Objekt ab sofort
+     *                           bewegen soll. In <b>[Umdrehnungen / s]</b>
+     */
+    @API
+    public void setAngularVelocity(float rotationsPerSecond) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setAngularVelocity(rotationsPerSecond);
+        }
+    }
+
+    @API
+    public void setAngularVelocity() {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.getAngularVelocity();
+        }
+    }
+
     @API
     public void setRestitution(float restitution) {
         synchronized (physicsHandlerLock) {

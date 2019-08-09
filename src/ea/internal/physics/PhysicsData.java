@@ -1,5 +1,6 @@
 package ea.internal.physics;
 
+import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.BodyType;
 import ea.internal.annotations.Internal;
@@ -39,7 +40,7 @@ public class PhysicsData {
 
     private Float mass;
 
-    private Vec2 velocity = new Vec2(0, 0);
+    private Vector velocity = Vector.NULL;
 
     private BodyType type = DEFAULT_BODY_TYPE;
 
@@ -60,8 +61,8 @@ public class PhysicsData {
         data.setY(body.getPosition().y);
         data.setRotation((float) Math.toDegrees(body.getAngle()));
         data.setTorque(body.m_torque);
-        data.setVelocity(body.m_linearVelocity);
-        data.setAngularVelocity(body.m_angularVelocity);
+        data.setVelocity(Vector.of(body.m_linearVelocity));
+        data.setAngularVelocity((float) Math.toDegrees(body.m_angularVelocity) / 360);
         data.setType(type);
         data.setShapes(shapes);
 
@@ -106,6 +107,7 @@ public class PhysicsData {
         fixtureDef.friction = this.getFriction();
         fixtureDef.restitution = this.getRestitution();
         fixtureDef.isSensor = this.getType().isSensorType();
+
         return fixtureDef;
     }
 
@@ -118,9 +120,8 @@ public class PhysicsData {
         bodyDef.angle = (float) Math.toRadians(this.getRotation());
         bodyDef.position.set(new Vec2(getX(), getY()));
         bodyDef.fixedRotation = isRotationLocked();
-        bodyDef.linearVelocity = getVelocity();
-        bodyDef.angularVelocity = getAngularVelocity();
-
+        bodyDef.linearVelocity = getVelocity().toVec2();
+        bodyDef.angularVelocity = (float) Math.toRadians(getAngularVelocity() * 360);
         bodyDef.type = getType().toBox2D();
         bodyDef.active = true;
         bodyDef.gravityScale = getType().getDefaultGravityScale();
@@ -218,11 +219,11 @@ public class PhysicsData {
         this.torque = torque;
     }
 
-    public Vec2 getVelocity() {
+    public Vector getVelocity() {
         return velocity;
     }
 
-    public void setVelocity(Vec2 velocity) {
+    public void setVelocity(Vector velocity) {
         this.velocity = velocity;
     }
 

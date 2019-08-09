@@ -209,6 +209,22 @@ public interface PhysicsHandler {
     Vector getVelocity();
 
     /**
+     * Setzt die Drehgeschwindigkeit für das Handler-Objekt.
+     *
+     * @param rotationsPerSecond Setzt die Drehgeschwindigkeit, mit der sich das Zielobjekt bewegen soll.
+     */
+    @Internal
+    void setAngularVelocity(float rotationsPerSecond);
+
+    /**
+     * Gibt die aktuelle Drehgeschwindigkeit aus.
+     *
+     * @return Die aktuelle Drehgeschwindigkeit.
+     */
+    @Internal
+    float getAngularVelocity();
+
+    /**
      * Setzt, ob die Rotation blockiert sein soll.
      */
     @Internal

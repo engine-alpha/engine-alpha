@@ -5,7 +5,6 @@ import ea.actor.BodyType;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Transform;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
 import java.util.ArrayList;
@@ -178,18 +177,28 @@ public class NullHandler implements PhysicsHandler {
 
     @Override
     public void resetMovement() {
-        physicsData.setVelocity(new Vec2());
+        physicsData.setVelocity(Vector.NULL);
         physicsData.setAngularVelocity(0);
     }
 
     @Override
     public void setVelocity(Vector metersPerSecond) {
-        mountCallbacks.add(physicsHandler -> physicsHandler.setVelocity(metersPerSecond));
+        physicsData.setVelocity(metersPerSecond);
     }
 
     @Override
     public Vector getVelocity() {
-        return Vector.NULL;
+        return physicsData.getVelocity();
+    }
+
+    @Override
+    public void setAngularVelocity(float rotationsPerSecond) {
+        physicsData.setAngularVelocity((float) Math.toRadians(rotationsPerSecond * 360));
+    }
+
+    @Override
+    public float getAngularVelocity() {
+        return physicsData.getAngularVelocity();
     }
 
     @Override

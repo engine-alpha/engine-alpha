@@ -174,6 +174,11 @@ public abstract class EduActor<T extends Actor> {
     }
 
     @API
+    public void setzeWinkelgeschwindigkeit(double umdrehnungenProSekunde) {
+        this.actor.setAngularVelocity((float) umdrehnungenProSekunde);
+    }
+
+    @API
     public void setzeReibung(double reibungsKoeffizient) {
         this.actor.setFriction((float) reibungsKoeffizient);
     }
