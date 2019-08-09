@@ -9,8 +9,9 @@ import ea.internal.physics.*;
 import org.jbox2d.dynamics.Body;
 
 import java.awt.Graphics2D;
-import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -22,6 +23,8 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings ( "OverlyCoupledClass" )
 public class Layer implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
+    private static final Comparator<? super Actor> ACTOR_COMPARATOR = Comparator.comparingInt(Actor::getLayerPosition);
+
     private <T> Supplier<T> createParentSupplier(Function<Scene, T> supplier) {
         return () -> {
             Scene scene = getParent();
@@ -33,7 +36,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         };
     }
 
-    private final Collection<Actor> actors;
+    private final List<Actor> actors;
 
     private float parallaxX = 1;
     private float parallaxY = 1;
@@ -63,7 +66,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     @API
     public Layer() {
         worldHandler = new WorldHandler(this);
-        actors = new ConcurrentLinkedQueue<>();
+        actors = new CopyOnWriteArrayList<>();
         EventListenerHelper.autoRegisterListeners(this);
     }
 
@@ -236,6 +239,8 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
 
                 this.actors.add(actor);
             }
+
+            this.actors.sort(ACTOR_COMPARATOR);
         });
     }
 
@@ -341,6 +346,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         if (!visible) {
             return;
         }
+
         Vector position = camera.getPosition();
         float rotation = -camera.getRotation();
         g.setClip(0, 0, width, height);
@@ -354,8 +360,24 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         // TODO: Calculate optimal bounds
         int size = Math.max(width, height);
 
+        boolean needsSort = false;
+        int previousPosition = Integer.MIN_VALUE;
+
         for (Actor actor : actors) {
             actor.renderBasic(g, new Bounds(position.getX() - size, position.getY() - size, size * 2, size * 2), pixelPerMeter);
+
+            if (!needsSort) {
+                int actorPosition = actor.getLayerPosition();
+                if (actorPosition < previousPosition) {
+                    needsSort = true;
+                }
+
+                previousPosition = actorPosition;
+            }
+        }
+
+        if (needsSort) {
+            this.actors.sort(ACTOR_COMPARATOR);
         }
     }
 
