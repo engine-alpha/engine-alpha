@@ -250,7 +250,7 @@ public class StatefulAnimation<State> extends Actor {
      */
     @Internal
     private void internalOnFrameUpdate(float frameDuration) {
-        if (currentAnimation == null) {
+        if (currentAnimation == null || currentAnimation.length == 0) {
             return; // we don't have a state yet
         }
 
@@ -277,13 +277,11 @@ public class StatefulAnimation<State> extends Actor {
         }
     }
 
-    /* ~~ ACTOR FUNCTIONALITY ~~ */
-
     @Internal
     @Override
     public void render(Graphics2D g, float pixelPerMeter) {
-        if (currentAnimation.length == 0) {
-            return;
+        if (currentAnimation == null || currentAnimation.length == 0) {
+            return; // we don't have a state yet
         }
 
         currentAnimation[currentIndex].render(g, width * pixelPerMeter, height * pixelPerMeter, flipHorizontal, flipVertical);
