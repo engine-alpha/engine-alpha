@@ -92,6 +92,11 @@ public final class Vector implements Cloneable {
         this.y = y;
     }
 
+    @API
+    public Vector(double x, double y) {
+        this((float) x, (float) y);
+    }
+
     /**
      * Konstruktor. <br><br> Vector wird erzeugt als die nötige Bewegung von einem Point zu einem zweiten.
      *

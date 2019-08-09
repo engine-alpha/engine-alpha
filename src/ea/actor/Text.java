@@ -19,6 +19,7 @@
 
 package ea.actor;
 
+import ea.Vector;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -41,12 +42,9 @@ public class Text extends Geometry {
 
     @Internal
     private static Shape createShape(String content, float height, Font font) {
-        FontMetrics fontMetrics = ea.internal.util.FontMetrics.get(font);
+        Vector sizeInPixels = ea.internal.util.FontMetrics.getSize(content, font);
 
-        int widthInPixels = fontMetrics.stringWidth(content);
-        int heightInPixels = fontMetrics.getHeight();
-
-        return ShapeBuilder.createSimpleRectangularShape(widthInPixels * height / heightInPixels, height);
+        return ShapeBuilder.createSimpleRectangularShape(sizeInPixels.x * height / sizeInPixels.y, height);
     }
 
     /**

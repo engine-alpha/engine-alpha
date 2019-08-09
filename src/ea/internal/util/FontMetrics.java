@@ -19,12 +19,23 @@
 
 package ea.internal.util;
 
-import java.awt.*;
+import ea.Vector;
+
+import java.awt.Canvas;
+import java.awt.Font;
+import java.awt.geom.Rectangle2D;
 
 public final class FontMetrics {
     private static final ThreadLocal<Canvas> canvas = ThreadLocal.withInitial(Canvas::new);
 
     public static java.awt.FontMetrics get(Font font) {
         return canvas.get().getFontMetrics(font);
+    }
+
+    public static Vector getSize(String content, Font font) {
+        Canvas canvas = FontMetrics.canvas.get();
+        Rectangle2D bounds = canvas.getFontMetrics(font).getStringBounds(content, canvas.getGraphics());
+
+        return new Vector(bounds.getWidth(), bounds.getHeight());
     }
 }

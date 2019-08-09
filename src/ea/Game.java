@@ -329,7 +329,7 @@ public final class Game {
         Rectangle2D bounds;
         int y = 10;
 
-        String fpsMessage = "FPS: " + (frameDuration == 0 ? "∞" : 1 / frameDuration);
+        String fpsMessage = "FPS: " + (frameDuration == 0 ? "∞" : Math.round(1 / frameDuration));
         bounds = fm.getStringBounds(fpsMessage, g);
 
         g.setColor(COLOR_FPS_BORDER);
