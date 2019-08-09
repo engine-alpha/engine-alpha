@@ -36,15 +36,15 @@ public class CircleAnimation extends AggregateFrameUpdateListener {
         ValueAnimator<Float> aX = new ValueAnimator<>(durationInSeconds, x -> actor.setCenter(x, actor.getCenter().y), new CosinusFloat(rightPoint.x, radius), AnimationMode.REPEATED, this);
         ValueAnimator<Float> aY = new ValueAnimator<>(durationInSeconds, y -> actor.setCenter(actor.getCenter().x, y), new SinusFloat(rotationCenter.y, circleClockwise ? -radius : radius), AnimationMode.REPEATED, this);
 
-        //Winkel zwischen gewünschtem Startpunkt und aktueller Actor-Position (immer in [0;PI])
+        // Winkel zwischen gewünschtem Startpunkt und aktueller Actor-Position (immer in [0;PI])
         float angle = rotationCenter.negate().add(rightPoint).getAngle(rotationCenter.negate().add(currentActorCenter));
 
         if (circleClockwise && currentActorCenter.y > rotationCenter.y || !circleClockwise && currentActorCenter.y < rotationCenter.y) {
-            //Gedrehter Winkel ist bereits über die Hälfte
-            angle = (float) (2 * Math.PI - angle);
+            // Gedrehter Winkel ist bereits über die Hälfte
+            angle = 360 - angle;
         }
 
-        float actualProgress = (float) (angle / (Math.PI * 2));
+        float actualProgress = angle / 360;
         aX.setProgress(actualProgress);
         aY.setProgress(actualProgress);
 
@@ -53,7 +53,7 @@ public class CircleAnimation extends AggregateFrameUpdateListener {
 
         if (rotateActor) {
             float rotationAngle = circleClockwise ? angle : -angle;
-            ValueAnimator<Float> aR = new ValueAnimator<>(durationInSeconds, actor::setRotation, new LinearFloat(-angle, -angle + ((float) (Math.PI * 2) * (circleClockwise ? -1 : 1))), AnimationMode.REPEATED, actor);
+            ValueAnimator<Float> aR = new ValueAnimator<>(durationInSeconds, actor::setRotation, new LinearFloat(-rotationAngle, -rotationAngle + 360 * (circleClockwise ? -1 : 1)), AnimationMode.REPEATED, actor);
             aR.setProgress(actualProgress);
             addFrameUpdateListener(aR);
         }
