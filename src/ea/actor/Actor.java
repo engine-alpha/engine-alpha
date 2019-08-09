@@ -1221,4 +1221,11 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
         return animator;
     }
+
+    @Internal
+    static void assertWidthAndHeight(float width, float height) {
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Höhe und Breite dürfen nicht negativ sein! Waren: " + width + " und " + height);
+        }
+    }
 }

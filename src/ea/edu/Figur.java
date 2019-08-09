@@ -26,62 +26,54 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
     /**
      * Einführungskonstruktor. Erstellt eine Figur mit einem ersten Zustand.
      *
-     * @param pixelProMeter Die Anzahl an Pixel in der Zieldatei, die einem Meter in der Engine entsprechen
-     * @param zustandsName  Der Name für den ersten Zustand.
-     * @param gifBildPfad   Pfad zu einem <b>GIF Bild</b>.
+     * @param zustandsname Der Name für den ersten Zustand.
+     * @param gifBildPfad  Pfad zu einem <b>GIF Bild</b>.
      */
     @API
-    public Figur(double pixelProMeter, String zustandsName, String gifBildPfad) {
-        super(new StatefulAnimation<>(ImageLoader.load(gifBildPfad).getWidth() / (float) pixelProMeter, ImageLoader.load(gifBildPfad).getHeight() / (float) pixelProMeter));
+    public Figur(String zustandsname, String gifBildPfad) {
+        super(new StatefulAnimation<>(ImageLoader.load(gifBildPfad).getWidth() / Camera.DEFAULT_ZOOM, ImageLoader.load(gifBildPfad).getHeight() / Camera.DEFAULT_ZOOM));
 
-        fuegeZustandVonGifHinzu(zustandsName, gifBildPfad);
-    }
-
-    @API
-    public Figur(String zustandsName, String gifBildPfad) {
-        this(Camera.DEFAULT_ZOOM, zustandsName, gifBildPfad);
+        fuegeZustandVonGifHinzu(zustandsname, gifBildPfad);
     }
 
     /**
      * Einführungskonstruktor. Erstellt eine Figur mit einem ersten Zustand.
      *
-     * @param pixelProMeter   Die Anzahl an Pixel in der Zieldatei, die einem Meter in der Engine entsprechen
-     * @param zustandsName    Der Name für den ersten Zustand.
+     * @param zustandsname    Der Name für den ersten Zustand.
      * @param spriteSheetPfad Pfad zu einem <b>Spritesheet</b>.
      * @param anzahlX         Anzahl der Spritesheet-Kacheln in die X-Richtung.
      * @param anzahlY         Anzahl der Spritesheet-Kacheln in die Y-Richtung.
      */
     @API
-    public Figur(double pixelProMeter, String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        super(new StatefulAnimation<>(ImageLoader.load(spriteSheetPfad).getWidth() / (float) pixelProMeter / anzahlX, ImageLoader.load(spriteSheetPfad).getHeight() / (float) pixelProMeter / anzahlY));
+    public Figur(String zustandsname, String spriteSheetPfad, int anzahlX, int anzahlY) {
+        super(new StatefulAnimation<>(ImageLoader.load(spriteSheetPfad).getWidth() / Camera.DEFAULT_ZOOM / anzahlX, ImageLoader.load(spriteSheetPfad).getHeight() / Camera.DEFAULT_ZOOM / anzahlY));
 
-        fuegeZustandVonSpritesheetHinzu(zustandsName, spriteSheetPfad, anzahlX, anzahlY);
-    }
-
-    @API
-    public Figur(String zustandsName, String spriteSheetPfad, int anzahlX, int anzahlY) {
-        this(Camera.DEFAULT_ZOOM, zustandsName, spriteSheetPfad, anzahlX, anzahlY);
+        fuegeZustandVonSpritesheetHinzu(zustandsname, spriteSheetPfad, anzahlX, anzahlY);
     }
 
     /**
      * Erstellt eine Figur mit einem ersten Zustand. Lädt dazu alle Bilder in einem Verzeichnis ein, die zu einem
      * bestimmten Präfix passen.
      *
-     * @param pixelProMeter   Die Anzahl an Pixel in der Zieldatei, die einem Meter in der Engine entsprechen
-     * @param zustandName     Name für den ersten Zustand.
+     * @param zustandname     Name für den ersten Zustand.
      * @param verzeichnisPfad Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
      * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
     @API
-    public Figur(double pixelProMeter, String zustandName, String verzeichnisPfad, String praefix) {
-        super(new StatefulAnimation<>(getWidthHeightFromPrefixed(verzeichnisPfad, praefix).getX() / (float) pixelProMeter, getWidthHeightFromPrefixed(verzeichnisPfad, praefix).getY() / (float) pixelProMeter));
+    public Figur(String zustandname, String verzeichnisPfad, String praefix) {
+        super(new StatefulAnimation<>(getWidthHeightFromPrefixed(verzeichnisPfad, praefix).getX() / Camera.DEFAULT_ZOOM, getWidthHeightFromPrefixed(verzeichnisPfad, praefix).getY() / Camera.DEFAULT_ZOOM));
 
-        fuegeZustandVonPraefixHinzu(zustandName, verzeichnisPfad, praefix);
+        fuegeZustandVonPraefixHinzu(zustandname, verzeichnisPfad, praefix);
     }
 
+    /**
+     * Ändert die Größe der Figur um einen Faktor.
+     *
+     * @param faktor Skalierungsfaktor
+     */
     @API
-    public Figur(String zustandName, String verzeichnisPfad, String praefix) {
-        this(Camera.DEFAULT_ZOOM, zustandName, verzeichnisPfad, praefix);
+    public void skaliere(double faktor) {
+        getActor().setSize(getActor().getWidth() * (float) faktor, getActor().getHeight() * (float) faktor);
     }
 
     /**
@@ -96,7 +88,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
             throw new RuntimeException("Der agegebene Bildpfad muss eine GIF-Datei sein und auf \".gif\" enden. Der angegebene Bildpfad war: " + bildpfad);
         }
 
-        addState(zustandsName, Animation.createFromAnimatedGif(bildpfad, getActor().getWidth(), getActor().getHeight()));
+        getActor().addState(zustandsName, Animation.createFromAnimatedGif(bildpfad, getActor().getWidth(), getActor().getHeight()));
     }
 
     /**
@@ -110,7 +102,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      */
     @API
     public void fuegeZustandVonSpritesheetHinzu(String zustandsName, String bildpfad, int anzahlX, int anzahlY) {
-        addState(zustandsName, Animation.createFromSpritesheet(DEFAULT_FRAME_DURATION, bildpfad, anzahlX, anzahlY, getActor().getWidth(), getActor().getHeight()));
+        getActor().addState(zustandsName, Animation.createFromSpritesheet(DEFAULT_FRAME_DURATION, bildpfad, anzahlX, anzahlY, getActor().getWidth(), getActor().getHeight()));
     }
 
     /**
@@ -121,7 +113,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      */
     @API
     public void fuegeZustandVonEinzelbildernHinzu(String zustandsName, String... bildpfade) {
-        addState(zustandsName, Animation.createFromImages(DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), bildpfade));
+        getActor().addState(zustandsName, Animation.createFromImages(DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), bildpfade));
     }
 
     /**
@@ -173,10 +165,6 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
     @API
     public void setzeAnimationsgeschwindigkeit(String zustandName, double dauerInSekunden) {
         getActor().setFrameDuration(zustandName, (float) dauerInSekunden);
-    }
-
-    private void addState(String stateName, Animation animation) {
-        getActor().addState(stateName, animation);
     }
 
     private static Vector getWidthHeightFromPrefixed(String directoryPath, String prefix) {

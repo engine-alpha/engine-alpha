@@ -274,6 +274,22 @@ public class StatefulAnimation<State> extends Actor {
         }
     }
 
+    /**
+     * Setzt die Höhe und Breite der Animation neu. Ändert die physikalischen Eigenschaften (Masse etc.).
+     *
+     * @param width  Neue Breite für das Rechteck.
+     * @param height Neue Höhe für das Rechteck.
+     */
+    @API
+    public void setSize(float width, float height) {
+        assertWidthAndHeight(width, height);
+
+        this.width = width;
+        this.height = height;
+
+        this.setShape(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
+    }
+
     @Internal
     @Override
     public void render(Graphics2D g, float pixelPerMeter) {

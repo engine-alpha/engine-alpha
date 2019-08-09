@@ -21,7 +21,6 @@ package ea.actor;
 
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
-import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.Graphics2D;
@@ -50,11 +49,6 @@ public class Rectangle extends Geometry {
     private float borderRadius;
 
     /**
-     * Faktor zur TODO
-     */
-    private static final int SCALING_APPROX_FACTOR = 1000;
-
-    /**
      * Konstruktor.
      *
      * @param width  Die Breite des Rechtecks
@@ -68,6 +62,7 @@ public class Rectangle extends Geometry {
         super(shapeSupplier);
 
         assertWidthAndHeight(width, height);
+
         this.width = width;
         this.height = height;
     }
@@ -89,20 +84,13 @@ public class Rectangle extends Geometry {
      * @param height Neue Höhe für das Rechteck.
      */
     @API
-    public void resetDimensions(float width, float height) {
+    public void setSize(float width, float height) {
         assertWidthAndHeight(width, height);
 
         this.width = width;
         this.height = height;
 
         this.setShape(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
-    }
-
-    @Internal
-    private static void assertWidthAndHeight(float width, float height) {
-        if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("Höhe und Breite dürfen nicht negativ sein! Waren: " + width + " und " + height);
-        }
     }
 
     @API
@@ -115,6 +103,7 @@ public class Rectangle extends Geometry {
         if (percent < 0 || percent > 1) {
             throw new IllegalArgumentException("Borderradius kann nur zwischen 0 und 1 sein. War " + percent);
         }
+
         this.borderRadius = percent;
     }
 
