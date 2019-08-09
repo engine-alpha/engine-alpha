@@ -26,8 +26,9 @@ import ea.internal.annotations.Internal;
 import java.awt.Color;
 import java.net.JarURLConnection;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -42,6 +43,8 @@ public final class EngineAlpha {
     @SuppressWarnings ( "MagicNumber" )
     public static void main(String[] args) {
         Game.start(800, 600, new Scene() {
+            private List<Actor> items = new ArrayList<>();
+
             {
                 setGravity(new Vector(0, -9.81f));
 
@@ -52,32 +55,33 @@ public final class EngineAlpha {
                 ground.setBodyType(BodyType.STATIC);
                 add(ground);
 
-                Rectangle a = new Rectangle(1, 1);
-                a.setPosition(-5, -2);
-                a.setRestitution(1);
-                a.setFriction(.2f);
-                a.setBodyType(BodyType.DYNAMIC);
-                a.setColor(new Color(26, 113, 156));
-                a.setRotation(30);
-                add(a);
+                for (int i = 0; i < 3; i++) {
+                    Rectangle a = new Rectangle(1, 1);
+                    a.setPosition(-5, -2);
+                    a.setRestitution(1);
+                    a.setFriction(.2f);
+                    a.setBodyType(BodyType.DYNAMIC);
+                    a.setColor(new Color(26, 113, 156));
+                    a.setRotation(30);
+                    spawnItem(a);
 
-                Circle b = new Circle(1);
-                b.setPosition(5, -1);
-                b.setRestitution(1);
-                b.setFriction(.2f);
-                b.setBodyType(BodyType.DYNAMIC);
-                b.setColor(new Color(158, 5, 5));
-                b.applyImpulse(new Vector(-100, 0));
-                add(b);
+                    Circle b = new Circle(1);
+                    b.setPosition(5, -1);
+                    b.setRestitution(1);
+                    b.setFriction(.2f);
+                    b.setBodyType(BodyType.DYNAMIC);
+                    b.setColor(new Color(158, 5, 5));
+                    b.applyImpulse(new Vector(Random.nextInteger(-100, 100), 0));
+                    spawnItem(b);
 
-                Polygon c = new Polygon(new Vector(0, 0), new Vector(1, 0), new Vector(.5, 1));
-                c.setPosition(-1, 5);
-                c.setRestitution(1);
-                c.setFriction(.2f);
-                c.setBodyType(BodyType.DYNAMIC);
-                c.setColor(new Color(25, 159, 69));
-                c.setRotation(-20);
-                add(c);
+                    Polygon c = new Polygon(new Vector(0, 0), new Vector(1, 0), new Vector(.5, 1));
+                    c.setRestitution(1);
+                    c.setFriction(.2f);
+                    c.setBodyType(BodyType.DYNAMIC);
+                    c.setColor(new Color(25, 159, 69));
+                    c.setRotation(-20);
+                    spawnItem(c);
+                }
 
                 Date date = new Date(BUILD_TIME * 1000);
                 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z");
@@ -89,13 +93,24 @@ public final class EngineAlpha {
                 add(text);
 
                 addFrameUpdateListener(time -> {
-                    for (Actor item : Arrays.asList(a, b, c)) {
+                    for (Actor item : items) {
                         if (item.getCenter().getY() < -10) {
-                            item.resetMovement();
-                            item.setCenter(Random.nextInteger(-7, 7), Random.nextInteger(0, 5));
+                            spawnItem(item);
                         }
                     }
                 });
+            }
+
+            private void spawnItem(Actor item) {
+                if (!item.isMounted()) {
+                    delay(Random.nextInteger(5), () -> {
+                        items.add(item);
+                        add(item);
+                    });
+                }
+
+                item.resetMovement();
+                item.setCenter(Random.nextInteger(-7, 7), Random.nextInteger(0, 5));
             }
         });
 

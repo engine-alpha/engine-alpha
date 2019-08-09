@@ -66,9 +66,9 @@ public final class Random {
         if (lowerLimit == upperLimit) {
             return lowerLimit;
         } else if (lowerLimit < upperLimit) {
-            return lowerLimit + ThreadLocalRandom.current().nextInt(upperLimit + 1);
+            return lowerLimit + ThreadLocalRandom.current().nextInt(upperLimit - lowerLimit + 1);
         } else {
-            return upperLimit + ThreadLocalRandom.current().nextInt(lowerLimit + 1);
+            return upperLimit + ThreadLocalRandom.current().nextInt(lowerLimit - upperLimit + 1);
         }
     }
 
