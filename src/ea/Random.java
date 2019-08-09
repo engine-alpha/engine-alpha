@@ -52,6 +52,27 @@ public final class Random {
     }
 
     /**
+     * Gibt einen <b>zufälligen</b> <code>int</code>-Wert zwischen einer festgelegten Unter- und Obergrenze
+     * zurück.<br> Die Wahrscheinlichkeiten für die Werte zwischen Unter- und Obergrenze sind gleich groß.
+     *
+     * @param lowerLimit Die niedrigste Zahl, die im Ergebnis vorkommen kann.
+     * @param upperLimit Die höchste Zahl, die im Ergebnis vorkommen kann.
+     *
+     * @return Eine Zahl <code>x</code>, wobei <code>lowerLimit &lt;= x &lt;= upperLimit</code> gilt. Die Wahrscheinlichkeit für
+     * alle möglichen Rückgaben ist <i>gleich groß</i>.
+     */
+    @API
+    public static int nextInteger(int lowerLimit, int upperLimit) {
+        if (lowerLimit == upperLimit) {
+            return lowerLimit;
+        } else if (lowerLimit < upperLimit) {
+            return lowerLimit + ThreadLocalRandom.current().nextInt(upperLimit + 1);
+        } else {
+            return upperLimit + ThreadLocalRandom.current().nextInt(lowerLimit + 1);
+        }
+    }
+
+    /**
      * Gibt einen <b>zufälligen</b> <code>float</code>-Wert im Intervall <code>[0;1)</code> zurück. Die
      * Wahrscheinlichkeit ist für alle möglichen Werte in diesem Intervall gleich groß.
      *

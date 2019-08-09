@@ -30,7 +30,11 @@ public abstract class EduActor<T extends Actor> {
         this.actor.addUnmountListener(() -> actorMap.remove(this.actor));
 
         EduScene activeScene = Spiel.getActiveScene();
-        Game.enqueue(() -> activeScene.addEduActor(this.getActor()));
+        Game.enqueue(() -> {
+            if (!this.actor.isMounted()) {
+                activeScene.addEduActor(this.getActor());
+            }
+        });
     }
 
     /**

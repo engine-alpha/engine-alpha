@@ -47,13 +47,15 @@ public final class EngineAlpha {
 
                 Rectangle ground = new Rectangle(20, .2f);
                 ground.setCenter(0, -6);
-                ground.setRestitution(.8f);
+                ground.setRestitution(1);
+                ground.setFriction(.2f);
                 ground.setBodyType(BodyType.STATIC);
                 add(ground);
 
                 Rectangle a = new Rectangle(1, 1);
                 a.setPosition(-5, -2);
-                a.setRestitution(.8f);
+                a.setRestitution(1);
+                a.setFriction(.2f);
                 a.setBodyType(BodyType.DYNAMIC);
                 a.setColor(new Color(26, 113, 156));
                 a.setRotation(30);
@@ -61,7 +63,8 @@ public final class EngineAlpha {
 
                 Circle b = new Circle(1);
                 b.setPosition(5, -1);
-                b.setRestitution(.8f);
+                b.setRestitution(1);
+                b.setFriction(.2f);
                 b.setBodyType(BodyType.DYNAMIC);
                 b.setColor(new Color(158, 5, 5));
                 b.applyImpulse(new Vector(-100, 0));
@@ -69,7 +72,8 @@ public final class EngineAlpha {
 
                 Polygon c = new Polygon(new Vector(0, 0), new Vector(1, 0), new Vector(.5, 1));
                 c.setPosition(-1, 5);
-                c.setRestitution(.8f);
+                c.setRestitution(1);
+                c.setFriction(.2f);
                 c.setBodyType(BodyType.DYNAMIC);
                 c.setColor(new Color(25, 159, 69));
                 c.setRotation(-20);
@@ -88,7 +92,7 @@ public final class EngineAlpha {
                     for (Actor item : Arrays.asList(a, b, c)) {
                         if (item.getCenter().getY() < -10) {
                             item.resetMovement();
-                            item.setCenter(0, 0);
+                            item.setCenter(Random.nextInteger(-7, 7), Random.nextInteger(0, 5));
                         }
                     }
                 });
