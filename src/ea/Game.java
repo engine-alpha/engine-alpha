@@ -250,8 +250,9 @@ public final class Game {
 
                 scene.worldStep(deltaSeconds, worldStepEndBarrier);
 
-                frameBarrierStart.arriveAndAwaitAdvance();
                 worldStepEndBarrier.arriveAndAwaitAdvance();
+                scene.getCamera().onFrameUpdate();
+                frameBarrierStart.arriveAndAwaitAdvance();
 
                 scene.invokeFrameUpdateListeners(deltaSeconds);
 

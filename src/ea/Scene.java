@@ -102,8 +102,6 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      */
     @Internal
     final void worldStep(float deltaSeconds, Phaser worldStepEndBarrier) {
-        camera.onFrameUpdate();
-
         synchronized (layers) {
             layerCountForCurrentRender = layers.size();
             AtomicInteger remainingSteps = new AtomicInteger(layerCountForCurrentRender);
