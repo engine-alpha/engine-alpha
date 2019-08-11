@@ -1,6 +1,7 @@
 package ea.edu;
 
 import ea.Game;
+import ea.Layer;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.BodyType;
@@ -30,9 +31,11 @@ public abstract class EduActor<T extends Actor> {
         this.actor.addUnmountListener(() -> actorMap.remove(this.actor));
 
         EduScene activeScene = Spiel.getActiveScene();
+        Layer activeLayer = activeScene.getActiveLayer();
+
         Game.enqueue(() -> {
             if (!this.actor.isMounted()) {
-                activeScene.addEduActor(this.getActor());
+                activeLayer.add(this.getActor());
             }
         });
     }

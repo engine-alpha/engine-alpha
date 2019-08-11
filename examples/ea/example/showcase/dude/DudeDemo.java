@@ -1,15 +1,17 @@
 package ea.example.showcase.dude;
 
-import ea.internal.Bounds;
 import ea.Layer;
 import ea.Scene;
 import ea.Vector;
-import ea.actor.*;
+import ea.actor.BodyType;
+import ea.actor.Image;
+import ea.actor.TileContainer;
+import ea.actor.TileMap;
 import ea.event.KeyListener;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
+import ea.internal.Bounds;
 
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 /**
@@ -23,7 +25,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
 
     private final GameData gameData;
     private final PlayerCharacter character;
-    private final Rectangle weird;
+    // private final Rectangle weird;
 
     public DudeDemo(Scene parent) {
         super(parent);
@@ -38,7 +40,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         character.setRotationLocked(true);
         character.setBodyType(BodyType.DYNAMIC);
 
-        weird = new Rectangle(2, 0.2f);
+        /* weird = new Rectangle(2, 0.2f);
         weird.setColor(Color.ORANGE);
         weird.setBodyType(BodyType.DYNAMIC);
         weird.setPosition(0.3f, 0.6f);
@@ -54,14 +56,14 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         boxy.setColor(Color.WHITE);
         boxy.setBodyType(BodyType.DYNAMIC);
         boxy.setPosition(3, 0);
-        //boxy.move(10, 10);
+        //boxy.move(10, 10); */
 
         add(character);
-        add(weird);
-        add(boxy);
+        // add(weird);
+        // add(boxy);
 
-        character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
-        character.createRopeJoint(boxy, new Vector(0.3f, 0.3f), new Vector(0.1f, 0.1f), 4);
+        // character.createRevoluteJoint(weird, new Vector(0.4f, 0.7f));
+        // character.createRopeJoint(boxy, new Vector(0.3f, 0.3f), new Vector(0.1f, 0.1f), 4);
         //character.createDistanceJoint(boxy, new Vector(0.3f, 0.3f), new Vector(0.1f, 0.1f));
 
         setGravity(new Vector(0, -13));
@@ -165,12 +167,12 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
     public void onKeyDown(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_M) {
             toggleDebug();
-        } else if (e.getKeyCode() == KeyEvent.VK_J) {
+        } /* else if (e.getKeyCode() == KeyEvent.VK_J) {
             if (weird.isMounted()) {
                 remove(weird);
             } else {
                 add(weird);
             }
-        }
+        } */
     }
 }

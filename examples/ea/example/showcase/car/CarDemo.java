@@ -95,8 +95,6 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         add(wheelBack);
 
         setGravity(new Vector(0, -9f));
-
-        add(new Text("Hello", 2));
     }
 
     @Override
