@@ -1,5 +1,6 @@
 package ea.example.showcase.dude;
 
+import ea.Game;
 import ea.Layer;
 import ea.Scene;
 import ea.Vector;
@@ -76,7 +77,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         setupPlayground();
         setupCosmeticLayers();
 
-        getMainLayer().setVisibleHeight(15);
+        getMainLayer().setVisibleHeight(15, Game.getSizeInPixels());
 
         PauseLayer pauseLayer = new PauseLayer();
         pauseLayer.setVisible(false);
@@ -112,7 +113,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         middleBackground.setLayerPosition(-200);
 
         Image backgroundImage = new Image("game-assets/dude/background/snow.png", 25f);
-        backgroundImage.setPosition(-getVisibleArea().getWidth() / 2, -getVisibleArea().getHeight() / 2);
+        backgroundImage.setPosition(-getVisibleArea(Game.getSizeInPixels()).getWidth() / 2, -getVisibleArea(Game.getSizeInPixels()).getHeight() / 2);
         middleBackground.add(backgroundImage);
 
         Layer furtherBackground = new Layer();
@@ -142,7 +143,7 @@ public class DudeDemo extends ShowcaseDemo implements KeyListener {
         for (int i = 0; i < NUM_TILES; i++) {
             cloudTiles.setTile(i, 0, TileMap.createFromImage(tilePath));
         }
-        cloudTiles.setPosition(xOffset, -getVisibleArea().getHeight() / 2 + 5);
+        cloudTiles.setPosition(xOffset, -getVisibleArea(Game.getSizeInPixels()).getHeight() / 2 + 5);
         clouds.add(cloudTiles);
         addLayer(clouds);
     }

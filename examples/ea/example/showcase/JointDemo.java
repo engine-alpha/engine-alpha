@@ -1,5 +1,6 @@
 package ea.example.showcase;
 
+import ea.Game;
 import ea.Scene;
 import ea.Vector;
 import ea.actor.BodyType;
@@ -42,7 +43,7 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
 
         hoverHolderBauen();
 
-        getMainLayer().setVisibleHeight(40);
+        getMainLayer().setVisibleHeight(40, Game.getSizeInPixels());
 
         ball = new Circle(1);
         add(ball);

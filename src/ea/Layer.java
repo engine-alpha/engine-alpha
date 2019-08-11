@@ -269,19 +269,6 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     /**
-     * Gibt die derzeit sichtbare Fläche des Layers auf dem Bildschirm an.
-     *
-     * @return Die sichtbare Fläche als Bounds Objekt <b>mit Angaben in Meter</b>
-     */
-    @Internal
-    public Bounds visibleArea() {
-        Vector center = parent.getCamera().getPosition();
-        float pixelPerMeter = calculatePixelPerMeter();
-        Bounds frameBoundsPx = Game.getFrameSizeInPixels();
-        return new Bounds(0, 0, frameBoundsPx.getWidth() / pixelPerMeter, frameBoundsPx.getHeight() / pixelPerMeter).withCenterPoint(center);
-    }
-
-    /**
      * Übersetzt einen Punkt auf diesem Layer zu der analogen, aktuellen Pixelkoordinate im zeichnenden Frame.
      *
      * @param worldPoint Ein Punkt auf dem Layer
@@ -292,57 +279,65 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     @Internal
     public Vector translateWorldPointToFramePxCoordinates(Vector worldPoint) {
         float pixelPerMeter = calculatePixelPerMeter();
-        Bounds frameSize = Game.getFrameSizeInPixels();
-        Vector cameraPositionInPx = new Vector(frameSize.getWidth() / 2, frameSize.getHeight() / 2);
+        Vector frameSize = Game.getSizeInPixels();
+        Vector cameraPositionInPx = new Vector(frameSize.getX() / 2, frameSize.getY() / 2);
         Vector fromCamToPointInWorld = parent.getCamera().getPosition().multiplyX(parallaxX).multiplyY(parallaxY).fromThisTo(worldPoint);
         return cameraPositionInPx.add(fromCamToPointInWorld.multiplyY(-1).multiply(pixelPerMeter * parallaxZoom));
+    }
+
+    /**
+     * Gibt die derzeit auf dem Bildschirm sichtbare Fläche des Layers an.
+     *
+     * @return Die sichtbare Fläche als Bounds Objekt <b>mit Angaben in Meter</b>
+     *
+     * @see Game#getSizeInPixels()
+     */
+    @API
+    public Bounds getVisibleArea(Vector gameSizeInPixels) {
+        Vector center = parent.getCamera().getPosition();
+        float pixelPerMeter = calculatePixelPerMeter();
+
+        return new Bounds(0, 0, gameSizeInPixels.getX() / pixelPerMeter, gameSizeInPixels.getY() / pixelPerMeter) //
+                .withCenterPoint(center);
     }
 
     /**
      * Setzt den Kamerazoom exakt, sodass die sichtbare Breite des sichtbaren Fensters einer bestimmten Länge
      * entspricht.
      *
-     * @param widthInM Die Breite in Meter, auf die die Kamera im Fenster exakt zu setzen ist.
+     * @param width Die Breite in Meter, auf die die Kamera im Fenster exakt zu setzen ist.
      *
-     * @see #setVisibleHeight(float)
+     * @see #setVisibleHeight(float, Vector)
+     * @see Game#getSizeInPixels()
      */
     @API
-    public void setVisibleWidth(float widthInM) {
-        Bounds frameBoundsPx = Game.getFrameSizeInPixels();
-
-        float desiredPixelPerMeter = frameBoundsPx.getWidth() / widthInM;
+    public void setVisibleWidth(float width, Vector gameSizeInPixels) {
+        float desiredPixelPerMeter = gameSizeInPixels.getX() / width;
         float desiredZoom = 1 + ((desiredPixelPerMeter - 1) / parallaxZoom);
+
         parent.getCamera().setZoom(desiredZoom);
     }
 
     /**
-     * Setzt den Kamerazoom exakt, sodass die sichtbare HÖhe des sichtbaren Fensters einer bestimmten Länge
+     * Setzt den Kamerazoom exakt, sodass die sichtbare Höhe des sichtbaren Fensters einer bestimmten Länge
      * entspricht.
      *
-     * @param heightInM Die Höhe in Meter, auf die die Kamera im Fenster exakt zu setzen ist.
+     * @param height Die Höhe in Meter, auf die die Kamera im Fenster exakt zu setzen ist.
      *
-     * @see #setVisibleWidth(float)
+     * @see #setVisibleWidth(float, Vector)
+     * @see Game#getSizeInPixels()
      */
     @API
-    public void setVisibleHeight(float heightInM) {
-        Bounds frameBoundsPx = Game.getFrameSizeInPixels();
-
-        float desiredPixelPerMeter = frameBoundsPx.getHeight() / heightInM;
+    public void setVisibleHeight(float height, Vector gameSizeInPixels) {
+        float desiredPixelPerMeter = gameSizeInPixels.getY() / height;
         float desiredZoom = 1 + ((desiredPixelPerMeter - 1) / parallaxZoom);
+
         parent.getCamera().setZoom(desiredZoom);
     }
 
     @API
     public float calculatePixelPerMeter() {
         return 1 + (parent.getCamera().getZoom() - 1) * parallaxZoom;
-    }
-
-    @API
-    public Bounds getCameraBoundsOnLayer(Camera camera) {
-        Bounds frameSizeInPx = Game.getFrameSizeInPixels();
-        float pixelPerMeter = calculatePixelPerMeter();
-
-        return new Bounds(0, 0, frameSizeInPx.getWidth() * pixelPerMeter, frameSizeInPx.getHeight() * pixelPerMeter).withCenterPoint(camera.getPosition());
     }
 
     @Internal

@@ -258,9 +258,9 @@ public final class Camera {
         Vector locationInWorldCameraRelative = position.fromThisTo(locationInWorld);
         Vector cameraRelativeLocInPx = position.multiply(pixelPerMeter);
 
-        Bounds frameSize = Game.getFrameSizeInPixels();
+        Vector frameSize = Game.getSizeInPixels();
 
-        return new Point((int) (frameSize.getWidth() / 2 + cameraRelativeLocInPx.getX()), (int) (frameSize.getHeight() / 2 + cameraRelativeLocInPx.getY()));
+        return new Point((int) (frameSize.getX() / 2 + cameraRelativeLocInPx.getX()), (int) (frameSize.getY() / 2 + cameraRelativeLocInPx.getY()));
     }
 
     // Does not implement FrameUpdateListener by design, as it's updated at a special moment

@@ -21,7 +21,6 @@ package ea;
 
 import ea.event.MouseButton;
 import ea.event.MouseWheelEvent;
-import ea.internal.Bounds;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
@@ -124,6 +123,16 @@ public final class Game {
     @API
     public static void setExitOnEsc(boolean value) {
         exitOnEsc = value;
+    }
+
+    /**
+     * Gibt die Fenstergröße <b>in Pixel</b> aus.
+     *
+     * @return Ein Vector-Objekt, dessen Höhe und Breite mit Fensterhöhe & -breite übereinstimmt.
+     */
+    @API
+    public static Vector getSizeInPixels() {
+        return new Vector(width, height);
     }
 
     /**
@@ -307,16 +316,6 @@ public final class Game {
     @API
     public static void setFramePosition(int x, int y) {
         frame.setLocation(x, y);
-    }
-
-    /**
-     * Gibt die Fenstergröße <b>in Pixel</b> aus.
-     *
-     * @return Ein Bounds-Objekt, dessen Höhe und Breite mit Fensterhöhe & -breite übereinstimmt.
-     */
-    @API
-    public static Bounds getFrameSizeInPixels() {
-        return new Bounds(0, 0, Game.width, Game.height);
     }
 
     /**

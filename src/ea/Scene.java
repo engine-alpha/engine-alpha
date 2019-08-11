@@ -161,10 +161,12 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      * Gibt die sichtbare Fläche auf dem <b>Hauptlayer</b> aus.
      *
      * @return Die sichtbare Fläche auf dem Hauptlayer
+     *
+     * @see Game#getSizeInPixels()
      */
     @API
-    public Bounds getVisibleArea() {
-        return mainLayer.visibleArea();
+    public Bounds getVisibleArea(Vector gameSizeInPixels) {
+        return mainLayer.getVisibleArea(gameSizeInPixels);
     }
 
     @API
