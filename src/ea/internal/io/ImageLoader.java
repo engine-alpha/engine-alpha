@@ -56,9 +56,7 @@ final public class ImageLoader {
         }
 
         try {
-            BufferedImage img = Optimizer.toCompatibleImage(
-                    ImageIO.read(ResourceLoader.loadAsStream(path))
-            );
+            BufferedImage img = Optimizer.toCompatibleImage(ImageIO.read(ResourceLoader.loadAsStream(path)));
 
             cache.put(path, img);
 

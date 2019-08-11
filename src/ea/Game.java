@@ -31,16 +31,10 @@ import ea.internal.physics.WorldHandler;
 import javax.swing.JOptionPane;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Phaser;
+import java.util.concurrent.*;
 
 /**
  * Diese Klasse gibt Zugriff auf das aktuelle Spiel.
@@ -53,14 +47,6 @@ public final class Game {
 
     private static final float DESIRED_FRAME_DURATION = 0.016f;
     private static final int NANOSECONDS_PER_SECOND = 1000000000;
-    private static final Color COLOR_FPS_BACKGROUND = new Color(255, 255, 255, 50);
-    private static final Color COLOR_FPS_BORDER = new Color(0, 106, 214);
-    private static final Color COLOR_BODY_COUNT_BORDER = new Color(0, 214, 84);
-    private static final Color COLOR_BODY_COUNT_BACKGROUND = new Color(255, 255, 255, 50);
-    private static final int DEBUG_INFO_HEIGHT = 20;
-    private static final int DEBUG_INFO_LEFT = 10;
-    private static final int DEBUG_INFO_TEXT_OFFSET = 16;
-    private static final Color DEBUG_GRID_COLOR = new Color(255, 255, 255, 100);
 
     static {
         System.setProperty("sun.java2d.opengl", "true"); // ok
@@ -80,9 +66,6 @@ public final class Game {
      * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
      * Dies betrifft below anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
      * diese Variable eingeführt.
-     *
-     * @author andonie
-     * @version 11.04.2017
      */
     private static boolean verbose;
 
@@ -143,7 +126,7 @@ public final class Game {
      * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die entsprechende Taste
      * gedrückt, sonst ist der Wert <code>false</code>.
      */
-    private static Collection<Integer> pressedKeys = new HashSet<>();
+    private static Collection<Integer> pressedKeys = ConcurrentHashMap.newKeySet();
 
     /**
      * Letzte Mausposition.
@@ -190,23 +173,7 @@ public final class Game {
         Game.height = height;
         Game.scene = scene;
 
-        renderPanel = new RenderPanel(width, height) {
-            public void render(Graphics2D g) {
-                // Absoluter Hintergrund
-                g.setColor(Color.black);
-                g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-                AffineTransform transform = g.getTransform();
-
-                Game.scene.render(g, Game.width, Game.height);
-
-                g.setTransform(transform);
-
-                if (isDebug()) {
-                    renderDebug(g);
-                }
-            }
-        };
+        renderPanel = new RenderPanel(width, height);
 
         frame.setResizable(false);
         frame.add(renderPanel);
@@ -256,105 +223,6 @@ public final class Game {
         mainThread.setPriority(Thread.MAX_PRIORITY);
     }
 
-    /**
-     * Rendert Debug-Informationen auf dem Bildschirm.
-     *
-     * @param g Das Graphics-Objekt zum zeichnen.
-     */
-    @Internal
-    private static void renderDebug(Graphics2D g) {
-        AffineTransform transform = g.getTransform();
-        Camera camera = Game.scene.getCamera();
-        Vector position = camera.getPosition();
-        float rotation = -camera.getRotation();
-
-        g.setClip(0, 0, width, height);
-        g.translate(width / 2, height / 2);
-
-        float pixelPerMeter = camera.getZoom();
-
-        g.rotate(rotation, 0, 0);
-        g.translate(-position.getX() * pixelPerMeter, position.getY() * pixelPerMeter);
-
-        int gridSizeInMeters = Math.round(150 / pixelPerMeter);
-        float gridSizeInPixels = gridSizeInMeters * pixelPerMeter;
-        float gridSizeFactor = gridSizeInPixels / gridSizeInMeters;
-
-        if (gridSizeInMeters > 0 && gridSizeInMeters < 100000) {
-            int windowSizeInPixels = (int) Math.ceil(Math.max(width, height));
-
-            int startX = (int) (position.getX() - windowSizeInPixels / 2 / pixelPerMeter);
-            int startY = (int) ((-1 * position.getY()) - windowSizeInPixels / 2 / pixelPerMeter);
-
-            startX -= (startX % gridSizeInMeters);
-            startY -= (startY % gridSizeInMeters);
-
-            startX -= gridSizeInMeters;
-
-            int stopX = (int) (startX + windowSizeInPixels / pixelPerMeter + gridSizeInMeters);
-            int stopY = (int) (startY + windowSizeInPixels / pixelPerMeter + gridSizeInMeters);
-
-            g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-            g.setColor(DEBUG_GRID_COLOR);
-
-            for (int x = startX; x < stopX; x += gridSizeInMeters) {
-                g.fillRect((int) (x * gridSizeFactor) - 1, (int) ((startY - 1) * gridSizeFactor), 2, (int) (windowSizeInPixels + 2 * gridSizeInPixels));
-            }
-
-            for (int y = startY; y < stopY; y += gridSizeInMeters) {
-                g.fillRect((int) ((startX - 1) * gridSizeFactor), (int) (y * gridSizeFactor - 1), (int) (windowSizeInPixels + 2 * gridSizeInPixels), 2);
-            }
-
-            for (int x = startX; x < stopX; x += gridSizeInMeters) {
-                for (int y = startY; y < stopY; y += gridSizeInMeters) {
-                    g.drawString(x + " / " + -y, x * gridSizeFactor + 5, y * gridSizeFactor - 5);
-                }
-            }
-        }
-
-        g.setTransform(transform);
-
-        renderInfo(g);
-    }
-
-    /**
-     * Rendert zusätzliche Debug-Infos auf dem Bildschirm.
-     *
-     * @param g Das Graphics-Objekt zum zeichnen.
-     */
-    private static void renderInfo(Graphics2D g) {
-        Font displayFont = new Font("Monospaced", Font.PLAIN, 12);
-        FontMetrics fm = g.getFontMetrics(displayFont);
-        Rectangle2D bounds;
-        int y = 10;
-
-        String fpsMessage = "FPS: " + (frameDuration == 0 ? "∞" : Math.round(1 / frameDuration));
-        bounds = fm.getStringBounds(fpsMessage, g);
-
-        g.setColor(COLOR_FPS_BORDER);
-        g.fillRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET);
-        g.setColor(COLOR_FPS_BACKGROUND);
-        g.drawRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT - 1, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET - 1);
-
-        g.setColor(Color.WHITE);
-        g.setFont(displayFont);
-        g.drawString(fpsMessage, DEBUG_INFO_LEFT + 10, y + 8 + fm.getHeight() - fm.getDescent());
-
-        y += fm.getHeight() + DEBUG_INFO_HEIGHT;
-
-        String bodyMessage = "Bodies: " + scene.getWorldHandler().getWorld().getBodyCount();
-        bounds = fm.getStringBounds(bodyMessage, g);
-
-        g.setColor(COLOR_BODY_COUNT_BORDER);
-        g.fillRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET);
-        g.setColor(COLOR_BODY_COUNT_BACKGROUND);
-        g.drawRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT - 1, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET - 1);
-
-        g.setColor(Color.WHITE);
-        g.setFont(displayFont);
-        g.drawString(bodyMessage, DEBUG_INFO_LEFT + 10, y + 8 + fm.getHeight() - fm.getDescent());
-    }
-
     private static void run() {
         renderThread.start();
 
@@ -377,7 +245,7 @@ public final class Game {
                 frameBarrierStart.arriveAndAwaitAdvance();
                 worldStepEndBarrier.arriveAndAwaitAdvance();
 
-                scene.onFrameUpdateInternal(deltaSeconds);
+                scene.invokeFrameUpdateListeners(deltaSeconds);
 
                 Runnable runnable = dispatchableQueue.poll();
                 while (runnable != null) {
@@ -451,7 +319,7 @@ public final class Game {
      */
     private static void enqueueMouseWheelEvent(java.awt.event.MouseWheelEvent mouseWheelEvent) {
         MouseWheelEvent mouseWheelAction = new MouseWheelEvent((float) mouseWheelEvent.getPreciseWheelRotation());
-        enqueue(() -> scene.onMouseWheelMoveInternal(mouseWheelAction));
+        enqueue(() -> scene.invokeMouseWheelMoveListeners(mouseWheelAction));
     }
 
     @API
@@ -766,9 +634,9 @@ public final class Game {
 
             enqueue(() -> {
                 if (down) {
-                    scene.onMouseDownInternal(sourcePosition, button);
+                    scene.invokeMouseDownListeners(sourcePosition, button);
                 } else {
-                    scene.onMouseUpInternal(sourcePosition, button);
+                    scene.invokeMouseUpListeners(sourcePosition, button);
                 }
             });
         }
@@ -790,23 +658,23 @@ public final class Game {
                 Game.exit();
             }
 
-            enqueue(() -> {
-                boolean pressed = pressedKeys.contains(e.getKeyCode());
+            boolean pressed = pressedKeys.contains(e.getKeyCode());
 
-                if (down) {
-                    if (pressed) {
-                        return; // Ignore duplicate presses, because they're system dependent
-                    }
-
-                    pressedKeys.add(e.getKeyCode());
-                } else {
-                    pressedKeys.remove(e.getKeyCode());
+            if (down) {
+                if (pressed) {
+                    return; // Ignore duplicate presses, because they're system dependent
                 }
 
+                pressedKeys.add(e.getKeyCode());
+            } else {
+                pressedKeys.remove(e.getKeyCode());
+            }
+
+            enqueue(() -> {
                 if (down) {
-                    scene.onKeyDownInternal(e);
+                    scene.invokeKeyDownListeners(e);
                 } else {
-                    scene.onKeyUpInternal(e);
+                    scene.invokeKeyUpListeners(e);
                 }
             });
         }
@@ -835,7 +703,14 @@ public final class Game {
                                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                                 g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-                                renderPanel.render(g);
+                                Scene activeScene = Game.scene;
+
+                                renderPanel.render(g, activeScene);
+
+                                if (isDebug()) {
+                                    renderPanel.renderDebug(g, activeScene);
+                                    renderPanel.renderInfo(g, frameDuration, activeScene.getWorldHandler().getWorld().getBodyCount());
+                                }
 
                                 g.dispose();
                             } while (bufferStrategy.contentsRestored() && !isInterrupted());
@@ -847,9 +722,7 @@ public final class Game {
                             Toolkit.getDefaultToolkit().sync();
                         } while (renderPanel.getBufferStrategy().contentsLost() && !isInterrupted());
                     } catch (IllegalStateException e) {
-                        //Logger.error(getName(), e.getMessage());
-                        e.printStackTrace();
-                        Game.exit();
+                        throw new RuntimeException(e);
                     }
 
                     frameBarrierEnd.awaitAdvanceInterruptibly(frameBarrierEnd.arrive());

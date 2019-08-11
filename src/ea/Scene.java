@@ -331,32 +331,32 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     @Internal
-    final void onFrameUpdateInternal(float deltaSeconds) {
+    final void invokeFrameUpdateListeners(float deltaSeconds) {
         frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(deltaSeconds));
     }
 
     @Internal
-    final void onKeyDownInternal(KeyEvent e) {
+    final void invokeKeyDownListeners(KeyEvent e) {
         keyListeners.invoke(keyListener -> keyListener.onKeyDown(e));
     }
 
     @Internal
-    final void onKeyUpInternal(KeyEvent e) {
+    final void invokeKeyUpListeners(KeyEvent e) {
         keyListeners.invoke(keyListener -> keyListener.onKeyUp(e));
     }
 
     @Internal
-    final void onMouseDownInternal(Vector position, MouseButton button) {
+    final void invokeMouseDownListeners(Vector position, MouseButton button) {
         mouseClickListeners.invoke(mouseClickListener -> mouseClickListener.onMouseDown(position, button));
     }
 
     @Internal
-    final void onMouseUpInternal(Vector position, MouseButton button) {
+    final void invokeMouseUpListeners(Vector position, MouseButton button) {
         mouseClickListeners.invoke(mouseClickListener -> mouseClickListener.onMouseUp(position, button));
     }
 
     @Internal
-    final void onMouseWheelMoveInternal(MouseWheelEvent mouseWheelEvent) {
+    final void invokeMouseWheelMoveListeners(MouseWheelEvent mouseWheelEvent) {
         mouseWheelListeners.invoke(mouseWheelListener -> mouseWheelListener.onMouseWheelMove(mouseWheelEvent));
     }
 
