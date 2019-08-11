@@ -1,6 +1,5 @@
 package ea.edu;
 
-import ea.Game;
 import ea.Layer;
 import ea.Vector;
 import ea.actor.Actor;
@@ -33,11 +32,7 @@ public abstract class EduActor<T extends Actor> {
         EduScene activeScene = Spiel.getActiveScene();
         Layer activeLayer = activeScene.getActiveLayer();
 
-        Game.enqueue(() -> {
-            if (!this.actor.isMounted()) {
-                activeLayer.add(this.getActor());
-            }
-        });
+        activeLayer.defer(() -> activeLayer.add(this.getActor()));
     }
 
     /**

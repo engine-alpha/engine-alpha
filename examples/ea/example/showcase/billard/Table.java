@@ -19,12 +19,11 @@
 
 package ea.example.showcase.billard;
 
-import ea.Game;
 import ea.actor.Actor;
 import ea.actor.Rectangle;
 import ea.collision.CollisionListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class Table {
         Hole hole;
         CollisionListener<Actor> collisionListener = (collisionEvent) -> {
             if (collisionEvent.getColliding() instanceof Ball) {
-                Game.enqueue(() -> collisionEvent.getColliding().remove());
+                collisionEvent.getColliding().remove();
             }
         };
 

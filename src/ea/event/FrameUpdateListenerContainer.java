@@ -41,6 +41,24 @@ public interface FrameUpdateListenerContainer {
     /**
      * Führt das übergebene Runnable mit Verzögerung aus.
      *
+     * @param runnable Wird im nächsten Frame ausgeführt.
+     */
+    @API
+    default void defer(Runnable runnable) {
+        FrameUpdateListener frameUpdateListener = new FrameUpdateListener() {
+            @Override
+            public void onFrameUpdate(float time) {
+                removeFrameUpdateListener(this);
+                runnable.run();
+            }
+        };
+
+        addFrameUpdateListener(frameUpdateListener);
+    }
+
+    /**
+     * Führt das übergebene Runnable mit einer vorgegebenen Verzögerung aus.
+     *
      * @param timeInSeconds Zeitverzögerung
      * @param runnable      Wird nach Ablauf der Verzögerung ausgeführt
      *

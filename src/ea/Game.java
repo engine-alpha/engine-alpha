@@ -28,7 +28,6 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
 import ea.internal.io.ImageLoader;
-import ea.internal.physics.WorldHandler;
 
 import javax.swing.JOptionPane;
 import java.awt.Dimension;
@@ -117,12 +116,12 @@ public final class Game {
      * Ein Thread Pool Executor Service für Engine-interne tasks.
      */
     @Internal
-    public static final ExecutorService threadPoolExecutor = Executors.newCachedThreadPool();//(ThreadPoolExecutor) Executors.newFixedThreadPool(6);
+    public static final ExecutorService threadPoolExecutor = Executors.newCachedThreadPool();
 
     /**
      * Queue aller Dispatchables, die im nächsten Frame ausgeführt werden.
      */
-    private static volatile Queue<Runnable> dispatchableQueue = new ConcurrentLinkedQueue<>();
+    private static Queue<Runnable> dispatchableQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die entsprechende Taste
@@ -328,38 +327,7 @@ public final class Game {
      */
     private static void enqueueMouseWheelEvent(java.awt.event.MouseWheelEvent mouseWheelEvent) {
         MouseWheelEvent mouseWheelAction = new MouseWheelEvent((float) mouseWheelEvent.getPreciseWheelRotation());
-        enqueue(() -> scene.invokeMouseWheelMoveListeners(mouseWheelAction));
-    }
-
-    @API
-    public static void enqueue(Runnable runnable) {
-        dispatchableQueue.add(runnable);
-    }
-
-    /**
-     * Führt eine Operation aus und stellt dabei sicher, dass diese nicht ausgeführt wird, während der WorldStep
-     * der Phyiscs-Engine läuft.
-     *
-     * @param runnable Die auszuführende Operation. Wird entweder sofort ausgeführt (falls der WorldStep nicht läuft)
-     *                 oder (falls der WorldStep läuft) enqueued und später ausgeführt, nachdem der WorldStep
-     *                 terminiert ist.
-     */
-    @API
-    public static void afterWorldStep(Runnable runnable) {
-        Scene currentScene = Game.scene;
-        WorldHandler worldHandler = currentScene == null ? null : currentScene.getWorldHandler();
-        if (worldHandler == null) {
-            Game.enqueue(runnable);
-            return;
-        }
-
-        synchronized (worldHandler) {
-            if (worldHandler.getWorld().isLocked()) {
-                enqueue(runnable);
-            } else {
-                runnable.run();
-            }
-        }
+        dispatchableQueue.add(() -> scene.invokeMouseWheelMoveListeners(mouseWheelAction));
     }
 
     /**
@@ -367,7 +335,7 @@ public final class Game {
      */
     @API
     public static void transitionToScene(Scene scene) {
-        enqueue(() -> nextScene = scene);
+        dispatchableQueue.add(() -> nextScene = scene);
     }
 
     /**
@@ -641,7 +609,7 @@ public final class Game {
                     return;
             }
 
-            enqueue(() -> {
+            dispatchableQueue.add(() -> {
                 if (down) {
                     scene.invokeMouseDownListeners(sourcePosition, button);
                 } else {
@@ -679,7 +647,7 @@ public final class Game {
                 pressedKeys.remove(e.getKeyCode());
             }
 
-            enqueue(() -> {
+            dispatchableQueue.add(() -> {
                 if (down) {
                     scene.invokeKeyDownListeners(e);
                 } else {

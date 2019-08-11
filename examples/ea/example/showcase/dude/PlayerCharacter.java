@@ -326,18 +326,16 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             Vector speed = getPhysicsHandler().getVelocity();
             Vector transformedSpeed = Math.abs(speed.getX()) < .1f ? speed.add(100f * ((float) Math.random() - .5f), 0) : speed;
 
-            Game.enqueue(() -> {
-                for (int i = 0; i < 100; i++) {
-                    Circle particle = new Circle(Random.nextFloat() * .02f + .02f);
-                    particle.setPosition(getCenter().add(0, -32));
-                    particle.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
-                    particle.setColor(Color.GRAY);
-                    particle.setLayerPosition(-1);
-                    particle.animateParticle(.5f);
+            for (int i = 0; i < 100; i++) {
+                Circle particle = new Circle(Random.nextFloat() * .02f + .02f);
+                particle.setPosition(getCenter().add(0, -32));
+                particle.applyImpulse(transformedSpeed.negate().multiply((float) Math.random() * 0.1f).multiplyY((float) Math.random() * 0.1f));
+                particle.setColor(Color.GRAY);
+                particle.setLayerPosition(-1);
+                particle.animateParticle(.5f);
 
-                    getLayer().add(particle);
-                }
-            });
+                getLayer().add(particle);
+            }
         }
     }
 

@@ -226,7 +226,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
 
     @API
     public void add(Actor... actors) {
-        Game.afterWorldStep(() -> {
+        defer(() -> {
             for (Actor actor : actors) {
                 if (actor.isMounted()) {
                     throw new IllegalArgumentException("Ein Actor kann nur an einem Layer gleichzeitig angemeldet sein");
@@ -246,7 +246,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
 
     @API
     final public void remove(Actor... actors) {
-        Game.afterWorldStep(() -> {
+        defer(() -> {
             for (Actor actor : actors) {
                 this.actors.remove(actor);
 
