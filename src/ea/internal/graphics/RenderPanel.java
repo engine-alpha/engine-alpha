@@ -118,8 +118,8 @@ public final class RenderPanel extends Canvas {
             int startX = (int) (position.getX() - windowSizeInPixels / 2 / pixelPerMeter);
             int startY = (int) ((-1 * position.getY()) - windowSizeInPixels / 2 / pixelPerMeter);
 
-            startX -= (startX % gridSizeInMeters) - 1;
-            startY -= (startY % gridSizeInMeters) - 1;
+            startX -= (startX % gridSizeInMeters) + gridSizeInMeters;
+            startY -= (startY % gridSizeInMeters) + gridSizeInMeters;
 
             startX -= gridSizeInMeters;
 

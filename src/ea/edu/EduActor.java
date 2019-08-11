@@ -6,6 +6,7 @@ import ea.actor.BodyType;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
 import ea.edu.event.KollisionsReagierbar;
+import ea.edu.internal.EduScene;
 import ea.internal.annotations.API;
 
 import java.util.Map;
@@ -16,7 +17,7 @@ public abstract class EduActor<T extends Actor> {
 
     private final T actor;
 
-    private final boolean skipSetup;
+    private final EduScene eduScene;
 
     public EduActor(T actor) {
         this.actor = actor;
@@ -29,9 +30,8 @@ public abstract class EduActor<T extends Actor> {
         this.actor.addMountListener(() -> actorMap.put(this.actor, this));
         this.actor.addUnmountListener(() -> actorMap.remove(this.actor));
 
-        EduSetup.setup(this);
-
-        skipSetup = EduSetup.isSetupSkipped();
+        eduScene = EduSetup.getActiveScene();
+        EduSetup.setup(this, eduScene);
     }
 
     /**
@@ -232,36 +232,28 @@ public abstract class EduActor<T extends Actor> {
 
     @API
     public void macheAktiv() {
-        if (!skipSetup) {
-            EduSetup.setup(this);
-        }
+        EduSetup.setup(this, eduScene);
 
         this.actor.setBodyType(BodyType.DYNAMIC);
     }
 
     @API
     public void machePassiv() {
-        if (!skipSetup) {
-            EduSetup.setup(this);
-        }
+        EduSetup.setup(this, eduScene);
 
         this.actor.setBodyType(BodyType.STATIC);
     }
 
     @API
     public void macheNeutral() {
-        if (!skipSetup) {
-            EduSetup.setup(this);
-        }
+        EduSetup.setup(this, eduScene);
 
         this.actor.setBodyType(BodyType.SENSOR);
     }
 
     @API
     public void machePartikel(double lebenszeit) {
-        if (!skipSetup) {
-            EduSetup.setup(this);
-        }
+        EduSetup.setup(this, eduScene);
 
         this.actor.animateParticle((float) lebenszeit);
     }

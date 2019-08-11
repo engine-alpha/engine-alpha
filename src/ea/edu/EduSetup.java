@@ -25,41 +25,44 @@ import ea.edu.internal.EduScene;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 public final class EduSetup {
 
-    private static ThreadLocal<AtomicBoolean> skipSetup = ThreadLocal.withInitial(() -> new AtomicBoolean(false));
+    private static ThreadLocal<EduScene> customSetup = ThreadLocal.withInitial(() -> null);
 
     @Internal
-    static <T extends Actor> void setup(EduActor<T> eduActor) {
-        if (isSetupSkipped()) {
-            return;
-        }
-
-        EduScene activeScene = Spiel.getActiveScene();
-        Layer activeLayer = activeScene.getActiveLayer();
+    static <T extends Actor> void setup(EduActor<T> eduActor, EduScene eduScene) {
+        Layer activeLayer = eduScene.getActiveLayer();
 
         activeLayer.defer(() -> activeLayer.add(eduActor.getActor()));
     }
 
-    public static boolean isSetupSkipped() {
-        return skipSetup.get().get();
+    public static EduScene getActiveScene() {
+        EduScene activeScene = customSetup.get();
+        if (activeScene == null) {
+            activeScene = Spiel.getActiveScene();
+        }
+
+        return activeScene;
     }
 
     /**
      * Erlaubt das überspringen des automatischen EDU-Setups.
      *
      * @param runnable Code, der ohne automatischen Setup ausgeführt wird.
+     * @param scene    Szene, zu der das neue Objekt hinzugefügt wird.
      */
     @API
-    public void skipSetup(Runnable runnable) {
-        AtomicBoolean skipSetup = EduSetup.skipSetup.get();
-        boolean pre = skipSetup.get();
+    public static <T> T customSetup(Supplier<T> runnable, EduScene scene) {
+        EduScene pre = customSetup.get();
 
-        runnable.run();
-
-        skipSetup.set(pre);
+        try {
+            customSetup.set(scene);
+            return runnable.get();
+        } finally {
+            customSetup.set(pre);
+        }
     }
 
     private EduSetup() {
