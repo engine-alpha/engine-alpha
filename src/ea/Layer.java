@@ -58,7 +58,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     private final EventListeners<KeyListener> keyListeners = new EventListeners<>(createParentSupplier(Scene::getKeyListeners));
     private final EventListeners<MouseClickListener> mouseClickListeners = new EventListeners<>(createParentSupplier(Scene::getMouseClickListeners));
     private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>(createParentSupplier(Scene::getMouseWheelListeners));
-    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>(createParentSupplier(Scene::getFrameUpdateListeners));
+    private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>();
 
     /**
      * Erstellt ein neues Layer.
@@ -229,7 +229,11 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         defer(() -> {
             for (Actor actor : actors) {
                 if (actor.isMounted()) {
-                    throw new IllegalArgumentException("Ein Actor kann nur an einem Layer gleichzeitig angemeldet sein");
+                    if (actor.getLayer() != this) {
+                        throw new IllegalArgumentException("Ein Actor kann nur an einem Layer gleichzeitig angemeldet sein");
+                    } else {
+                        return;
+                    }
                 }
 
                 PhysicsHandler oldHandler = actor.getPhysicsHandler();
@@ -391,12 +395,10 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         return worldHandler;
     }
 
+    @Internal
     public void step(float deltaSeconds) {
         synchronized (worldHandler) {
-            float scaledDeltaSeconds = deltaSeconds * timeDistort;
-
-            worldHandler.step(scaledDeltaSeconds);
-            frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(scaledDeltaSeconds));
+            worldHandler.step(deltaSeconds * timeDistort);
         }
     }
 
@@ -418,5 +420,11 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     @API
     public EventListeners<FrameUpdateListener> getFrameUpdateListeners() {
         return frameUpdateListeners;
+    }
+
+    @Internal
+    void invokeFrameUpdateListeners(float deltaSeconds) {
+        float scaledSeconds = deltaSeconds * timeDistort;
+        frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(scaledSeconds));
     }
 }

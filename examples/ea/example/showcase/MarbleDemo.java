@@ -57,7 +57,7 @@ public class MarbleDemo extends ShowcaseDemo implements KeyListener {
             r.setBodyType(BodyType.STATIC);
         }
 
-        lm.getLayer().getParent().setGravity(new Vector(0, 15));
+        setGravity(new Vector(0, 15));
 
         lm.setRotation(-45);
         rm.setRotation(45);

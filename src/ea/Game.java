@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2019 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@ package ea;
 import ea.event.MouseButton;
 import ea.event.MouseWheelEvent;
 import ea.internal.Bounds;
-import ea.internal.DebugInfo;
-import ea.internal.RenderThread;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
@@ -34,8 +32,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.*;
 import java.util.Collection;
-import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Diese Klasse gibt Zugriff auf das aktuelle Spiel.
@@ -45,9 +42,6 @@ import java.util.concurrent.*;
  */
 @SuppressWarnings ( "StaticVariableOfConcreteClass" )
 public final class Game {
-
-    private static final float DESIRED_FRAME_DURATION = 0.016f;
-    private static final int NANOSECONDS_PER_SECOND = 1000000000;
 
     static {
         System.setProperty("sun.java2d.opengl", "true"); // ok
@@ -97,31 +91,9 @@ public final class Game {
      */
     private static Scene scene;
 
-    /**
-     * Falls gesetzt, wird im nächsten Frame zu dieser Szene gewechselt.
-     */
-    private static Scene nextScene;
-
-    private static Phaser frameBarrierStart = new Phaser(2);
-
-    private static Phaser frameBarrierEnd = new Phaser(2);
-
-    private static Phaser worldStepEndBarrier = new Phaser(2);
-
-    private static Thread renderThread;
+    private static GameLogic gameLogic;
 
     private static Thread mainThread;
-
-    /**
-     * Ein Thread Pool Executor Service für Engine-interne tasks.
-     */
-    @Internal
-    public static final ExecutorService threadPoolExecutor = Executors.newCachedThreadPool();
-
-    /**
-     * Queue aller Dispatchables, die im nächsten Frame ausgeführt werden.
-     */
-    private static Queue<Runnable> dispatchableQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Speichert den Zustand von Tasten der Tastatur. Ist ein Wert <code>true</code>, so ist die entsprechende Taste
@@ -133,8 +105,6 @@ public final class Game {
      * Letzte Mausposition.
      */
     private static java.awt.Point mousePosition;
-
-    private static float frameDuration;
 
     /**
      * Setzt den Titel des Spielfensters.
@@ -214,15 +184,6 @@ public final class Game {
             // Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
         }
 
-        renderThread = new RenderThread(frameBarrierStart, frameBarrierEnd, renderPanel, Game::getActiveScene, () -> {
-            if (isDebug()) {
-                return new DebugInfo(frameDuration, getActiveScene().getWorldHandler().getWorld().getBodyCount());
-            }
-
-            return null;
-        });
-        renderThread.setPriority(Thread.MAX_PRIORITY);
-
         mousePosition = new java.awt.Point(width / 2, height / 2);
 
         mainThread = new Thread(Game::run, "ea.main");
@@ -231,76 +192,8 @@ public final class Game {
     }
 
     private static void run() {
-        renderThread.start();
-
-        frameDuration = DESIRED_FRAME_DURATION;
-
-        long frameStart = System.nanoTime();
-        long frameEnd;
-
-        while (!Thread.interrupted()) {
-            if (nextScene != null) {
-                scene = nextScene;
-                nextScene = null;
-            }
-
-            try {
-                float deltaSeconds = Math.min(2 * DESIRED_FRAME_DURATION, frameDuration);
-
-                scene.worldStep(deltaSeconds, worldStepEndBarrier);
-
-                worldStepEndBarrier.arriveAndAwaitAdvance();
-                scene.getCamera().onFrameUpdate();
-                frameBarrierStart.arriveAndAwaitAdvance();
-
-                scene.invokeFrameUpdateListeners(deltaSeconds);
-
-                Runnable runnable = dispatchableQueue.poll();
-                while (runnable != null) {
-                    runnable.run();
-                    runnable = dispatchableQueue.poll();
-                }
-
-                frameBarrierEnd.arriveAndAwaitAdvance();
-
-                frameEnd = System.nanoTime();
-                float duration = (float) (frameEnd - frameStart) / NANOSECONDS_PER_SECOND;
-
-                if (duration < DESIRED_FRAME_DURATION) {
-                    try {
-                        Thread.sleep((int) (1000 * (DESIRED_FRAME_DURATION - duration)));
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
-                }
-
-                frameEnd = System.nanoTime();
-                frameDuration = ((float) (frameEnd - frameStart) / NANOSECONDS_PER_SECOND);
-
-                frameStart = frameEnd;
-            } catch (Exception e) {
-                Game.exit();
-
-                // noinspection CallToPrintStackTrace
-                e.printStackTrace();
-
-                break; // comment out to keep window open
-            }
-        }
-
-        while (renderThread.isAlive()) {
-            // Thread soll aufhören: Sauber machen!
-            renderThread.interrupt();
-
-            try {
-                renderThread.join();
-            } catch (InterruptedException e) {
-                // Try again
-            }
-        }
-
-        threadPoolExecutor.shutdown();
+        gameLogic = new GameLogic(renderPanel, Game::getActiveScene, Game::isDebug);
+        gameLogic.run();
 
         frame.setVisible(false);
         frame.dispose();
@@ -327,7 +220,7 @@ public final class Game {
      */
     private static void enqueueMouseWheelEvent(java.awt.event.MouseWheelEvent mouseWheelEvent) {
         MouseWheelEvent mouseWheelAction = new MouseWheelEvent((float) mouseWheelEvent.getPreciseWheelRotation());
-        dispatchableQueue.add(() -> scene.invokeMouseWheelMoveListeners(mouseWheelAction));
+        gameLogic.enqueue(() -> scene.invokeMouseWheelMoveListeners(mouseWheelAction));
     }
 
     /**
@@ -335,7 +228,7 @@ public final class Game {
      */
     @API
     public static void transitionToScene(Scene scene) {
-        dispatchableQueue.add(() -> nextScene = scene);
+        gameLogic.enqueue(() -> Game.scene = scene);
     }
 
     /**
@@ -609,7 +502,7 @@ public final class Game {
                     return;
             }
 
-            dispatchableQueue.add(() -> {
+            gameLogic.enqueue(() -> {
                 if (down) {
                     scene.invokeMouseDownListeners(sourcePosition, button);
                 } else {
@@ -647,7 +540,7 @@ public final class Game {
                 pressedKeys.remove(e.getKeyCode());
             }
 
-            dispatchableQueue.add(() -> {
+            gameLogic.enqueue(() -> {
                 if (down) {
                     scene.invokeKeyDownListeners(e);
                 } else {

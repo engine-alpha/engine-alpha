@@ -31,7 +31,7 @@ import java.util.concurrent.Phaser;
 import java.util.function.Supplier;
 
 @Internal
-public class RenderThread extends Thread {
+public final class RenderThread extends Thread {
     private final Phaser frameStartBarrier;
     private final Phaser frameEndBarrier;
     private final RenderPanel renderPanel;

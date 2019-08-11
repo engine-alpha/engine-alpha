@@ -33,14 +33,12 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 public class Scene implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
     public static final Color REVOLUTE_JOINT_COLOR = Color.BLUE;
@@ -78,10 +76,6 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      */
     private final Layer mainLayer;
 
-    @SuppressWarnings ( "FieldAccessedSynchronizedAndUnsynchronized" )
-    private transient int layerCountForCurrentRender;
-    private transient final Queue<Future> layerFutures = new ConcurrentLinkedQueue<>();// (Basis-)Radius für die Visualisierung von Kreisen
-
     private static final int JOINT_CIRCLE_RADIUS = 10;// (Basis-)Breite für die Visualisierung von Rechtecken
     private static final int JOINT_RECTANGLE_SIDE = 12;
 
@@ -101,21 +95,21 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      * @param deltaSeconds Die Echtzeit, die seit dem letzten World-Step vergangen ist.
      */
     @Internal
-    final void worldStep(float deltaSeconds, Phaser worldStepEndBarrier) {
+    public final void step(float deltaSeconds, Function<Runnable, Future> invoker) {
         synchronized (layers) {
-            layerCountForCurrentRender = layers.size();
-            AtomicInteger remainingSteps = new AtomicInteger(layerCountForCurrentRender);
+            Collection<Future> layerFutures = new ArrayList<>(layers.size());
 
             for (Layer layer : layers) {
-                Future future = Game.threadPoolExecutor.submit(() -> {
-                    layer.step(deltaSeconds);
-
-                    if (remainingSteps.decrementAndGet() == 0) {
-                        worldStepEndBarrier.arrive();
-                    }
-                });
-
+                Future future = invoker.apply(() -> layer.step(deltaSeconds));
                 layerFutures.add(future);
+            }
+
+            for (Future layerFuture : layerFutures) {
+                try {
+                    layerFuture.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -124,34 +118,11 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
     public final void render(Graphics2D g, int width, int height) {
         final AffineTransform base = g.getTransform();
 
-        int current = 0;
-        int limit = this.layerCountForCurrentRender;
-
-        while (current < limit) {
-            Future future = layerFutures.poll();
-            if (future == null) {
-                break;
+        synchronized (layers) {
+            for (Layer layer : layers) {
+                layer.render(g, camera, width, height);
+                g.setTransform(base);
             }
-
-            try {
-                future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-
-            Layer layer;
-            synchronized (layers) {
-                layer = layers.get(current);
-            }
-
-            if (layer == null) {
-                break;
-            }
-
-            layer.render(g, camera, width, height);
-            g.setTransform(base);
-
-            current++;
         }
 
         if (Game.isDebug()) {
@@ -329,8 +300,14 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     @Internal
-    final void invokeFrameUpdateListeners(float deltaSeconds) {
+    public final void invokeFrameUpdateListeners(float deltaSeconds) {
         frameUpdateListeners.invoke(frameUpdateListener -> frameUpdateListener.onFrameUpdate(deltaSeconds));
+
+        synchronized (layers) {
+            for (Layer layer : layers) {
+                layer.invokeFrameUpdateListeners(deltaSeconds);
+            }
+        }
     }
 
     @Internal
