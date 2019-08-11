@@ -58,7 +58,7 @@ public class DateiManager {
 	/**
 	 * Eine Liste, die alle bereits verwendeten Farben einmalig listet
 	 */
-	private static final List<Color> colors = new ArrayList<>();
+	private static final java.util.List<Color> colors = new ArrayList<>();
 
 	static {
 		colors.add(Color.RED);

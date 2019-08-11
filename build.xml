@@ -95,6 +95,10 @@
                 <include name="**/*.class"/>
             </fileset>
         </cobertura-instrument>
+
+        <cobertura-instrument>
+            <auxClasspath path="${build.dir}/Engine.Alpha.jar" />
+        </cobertura-instrument>
     </target>
 
     <target name="test" depends="compile, instrument">
