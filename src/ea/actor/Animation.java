@@ -20,7 +20,6 @@
 package ea.actor;
 
 import ea.FrameUpdateListener;
-import ea.Scene;
 import ea.event.EventListeners;
 import ea.internal.ShapeBuilder;
 import ea.internal.annotations.API;
@@ -225,7 +224,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @author Michael Andonie
      */
     @API
-    public static Animation createFromImagesPrefix(Scene scene, float frameDuration, float width, float height, String directoryPath, String prefix) {
+    public static Animation createFromImagesPrefix(float frameDuration, float width, float height, String directoryPath, String prefix) {
         // Liste mit den Pfaden aller qualifizierten Dateien
         ArrayList<String> allPaths = new ArrayList<>();
 

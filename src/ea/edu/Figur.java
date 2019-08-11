@@ -126,7 +126,7 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      */
     @API
     public void fuegeZustandVonPraefixHinzu(String zustandsname, String verzeichnis, String praefix) {
-        getActor().addState(zustandsname, Animation.createFromImagesPrefix(Spiel.getActiveScene(), DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), verzeichnis, praefix));
+        getActor().addState(zustandsname, Animation.createFromImagesPrefix(DEFAULT_FRAME_DURATION, getActor().getWidth(), getActor().getHeight(), verzeichnis, praefix));
     }
 
     /**

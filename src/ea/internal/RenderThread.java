@@ -73,7 +73,7 @@ public final class RenderThread extends Thread {
                             renderPanel.render(g, scene);
 
                             if (debugInfo != null) {
-                                renderPanel.renderDebug(g, scene);
+                                renderPanel.renderGrid(g, scene);
                                 renderPanel.renderInfo(g, debugInfo);
                             }
 

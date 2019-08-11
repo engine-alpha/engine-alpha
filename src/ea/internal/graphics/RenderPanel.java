@@ -90,7 +90,7 @@ public final class RenderPanel extends Canvas {
      * @param g Das Graphics-Objekt zum zeichnen.
      */
     @Internal
-    public void renderDebug(Graphics2D g, Scene scene) {
+    public void renderGrid(Graphics2D g, Scene scene) {
         AffineTransform pre = g.getTransform();
 
         Camera camera = scene.getCamera();
@@ -118,13 +118,13 @@ public final class RenderPanel extends Canvas {
             int startX = (int) (position.getX() - windowSizeInPixels / 2 / pixelPerMeter);
             int startY = (int) ((-1 * position.getY()) - windowSizeInPixels / 2 / pixelPerMeter);
 
-            startX -= (startX % gridSizeInMeters);
-            startY -= (startY % gridSizeInMeters);
+            startX -= (startX % gridSizeInMeters) - 1;
+            startY -= (startY % gridSizeInMeters) - 1;
 
             startX -= gridSizeInMeters;
 
-            int stopX = (int) (startX + windowSizeInPixels / pixelPerMeter + gridSizeInMeters);
-            int stopY = (int) (startY + windowSizeInPixels / pixelPerMeter + gridSizeInMeters);
+            int stopX = (int) (startX + windowSizeInPixels / pixelPerMeter + gridSizeInMeters * 2);
+            int stopY = (int) (startY + windowSizeInPixels / pixelPerMeter + gridSizeInMeters * 2);
 
             g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, DEBUG_TEXT_SIZE));
             g.setColor(DEBUG_GRID_COLOR);

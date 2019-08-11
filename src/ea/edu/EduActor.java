@@ -1,13 +1,11 @@
 package ea.edu;
 
-import ea.Layer;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.BodyType;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
 import ea.edu.event.KollisionsReagierbar;
-import ea.edu.internal.EduScene;
 import ea.internal.annotations.API;
 
 import java.util.Map;
@@ -17,6 +15,8 @@ public abstract class EduActor<T extends Actor> {
     private static final Map<Actor, EduActor> actorMap = new ConcurrentHashMap<>();
 
     private final T actor;
+
+    private final boolean skipSetup;
 
     public EduActor(T actor) {
         this.actor = actor;
@@ -29,10 +29,9 @@ public abstract class EduActor<T extends Actor> {
         this.actor.addMountListener(() -> actorMap.put(this.actor, this));
         this.actor.addUnmountListener(() -> actorMap.remove(this.actor));
 
-        EduScene activeScene = Spiel.getActiveScene();
-        Layer activeLayer = activeScene.getActiveLayer();
+        EduSetup.setup(this);
 
-        activeLayer.defer(() -> activeLayer.add(this.getActor()));
+        skipSetup = EduSetup.isSetupSkipped();
     }
 
     /**
@@ -233,8 +232,8 @@ public abstract class EduActor<T extends Actor> {
 
     @API
     public void macheAktiv() {
-        if (!this.actor.isMounted()) {
-            Spiel.getActiveScene().addEduActor(this.getActor());
+        if (!skipSetup) {
+            EduSetup.setup(this);
         }
 
         this.actor.setBodyType(BodyType.DYNAMIC);
@@ -242,8 +241,8 @@ public abstract class EduActor<T extends Actor> {
 
     @API
     public void machePassiv() {
-        if (!this.actor.isMounted()) {
-            Spiel.getActiveScene().addEduActor(this.getActor());
+        if (!skipSetup) {
+            EduSetup.setup(this);
         }
 
         this.actor.setBodyType(BodyType.STATIC);
@@ -251,8 +250,8 @@ public abstract class EduActor<T extends Actor> {
 
     @API
     public void macheNeutral() {
-        if (!this.actor.isMounted()) {
-            Spiel.getActiveScene().addEduActor(this.getActor());
+        if (!skipSetup) {
+            EduSetup.setup(this);
         }
 
         this.actor.setBodyType(BodyType.SENSOR);
@@ -260,8 +259,8 @@ public abstract class EduActor<T extends Actor> {
 
     @API
     public void machePartikel(double lebenszeit) {
-        if (!this.actor.isMounted()) {
-            Spiel.getActiveScene().addEduActor(this.getActor());
+        if (!skipSetup) {
+            EduSetup.setup(this);
         }
 
         this.actor.animateParticle((float) lebenszeit);
