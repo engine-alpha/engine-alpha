@@ -22,6 +22,8 @@ package ea;
 import ea.event.MouseButton;
 import ea.event.MouseWheelEvent;
 import ea.internal.Bounds;
+import ea.internal.DebugInfo;
+import ea.internal.RenderThread;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
@@ -29,9 +31,9 @@ import ea.internal.io.ImageLoader;
 import ea.internal.physics.WorldHandler;
 
 import javax.swing.JOptionPane;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.*;
-import java.awt.image.BufferStrategy;
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.*;
@@ -213,12 +215,18 @@ public final class Game {
             // Logger.warning("IO", "Standard-Icon konnte nicht geladen werden.");
         }
 
-        renderThread = new RenderThread();
+        renderThread = new RenderThread(frameBarrierStart, frameBarrierEnd, renderPanel, Game::getActiveScene, () -> {
+            if (isDebug()) {
+                return new DebugInfo(frameDuration, getActiveScene().getWorldHandler().getWorld().getBodyCount());
+            }
+
+            return null;
+        });
         renderThread.setPriority(Thread.MAX_PRIORITY);
 
         mousePosition = new java.awt.Point(width / 2, height / 2);
 
-        mainThread = new Thread(Game::run, "Main Game");
+        mainThread = new Thread(Game::run, "ea.main");
         mainThread.start();
         mainThread.setPriority(Thread.MAX_PRIORITY);
     }
@@ -677,59 +685,6 @@ public final class Game {
                     scene.invokeKeyUpListeners(e);
                 }
             });
-        }
-    }
-
-    private static class RenderThread extends Thread {
-        public RenderThread() {
-            super("Rendering");
-        }
-
-        @Override
-        public void run() {
-            while (!isInterrupted()) {
-                try {
-                    frameBarrierStart.awaitAdvanceInterruptibly(frameBarrierStart.arrive());
-
-                    try {
-                        do {
-                            BufferStrategy bufferStrategy = renderPanel.getBufferStrategy();
-
-                            do {
-                                Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
-
-                                // have to be the same @ Game.screenshot!
-                                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
-                                Scene activeScene = Game.scene;
-
-                                renderPanel.render(g, activeScene);
-
-                                if (isDebug()) {
-                                    renderPanel.renderDebug(g, activeScene);
-                                    renderPanel.renderInfo(g, frameDuration, activeScene.getWorldHandler().getWorld().getBodyCount());
-                                }
-
-                                g.dispose();
-                            } while (bufferStrategy.contentsRestored() && !isInterrupted());
-
-                            if (!bufferStrategy.contentsLost()) {
-                                bufferStrategy.show();
-                            }
-
-                            Toolkit.getDefaultToolkit().sync();
-                        } while (renderPanel.getBufferStrategy().contentsLost() && !isInterrupted());
-                    } catch (IllegalStateException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    frameBarrierEnd.awaitAdvanceInterruptibly(frameBarrierEnd.arrive());
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
         }
     }
 }

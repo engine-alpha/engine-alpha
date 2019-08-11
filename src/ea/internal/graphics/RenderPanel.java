@@ -22,6 +22,7 @@ package ea.internal.graphics;
 import ea.Camera;
 import ea.Scene;
 import ea.Vector;
+import ea.internal.DebugInfo;
 import ea.internal.annotations.Internal;
 
 import java.awt.*;
@@ -152,7 +153,10 @@ public final class RenderPanel extends Canvas {
      * @param g Das Graphics-Objekt zum zeichnen.
      */
     @Internal
-    public void renderInfo(Graphics2D g, float frameDuration, int bodies) {
+    public void renderInfo(Graphics2D g, DebugInfo debugInfo) {
+        float frameDuration = debugInfo.getFrameDuration();
+        int bodyCount = debugInfo.getBodyCount();
+
         Font displayFont = new Font("Monospaced", Font.PLAIN, DEBUG_TEXT_SIZE);
         FontMetrics fm = g.getFontMetrics(displayFont);
         Rectangle2D bounds;
@@ -172,7 +176,7 @@ public final class RenderPanel extends Canvas {
 
         y += fm.getHeight() + DEBUG_INFO_HEIGHT;
 
-        String bodyMessage = "Bodies: " + bodies;
+        String bodyMessage = "Bodies: " + bodyCount;
         bounds = fm.getStringBounds(bodyMessage, g);
 
         g.setColor(COLOR_BODY_COUNT_BORDER);
