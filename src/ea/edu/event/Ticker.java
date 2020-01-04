@@ -22,8 +22,8 @@ public interface Ticker {
      * @see #stoppeTicker()
      */
     @API
-    default void starteTickerNeu(float intervalInS) {
-        Spiel.getActiveScene().addEduTicker(intervalInS, this);
+    default void starteTickerNeu(double intervalInS) {
+        Spiel.getActiveScene().addEduTicker((float) intervalInS, this);
     }
 
     /**
