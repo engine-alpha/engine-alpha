@@ -154,7 +154,7 @@ public class Spiel {
     }
 
     @Internal
-    static EduScene getActiveScene() {
+    public static EduScene getActiveScene() {
         if (activeScene == null) {
             activeScene = new EduScene();
             parallel(() -> Game.start(fensterBreite, fensterHoehe, activeScene));
