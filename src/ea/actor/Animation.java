@@ -198,8 +198,8 @@ public class Animation extends Actor implements FrameUpdateListener {
 
     @API
     public static Animation createFromImages(float frameDuration, float width, float height, String... filepaths) {
-        if (frameDuration < 1) {
-            throw new RuntimeException("Frame-Länge kann nicht kleiner als 1 sein.");
+        if (frameDuration <= 0) {
+            throw new RuntimeException("Frame-Länge muss größer als 1 sein.");
         }
 
         Collection<AnimationFrame> frames = new LinkedList<>();
