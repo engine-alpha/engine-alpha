@@ -21,6 +21,10 @@ package ea.edu;
 
 import ea.Layer;
 import ea.actor.Actor;
+import ea.edu.event.BildAktualisierungReagierbar;
+import ea.edu.event.MausKlickReagierbar;
+import ea.edu.event.MausRadReagierbar;
+import ea.edu.event.TastenReagierbar;
 import ea.edu.internal.EduScene;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
@@ -36,6 +40,19 @@ public final class EduSetup {
         Layer activeLayer = eduScene.getActiveLayer();
 
         activeLayer.defer(() -> activeLayer.add(eduActor.getActor()));
+
+        if (eduActor instanceof BildAktualisierungReagierbar) {
+            eduScene.addEduFrameUpdateListener((BildAktualisierungReagierbar) eduActor);
+        }
+        if (eduActor instanceof MausKlickReagierbar) {
+            eduScene.addEduClickListener((MausKlickReagierbar) eduActor);
+        }
+        if (eduActor instanceof MausRadReagierbar) {
+            eduScene.addEduMouseWheelListener((MausRadReagierbar) eduActor);
+        }
+        if (eduActor instanceof TastenReagierbar) {
+            eduScene.addEduKeyListener((TastenReagierbar) eduActor);
+        }
     }
 
     public static EduScene getActiveScene() {
