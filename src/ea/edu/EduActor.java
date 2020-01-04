@@ -388,18 +388,18 @@ public abstract class EduActor<T extends Actor> {
     /**
      * Baut einen Rope-Joint an diesem und einem weiteren Actor.
      *
-     * @param anderer    Anderer Actor.
-     * @param ropeLength Maximale Länge zwischen Punkt A und B zu jedem Zeitpunkt.
-     * @param aX         Punkt A, Koordinate X
-     * @param aY         Punkt A, Koordinate Y
-     * @param bX         Punkt B, Koordinate X
-     * @param bY         Punkt B, Koordinate Y
+     * @param anderer Anderer Actor.
+     * @param laenge  Maximale Länge zwischen Punkt A und B zu jedem Zeitpunkt.
+     * @param aX      Punkt A, Koordinate X
+     * @param aY      Punkt A, Koordinate Y
+     * @param bX      Punkt B, Koordinate X
+     * @param bY      Punkt B, Koordinate Y
      *
      * @see ea.actor.Actor#createRopeJoint(Actor, Vector, Vector, float)
      */
     @API
-    public void erzeugeSeilverbindung(EduActor anderer, double ropeLength, double aX, double aY, double bX, double bY) {
-        this.actor.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), (float) ropeLength);
+    public void erzeugeSeilverbindung(EduActor anderer, double laenge, double aX, double aY, double bX, double bY) {
+        this.actor.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), (float) laenge);
     }
 
     /**
