@@ -405,8 +405,8 @@ public abstract class EduActor<T extends Actor> {
     /**
      * Führt ein Runnable verzögert aus.
      *
-     * @param verzoegerungInSekunden Spielzeit-Verzögerung
-     * @param runnable               Runnable, dass dann ausgeführt wird
+     * @param verzoegerungInSekunden Spielzeit-Verzögerung in Sekunden
+     * @param runnable               Runnable, das dann ausgeführt wird
      */
     @API
     public void verzoegere(double verzoegerungInSekunden, Runnable runnable) {
