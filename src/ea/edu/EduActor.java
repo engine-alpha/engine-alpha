@@ -237,29 +237,21 @@ public abstract class EduActor<T extends Actor> {
 
     @API
     public void macheAktiv() {
-        EduSetup.setup(this, eduScene);
-
         this.actor.setBodyType(BodyType.DYNAMIC);
     }
 
     @API
     public void machePassiv() {
-        EduSetup.setup(this, eduScene);
-
         this.actor.setBodyType(BodyType.STATIC);
     }
 
     @API
     public void macheNeutral() {
-        EduSetup.setup(this, eduScene);
-
         this.actor.setBodyType(BodyType.SENSOR);
     }
 
     @API
     public void machePartikel(double lebenszeit) {
-        EduSetup.setup(this, eduScene);
-
         this.actor.animateParticle((float) lebenszeit);
     }
 
