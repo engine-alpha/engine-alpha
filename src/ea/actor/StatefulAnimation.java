@@ -47,6 +47,8 @@ public class StatefulAnimation<State> extends Actor {
     private boolean flipHorizontal = false;
     private boolean flipVertical = false;
 
+    private boolean animationPaused = false;
+
     public StatefulAnimation(float width, float height) {
         super(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
 
@@ -199,6 +201,32 @@ public class StatefulAnimation<State> extends Actor {
     }
 
     /**
+     * Setzt, ob diese <code>StatefulAnimation</code> animiert werden soll.
+     *
+     * @param animationPaused Ist dieser Wert <code>true</code>, so läuft die Animation normal weiter.
+     *                        Ist dieser Wert <code>false</code>, so läuft die Animation nicht und keine automatischen
+     *                        Zustandsübergänge passieren.
+     *
+     * @see #isAnimationPaused()
+     */
+    @API
+    public void setAnimationPaused(boolean animationPaused) {
+        this.animationPaused = animationPaused;
+    }
+
+    /**
+     * Gibt an, ob die Animation derzeit pausiert ist.
+     *
+     * @return <code>true</code>, wenn die Animation gerade pausiert ist. Sonst <code>false</code>.
+     *
+     * @see #setAnimationPaused(boolean)
+     */
+    @API
+    public boolean isAnimationPaused() {
+        return this.animationPaused;
+    }
+
+    /**
      * Setzt eine neue Übergangsregel für die Zustände der Animation.<br> Jedes Mal, wenn die Animation vom
      * <b>Von-Zustand</b> einmal durchlaufen wurde, geht die Animation automatisch in den <b>Ziel-Zustand</b> über. <br>
      * Per Default gilt: Ein zugefügter Zustand geht nach Abschluss seiner Animation "in sich selbst" über. Also
@@ -247,8 +275,8 @@ public class StatefulAnimation<State> extends Actor {
      */
     @Internal
     private void internalOnFrameUpdate(float frameDuration) {
-        if (currentAnimation == null || currentAnimation.length == 0) {
-            return; // we don't have a state yet
+        if (currentAnimation == null || currentAnimation.length == 0 || animationPaused) {
+            return; // we don't have a state yet - or the animation is paused
         }
 
         currentTime += frameDuration;

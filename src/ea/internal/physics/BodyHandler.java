@@ -316,11 +316,12 @@ public class BodyHandler implements PhysicsHandler {
 
         AABB bodyBounds = calculateBodyAABB();
 
-        // Test-AABB: Should be a minimal space centered right below the Body
+        // Test-AABB: Should be a rectangle right below the body
+        //Minimal height, width of the body
         AABB testAABB = new AABB();
         final float epsilon = 0.0001f;
-        testAABB.lowerBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 - epsilon, bodyBounds.lowerBound.y);
-        testAABB.upperBound.set((bodyBounds.lowerBound.x + bodyBounds.upperBound.x) / 2 + epsilon, bodyBounds.lowerBound.y + 2 * epsilon);
+        testAABB.lowerBound.set(bodyBounds.lowerBound.x, bodyBounds.lowerBound.y);
+        testAABB.upperBound.set(bodyBounds.upperBound.x, bodyBounds.lowerBound.y + epsilon);
 
         Fixture[] groundCandidates = worldHandler.queryAABB(testAABB);
         for (Fixture fixture : groundCandidates) {

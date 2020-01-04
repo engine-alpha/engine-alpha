@@ -5,6 +5,7 @@ import ea.Vector;
 import ea.actor.Animation;
 import ea.actor.StatefulAnimation;
 import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 
@@ -120,9 +121,9 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
      * Fügt einen Zustand hinzu. Lädt dazu alle Bilder in einem Verzeichnis ein, die zu einem
      * bestimmten Präfix passen.
      *
-     * @param zustandsname     Name für den ersten Zustand.
-     * @param verzeichnis Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
-     * @param praefix         Das Präfix, das alle einzuladenden Bilder haben müssen.
+     * @param zustandsname Name für den ersten Zustand.
+     * @param verzeichnis  Pfad zum Verzeichnis, in dem alle einzuladenden Bilder liegen.
+     * @param praefix      Das Präfix, das alle einzuladenden Bilder haben müssen.
      */
     @API
     public void fuegeZustandVonPraefixHinzu(String zustandsname, String verzeichnis, String praefix) {
@@ -167,6 +168,17 @@ public class Figur extends EduActor<StatefulAnimation<String>> {
         getActor().setFrameDuration(zustandsname, (float) dauerInSekunden);
     }
 
+    @API
+    public void setzeAnimationPausiert(boolean animationPausiert) {
+        getActor().setAnimationPaused(animationPausiert);
+    }
+
+    @API
+    public boolean nenneAnimationPausiert() {
+        return getActor().isAnimationPaused();
+    }
+
+    @Internal
     private static Vector getWidthHeightFromPrefixed(String directoryPath, String prefix) {
         try {
             File directory = ResourceLoader.loadAsFile(directoryPath);
