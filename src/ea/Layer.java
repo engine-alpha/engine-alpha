@@ -21,7 +21,6 @@ import java.util.function.Supplier;
  *
  * @author Michael Andonie
  */
-@SuppressWarnings ( "OverlyCoupledClass" )
 public class Layer implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
     private static final Comparator<? super Actor> ACTOR_COMPARATOR = Comparator.comparingInt(Actor::getLayerPosition);
 
