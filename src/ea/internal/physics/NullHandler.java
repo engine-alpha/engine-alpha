@@ -120,11 +120,6 @@ public class NullHandler implements PhysicsHandler {
     }
 
     @Override
-    public void setMass(float mass) {
-        physicsData.setMass(mass);
-    }
-
-    @Override
     public float getMass() {
         Float mass = physicsData.getMass();
         return mass == null ? 0 : mass;

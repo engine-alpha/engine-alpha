@@ -3,11 +3,11 @@ package ea.example.showcase;
 import ea.Scene;
 import ea.Vector;
 import ea.actor.Actor;
+import ea.actor.BodyType;
 import ea.actor.Circle;
 import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.actor.BodyType;
 import ea.event.KeyListener;
 
 import java.awt.Color;
@@ -21,10 +21,10 @@ import java.awt.event.KeyEvent;
  *
  * <p>Die Simulation kann gesteuert werden durch:</p>
  * <ul>
- *     <li>S-Key: Startet Simulation</li>
- *     <li>R-Key: Setzt Simulation zurück</li>
- *     <li>Die Keyn Z und U ändern den Zoom auf die Umgebung (rudimentär implementiert)</li>
- *     <li>D-Key: Toggelt den Debug-Modus (zeigt das Pixel-Raster)</li>
+ * <li>S-Key: Startet Simulation</li>
+ * <li>R-Key: Setzt Simulation zurück</li>
+ * <li>Die Keyn Z und U ändern den Zoom auf die Umgebung (rudimentär implementiert)</li>
+ * <li>D-Key: Toggelt den Debug-Modus (zeigt das Pixel-Raster)</li>
  * </ul>
  *
  * <h3>Anpassung der Parameter</h3>
@@ -32,12 +32,12 @@ import java.awt.event.KeyEvent;
  * <p>Die Simulation arbeitet mit einigen physikalischen Parametern, die sich ändern lassen. Folgende Parameter sind
  * als Konstanten im Code definiert und können im angepasst werden:</p>
  * <ul>
- *     <li><code>DURCHMESSER</code>: Der Durchmesser des Circlees (hat keinen Einfluss auf die Masse.</li>
- *     <li><code>HOEHE_UEBER_BODEN</code>: Abstand zwischen dem untersten Punkt des Balls und dem Boden</li>
- *     <li><code>MASSE</code>: Masse des Balls</li>
- *     <li><code>IMPULS: Impuls, der auf den Ball angewandt wird.</code></li>
- *     <li><code>WINKEL</code>: Winkel, in dem der Impuls auf den Ball angewandt wird.
- *          0° = parallel zum Boden, 90° = gerade nach oben</li>
+ * <li><code>DURCHMESSER</code>: Der Durchmesser des Circlees (hat keinen Einfluss auf die Masse.</li>
+ * <li><code>HOEHE_UEBER_BODEN</code>: Abstand zwischen dem untersten Punkt des Balls und dem Boden</li>
+ * <li><code>MASSE</code>: Masse des Balls</li>
+ * <li><code>IMPULS: Impuls, der auf den Ball angewandt wird.</code></li>
+ * <li><code>WINKEL</code>: Winkel, in dem der Impuls auf den Ball angewandt wird.
+ * 0° = parallel zum Boden, 90° = gerade nach oben</li>
  * </ul>
  * Created by Michael on 11.04.2017.
  */
@@ -85,7 +85,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         add(ball);
         ball.setColor(Color.RED);
         ball.setBodyType(BodyType.DYNAMIC);
-        ball.setMass(MASSE);
+        //ball.setDensity(MASSE*X);
         ball.setCenter(ABSTAND_LINKS, BODEN_TIEFE - (HOEHE_UEBER_BODEN * PIXELPROMETER + 0.5f * DURCHMESSER * PIXELPROMETER));
 
         //kamera.fokusSetzen(ball);

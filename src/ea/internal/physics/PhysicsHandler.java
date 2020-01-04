@@ -105,14 +105,6 @@ public interface PhysicsHandler {
     float getRestitution();
 
     /**
-     * Setzt die Masse für das Ziel-Objekt.
-     *
-     * @param mass Die Masse, die das Ziel-Objekt einnehmen soll. In [kg]
-     */
-    @Internal
-    void setMass(float mass);
-
-    /**
      * Gibt die Masse des Ziel-Objekts aus.
      *
      * @return Die Masse des Ziel-Objekts in [kg].

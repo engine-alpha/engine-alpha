@@ -624,18 +624,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Setzt die Masse des Objekts neu. Hat Einfluss auf das physikalische Verhalten des Objekts.
-     *
-     * @param massInKG Die neue Masse für das Objekt in <b>[kg]</b>.
-     */
-    @API
-    public void setMass(float massInKG) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setMass(massInKG);
-        }
-    }
-
-    /**
      * Gibt die aktuelle Masse des Ziel-Objekts aus. Die Form bleibt unverändert, daher ändert sich
      * die <b>Dichte</b> in der Regel.
      *

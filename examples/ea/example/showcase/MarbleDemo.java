@@ -112,7 +112,7 @@ public class MarbleDemo extends ShowcaseDemo implements KeyListener {
 
         Circle murmel = new Marble(Random.nextInteger(50) + 10);
         murmel.setBodyType(BodyType.DYNAMIC);
-        murmel.setMass(4);
+        //murmel.setMass(4);
         murmel.setColor(new Color(Random.nextInteger(255), Random.nextInteger(255), Random.nextInteger(255)));
 
         return murmel;

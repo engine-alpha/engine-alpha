@@ -127,7 +127,7 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
         gewicht.setColor(Color.WHITE);
 
         gewicht.setBodyType(BodyType.DYNAMIC);
-        gewicht.setMass(40);
+        //gewicht.setMass(40);
 
         Vector vektor = new Vector(45 * kette.length, 35);
         gewicht.setCenter(new Vector(vektor.getX(), vektor.getY()));

@@ -98,7 +98,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             return shapeList;
         });*/
 
-        setMass(MASS);
+        //setMass(MASS);
 
         addCollisionListener(this);
     }

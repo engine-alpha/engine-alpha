@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 @Internal
 public class PhysicsData {
 
-    private static final float DEFAULT_DENSITY = 30f;
+    private static final float DEFAULT_DENSITY = 10f;
     private static final float DEFAULT_FRICTION = 0f;
     private static final float DEFAULT_RESTITUTION = 0.5f;
     private static final BodyType DEFAULT_BODY_TYPE = BodyType.SENSOR;

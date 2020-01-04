@@ -20,8 +20,8 @@
 package ea.example.showcase.dude;
 
 import ea.Random;
-import ea.actor.Image;
 import ea.actor.BodyType;
+import ea.actor.Image;
 
 public class Box extends Image {
 
@@ -37,7 +37,7 @@ public class Box extends Image {
         super(getBoxPath(type), SIZE, SIZE);
 
         setBodyType(BodyType.DYNAMIC);
-        setMass(MASS_IN_KG);
+        //setMass(MASS_IN_KG);
         setRestitution(RESTITUTION);
     }
 

@@ -216,8 +216,13 @@ public abstract class EduActor<T extends Actor> {
     }
 
     @API
-    public void setzeMasse(double masse) {
-        this.actor.setMass((float) masse);
+    public void setzeDichte(double dichteInKgProQM) {
+        this.actor.setDensity((float) dichteInKgProQM);
+    }
+
+    @API
+    public double nenneDichte() {
+        return this.actor.getDensity();
     }
 
     @API

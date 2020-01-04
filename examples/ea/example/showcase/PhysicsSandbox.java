@@ -4,16 +4,13 @@ import ea.FrameUpdateListener;
 import ea.Scene;
 import ea.Vector;
 import ea.actor.*;
-import ea.actor.Polygon;
-import ea.actor.Rectangle;
 import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
-import ea.actor.BodyType;
 import ea.event.KeyListener;
 import ea.event.MouseButton;
 import ea.event.MouseClickListener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 /**
@@ -25,17 +22,17 @@ import java.awt.event.KeyEvent;
  * ab. Der entsprechende Vector ist sichtbar.</p>
  * <h3>Funktionen</h3>
  * <ul>
- *     <li>R Setzt die gesamte Simulation zurück. Alle Objekte verharren wieder in Ruhe an ihrer Ausgangsposition.</li>
- *     <li>S Aktiviert/Deaktiviert Schwerkraft in der Simulation.</li>
- *     <li>E Aktiviert/Deaktiviert Wände</li>
- *     <li>D Aktiviert/Deaktiviert den Debug-Modus (und stellt damit ein Raster, FPS etc. dar)</li>
- *     <li>I Aktiviert/Deaktiviert die Info-Box mit Infos zu den physikalischen Eigenschaften des zuletzt
- *     angeklickten Objekts.</li>
- *     <li>U und J erhöhen/reduzieren die Masse des zuöetzt angeklickten Objekts.</li>
- *     <li>W und Q erhöhen/reduzieren die Elastizität der Wände.</li>
- *     <li>1 und 2 zoomen rein/raus</li>
+ * <li>R Setzt die gesamte Simulation zurück. Alle Objekte verharren wieder in Ruhe an ihrer Ausgangsposition.</li>
+ * <li>S Aktiviert/Deaktiviert Schwerkraft in der Simulation.</li>
+ * <li>E Aktiviert/Deaktiviert Wände</li>
+ * <li>D Aktiviert/Deaktiviert den Debug-Modus (und stellt damit ein Raster, FPS etc. dar)</li>
+ * <li>I Aktiviert/Deaktiviert die Info-Box mit Infos zu den physikalischen Eigenschaften des zuletzt
+ * angeklickten Objekts.</li>
+ * <li>U und J erhöhen/reduzieren die Masse des zuöetzt angeklickten Objekts.</li>
+ * <li>W und Q erhöhen/reduzieren die Elastizität der Wände.</li>
+ * <li>1 und 2 zoomen rein/raus</li>
  * </ul>
- *
+ * <p>
  * Created by andonie on 05.09.15.
  */
 public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, FrameUpdateListener, KeyListener {
@@ -91,12 +88,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     /**
      * Die Startpunkte für die Test-Objekte
      */
-    private static final Vector[] STARTINGPOINTS = new Vector[] {
-            new Vector(260, 250),
-            new Vector(50, 60),
-            new Vector(400, 100),
-            new Vector(50, 200)
-    };
+    private static final Vector[] STARTINGPOINTS = new Vector[] {new Vector(260, 250), new Vector(50, 60), new Vector(400, 100), new Vector(50, 200)};
 
     /**
      * Beschreibt die Zustände, in denen sich die Sandbox im Bezug auf Mausklick-Funktion befinden kann.
@@ -138,10 +130,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         super(parent);
         this.FRAME_WIDHT = frame_width;
         this.FRAME_HEIGHT = frame_height;
-        getCamera().moveBy(
-                FRAME_WIDHT/4,
-                FRAME_HEIGHT/4
-        );
+        getCamera().moveBy(FRAME_WIDHT / 4, FRAME_HEIGHT / 4);
         //ppmSetzen(30);
         initialisieren();
     }
@@ -165,9 +154,8 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         //fixierungsGruppe = new ActorGroup(this);
         //add(fixierungsGruppe);
 
-
         Circle kreis = new Circle(50);
-        kreis.setPosition(10,10);
+        kreis.setPosition(10, 10);
         //wurzel.add(kreis);
         //fixierungsGruppe.add(kreis);
         kreis.setColor(Color.MAGENTA);
@@ -182,8 +170,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         //kreis2.physics.masse(50);
         testObjects[2] = kreis2;
 
-        Polygon polygon = new Polygon(new Vector(0,0), new Vector(20, 30), new Vector(10, 50),
-                new Vector(80, 10), new Vector(120, 0));
+        Polygon polygon = new Polygon(new Vector(0, 0), new Vector(20, 30), new Vector(10, 50), new Vector(80, 10), new Vector(120, 0));
         //fixierungsGruppe.add(polygon);
         polygon.setColor(Color.BLUE);
         polygon.setBodyType(BodyType.DYNAMIC);
@@ -200,19 +187,18 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         //Der Rest der Wände
         Rectangle links = new Rectangle(10, FIELD_DEPTH);
         Rectangle rechts = new Rectangle(10, FIELD_DEPTH);
-        rechts.setPosition(FIELD_WIDTH-10, 0);
+        rechts.setPosition(FIELD_WIDTH - 10, 0);
         Rectangle oben = new Rectangle(FIELD_WIDTH, 10);
         add(links, rechts, oben);
         walls[1] = links;
         walls[2] = rechts;
         walls[3] = oben;
 
-        for(int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 3; i++) {
             walls[i].setColor(Color.WHITE);
             walls[i].setVisible(false);
             walls[i].setBodyType(BodyType.SENSOR);
         }
-
 
         //Vector-Visualisierung
         Rectangle stab = new Rectangle(100, 5);
@@ -232,15 +218,15 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         add(box);
         box.setPosition(200, 30); */
 
-
         //Test-Objekte zur Kollision Anmelden
-        for(int i = 0; i < testObjects.length; i++) {
+        for (int i = 0; i < testObjects.length; i++) {
             final int key = i;
             CollisionListener<Actor> kr = new CollisionListener<Actor>() {
                 @Override
                 public void onCollision(CollisionEvent e) {
                     isInAttackRange[lastAttackTarget = key] = true;
                 }
+
                 @Override
                 public void onCollisionEnd(CollisionEvent e) {
                     //Code = index d. Test-Objekts, das attack-range verlassen hat.
@@ -259,12 +245,11 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
      */
     private void resetSituation() {
         //Testobjekt zurücksetzen und in Ruhezustand bringen.
-        for(int i = 0; i < testObjects.length; i++) {
+        for (int i = 0; i < testObjects.length; i++) {
             testObjects[i].resetMovement();
             testObjects[i].setPosition(STARTINGPOINTS[i]);
             testObjects[i].setRotation(0);
         }
-
 
         //Attack zurücksetzen (falls gesetzt)
         attack.setVisible(false);
@@ -274,22 +259,21 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
         stange.setVisible(false);
     }
 
-
     /**
      * Wird bei jedem Keyndruck aufgerufen.
-     * @param e  Der Code der gedrückten Key.
+     *
+     * @param e Der Code der gedrückten Key.
      */
     @Override
     public void onKeyDown(KeyEvent e) {
-        switch(e.getKeyCode()) {
+        switch (e.getKeyCode()) {
             case KeyEvent.VK_R: // RESET
                 resetSituation();
                 break;
             case KeyEvent.VK_S: // SCHWERKRAFT-TOGGLE
                 hatSchwerkraft = !hatSchwerkraft;
-                for(Actor testObject : testObjects) {
-                    testObject.getLayer().getParent().setGravity(hatSchwerkraft ?
-                            ERDBESCHLEUNIGUNG : Vector.NULL);
+                for (Actor testObject : testObjects) {
+                    testObject.getLayer().getParent().setGravity(hatSchwerkraft ? ERDBESCHLEUNIGUNG : Vector.NULL);
                 }
                 //System.out.println("Schwerkraft: " + hatSchwerkraft + " - ");
                 break;
@@ -297,7 +281,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 boolean wasActive = walls[1].isVisible();
                 BodyType newType = wasActive ? BodyType.SENSOR : BodyType.STATIC;
                 //System.out.println("Type = " + newType);
-                for(int i = 1; i <= 3; i++) {
+                for (int i = 1; i <= 3; i++) {
                     walls[i].setVisible(!wasActive);
                     walls[i].setBodyType(newType);
                 }
@@ -320,10 +304,10 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 System.out.println("Ela der Wand " + ground.getRestitution());
                 break;
             case KeyEvent.VK_1: //Zoom Out
-                getCamera().setZoom(getCamera().getZoom()-0.1f);
+                getCamera().setZoom(getCamera().getZoom() - 0.1f);
                 break;
             case KeyEvent.VK_2: //Zoom In
-                getCamera().setZoom(getCamera().getZoom()+0.1f);
+                getCamera().setZoom(getCamera().getZoom() + 0.1f);
                 break;
             case KeyEvent.VK_B: //Toggle die Circlefixierung
                 /* if(fixierungsGruppe.isFixated()) {
@@ -337,20 +321,22 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
 
     /**
      * Ändert die Masse vom letzten Objekt, was im Attack-Point war/ist.
+     *
      * @param deltaM Die Masseänderung (positiv=mehr Masse, negativ=weniger Masse).
      */
     private void changeMass(int deltaM) {
-        testObjects[lastAttackTarget].setMass(
-                testObjects[lastAttackTarget].getMass()+deltaM);
+        //testObjects[lastAttackTarget].setMass(
+        //        testObjects[lastAttackTarget].getMass()+deltaM);
     }
 
     /**
      * Wird bei jedem Mausklick aufgerufen.
+     *
      * @param p Point des Mausklicks auf der Zeichenebene.
      */
     @Override
     public void onMouseDown(Vector p, MouseButton button) {
-        switch(klickMode) {
+        switch (klickMode) {
             case ATTACK_POINT:
                 lastAttack = p;
 
@@ -362,12 +348,11 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 stange.setVisible(true);
                 stange.setPosition(p);
 
-
                 klickMode = KlickMode.DIRECTION_INTENSITY;
                 break;
             case DIRECTION_INTENSITY:
 
-                if(lastAttack==null) {
+                if (lastAttack == null) {
                     klickMode = KlickMode.ATTACK_POINT;
                     return;
                 }
@@ -376,11 +361,11 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
                 stange.setVisible(false);
                 Vector distance = lastAttack.negate().add(p);
 
-                for(int i = 0; i < testObjects.length; i++) {
-                    if(isInAttackRange[i])
+                for (int i = 0; i < testObjects.length; i++) {
+                    if (isInAttackRange[i]) {
                         testObjects[i].applyImpulse(distance.multiply(10), lastAttack);
+                    }
                 }
-
 
                 klickMode = KlickMode.ATTACK_POINT;
 
@@ -390,15 +375,17 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
 
     /**
      * Wird jeden Frame des Spiels exakt einmal aufgerufen.
-     * @param deltaSeconds    Die Zeit in Sekunden, die seit dem letzten Frame-Update vergangen sind.
+     *
+     * @param deltaSeconds Die Zeit in Sekunden, die seit dem letzten Frame-Update vergangen sind.
      */
     @Override
     public void onFrameUpdate(float deltaSeconds) {
         //Visualisiere ggf. die Vectorstange
-        if(klickMode == KlickMode.DIRECTION_INTENSITY) {
+        if (klickMode == KlickMode.DIRECTION_INTENSITY) {
             Vector pointer = getMousePosition();
-            if(pointer==null || lastAttack == null)
+            if (pointer == null || lastAttack == null) {
                 return;
+            }
             Vector pos = stange.getPosition();
             remove(stange);
             stange = new Rectangle(new Vector(lastAttack, pointer).getLength(), 5);
@@ -408,15 +395,14 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
             stange.setPosition(pos);
             add(stange);
             float rot = Vector.RIGHT.getAngle(lastAttack.negate().add(pointer));
-            if(Float.isNaN(rot))
+            if (Float.isNaN(rot)) {
                 return;
-            if(pointer.getY() < lastAttack.getY())
-                rot = (float)( Math.PI*2 - rot);
+            }
+            if (pointer.getY() < lastAttack.getY()) {
+                rot = (float) (Math.PI * 2 - rot);
+            }
             stange.setRotation(rot);
         }
-
-
-
 
         //Update für die Textbox
         Vector vel = testObjects[lastAttackTarget].getVelocity();

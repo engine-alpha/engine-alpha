@@ -5,7 +5,6 @@ import ea.actor.Actor;
 import ea.actor.BodyType;
 import ea.internal.annotations.Internal;
 import org.jbox2d.collision.AABB;
-import org.jbox2d.collision.shapes.MassData;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -124,6 +123,7 @@ public class BodyHandler implements PhysicsHandler {
             for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
                 fixture.setDensity(density);
             }
+            body.resetMassData();
         }
     }
 
@@ -158,18 +158,6 @@ public class BodyHandler implements PhysicsHandler {
     @Override
     public float getRestitution() {
         return body.m_fixtureList.getRestitution();
-    }
-
-    @Override
-    public void setMass(float mass) {
-        synchronized (worldHandler) {
-            worldHandler.assertNoWorldStep();
-
-            MassData massData = new MassData();
-            body.getMassData(massData);
-            massData.mass = mass;
-            body.setMassData(massData);
-        }
     }
 
     @Override
