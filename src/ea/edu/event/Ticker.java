@@ -33,6 +33,6 @@ public interface Ticker {
      */
     @API
     default void stoppeTicker() {
-
+        Spiel.getActiveScene().removeEduTicker(this);
     }
 }
