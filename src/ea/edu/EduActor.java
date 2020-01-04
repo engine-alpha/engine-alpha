@@ -11,7 +11,6 @@ import ea.event.AggregateFrameUpdateListener;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,8 +21,9 @@ public abstract class EduActor<T extends Actor> {
 
     private final EduScene eduScene;
 
-    private final LinkedList<AggregateFrameUpdateListener> activeAnimations = new LinkedList<>();
     private boolean animationsPaused = false;
+
+    private AggregateFrameUpdateListener lastAnimation = null;
 
     public EduActor(T actor) {
         this.actor = actor;
@@ -53,7 +53,7 @@ public abstract class EduActor<T extends Actor> {
     @Internal
     private void addAnimation(AggregateFrameUpdateListener animation) {
         animation.setPaused(animationsPaused);
-        activeAnimations.add(animation);
+        lastAnimation = animation;
         this.actor.addFrameUpdateListener(animation);
     }
 
@@ -374,8 +374,8 @@ public abstract class EduActor<T extends Actor> {
     @API
     public void pausiereAnimation(boolean pausiert) {
         animationsPaused = pausiert;
-        for (AggregateFrameUpdateListener agl : activeAnimations) {
-            agl.setPaused(pausiert);
+        if (lastAnimation != null) {
+            lastAnimation.setPaused(pausiert);
         }
     }
 
