@@ -9,7 +9,7 @@ public interface Ticker {
     /**
      * Die Tick-Methode. Sie wird in einem regelmäßigen Intervall aufgerufen, sobald dieser Ticker gestartet wurde.
      *
-     * @see #starteTickerNeu(float)
+     * @see #starteTickerNeu(double)
      */
     @API
     void tick();
@@ -29,7 +29,7 @@ public interface Ticker {
     /**
      * Stoppt den Ticker.
      *
-     * @see #starteTickerNeu(float)
+     * @see #starteTickerNeu(double)
      */
     @API
     default void stoppeTicker() {
