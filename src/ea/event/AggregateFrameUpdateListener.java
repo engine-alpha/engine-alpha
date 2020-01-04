@@ -20,8 +20,7 @@
 package ea.event;
 
 import ea.FrameUpdateListener;
-import ea.event.EventListeners;
-import ea.event.FrameUpdateListenerContainer;
+import ea.internal.annotations.API;
 
 /**
  * @author Niklas Keller
@@ -30,9 +29,23 @@ public abstract class AggregateFrameUpdateListener implements FrameUpdateListene
 
     private final EventListeners<FrameUpdateListener> listeners = new EventListeners<>();
 
+    private boolean paused = false;
+
+    @API
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    @API
+    public boolean isPaused() {
+        return paused;
+    }
+
     @Override
     public void onFrameUpdate(float deltaSeconds) {
-        listeners.invoke(listener -> listener.onFrameUpdate(deltaSeconds));
+        if (!paused) {
+            listeners.invoke(listener -> listener.onFrameUpdate(deltaSeconds));
+        }
     }
 
     @Override

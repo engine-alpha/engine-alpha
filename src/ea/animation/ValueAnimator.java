@@ -33,6 +33,7 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
     private float currentTime = 0;
     private float duration;
     private boolean complete = false;
+    private boolean paused = false;
 
     /**
      * Hilfsvariable für PINGPONG-Mode.
@@ -50,6 +51,31 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
         if (mode == AnimationMode.SINGLE) {
             addCompletionListener((v) -> parent.removeFrameUpdateListener(this));
         }
+    }
+
+    /**
+     * Setzt, ob die ValueAnimation pausiert werden soll.
+     *
+     * @param paused <code>true</code>: Die Animation wird unterbrochen, bis das flag umgesetzt wird.
+     *               <code>false</code>: Die Animation wird wieder aufgenommen (sollte sie unterbrochen worden sein)
+     *
+     * @see #isPaused()
+     */
+    @API
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    /**
+     * Gibt an, ob der Animator pausiert ist.
+     *
+     * @return Ob der Animator pausiert ist.
+     *
+     * @see #setPaused(boolean)
+     */
+    @API
+    public boolean isPaused() {
+        return paused;
     }
 
     public ValueAnimator(float duration, Consumer<Value> consumer, Interpolator<Value> interpolator, FrameUpdateListenerContainer parent) {
@@ -76,6 +102,9 @@ public class ValueAnimator<Value> implements FrameUpdateListener {
 
     @Override
     public void onFrameUpdate(float deltaSeconds) {
+        if (paused) {
+            return;
+        }
         float progress;
 
         if (!goingBackwards) {

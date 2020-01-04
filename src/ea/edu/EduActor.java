@@ -7,8 +7,11 @@ import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
 import ea.edu.event.KollisionsReagierbar;
 import ea.edu.internal.EduScene;
+import ea.event.AggregateFrameUpdateListener;
 import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,6 +21,9 @@ public abstract class EduActor<T extends Actor> {
     private final T actor;
 
     private final EduScene eduScene;
+
+    private final LinkedList<AggregateFrameUpdateListener> activeAnimations = new LinkedList<>();
+    private boolean animationsPaused = false;
 
     public EduActor(T actor) {
         this.actor = actor;
@@ -42,6 +48,13 @@ public abstract class EduActor<T extends Actor> {
     @API
     protected final T getActor() {
         return this.actor;
+    }
+
+    @Internal
+    private void addAnimation(AggregateFrameUpdateListener animation) {
+        animation.setPaused(animationsPaused);
+        activeAnimations.add(animation);
+        this.actor.addFrameUpdateListener(animation);
     }
 
     /**
@@ -99,6 +112,11 @@ public abstract class EduActor<T extends Actor> {
     @API
     public void setzeDrehwinkel(double grad) {
         this.actor.setRotation((float) grad);
+    }
+
+    @API
+    public double nenneWinkelgeschwindigkeit() {
+        return this.actor.getAngularVelocity();
     }
 
     @API
@@ -314,10 +332,12 @@ public abstract class EduActor<T extends Actor> {
      *                      Uhrzeigersinn
      * @param rotation      <code>true</code>=Das Actor-Objekt wird auch entsprechend seiner Kreis-Position rotiert.
      *                      <code>false</code>=Das Actor-Objekt behält seine Rotation bei.
+     *
+     * @see #pausiereAnimation(boolean)
      */
     @API
     public void animiereKreis(double sekunden, double mX, double mY, boolean uhrzeigersinn, boolean rotation) {
-        this.actor.addFrameUpdateListener(new CircleAnimation(getActor(), new Vector(mX, mY), (float) sekunden, uhrzeigersinn, rotation));
+        addAnimation(new CircleAnimation(getActor(), new Vector(mX, mY), (float) sekunden, uhrzeigersinn, rotation));
     }
 
     /**
@@ -334,10 +354,40 @@ public abstract class EduActor<T extends Actor> {
      *                 <code>false</code>: Die Animation endet automatisch, nachdem der Zielpunkt (das erste Mal)
      *                 erreicht
      *                 wurde.
+     *
+     * @see #pausiereAnimation(boolean)
      */
     @API
     public void animiereGerade(double sekunden, double zX, double zY, boolean loop) {
-        this.actor.addFrameUpdateListener(new LineAnimation(getActor(), new Vector(zX, zY), (float) sekunden, loop));
+        addAnimation(new LineAnimation(getActor(), new Vector(zX, zY), (float) sekunden, loop));
+    }
+
+    /**
+     * Setzt, ob die Animationen dieses Actors gerade laufen sollen oder nicht.
+     *
+     * @param pausiert <code>true</code>: Alle Animationen werden pausiert.
+     *                 <code>false</code>: Alle Animationen laufen normal.
+     *
+     * @see #animiereGerade(double, double, double, boolean)
+     * @see #animiereKreis(double, double, double, boolean, boolean)
+     */
+    @API
+    public void pausiereAnimation(boolean pausiert) {
+        animationsPaused = pausiert;
+        for (AggregateFrameUpdateListener agl : activeAnimations) {
+            agl.setPaused(pausiert);
+        }
+    }
+
+    /**
+     * Gibt an, ob die Animationen dieses Actors gerade pausiert sind.
+     *
+     * @return <code>true</code>: Alle Animationen sind pausiert.
+     * <code>false</code>: Alle Animationen laufen.
+     */
+    @API
+    public boolean nennePausiert() {
+        return animationsPaused;
     }
 
     /**
