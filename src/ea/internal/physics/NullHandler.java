@@ -212,16 +212,6 @@ public class NullHandler implements PhysicsHandler {
     }
 
     @Override
-    public float getTorque() {
-        return 0;
-    }
-
-    @Override
-    public void setTorque(float value) {
-        mountCallbacks.add(physicsHandler -> physicsHandler.setTorque(value));
-    }
-
-    @Override
     public void setShapes(Supplier<List<Shape>> shapes) {
         physicsData.setShapes(shapes);
     }

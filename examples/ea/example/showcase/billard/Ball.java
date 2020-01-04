@@ -44,7 +44,7 @@ public class Ball extends Circle implements FrameUpdateListener {
             setVelocity(Vector.NULL);
         } else {
             applyForce(getVelocity().negate().multiply(5));
-            setTorque(getTorque() * 0.5f);
+            // TODO torque
         }
     }
 }

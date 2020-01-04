@@ -27,6 +27,7 @@ import org.jbox2d.dynamics.contacts.Contact;
  * </ul>
  *
  * @see CollisionListener
+ * @see <a href="http://www.iforce2d.net/b2dtut/collision-anatomy" target="_top">http://www.iforce2d.net/b2dtut/collision-anatomy</a>
  */
 public class CollisionEvent<E extends Actor> {
     /**

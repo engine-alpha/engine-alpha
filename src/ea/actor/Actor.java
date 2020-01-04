@@ -665,12 +665,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Setzt den Reibungskoeffizient für das Objekt. Hat Einfluss auf
      * die Bewegung des Objekts.
      *
-     * @param coefficientOfElasticity Der Reibungskoeffizient. In der Regel im Bereich <b>[0; 1]</b>.
+     * @param friction Der Reibungskoeffizient. In der Regel im Bereich <b>[0; 1]</b>.
      */
     @API
-    public void setFriction(float coefficientOfElasticity) {
+    public void setFriction(float friction) {
         synchronized (physicsHandlerLock) {
-            physicsHandler.setFriction(coefficientOfElasticity);
+            physicsHandler.setFriction(friction);
         }
     }
 
@@ -716,6 +716,18 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
+     * Gibt die aktuelle Drehgeschwindigkeit aus.
+     *
+     * @return Die aktuelle Drehgeschwindigkeit.
+     */
+    @API
+    public float getAngularVelocity() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getAngularVelocity();
+        }
+    }
+
+    /**
      * Setzt die Drehgeschwindigkeit "hart" für dieses Objekt. Damit wird die aktuelle
      * Rotation des Objekts ignoriert und hart auf den übergebenen Wert gesetzt.
      *
@@ -726,13 +738,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     public void setAngularVelocity(float rotationsPerSecond) {
         synchronized (physicsHandlerLock) {
             physicsHandler.setAngularVelocity(rotationsPerSecond);
-        }
-    }
-
-    @API
-    public void setAngularVelocity() {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.getAngularVelocity();
         }
     }
 
@@ -761,6 +766,18 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     public void applyForce(Vector force) {
         synchronized (physicsHandlerLock) {
             physicsHandler.applyForce(force);
+        }
+    }
+
+    /**
+     * Wirkt einen Drehmoment auf das Ziel-Objekt.
+     *
+     * @param torque der Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
+     */
+    @API
+    public void applyTorque(float torque) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.applyTorque(torque);
         }
     }
 
@@ -941,20 +958,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
             return (org.jbox2d.dynamics.joints.DistanceJoint) world.createJoint(distanceJointDef);
         }, new DistanceJoint());
-    }
-
-    @API
-    public float getTorque() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getTorque();
-        }
-    }
-
-    @API
-    public void setTorque(float value) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setTorque(value);
-        }
     }
 
     /**

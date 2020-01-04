@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2019 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2020 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,21 +36,21 @@ public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> 
      */
     @Internal
     public final void setJoint(JointType joint, WorldHandler worldHandler) {
-        if (joint != null) {
-            updateJoint(joint);
-        }
-
         this.joint = new Pair<>(joint, worldHandler);
+
+        updateCustomProperties(joint);
     }
 
-    @Internal
-    abstract protected void updateJoint(JointType joint);
+    protected abstract void updateCustomProperties(JointType joint);
 
     @Internal
-    protected void update() {
-        if (this.joint != null) {
-            updateJoint(this.joint.getKey());
+    protected final JointType getJoint() {
+        Pair<JointType, WorldHandler> joint = this.joint;
+        if (joint == null) {
+            return null;
         }
+
+        return joint.getKey();
     }
 
     @API

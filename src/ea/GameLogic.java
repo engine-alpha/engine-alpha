@@ -110,6 +110,8 @@ public final class GameLogic {
                 frameDuration = ((float) (frameEnd - frameStart) / NANOSECONDS_PER_SECOND);
 
                 frameStart = frameEnd;
+            } catch (InterruptedException e) {
+                break;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

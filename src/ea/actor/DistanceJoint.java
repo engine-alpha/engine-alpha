@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2019 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2020 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@
 package ea.actor;
 
 public class DistanceJoint extends Joint<org.jbox2d.dynamics.joints.DistanceJoint> {
-    @Override
-    protected void updateJoint(org.jbox2d.dynamics.joints.DistanceJoint joint) {
 
+    @Override
+    protected void updateCustomProperties(org.jbox2d.dynamics.joints.DistanceJoint joint) {
+        // nothing to do
     }
 }

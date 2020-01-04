@@ -95,7 +95,7 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      * @param deltaSeconds Die Echtzeit, die seit dem letzten World-Step vergangen ist.
      */
     @Internal
-    public final void step(float deltaSeconds, Function<Runnable, Future> invoker) {
+    public final void step(float deltaSeconds, Function<Runnable, Future> invoker) throws InterruptedException {
         synchronized (layers) {
             Collection<Future> layerFutures = new ArrayList<>(layers.size());
 
@@ -107,7 +107,7 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
             for (Future layerFuture : layerFutures) {
                 try {
                     layerFuture.get();
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (ExecutionException e) {
                     throw new RuntimeException(e);
                 }
             }

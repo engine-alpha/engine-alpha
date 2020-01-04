@@ -240,12 +240,6 @@ public interface PhysicsHandler {
     @Internal
     boolean isGrounded();
 
-    @Internal
-    float getTorque();
-
-    @Internal
-    void setTorque(float value);
-
     /**
      * Entfernt alle Shapes/Collider am Actor und setzt alle Shapes für dieses Objekt neu.
      *

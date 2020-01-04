@@ -335,18 +335,6 @@ public class BodyHandler implements PhysicsHandler {
     }
 
     @Override
-    public float getTorque() {
-        return body.m_torque;
-    }
-
-    @Override
-    public void setTorque(float value) {
-        synchronized (worldHandler) {
-            body.m_torque = value;
-        }
-    }
-
-    @Override
     public void setShapes(Supplier<List<Shape>> shapes) {
         synchronized (worldHandler) {
             PhysicsData physicsData = this.getPhysicsData();
