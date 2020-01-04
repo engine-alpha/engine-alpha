@@ -21,14 +21,18 @@ package ea.event;
 
 import ea.internal.annotations.API;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class EventListeners<T> {
-    private final Collection<T> listeners = ConcurrentHashMap.newKeySet();
+    private final Collection<T> listeners = new LinkedHashSet<>();
+    private final Collection<T> listenerIterationCopy = new LinkedHashSet<>();
+    private final Collection<Runnable> pendingCopyModifications = new ArrayList<>();
     private final Supplier<EventListeners<T>> parentSupplier;
+    private boolean iterating = false;
 
     public EventListeners() {
         this(() -> null);
@@ -39,8 +43,14 @@ public final class EventListeners<T> {
     }
 
     @API
-    public void add(T listener) {
+    public synchronized void add(T listener) {
         listeners.add(listener);
+
+        if (iterating) {
+            pendingCopyModifications.add(() -> listenerIterationCopy.add(listener));
+        } else {
+            listenerIterationCopy.add(listener);
+        }
 
         EventListeners<T> parent = parentSupplier.get();
         if (parent != null) {
@@ -49,8 +59,14 @@ public final class EventListeners<T> {
     }
 
     @API
-    public void remove(T listener) {
+    public synchronized void remove(T listener) {
         listeners.remove(listener);
+
+        if (iterating) {
+            pendingCopyModifications.add(() -> listenerIterationCopy.remove(listener));
+        } else {
+            listenerIterationCopy.remove(listener);
+        }
 
         EventListeners<T> parent = parentSupplier.get();
         if (parent != null) {
@@ -59,24 +75,40 @@ public final class EventListeners<T> {
     }
 
     @API
-    public boolean contains(T listener) {
+    public synchronized boolean contains(T listener) {
         return listeners.contains(listener);
     }
 
     @API
-    public void invoke(Consumer<T> invoker) {
-        for (T listener : listeners) {
-            invoker.accept(listener);
+    public synchronized void invoke(Consumer<T> invoker) {
+        if (iterating) {
+            throw new IllegalStateException("Recursive invocation of event listeners is unsupported");
+        }
+
+        try {
+            iterating = true;
+
+            for (T listener : listenerIterationCopy) {
+                invoker.accept(listener);
+            }
+        } finally {
+            iterating = false;
+
+            for (Runnable pendingModification : pendingCopyModifications) {
+                pendingModification.run();
+            }
+
+            pendingCopyModifications.clear();
         }
     }
 
     @API
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return listeners.isEmpty();
     }
 
     @API
-    public void clear() {
+    public synchronized void clear() {
         listeners.clear();
     }
 }
