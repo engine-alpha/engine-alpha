@@ -6,6 +6,7 @@ import ea.edu.event.*;
 import ea.edu.internal.EduScene;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
+import ea.internal.util.Logger;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -38,6 +39,10 @@ public class Spiel {
     private static final Color COLOR_DUNKELBLAU = new Color(21, 0, 137);
     private static final Color COLOR_HELLGRUEN = new Color(157, 255, 0);
     private static final Color COLOR_DUNKELGRUEN = new Color(11, 71, 0);
+    /**
+     * Der Threshold-Zeitintervalwert, ab dem eine Warnung ausgegeben wird für Tickeranmeldung
+     */
+    private static final double TICKER_THRESHOLD = 0.09;
 
     private static int fensterBreite = STANDARD_BREITE;
     private static int fensterHoehe = STANDARD_HOEHE;
@@ -403,9 +408,7 @@ public class Spiel {
     }
 
     /**
-     * Meldet ein Objekt zum Ticken an. Intern laesst sich theoretisch ein Objekt <b>JEDER</b>
-     * Klasse anmelden!<br> Deshalb <i>sollten nur Objekte angemeldet werden, die Instanzen des
-     * EDU-<code>TICKER</code>-Interfaces sind!!</i>
+     * Meldet ein Objekt zum Ticken an.
      *
      * @param ticker              Das anzumeldende Objekt, dessen Tickermethode aufgerufen werden soll.<br> Es
      *                            <b>MUSS</b>
@@ -414,6 +417,9 @@ public class Spiel {
      */
     @API
     public void registriereTicker(double intervallInSekunden, Ticker ticker) {
+        if (intervallInSekunden < TICKER_THRESHOLD) {
+            Logger.warning("Du hast einen Ticker mit geringem Intervall angemeldet (" + intervallInSekunden + " s). Bei so Intervalwert nahe der Framerate können unerwünschte Effekte eintreten. Nutze stattdessen BildAktualisierungsReagierbar !", "EDU");
+        }
         getActiveScene().addEduTicker((float) intervallInSekunden, ticker);
     }
 

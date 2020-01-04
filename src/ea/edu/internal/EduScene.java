@@ -232,6 +232,7 @@ public class EduScene extends Scene {
 
     @Internal
     public void addEduTicker(float interval, Ticker ticker) {
+
         FrameUpdateListener periodicTask = new PeriodicTask(interval, ticker::tick);
         addListener(ticker, sceneTickers, activeLayer.getFrameUpdateListeners(), periodicTask);
     }

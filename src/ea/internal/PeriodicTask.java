@@ -47,7 +47,7 @@ public final class PeriodicTask implements FrameUpdateListener {
     /**
      * Konstruktor.
      *
-     * @param intervalInSeconds Zeit zwischen den Ausführungen in Millisekunden.
+     * @param intervalInSeconds Zeit zwischen den Ausführungen in Sekunden.
      */
     public PeriodicTask(float intervalInSeconds, Runnable runnable) {
         setInterval(intervalInSeconds);
