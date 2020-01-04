@@ -61,23 +61,7 @@ public final class RenderThread extends Thread {
 
                         do {
                             Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
-
-                            // have to be the same @ Game.screenshot!
-                            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-
-                            Scene scene = currentScene.get();
-                            DebugInfo debugInfo = this.debugInfo.get();
-
-                            renderPanel.render(g, scene);
-
-                            if (debugInfo != null) {
-                                renderPanel.renderGrid(g, scene);
-                                renderPanel.renderInfo(g, debugInfo);
-                            }
-
-                            g.dispose();
+                            renderFrame(g);
                         } while (bufferStrategy.contentsRestored() && !isInterrupted());
 
                         if (!bufferStrategy.contentsLost()) {
@@ -95,5 +79,30 @@ public final class RenderThread extends Thread {
                 return;
             }
         }
+    }
+
+    /**
+     * Rendert den aktuellen Frame.
+     *
+     * @param g Das Graphics2D Objekt, das den Frame rendern soll.
+     */
+    @Internal
+    public void renderFrame(Graphics2D g) {
+        // have to be the same @ Game.screenshot!
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
+        Scene scene = currentScene.get();
+        DebugInfo debugInfo = this.debugInfo.get();
+
+        renderPanel.render(g, scene);
+
+        if (debugInfo != null) {
+            renderPanel.renderGrid(g, scene);
+            renderPanel.renderInfo(g, debugInfo);
+        }
+
+        g.dispose();
     }
 }

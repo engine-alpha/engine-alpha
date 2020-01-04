@@ -21,6 +21,7 @@ package ea;
 
 import ea.internal.DebugInfo;
 import ea.internal.RenderThread;
+import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
 
 import java.util.Queue;
@@ -133,5 +134,10 @@ public final class GameLogic {
             // noinspection UnnecessaryReturnStatement
             return; // if interrupted again, don't wait
         }
+    }
+
+    @Internal
+    RenderThread getRenderThread() {
+        return this.renderThread;
     }
 }

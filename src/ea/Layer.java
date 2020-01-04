@@ -278,7 +278,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     @Internal
     public Vector translateWorldPointToFramePxCoordinates(Vector worldPoint) {
         float pixelPerMeter = calculatePixelPerMeter();
-        Vector frameSize = Game.getSizeInPixels();
+        Vector frameSize = Game.getFrameSizeInPixels();
         Vector cameraPositionInPx = new Vector(frameSize.getX() / 2, frameSize.getY() / 2);
         Vector fromCamToPointInWorld = parent.getCamera().getPosition().multiplyX(parallaxX).multiplyY(parallaxY).fromThisTo(worldPoint);
         return cameraPositionInPx.add(fromCamToPointInWorld.multiplyY(-1).multiply(pixelPerMeter * parallaxZoom));
@@ -289,7 +289,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
      *
      * @return Die sichtbare Fläche als Bounds Objekt <b>mit Angaben in Meter</b>
      *
-     * @see Game#getSizeInPixels()
+     * @see Game#getFrameSizeInPixels()
      */
     @API
     public Bounds getVisibleArea(Vector gameSizeInPixels) {
@@ -307,7 +307,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
      * @param width Die Breite in Meter, auf die die Kamera im Fenster exakt zu setzen ist.
      *
      * @see #setVisibleHeight(float, Vector)
-     * @see Game#getSizeInPixels()
+     * @see Game#getFrameSizeInPixels()
      */
     @API
     public void setVisibleWidth(float width, Vector gameSizeInPixels) {
@@ -324,7 +324,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
      * @param height Die Höhe in Meter, auf die die Kamera im Fenster exakt zu setzen ist.
      *
      * @see #setVisibleWidth(float, Vector)
-     * @see Game#getSizeInPixels()
+     * @see Game#getFrameSizeInPixels()
      */
     @API
     public void setVisibleHeight(float height, Vector gameSizeInPixels) {

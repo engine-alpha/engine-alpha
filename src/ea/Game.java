@@ -25,11 +25,14 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.RenderPanel;
 import ea.internal.io.ImageLoader;
+import ea.internal.io.ImageWriter;
 
 import javax.swing.JOptionPane;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -131,7 +134,7 @@ public final class Game {
      * @return Ein Vector-Objekt, dessen Höhe und Breite mit Fensterhöhe & -breite übereinstimmt.
      */
     @API
-    public static Vector getSizeInPixels() {
+    public static Vector getFrameSizeInPixels() {
         return new Vector(width, height);
     }
 
@@ -454,6 +457,19 @@ public final class Game {
     @API
     public static void setDebug(boolean value) {
         debug = value;
+    }
+
+    /**
+     * Rendert einen Screenshot des aktuellen Spielfensters und speichert das resultierende Bild in einer Datei.
+     *
+     * @param filename Der Name der Datei, in der der Screenshot gespeichert werden soll.
+     */
+    @API
+    public static void writeScreenshot(String filename) {
+        BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) screenshot.getGraphics();
+        gameLogic.getRenderThread().renderFrame(g2d);
+        ImageWriter.writeImage(screenshot, filename);
     }
 
     @SuppressWarnings ( "AssignmentToStaticFieldFromInstanceMethod" )

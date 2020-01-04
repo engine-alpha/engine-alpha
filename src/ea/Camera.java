@@ -258,7 +258,7 @@ public final class Camera {
         Vector locationInWorldCameraRelative = position.fromThisTo(locationInWorld);
         Vector cameraRelativeLocInPx = position.multiply(pixelPerMeter);
 
-        Vector frameSize = Game.getSizeInPixels();
+        Vector frameSize = Game.getFrameSizeInPixels();
 
         return new Point((int) (frameSize.getX() / 2 + cameraRelativeLocInPx.getX()), (int) (frameSize.getY() / 2 + cameraRelativeLocInPx.getY()));
     }

@@ -43,7 +43,7 @@ public class JointDemo extends ForceKlickEnvironment implements KeyListener {
 
         hoverHolderBauen();
 
-        getMainLayer().setVisibleHeight(40, Game.getSizeInPixels());
+        getMainLayer().setVisibleHeight(40, Game.getFrameSizeInPixels());
 
         ball = new Circle(1);
         add(ball);

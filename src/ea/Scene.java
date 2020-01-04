@@ -162,7 +162,7 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      *
      * @return Die sichtbare Fläche auf dem Hauptlayer
      *
-     * @see Game#getSizeInPixels()
+     * @see Game#getFrameSizeInPixels()
      */
     @API
     public Bounds getVisibleArea(Vector gameSizeInPixels) {

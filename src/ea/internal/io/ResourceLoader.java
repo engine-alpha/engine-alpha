@@ -82,7 +82,7 @@ final public class ResourceLoader {
         return new File(normalizePath(normalizedFilename));
     }
 
-    private static String normalizePath(String path) {
+    static String normalizePath(String path) {
         return path.replace("\\", File.separator).replace("/", File.separator);
     }
 }
