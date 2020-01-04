@@ -89,6 +89,8 @@
             <manifest>
                 <attribute name="Main-Class" value="ea.EngineAlpha"/>
             </manifest>
+
+            <fileset dir="${src.dir}" includes="**/*.java"/>
         </jar>
     </target>
 
