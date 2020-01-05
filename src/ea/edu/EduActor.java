@@ -257,7 +257,7 @@ public abstract class EduActor<T extends Actor> {
      * @see #macheDynamisch() ()
      * @deprecated Bezeichnung ist nicht identisch mit Core Engine. Wird in zukünftigem Release entfernt.
      */
-    @Deprecated ( since = "4.0", forRemoval = true )
+    @Deprecated
     @API
     public void macheAktiv() {
         this.actor.setBodyType(BodyType.DYNAMIC);
@@ -272,7 +272,7 @@ public abstract class EduActor<T extends Actor> {
      * @see #macheStatisch()
      * @deprecated Bezeichnung ist nicht identisch mit Core Engine. Wird in zukünftigem Release entfernt.
      */
-    @Deprecated ( since = "4.0", forRemoval = true )
+    @Deprecated
     @API
     public void machePassiv() {
         this.actor.setBodyType(BodyType.STATIC);
@@ -287,7 +287,7 @@ public abstract class EduActor<T extends Actor> {
      * @see #macheSensor() ()
      * @deprecated Bezeichnung ist nicht identisch mit Core Engine. Wird in zukünftigem Release entfernt.
      */
-    @Deprecated ( since = "4.0", forRemoval = true )
+    @Deprecated
     @API
     public void macheNeutral() {
         this.actor.setBodyType(BodyType.SENSOR);
