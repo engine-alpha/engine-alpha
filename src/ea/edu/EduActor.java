@@ -253,19 +253,54 @@ public abstract class EduActor<T extends Actor> {
         return this.actor.overlaps(actor.getActor()) && this.actor.isGrounded();
     }
 
+    /**
+     * @see #macheDynamisch() ()
+     * @deprecated Bezeichnung ist nicht identisch mit Core Engine. Wird in zukünftigem Release entfernt.
+     */
+    @Deprecated ( since = "4.0", forRemoval = true )
     @API
     public void macheAktiv() {
         this.actor.setBodyType(BodyType.DYNAMIC);
     }
 
     @API
+    public void macheDynamisch() {
+        this.actor.setBodyType(BodyType.DYNAMIC);
+    }
+
+    /**
+     * @see #macheStatisch()
+     * @deprecated Bezeichnung ist nicht identisch mit Core Engine. Wird in zukünftigem Release entfernt.
+     */
+    @Deprecated ( since = "4.0", forRemoval = true )
+    @API
     public void machePassiv() {
         this.actor.setBodyType(BodyType.STATIC);
     }
 
     @API
+    public void macheStatisch() {
+        this.actor.setBodyType(BodyType.STATIC);
+    }
+
+    /**
+     * @see #macheSensor() ()
+     * @deprecated Bezeichnung ist nicht identisch mit Core Engine. Wird in zukünftigem Release entfernt.
+     */
+    @Deprecated ( since = "4.0", forRemoval = true )
+    @API
     public void macheNeutral() {
         this.actor.setBodyType(BodyType.SENSOR);
+    }
+
+    @API
+    public void macheSensor() {
+        this.actor.setBodyType(BodyType.SENSOR);
+    }
+
+    @API
+    public void macheKinematisch() {
+        this.actor.setBodyType(BodyType.KINEMATIC);
     }
 
     @API
