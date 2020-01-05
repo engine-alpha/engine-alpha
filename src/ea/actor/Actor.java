@@ -25,6 +25,7 @@ import ea.Layer;
 import ea.Vector;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.EaseInOutFloat;
+import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.event.*;
 import ea.internal.Bounds;
@@ -248,6 +249,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     public final boolean overlaps(Actor other) {
         synchronized (physicsHandlerLock) {
             return WorldHandler.isBodyCollision(physicsHandler.getBody(), other.getPhysicsHandler().getBody());
+        }
+    }
+
+    public final List<CollisionEvent<Actor>> getCollisions() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getCollisions();
         }
     }
 
@@ -953,7 +960,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
             distanceJointDef.bodyB = b;
             distanceJointDef.localAnchorA.set(anchorRelativeToThis.toVec2());
             distanceJointDef.localAnchorB.set(anchorRelativeToOther.toVec2());
-            Vector distanceBetweenBothActors = (this.getPosition().add(anchorRelativeToThis)).fromThisTo(other.getPosition().add(anchorRelativeToOther));
+            Vector distanceBetweenBothActors = (this.getPosition().add(anchorRelativeToThis)).getDistance(other.getPosition().add(anchorRelativeToOther));
             distanceJointDef.length = distanceBetweenBothActors.getLength();
 
             return (org.jbox2d.dynamics.joints.DistanceJoint) world.createJoint(distanceJointDef);

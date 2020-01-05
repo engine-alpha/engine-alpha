@@ -67,7 +67,7 @@ public class MarbleDemo extends ShowcaseDemo implements KeyListener {
             add(marble);
             marble.setBodyType(BodyType.DYNAMIC);
             marble.setPosition(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150);
-            marble.applyImpulse(new Vector(Random.nextFloat() * 200 - 100, Random.nextFloat() * -300 - 100));
+            marble.applyImpulse(new Vector(Random.getFloat() * 200 - 100, Random.getFloat() * -300 - 100));
         });
     }
 

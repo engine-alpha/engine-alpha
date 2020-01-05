@@ -1,7 +1,9 @@
 package ea.internal.physics;
 
 import ea.Vector;
+import ea.actor.Actor;
 import ea.actor.BodyType;
+import ea.collision.CollisionEvent;
 import ea.internal.annotations.Internal;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
@@ -257,4 +259,6 @@ public interface PhysicsHandler {
     PhysicsData getPhysicsData();
 
     void applyMountCallbacks(PhysicsHandler otherHandler);
+
+    List<CollisionEvent<Actor>> getCollisions();
 }

@@ -26,7 +26,7 @@ public final class Random {
      * <code>true</code>.
      */
     @API
-    public static boolean nextBoolean() {
+    public static boolean getBoolean() {
         return ThreadLocalRandom.current().nextBoolean();
     }
 
@@ -43,9 +43,7 @@ public final class Random {
     @API
     public static int nextInteger(int upperLimit) {
         if (upperLimit < 0) {
-            throw new IllegalArgumentException(
-                    "Achtung! Für eine Zufallszahl muss die definierte Obergrenze (die inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!"
-            );
+            throw new IllegalArgumentException("Achtung! Für eine Zufallszahl muss die definierte Obergrenze (die inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!");
         }
 
         return ThreadLocalRandom.current().nextInt(upperLimit + 1);
@@ -62,7 +60,7 @@ public final class Random {
      * alle möglichen Rückgaben ist <i>gleich groß</i>.
      */
     @API
-    public static int nextInteger(int lowerLimit, int upperLimit) {
+    public static int getInt(int lowerLimit, int upperLimit) {
         if (lowerLimit == upperLimit) {
             return lowerLimit;
         } else if (lowerLimit < upperLimit) {
@@ -80,7 +78,28 @@ public final class Random {
      * Rückgaben ist <i>gleich groß</i>.
      */
     @API
-    public static float nextFloat() {
+    public static float getFloat() {
         return ThreadLocalRandom.current().nextFloat();
+    }
+
+    /**
+     * Gibt einen <b>zufälligen</b> <code>float</code>-Wert zwischen einer festgelegten Unter- und Obergrenze
+     * zurück.<br> Die Wahrscheinlichkeiten für die Werte zwischen Unter- und Obergrenze sind gleich groß.
+     *
+     * @param lowerLimit Die niedrigste Zahl, die im Ergebnis vorkommen kann.
+     * @param upperLimit Die höchste Zahl, die im Ergebnis vorkommen kann.
+     *
+     * @return Eine Zahl <code>x</code>, wobei <code>lowerLimit &lt;= x &lt;= upperLimit</code> gilt. Die Wahrscheinlichkeit für
+     * alle möglichen Rückgaben ist <i>gleich groß</i>.
+     */
+    @API
+    public static float getFloat(float lowerLimit, float upperLimit) {
+        if (lowerLimit == upperLimit) {
+            return lowerLimit;
+        } else if (lowerLimit < upperLimit) {
+            return lowerLimit + ThreadLocalRandom.current().nextFloat() * (upperLimit - lowerLimit);
+        } else {
+            return upperLimit + ThreadLocalRandom.current().nextFloat() * (lowerLimit - upperLimit);
+        }
     }
 }

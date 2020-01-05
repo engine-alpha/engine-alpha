@@ -1,13 +1,16 @@
 package ea.internal.physics;
 
 import ea.Vector;
+import ea.actor.Actor;
 import ea.actor.BodyType;
+import ea.collision.CollisionEvent;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Transform;
 import org.jbox2d.dynamics.Body;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -228,5 +231,10 @@ public class NullHandler implements PhysicsHandler {
         }
 
         mountCallbacks.clear();
+    }
+
+    @Override
+    public List<CollisionEvent<Actor>> getCollisions() {
+        return Collections.emptyList();
     }
 }

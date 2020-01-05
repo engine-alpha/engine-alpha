@@ -66,12 +66,6 @@ public class WorldHandler implements ContactListener {
     private final Map<Body, List<CollisionListener<Actor>>> generalCollisonListeners = new HashMap<>();
 
     /**
-     * Diese Hashmap enthält sämtliche Bodies, die in der World existieren und mapt diese auf die
-     * zugehörigen Actor-Objekte.
-     */
-    private final Map<Body, Actor> worldMap = new HashMap<>();
-
-    /**
      * Diese Liste enthält die (noch nicht beendeten) Kontakte, die nicht aufgelöst werden sollen.
      */
     private final Collection<FixturePair> contactsToIgnore = new ArrayList<>();
@@ -155,29 +149,10 @@ public class WorldHandler implements ContactListener {
 
         synchronized (world) {
             body = world.createBody(bd);
-            worldMap.put(body, actor);
+            body.setUserData(actor);
         }
 
         return body;
-    }
-
-    /**
-     * Überprüft, welcher Actor mit einem bestimmten Body in der World verknüpft ist.
-     *
-     * @param body Der zu testende Body.
-     *
-     * @return Der Actor, zu dem der zu testende Body gehört.
-     *
-     * @throws RuntimeException Falls der body nicht zur World gehört.
-     */
-    @Internal
-    public Actor lookupActor(Body body) {
-        Actor result = worldMap.get(body);
-        if (result == null) {
-            throw new RuntimeException("No actor found for given body");
-        }
-
-        return result;
     }
 
     /**
@@ -189,7 +164,6 @@ public class WorldHandler implements ContactListener {
     public void removeAllInternalReferences(Body body) {
         specificCollisionListeners.remove(body);
         generalCollisonListeners.remove(body);
-        worldMap.remove(body);
     }
 
     /**
@@ -300,7 +274,7 @@ public class WorldHandler implements ContactListener {
     private void generalCheckup(Body act, Body col, Contact contact, final boolean isBegin) {
         List<CollisionListener<Actor>> list = generalCollisonListeners.get(act);
         if (list != null) {
-            Actor other = worldMap.get(col);
+            Actor other = (Actor)col.getUserData();
             if (other == null) {
                 return; // Is null on async removals
             }

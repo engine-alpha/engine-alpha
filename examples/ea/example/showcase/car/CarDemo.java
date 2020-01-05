@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2019 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2020 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,7 @@
 
 package ea.example.showcase.car;
 
-import ea.FrameUpdateListener;
-import ea.Game;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.actor.*;
 import ea.collision.CollisionEvent;
 import ea.example.showcase.ShowcaseDemo;
@@ -34,27 +31,18 @@ import java.awt.event.KeyEvent;
 
 public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
-    public static final float WHEEL_FRICTION = .8f;
-    public static final float WHEEL_RESTITUTION = .6f;
-    public static final Color WHEEL_COLOR = Color.GRAY;
+    public static final float GROUND_FRICTION = .95f;
+    public static final float GROUND_RESTITUTION = .3f;
 
-    public static final int MOTOR_LIMIT = 500;
-
-    public static final float GROUND_RESTITUTION = .6f;
-    public static final float GROUND_FRICTION = .8f;
+    public static final int MOTOR_SPEED = 80;
 
     public static void main(String[] args) {
         Game.setDebug(true);
         Game.start(Showcases.WIDTH, Showcases.HEIGHT, new CarDemo(null));
     }
 
-    private Rectangle carBody;
-    private Actor wheelFront;
-    private Actor wheelBack;
-    private PrismaticJoint springFront;
-    private PrismaticJoint springBack;
-    private RevoluteJoint motorFront;
-    private RevoluteJoint motorBack;
+    private Wheel wheelFront;
+    private Wheel wheelBack;
 
     public CarDemo(Scene parent) {
         super(parent);
@@ -65,75 +53,32 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         ground.setBodyType(BodyType.STATIC);
         ground.setFriction(GROUND_FRICTION);
         ground.setRestitution(GROUND_RESTITUTION);
+        ground.setDensity(50);
+        add(ground);
 
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i < 30; i++) {
             float offset = 180;
-            float height = (float) Math.random() * 2;
+            float height = 1 + (float) Math.random() * 2;
 
             for (int j = 0; j < 20; j += 1) {
                 Polygon g = new Polygon(new Vector(i * 20 + j, -10), new Vector(i * 20 + j + 1, -10), new Vector(i * 20 + j + 1, -10 + Math.cos(Math.toRadians((j + 1) * 18 + offset)) * height + height), new Vector(i * 20 + j, -10 + Math.cos(Math.toRadians(j * 18 + offset)) * height + height));
 
-                g.setFriction(.5f);
                 g.setBodyType(BodyType.STATIC);
                 g.setColor(Color.BLUE);
                 g.setFriction(GROUND_FRICTION);
                 g.setRestitution(GROUND_RESTITUTION);
+                g.setDensity(50);
                 add(g);
             }
         }
 
-        carBody = new Rectangle(4, 1.2f);
-        carBody.setPosition(-2, -7.5f);
-        carBody.setBodyType(BodyType.DYNAMIC);
-        carBody.setLayerPosition(2);
-        carBody.setDensity(50);
-        carBody.setBorderRadius(.5f);
+        CarBody carBody = new CarBody(0, -7.2f);
 
-        Rectangle axleFront = new Rectangle(.2f, 1);
-        axleFront.setCenter(1.3f, -7.6f);
-        axleFront.setBodyType(BodyType.DYNAMIC);
-        axleFront.setColor(Color.GRAY);
-        axleFront.setBorderRadius(.5f);
-        springFront = axleFront.createPrismaticJoint(carBody, axleFront.getCenterRelative().add(0, axleFront.getHeight() / 2), 90);
-        springFront.setLimits(-.5f, .25f);
+        wheelFront = new Wheel(1, -8, new Axle(1, -7.6f, carBody));
+        wheelBack = new Wheel(-1, -8, new Axle(-1, -7.6f, carBody));
 
-        wheelFront = new Image("game-assets/car/wheel.png", 1, 1);
-        wheelFront.setShape(() -> ShapeBuilder.createCircleShape(.5f, .5f, .5f));
-        wheelFront.setCenter(1.3f, -8);
-        wheelFront.setDensity(60);
-        wheelFront.setBodyType(BodyType.DYNAMIC);
-        wheelFront.setFriction(WHEEL_FRICTION);
-        wheelFront.setRestitution(WHEEL_RESTITUTION);
-        motorFront = wheelFront.createRevoluteJoint(axleFront, wheelFront.getCenterRelative());
-        motorFront.setMaximumMotorTorque(MOTOR_LIMIT);
-
-        Rectangle axleBack = new Rectangle(.2f, 1);
-        axleBack.setCenter(-1.3f, -7.6f);
-        axleBack.setBodyType(BodyType.DYNAMIC);
-        axleBack.setColor(Color.GRAY);
-        axleBack.setBorderRadius(.5f);
-        springBack = axleBack.createPrismaticJoint(carBody, axleBack.getCenterRelative().add(0, axleBack.getHeight() / 2), 90);
-        springBack.setLimits(-.5f, .25f);
-
-        wheelBack = new Image("game-assets/car/wheel.png", 1, 1);
-        wheelBack.setShape(() -> ShapeBuilder.createCircleShape(.5f, .5f, .5f));
-        wheelBack.setCenter(-1.3f, -8);
-        wheelBack.setDensity(60);
-        wheelBack.setBodyType(BodyType.DYNAMIC);
-        wheelBack.setFriction(WHEEL_FRICTION);
-        wheelBack.setRestitution(WHEEL_RESTITUTION);
-        motorBack = wheelBack.createRevoluteJoint(axleBack, wheelBack.getCenterRelative());
-        motorBack.setMaximumMotorTorque(MOTOR_LIMIT);
-
-        add(ground);
-        add(carBody);
-        add(axleFront);
-        add(axleBack);
-        add(wheelFront);
-        add(wheelBack);
-
-        carBody.addCollisionListener(wheelFront, CollisionEvent::ignoreCollision);
-        carBody.addCollisionListener(wheelBack, CollisionEvent::ignoreCollision);
+        // Wheels automatically add axes, and axes add the car body
+        add(wheelFront, wheelBack);
 
         setGravity(new Vector(0, -9.81f));
 
@@ -148,32 +93,136 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
         // Antriebssteuerung
         if (left ^ right) {
-            motorFront.setMotorSpeed(right ? 10 : -10);
-            motorBack.setMotorSpeed(right ? 10 : -10);
+            wheelFront.setMotorSpeed(right ? MOTOR_SPEED : -MOTOR_SPEED);
+            wheelBack.setMotorSpeed(right ? MOTOR_SPEED : -MOTOR_SPEED);
         } else {
-            motorFront.setMotorEnabled(false);
-            motorBack.setMotorEnabled(false);
+            wheelFront.setMotorEnabled(false);
+            wheelBack.setMotorEnabled(false);
         }
 
-        // Reibung der Radachse, damit Auto nicht endlos weiterfährt
-        wheelFront.applyTorque(-150 * wheelFront.getAngularVelocity());
-        wheelBack.applyTorque(-150 * wheelBack.getAngularVelocity());
-
-        // TODO Remove in real game
+        // Bremse
         if (Game.isKeyPressed(KeyEvent.VK_SPACE)) {
-            carBody.applyImpulse(new Vector(0, 100));
+            wheelFront.setMotorSpeed(0);
+            wheelBack.setMotorSpeed(0);
+        }
+    }
+
+    private static class Axle extends Rectangle implements FrameUpdateListener {
+        private PrismaticJoint spring;
+        private CarBody carBody;
+
+        public Axle(float cx, float cy, CarBody carBody) {
+            super(.2f, 1);
+
+            setCenter(cx, cy);
+            setBodyType(BodyType.DYNAMIC);
+            setColor(Color.GRAY);
+            setBorderRadius(1);
+            setDensity(50);
+
+            this.carBody = carBody;
+
+            spring = createPrismaticJoint(carBody, getCenterRelative(), 90);
+            spring.setLimits(-.15f, .15f);
+
+            addMountListener(() -> getLayer().add(carBody));
         }
 
-        // Federeffekt für die Achsen
-        float springFrontTranslation = springFront.getTranslation();
-        springFront.setMotorSpeed((springFront.getMotorSpeed() - 2 * springFrontTranslation) * .5f);
-        springFront.setMaximumMotorForce(Math.abs(5000 * springFrontTranslation));
+        @Override
+        public void onFrameUpdate(float deltaSeconds) {
+            // Federeffekt für die Achsen
+            float translation = spring.getTranslation();
+            spring.setMotorSpeed((float) Math.sin(Math.min(Math.max(-0.15f, translation), 0.15f) / .15 * Math.PI / 2) * -.1f);
+            spring.setMaximumMotorForce(Math.abs(5000));
+        }
 
-        float springBackTranslation = springBack.getTranslation();
-        springBack.setMotorSpeed((springBack.getMotorSpeed() - 2 * springBackTranslation) * .5f);
-        springBack.setMaximumMotorForce(Math.abs(5000 * springBackTranslation));
+        public CarBody getCarBody() {
+            return carBody;
+        }
+    }
 
-        // Stabilisierung der Rotation des Autos
-        carBody.applyTorque(-4000 * carBody.getAngularVelocity());
+    private static class Wheel extends Image implements FrameUpdateListener {
+        private RevoluteJoint motor;
+
+        public Wheel(float cx, float cy, Axle axle) {
+            super("game-assets/car/wheel.png", 1, 1);
+
+            setShape(() -> ShapeBuilder.createCircleShape(.5f, .5f, .5f));
+            setCenter(cx, cy);
+            setDensity(100);
+            setBodyType(BodyType.DYNAMIC);
+            setFriction(1);
+            setRestitution(.2f);
+            setDensity(150);
+
+            motor = createRevoluteJoint(axle, getCenterRelative());
+            motor.setMaximumMotorTorque(1000);
+
+            addMountListener(() -> getLayer().add(axle));
+            addCollisionListener(axle.getCarBody(), CollisionEvent::ignoreCollision);
+
+            /*
+            float overtwist = Math.abs(getAngularVelocity() * (float) Math.PI) / getVelocity().getLength();
+                    if (true || overtwist > 1.01f || overtwist < 0.98f) {
+
+                    }
+             */
+        }
+
+        public void setMotorSpeed(int speed) {
+            motor.setMotorSpeed(speed);
+        }
+
+        public void setMotorEnabled(boolean enabled) {
+            motor.setMotorEnabled(enabled);
+        }
+
+        @Override
+        public void onFrameUpdate(float deltaSeconds) {
+            // Reibung der Radachse, damit Auto nicht endlos weiterfährt
+            applyTorque(-10000 * getAngularVelocity() * deltaSeconds);
+
+            for (CollisionEvent<Actor> collision : getCollisions()) {
+                if (collision.isIgnored()) {
+                    continue;
+                }
+
+                float velocity = getVelocity().getLength();
+                float overtwist = Math.abs(getAngularVelocity() * (float) Math.PI) / velocity;
+
+                if (overtwist > 0.97 && overtwist < 1.03) {
+                    continue;
+                }
+
+                collision.getPoints().forEach((point) -> {
+                    Circle particle = new Circle(0.1f);
+                    particle.setCenter(point.add(point.getDistance(getCenter()).multiply(0.15f)));
+                    particle.setColor(Color.GRAY);
+                    particle.setLayerPosition(2);
+                    particle.animateParticle(.5f);
+                    particle.animateColor(.25f, Color.WHITE);
+                    particle.applyImpulse(collision.getTangentNormal().rotate(90 * -Math.signum(1 - overtwist) + Random.getFloat(-5, 5)).multiply(-0.05f * Math.min(Math.max(-1, 1 - overtwist), 1)));
+
+                    getLayer().add(particle);
+                });
+            }
+        }
+    }
+
+    private static class CarBody extends Rectangle implements FrameUpdateListener {
+        public CarBody(float cx, float cy) {
+            super(4, 1.2f);
+
+            setCenter(cx, cy);
+            setBodyType(BodyType.DYNAMIC);
+            setDensity(50);
+            setBorderRadius(.5f);
+        }
+
+        @Override
+        public void onFrameUpdate(float deltaSeconds) {
+            // Stabilisierung der Rotation des Autos
+            applyTorque(-40000 * deltaSeconds * getAngularVelocity());
+        }
     }
 }

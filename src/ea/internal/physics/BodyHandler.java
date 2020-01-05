@@ -3,6 +3,7 @@ package ea.internal.physics;
 import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.BodyType;
+import ea.collision.CollisionEvent;
 import ea.internal.annotations.Internal;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.Shape;
@@ -10,6 +11,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -325,7 +327,7 @@ public class BodyHandler implements PhysicsHandler {
 
         Fixture[] groundCandidates = worldHandler.queryAABB(testAABB);
         for (Fixture fixture : groundCandidates) {
-            Actor corresponding = worldHandler.lookupActor(fixture.m_body);
+            Actor corresponding = (Actor) fixture.getBody().getUserData();
             if (corresponding != null && corresponding.getBodyType() == BodyType.STATIC) {
                 return true;
             }
@@ -366,6 +368,20 @@ public class BodyHandler implements PhysicsHandler {
     @Override
     public void applyMountCallbacks(PhysicsHandler otherHandler) {
         // nothing to do
+    }
+
+    @Override
+    public List<CollisionEvent<Actor>> getCollisions() {
+        List<CollisionEvent<Actor>> contacts = new ArrayList<>();
+
+        for (ContactEdge contact = body.getContactList(); contact != null; contact = contact.next) {
+            // Contact exists with other Body. Next, check if they are actually touching
+            if (contact.contact.isTouching()) {
+                contacts.add(new CollisionEvent<>(contact.contact, (Actor) contact.other.getUserData()));
+            }
+        }
+
+        return contacts;
     }
 
     @Override

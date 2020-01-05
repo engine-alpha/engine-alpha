@@ -239,6 +239,23 @@ public final class Vector implements Cloneable {
     }
 
     /**
+     * Berechnet eine rotierte Version.
+     *
+     * @param degree Rotation in Grad
+     *
+     * @return Neues Vector-Objekt, das entsprechend der Gradzahl rotiert wurde.
+     */
+    @API
+    public Vector rotate(float degree) {
+        double angle = Math.toRadians(degree);
+
+        return new Vector( //
+                Math.cos(angle) * x + Math.sin(angle) * y, //
+                -Math.sin(angle) * x + Math.cos(angle) * y //
+        );
+    }
+
+    /**
      * Gibt den Vektor an, der den Punkt, den dieser Vektor beschreibt, zu dem Punkt verschieben würde, den ein
      * weiterer Vektor beschreibt.
      *
@@ -247,7 +264,7 @@ public final class Vector implements Cloneable {
      * @return Der Vektor, der <code>(this.x|this.y)</code> verschieben würde zu <code>(v.x|v.y)</code>.
      */
     @API
-    public Vector fromThisTo(Vector v) {
+    public Vector getDistance(Vector v) {
         return v.subtract(this);
     }
 

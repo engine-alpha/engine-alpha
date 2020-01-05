@@ -1,9 +1,15 @@
 package ea.collision;
 
+import ea.Vector;
 import ea.actor.Actor;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
+import org.jbox2d.collision.WorldManifold;
 import org.jbox2d.dynamics.contacts.Contact;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Ein Objekt der Klasse <code>CollisionEvent</code> repräsentiert eine <b>Kollision zwischen zwei Actor-Objekten</b>.
@@ -30,6 +36,8 @@ import org.jbox2d.dynamics.contacts.Contact;
  * @see <a href="http://www.iforce2d.net/b2dtut/collision-anatomy" target="_top">http://www.iforce2d.net/b2dtut/collision-anatomy</a>
  */
 public class CollisionEvent<E extends Actor> {
+    private static final ThreadLocal<WorldManifold> worldManifold = ThreadLocal.withInitial(WorldManifold::new);
+
     /**
      * Der JBox2D-Contact. Zur Manipulation der Kollision und zur Abfrage.
      */
@@ -81,5 +89,45 @@ public class CollisionEvent<E extends Actor> {
     public void ignoreCollision() {
         contact.setEnabled(false);
         colliding.getPhysicsHandler().getWorldHandler().addContactToBlacklist(contact);
+    }
+
+    @API
+    public float getTangentSpeed() {
+        return contact.getTangentSpeed();
+    }
+
+    @API
+    public Vector getTangentNormal() {
+        WorldManifold worldManifold = CollisionEvent.worldManifold.get();
+        contact.getWorldManifold(worldManifold);
+
+        Vector normal = Vector.of(worldManifold.normal);
+
+        if (contact.m_fixtureA.getBody().getUserData() == colliding) {
+            normal = normal.negate();
+        }
+
+        return normal;
+    }
+
+    @API
+    public List<Vector> getPoints() {
+        WorldManifold worldManifold = CollisionEvent.worldManifold.get();
+        contact.getWorldManifold(worldManifold);
+
+        int pointCount = contact.getManifold().pointCount;
+        if (pointCount == 0) {
+            return Collections.emptyList();
+        } else if (pointCount == 1) {
+            return Collections.singletonList(Vector.of(worldManifold.points[0]));
+        } else if (pointCount == 2) {
+            return Arrays.asList(Vector.of(worldManifold.points[0]), Vector.of(worldManifold.points[1]));
+        } else {
+            throw new IllegalStateException("Invalid contact point count: " + pointCount);
+        }
+    }
+
+    public boolean isIgnored() {
+        return !contact.isEnabled();
     }
 }

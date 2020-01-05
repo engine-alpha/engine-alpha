@@ -72,7 +72,7 @@ public final class EngineAlpha {
                     b.setFriction(1);
                     b.setBodyType(BodyType.DYNAMIC);
                     b.setColor(new Color(158, 5, 5));
-                    b.applyImpulse(new Vector(Random.nextInteger(-100, 100), 0));
+                    b.applyImpulse(new Vector(Random.getInt(-100, 100), 0));
                     spawnItem(b);
 
                     Polygon c = new Polygon(new Vector(0, 0), new Vector(1, 0), new Vector(.5, 1));
@@ -117,7 +117,7 @@ public final class EngineAlpha {
                 }
 
                 item.resetMovement();
-                item.setCenter(Random.nextInteger(-7, 7), Random.nextInteger(0, 5));
+                item.setCenter(Random.getInt(-7, 7), Random.getInt(0, 5));
             }
         });
 

@@ -280,7 +280,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
         float pixelPerMeter = calculatePixelPerMeter();
         Vector frameSize = Game.getFrameSizeInPixels();
         Vector cameraPositionInPx = new Vector(frameSize.getX() / 2, frameSize.getY() / 2);
-        Vector fromCamToPointInWorld = parent.getCamera().getPosition().multiplyX(parallaxX).multiplyY(parallaxY).fromThisTo(worldPoint);
+        Vector fromCamToPointInWorld = parent.getCamera().getPosition().multiplyX(parallaxX).multiplyY(parallaxY).getDistance(worldPoint);
         return cameraPositionInPx.add(fromCamToPointInWorld.multiplyY(-1).multiply(pixelPerMeter * parallaxZoom));
     }
 
