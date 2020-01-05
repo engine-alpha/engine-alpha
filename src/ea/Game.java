@@ -406,6 +406,16 @@ public final class Game {
     }
 
     /**
+     * Gibt die Position der Maus in der aktuell angezeigten Scene aus.
+     *
+     * @return Die Position der Maus in der aktuellen Scene (unter Einbezug von Kamerazoom und -verschiebung).
+     */
+    @API
+    public static Vector getMousePositionInCurrentScene() {
+        return scene.getMousePosition();
+    }
+
+    /**
      * Gibt an, ob die Engine gerade im Debug-Modus ausgeführt wird.
      *
      * @return ist dieser Wert <code>true</code>, wird die Engine gerade im Debug-Modus ausgeführt. Sonst ist der Wert
