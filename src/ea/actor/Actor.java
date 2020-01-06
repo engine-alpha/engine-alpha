@@ -500,6 +500,37 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #addCollisionListener(Actor, CollisionListener)
      */
     @API
+    public <E extends Actor> void addCollisionListener(Class<E> clazz, CollisionListener<E> listener) {
+        // noinspection OverlyComplexAnonymousInnerClass
+        WorldHandler.addGenericCollisionListener(new CollisionListener<Actor>() {
+            @Override
+            public void onCollision(CollisionEvent<Actor> collisionEvent) {
+                if (clazz.isInstance(collisionEvent.getColliding())) {
+                    // noinspection unchecked
+                    listener.onCollision((CollisionEvent<E>) collisionEvent);
+                }
+            }
+
+            @Override
+            public void onCollisionEnd(CollisionEvent<Actor> collisionEvent) {
+                if (clazz.isInstance(collisionEvent.getColliding())) {
+                    // noinspection unchecked
+                    listener.onCollisionEnd((CollisionEvent<E>) collisionEvent);
+                }
+            }
+        }, this);
+    }
+
+    /**
+     * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen reagiert, die dieser Actor mit seiner
+     * Umwelt erlebt.
+     *
+     * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
+     *                 allen anderen Objekten der Scene erlebt.
+     *
+     * @see #addCollisionListener(Actor, CollisionListener)
+     */
+    @API
     public void addCollisionListener(CollisionListener<Actor> listener) {
         WorldHandler.addGenericCollisionListener(listener, this);
     }

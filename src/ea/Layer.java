@@ -9,9 +9,9 @@ import ea.internal.physics.*;
 import org.jbox2d.dynamics.Body;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -65,7 +65,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
     @API
     public Layer() {
         worldHandler = new WorldHandler(this);
-        actors = new CopyOnWriteArrayList<>();
+        actors = new ArrayList<>();
         EventListenerHelper.autoRegisterListeners(this);
     }
 

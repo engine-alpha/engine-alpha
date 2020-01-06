@@ -91,7 +91,7 @@ public final class Game {
     /**
      * Aktuelle Szene des Spiels.
      */
-    private static Scene scene;
+    private static Scene scene = new Scene();
 
     private static GameLogic gameLogic;
 
@@ -148,8 +148,7 @@ public final class Game {
     @API
     public static void start(int width, int height, Scene scene) {
         if (renderPanel != null) {
-            //Start wurde schon ausgeführt.
-            throw new RuntimeException("Game.start wurde bereits ausgeführt.");
+            throw new IllegalStateException("Game.start wurde bereits ausgeführt und kann nur einmal ausgeführt werden");
         }
 
         Game.width = width;
@@ -165,10 +164,10 @@ public final class Game {
         // Center frame on screen - https://stackoverflow.com/a/144893/2373138
         frame.setLocationRelativeTo(null);
 
-        renderPanel.allocateBuffers();
-
-        // pack() already allows to create the buffer strategy for rendering
+        // pack() already allows to create the buffer strategy for rendering (but not on Windows?)
         frame.setVisible(true);
+
+        renderPanel.allocateBuffers();
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -240,7 +239,11 @@ public final class Game {
      */
     @API
     public static void transitionToScene(Scene scene) {
-        gameLogic.enqueue(() -> Game.scene = scene);
+        if (scene == null) {
+            gameLogic.enqueue(() -> Game.scene = new Scene());
+        } else {
+            gameLogic.enqueue(() -> Game.scene = scene);
+        }
     }
 
     /**
@@ -299,6 +302,9 @@ public final class Game {
             throw new RuntimeException("Fenster-Resizing ist erst möglich, nachdem Game.start ausgeführt wurde.");
         }
 
+        int diffX = (width - Game.width) / 2;
+        int diffY = (height - Game.height) / 2;
+
         Game.width = width;
         Game.height = height;
 
@@ -306,6 +312,7 @@ public final class Game {
         renderPanel.setPreferredSize(new Dimension(width, height));
 
         frame.pack();
+        frame.setLocation(frame.getLocation().x - diffX, frame.getLocation().y - diffY);
     }
 
     /**
@@ -333,7 +340,9 @@ public final class Game {
             return;
         }
 
-        mainThread.interrupt();
+        if (!mainThread.isInterrupted()) {
+            mainThread.interrupt();
+        }
     }
 
     /**
@@ -478,7 +487,7 @@ public final class Game {
     public static void writeScreenshot(String filename) {
         BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = (Graphics2D) screenshot.getGraphics();
-        gameLogic.getRenderThread().renderFrame(g2d);
+        gameLogic.render(source -> source.render(g2d, width, height));
         ImageWriter.writeImage(screenshot, filename);
     }
 
