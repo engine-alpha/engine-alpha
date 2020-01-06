@@ -226,6 +226,18 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         return splitter;
     }
 
+    private static Runnable createSplitterEmitter(Actor actor) {
+        return () -> {
+            for (CollisionEvent<Actor> collision : actor.getCollisions()) {
+                if (collision.getColliding() instanceof Wood && actor.getVelocity().getLength() > 1) {
+                    for (Vector point : collision.getPoints()) {
+                        actor.getLayer().add(createSplitter(point));
+                    }
+                }
+            }
+        };
+    }
+
     private static class Ground extends Rectangle implements Mud {
         public Ground(float startX, float endX) {
             super(endX - startX, 10);
@@ -325,15 +337,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
                 }
             });
 
-            repeat(.25f, () -> {
-                for (CollisionEvent<Actor> collision : getCollisions()) {
-                    if (collision.getColliding() instanceof Wood) {
-                        for (Vector point : collision.getPoints()) {
-                            getLayer().add(createSplitter(point));
-                        }
-                    }
-                }
-            });
+            repeat(.25f, createSplitterEmitter(this));
         }
 
         public void setMotorSpeed(int speed) {
@@ -372,15 +376,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
                 }
             });
 
-            repeat(.25f, () -> {
-                for (CollisionEvent<Actor> collision : getCollisions()) {
-                    if (collision.getColliding() instanceof Wood) {
-                        for (Vector point : collision.getPoints()) {
-                            getLayer().add(createSplitter(point));
-                        }
-                    }
-                }
-            });
+            repeat(.25f, createSplitterEmitter(this));
         }
     }
 
