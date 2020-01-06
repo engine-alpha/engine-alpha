@@ -67,9 +67,9 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
         Layer background = new Layer();
         background.setLayerPosition(-1);
-        background.setParallaxPosition(.5f, -.05f);
+        background.setParallaxPosition(.5f, .05f);
 
-        for (int i = -200; i < 200; i+= 10) {
+        for (int i = -200; i < 200; i += 10) {
             background.add(createBackgroundTile(i));
         }
 
@@ -112,9 +112,9 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
     private void createRope(int startX, int endX, Actor left, Actor right) {
         int length = (endX - startX);
 
-        Rectangle[] rope = new Rectangle[length];
+        RopeSegment[] rope = new RopeSegment[length];
         for (int i = 0; i < length; i++) {
-            rope[i] = new Rectangle(.8f, 0.2f);
+            rope[i] = new RopeSegment(.8f, 0.2f);
             rope[i].setPosition(startX + i + 0.1f, -10.2f);
             rope[i].setColor(new Color(119, 82, 54));
             rope[i].setBodyType(BodyType.DYNAMIC);
@@ -137,15 +137,8 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         add(rope);
     }
 
-    private Actor createGround(float startX, float endX) {
-        Rectangle ground = new Rectangle(endX - startX, 10);
-        ground.setPosition(startX, -20);
-        ground.setColor(GROUND_COLOR);
-        ground.setBodyType(BodyType.STATIC);
-        ground.setFriction(GROUND_FRICTION);
-        ground.setRestitution(GROUND_RESTITUTION);
-        ground.setDensity(150);
-        ground.setBorderRadius(.1f);
+    private Ground createGround(float startX, float endX) {
+        Ground ground = new Ground(startX, endX);
 
         add(ground);
 
@@ -156,7 +149,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         float offset = 180;
 
         for (int j = 0; j < 40 - 1; j += 1) {
-            Polygon ground = new Polygon(new Vector(x + j / 2f, -10), new Vector(x + j / 2f + 1, -10), new Vector(x + (j + 1) / 2f, -10 + Math.cos(Math.toRadians(((j + 1) / 2f) * 18 + offset)) * height + height), new Vector(x + j / 2f, -10 + Math.cos(Math.toRadians(j / 2f * 18 + offset)) * height + height));
+            Polygon ground = new HillSegment(new Vector(x + j / 2f, -10), new Vector(x + j / 2f + 1, -10), new Vector(x + (j + 1) / 2f, -10 + Math.cos(Math.toRadians(((j + 1) / 2f) * 18 + offset)) * height + height), new Vector(x + j / 2f, -10 + Math.cos(Math.toRadians(j / 2f * 18 + offset)) * height + height));
             ground.moveBy(0, -0.01f);
             ground.setBodyType(BodyType.STATIC);
             ground.setColor(GROUND_COLOR);
@@ -183,6 +176,25 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         } else {
             wheelFront.setMotorEnabled(false);
             wheelBack.setMotorEnabled(false);
+        }
+    }
+
+    private static class Ground extends Rectangle implements Mud {
+        public Ground(float startX, float endX) {
+            super(endX - startX, 10);
+            setPosition(startX, -20);
+            setColor(GROUND_COLOR);
+            setBodyType(BodyType.STATIC);
+            setFriction(GROUND_FRICTION);
+            setRestitution(GROUND_RESTITUTION);
+            setDensity(150);
+            setBorderRadius(.1f);
+        }
+    }
+
+    private static class HillSegment extends Polygon implements Mud {
+        public HillSegment(Vector... vectors) {
+            super(vectors);
         }
     }
 
@@ -219,9 +231,8 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         }
     }
 
-    private static class Wheel extends Image implements FrameUpdateListener {
+    private static class Wheel extends Image {
         private RevoluteJoint motor;
-        private float particleTimeRemaining;
 
         public Wheel(float cx, float cy, Axle axle) {
             super("game-assets/car/wheel-back.png", 1.4f, 1.4f);
@@ -241,6 +252,40 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
             addMountListener(() -> getLayer().add(axle));
             addCollisionListener(axle.getCarBody(), CollisionEvent::ignoreCollision);
+
+            repeat(.025f, () -> {
+                for (CollisionEvent<Actor> collision : getCollisions()) {
+                    if (collision.getColliding() instanceof Mud) {
+                        float velocity = getVelocity().getLength();
+                        float overtwist = abs(getAngularVelocity() * (float) Math.PI * 2 * 0.7f) / velocity;
+
+                        boolean slowMoving = abs(getVelocity().getX()) < 0.5f && abs(getAngularVelocity()) < 0.3f;
+                        if (overtwist > 0.95 && overtwist < 1.05 || slowMoving) {
+                            continue;
+                        }
+
+                        Vector impulse = collision.getTangentNormal() //
+                                .rotate(90) //
+                                .multiply(min(max(-1, overtwist - 1), 1));
+
+                        for (Vector point : collision.getPoints()) {
+                            float size = range(0.05f, .15f);
+                            Vector center = point.add(point.getDistance(getCenter()).multiply(size));
+                            getLayer().add(createParticle(size, center, GROUND_COLOR, impulse.rotate(range(-15, 15))));
+                        }
+                    }
+                }
+            });
+
+            repeat(.25f, () -> {
+                for (CollisionEvent<Actor> collision : getCollisions()) {
+                    if (collision.getColliding() instanceof Wood) {
+                        for (Vector point : collision.getPoints()) {
+                            getLayer().add(createSplitter(point));
+                        }
+                    }
+                }
+            });
         }
 
         public void setMotorSpeed(int speed) {
@@ -249,53 +294,6 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
         public void setMotorEnabled(boolean enabled) {
             motor.setMotorEnabled(enabled);
-        }
-
-        @Override
-        public void onFrameUpdate(float deltaSeconds) {
-            particleTimeRemaining -= deltaSeconds;
-            if (particleTimeRemaining > 0) {
-                return;
-            }
-
-            while (particleTimeRemaining < 0) {
-                particleTimeRemaining += .025f;
-
-                for (CollisionEvent<Actor> collision : getCollisions()) {
-                    if (collision.isIgnored()) {
-                        continue;
-                    }
-
-                    float velocity = getVelocity().getLength();
-                    float overtwist = abs(getAngularVelocity() * (float) Math.PI * 2 * 0.7f) / velocity;
-
-                    if (overtwist > 0.95 && overtwist < 1.05 || abs(getVelocity().getX()) < 0.5f && abs(getAngularVelocity()) < 0.3f) {
-                        continue;
-                    }
-
-                    Vector impulse = collision.getTangentNormal() //
-                            .rotate(90) //
-                            .multiply(-1f * min(max(-1, 1 - overtwist), 1));
-
-                    collision.getPoints().forEach((point) -> {
-                        float size = range(0.05f, .15f);
-
-                        Circle particle = new Circle(size);
-                        particle.setCenter(point.add(point.getDistance(getCenter()).multiply(size)));
-                        particle.setBodyType(BodyType.PARTICLE);
-                        particle.setColor(GROUND_COLOR);
-                        particle.setLayerPosition(2);
-                        particle.animateParticle(range(.1f, 3f));
-                        particle.animateColor(range(.3f, .6f), Color.BLACK);
-                        particle.applyImpulse(impulse.rotate(range(-15, 15)));
-                        particle.setGravityScale(1);
-                        particle.setLinearDamping(range(18, 22));
-                        particle.setLayerPosition(-1);
-
-                        getLayer().add(particle);
-                    });
-                }
-            }
         }
     }
 
@@ -307,6 +305,76 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
             setBodyType(BodyType.DYNAMIC);
             setDensity(100);
             setAngularDamping(0.3f);
+            setFriction(0.5f);
+            setShapes("R0,.45,2,.45&P2,1.2,2.6,1.15,3.8,0.8,3.95,0.45,2,0.45&R1,0,2,0.6");
+
+            repeat(.05f, () -> {
+                for (CollisionEvent<Actor> collision : getCollisions()) {
+                    if (collision.getColliding() instanceof Mud) {
+                        for (Vector point : collision.getPoints()) {
+                            float size = range(0.05f, .15f);
+                            Vector impulse = new Vector(range(-1f, 1f), range(-1f, 1f));
+                            getLayer().add(createParticle(size, point, Color.YELLOW, impulse));
+                        }
+                    }
+                }
+            });
+
+            repeat(.25f, () -> {
+                for (CollisionEvent<Actor> collision : getCollisions()) {
+                    if (collision.getColliding() instanceof Wood) {
+                        for (Vector point : collision.getPoints()) {
+                            getLayer().add(createSplitter(point));
+                        }
+                    }
+                }
+            });
         }
+    }
+
+    private static Actor createParticle(float size, Vector center, Color initialColor, Vector impulse) {
+        Circle particle = new Circle(size);
+        particle.setBodyType(BodyType.PARTICLE);
+        particle.setLayerPosition(2);
+        particle.setColor(initialColor);
+        particle.setCenter(center);
+        particle.animateParticle(range(.1f, 3f));
+        particle.animateColor(range(.3f, .6f), Color.BLACK);
+        particle.applyImpulse(impulse);
+        particle.setGravityScale(1);
+        particle.setLinearDamping(range(18, 22));
+        particle.setLayerPosition(-1);
+
+        return particle;
+    }
+
+    private static Actor createSplitter(Vector center) {
+        Polygon particle = new Polygon(new Vector(0, 0), new Vector(0.15f, 0), new Vector(0.15f, 0.05f));
+        particle.setBodyType(BodyType.PARTICLE);
+        particle.rotateBy(range(0, 360));
+        particle.setLayerPosition(2);
+        particle.setColor(new Color(119, 82, 54));
+        particle.setCenter(center.add(range(-.2f, .2f), range(-.2f, .2f)));
+        particle.animateParticle(range(.1f, 3f));
+        particle.setGravityScale(1);
+        particle.setLinearDamping(range(18, 22));
+        particle.setLayerPosition(-1);
+
+        return particle;
+    }
+
+    private static class RopeSegment extends Rectangle implements Wood {
+        public RopeSegment(float width, float height) {
+            super(width, height);
+        }
+    }
+
+    /**
+     * Marker für Matschboden.
+     */
+    private interface Mud {
+    }
+
+    private interface Wood {
     }
 }

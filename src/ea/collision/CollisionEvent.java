@@ -91,10 +91,10 @@ public class CollisionEvent<E extends Actor> {
         colliding.getPhysicsHandler().getWorldHandler().addContactToBlacklist(contact);
     }
 
-    @API
+    /* @API
     public float getTangentSpeed() {
-        return contact.getTangentSpeed();
-    }
+        return contact.getTangentSpeed(); // TODO Check how this works, currently returns always 0.0
+    } */
 
     @API
     public Vector getTangentNormal() {
