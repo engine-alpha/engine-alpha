@@ -75,7 +75,8 @@ public final class RenderPanel extends Canvas {
     public void render(Graphics2D g, Scene scene) {
         // Absoluter Hintergrund
         g.setColor(scene.getBackgroundColor());
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setClip(0, 0, getWidth(), getHeight());
 
         AffineTransform transform = g.getTransform();
 

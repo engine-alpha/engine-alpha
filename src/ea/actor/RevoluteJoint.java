@@ -86,6 +86,19 @@ public final class RevoluteJoint extends Joint<org.jbox2d.dynamics.joints.Revolu
     }
 
     @API
+    public void setLimits(float lowerLimit, float upperLimit) {
+        this.lowerLimit = lowerLimit;
+        this.upperLimit = upperLimit;
+        this.limitEnabled = true;
+
+        org.jbox2d.dynamics.joints.RevoluteJoint joint = getJoint();
+        if (joint != null) {
+            joint.setLimits(lowerLimit, upperLimit);
+            joint.enableLimit(true);
+        }
+    }
+
+    @API
     public float getMotorSpeed() {
         org.jbox2d.dynamics.joints.RevoluteJoint joint = getJoint();
         if (joint != null) {

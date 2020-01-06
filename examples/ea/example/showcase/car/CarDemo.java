@@ -19,10 +19,7 @@
 
 package ea.example.showcase.car;
 
-import ea.FrameUpdateListener;
-import ea.Game;
-import ea.Scene;
-import ea.Vector;
+import ea.*;
 import ea.actor.*;
 import ea.collision.CollisionEvent;
 import ea.example.showcase.ShowcaseDemo;
@@ -44,7 +41,6 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
     public static final Color GROUND_COLOR = new Color(85, 86, 81);
 
     public static void main(String[] args) {
-        Game.setDebug(true);
         Game.start(Showcases.WIDTH, Showcases.HEIGHT, new CarDemo(null));
     }
 
@@ -54,32 +50,28 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
     public CarDemo(Scene parent) {
         super(parent);
 
-        setBackgroundColor(new Color(112, 187, 250));
+        setBackgroundColor(new Color(207, 239, 252));
 
-        Rectangle ground = new Rectangle(400, 10);
-        ground.setPosition(-200, -20);
-        ground.setColor(GROUND_COLOR);
-        ground.setBodyType(BodyType.STATIC);
-        ground.setFriction(GROUND_FRICTION);
-        ground.setRestitution(GROUND_RESTITUTION);
-        ground.setDensity(50);
-        add(ground);
+        Layer background = new Layer();
+        background.setLayerPosition(-1);
+        background.setParallaxPosition(.5f, -.05f);
 
-        for (int i = 1; i < 30; i++) {
-            float offset = 180;
-            float height = 1 + (float) Math.random() * 2;
-
-            for (int j = 0; j < 20; j += 1) {
-                Polygon g = new Polygon(new Vector(i * 20 + j, -10), new Vector(i * 20 + j + 1, -10), new Vector(i * 20 + j + 1, -10 + Math.cos(Math.toRadians((j + 1) * 18 + offset)) * height + height), new Vector(i * 20 + j, -10 + Math.cos(Math.toRadians(j * 18 + offset)) * height + height));
-
-                g.setBodyType(BodyType.STATIC);
-                g.setColor(GROUND_COLOR);
-                g.setFriction(GROUND_FRICTION);
-                g.setRestitution(GROUND_RESTITUTION);
-                g.setDensity(50);
-                add(g);
-            }
+        for (int i = -200; i < 200; i+= 10) {
+            background.add(createBackgroundTile(i));
         }
+
+        addLayer(background);
+
+        Actor left = createGround(-200, -20);
+        Actor middle = createGround(-10, 70);
+        Actor right = createGround(85, 170);
+
+        createRope(-20, -10, left, middle);
+        createRope(70, 85, middle, right);
+
+        createHill(5, range(1, 2));
+        createHill(25, range(1, 2));
+        createHill(45, range(1, 2));
 
         CarBody carBody = new CarBody(0, -8f);
 
@@ -94,6 +86,73 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         getCamera().setZoom(60);
         getCamera().setFocus(carBody);
         getCamera().setOffset(new Vector(0, 3));
+    }
+
+    private Actor createBackgroundTile(int x) {
+        Image image = new Image("game-assets/car/background-color-grass.png", 10, 10);
+        image.setPosition(x, -7);
+        image.setGravityScale(0);
+
+        return image;
+    }
+
+    private void createRope(int startX, int endX, Actor left, Actor right) {
+        int length = (endX - startX);
+
+        Rectangle[] rope = new Rectangle[length];
+        for (int i = 0; i < length; i++) {
+            rope[i] = new Rectangle(.8f, 0.2f);
+            rope[i].setPosition(startX + i + 0.1f, -10.2f);
+            rope[i].setColor(new Color(119, 82, 54));
+            rope[i].setBodyType(BodyType.DYNAMIC);
+            rope[i].setDensity(150);
+            rope[i].setFriction(GROUND_FRICTION);
+            rope[i].setRestitution(GROUND_RESTITUTION);
+            rope[i].setBorderRadius(.5f);
+
+            if (i == 0) {
+                rope[0].createRevoluteJoint(left, new Vector(-.1f, .2f)).setLimits(0, 0.1f);
+            } else {
+                if (i == length - 1) {
+                    rope[length - 1].createRevoluteJoint(right, new Vector(.9f, .2f)).setLimits(0, 0.1f);
+                }
+
+                rope[i - 1].createRevoluteJoint(rope[i], new Vector(.9f, .2f)).setLimits(0, 0.1f);
+            }
+        }
+
+        add(rope);
+    }
+
+    private Actor createGround(float startX, float endX) {
+        Rectangle ground = new Rectangle(endX - startX, 10);
+        ground.setPosition(startX, -20);
+        ground.setColor(GROUND_COLOR);
+        ground.setBodyType(BodyType.STATIC);
+        ground.setFriction(GROUND_FRICTION);
+        ground.setRestitution(GROUND_RESTITUTION);
+        ground.setDensity(150);
+        ground.setBorderRadius(.1f);
+
+        add(ground);
+
+        return ground;
+    }
+
+    private void createHill(float x, float height) {
+        float offset = 180;
+
+        for (int j = 0; j < 40 - 1; j += 1) {
+            Polygon ground = new Polygon(new Vector(x + j / 2f, -10), new Vector(x + j / 2f + 1, -10), new Vector(x + (j + 1) / 2f, -10 + Math.cos(Math.toRadians(((j + 1) / 2f) * 18 + offset)) * height + height), new Vector(x + j / 2f, -10 + Math.cos(Math.toRadians(j / 2f * 18 + offset)) * height + height));
+            ground.moveBy(0, -0.01f);
+            ground.setBodyType(BodyType.STATIC);
+            ground.setColor(GROUND_COLOR);
+            ground.setFriction(GROUND_FRICTION);
+            ground.setRestitution(GROUND_RESTITUTION);
+            ground.setDensity(50);
+
+            add(ground);
+        }
     }
 
     @Override
@@ -197,13 +256,13 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
                     float velocity = getVelocity().getLength();
                     float overtwist = abs(getAngularVelocity() * (float) Math.PI * 2 * 0.7f) / velocity;
 
-                    if (overtwist > 0.95 && overtwist < 1.05 || abs(getVelocity().getX()) < 0.001f && getAngularVelocity() < 0.01f) {
+                    if (overtwist > 0.95 && overtwist < 1.05 || abs(getVelocity().getX()) < 0.5f && abs(getAngularVelocity()) < 0.3f) {
                         continue;
                     }
 
                     Vector impulse = collision.getTangentNormal() //
                             .rotate(90) //
-                            .multiply(-0.3f * min(max(-1, 1 - overtwist), 1));
+                            .multiply(-1f * min(max(-1, 1 - overtwist), 1));
 
                     collision.getPoints().forEach((point) -> {
                         float size = range(0.05f, .15f);
@@ -229,7 +288,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
     private static class CarBody extends Image {
         public CarBody(float cx, float cy) {
-            super("game-assets/car/truck.png", 4, 1.2f);
+            super("game-assets/car/truck-240px.png", 4, 1.2f);
 
             setCenter(cx, cy);
             setBodyType(BodyType.DYNAMIC);
