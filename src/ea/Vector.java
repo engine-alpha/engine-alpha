@@ -107,6 +107,11 @@ public final class Vector implements Cloneable {
         this.y = end.y - start.y;
     }
 
+    public static Vector ofAngle(float angleInDegree) {
+        double rad = Math.toRadians(angleInDegree);
+        return new Vector(Math.cos(rad), Math.sin(rad));
+    }
+
     @API
     public float getX() {
         return x;

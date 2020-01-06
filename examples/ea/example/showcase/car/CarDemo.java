@@ -358,7 +358,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
             setDensity(100);
             setAngularDamping(0.3f);
             setFriction(0.5f);
-            setShapes("R0,.45,2,.45&P2,1.2,2.6,1.15,3.8,0.8,3.95,0.45,2,0.45&R1,0,2,0.6");
+            setFixtures("R0,.45,2,.45&P2,1.2,2.6,1.15,3.8,0.8,3.95,0.45,2,0.45&R1,0,2,0.6");
 
             repeat(.05f, () -> {
                 if (getVelocity().getLength() < 0.1f) {

@@ -33,7 +33,6 @@ import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.*;
-import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -96,8 +95,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     private PhysicsHandler physicsHandler;
 
-    private final Object physicsHandlerLock = new Object();
-
     private final EventListeners<Runnable> mountListeners = new EventListeners<>();
     private final EventListeners<Runnable> unmountListeners = new EventListeners<>();
     private final EventListeners<KeyListener> keyListeners = new EventListeners<>(createParentSupplier(Layer::getKeyListeners));
@@ -121,47 +118,35 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
     @API
     public final void addMountListener(Runnable listener) {
-        synchronized (physicsHandlerLock) {
-            mountListeners.add(listener);
+        mountListeners.add(listener);
 
-            if (isMounted()) {
-                listener.run();
-            }
+        if (isMounted()) {
+            listener.run();
         }
     }
 
     @API
     public final void removeMountListener(Runnable listener) {
-        synchronized (physicsHandlerLock) {
-            mountListeners.remove(listener);
-        }
+        mountListeners.remove(listener);
     }
 
     @API
     public final void addUnmountListener(Runnable listener) {
-        synchronized (physicsHandlerLock) {
-            unmountListeners.add(listener);
-        }
+        unmountListeners.add(listener);
     }
 
     @API
     public final void removeUnmountListener(Runnable listener) {
-        synchronized (physicsHandlerLock) {
-            unmountListeners.remove(listener);
-        }
+        unmountListeners.remove(listener);
     }
-
-    /* _________________________ Getter & Setter (die sonst nicht zuordbar) _________________________ */
 
     /**
      * Setzt den Layer dieses Actors. Je größer, desto weiter vorne wird ein Actor gezeichnet.
-     * <b>Diese Methode muss ausgeführt werden, bevor der Actor zu einer ActorGroup hinzugefügt
-     * wird.</b>
      *
      * @param position Layer-Index
      */
     @API
-    public void setLayerPosition(int position) {
+    public final void setLayerPosition(int position) {
         this.layerPosition = position;
     }
 
@@ -171,7 +156,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @return Layer-Index
      */
     @API
-    public int getLayerPosition() {
+    public final int getLayerPosition() {
         return this.layerPosition;
     }
 
@@ -179,7 +164,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Setzt die Sichtbarkeit des Objektes.
      *
      * @param visible Ob das Objekt isVisible sein soll oder nicht.<br> Ist dieser Wert
-     *                <code>false</code>, so wird es nicht im Window gezeichnet.
+     *                <code>false</code>, so wird es nicht gezeichnet.
      *
      * @see #isVisible()
      */
@@ -189,9 +174,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Gibt an, ob das Actor-Objekt isVisible ist.
+     * Gibt an, ob das Actor-Objekt sichtbar ist.
      *
-     * @return Ist <code>true</code>, wenn das Actor-Objekt zur Zeit isVisible ist.
+     * @return Ist <code>true</code>, wenn das Actor-Objekt zur Zeit sichtbar ist.
      *
      * @see #setVisible(boolean)
      */
@@ -206,22 +191,20 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @return Gibt die aktuelle Opacity des Raumes zurück.
      */
     @API
-    public float getOpacity() {
+    public final float getOpacity() {
         return opacity;
     }
 
     /**
      * Setzt die Opacity des Raumes.
      * <p>
-     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Actor.</li>
+     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen (transparenten) Actor.</li>
      * <li><code>1.0f</code> entspricht einem undurchsichtigem Actor.</li></ul>
      */
     @API
-    public void setOpacity(float opacity) {
+    public final void setOpacity(float opacity) {
         this.opacity = opacity;
     }
-
-    /* _________________________ API-Methoden in der Klasse direkt _________________________ */
 
     /**
      * Prueft, ob ein bestimmter Point innerhalb des Actor-Objekts liegt.
@@ -232,13 +215,11 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public final boolean contains(Vector p) {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.contains(p);
-        }
+        return physicsHandler.contains(p);
     }
 
     /**
-     * Prueft, ob dieser Actor sich mit einem weiteren Actor schneidet.<br> Für die Überprüfung des Überlappens werden
+     * Prüft, ob dieser Actor sich mit einem weiteren Actor schneidet.<br> Für die Überprüfung des Überlappens werden
      * die internen <b>Collider</b> genutzt. Je nach Genauigkeit der Collider kann die Überprüfung unterschiedlich
      * befriedigend ausfallen. Die Collider können im <b>Debug-Modus</b> der Engine eingesehen werden.
      *
@@ -251,18 +232,15 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public final boolean overlaps(Actor other) {
-        synchronized (physicsHandlerLock) {
-            return WorldHandler.isBodyCollision(physicsHandler.getBody(), other.getPhysicsHandler().getBody());
-        }
+        Body a = physicsHandler.getBody();
+        Body b = other.getPhysicsHandler().getBody();
+
+        return WorldHandler.isBodyCollision(a, b);
     }
 
     public final List<CollisionEvent<Actor>> getCollisions() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getCollisions();
-        }
+        return physicsHandler.getCollisions();
     }
-
-    /* _________________________ Utilities, interne & überschriebene Methoden _________________________ */
 
     /**
      * Setzt, was für eine Type physikalisches Objekt das Objekt sein soll. Erläuterung findet
@@ -273,14 +251,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see BodyType
      */
     @API
-    public void setBodyType(BodyType type) {
+    public final void setBodyType(BodyType type) {
         if (type == null) {
-            throw new IllegalArgumentException("BodyType darf nicht null sein");
+            throw new IllegalArgumentException("Typ darf nicht null sein");
         }
 
-        synchronized (physicsHandlerLock) {
-            this.physicsHandler.setType(type);
-        }
+        this.physicsHandler.setType(type);
     }
 
     /**
@@ -291,10 +267,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see BodyType
      */
     @API
-    public BodyType getBodyType() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getType();
-        }
+    public final BodyType getBodyType() {
+        return physicsHandler.getType();
     }
 
     /**
@@ -332,9 +306,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public final void setFixtures(Supplier<List<FixtureData>> fixturesSupplier) {
-        synchronized (physicsHandlerLock) {
-            this.physicsHandler.setFixtures(fixturesSupplier);
-        }
+        this.physicsHandler.setFixtures(fixturesSupplier);
     }
 
     /**
@@ -346,60 +318,58 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *          werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
      */
     @Internal
-    public void renderBasic(Graphics2D g, Bounds r, float pixelPerMeter) {
+    public final void renderBasic(Graphics2D g, Bounds r, float pixelPerMeter) {
         if (visible && this.isWithinBounds(r)) {
-            synchronized (physicsHandlerLock) {
-                float rotation = physicsHandler.getRotation();
-                Vector position = physicsHandler.getPosition();
+            float rotation = physicsHandler.getRotation();
+            Vector position = physicsHandler.getPosition();
 
-                // ____ Pre-Render ____
+            // ____ Pre-Render ____
 
-                AffineTransform transform = g.getTransform();
+            AffineTransform transform = g.getTransform();
 
-                g.rotate(-Math.toRadians(rotation), position.getX() * pixelPerMeter, -position.getY() * pixelPerMeter);
-                g.translate(position.getX() * pixelPerMeter, -position.getY() * pixelPerMeter);
+            g.rotate(-Math.toRadians(rotation), position.getX() * pixelPerMeter, -position.getY() * pixelPerMeter);
+            g.translate(position.getX() * pixelPerMeter, -position.getY() * pixelPerMeter);
 
-                // Opacity Update
-                Composite composite;
-                if (opacity != 1) {
-                    composite = g.getComposite();
-                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-                } else {
-                    composite = null;
-                }
-
-                // ____ Render ____
-
-                render(g, pixelPerMeter);
-
-                if (Game.isDebug()) {
-                    synchronized (this) {
-                        // Visualisiere die Shape
-                        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-                        Body body = physicsHandler.getBody();
-
-                        if (body != null) {
-                            Fixture fixture = body.m_fixtureList;
-                            while (fixture != null && fixture.m_shape != null) {
-                                renderShape(fixture.m_shape, g, pixelPerMeter);
-                                fixture = fixture.m_next;
-                            }
-                        }
-
-                        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    }
-                }
-
-                // ____ Post-Render ____
-
-                // Opacity Update
-                if (composite != null) {
-                    g.setComposite(composite);
-                }
-
-                // Transform zurücksetzen
-                g.setTransform(transform);
+            // Opacity Update
+            Composite composite;
+            if (opacity != 1) {
+                composite = g.getComposite();
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+            } else {
+                composite = null;
             }
+
+            // ____ Render ____
+
+            render(g, pixelPerMeter);
+
+            if (Game.isDebug()) {
+                synchronized (this) {
+                    // Visualisiere die Shape
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+                    Body body = physicsHandler.getBody();
+
+                    if (body != null) {
+                        Fixture fixture = body.m_fixtureList;
+                        while (fixture != null && fixture.m_shape != null) {
+                            renderShape(fixture.m_shape, g, pixelPerMeter);
+                            fixture = fixture.m_next;
+                        }
+                    }
+
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                }
+            }
+
+            // ____ Post-Render ____
+
+            // Opacity Update
+            if (composite != null) {
+                g.setComposite(composite);
+            }
+
+            // Transform zurücksetzen
+            g.setTransform(transform);
         }
     }
 
@@ -411,7 +381,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *              eingestellt sein. Diese Methode übernimmt nur das direkte rendern.
      */
     @Internal
-    public static void renderShape(Shape shape, Graphics2D g, float pixelPerMeter) {
+    private static void renderShape(Shape shape, Graphics2D g, float pixelPerMeter) {
         if (shape == null) {
             return;
         }
@@ -439,7 +409,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
             float diameter = (circleShape.m_radius * 2);
             g.drawOval((int) ((circleShape.m_p.x - circleShape.m_radius) * pixelPerMeter), (int) ((-circleShape.m_p.y - circleShape.m_radius) * pixelPerMeter), (int) (diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter));
         } else {
-            Logger.error("Debug/Render", "Konnte die Shape (" + shape + ") nicht rendern. Unerwartete Shape.");
+            throw new RuntimeException("Konnte die Shape (" + shape + ") nicht rendern, unerwartete Shape");
         }
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -463,14 +433,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Gibt den aktuellen, internen Physics-Handler aus.
      *
-     * @return der aktuellen, internen WorldHandler-Handler aus.
+     * @return der aktuellen, internen Physics-Handler aus.
      */
     @Internal
-    public PhysicsHandler getPhysicsHandler() {
+    public final PhysicsHandler getPhysicsHandler() {
         return physicsHandler;
     }
-
-    /* _________________________ Listeners _________________________ */
 
     /**
      * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen zwischen diesem Actor und dem Actor
@@ -486,7 +454,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #addCollisionListener(CollisionListener)
      */
     @API
-    public <E extends Actor> void addCollisionListener(E collider, CollisionListener<E> listener) {
+    public final <E extends Actor> void addCollisionListener(E collider, CollisionListener<E> listener) {
         WorldHandler.addSpecificCollisionListener(this, collider, listener);
     }
 
@@ -500,7 +468,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #addCollisionListener(Actor, CollisionListener)
      */
     @API
-    public <E extends Actor> void addCollisionListener(Class<E> clazz, CollisionListener<E> listener) {
+    public final <E extends Actor> void addCollisionListener(Class<E> clazz, CollisionListener<E> listener) {
         // noinspection OverlyComplexAnonymousInnerClass
         WorldHandler.addGenericCollisionListener(new CollisionListener<Actor>() {
             @Override
@@ -526,16 +494,14 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Umwelt erlebt.
      *
      * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
-     *                 allen anderen Objekten der Scene erlebt.
+     *                 allen anderen Objekten der Szene erlebt.
      *
      * @see #addCollisionListener(Actor, CollisionListener)
      */
     @API
-    public void addCollisionListener(CollisionListener<Actor> listener) {
+    public final void addCollisionListener(CollisionListener<Actor> listener) {
         WorldHandler.addGenericCollisionListener(listener, this);
     }
-
-    /* _________________________ Kontrakt: Abstrakte Methoden/Funktionen eines Actor-Objekts _________________________ */
 
     /**
      * Rendert das Objekt am Ursprung. <ul> <li>Die Position ist (0|0).</li> <li>Die Roation ist 0.</li> </ul>
@@ -546,57 +512,53 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     public abstract void render(Graphics2D g, float pixelPerMeter);
 
     @Internal
-    public void setPhysicsHandler(PhysicsHandler handler) {
-        synchronized (physicsHandlerLock) {
-            WorldHandler worldHandler = handler.getWorldHandler();
-            WorldHandler previousWorldHandler = physicsHandler.getWorldHandler();
+    public final void setPhysicsHandler(PhysicsHandler handler) {
+        WorldHandler worldHandler = handler.getWorldHandler();
+        WorldHandler previousWorldHandler = physicsHandler.getWorldHandler();
 
-            if (worldHandler == null) {
-                if (previousWorldHandler == null) {
-                    return;
-                }
-
-                Layer layer = previousWorldHandler.getLayer();
-
-                keyListeners.invoke(layer::removeKeyListener);
-                mouseClickListeners.invoke(layer::removeMouseClickListener);
-                mouseWheelListeners.invoke(layer::removeMouseWheelListener);
-                frameUpdateListeners.invoke(layer::removeFrameUpdateListener);
-
-                unmountListeners.invoke(Runnable::run);
-
-                physicsHandler = handler;
-            } else {
-                if (previousWorldHandler != null) {
-                    return;
-                }
-
-                physicsHandler = handler;
-
-                Layer layer = worldHandler.getLayer();
-
-                mountListeners.invoke(Runnable::run);
-
-                keyListeners.invoke(layer::addKeyListener);
-                mouseClickListeners.invoke(layer::addMouseClickListener);
-                mouseWheelListeners.invoke(layer::addMouseWheelListener);
-                frameUpdateListeners.invoke(layer::addFrameUpdateListener);
+        if (worldHandler == null) {
+            if (previousWorldHandler == null) {
+                return;
             }
+
+            Layer layer = previousWorldHandler.getLayer();
+
+            keyListeners.invoke(layer::removeKeyListener);
+            mouseClickListeners.invoke(layer::removeMouseClickListener);
+            mouseWheelListeners.invoke(layer::removeMouseWheelListener);
+            frameUpdateListeners.invoke(layer::removeFrameUpdateListener);
+
+            unmountListeners.invoke(Runnable::run);
+
+            physicsHandler = handler;
+        } else {
+            if (previousWorldHandler != null) {
+                return;
+            }
+
+            physicsHandler = handler;
+
+            Layer layer = worldHandler.getLayer();
+
+            mountListeners.invoke(Runnable::run);
+
+            keyListeners.invoke(layer::addKeyListener);
+            mouseClickListeners.invoke(layer::addMouseClickListener);
+            mouseWheelListeners.invoke(layer::addMouseWheelListener);
+            frameUpdateListeners.invoke(layer::addFrameUpdateListener);
         }
     }
 
-    public Layer getLayer() {
-        synchronized (physicsHandlerLock) {
-            WorldHandler worldHandler = physicsHandler.getWorldHandler();
-            if (worldHandler == null) {
-                return null;
-            }
-
-            return worldHandler.getLayer();
+    public final Layer getLayer() {
+        WorldHandler worldHandler = physicsHandler.getWorldHandler();
+        if (worldHandler == null) {
+            return null;
         }
+
+        return worldHandler.getLayer();
     }
 
-    public void remove() {
+    public final void remove() {
         Layer layer = getLayer();
         if (layer != null) {
             layer.remove(this);
@@ -604,22 +566,22 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     @API
-    public EventListeners<KeyListener> getKeyListeners() {
+    public final EventListeners<KeyListener> getKeyListeners() {
         return keyListeners;
     }
 
     @API
-    public EventListeners<MouseClickListener> getMouseClickListeners() {
+    public final EventListeners<MouseClickListener> getMouseClickListeners() {
         return mouseClickListeners;
     }
 
     @API
-    public EventListeners<MouseWheelListener> getMouseWheelListeners() {
+    public final EventListeners<MouseWheelListener> getMouseWheelListeners() {
         return mouseWheelListeners;
     }
 
     @API
-    public EventListeners<FrameUpdateListener> getFrameUpdateListeners() {
+    public final EventListeners<FrameUpdateListener> getFrameUpdateListeners() {
         return frameUpdateListeners;
     }
 
@@ -641,10 +603,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #isRotationLocked()
      */
     @API
-    public void setRotationLocked(boolean rotationLocked) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setRotationLocked(rotationLocked);
-        }
+    public final void setRotationLocked(boolean rotationLocked) {
+        physicsHandler.setRotationLocked(rotationLocked);
     }
 
     /**
@@ -657,10 +617,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #setRotationLocked(boolean)
      */
     @API
-    public boolean isRotationLocked() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.isRotationLocked();
-        }
+    public final boolean isRotationLocked() {
+        return physicsHandler.isRotationLocked();
     }
 
     /**
@@ -670,10 +628,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @return Die Masse des Ziel-Objekts in <b>[kg]</b>.
      */
     @API
-    public float getMass() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getMass();
-        }
+    public final float getMass() {
+        return physicsHandler.getMass();
     }
 
     /**
@@ -683,10 +639,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param densityInKgProQM die neue Dichte des Objekts in <b>[kg/m^2]</b>
      */
     @API
-    public void setDensity(float densityInKgProQM) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setDensity(densityInKgProQM);
-        }
+    public final void setDensity(float densityInKgProQM) {
+        physicsHandler.setDensity(densityInKgProQM);
     }
 
     /**
@@ -695,10 +649,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @return Die aktuelle Dichte des Objekts in <b>[kg/m^2]</b>.
      */
     @API
-    public float getDensity() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getDensity();
-        }
+    public final float getDensity() {
+        return physicsHandler.getDensity();
     }
 
     /**
@@ -707,10 +659,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param factor Gravitationsfaktor
      */
     @API
-    public void setGravityScale(float factor) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setGravityScale(factor);
-        }
+    public final void setGravityScale(float factor) {
+        physicsHandler.setGravityScale(factor);
     }
 
     /**
@@ -719,10 +669,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @return Gravitationsfaktor
      */
     @API
-    public float getGravityScale() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getGravityScale();
-        }
+    public final float getGravityScale() {
+        return physicsHandler.getGravityScale();
     }
 
     /**
@@ -732,10 +680,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param friction Der Reibungskoeffizient. In der Regel im Bereich <b>[0; 1]</b>.
      */
     @API
-    public void setFriction(float friction) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setFriction(friction);
-        }
+    public final void setFriction(float friction) {
+        physicsHandler.setFriction(friction);
     }
 
     /**
@@ -745,38 +691,28 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * ein Wert im Bereich <b>[0; 1]</b>.
      */
     @API
-    public float getFriction() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getFriction();
-        }
+    public final float getFriction() {
+        return physicsHandler.getFriction();
     }
 
     @API
-    public void setAngularDamping(float damping) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setAngularDamping(damping);
-        }
+    public final void setAngularDamping(float damping) {
+        physicsHandler.setAngularDamping(damping);
     }
 
     @API
-    public float getAngularDamping() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getAngularDamping();
-        }
+    public final float getAngularDamping() {
+        return physicsHandler.getAngularDamping();
     }
 
     @API
-    public void setLinearDamping(float damping) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setLinearDamping(damping);
-        }
+    public final void setLinearDamping(float damping) {
+        physicsHandler.setLinearDamping(damping);
     }
 
     @API
-    public float getLinearDamping() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getLinearDamping();
-        }
+    public final float getLinearDamping() {
+        return physicsHandler.getLinearDamping();
     }
 
     /**
@@ -788,10 +724,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *                        bewegen soll. In <b>[m / s]</b>
      */
     @API
-    public void setVelocity(Vector velocityInMPerS) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setVelocity(velocityInMPerS);
+    public final void setVelocity(Vector velocityInMPerS) {
+        if (velocityInMPerS.isNaN()) {
+            return;
         }
+
+        physicsHandler.setVelocity(velocityInMPerS);
     }
 
     /**
@@ -801,10 +739,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * In <b>[m / s]</b>
      */
     @API
-    public Vector getVelocity() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getVelocity();
-        }
+    public final Vector getVelocity() {
+        return physicsHandler.getVelocity();
     }
 
     /**
@@ -813,10 +749,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @return Die aktuelle Drehgeschwindigkeit.
      */
     @API
-    public float getAngularVelocity() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getAngularVelocity();
-        }
+    public final float getAngularVelocity() {
+        return physicsHandler.getAngularVelocity();
     }
 
     /**
@@ -827,24 +761,26 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *                           bewegen soll. In <b>[Umdrehnungen / s]</b>
      */
     @API
-    public void setAngularVelocity(float rotationsPerSecond) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setAngularVelocity(rotationsPerSecond);
+    public final void setAngularVelocity(float rotationsPerSecond) {
+        if (Float.isNaN(rotationsPerSecond)) {
+            return;
         }
+
+        physicsHandler.setAngularVelocity(rotationsPerSecond);
     }
 
     @API
-    public void setRestitution(float restitution) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setRestitution(restitution);
+    public final void setRestitution(float restitution) {
+        if (Float.isNaN(restitution)) {
+            return;
         }
+
+        physicsHandler.setRestitution(restitution);
     }
 
     @API
-    public float getRestitution() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getRestitution();
-        }
+    public final float getRestitution() {
+        return physicsHandler.getRestitution();
     }
 
     /**
@@ -853,14 +789,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param torque Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
      */
     @API
-    public void applyTorque(float torque) {
+    public final void applyTorque(float torque) {
         if (Float.isNaN(torque)) {
             return;
         }
 
-        synchronized (physicsHandlerLock) {
-            physicsHandler.applyTorque(torque);
-        }
+        physicsHandler.applyTorque(torque);
     }
 
     /**
@@ -869,14 +803,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param newton Kraftvektor in <b>[N]</b>
      */
     @API
-    public void applyForce(Vector newton) {
+    public final void applyForce(Vector newton) {
         if (newton.isNaN()) {
             return;
         }
 
-        synchronized (physicsHandlerLock) {
-            physicsHandler.applyForce(newton);
-        }
+        physicsHandler.applyForce(newton);
     }
 
     /**
@@ -886,14 +818,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param globalPoint Ort auf der <i>Zeichenebene</i>, an dem die Kraft wirken soll.
      */
     @API
-    public void applyForce(Vector newton, Vector globalPoint) {
+    public final void applyForce(Vector newton, Vector globalPoint) {
         if (newton.isNaN() || globalPoint.isNaN()) {
             return;
         }
 
-        synchronized (physicsHandlerLock) {
-            physicsHandler.applyForce(newton, globalPoint);
-        }
+        physicsHandler.applyForce(newton, globalPoint);
     }
 
     /**
@@ -902,14 +832,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param newtonSeconds Impuls in <b>[Ns]</b>, der auf den Schwerpunkt wirken soll
      */
     @API
-    public void applyImpulse(Vector newtonSeconds) {
+    public final void applyImpulse(Vector newtonSeconds) {
         if (newtonSeconds.isNaN()) {
             return; // ignore invalid impulses, they make box2d hang
         }
 
-        synchronized (physicsHandlerLock) {
-            physicsHandler.applyImpluse(newtonSeconds, physicsHandler.getCenter());
-        }
+        physicsHandler.applyImpluse(newtonSeconds, physicsHandler.getCenter());
     }
 
     /**
@@ -919,10 +847,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param globalPoint   Ort auf der <i>Zeichenebene</i>, an dem der Impuls wirken soll
      */
     @API
-    public void applyImpulse(Vector newtonSeconds, Vector globalPoint) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.applyImpluse(newtonSeconds, globalPoint);
-        }
+    public final void applyImpulse(Vector newtonSeconds, Vector globalPoint) {
+        physicsHandler.applyImpluse(newtonSeconds, globalPoint);
     }
 
     /**
@@ -932,10 +858,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * wird dieses Objekt jedoch möglicherweise aus der Ruhelage wieder in Bewegung versetzt.
      */
     @API
-    public void resetMovement() {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.resetMovement();
-        }
+    public final void resetMovement() {
+        physicsHandler.resetMovement();
     }
 
     /**
@@ -952,10 +876,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * </ul>
      */
     @API
-    public boolean isGrounded() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.isGrounded();
-        }
+    public final boolean isGrounded() {
+        return physicsHandler.isGrounded();
     }
 
     /* _________________________ JOINTS _________________________ */
@@ -978,7 +900,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
-    public RevoluteJoint createRevoluteJoint(Actor other, Vector relativeAnchor) {
+    public final RevoluteJoint createRevoluteJoint(Actor other, Vector relativeAnchor) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
             RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
             revoluteJointDef.initialize(a, b, getPosition().add(relativeAnchor).toVec2());
@@ -1009,7 +931,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see org.jbox2d.dynamics.joints.RopeJoint
      */
     @API
-    public RopeJoint createRopeJoint(Actor other, Vector relativeAnchor, Vector relativeAnchorOther, float ropeLength) {
+    public final RopeJoint createRopeJoint(Actor other, Vector relativeAnchor, Vector relativeAnchorOther, float ropeLength) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
             RopeJointDef ropeJointDef = new RopeJointDef();
             ropeJointDef.bodyA = a;
@@ -1024,7 +946,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     @API
-    public PrismaticJoint createPrismaticJoint(Actor other, Vector anchor, float axisAngle) {
+    public final PrismaticJoint createPrismaticJoint(Actor other, Vector anchor, float axisAngle) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
             double angleInRadians = Math.toRadians(axisAngle);
 
@@ -1053,7 +975,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see org.jbox2d.dynamics.joints.DistanceJoint
      */
     @API
-    public DistanceJoint createDistanceJoint(Actor other, Vector anchorRelativeToThis, Vector anchorRelativeToOther) {
+    public final DistanceJoint createDistanceJoint(Actor other, Vector anchorRelativeToThis, Vector anchorRelativeToOther) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
             DistanceJointDef distanceJointDef = new DistanceJointDef();
 
@@ -1081,7 +1003,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #setY(float)
      */
     @API
-    public void setPosition(float x, float y) {
+    public final void setPosition(float x, float y) {
         this.setPosition(new Vector(x, y));
     }
 
@@ -1089,7 +1011,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Setzt die Position des Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
      * gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
-     * @param p Der neue Zielpunkt
+     * @param position Der neue Zielpunkt
      *
      * @see #setPosition(float, float)
      * @see #setCenter(float, float)
@@ -1097,13 +1019,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #setY(float)
      */
     @API
-    public void setPosition(Vector p) {
-        this.moveBy(new Vector(p.getX() - this.getX(), p.getY() - this.getY()));
+    public final void setPosition(Vector position) {
+        this.moveBy(position.subtract(getPosition()));
     }
 
     /**
-     * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene. Dies ist die <b>zentrale</b>
-     * Methode zum
+     * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene.
      *
      * @param v Der Vector, der die Verschiebung des Objekts angibt.
      *
@@ -1111,10 +1032,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #moveBy(float, float)
      */
     @API
-    public void moveBy(Vector v) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.moveBy(v);
-        }
+    public final void moveBy(Vector v) {
+        physicsHandler.moveBy(v);
     }
 
     /**
@@ -1128,13 +1047,14 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param y Die <code>getY</code>-Koordinate des neuen Mittelpunktes des Objektes
      *
      * @see #setCenter(Vector)
+     * @see #moveBy(float, float)
      * @see #moveBy(Vector)
      * @see #setPosition(float, float)
      * @see #setPosition(Vector)
      * @see #getCenter()
      */
     @API
-    public void setCenter(float x, float y) {
+    public final void setCenter(float x, float y) {
         this.setCenter(new Vector(x, y));
     }
 
@@ -1145,16 +1065,18 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * ein ActorGroup-Objekt nicht unbedingt sinnvoll.<br> Macht dasselbe wie
      * <code>mittelPunktSetzen(p.getX, p.getY)</code>.
      *
-     * @param p Der neue Mittelpunkt des Actor-Objekts
+     * @param center Der neue Mittelpunkt des Actor-Objekts
      *
      * @see #setCenter(float, float)
+     * @see #moveBy(float, float)
      * @see #moveBy(Vector)
      * @see #setPosition(float, float)
+     * @see #setPosition(Vector)
      * @see #getCenter()
      */
     @API
-    public void setCenter(Vector p) {
-        this.moveBy(this.getCenter().negate().add(p));
+    public final void setCenter(Vector center) {
+        this.moveBy(this.getCenter().negate().add(center));
     }
 
     /**
@@ -1168,7 +1090,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #getPosition()
      */
     @API
-    public float getX() {
+    public final float getX() {
         return this.getPosition().getX();
     }
 
@@ -1183,7 +1105,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #setY(float)
      */
     @API
-    public void setX(float x) {
+    public final void setX(float x) {
         this.moveBy(x - getX(), 0);
     }
 
@@ -1197,7 +1119,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #getPosition()
      */
     @API
-    public float getY() {
+    public final float getY() {
         return this.getPosition().getY();
     }
 
@@ -1216,7 +1138,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #setX(float)
      */
     @API
-    public void setY(float y) {
+    public final void setY(float y) {
         this.moveBy(0, y - getY());
     }
 
@@ -1228,14 +1150,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #getPosition()
      */
     @API
-    public Vector getCenter() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getCenter();
-        }
+    public final Vector getCenter() {
+        return physicsHandler.getCenter();
     }
 
     @API
-    public Vector getCenterRelative() {
+    public final Vector getCenterRelative() {
         return getCenter().subtract(getPosition());
     }
 
@@ -1250,7 +1170,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see #moveBy(Vector)
      */
     @API
-    public void moveBy(float dX, float dY) {
+    public final void moveBy(float dX, float dY) {
         this.moveBy(new Vector(dX, dY));
     }
 
@@ -1260,10 +1180,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @return die aktuelle Position dieses <code>Actor</code>-Objekts.
      */
     @API
-    public Vector getPosition() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getPosition();
-        }
+    public final Vector getPosition() {
+        return physicsHandler.getPosition();
     }
 
     /**
@@ -1272,7 +1190,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param degree Der Winkel (in <b>Grad</b>), um den das Objekt rotiert werden soll.
      */
     @API
-    public void rotateBy(float degree) {
+    public final void rotateBy(float degree) {
         physicsHandler.rotateBy(degree);
     }
 
@@ -1284,10 +1202,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * <code>0</code> zurück).
      */
     @API
-    public float getRotation() {
-        synchronized (physicsHandlerLock) {
-            return physicsHandler.getRotation();
-        }
+    public final float getRotation() {
+        return physicsHandler.getRotation();
     }
 
     /**
@@ -1297,14 +1213,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *               Initialisierung</b> rotiert werden soll.
      */
     @API
-    public void setRotation(float degree) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.setRotation(degree);
-        }
+    public final void setRotation(float degree) {
+        physicsHandler.setRotation(degree);
     }
 
     @API
-    public boolean isMounted() {
+    public final boolean isMounted() {
         return getLayer() != null;
     }
 
@@ -1315,7 +1229,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param lifetime Lebenszeit in Sekunden
      */
     @API
-    public ValueAnimator<Float> animateParticle(float lifetime) {
+    public final ValueAnimator<Float> animateParticle(float lifetime) {
         setBodyType(BodyType.PARTICLE);
 
         setOpacity(1);
@@ -1339,7 +1253,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @see ea.animation.interpolation.EaseInOutFloat
      */
     @API
-    public ValueAnimator<Float> animateOpacity(float time, float toOpacityValue) {
+    public final ValueAnimator<Float> animateOpacity(float time, float toOpacityValue) {
         ValueAnimator<Float> animator = new ValueAnimator<>(time, this::setOpacity, new EaseInOutFloat(getOpacity(), toOpacityValue), this);
         addFrameUpdateListener(animator);
 
@@ -1347,9 +1261,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     @Internal
-    static void assertWidthAndHeight(float width, float height) {
+    static void assertPositiveWidthAndHeight(float width, float height) {
         if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("Höhe und Breite dürfen nicht negativ sein! Waren: " + width + " und " + height);
+            throw new IllegalArgumentException("Breite und Höhe müssen größer 0 sein! " + width + " / " + height);
         }
     }
 }

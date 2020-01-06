@@ -61,7 +61,7 @@ public class Rectangle extends Geometry {
     public Rectangle(float width, float height, Supplier<FixtureData> shapeSupplier) {
         super(shapeSupplier);
 
-        assertWidthAndHeight(width, height);
+        assertPositiveWidthAndHeight(width, height);
 
         this.width = width;
         this.height = height;
@@ -85,7 +85,7 @@ public class Rectangle extends Geometry {
      */
     @API
     public void setSize(float width, float height) {
-        assertWidthAndHeight(width, height);
+        assertPositiveWidthAndHeight(width, height);
 
         this.width = width;
         this.height = height;

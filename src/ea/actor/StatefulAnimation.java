@@ -310,7 +310,7 @@ public class StatefulAnimation<State> extends Actor {
      */
     @API
     public void setSize(float width, float height) {
-        assertWidthAndHeight(width, height);
+        assertPositiveWidthAndHeight(width, height);
 
         this.width = width;
         this.height = height;
