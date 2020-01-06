@@ -190,7 +190,7 @@ public final class GameLogic {
 
         float pixelPerMeter = camera.getZoom();
 
-        g.rotate(rotation, 0, 0);
+        g.rotate(Math.toRadians(rotation), 0, 0);
         g.translate(-position.getX() * pixelPerMeter, position.getY() * pixelPerMeter);
 
         int gridSizeInMeters = Math.round(GRID_SIZE_IN_PIXELS / pixelPerMeter);

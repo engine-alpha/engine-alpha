@@ -352,7 +352,7 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
 
         float pixelPerMeter = calculatePixelPerMeter();
 
-        g.rotate(rotation * parallaxRotation, 0, 0);
+        g.rotate(Math.toRadians(rotation) * parallaxRotation, 0, 0);
         g.translate((-position.getX() * parallaxX) * pixelPerMeter, (position.getY() * parallaxY) * pixelPerMeter);
 
         // TODO: Calculate optimal bounds

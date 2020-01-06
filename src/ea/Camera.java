@@ -73,7 +73,7 @@ public final class Camera {
     private float zoom = DEFAULT_ZOOM;
 
     /**
-     * Die aktuelle Drehung in Radians.
+     * Die aktuelle Drehung in Grad.
      */
     private float rotation = 0;
 
@@ -225,13 +225,13 @@ public final class Camera {
     }
 
     @API
-    public void rotateBy(float radians) {
-        this.rotation += radians;
+    public void rotateBy(float degree) {
+        this.rotation += degree;
     }
 
     @API
-    public void rotateTo(float radians) {
-        this.rotation = radians;
+    public void rotateTo(float degree) {
+        this.rotation = degree;
     }
 
     /**

@@ -220,7 +220,7 @@ public final class Game {
         float rotation = scene.getCamera().getRotation();
         Vector position = scene.getCamera().getPosition();
 
-        return new Vector(position.getX() + (((float) Math.cos(Math.toRadians(rotation)) * (mousePosition.x - width / 2f) + (float) Math.sin(Math.toRadians(rotation)) * (mousePosition.y - height / 2f))) / zoom, position.getY() + (((float) Math.sin(rotation) * (mousePosition.x - width / 2f) - (float) Math.cos(rotation) * (mousePosition.y - height / 2f))) / zoom);
+        return new Vector(position.getX() + (((float) Math.cos(Math.toRadians(rotation)) * (mousePosition.x - width / 2f) + (float) Math.sin(Math.toRadians(rotation)) * (mousePosition.y - height / 2f))) / zoom, position.getY() + (((float) Math.sin(Math.toRadians(rotation)) * (mousePosition.x - width / 2f) - (float) Math.cos(Math.toRadians(rotation)) * (mousePosition.y - height / 2f))) / zoom);
     }
 
     /**
