@@ -39,6 +39,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
     public static final int MOTOR_SPEED = 80;
     public static final Color GROUND_COLOR = new Color(85, 86, 81);
+    public static final int ZOOM = 60;
 
     public static void main(String[] args) {
         Game.start(Showcases.WIDTH, Showcases.HEIGHT, new CarDemo(null));
@@ -51,6 +52,18 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         super(parent);
 
         setBackgroundColor(new Color(207, 239, 252));
+
+        Layer blend = new Layer();
+        Rectangle blender = new Rectangle((float) Showcases.WIDTH / ZOOM, (float) Showcases.HEIGHT / ZOOM);
+        blender.setColor(Color.BLACK);
+        blender.setCenter(0, 0);
+        blend.add(blender);
+        blend.setParallaxRotation(0);
+        blend.setParallaxPosition(0, 0);
+        blend.setLayerPosition(10);
+        addLayer(blend);
+
+        delay(.5f, () -> blender.animateOpacity(.5f, 0));
 
         Layer background = new Layer();
         background.setLayerPosition(-1);
@@ -83,7 +96,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
         setGravity(new Vector(0, -9.81f));
 
-        getCamera().setZoom(60);
+        getCamera().setZoom(ZOOM);
         getCamera().setFocus(carBody);
         getCamera().setOffset(new Vector(0, 3));
     }
