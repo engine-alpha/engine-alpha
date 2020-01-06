@@ -5,7 +5,6 @@ import ea.actor.Actor;
 import ea.actor.BodyType;
 import ea.collision.CollisionEvent;
 import org.jbox2d.collision.AABB;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Transform;
 import org.jbox2d.dynamics.Body;
 
@@ -43,9 +42,9 @@ public class NullHandler implements PhysicsHandler {
         AABB shapeBounds = new AABB();
         Transform transform = new Transform();
 
-        for (Shape shape : physicsData.getShapes().get()) {
+        for (FixtureData fixtureData : physicsData.getFixtures().get()) {
             transform.set(getPosition().toVec2(), (float) Math.toRadians(getRotation()));
-            shape.computeAABB(shapeBounds, transform, 0);
+            fixtureData.getShape().computeAABB(shapeBounds, transform, 0);
 
             if (bounds != null) {
                 bounds.combine(shapeBounds);
@@ -95,12 +94,12 @@ public class NullHandler implements PhysicsHandler {
         if (density <= 0) {
             throw new IllegalArgumentException("Dichte kann nicht kleiner als 0 sein. Eingabe war " + density + ".");
         }
-        this.physicsData.setDensity(density);
+        this.physicsData.setGlobalDensity(density);
     }
 
     @Override
     public float getDensity() {
-        return this.physicsData.getDensity();
+        return this.physicsData.getGlobalDensity();
     }
 
     @Override
@@ -115,22 +114,22 @@ public class NullHandler implements PhysicsHandler {
 
     @Override
     public void setFriction(float friction) {
-        this.physicsData.setFriction(friction);
+        this.physicsData.setGlobalFriction(friction);
     }
 
     @Override
     public float getFriction() {
-        return this.physicsData.getFriction();
+        return this.physicsData.getGlobalFriction();
     }
 
     @Override
     public void setRestitution(float elasticity) {
-        this.physicsData.setRestitution(elasticity);
+        this.physicsData.setGlobalRestitution(elasticity);
     }
 
     @Override
     public float getRestitution() {
-        return this.physicsData.getRestitution();
+        return this.physicsData.getGlobalRestitution();
     }
 
     @Override
@@ -246,8 +245,8 @@ public class NullHandler implements PhysicsHandler {
     }
 
     @Override
-    public void setShapes(Supplier<List<Shape>> shapes) {
-        physicsData.setShapes(shapes);
+    public void setFixtures(Supplier<List<FixtureData>> shapes) {
+        physicsData.setFixtures(shapes);
     }
 
     @Override

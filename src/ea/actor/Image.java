@@ -19,7 +19,7 @@
 
 package ea.actor;
 
-import ea.internal.ShapeBuilder;
+import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.io.ImageLoader;
@@ -52,7 +52,7 @@ public class Image extends Actor {
      */
     @API
     public Image(String filepath, float width, float height) {
-        super(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
+        super(() -> FixtureBuilder.createSimpleRectangularFixture(width, height));
         assertViableSizes(width, height);
         this.image = ImageLoader.load(filepath);
 
@@ -69,7 +69,7 @@ public class Image extends Actor {
      */
     @API
     public Image(String filepath, final float pixelPerMeter) {
-        super(() -> ShapeBuilder.createSimpleRectangularShape(ImageLoader.load(filepath).getWidth() / pixelPerMeter, ImageLoader.load(filepath).getHeight() / pixelPerMeter));
+        super(() -> FixtureBuilder.createSimpleRectangularFixture(ImageLoader.load(filepath).getWidth() / pixelPerMeter, ImageLoader.load(filepath).getHeight() / pixelPerMeter));
         assertViablePPM(pixelPerMeter);
         this.image = ImageLoader.load(filepath);
 
@@ -100,7 +100,7 @@ public class Image extends Actor {
         assertViableSizes(width, height);
         this.width = width;
         this.height = height;
-        this.setShape(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
+        this.setFixture(() -> FixtureBuilder.createSimpleRectangularFixture(width, height));
     }
 
     /**

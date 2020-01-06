@@ -8,6 +8,7 @@ import ea.animation.LineAnimation;
 import ea.edu.event.KollisionsReagierbar;
 import ea.edu.internal.EduScene;
 import ea.event.AggregateFrameUpdateListener;
+import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
@@ -430,11 +431,11 @@ public abstract class EduActor<T extends Actor> {
      *
      * @param kollisionsFormenCode Der Code, der die Kollisionsformen für dieses Objekt beschreibt.
      *
-     * @see ea.internal.ShapeBuilder#fromString(String)
+     * @see FixtureBuilder#fromString(String)
      */
     @API
     public void setzeKollisionsformen(String kollisionsFormenCode) {
-        this.actor.setShapes(kollisionsFormenCode);
+        this.actor.setFixtures(kollisionsFormenCode);
     }
 
     /**

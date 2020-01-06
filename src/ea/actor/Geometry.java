@@ -23,7 +23,7 @@ import ea.animation.AnimationMode;
 import ea.animation.ValueAnimator;
 import ea.animation.interpolation.LinearFloat;
 import ea.internal.annotations.API;
-import org.jbox2d.collision.shapes.Shape;
+import ea.internal.physics.FixtureData;
 
 import java.awt.Color;
 import java.util.function.Supplier;
@@ -44,8 +44,8 @@ public abstract class Geometry extends Actor {
      * Konstruktor.
      */
     @API
-    public Geometry(Supplier<Shape> shapeSupplier) {
-        super(shapeSupplier);
+    public Geometry(Supplier<FixtureData> fixtureSupplier) {
+        super(fixtureSupplier);
     }
 
     /**

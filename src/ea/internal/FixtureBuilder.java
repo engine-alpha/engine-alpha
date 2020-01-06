@@ -20,6 +20,7 @@
 package ea.internal;
 
 import ea.Vector;
+import ea.internal.physics.FixtureData;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
-public final class ShapeBuilder {
+public final class FixtureBuilder {
     /**
      * Erstellt eine <i>einfache</i> rechteckige Shape. Einfach bedeutet: Sie beginnt immer bei (0|0) und Breite/Höhe
      * ist parallel zu den Koordinatenaxen.
@@ -38,14 +39,12 @@ public final class ShapeBuilder {
      * @param width  Die Breite der rechteckigen Shape.
      * @param height Die Höhe der rechteckigen Shape.
      */
-    public static Shape createSimpleRectangularShape(float width, float height) {
+    public static FixtureData createSimpleRectangularFixture(float width, float height) {
         PolygonShape shape = new PolygonShape();
-
         shape.set(new Vec2[] {new Vec2(0, 0), new Vec2(0, height), new Vec2(width, height), new Vec2(width, 0)}, 4);
-
         shape.m_centroid.set(new Vec2(width / 2, height / 2));
 
-        return shape;
+        return new FixtureData(shape);
     }
 
     /**
@@ -55,11 +54,11 @@ public final class ShapeBuilder {
      * @param my Der Mittelpunkt des Kreises, Y-Koordinate.
      * @param r  Der Radius des Kreises
      */
-    public static Shape createCircleShape(float mx, float my, float r) {
+    public static FixtureData createCircleShape(float mx, float my, float r) {
         CircleShape circleShape = new CircleShape();
         circleShape.m_p.set(mx, my);
         circleShape.setRadius(r);
-        return circleShape;
+        return new FixtureData(circleShape);
     }
 
     /**
@@ -68,7 +67,7 @@ public final class ShapeBuilder {
      *
      * @param points Ein Reihe an Punkten, die nacheinander diese Shape beschreiben (mindestens 3 Punkte).
      */
-    public static Shape createPolygonShape(Vector... points) {
+    public static FixtureData createPolygonShape(Vector... points) {
         if (points.length < 3) {
             throw new IllegalArgumentException("Eine polygonale Shape benötigt mindestens 3 Punkte.");
         }
@@ -78,7 +77,7 @@ public final class ShapeBuilder {
         }
         PolygonShape polygonShape = new PolygonShape();
         polygonShape.set(vec2s, vec2s.length);
-        return polygonShape;
+        return new FixtureData(polygonShape);
     }
 
     /**
@@ -105,17 +104,17 @@ public final class ShapeBuilder {
      *             <li>Kreis:  <code>C10,10,40</code> Kreis mit Mittelpunkt (10|10) und Radius 40</li>
      *             </ul>
      */
-    public static Supplier<List<Shape>> fromString(String code) {
+    public static Supplier<List<FixtureData>> fromString(String code) {
         //Leerzeichen raus
         code.replace(" ", "");
 
         Scanner scanner = new Scanner(code);
         scanner.useDelimiter("&");
-        ArrayList<Shape> shapeList = new ArrayList<>();
+        ArrayList<FixtureData> shapeList = new ArrayList<>();
         while (scanner.hasNext()) {
             String line = scanner.next();
             Shape shape = fromLine(line);
-            shapeList.add(shape);
+            shapeList.add(new FixtureData(shape));
         }
         return () -> shapeList;
     }
@@ -152,7 +151,10 @@ public final class ShapeBuilder {
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Fehlerhafte Eingabe");
                 }
-                return createCircleShape(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
+                CircleShape circleShape = new CircleShape();
+                circleShape.m_p.set(Float.parseFloat(split[0]), Float.parseFloat(split[1]));
+                circleShape.setRadius(Float.parseFloat(split[2]));
+                return circleShape;
             default:
                 throw new IllegalArgumentException("Fehlerhafte Eingabe!");
         }

@@ -21,7 +21,7 @@ package ea.actor;
 
 import ea.FrameUpdateListener;
 import ea.event.EventListeners;
-import ea.internal.ShapeBuilder;
+import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.AnimationFrame;
@@ -69,7 +69,7 @@ public class Animation extends Actor implements FrameUpdateListener {
                 throw new RuntimeException("Eine Animation kann nicht mit einem leeren Frames-Array initialisiert werden.");
             }
 
-            return ShapeBuilder.createSimpleRectangularShape(width, height);
+            return FixtureBuilder.createSimpleRectangularFixture(width, height);
         });
 
         for (AnimationFrame frame : frames) {

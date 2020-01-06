@@ -6,11 +6,9 @@ import ea.actor.BodyType;
 import ea.collision.CollisionEvent;
 import ea.internal.annotations.Internal;
 import org.jbox2d.collision.AABB;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 
 import java.util.ArrayList;
@@ -373,7 +371,7 @@ public class BodyHandler implements PhysicsHandler {
     }
 
     @Override
-    public void setShapes(Supplier<List<Shape>> shapes) {
+    public void setFixtures(Supplier<List<FixtureData>> fixtures) {
         synchronized (worldHandler) {
             PhysicsData physicsData = this.getPhysicsData();
 
@@ -381,10 +379,8 @@ public class BodyHandler implements PhysicsHandler {
                 body.destroyFixture(fixture);
             }
 
-            FixtureDef fixtureDef = physicsData.createPlainFixtureDef();
-            for (Shape shape : shapes.get()) {
-                fixtureDef.shape = shape;
-                body.createFixture(fixtureDef);
+            for (FixtureData fixtureData : fixtures.get()) {
+                body.createFixture(fixtureData.createFixtureDef(physicsData));
             }
         }
     }
@@ -392,13 +388,7 @@ public class BodyHandler implements PhysicsHandler {
     @Override
     @Internal
     public PhysicsData getPhysicsData() {
-        final List<Shape> shapeList = new ArrayList<>();
-
-        for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
-            shapeList.add(fixture.m_shape);
-        }
-
-        return PhysicsData.fromBody(body, () -> shapeList, getType());
+        return PhysicsData.fromBody(body, getType());
     }
 
     @Override

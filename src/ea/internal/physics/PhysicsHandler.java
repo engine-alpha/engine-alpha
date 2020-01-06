@@ -5,7 +5,6 @@ import ea.actor.Actor;
 import ea.actor.BodyType;
 import ea.collision.CollisionEvent;
 import ea.internal.annotations.Internal;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.Body;
 
 import java.util.List;
@@ -261,12 +260,12 @@ public interface PhysicsHandler {
     boolean isGrounded();
 
     /**
-     * Entfernt alle Shapes/Collider am Actor und setzt alle Shapes für dieses Objekt neu.
+     * Entfernt alle Fixtures/Collider am Actor und setzt alle Fixturs für dieses Objekt neu.
      *
-     * @param shapes Die neuen Shapes als Supplier, der die Liste der Shapes ausgibt.
+     * @param fixtures Die neuen Fixtures als Supplier, der die Liste der Fixtures ausgibt.
      */
     @Internal
-    void setShapes(Supplier<List<Shape>> shapes);
+    void setFixtures(Supplier<List<FixtureData>> fixtures);
 
     /**
      * Gibt die Proxy-Daten des Actors aus.

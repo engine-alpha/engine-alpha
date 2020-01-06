@@ -24,7 +24,7 @@ import ea.actor.*;
 import ea.collision.CollisionEvent;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
-import ea.internal.ShapeBuilder;
+import ea.internal.FixtureBuilder;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -69,7 +69,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         background.setLayerPosition(-1);
         background.setParallaxPosition(.5f, -.05f);
 
-        for (int i = -200; i < 200; i+= 10) {
+        for (int i = -200; i < 200; i += 10) {
             background.add(createBackgroundTile(i));
         }
 
@@ -226,7 +226,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         public Wheel(float cx, float cy, Axle axle) {
             super("game-assets/car/wheel-back.png", 1.4f, 1.4f);
 
-            setShape(() -> ShapeBuilder.createCircleShape(.7f, .7f, .7f));
+            setFixture(() -> FixtureBuilder.createCircleShape(.7f, .7f, .7f));
             setCenter(cx, cy);
             setDensity(100);
             setBodyType(BodyType.DYNAMIC);

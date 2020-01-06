@@ -29,13 +29,10 @@ import ea.collision.CollisionEvent;
 import ea.collision.CollisionListener;
 import ea.event.*;
 import ea.internal.Bounds;
-import ea.internal.ShapeBuilder;
+import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
-import ea.internal.physics.NullHandler;
-import ea.internal.physics.PhysicsData;
-import ea.internal.physics.PhysicsHandler;
-import ea.internal.physics.WorldHandler;
+import ea.internal.physics.*;
 import ea.internal.util.Logger;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -110,8 +107,15 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
     /* _________________________ Die Handler _________________________ */
 
-    public Actor(Supplier<Shape> shapeSupplier) {
-        this.physicsHandler = new NullHandler(new PhysicsData(() -> Collections.singletonList(shapeSupplier.get())));
+    /**
+     * Erstellt ein Actor-Objekt
+     *
+     * @param defaultFixtureSupplier Ein Supplier, der die default-Shape für diesen Actor generiert.
+     *                               Die ist in der Regel ein optimal gelegtes Rechteck parallel zu den Axen bei
+     *                               Rotationswinkel 0.
+     */
+    public Actor(Supplier<FixtureData> defaultFixtureSupplier) {
+        this.physicsHandler = new NullHandler(new PhysicsData(() -> Collections.singletonList(defaultFixtureSupplier.get())));
         EventListenerHelper.autoRegisterListeners(this);
     }
 
@@ -298,40 +302,38 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param shapeCode der Shape-Code
      *
-     * @see ShapeBuilder#fromString(String)
-     * @see #setShape(Supplier)
-     * @see #setShapes(Supplier)
+     * @see FixtureBuilder#fromString(String)
+     * @see #setFixture(Supplier)
+     * @see #setFixtures(Supplier)
      */
     @API
-    public final void setShapes(String shapeCode) {
-        this.setShapes(ShapeBuilder.fromString(shapeCode));
+    public final void setFixtures(String shapeCode) {
+        this.setFixtures(FixtureBuilder.fromString(shapeCode));
     }
 
     /**
-     * Ändert die Shape des Actors neu in eine alternative Shape.Alle anderen physikalischen Eigenschaften bleiben
-     * weitgehend erhalten.
+     * Ändert die Fixture des Actors neu in eine einzige alternative Fixture.
      *
-     * @param shapeSupplier Der Supplier, der die neue Shape des Objektes ausgibt.
+     * @param fixtureSupplier Der Supplier, der die neue Shape des Objektes ausgibt.
      *
-     * @see #setShapes(Supplier)
+     * @see #setFixtures(Supplier)
      */
     @API
-    public final void setShape(Supplier<Shape> shapeSupplier) {
-        this.setShapes(() -> Collections.singletonList(shapeSupplier.get()));
+    public final void setFixture(Supplier<FixtureData> fixtureSupplier) {
+        this.setFixtures(() -> Collections.singletonList(fixtureSupplier.get()));
     }
 
     /**
-     * Ändert die Shapes dieses Actors in eine Reihe neuer Shapes. Alle anderen physikalischen Eigenschaften bleiben
-     * weitgehend erhalten.
+     * Ändert die Fixtures dieses Actors in eine Reihe neuer Fixtures.
      *
-     * @param shapesSupplier Ein Supplier, der eine Liste mit allen neuen Shapes für den Actor angibt.
+     * @param fixturesSupplier Ein Supplier, der eine Liste mit allen neuen Shapes für den Actor angibt.
      *
-     * @see #setShape(Supplier)
+     * @see #setFixture(Supplier)
      */
     @API
-    public final void setShapes(Supplier<List<Shape>> shapesSupplier) {
+    public final void setFixtures(Supplier<List<FixtureData>> fixturesSupplier) {
         synchronized (physicsHandlerLock) {
-            this.physicsHandler.setShapes(shapesSupplier);
+            this.physicsHandler.setFixtures(fixturesSupplier);
         }
     }
 
@@ -419,7 +421,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
         g.setColor(Color.YELLOW);
-        g.drawLine(0, 0, 0, 0);
+        g.drawOval(-1, -1, 2, 2);
         g.setColor(Color.RED);
 
         if (shape instanceof PolygonShape) {

@@ -89,12 +89,12 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
         setFriction(FRICTION);
         setRestitution(RESTITUTION);
 
-        setShapes("C0.5,0.3,0.3&C0.5,0.6,0.3");
+        setFixtures("C0.5,0.3,0.3&C0.5,0.6,0.3");
 
-        /*setShapes(() -> {
+        /*setFixtures(() -> {
             List<Shape> shapeList = new ArrayList<>(2);
-            shapeList.add(ShapeBuilder.createAxisParallelRectangularShape(0.2f, 0, 0.6f, 1f));
-            shapeList.add(ShapeBuilder.createCircleShape(.3f, .3f, 0.3f));
+            shapeList.add(FixtureBuilder.createAxisParallelRectangularShape(0.2f, 0, 0.6f, 1f));
+            shapeList.add(FixtureBuilder.createCircleShape(.3f, .3f, 0.3f));
             return shapeList;
         });*/
 

@@ -1,6 +1,6 @@
 package ea.actor;
 
-import ea.internal.ShapeBuilder;
+import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.graphics.AnimationFrame;
@@ -50,7 +50,7 @@ public class StatefulAnimation<State> extends Actor {
     private boolean animationPaused = false;
 
     public StatefulAnimation(float width, float height) {
-        super(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
+        super(() -> FixtureBuilder.createSimpleRectangularFixture(width, height));
 
         this.width = width;
         this.height = height;
@@ -315,7 +315,7 @@ public class StatefulAnimation<State> extends Actor {
         this.width = width;
         this.height = height;
 
-        this.setShape(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
+        this.setFixture(() -> FixtureBuilder.createSimpleRectangularFixture(width, height));
     }
 
     @Internal

@@ -4,10 +4,10 @@ import ea.Vector;
 import ea.actor.Actor;
 import ea.actor.BodyType;
 import ea.internal.annotations.Internal;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 
 import java.util.ArrayList;
@@ -16,14 +16,15 @@ import java.util.function.Supplier;
 
 /**
  * Diese Klasse wrappt die wesentlichen physikalischen Eigenschaften eines <code>Actor</code>-Objekts.
+ * Die
  */
 @Internal
 public class PhysicsData {
 
-    private static final float DEFAULT_DENSITY = 10f;
-    private static final float DEFAULT_FRICTION = 0f;
-    private static final float DEFAULT_RESTITUTION = 0.5f;
-    private static final BodyType DEFAULT_BODY_TYPE = BodyType.SENSOR;
+    static final float DEFAULT_DENSITY = 10f;
+    static final float DEFAULT_FRICTION = 0f;
+    static final float DEFAULT_RESTITUTION = 0.5f;
+    static final BodyType DEFAULT_BODY_TYPE = BodyType.SENSOR;
 
     private boolean rotationLocked = false;
 
@@ -32,9 +33,9 @@ public class PhysicsData {
 
     private float rotation = 0;
 
-    private float density = DEFAULT_DENSITY;
-    private float friction = DEFAULT_FRICTION;
-    private float restitution = DEFAULT_RESTITUTION;
+    private float globalDensity = DEFAULT_DENSITY;
+    private float globalFriction = DEFAULT_FRICTION;
+    private float globalRestitution = DEFAULT_RESTITUTION;
     private float torque = 0;
     private float angularVelocity = 0;
     private float gravityScale = 1;
@@ -47,19 +48,22 @@ public class PhysicsData {
 
     private BodyType type = DEFAULT_BODY_TYPE;
 
-    private Supplier<List<Shape>> shapes;
+    private Supplier<List<FixtureData>> fixtures;
 
     /**
      * Erstellt ein Proxydatenset basierend auf einem JBox2D-Body
      *
      * @param body Der zu kopierende Körper.
      */
-    public static PhysicsData fromBody(Body body, Supplier<List<Shape>> shapes, BodyType type) {
-        PhysicsData data = new PhysicsData(shapes);
+    public static PhysicsData fromBody(Body body, BodyType type) {
+        PhysicsData data = new PhysicsData(extractFixturesFromBody(body));
+
+        //Global Fixture Vals are blindly taken from first Fixture
+        data.setGlobalDensity(body.m_fixtureList.m_density);
+        data.setGlobalFriction(body.m_fixtureList.m_friction);
+        data.setGlobalRestitution(body.m_fixtureList.m_restitution);
+
         data.setRotationLocked(body.isFixedRotation());
-        data.setDensity(body.m_fixtureList.m_density);
-        data.setFriction(body.m_fixtureList.m_friction);
-        data.setRestitution(body.m_fixtureList.m_restitution);
         data.setGravityScale(body.m_gravityScale);
         data.setX(body.getPosition().x);
         data.setY(body.getPosition().y);
@@ -68,20 +72,30 @@ public class PhysicsData {
         data.setVelocity(Vector.of(body.m_linearVelocity));
         data.setAngularVelocity((float) Math.toDegrees(body.m_angularVelocity) / 360);
         data.setType(type);
-        data.setShapes(shapes);
+
         data.setAngularDamping(body.getAngularDamping());
         data.setLinearDamping(body.getLinearDamping());
 
         return data;
     }
 
+    public static Supplier<List<FixtureData>> extractFixturesFromBody(Body body) {
+        final ArrayList<FixtureData> fixtureData = new ArrayList<>();
+
+        for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
+            fixtureData.add(FixtureData.fromFixture(fixture));
+        }
+
+        return () -> fixtureData;
+    }
+
     /**
      * Default-Konstruktor erstellt ein Proxydatenset mit Standardwerten.
      *
-     * @param shapes Eine Funktion, die eine gut abschätzende Shape für das zugehörige Actor-Objekt berechnet.
+     * @param fixtures Eine Funktion, die eine gut abschätzende Shape für das zugehörige Actor-Objekt berechnet.
      */
-    public PhysicsData(Supplier<List<Shape>> shapes) {
-        setShapes(shapes);
+    public PhysicsData(Supplier<List<FixtureData>> fixtures) {
+        setFixtures(fixtures);
     }
 
     /**
@@ -89,32 +103,13 @@ public class PhysicsData {
      */
     public FixtureDef[] createFixtureDefs() {
         List<FixtureDef> fixtureDefs = new ArrayList<>();
-        List<Shape> shapeList = this.getShapes().get();
+        List<FixtureData> fixtureList = this.getFixtures().get();
 
-        for (Shape shape : shapeList) {
-            FixtureDef fixtureDef = new FixtureDef();
-            fixtureDef.density = this.getDensity();
-            fixtureDef.friction = this.getFriction();
-            fixtureDef.restitution = this.getRestitution();
-            fixtureDef.shape = shape;
-            fixtureDef.isSensor = this.getType().isSensor();
-            fixtureDefs.add(fixtureDef);
+        for (FixtureData fixtureData : fixtureList) {
+            fixtureDefs.add(fixtureData.createFixtureDef(this));
         }
 
         return fixtureDefs.toArray(new FixtureDef[0]);
-    }
-
-    /**
-     * Erstellt eine FixtureDef OHNE SHAPE
-     */
-    public FixtureDef createPlainFixtureDef() {
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = this.getDensity();
-        fixtureDef.friction = this.getFriction();
-        fixtureDef.restitution = this.getRestitution();
-        fixtureDef.isSensor = this.getType().isSensor();
-
-        return fixtureDef;
     }
 
     /**
@@ -153,6 +148,12 @@ public class PhysicsData {
         }
 
         return body;
+    }
+
+    @Internal
+    public FixtureData[] generateFixtureData() {
+        List<FixtureData> data = fixtures.get();
+        return data.toArray(new FixtureData[data.size()]);
     }
 
     public void setMass(Float mass) {
@@ -211,12 +212,12 @@ public class PhysicsData {
         this.angularDamping = angularDamping;
     }
 
-    public float getDensity() {
-        return density;
+    public float getGlobalDensity() {
+        return globalDensity;
     }
 
-    public void setDensity(float density) {
-        this.density = density;
+    public void setGlobalDensity(float globalDensity) {
+        this.globalDensity = globalDensity;
     }
 
     public float getGravityScale() {
@@ -227,20 +228,20 @@ public class PhysicsData {
         this.gravityScale = factor;
     }
 
-    public float getFriction() {
-        return friction;
+    public float getGlobalFriction() {
+        return globalFriction;
     }
 
-    public void setFriction(float friction) {
-        this.friction = friction;
+    public void setGlobalFriction(float globalFriction) {
+        this.globalFriction = globalFriction;
     }
 
-    public float getRestitution() {
-        return restitution;
+    public float getGlobalRestitution() {
+        return globalRestitution;
     }
 
-    public void setRestitution(float restitution) {
-        this.restitution = restitution;
+    public void setGlobalRestitution(float globalRestitution) {
+        this.globalRestitution = globalRestitution;
     }
 
     public float getTorque() {
@@ -267,12 +268,12 @@ public class PhysicsData {
         this.type = type;
     }
 
-    public Supplier<List<Shape>> getShapes() {
-        return shapes;
+    public Supplier<List<FixtureData>> getFixtures() {
+        return fixtures;
     }
 
-    public void setShapes(Supplier<List<Shape>> shapes) {
-        this.shapes = shapes;
+    public void setFixtures(Supplier<List<FixtureData>> fixtures) {
+        this.fixtures = fixtures;
     }
 
     public float getAngularVelocity() {

@@ -1,9 +1,9 @@
 package ea.example.showcase.dude;
 
+import ea.actor.BodyType;
 import ea.actor.Tile;
 import ea.actor.TileContainer;
 import ea.actor.TileMap;
-import ea.actor.BodyType;
 
 /**
  * Einfache Plattform. Herzlichen Dank an <a href="https://www.gameart2d.com/free-graveyard-platformer-tileset.html">Billard
@@ -20,7 +20,7 @@ public class Platform extends TileContainer {
             throw new IllegalArgumentException("Number of tiles must be at least 2");
         }
 
-        setShapes("R 0, " + (SIZE - 0.5) + "," + (SIZE * tileCount) + ", 0.5");
+        setFixtures("R 0, " + (SIZE - 0.5) + "," + (SIZE * tileCount) + ", 0.5");
 
         String basePath = "game-assets/dude/tiles/";
 

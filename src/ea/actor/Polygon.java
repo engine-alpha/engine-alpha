@@ -1,7 +1,7 @@
 package ea.actor;
 
 import ea.Vector;
-import ea.internal.ShapeBuilder;
+import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
@@ -40,7 +40,7 @@ public class Polygon extends Geometry {
      */
     @API
     public Polygon(Vector... points) {
-        super(() -> ShapeBuilder.createPolygonShape(points));
+        super(() -> FixtureBuilder.createPolygonShape(points));
         resetPoints(points);
     }
 
@@ -49,11 +49,11 @@ public class Polygon extends Geometry {
      * Polygons.
      * <i>Konkanve Streckenzüge werden durch die kleinste konvexe Körperform beschrieben, die den Streckenzug
      * umspannt.</i>
-     * Komplexere Formen können über {@code setShapes(Supplier)} physikalisch präzise umgesetzt werden.
+     * Komplexere Formen können über {@code setFixtures(Supplier)} physikalisch präzise umgesetzt werden.
      *
      * @param points Neuer Streckenzug.
      *
-     * @see ea.actor.Actor#setShapes(Supplier)
+     * @see ea.actor.Actor#setFixtures(Supplier)
      */
     @API
     public void resetPoints(Vector... points) {
@@ -71,7 +71,7 @@ public class Polygon extends Geometry {
             py[i] = points[i].getY();
         }
 
-        this.setShape(() -> ShapeBuilder.createPolygonShape(points));
+        this.setFixture(() -> FixtureBuilder.createPolygonShape(points));
     }
 
     /**

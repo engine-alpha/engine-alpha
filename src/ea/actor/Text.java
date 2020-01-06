@@ -20,12 +20,12 @@
 package ea.actor;
 
 import ea.Vector;
-import ea.internal.ShapeBuilder;
+import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.io.FontLoader;
+import ea.internal.physics.FixtureData;
 import ea.internal.util.FontMetrics;
-import org.jbox2d.collision.shapes.Shape;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -42,10 +42,10 @@ public class Text extends Geometry {
     private static final int SIZE = 1000;
 
     @Internal
-    private static Shape createShape(String content, float height, Font font) {
+    private static FixtureData createShape(String content, float height, Font font) {
         Vector sizeInPixels = ea.internal.util.FontMetrics.getSize(content, font);
 
-        return ShapeBuilder.createSimpleRectangularShape(sizeInPixels.getX() * height / sizeInPixels.getY(), height);
+        return FixtureBuilder.createSimpleRectangularFixture(sizeInPixels.getX() * height / sizeInPixels.getY(), height);
     }
 
     /**
@@ -217,7 +217,7 @@ public class Text extends Geometry {
         cachedScaleFactor = height / size.getY();
         cachedDescent = FontMetrics.getDescent(font);
 
-        setShape(() -> createShape(content, height, font));
+        setFixture(() -> createShape(content, height, font));
     }
 
     @Override

@@ -85,7 +85,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
         add(ball);
         ball.setColor(Color.RED);
         ball.setBodyType(BodyType.DYNAMIC);
-        //ball.setDensity(MASSE*X);
+        //ball.setGlobalDensity(MASSE*X);
         ball.setCenter(ABSTAND_LINKS, BODEN_TIEFE - (HOEHE_UEBER_BODEN * PIXELPROMETER + 0.5f * DURCHMESSER * PIXELPROMETER));
 
         //kamera.fokusSetzen(ball);

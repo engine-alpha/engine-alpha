@@ -19,9 +19,9 @@
 
 package ea.actor;
 
-import ea.internal.ShapeBuilder;
+import ea.internal.FixtureBuilder;
 import ea.internal.annotations.API;
-import org.jbox2d.collision.shapes.Shape;
+import ea.internal.physics.FixtureData;
 
 import java.awt.Graphics2D;
 import java.util.function.Supplier;
@@ -55,10 +55,10 @@ public class Rectangle extends Geometry {
      * @param height Die Höhe des Rechtecks
      */
     public Rectangle(float width, float height) {
-        this(width, height, () -> ShapeBuilder.createSimpleRectangularShape(width, height));
+        this(width, height, () -> FixtureBuilder.createSimpleRectangularFixture(width, height));
     }
 
-    public Rectangle(float width, float height, Supplier<Shape> shapeSupplier) {
+    public Rectangle(float width, float height, Supplier<FixtureData> shapeSupplier) {
         super(shapeSupplier);
 
         assertWidthAndHeight(width, height);
@@ -90,7 +90,7 @@ public class Rectangle extends Geometry {
         this.width = width;
         this.height = height;
 
-        this.setShape(() -> ShapeBuilder.createSimpleRectangularShape(width, height));
+        this.setFixture(() -> FixtureBuilder.createSimpleRectangularFixture(width, height));
     }
 
     @API
