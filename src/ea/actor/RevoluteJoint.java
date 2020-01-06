@@ -102,7 +102,8 @@ public final class RevoluteJoint extends Joint<org.jbox2d.dynamics.joints.Revolu
 
         org.jbox2d.dynamics.joints.RevoluteJoint joint = getJoint();
         if (joint != null) {
-            joint.setMotorSpeed((float) Math.toRadians(motorSpeed * 360));
+            float speed = (float) Math.toRadians(motorSpeed * 360);
+            joint.setMotorSpeed(speed);
             joint.enableMotor(true);
         }
     }

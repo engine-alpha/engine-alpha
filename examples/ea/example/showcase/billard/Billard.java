@@ -85,7 +85,7 @@ public class Billard extends ShowcaseDemo implements KeyListener {
     @Override
     public void onKeyDown(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            whiteBall.applyImpulse(new Vector(1000, (Random.getFloat() - .5f) * 100));
+            whiteBall.applyImpulse(new Vector(1000, (Random.range() - .5f) * 100));
         }
     }
 }

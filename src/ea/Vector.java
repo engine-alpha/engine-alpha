@@ -452,4 +452,9 @@ public final class Vector implements Cloneable {
     public Vec2 toVec2() {
         return new Vec2(x, y);
     }
+
+    @API
+    public boolean isNaN() {
+        return Float.isNaN(x) || Float.isNaN(y);
+    }
 }

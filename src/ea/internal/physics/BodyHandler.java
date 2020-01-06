@@ -135,6 +135,16 @@ public class BodyHandler implements PhysicsHandler {
     }
 
     @Override
+    public void setGravityScale(float factor) {
+        body.setGravityScale(factor);
+    }
+
+    @Override
+    public float getGravityScale() {
+        return body.getGravityScale();
+    }
+
+    @Override
     public void setFriction(float friction) {
         synchronized (worldHandler) {
             for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
@@ -160,6 +170,30 @@ public class BodyHandler implements PhysicsHandler {
     @Override
     public float getRestitution() {
         return body.m_fixtureList.getRestitution();
+    }
+
+    @Override
+    public void setLinearDamping(float damping) {
+        synchronized (worldHandler) {
+            body.setLinearDamping(damping);
+        }
+    }
+
+    @Override
+    public float getLinearDamping() {
+        return body.getLinearDamping();
+    }
+
+    @Override
+    public void setAngularDamping(float damping) {
+        synchronized (worldHandler) {
+            body.setAngularDamping(damping);
+        }
+    }
+
+    @Override
+    public float getAngularDamping() {
+        return body.getAngularDamping();
     }
 
     @Override
@@ -202,10 +236,9 @@ public class BodyHandler implements PhysicsHandler {
             body.setType(type.toBox2D());
             body.setActive(true);
             body.setAwake(true);
-            body.setGravityScale(type.getDefaultGravityScale());
 
             for (Fixture fixture = body.m_fixtureList; fixture != null; fixture = fixture.m_next) {
-                fixture.m_isSensor = type.isSensorType();
+                fixture.m_isSensor = type.isSensor();
 
                 switch (type) {
                     case SENSOR:
@@ -216,14 +249,17 @@ public class BodyHandler implements PhysicsHandler {
                         fixture.m_filter.categoryBits = WorldHandler.CATEGORY_STATIC;
                         fixture.m_filter.maskBits = DEFAULT_MASK_BITS;
                         break;
-                    case DYNAMIC:
                     case KINEMATIC:
-                        fixture.m_filter.categoryBits = WorldHandler.CATEGORY_DYNAMIC_OR_KINEMATIC;
+                        fixture.m_filter.categoryBits = WorldHandler.CATEGORY_KINEMATIC;
+                        fixture.m_filter.maskBits = DEFAULT_MASK_BITS;
+                        break;
+                    case DYNAMIC:
+                        fixture.m_filter.categoryBits = WorldHandler.CATEGORY_DYNAMIC;
                         fixture.m_filter.maskBits = DEFAULT_MASK_BITS & ~WorldHandler.CATEGORY_PARTICLE;
                         break;
                     case PARTICLE:
                         fixture.m_filter.categoryBits = WorldHandler.CATEGORY_PARTICLE;
-                        fixture.m_filter.maskBits = WorldHandler.CATEGORY_STATIC;
+                        fixture.m_filter.maskBits = WorldHandler.CATEGORY_STATIC | WorldHandler.CATEGORY_KINEMATIC;
                         break;
                     default:
                         throw new RuntimeException("Unknown body type: " + type);

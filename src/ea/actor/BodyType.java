@@ -64,12 +64,10 @@ import ea.internal.annotations.Internal;
  */
 @API
 public enum BodyType {
-    STATIC(1), DYNAMIC(1), KINEMATIC(1), SENSOR(0), PARTICLE(0);
+    STATIC, DYNAMIC, KINEMATIC, SENSOR, PARTICLE;
 
-    private float defaultGravityScale;
-
-    BodyType(float defaultGravityScale) {
-        this.defaultGravityScale = defaultGravityScale;
+    BodyType() {
+        //
     }
 
     /**
@@ -93,11 +91,7 @@ public enum BodyType {
         }
     }
 
-    public float getDefaultGravityScale() {
-        return this.defaultGravityScale;
-    }
-
-    public boolean isSensorType() {
+    public boolean isSensor() {
         return this == SENSOR;
     }
 }

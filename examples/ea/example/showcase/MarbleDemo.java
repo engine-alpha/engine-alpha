@@ -67,7 +67,7 @@ public class MarbleDemo extends ShowcaseDemo implements KeyListener {
             add(marble);
             marble.setBodyType(BodyType.DYNAMIC);
             marble.setPosition(ABSTAND_LINKS + 200, ABSTAND_OBEN - 150);
-            marble.applyImpulse(new Vector(Random.getFloat() * 200 - 100, Random.getFloat() * -300 - 100));
+            marble.applyImpulse(new Vector(Random.range() * 200 - 100, Random.range() * -300 - 100));
         });
     }
 
@@ -110,10 +110,10 @@ public class MarbleDemo extends ShowcaseDemo implements KeyListener {
             }
         }
 
-        Circle murmel = new Marble(Random.nextInteger(50) + 10);
+        Circle murmel = new Marble(Random.range(50) + 10);
         murmel.setBodyType(BodyType.DYNAMIC);
         //murmel.setMass(4);
-        murmel.setColor(new Color(Random.nextInteger(255), Random.nextInteger(255), Random.nextInteger(255)));
+        murmel.setColor(new Color(Random.range(255), Random.range(255), Random.range(255)));
 
         return murmel;
     }

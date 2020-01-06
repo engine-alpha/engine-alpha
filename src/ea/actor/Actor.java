@@ -669,6 +669,30 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
+     * Setzt den Gravitationsfaktor, normalerweise im Bereich [0, 1].
+     *
+     * @param factor Gravitationsfaktor
+     */
+    @API
+    public void setGravityScale(float factor) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setGravityScale(factor);
+        }
+    }
+
+    /**
+     * Gibt den aktuellen Gravitationsfaktor des Objekts an.
+     *
+     * @return Gravitationsfaktor
+     */
+    @API
+    public float getGravityScale() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getGravityScale();
+        }
+    }
+
+    /**
      * Setzt den Reibungskoeffizient für das Objekt. Hat Einfluss auf
      * die Bewegung des Objekts.
      *
@@ -691,6 +715,34 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     public float getFriction() {
         synchronized (physicsHandlerLock) {
             return physicsHandler.getFriction();
+        }
+    }
+
+    @API
+    public void setAngularDamping(float damping) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setAngularDamping(damping);
+        }
+    }
+
+    @API
+    public float getAngularDamping() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getAngularDamping();
+        }
+    }
+
+    @API
+    public void setLinearDamping(float damping) {
+        synchronized (physicsHandlerLock) {
+            physicsHandler.setLinearDamping(damping);
+        }
+    }
+
+    @API
+    public float getLinearDamping() {
+        synchronized (physicsHandlerLock) {
+            return physicsHandler.getLinearDamping();
         }
     }
 
@@ -762,67 +814,81 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         }
     }
 
-    /* _________________________ Doers : Direkter Effekt auf Simulation _________________________ */
-
     /**
-     * Wirkt eine Kraft auf den <i>Schwerpunkt</i> des Objekts.
+     * Wirkt einen Drehmoment auf das Objekt.
      *
-     * @param force Ein Kraft-Vector. Einheit ist <b>nicht [px], sonder [N]</b>.
-     */
-    @API
-    public void applyForce(Vector force) {
-        synchronized (physicsHandlerLock) {
-            physicsHandler.applyForce(force);
-        }
-    }
-
-    /**
-     * Wirkt einen Drehmoment auf das Ziel-Objekt.
-     *
-     * @param torque der Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
+     * @param torque Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
      */
     @API
     public void applyTorque(float torque) {
+        if (Float.isNaN(torque)) {
+            return;
+        }
+
         synchronized (physicsHandlerLock) {
             physicsHandler.applyTorque(torque);
         }
     }
 
     /**
-     * Wirkt eine Kraft auf einem bestimmten <i>Point in der Welt</i>.
+     * Wirkt eine Kraft auf den <i>Schwerpunkt</i> des Objekts.
      *
-     * @param kraftInN    Eine Kraft. Einheit ist <b>[N]</b>
-     * @param globalPoint Der Ort auf der <i>Zeichenebene</i>, an dem die Kraft wirken soll.
+     * @param newton Kraftvektor in <b>[N]</b>
      */
     @API
-    public void applyForce(Vector kraftInN, Vector globalPoint) {
+    public void applyForce(Vector newton) {
+        if (newton.isNaN()) {
+            return;
+        }
+
         synchronized (physicsHandlerLock) {
-            physicsHandler.applyForce(kraftInN, globalPoint);
+            physicsHandler.applyForce(newton);
+        }
+    }
+
+    /**
+     * Wirkt eine Kraft auf einem bestimmten <i>Punkt in der Welt</i>.
+     *
+     * @param newton      Kraft in <b>[N]</b>
+     * @param globalPoint Ort auf der <i>Zeichenebene</i>, an dem die Kraft wirken soll.
+     */
+    @API
+    public void applyForce(Vector newton, Vector globalPoint) {
+        if (newton.isNaN() || globalPoint.isNaN()) {
+            return;
+        }
+
+        synchronized (physicsHandlerLock) {
+            physicsHandler.applyForce(newton, globalPoint);
         }
     }
 
     /**
      * Wirkt einen Impuls auf den <i>Schwerpunkt</i> des Objekts.
      *
-     * @param impulseInNS Der Impuls, der auf den Schwerpunkt wirken soll. Einheit ist <b>[Ns]</b>
+     * @param newtonSeconds Impuls in <b>[Ns]</b>, der auf den Schwerpunkt wirken soll
      */
     @API
-    public void applyImpulse(Vector impulseInNS) {
+    public void applyImpulse(Vector newtonSeconds) {
+        if (newtonSeconds.isNaN()) {
+            return; // ignore invalid impulses, they make box2d hang
+        }
+
         synchronized (physicsHandlerLock) {
-            physicsHandler.applyImpluse(impulseInNS, physicsHandler.getCenter());
+            physicsHandler.applyImpluse(newtonSeconds, physicsHandler.getCenter());
         }
     }
 
     /**
      * Wirkt einen Impuls an einem bestimmten <i>Point in der Welt</i>.
      *
-     * @param impulseInNS Ein Impuls. Einheit ist <b>[Ns]</b>
-     * @param globalPoint Der Ort auf der <i>Zeichenebene</i>, an dem der Impuls wirken soll.
+     * @param newtonSeconds Impuls in <b>[Ns]</b>
+     * @param globalPoint   Ort auf der <i>Zeichenebene</i>, an dem der Impuls wirken soll
      */
     @API
-    public void applyImpulse(Vector impulseInNS, Vector globalPoint) {
+    public void applyImpulse(Vector newtonSeconds, Vector globalPoint) {
         synchronized (physicsHandlerLock) {
-            physicsHandler.applyImpluse(impulseInNS, globalPoint);
+            physicsHandler.applyImpluse(newtonSeconds, globalPoint);
         }
     }
 
@@ -927,8 +993,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     @API
     public PrismaticJoint createPrismaticJoint(Actor other, Vector anchor, float axisAngle) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {
+            double angleInRadians = Math.toRadians(axisAngle);
+
             PrismaticJointDef prismaticJointDef = new PrismaticJointDef();
-            prismaticJointDef.initialize(a, b, getPosition().add(anchor).toVec2(), new Vec2((float) Math.cos(Math.toRadians(axisAngle)), (float) Math.sin(Math.toRadians(axisAngle))));
+            prismaticJointDef.initialize(a, b, getPosition().add(anchor).toVec2(), new Vec2((float) Math.cos(angleInRadians), (float) Math.sin(angleInRadians)));
             prismaticJointDef.collideConnected = false;
 
             return (org.jbox2d.dynamics.joints.PrismaticJoint) world.createJoint(prismaticJointDef);

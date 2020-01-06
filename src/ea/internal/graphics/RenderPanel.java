@@ -74,7 +74,7 @@ public final class RenderPanel extends Canvas {
     @Internal
     public void render(Graphics2D g, Scene scene) {
         // Absoluter Hintergrund
-        g.setColor(Color.black);
+        g.setColor(scene.getBackgroundColor());
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
         AffineTransform transform = g.getTransform();
@@ -129,16 +129,16 @@ public final class RenderPanel extends Canvas {
             g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, DEBUG_TEXT_SIZE));
             g.setColor(DEBUG_GRID_COLOR);
 
-            for (int x = startX; x < stopX; x += gridSizeInMeters) {
-                g.fillRect((int) (x * gridSizeFactor) - 1, (int) ((startY - 1) * gridSizeFactor), 2, (int) (windowSizeInPixels + 2 * gridSizeInPixels));
+            for (int x = startX; x <= stopX; x += gridSizeInMeters) {
+                g.fillRect((int) (x * gridSizeFactor) - 1, (int) ((startY - 1) * gridSizeFactor), 2, (int) (windowSizeInPixels + 3 * gridSizeInPixels));
             }
 
-            for (int y = startY; y < stopY; y += gridSizeInMeters) {
-                g.fillRect((int) ((startX - 1) * gridSizeFactor), (int) (y * gridSizeFactor - 1), (int) (windowSizeInPixels + 2 * gridSizeInPixels), 2);
+            for (int y = startY; y <= stopY; y += gridSizeInMeters) {
+                g.fillRect((int) ((startX - 1) * gridSizeFactor), (int) (y * gridSizeFactor - 1), (int) (windowSizeInPixels + 3 * gridSizeInPixels), 2);
             }
 
-            for (int x = startX; x < stopX; x += gridSizeInMeters) {
-                for (int y = startY; y < stopY; y += gridSizeInMeters) {
+            for (int x = startX; x <= stopX; x += gridSizeInMeters) {
+                for (int y = startY; y <= stopY; y += gridSizeInMeters) {
                     g.drawString(x + " / " + -y, x * gridSizeFactor + 5, y * gridSizeFactor - 5);
                 }
             }

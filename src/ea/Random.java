@@ -26,7 +26,7 @@ public final class Random {
      * <code>true</code>.
      */
     @API
-    public static boolean getBoolean() {
+    public static boolean toggle() {
         return ThreadLocalRandom.current().nextBoolean();
     }
 
@@ -41,7 +41,7 @@ public final class Random {
      * alle möglichen Rückgaben ist <i>gleich groß</i>.
      */
     @API
-    public static int nextInteger(int upperLimit) {
+    public static int range(int upperLimit) {
         if (upperLimit < 0) {
             throw new IllegalArgumentException("Achtung! Für eine Zufallszahl muss die definierte Obergrenze (die inklusiv in der Ergebnismenge ist) eine nichtnegative Zahl sein!");
         }
@@ -60,7 +60,7 @@ public final class Random {
      * alle möglichen Rückgaben ist <i>gleich groß</i>.
      */
     @API
-    public static int getInt(int lowerLimit, int upperLimit) {
+    public static int range(int lowerLimit, int upperLimit) {
         if (lowerLimit == upperLimit) {
             return lowerLimit;
         } else if (lowerLimit < upperLimit) {
@@ -78,7 +78,7 @@ public final class Random {
      * Rückgaben ist <i>gleich groß</i>.
      */
     @API
-    public static float getFloat() {
+    public static float range() {
         return ThreadLocalRandom.current().nextFloat();
     }
 
@@ -93,7 +93,7 @@ public final class Random {
      * alle möglichen Rückgaben ist <i>gleich groß</i>.
      */
     @API
-    public static float getFloat(float lowerLimit, float upperLimit) {
+    public static float range(float lowerLimit, float upperLimit) {
         if (lowerLimit == upperLimit) {
             return lowerLimit;
         } else if (lowerLimit < upperLimit) {

@@ -35,8 +35,9 @@ import java.util.function.Consumer;
 public class WorldHandler implements ContactListener {
     public static final int CATEGORY_PASSIVE = 1;
     public static final int CATEGORY_STATIC = 2;
-    public static final int CATEGORY_DYNAMIC_OR_KINEMATIC = 4;
-    public static final int CATEGORY_PARTICLE = 8;
+    public static final int CATEGORY_KINEMATIC = 4;
+    public static final int CATEGORY_DYNAMIC = 8;
+    public static final int CATEGORY_PARTICLE = 16;
 
     public static final float STEP_TIME = 8f / 1000;
 

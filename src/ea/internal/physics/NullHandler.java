@@ -10,6 +10,7 @@ import org.jbox2d.common.Transform;
 import org.jbox2d.dynamics.Body;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
 public class NullHandler implements PhysicsHandler {
 
     private final PhysicsData physicsData;
-    private final List<Consumer<PhysicsHandler>> mountCallbacks = new ArrayList<>();
+    private final Collection<Consumer<PhysicsHandler>> mountCallbacks = new ArrayList<>();
 
     public NullHandler(PhysicsData physicsData) {
         this.physicsData = physicsData;
@@ -103,6 +104,16 @@ public class NullHandler implements PhysicsHandler {
     }
 
     @Override
+    public void setGravityScale(float factor) {
+        this.physicsData.setGravityScale(factor);
+    }
+
+    @Override
+    public float getGravityScale() {
+        return this.physicsData.getGravityScale();
+    }
+
+    @Override
     public void setFriction(float friction) {
         this.physicsData.setFriction(friction);
     }
@@ -120,6 +131,26 @@ public class NullHandler implements PhysicsHandler {
     @Override
     public float getRestitution() {
         return this.physicsData.getRestitution();
+    }
+
+    @Override
+    public void setLinearDamping(float damping) {
+        this.physicsData.setLinearDamping(damping);
+    }
+
+    @Override
+    public float getLinearDamping() {
+        return physicsData.getLinearDamping();
+    }
+
+    @Override
+    public void setAngularDamping(float damping) {
+        physicsData.setAngularDamping(damping);
+    }
+
+    @Override
+    public float getAngularDamping() {
+        return physicsData.getAngularDamping();
     }
 
     @Override

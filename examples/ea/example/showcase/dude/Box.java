@@ -30,7 +30,7 @@ public class Box extends Image {
     private static final float RESTITUTION = .3f;
 
     public Box() {
-        this(Random.nextInteger(9));
+        this(Random.range(9));
     }
 
     public Box(int type) {

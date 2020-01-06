@@ -60,8 +60,7 @@ public final class RenderThread extends Thread {
                         BufferStrategy bufferStrategy = renderPanel.getBufferStrategy();
 
                         do {
-                            Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
-                            renderFrame(g);
+                            renderFrame((Graphics2D) bufferStrategy.getDrawGraphics());
                         } while (bufferStrategy.contentsRestored() && !isInterrupted());
 
                         if (!bufferStrategy.contentsLost()) {

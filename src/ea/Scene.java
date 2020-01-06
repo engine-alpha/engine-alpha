@@ -61,6 +61,8 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      */
     private final List<Layer> layers = new ArrayList<>();
 
+    private Color backgroundColor = Color.BLACK;
+
     /**
      * Gibt das Main Layer dieser Scene aus.
      *
@@ -340,5 +342,13 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
     @API
     public final Vector getMousePosition() {
         return Game.convertMousePosition(this, Game.getMousePositionInFrame());
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 }

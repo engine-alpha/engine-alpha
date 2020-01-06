@@ -95,6 +95,12 @@ public interface PhysicsHandler {
     float getDensity();
 
     @Internal
+    void setGravityScale(float factor);
+
+    @Internal
+    float getGravityScale();
+
+    @Internal
     void setFriction(float friction);
 
     @Internal
@@ -105,6 +111,18 @@ public interface PhysicsHandler {
 
     @Internal
     float getRestitution();
+
+    @Internal
+    void setLinearDamping(float damping);
+
+    @Internal
+    float getLinearDamping();
+
+    @Internal
+    void setAngularDamping(float damping);
+
+    @Internal
+    float getAngularDamping();
 
     /**
      * Gibt die Masse des Ziel-Objekts aus.

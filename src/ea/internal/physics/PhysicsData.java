@@ -37,6 +37,9 @@ public class PhysicsData {
     private float restitution = DEFAULT_RESTITUTION;
     private float torque = 0;
     private float angularVelocity = 0;
+    private float gravityScale = 1;
+    private float linearDamping = 0;
+    private float angularDamping = 0;
 
     private Float mass;
 
@@ -57,6 +60,7 @@ public class PhysicsData {
         data.setDensity(body.m_fixtureList.m_density);
         data.setFriction(body.m_fixtureList.m_friction);
         data.setRestitution(body.m_fixtureList.m_restitution);
+        data.setGravityScale(body.m_gravityScale);
         data.setX(body.getPosition().x);
         data.setY(body.getPosition().y);
         data.setRotation((float) Math.toDegrees(body.getAngle()));
@@ -65,6 +69,8 @@ public class PhysicsData {
         data.setAngularVelocity((float) Math.toDegrees(body.m_angularVelocity) / 360);
         data.setType(type);
         data.setShapes(shapes);
+        data.setAngularDamping(body.getAngularDamping());
+        data.setLinearDamping(body.getLinearDamping());
 
         return data;
     }
@@ -91,7 +97,7 @@ public class PhysicsData {
             fixtureDef.friction = this.getFriction();
             fixtureDef.restitution = this.getRestitution();
             fixtureDef.shape = shape;
-            fixtureDef.isSensor = this.getType().isSensorType();
+            fixtureDef.isSensor = this.getType().isSensor();
             fixtureDefs.add(fixtureDef);
         }
 
@@ -106,7 +112,7 @@ public class PhysicsData {
         fixtureDef.density = this.getDensity();
         fixtureDef.friction = this.getFriction();
         fixtureDef.restitution = this.getRestitution();
-        fixtureDef.isSensor = this.getType().isSensorType();
+        fixtureDef.isSensor = this.getType().isSensor();
 
         return fixtureDef;
     }
@@ -124,7 +130,9 @@ public class PhysicsData {
         bodyDef.angularVelocity = (float) Math.toRadians(getAngularVelocity() * 360);
         bodyDef.type = getType().toBox2D();
         bodyDef.active = true;
-        bodyDef.gravityScale = getType().getDefaultGravityScale();
+        bodyDef.gravityScale = gravityScale;
+        bodyDef.angularDamping = angularDamping;
+        bodyDef.linearDamping = linearDamping;
 
         return bodyDef;
     }
@@ -187,12 +195,36 @@ public class PhysicsData {
         this.rotation = rotation;
     }
 
+    public float getLinearDamping() {
+        return linearDamping;
+    }
+
+    public void setLinearDamping(float linearDamping) {
+        this.linearDamping = linearDamping;
+    }
+
+    public float getAngularDamping() {
+        return angularDamping;
+    }
+
+    public void setAngularDamping(float angularDamping) {
+        this.angularDamping = angularDamping;
+    }
+
     public float getDensity() {
         return density;
     }
 
     public void setDensity(float density) {
         this.density = density;
+    }
+
+    public float getGravityScale() {
+        return gravityScale;
+    }
+
+    public void setGravityScale(float factor) {
+        this.gravityScale = factor;
     }
 
     public float getFriction() {
