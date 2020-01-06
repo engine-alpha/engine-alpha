@@ -29,6 +29,7 @@ import ea.internal.ShapeBuilder;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
+import static ea.Factory.vector;
 import static ea.Random.range;
 import static java.lang.Math.*;
 
@@ -45,6 +46,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         Game.start(Showcases.WIDTH, Showcases.HEIGHT, new CarDemo(null));
     }
 
+    private CarBody carBody;
     private Wheel wheelFront;
     private Wheel wheelBack;
 
@@ -63,11 +65,11 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         blend.setLayerPosition(10);
         addLayer(blend);
 
-        delay(.5f, () -> blender.animateOpacity(.5f, 0));
+        delay(.2f, () -> blender.animateOpacity(.3f, 0));
 
         Layer background = new Layer();
         background.setLayerPosition(-1);
-        background.setParallaxPosition(.5f, .05f);
+        background.setParallaxPosition(.5f, -.025f);
 
         for (int i = -200; i < 200; i += 10) {
             background.add(createBackgroundTile(i));
@@ -75,9 +77,13 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
 
         addLayer(background);
 
-        Actor left = createGround(-200, -20);
+        createGround(-70, -49).setColor(new Color(200, 104, 73));
+
+        Actor left = createGround(-50, -20);
         Actor middle = createGround(-10, 70);
         Actor right = createGround(85, 170);
+
+        createGround(169, 200).setColor(new Color(200, 104, 73));
 
         createRope(-20, -10, left, middle);
         createRope(70, 85, middle, right);
@@ -86,7 +92,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         createHill(25, range(1, 2));
         createHill(45, range(1, 2));
 
-        CarBody carBody = new CarBody(0, -8f);
+        carBody = new CarBody(0, -8f);
 
         wheelFront = new Wheel(1.36f, -8.75f, new Axle(1.36f, -8.6f, carBody));
         wheelBack = new Wheel(-1, -8.75f, new Axle(-1, -8.6f, carBody));
@@ -94,11 +100,11 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         // Wheels automatically add axes, and axes add the car body
         add(wheelFront, wheelBack);
 
-        setGravity(new Vector(0, -9.81f));
+        setGravity(vector(0, -9.81f));
 
         getCamera().setZoom(ZOOM);
         getCamera().setFocus(carBody);
-        getCamera().setOffset(new Vector(0, 3));
+        getCamera().setOffset(vector(0, 3));
     }
 
     private Actor createBackgroundTile(int x) {
@@ -124,13 +130,13 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
             rope[i].setBorderRadius(.5f);
 
             if (i == 0) {
-                rope[0].createRevoluteJoint(left, new Vector(-.1f, .2f)).setLimits(0, 0.1f);
+                rope[0].createRevoluteJoint(left, vector(-.1f, .2f)).setLimits(0, 0.1f);
             } else {
                 if (i == length - 1) {
-                    rope[length - 1].createRevoluteJoint(right, new Vector(.9f, .2f)).setLimits(0, 0.1f);
+                    rope[length - 1].createRevoluteJoint(right, vector(.9f, .2f)).setLimits(0, 0.1f);
                 }
 
-                rope[i - 1].createRevoluteJoint(rope[i], new Vector(.9f, .2f)).setLimits(0, 0.1f);
+                rope[i - 1].createRevoluteJoint(rope[i], vector(.9f, .2f)).setLimits(0, 0.1f);
             }
         }
 
@@ -149,7 +155,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         float offset = 180;
 
         for (int j = 0; j < 40 - 1; j += 1) {
-            Polygon ground = new HillSegment(new Vector(x + j / 2f, -10), new Vector(x + j / 2f + 1, -10), new Vector(x + (j + 1) / 2f, -10 + Math.cos(Math.toRadians(((j + 1) / 2f) * 18 + offset)) * height + height), new Vector(x + j / 2f, -10 + Math.cos(Math.toRadians(j / 2f * 18 + offset)) * height + height));
+            Polygon ground = new HillSegment(vector(x + j / 2f, -10), vector(x + j / 2f + 1, -10), vector(x + (j + 1) / 2f, -10 + Math.cos(Math.toRadians(((j + 1) / 2f) * 18 + offset)) * height + height), vector(x + j / 2f, -10 + Math.cos(Math.toRadians(j / 2f * 18 + offset)) * height + height));
             ground.moveBy(0, -0.01f);
             ground.setBodyType(BodyType.STATIC);
             ground.setColor(GROUND_COLOR);
@@ -177,6 +183,47 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
             wheelFront.setMotorEnabled(false);
             wheelBack.setMotorEnabled(false);
         }
+
+        if (carBody.getCenter().getX() < -65) {
+            carBody.applyForce(vector(10000 * (-65 - carBody.getCenter().getX()), 0), carBody.getCenter());
+        } else if (carBody.getCenter().getX() > 195) {
+            carBody.applyForce(vector(10000 * (195 - carBody.getCenter().getX()), 0), carBody.getCenter());
+        }
+
+        if (carBody.getCenter().getY() < -20) {
+            Game.transitionToScene(new CarDemo(null));
+        }
+    }
+
+    private static Actor createParticle(float size, Vector center, Color initialColor, Vector impulse) {
+        Circle particle = new Circle(size);
+        particle.setBodyType(BodyType.PARTICLE);
+        particle.setLayerPosition(2);
+        particle.setColor(initialColor);
+        particle.setCenter(center);
+        particle.animateParticle(range(.1f, 3f));
+        particle.animateColor(range(.3f, .6f), Color.BLACK);
+        particle.applyImpulse(impulse);
+        particle.setGravityScale(1);
+        particle.setLinearDamping(range(18, 22));
+        particle.setLayerPosition(-1);
+
+        return particle;
+    }
+
+    private static Actor createSplitter(Vector center) {
+        Polygon splitter = new Polygon(vector(0, 0), vector(0.15f, 0), vector(0.15f, 0.05f));
+        splitter.setBodyType(BodyType.PARTICLE);
+        splitter.rotateBy(range(0, 360));
+        splitter.setLayerPosition(2);
+        splitter.setColor(new Color(119, 82, 54));
+        splitter.setCenter(center.add(range(-.2f, .2f), range(-.2f, .2f)));
+        splitter.animateParticle(range(.1f, 3f));
+        splitter.setGravityScale(1);
+        splitter.setLinearDamping(range(18, 22));
+        splitter.setLayerPosition(-1);
+
+        return splitter;
     }
 
     private static class Ground extends Rectangle implements Mud {
@@ -271,7 +318,8 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
                         for (Vector point : collision.getPoints()) {
                             float size = range(0.05f, .15f);
                             Vector center = point.add(point.getDistance(getCenter()).multiply(size));
-                            getLayer().add(createParticle(size, center, GROUND_COLOR, impulse.rotate(range(-15, 15))));
+                            Color color = ((Mud) collision.getColliding()).getColor();
+                            getLayer().add(createParticle(size, center, color, impulse.rotate(range(-15, 15))));
                         }
                     }
                 }
@@ -309,11 +357,15 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
             setShapes("R0,.45,2,.45&P2,1.2,2.6,1.15,3.8,0.8,3.95,0.45,2,0.45&R1,0,2,0.6");
 
             repeat(.05f, () -> {
+                if (getVelocity().getLength() < 0.1f) {
+                    return;
+                }
+
                 for (CollisionEvent<Actor> collision : getCollisions()) {
                     if (collision.getColliding() instanceof Mud) {
                         for (Vector point : collision.getPoints()) {
                             float size = range(0.05f, .15f);
-                            Vector impulse = new Vector(range(-1f, 1f), range(-1f, 1f));
+                            Vector impulse = vector(range(-1f, 1f), range(-1f, 1f));
                             getLayer().add(createParticle(size, point, Color.YELLOW, impulse));
                         }
                     }
@@ -332,49 +384,17 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         }
     }
 
-    private static Actor createParticle(float size, Vector center, Color initialColor, Vector impulse) {
-        Circle particle = new Circle(size);
-        particle.setBodyType(BodyType.PARTICLE);
-        particle.setLayerPosition(2);
-        particle.setColor(initialColor);
-        particle.setCenter(center);
-        particle.animateParticle(range(.1f, 3f));
-        particle.animateColor(range(.3f, .6f), Color.BLACK);
-        particle.applyImpulse(impulse);
-        particle.setGravityScale(1);
-        particle.setLinearDamping(range(18, 22));
-        particle.setLayerPosition(-1);
-
-        return particle;
-    }
-
-    private static Actor createSplitter(Vector center) {
-        Polygon particle = new Polygon(new Vector(0, 0), new Vector(0.15f, 0), new Vector(0.15f, 0.05f));
-        particle.setBodyType(BodyType.PARTICLE);
-        particle.rotateBy(range(0, 360));
-        particle.setLayerPosition(2);
-        particle.setColor(new Color(119, 82, 54));
-        particle.setCenter(center.add(range(-.2f, .2f), range(-.2f, .2f)));
-        particle.animateParticle(range(.1f, 3f));
-        particle.setGravityScale(1);
-        particle.setLinearDamping(range(18, 22));
-        particle.setLayerPosition(-1);
-
-        return particle;
-    }
-
     private static class RopeSegment extends Rectangle implements Wood {
         public RopeSegment(float width, float height) {
             super(width, height);
         }
     }
 
-    /**
-     * Marker für Matschboden.
-     */
     private interface Mud {
+        Color getColor();
     }
 
     private interface Wood {
+        // marker
     }
 }
