@@ -20,27 +20,42 @@
 package ea;
 
 import ea.internal.DebugInfo;
-import ea.internal.RenderThread;
 import ea.internal.annotations.Internal;
-import ea.internal.graphics.RenderPanel;
+import ea.internal.graphics.RenderTarget;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 public final class GameLogic {
+    private static final Color COLOR_FPS_BACKGROUND = new Color(255, 255, 255, 50);
+    private static final Color COLOR_FPS_BORDER = new Color(0, 106, 214);
+    private static final Color COLOR_BODY_COUNT_BORDER = new Color(0, 214, 84);
+    private static final Color COLOR_BODY_COUNT_BACKGROUND = new Color(255, 255, 255, 50);
+    private static final int DEBUG_INFO_HEIGHT = 20;
+    private static final int DEBUG_INFO_LEFT = 10;
+    private static final int DEBUG_INFO_TEXT_OFFSET = 16;
+    private static final Color DEBUG_GRID_COLOR = new Color(255, 255, 255, 100);
+    public static final int GRID_SIZE_IN_PIXELS = 150;
+    public static final int GRID_SIZE_METER_LIMIT = 100000;
+    public static final int DEBUG_TEXT_SIZE = 12;
+
     private static final float DESIRED_FRAME_DURATION = 0.016f;
 
     private static final int NANOSECONDS_PER_SECOND = 1000000000;
 
     private final ExecutorService threadPoolExecutor = Executors.newCachedThreadPool();
 
-    private final RenderThread renderThread;
-
-    private final Phaser frameStartBarrier = new Phaser(2);
-    private final Phaser frameEndBarrier = new Phaser(2);
+    private final RenderTarget render;
 
     private final Supplier<Scene> currentScene;
+    private final Supplier<Boolean> isDebug;
 
     /**
      * Queue aller Dispatchables, die im nächsten Frame ausgeführt werden.
@@ -49,16 +64,10 @@ public final class GameLogic {
 
     private float frameDuration;
 
-    public GameLogic(RenderPanel renderPanel, Supplier<Scene> currentScene, Supplier<Boolean> isDebug) {
-        this.renderThread = new RenderThread(frameStartBarrier, frameEndBarrier, renderPanel, currentScene, () -> {
-            if (isDebug.get()) {
-                return new DebugInfo(frameDuration, currentScene.get().getWorldHandler().getWorld().getBodyCount());
-            }
-
-            return null;
-        });
-
+    public GameLogic(RenderTarget render, Supplier<Scene> currentScene, Supplier<Boolean> isDebug) {
+        this.render = render;
         this.currentScene = currentScene;
+        this.isDebug = isDebug;
     }
 
     public void enqueue(Runnable runnable) {
@@ -66,14 +75,12 @@ public final class GameLogic {
     }
 
     public void run() {
-        this.renderThread.start();
-
         this.frameDuration = DESIRED_FRAME_DURATION;
 
         long frameStart = System.nanoTime();
         long frameEnd;
 
-        while (!Thread.interrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             Scene scene = this.currentScene.get();
 
             try {
@@ -81,9 +88,6 @@ public final class GameLogic {
 
                 scene.step(deltaSeconds, threadPoolExecutor::submit);
                 scene.getCamera().onFrameUpdate();
-
-                frameStartBarrier.arriveAndAwaitAdvance();
-
                 scene.invokeFrameUpdateListeners(deltaSeconds);
 
                 Runnable runnable = dispatchableQueue.poll();
@@ -92,7 +96,7 @@ public final class GameLogic {
                     runnable = dispatchableQueue.poll();
                 }
 
-                frameEndBarrier.arriveAndAwaitAdvance();
+                render();
 
                 frameEnd = System.nanoTime();
                 float duration = (float) (frameEnd - frameStart) / NANOSECONDS_PER_SECOND;
@@ -117,17 +121,6 @@ public final class GameLogic {
             }
         }
 
-        while (renderThread.isAlive()) {
-            // Thread soll aufhören: Sauber machen!
-            renderThread.interrupt();
-
-            try {
-                renderThread.join();
-            } catch (InterruptedException e) {
-                // Try again
-            }
-        }
-
         threadPoolExecutor.shutdown();
 
         try {
@@ -138,8 +131,146 @@ public final class GameLogic {
         }
     }
 
+    public void render(RenderTarget renderTarget) {
+        renderTarget.render(this::render);
+    }
+
+    private void render() {
+        render.render(this::render);
+    }
+
+    /**
+     * Führt die gesamte Zeichenroutine aus.
+     *
+     * @param g Zeichenobjekt.
+     */
     @Internal
-    RenderThread getRenderThread() {
-        return this.renderThread;
+    private void render(Graphics2D g, int width, int height) {
+        Scene scene = this.currentScene.get();
+
+        // have to be the same @ Game.screenshot!
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+
+        // Absoluter Hintergrund
+        g.setColor(scene.getBackgroundColor());
+        g.fillRect(0, 0, width, height);
+        g.setClip(0, 0, width, height);
+
+        AffineTransform transform = g.getTransform();
+
+        scene.render(g, width, height);
+
+        g.setTransform(transform);
+
+        if (isDebug.get()) {
+            renderGrid(g, scene, width, height);
+            renderInfo(g, new DebugInfo(frameDuration, currentScene.get().getWorldHandler().getWorld().getBodyCount()));
+        }
+
+        g.dispose();
+    }
+
+    /**
+     * Rendert Debug-Informationen auf dem Bildschirm.
+     *
+     * @param g Das Graphics-Objekt zum zeichnen.
+     */
+    @Internal
+    private void renderGrid(Graphics2D g, Scene scene, int width, int height) {
+        AffineTransform pre = g.getTransform();
+
+        Camera camera = scene.getCamera();
+        Vector position = camera.getPosition();
+        float rotation = -camera.getRotation();
+
+        g.setClip(0, 0, width, height);
+        g.translate(width / 2, height / 2);
+
+        float pixelPerMeter = camera.getZoom();
+
+        g.rotate(rotation, 0, 0);
+        g.translate(-position.getX() * pixelPerMeter, position.getY() * pixelPerMeter);
+
+        int gridSizeInMeters = Math.round(GRID_SIZE_IN_PIXELS / pixelPerMeter);
+        float gridSizeInPixels = gridSizeInMeters * pixelPerMeter;
+        float gridSizeFactor = gridSizeInPixels / gridSizeInMeters;
+
+        if (gridSizeInMeters > 0 && gridSizeInMeters < GRID_SIZE_METER_LIMIT) {
+            int windowSizeInPixels = (int) Math.ceil(Math.max(width, height));
+
+            int startX = (int) (position.getX() - windowSizeInPixels / 2 / pixelPerMeter);
+            int startY = (int) ((-1 * position.getY()) - windowSizeInPixels / 2 / pixelPerMeter);
+
+            startX -= (startX % gridSizeInMeters) + gridSizeInMeters;
+            startY -= (startY % gridSizeInMeters) + gridSizeInMeters;
+
+            startX -= gridSizeInMeters;
+
+            int stopX = (int) (startX + windowSizeInPixels / pixelPerMeter + gridSizeInMeters * 2);
+            int stopY = (int) (startY + windowSizeInPixels / pixelPerMeter + gridSizeInMeters * 2);
+
+            g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, DEBUG_TEXT_SIZE));
+            g.setColor(DEBUG_GRID_COLOR);
+
+            for (int x = startX; x <= stopX; x += gridSizeInMeters) {
+                g.fillRect((int) (x * gridSizeFactor) - 1, (int) ((startY - 1) * gridSizeFactor), 2, (int) (windowSizeInPixels + 3 * gridSizeInPixels));
+            }
+
+            for (int y = startY; y <= stopY; y += gridSizeInMeters) {
+                g.fillRect((int) ((startX - 1) * gridSizeFactor), (int) (y * gridSizeFactor - 1), (int) (windowSizeInPixels + 3 * gridSizeInPixels), 2);
+            }
+
+            for (int x = startX; x <= stopX; x += gridSizeInMeters) {
+                for (int y = startY; y <= stopY; y += gridSizeInMeters) {
+                    g.drawString(x + " / " + -y, x * gridSizeFactor + 5, y * gridSizeFactor - 5);
+                }
+            }
+        }
+
+        g.setTransform(pre);
+    }
+
+    /**
+     * Rendert zusätzliche Debug-Infos auf dem Bildschirm.
+     *
+     * @param g Das Graphics-Objekt zum zeichnen.
+     */
+    @Internal
+    private void renderInfo(Graphics2D g, DebugInfo debugInfo) {
+        float frameDuration = debugInfo.getFrameDuration();
+        int bodyCount = debugInfo.getBodyCount();
+
+        Font displayFont = new Font("Monospaced", Font.PLAIN, DEBUG_TEXT_SIZE);
+        FontMetrics fm = g.getFontMetrics(displayFont);
+        Rectangle2D bounds;
+        int y = 10;
+
+        String fpsMessage = "FPS: " + (frameDuration == 0 ? "∞" : Math.round(1 / frameDuration));
+        bounds = fm.getStringBounds(fpsMessage, g);
+
+        g.setColor(COLOR_FPS_BORDER);
+        g.fillRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET);
+        g.setColor(COLOR_FPS_BACKGROUND);
+        g.drawRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT - 1, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET - 1);
+
+        g.setColor(Color.WHITE);
+        g.setFont(displayFont);
+        g.drawString(fpsMessage, DEBUG_INFO_LEFT + 10, y + 8 + fm.getHeight() - fm.getDescent());
+
+        y += fm.getHeight() + DEBUG_INFO_HEIGHT;
+
+        String bodyMessage = "Bodies: " + bodyCount;
+        bounds = fm.getStringBounds(bodyMessage, g);
+
+        g.setColor(COLOR_BODY_COUNT_BORDER);
+        g.fillRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET);
+        g.setColor(COLOR_BODY_COUNT_BACKGROUND);
+        g.drawRect(DEBUG_INFO_LEFT, y, (int) bounds.getWidth() + DEBUG_INFO_HEIGHT - 1, (int) bounds.getHeight() + DEBUG_INFO_TEXT_OFFSET - 1);
+
+        g.setColor(Color.WHITE);
+        g.setFont(displayFont);
+        g.drawString(bodyMessage, DEBUG_INFO_LEFT + 10, y + 8 + fm.getHeight() - fm.getDescent());
     }
 }
