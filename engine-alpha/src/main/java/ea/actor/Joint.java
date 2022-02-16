@@ -23,7 +23,8 @@ import ea.event.EventListeners;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.WorldHandler;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 @API
 public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> {
@@ -36,7 +37,7 @@ public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> 
      */
     @Internal
     public final void setJoint(JointType joint, WorldHandler worldHandler) {
-        this.joint = new Pair<>(joint, worldHandler);
+        this.joint = new ImmutablePair<>(joint, worldHandler);
 
         updateCustomProperties(joint);
     }

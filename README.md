@@ -34,3 +34,13 @@ public class Sample extends Game {
 	}
 }
 ```
+
+## Version 4
+
+### Was ist neu oder anders?
+
+* Umstieg auf [JBox2d](http://www.jbox2d.org/) als zugrundeliegender 2D Engine
+* Koordinatensystem:
+  * Das Koordinatensystem hat seinen Nullpunkt (x=0, y=0) nicht mehr in der linken oberen Ecke, sondern in der Mitte des Spielefensters
+  * Mit der Position eines Objekts, z.B. `rectangle.setPosition(-150, 0);`, wird die Position der linken unteren Ecke des Objekts gesetzt.
+

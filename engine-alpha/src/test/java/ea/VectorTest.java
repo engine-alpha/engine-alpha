@@ -113,7 +113,7 @@ public class VectorTest {
     @Test
     public void realX() {
         float x = .013f;
-        assertEquals(new Vector(x, 0).getY(), x, 0.00001f);
+        assertEquals(new Vector(x, 0).getX(), x, 0.00001f);
     }
 
     @Test
@@ -124,7 +124,7 @@ public class VectorTest {
 
     @Test
     public void testToString() {
-        assertEquals("ea.Vector [getX = 1.0; getY = 1.0]", new Vector(1, 1).toString());
+        assertEquals("ea.Vector [ x = 1.0; y = 1.0 ]", new Vector(1, 1).toString());
     }
 
     @Test
