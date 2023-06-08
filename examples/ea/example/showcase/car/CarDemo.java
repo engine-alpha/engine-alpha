@@ -46,9 +46,9 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         Game.start(Showcases.WIDTH, Showcases.HEIGHT, new CarDemo(null));
     }
 
-    private CarBody carBody;
-    private Wheel wheelFront;
-    private Wheel wheelBack;
+    private final CarBody carBody;
+    private final Wheel wheelFront;
+    private final Wheel wheelBack;
 
     public CarDemo(Scene parent) {
         super(parent);
@@ -258,8 +258,8 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
     }
 
     private static class Axle extends Rectangle implements FrameUpdateListener {
-        private PrismaticJoint spring;
-        private CarBody carBody;
+        private final PrismaticJoint spring;
+        private final CarBody carBody;
 
         public Axle(float cx, float cy, CarBody carBody) {
             super(.2f, .9f);
@@ -291,7 +291,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
     }
 
     private static class Wheel extends Image {
-        private RevoluteJoint motor;
+        private final RevoluteJoint motor;
 
         public Wheel(float cx, float cy, Axle axle) {
             super("game-assets/car/wheel-back.png", 1.4f, 1.4f);
