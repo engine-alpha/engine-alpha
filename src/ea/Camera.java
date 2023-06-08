@@ -235,6 +235,25 @@ public final class Camera {
     }
 
     /**
+     * Setzt die aktuelle Position der Kamera
+     * @param position die neue Position der Kamera
+     */
+    @API
+    public void setPosition(Vector position) {
+        this.position = position;
+    }
+
+    /**
+     * Setzt die aktuelle Position der Kamera
+     * @param x Neue X-Koordinate des Kamerazentrums
+     * @param y Neue Y-Koordinate des Kamerazentrums
+     */
+    @API
+    public void setPostion(float x, float y) {
+        this.setPosition(new Vector(x, y));
+    }
+
+    /**
      * Die aktuelle Position der Kamera.
      *
      * @return Die aktuelle Position der Kamera.
