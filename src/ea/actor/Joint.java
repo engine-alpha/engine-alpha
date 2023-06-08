@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2020 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2023 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,10 @@ import ea.event.EventListeners;
 import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.WorldHandler;
-import javafx.util.Pair;
 
 @API
 public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> {
-    private Pair<JointType, WorldHandler> joint;
+    private JointRegistration<JointType> joint;
     private final EventListeners<Runnable> releaseListeners = new EventListeners<>();
 
     /**
@@ -36,7 +35,7 @@ public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> 
      */
     @Internal
     public final void setJoint(JointType joint, WorldHandler worldHandler) {
-        this.joint = new Pair<>(joint, worldHandler);
+        this.joint = new JointRegistration<>(joint, worldHandler);
 
         updateCustomProperties(joint);
     }
@@ -45,18 +44,18 @@ public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> 
 
     @Internal
     protected final JointType getJoint() {
-        Pair<JointType, WorldHandler> joint = this.joint;
+        JointRegistration<JointType> joint = this.joint;
         if (joint == null) {
             return null;
         }
 
-        return joint.getKey();
+        return joint.getJoint();
     }
 
     @API
     public void release() {
         if (joint != null) {
-            joint.getValue().getWorld().destroyJoint(joint.getKey());
+            joint.getWorldHandler().getWorld().destroyJoint(joint.getJoint());
             joint = null;
         }
 
@@ -67,5 +66,23 @@ public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> 
     @API
     public void addReleaseListener(Runnable runnable) {
         releaseListeners.add(runnable);
+    }
+
+    public static class JointRegistration<T> {
+        private final T joint;
+        private final WorldHandler worldHandler;
+
+        public JointRegistration(T joint, WorldHandler worldHandler) {
+            this.joint = joint;
+            this.worldHandler = worldHandler;
+        }
+
+        public T getJoint() {
+            return joint;
+        }
+
+        public WorldHandler getWorldHandler() {
+            return worldHandler;
+        }
     }
 }
