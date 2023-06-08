@@ -450,7 +450,11 @@ public final class Vector implements Cloneable {
      */
     @API
     public float getAngle(Vector other) {
-        return (float) Math.toDegrees(Math.acos(this.getScalarProduct(other) / (this.getLength() * other.getLength())));
+        if(this.y < other.y) {
+            return (float) Math.toDegrees(Math.acos(this.getScalarProduct(other) / (this.getLength() * other.getLength())));
+        } else {
+            return (float) (360-Math.toDegrees(Math.acos(this.getScalarProduct(other) / (this.getLength() * other.getLength()))));
+        }
     }
 
     @Internal
