@@ -243,10 +243,11 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Setzt, was für eine Type physikalisches Objekt das Objekt sein soll. Erläuterung findet
-     * sich im <code>enum Type</code>.
+     * Setzt, was für ein generelles Verhalten dieser Actor im Rahmen der Physics-Engine (und Collision Detection)
+     * haben soll soll.
+     * Eine Erläuterung der verschiedenen Verhaltenstypen finden sich in der Dokumentation von <code>BodyType</code>.
      *
-     * @param type Der Type Physics-Objekt, der ab sofort dieses Objekt sein soll.
+     * @param type      Der neue <code>BodyType</code>, für den Actor.
      *
      * @see BodyType
      */
