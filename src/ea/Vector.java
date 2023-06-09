@@ -60,13 +60,13 @@ public final class Vector implements Cloneable {
      * Konstante für eine einfache Verschiebung vectorFromThisTo oben (0, -1)
      */
     @API
-    public static final Vector UP = new Vector(0, -1);
+    public static final Vector UP = new Vector(0, 1);
 
     /**
      * Konstante für eine einfache Verschiebung vectorFromThisTo unten (0, 1)
      */
     @API
-    public static final Vector DOWN = new Vector(0, 1);
+    public static final Vector DOWN = new Vector(0, -1);
 
     /**
      * Der kontinuierliche DeltaX-Wert des Punktes. Die anderen Koordinaten sind ggf. nur gerundet.
