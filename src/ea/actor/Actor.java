@@ -39,10 +39,7 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.joints.DistanceJointDef;
-import org.jbox2d.dynamics.joints.PrismaticJointDef;
-import org.jbox2d.dynamics.joints.RevoluteJointDef;
-import org.jbox2d.dynamics.joints.RopeJointDef;
+import org.jbox2d.dynamics.joints.*;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -989,6 +986,36 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
             return (org.jbox2d.dynamics.joints.DistanceJoint) world.createJoint(distanceJointDef);
         }, new DistanceJoint());
+    }
+
+    /**
+     * Erstellt einen Weld-Joint zwischen diesem und einem weiteren <code>Actor</code>-Objekt.
+     *
+     * @param other                 Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                              <code>Actor</code>-Objekt
+     *                              über einen <code>DistanceJoint</code> verbunden sein soll.
+     * @param anchorRelativeToThis  Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste
+     *                              Befestigungspunkt
+     *                              des Joints. Angabe relativ zu <code>this</code> also absolut.
+     * @param anchorRelativeToOther Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
+     *                              Der zweite Befestigungspunkt des Joints. Angabe relativ zu <code>other</code>
+     *
+     * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     *
+     * @see org.jbox2d.dynamics.joints.DistanceJoint
+     */
+    @API
+    public final WeldJoint createWeldJoint(Actor other, Vector anchorRelativeToThis, Vector anchorRelativeToOther) {
+        return WorldHandler.createJoint(this, other, (world, a, b) -> {
+            WeldJointDef weldJointDef = new WeldJointDef();
+
+            weldJointDef.bodyA = a;
+            weldJointDef.bodyB = b;
+            weldJointDef.localAnchorA.set(anchorRelativeToThis.toVec2());
+            weldJointDef.localAnchorB.set(anchorRelativeToOther.toVec2());
+
+            return (org.jbox2d.dynamics.joints.WeldJoint) world.createJoint(weldJointDef);
+        }, new WeldJoint());
     }
 
     /**
