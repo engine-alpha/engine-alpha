@@ -25,3 +25,8 @@
 engine-alpha.log
 
 *~
+
+/engine-alpha/target/
+/engine-alpha-edu/target/
+/engine-alpha-examples/target/
+/engine-alpha-edu-beispiele/target/
