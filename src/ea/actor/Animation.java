@@ -29,15 +29,16 @@ import ea.internal.io.ImageLoader;
 import ea.internal.io.ResourceLoader;
 import ea.internal.util.GifDecoder;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.*;
 
 /**
- * Eine Animation ein Actor-Objekt, das aus mehreren
- * <a href="https://de.wikipedia.org/wiki/Einzelbild_(Film)">Frames</a> Frames besteht. Frames können auf verschiedene
+ * Eine Animation ist ein Actor-Objekt, das aus mehreren
+ * <a href="https://de.wikipedia.org/wiki/Einzelbild_(Film)">Frames</a> besteht. Frames können auf verschiedene
  * Arten aus Bilddateien eingeladen werden:
  * <ul>
  * <li>Animierte GIFs</li>
@@ -59,9 +60,9 @@ public class Animation extends Actor implements FrameUpdateListener {
     private transient int currentIndex;
 
     /**
-     * Liste aller Dispatchables, die beim Abschließen des Loops ausgeführt werden.
+     * Liste aller Runnable, die beim Abschließen des Loops ausgeführt werden.
      */
-    private EventListeners<Runnable> onCompleteListeners = new EventListeners<>();
+    private final EventListeners<Runnable> onCompleteListeners = new EventListeners<>();
 
     private Animation(AnimationFrame[] frames, float width, float height) {
         super(() -> {
@@ -74,7 +75,7 @@ public class Animation extends Actor implements FrameUpdateListener {
 
         for (AnimationFrame frame : frames) {
             if (frame.getDuration() <= 0) {
-                throw new RuntimeException("Ein Frame muss länger als 0 Sekunden sein");
+                throw new RuntimeException("Ein Frame muss länger als 0 Sekunden sein.");
             }
         }
 
@@ -108,10 +109,9 @@ public class Animation extends Actor implements FrameUpdateListener {
     }
 
     /**
-     * Gibt die Breite der Animation in Pixel aus.
+     * Gibt die Breite der Animation in Metern aus.
      *
      * @return Die Breite der Animation in Pixel.
-     *
      * @see #getHeight()
      */
     @API
@@ -120,10 +120,9 @@ public class Animation extends Actor implements FrameUpdateListener {
     }
 
     /**
-     * Gibt die Höhe der Animation in Pixel aus.
+     * Gibt die Höhe der Animation in Metern aus.
      *
      * @return Die Höhe der Animation in Pixel
-     *
      * @see #getWidth()
      */
     @API
@@ -218,9 +217,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @param directoryPath Der Pfad zum Verzeichnis, in dem die einzuladenden Bilder liegen.
      * @param prefix        Das Pfad-Präfix. Diese Funktion sucht <a>alle Dateien mit dem gegebenen Präfix</a> (im
      *                      angebenenen Ordner) und fügt sie in aufsteigender Reihenfolge der Animation hinzu.
-     *
      * @return Eine Animation aus allen Dateien, die mit dem Pfadpräfix beginnen.
-     *
      * @author Michael Andonie
      */
     @API

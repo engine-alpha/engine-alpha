@@ -39,26 +39,24 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.joints.DistanceJointDef;
-import org.jbox2d.dynamics.joints.PrismaticJointDef;
-import org.jbox2d.dynamics.joints.RevoluteJointDef;
-import org.jbox2d.dynamics.joints.RopeJointDef;
+import org.jbox2d.dynamics.joints.*;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Actor bezeichnet alles, was sich auf der Zeichenebene befindet.<br> Dies ist die absolute Superklasse aller
+ * Jedes Objekt auf der Zeichenebene ist ein Actor.<br>Dies ist die absolute Superklasse aller
  * grafischen Objekte. Umgekehrt kann somit jedes grafische Objekt die folgenden Methoden nutzen.
  *
  * @author Michael Andonie
  * @author Niklas Keller
  */
-@SuppressWarnings ( "OverlyComplexClass" )
+@SuppressWarnings("OverlyComplexClass")
 public abstract class Actor implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
     private <T> Supplier<T> createParentSupplier(Function<Layer, T> supplier) {
         return () -> {
@@ -72,21 +70,21 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Gibt an, ob das Objekt zur Zeit überhaupt sichtbar sein soll.<br> Ist dies nicht der Fall, so wird die
+     * Gibt an, ob das Objekt zurzeit überhaupt sichtbar sein soll.<br> Ist dies nicht der Fall, so wird die
      * Zeichenroutine direkt übergangen.
      */
     private boolean visible = true;
 
     /**
-     * Z-Index des Raumes, je höher, desto weiter oben wird der Actor gezeichnet
+     * Z-Index des Objekts, je höher, desto weiter im Vordergrund wird das Objekt gezeichnet.
      */
     private int layerPosition = 1;
 
     /**
-     * Opacity = Durchsichtigkeit des Raumes
+     * Opacity = Durchsichtigkeit des Objekts
      * <p>
-     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Image.</li>
-     * <li><code>1.0f</code> entspricht einem undurchsichtigem Image.</li></ul>
+     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen Bild.</li>
+     * <li><code>1.0f</code> entspricht einem undurchsichtigem Bild.</li></ul>
      */
     private float opacity = 1;
 
@@ -102,12 +100,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     private final EventListeners<MouseWheelListener> mouseWheelListeners = new EventListeners<>(createParentSupplier(Layer::getMouseWheelListeners));
     private final EventListeners<FrameUpdateListener> frameUpdateListeners = new EventListeners<>(createParentSupplier(Layer::getFrameUpdateListeners));
 
-    /* _________________________ Die Handler _________________________ */
-
     /**
-     * Erstellt ein Actor-Objekt
+     * Erstellt ein neues Objekt.
      *
-     * @param defaultFixtureSupplier Ein Supplier, der die default-Shape für diesen Actor generiert.
+     * @param defaultFixtureSupplier Ein Supplier, der die Default-Shape für dieses Objekt generiert.
      *                               Die ist in der Regel ein optimal gelegtes Rechteck parallel zu den Axen bei
      *                               Rotationswinkel 0.
      */
@@ -141,9 +137,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Setzt den Layer dieses Actors. Je größer, desto weiter vorne wird ein Actor gezeichnet.
+     * Setzt die Layer-Position dieses Objekts. Je größer, desto weiter vorne wird das Objekt gezeichnet.
      *
      * @param position Layer-Index
+     * @see #getLayerPosition()
      */
     @API
     public final void setLayerPosition(int position) {
@@ -151,9 +148,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Gibt den Layer zurück.
+     * Gibt die Layer-Position zurück. Je größer, desto weiter vorne wird das Objekt gezeichnet.
      *
      * @return Layer-Index
+     * @see #setLayerPosition(int)
      */
     @API
     public final int getLayerPosition() {
@@ -165,7 +163,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param visible Ob das Objekt isVisible sein soll oder nicht.<br> Ist dieser Wert
      *                <code>false</code>, so wird es nicht gezeichnet.
-     *
      * @see #isVisible()
      */
     @API
@@ -174,10 +171,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Gibt an, ob das Actor-Objekt sichtbar ist.
+     * Gibt an, ob das Objekt sichtbar ist.
      *
-     * @return Ist <code>true</code>, wenn das Actor-Objekt zur Zeit sichtbar ist.
-     *
+     * @return Ist <code>true</code>, wenn das Objekt zurzeit sichtbar ist.
      * @see #setVisible(boolean)
      */
     @API
@@ -196,10 +192,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Setzt die Opacity des Raumes.
+     * Setzt die Sichtbarkeit des Objekts.
      * <p>
-     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen (transparenten) Actor.</li>
-     * <li><code>1.0f</code> entspricht einem undurchsichtigem Actor.</li></ul>
+     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen (transparenten) Objekt.</li>
+     * <li><code>1.0f</code> entspricht einem undurchsichtigem Objekt.</li></ul>
      */
     @API
     public final void setOpacity(float opacity) {
@@ -207,11 +203,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Prueft, ob ein bestimmter Point innerhalb des Actor-Objekts liegt.
+     * Prüft, ob ein bestimmter Punkt innerhalb des Objekts liegt.
      *
-     * @param p Der Point, der auf Inhalt im Objekt getestet werden soll.
-     *
-     * @return TRUE, wenn der Point innerhalb des Objekts liegt.
+     * @param p Der Punkt, der auf Inhalt im Objekt getestet werden soll.
+     * @return <code>true</code>, wenn der Point innerhalb des Objekts liegt.
      */
     @API
     public final boolean contains(Vector p) {
@@ -219,15 +214,13 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Prüft, ob dieser Actor sich mit einem weiteren Actor schneidet.<br> Für die Überprüfung des Überlappens werden
+     * Prüft, ob dieses Objekt sich mit einem weiteren Objekt schneidet.<br> Für die Überprüfung des Überlappens werden
      * die internen <b>Collider</b> genutzt. Je nach Genauigkeit der Collider kann die Überprüfung unterschiedlich
      * befriedigend ausfallen. Die Collider können im <b>Debug-Modus</b> der Engine eingesehen werden.
      *
      * @param other Ein weiteres Actor-Objekt.
-     *
      * @return <code>true</code>, wenn dieses Actor-Objekt sich mit <code>another</code> schneidet. Sonst
      * <code>false</code>.
-     *
      * @see ea.Game#setDebug(boolean)
      */
     @API
@@ -243,28 +236,24 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Setzt, was für ein generelles Verhalten dieser Actor im Rahmen der Physics-Engine (und Collision Detection)
-     * haben soll soll.
+     * Setzt das allgemeine Verhalten dieses Objekts im Rahmen der Physics-Engine (und Collision Detection)
+     * haben soll.
      * Eine Erläuterung der verschiedenen Verhaltenstypen finden sich in der Dokumentation von <code>BodyType</code>.
      *
-     * @param type      Der neue <code>BodyType</code>, für den Actor.
-     *
+     * @param type Der neue <code>BodyType</code>, für den Actor.
      * @see BodyType
      */
     @API
     public final void setBodyType(BodyType type) {
-        if (type == null) {
-            throw new IllegalArgumentException("Typ darf nicht null sein");
-        }
+        Objects.requireNonNull(type, "Typ darf nicht null sein");
 
         this.physicsHandler.setType(type);
     }
 
     /**
-     * Gibt aus, was für ein Type Physics-Objekt dieses Objekt momentan ist.
+     * Gibt aus, was für ein Physics-Typ dieses Objekt momentan ist.
      *
-     * @return der Type Physics-Objekt, der das entsprechende <code>Actor</code>-Objekt momentan ist.
-     *
+     * @return der Physics-Typ, der das entsprechende <code>Actor</code>-Objekt momentan ist.
      * @see BodyType
      */
     @API
@@ -273,10 +262,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Setzt neue Shapes für das Actor Objekt. Hat Einfluss auf die Physik (Kollisionen, Masse, etc.)
+     * Setzt neue Shapes für das Objekt. Hat Einfluss auf die Physik (Kollisionen, Masse, etc.)
      *
      * @param shapeCode der Shape-Code
-     *
      * @see FixtureBuilder#fromString(String)
      * @see #setFixture(Supplier)
      * @see #setFixtures(Supplier)
@@ -290,7 +278,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Ändert die Fixture des Actors neu in eine einzige alternative Fixture.
      *
      * @param fixtureSupplier Der Supplier, der die neue Shape des Objektes ausgibt.
-     *
      * @see #setFixtures(Supplier)
      */
     @API
@@ -302,7 +289,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Ändert die Fixtures dieses Actors in eine Reihe neuer Fixtures.
      *
      * @param fixturesSupplier Ein Supplier, der eine Liste mit allen neuen Shapes für den Actor angibt.
-     *
      * @see #setFixture(Supplier)
      */
     @API
@@ -311,8 +297,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Die Basiszeichenmethode.<br> Sie schließt eine Fallabfrage zur Sichtbarkeit ein. Diese Methode wird bei den
-     * einzelnen Gliedern eines Knotens aufgerufen.
+     * Die Basiszeichenmethode.<br> Sie schließt eine Fallabfrage zur Sichtbarkeit ein.
      *
      * @param g Das zeichnende Graphics-Objekt
      * @param r Das Bounds, dass die Kameraperspektive Repraesentiert.<br> Hierbei soll zunaechst getestet
@@ -395,8 +380,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         g.drawOval(-1, -1, 2, 2);
         g.setColor(Color.RED);
 
-        if (shape instanceof PolygonShape) {
-            PolygonShape polygonShape = (PolygonShape) shape;
+        if (shape instanceof PolygonShape polygonShape) {
             Vec2[] vec2s = polygonShape.getVertices();
             int[] xs = new int[polygonShape.getVertexCount()], ys = new int[polygonShape.getVertexCount()];
             for (int i = 0; i < xs.length; i++) {
@@ -405,8 +389,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
             }
 
             g.drawPolygon(xs, ys, xs.length);
-        } else if (shape instanceof CircleShape) {
-            CircleShape circleShape = (CircleShape) shape;
+        } else if (shape instanceof CircleShape circleShape) {
             float diameter = (circleShape.m_radius * 2);
             g.drawOval((int) ((circleShape.m_p.x - circleShape.m_radius) * pixelPerMeter), (int) ((-circleShape.m_p.y - circleShape.m_radius) * pixelPerMeter), (int) (diameter * (double) pixelPerMeter), (int) (diameter * (double) pixelPerMeter));
         } else {
@@ -420,13 +403,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Interne Methode. Prüft, ob das anliegende Objekt (teilweise) innerhalb des sichtbaren Bereichs liegt.
      *
-     * @param r Die Bounds der Kamera.
-     *
+     * @param bounds Die Bounds der Kamera.
      * @return <code>true</code>, wenn das Objekt (teilweise) innerhalb des derzeit sichtbaren
      * Breichs liegt, sonst <code>false</code>.
      */
     @Internal
-    private boolean isWithinBounds(Bounds r) {
+    private boolean isWithinBounds(Bounds bounds) {
         // FIXME : Parameter ändern (?) und Funktionalität implementieren.
         return true;
     }
@@ -451,7 +433,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param <E>      Typ-Parameter. SOllte im Regelfall exakt die Klasse von <code>collider</code> sein. Dies
      *                 ermöglicht die Nutzung von spezifischen Methoden aus spezialisierteren Klassen der
      *                 Actor-Hierarchie.
-     *
      * @see #addCollisionListener(CollisionListener)
      */
     @API
@@ -465,13 +446,12 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
      *                 allen anderen Objekten der Scene erlebt.
-     *
      * @see #addCollisionListener(Actor, CollisionListener)
      */
     @API
     public final <E extends Actor> void addCollisionListener(Class<E> clazz, CollisionListener<E> listener) {
         // noinspection OverlyComplexAnonymousInnerClass
-        WorldHandler.addGenericCollisionListener(new CollisionListener<Actor>() {
+        WorldHandler.addGenericCollisionListener(new CollisionListener<>() {
             @Override
             public void onCollision(CollisionEvent<Actor> collisionEvent) {
                 if (clazz.isInstance(collisionEvent.getColliding())) {
@@ -496,7 +476,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
      *                 allen anderen Objekten der Szene erlebt.
-     *
      * @see #addCollisionListener(Actor, CollisionListener)
      */
     @API
@@ -600,7 +579,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *                       Objekts innerhalb der physikalischen Simulation <b>nicht mehr</b>.
      *                       Ist dieser Wert <code>false</code>, rotiert sich dieses
      *                       Objekt innerhalb der physikalsichen Simulation.
-     *
      * @see #isRotationLocked()
      */
     @API
@@ -614,7 +592,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @return <code>true</code>, wenn die Rotation dieses Objekts derzeit innerhalb der
      * physikalischen Simulation blockiert ist.
-     *
      * @see #setRotationLocked(boolean)
      */
     @API
@@ -679,6 +656,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * die Bewegung des Objekts.
      *
      * @param friction Der Reibungskoeffizient. In der Regel im Bereich <b>[0; 1]</b>.
+     *                 
+     * @see #getFriction() 
      */
     @API
     public final void setFriction(float friction) {
@@ -690,6 +669,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @return Der Reibungskoeffizient des Objekts. Ist in der Regel (in der Realität)
      * ein Wert im Bereich <b>[0; 1]</b>.
+     * 
+     * @see #setFriction(float) 
      */
     @API
     public final float getFriction() {
@@ -723,6 +704,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param velocityInMPerS Die Geschwindigkeit, mit der sich dieses Objekt ab sofort
      *                        bewegen soll. In <b>[m / s]</b>
+     *
+     * @see #getVelocity()
      */
     @API
     public final void setVelocity(Vector velocityInMPerS) {
@@ -738,6 +721,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @return Die Geschwindigkeit, mit der sich dieses Objekt gerade (also in diesem Frame) bewegt.
      * In <b>[m / s]</b>
+     * 
+     * @see #setVelocity(Vector)
+     * @see #getAngularVelocity()
      */
     @API
     public final Vector getVelocity() {
@@ -748,6 +734,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Gibt die aktuelle Drehgeschwindigkeit aus.
      *
      * @return Die aktuelle Drehgeschwindigkeit.
+     *
+     * @see #setAngularVelocity(float)
+     * @see #getVelocity()
+     * @see #getAngularDamping()
      */
     @API
     public final float getAngularVelocity() {
@@ -760,6 +750,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param rotationsPerSecond Die Geschwindigkeit, mit der sich dieses Objekt ab sofort
      *                           bewegen soll. In <b>[Umdrehnungen / s]</b>
+     *
+     * @see #getAngularVelocity()
+     * @see #setVelocity(Vector)
+     * @see #setAngularDamping(float)
      */
     @API
     public final void setAngularVelocity(float rotationsPerSecond) {
@@ -785,7 +779,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Wirkt einen Drehmoment auf das Objekt.
+     * Wirkt ein Drehmoment auf das Objekt.
      *
      * @param torque Drehmoment, der auf das Ziel-Objekt wirken soll. In [N*m]
      */
@@ -855,7 +849,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Versetzt das Objekt - unabhängig von aktuellen Kräften und Geschwindigkeiten -
      * <i>in Ruhe</i>. Damit werden alle (physikalischen) Bewegungen des Objektes zurückgesetzt.
-     * Sollte eine konstante <i>Schwerkraft</i> (oder etwas Vergleichbares) exisitieren, wo
+     * Sollte eine konstante <i>Schwerkraft</i> (oder etwas Vergleichbares) existieren, wo
      * wird dieses Objekt jedoch möglicherweise aus der Ruhelage wieder in Bewegung versetzt.
      */
     @API
@@ -895,9 +889,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *                       über einen <code>RevoluteJoint</code> verbunden sein soll.
      * @param relativeAnchor Der Ankerpunkt <b>relativ zu diesem Actor</b>. Es wird davon
      *                       ausgegangen, dass beide Objekte bereits korrekt positioniert sind.
-     *
      * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
-     *
      * @see org.jbox2d.dynamics.joints.RevoluteJoint
      */
     @API
@@ -926,9 +918,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * @param ropeLength          Die Länge des Lassos. Dies ist ab sofort die maximale Länge, die die beiden
      *                            Ankerpunkte
      *                            der Objekte voneinader entfernt sein können.
-     *
      * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
-     *
      * @see org.jbox2d.dynamics.joints.RopeJoint
      */
     @API
@@ -970,9 +960,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *                              des Joints. Angabe relativ zu <code>this</code> also absolut.
      * @param anchorRelativeToOther Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
      *                              Der zweite Befestigungspunkt des Joints. Angabe relativ zu <code>other</code>
-     *
      * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
-     *
      * @see org.jbox2d.dynamics.joints.DistanceJoint
      */
     @API
@@ -992,12 +980,39 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
+     * Erstellt einen Weld-Joint zwischen diesem und einem weiteren <code>Actor</code>-Objekt.
+     *
+     * @param other                 Das zweite <code>Actor</code>-Objekt, das ab sofort mit dem zugehörigen
+     *                              <code>Actor</code>-Objekt
+     *                              über einen <code>DistanceJoint</code> verbunden sein soll.
+     * @param anchorRelativeToThis  Der Ankerpunkt für das zugehörige <code>Actor</code>-Objekt. Der erste
+     *                              Befestigungspunkt
+     *                              des Joints. Angabe relativ zu <code>this</code> also absolut.
+     * @param anchorRelativeToOther Der Ankerpunkt für das zweite <code>Actor</code>-Objekt, also <code>other</code>.
+     *                              Der zweite Befestigungspunkt des Joints. Angabe relativ zu <code>other</code>
+     * @return Ein <code>Joint</code>-Objekt, mit dem der Joint weiter gesteuert werden kann.
+     * @see org.jbox2d.dynamics.joints.DistanceJoint
+     */
+    @API
+    public final WeldJoint createWeldJoint(Actor other, Vector anchorRelativeToThis, Vector anchorRelativeToOther) {
+        return WorldHandler.createJoint(this, other, (world, a, b) -> {
+            WeldJointDef weldJointDef = new WeldJointDef();
+
+            weldJointDef.bodyA = a;
+            weldJointDef.bodyB = b;
+            weldJointDef.localAnchorA.set(anchorRelativeToThis.toVec2());
+            weldJointDef.localAnchorB.set(anchorRelativeToOther.toVec2());
+
+            return (org.jbox2d.dynamics.joints.WeldJoint) world.createJoint(weldJointDef);
+        }, new WeldJoint());
+    }
+
+    /**
      * Setzt die Position des <code>Actor</code>-Objektes gänzlich neu auf der Zeichenebene. Das Setzen ist technisch
      * gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param x neue <code>getX</code>-Koordinate
      * @param y neue <code>getY</code>-Koordinate
-     *
      * @see #setPosition(Vector)
      * @see #setCenter(float, float)
      * @see #setX(float)
@@ -1013,7 +1028,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param position Der neue Zielpunkt
-     *
      * @see #setPosition(float, float)
      * @see #setCenter(float, float)
      * @see #setX(float)
@@ -1028,7 +1042,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Verschiebt das Objekt ohne Bedingungen auf der Zeichenebene.
      *
      * @param v Der Vector, der die Verschiebung des Objekts angibt.
-     *
      * @see Vector
      * @see #moveBy(float, float)
      */
@@ -1046,7 +1059,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param x Die <code>getX</code>-Koordinate des neuen Mittelpunktes des Objektes
      * @param y Die <code>getY</code>-Koordinate des neuen Mittelpunktes des Objektes
-     *
      * @see #setCenter(Vector)
      * @see #moveBy(float, float)
      * @see #moveBy(Vector)
@@ -1061,13 +1073,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
     /**
      * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.<br>
-     * Diese Methode Arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
-     * durch den Aufruf der Methode <code>center()</code>. Daher ist diese Methode im Anwand auf
-     * ein ActorGroup-Objekt nicht unbedingt sinnvoll.<br> Macht dasselbe wie
-     * <code>mittelPunktSetzen(p.getX, p.getY)</code>.
+     * Diese Methode arbeitet mit dem Mittelpunkt des das Objekt abdeckenden Bounding-Rechtecks
+     * durch den Aufruf der Methode <code>getCenter()</code>.
      *
-     * @param center Der neue Mittelpunkt des Actor-Objekts
-     *
+     * @param center Der neue Mittelpunkt des Objekts
      * @see #setCenter(float, float)
      * @see #moveBy(float, float)
      * @see #moveBy(Vector)
@@ -1086,7 +1095,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * <p>
      *
      * @return <code>getX</code>-Koordinate
-     *
      * @see #getY()
      * @see #getPosition()
      */
@@ -1100,7 +1108,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param x neue <code>getX</code>-Koordinate
-     *
      * @see #setPosition(float, float)
      * @see #setCenter(float, float)
      * @see #setY(float)
@@ -1111,11 +1118,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Gibt die getY-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
-     * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
+     * Gibt die getY-Koordinate der linken unteren Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+     * sein, so wird die Position der linken unteren Ecke des umschließenden Rechtecks genommen.
      *
      * @return <code>getY</code>-Koordinate
-     *
      * @see #getX()
      * @see #getPosition()
      */
@@ -1128,12 +1134,11 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Setzt die getY-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
      * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br>
      * <br> <b>Achtung!</b><br> Bei <b>allen</b> Objekten ist die eingegebene Position die
-     * linke, obere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
+     * linke, untere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
      * Kreisen z.B. <b>nicht</b> der Mittelpunkt ist! Hierfür gibt es die Sondermethode
-     * <code>setCenter(int getX, int getY)</code>.
+     * {@link #setCenter(float, float)}.
      *
      * @param y neue <code>getY</code>-Koordinate
-     *
      * @see #setPosition(float, float)
      * @see #setCenter(float, float)
      * @see #setX(float)
@@ -1147,7 +1152,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Gibt den Mittelpunkt des Objektes in der Scene aus.
      *
      * @return Die Koordinaten des Mittelpunktes des Objektes
-     *
      * @see #getPosition()
      */
     @API
@@ -1162,12 +1166,11 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
     /**
      * Verschiebt das Objekt.<br> Hierbei wird nichts anderes gemacht, als <code>move(new
-     * Vector(getDX, getDY))</code> auszufuehren. Insofern ist diese Methode dafuer gut, sich nicht mit
-     * der Klasse Vector auseinandersetzen zu muessen.
+     * Vector(dx, dy))</code> auszuführen. Insofern ist diese Methode dafür gut, sich nicht mit
+     * der Klasse Vector auseinandersetzen zu müssen.
      *
      * @param dX Die Verschiebung in Richtung X
      * @param dY Die Verschiebung in Richtung Y
-     *
      * @see #moveBy(Vector)
      */
     @API
@@ -1198,8 +1201,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Gibt den Winkel aus, um den das Objekt derzeit rotiert ist.
      *
-     * @return Der Winkel (in <b>Bogenmaß</b>), um den das Objekt derzeit rotiert ist. Jedes Objekt ist bei
-     * Initialisierung nicht rotiert (<code>getRotation()</code> gibt direkt vectorFromThisTo Initialisierung
+     * @return Der Winkel (in <b>Grad</b>), um den das Objekt derzeit rotiert ist. Jedes Objekt ist bei
+     * Initialisierung nicht rotiert (<code>getRotation()</code> gibt direkt ab Initialisierung
      * <code>0</code> zurück).
      */
     @API
@@ -1247,10 +1250,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param time           Die Animationszeit in Sekunden
      * @param toOpacityValue Der Opacity-Wert, zu dem innerhalb von {@code time} zu interpolieren ist.
-     *
      * @return Ein {@code ValueAnimator}, der diese Animation ausführt. Der Animator ist bereits aktiv, es muss nichts
      * an dem Objekt getan werden, um die Animation auszuführen.
-     *
      * @see ea.animation.interpolation.EaseInOutFloat
      */
     @API
