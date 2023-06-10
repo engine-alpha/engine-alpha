@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 /**
- * Ein <code>TileContainer</code> ist eine schachbrettartige Anordnung quadratischer
+ * Ein <code>TileContainer</code> ist eine schachbrettartige Anordnung rechteckiger
  * <a href="https://de.wikipedia.org/wiki/Tiling_(Computer)">Tiles</a>.
  *
  * @author Michael Andonie
