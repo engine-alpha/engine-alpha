@@ -43,6 +43,9 @@ public class Image extends Actor {
     private float width;
     private float height;
 
+    private boolean flipVertical = false;
+    private boolean flipHorizontal = false;
+
     /**
      * Der Konstruktor für ein Bildobjekt.
      *
@@ -129,6 +132,52 @@ public class Image extends Actor {
         }
     }
 
+
+    /**
+     * Setzt, ob dieses Bild horizontal gespiegelt dargestellt werden sollen. Hiermit lassen sich zum Beispiel
+     * Bewegungsrichtungen (links/rechts) einfach umsetzen.
+     *
+     * @param flipHorizontal Ob das Bild horizontal geflippt dargestellt werden soll.
+     *
+     * @see #setFlipVertical(boolean)
+     */
+    @API
+    public void setFlipHorizontal(boolean flipHorizontal) {
+        this.flipHorizontal = flipHorizontal;
+    }
+
+    /**
+     * Setzt, ob das Bild vertikal gespiegelt dargestellt werden sollen.
+     *
+     * @param flipVertical Ob die Animation horizontal geflippt dargestellt werden soll.
+     *
+     * @see #setFlipVertical(boolean)
+     */
+    @API
+    public void setFlipVertical(boolean flipVertical) {
+        this.flipVertical = flipVertical;
+    }
+
+    /**
+     * Gibt an, ob das Objekt horizontal gespiegelt ist.
+     *
+     * @return <code>true</code>, wenn das Objekt gerade horizontal gespiegelt ist. Sonst <code>false</code>.
+     */
+    @API
+    public boolean isFlipHorizontal() {
+        return flipHorizontal;
+    }
+
+    /**
+     * Gibt an, ob das Objekt vertikal gespiegelt ist.
+     *
+     * @return <code>true</code>, wenn das Objekt gerade vertikal gespiegelt ist. Sonst <code>false</code>.
+     */
+    @API
+    public boolean isFlipVertical() {
+        return flipVertical;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -136,7 +185,12 @@ public class Image extends Actor {
     public void render(Graphics2D g, float pixelPerMeter) {
         AffineTransform pre = g.getTransform();
         g.scale(width * pixelPerMeter / this.image.getWidth(), height * pixelPerMeter / this.image.getHeight());
-        g.drawImage(this.image, 0, -image.getHeight(), null);
+        g.drawImage(this.image,
+                flipHorizontal ? image.getWidth() : 0,
+                -image.getHeight() + (flipVertical ? image.getHeight() : 0),
+                (flipHorizontal ? -1 : 1)*image.getWidth(),
+                (flipVertical ? -1 : 1)*image.getHeight(),
+                null);
         g.setTransform(pre);
     }
 }
