@@ -1,8 +1,7 @@
 package ea.edu;
 
 import ea.Vector;
-import ea.actor.Actor;
-import ea.actor.BodyType;
+import ea.actor.*;
 import ea.animation.CircleAnimation;
 import ea.animation.LineAnimation;
 import ea.edu.event.KollisionsReagierbar;
@@ -450,8 +449,9 @@ public abstract class EduActor<T extends Actor> {
      * @see ea.actor.Actor#createDistanceJoint(Actor, Vector, Vector)
      */
     @API
-    public void erzeugeStabverbindung(EduActor anderer, double aX, double aY, double bX, double bY) {
-        this.actor.createDistanceJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY));
+    public StabVerbindung erzeugeStabverbindung(EduActor anderer, double aX, double aY, double bX, double bY) {
+        DistanceJoint joint = this.actor.createDistanceJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY));
+        return new StabVerbindung(joint);
     }
 
     /**
@@ -464,8 +464,9 @@ public abstract class EduActor<T extends Actor> {
      * @see ea.actor.Actor#createRevoluteJoint(Actor, Vector) e
      */
     @API
-    public void erzeugeGelenkverbindung(EduActor anderer, double aX, double aY) {
-        this.actor.createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
+    public GelenkVerbindung erzeugeGelenkverbindung(EduActor anderer, double aX, double aY) {
+        RevoluteJoint joint = this.actor.createRevoluteJoint(anderer.getActor(), new Vector(aX, aY));
+        return new GelenkVerbindung(joint);
     }
 
     /**
@@ -481,8 +482,9 @@ public abstract class EduActor<T extends Actor> {
      * @see ea.actor.Actor#createRopeJoint(Actor, Vector, Vector, float)
      */
     @API
-    public void erzeugeSeilverbindung(EduActor anderer, double laenge, double aX, double aY, double bX, double bY) {
-        this.actor.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), (float) laenge);
+    public SeilVerbindung erzeugeSeilverbindung(EduActor anderer, double aX, double aY, double bX, double bY, double laenge) {
+        RopeJoint joint = this.actor.createRopeJoint(anderer.getActor(), new Vector(aX, aY), new Vector(bX, bY), (float) laenge);
+        return new SeilVerbindung(joint);
     }
 
     /**
