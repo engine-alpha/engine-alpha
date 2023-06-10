@@ -5,14 +5,18 @@ import ea.internal.util.Optimizer;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeFalse;
 
 public class OptimizerTest {
 	@Test
 	public void optimizeImage () {
+		assumeFalse(GraphicsEnvironment.isHeadless());
+
 		BufferedImage img = null;
 
 		try {
