@@ -100,7 +100,7 @@ public class TileContainer extends Actor implements TileMap {
         g.translate(0, -offset);
 
         for (int x = 0; x < tiles.length; x++) {
-            for (int y = 0; y < tiles[0].length; y++) {
+            for (int y = 0; y < tiles[x].length; y++) {
                 if (tiles[x][y] == null) {
                     continue;
                 }
