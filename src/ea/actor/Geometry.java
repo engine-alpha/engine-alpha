@@ -29,7 +29,7 @@ import java.awt.Color;
 import java.util.function.Supplier;
 
 /**
- * Ein Objekt, das aus n primitiven Geometrischen Formen - <b>Dreiecken</b> - besteht.
+ * Ein Objekt, das aus n primitiven geometrischen Formen - <b>Dreiecken</b> - besteht.
  *
  * @author Michael Andonie
  */

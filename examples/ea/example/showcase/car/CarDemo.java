@@ -20,13 +20,16 @@
 package ea.example.showcase.car;
 
 import ea.*;
+import ea.actor.Image;
+import ea.actor.Polygon;
+import ea.actor.Rectangle;
 import ea.actor.*;
 import ea.collision.CollisionEvent;
 import ea.example.showcase.ShowcaseDemo;
 import ea.example.showcase.Showcases;
 import ea.internal.FixtureBuilder;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import static ea.Factory.vector;
@@ -68,8 +71,14 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         delay(.2f, () -> blender.animateOpacity(.3f, 0));
 
         Layer background = new Layer();
-        background.setLayerPosition(-1);
+        background.setLayerPosition(-2);
         background.setParallaxPosition(.5f, -.025f);
+
+        Rectangle backgroundColor = new Rectangle(400, 100);
+        backgroundColor.setPosition(-200, -105);
+        backgroundColor.setColor(new Color(0,194,111));
+
+        background.add(backgroundColor);
 
         for (int i = -200; i < 200; i += 10) {
             background.add(createBackgroundTile(i));
@@ -92,6 +101,19 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         createHill(25, range(1, 2));
         createHill(45, range(1, 2));
 
+        Layer decoration = new Layer();
+        decoration.setLayerPosition(-1);
+
+        var tiles = new TileContainer(27, 1, .5f);
+        tiles.setPosition(-9, -10);
+        tiles.setBodyType(BodyType.STATIC);
+        for (int i = 0; i < tiles.getTileCountX(); i++) {
+            tiles.setTile(i, 0, TileMap.createFromImage("game-assets/car/tile01.png"));
+        }
+
+        decoration.add(tiles);
+        addLayer(decoration);
+
         carBody = new CarBody(0, -8f);
 
         wheelFront = new Wheel(1.36f, -8.75f, new Axle(1.36f, -8.6f, carBody));
@@ -110,7 +132,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
     private Actor createBackgroundTile(int x) {
         Image image = new Image("game-assets/car/background-color-grass.png", 10, 10);
         image.setPosition(x, -7);
-        image.setGravityScale(0);
+        image.setBodyType(BodyType.STATIC);
 
         return image;
     }
@@ -122,7 +144,7 @@ public class CarDemo extends ShowcaseDemo implements FrameUpdateListener {
         for (int i = 0; i < length; i++) {
             rope[i] = new RopeSegment(.8f, 0.2f);
             rope[i].setPosition(startX + i + 0.1f, -10.2f);
-            rope[i].setColor(new Color(119, 82, 54));
+            rope[i].setColor(new Color(175, 90, 30));
             rope[i].setBodyType(BodyType.DYNAMIC);
             rope[i].setDensity(150);
             rope[i].setFriction(GROUND_FRICTION);
