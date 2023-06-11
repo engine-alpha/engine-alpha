@@ -135,6 +135,7 @@ public class BodyHandler implements PhysicsHandler {
     @Override
     public void setGravityScale(float factor) {
         body.setGravityScale(factor);
+        body.setAwake(true);
     }
 
     @Override
