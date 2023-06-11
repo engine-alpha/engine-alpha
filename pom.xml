@@ -77,4 +77,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.12.0</version>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
