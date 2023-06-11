@@ -29,34 +29,23 @@ public enum Direction {
     UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT, NONE;
 
     /**
-     * Berechnet einen einfachen Vector (maximale Auslenkung bei jeder Achse 1 (positiv wie negativ)).
+     * Berechnet einen einfachen Vector (maximale Auslenkung bei jeder Achse 1 – positiv wie negativ).
      *
-     * @return Vector, der mit einer einfachen Auslenkung (d.h. für <code>getX</code> und
-     * <code>getY</code> je ein Wertebereich von {-1, 0, 1}) die entsprechende Bewegung macht.
+     * @return Vector, der mit einer einfachen Auslenkung (d.h. für <code>x</code> und
+     * <code>y</code> je ein Wertebereich von {-1, 0, 1}) die entsprechende Bewegung macht.
      */
     @API
     public Vector toVector() {
-        switch (this) {
-            case UP:
-                return Vector.UP;
-            case UP_RIGHT:
-                return Vector.UP.add(Vector.RIGHT);
-            case RIGHT:
-                return Vector.RIGHT;
-            case DOWN_RIGHT:
-                return Vector.DOWN.add(Vector.RIGHT);
-            case DOWN:
-                return Vector.DOWN;
-            case DOWN_LEFT:
-                return Vector.DOWN.add(Vector.LEFT);
-            case LEFT:
-                return Vector.LEFT;
-            case UP_LEFT:
-                return Vector.UP.add(Vector.LEFT);
-            case NONE:
-                return Vector.NULL;
-            default:
-                throw new IllegalStateException("Invalid enum value");
-        }
+        return switch (this) {
+            case UP -> Vector.UP;
+            case UP_RIGHT -> Vector.UP.add(Vector.RIGHT);
+            case RIGHT -> Vector.RIGHT;
+            case DOWN_RIGHT -> Vector.DOWN.add(Vector.RIGHT);
+            case DOWN -> Vector.DOWN;
+            case DOWN_LEFT -> Vector.DOWN.add(Vector.LEFT);
+            case LEFT -> Vector.LEFT;
+            case UP_LEFT -> Vector.UP.add(Vector.LEFT);
+            case NONE -> Vector.NULL;
+        };
     }
 }
