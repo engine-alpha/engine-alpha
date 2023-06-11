@@ -42,9 +42,9 @@ public final class GameLogic {
     private static final int DEBUG_INFO_LEFT = 10;
     private static final int DEBUG_INFO_TEXT_OFFSET = 16;
     private static final Color DEBUG_GRID_COLOR = new Color(255, 255, 255, 100);
-    public static final int GRID_SIZE_IN_PIXELS = 150;
-    public static final int GRID_SIZE_METER_LIMIT = 100000;
-    public static final int DEBUG_TEXT_SIZE = 12;
+    private static final int GRID_SIZE_IN_PIXELS = 150;
+    private static final int GRID_SIZE_METER_LIMIT = 100000;
+    private static final int DEBUG_TEXT_SIZE = 12;
 
     private static final float DESIRED_FRAME_DURATION = 0.016f;
 
@@ -60,7 +60,7 @@ public final class GameLogic {
     /**
      * Queue aller Dispatchables, die im nächsten Frame ausgeführt werden.
      */
-    private Queue<Runnable> dispatchableQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<Runnable> dispatchableQueue = new ConcurrentLinkedQueue<>();
 
     private float frameDuration;
 
@@ -103,6 +103,7 @@ public final class GameLogic {
 
                 if (duration < DESIRED_FRAME_DURATION) {
                     try {
+                        //noinspection BusyWait
                         Thread.sleep((int) (1000 * (DESIRED_FRAME_DURATION - duration)));
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
@@ -198,7 +199,7 @@ public final class GameLogic {
         float gridSizeFactor = gridSizeInPixels / gridSizeInMeters;
 
         if (gridSizeInMeters > 0 && gridSizeInMeters < GRID_SIZE_METER_LIMIT) {
-            int windowSizeInPixels = (int) Math.ceil(Math.max(width, height));
+            int windowSizeInPixels = Math.max(width, height);
 
             int startX = (int) (position.getX() - windowSizeInPixels / 2 / pixelPerMeter);
             int startY = (int) ((-1 * position.getY()) - windowSizeInPixels / 2 / pixelPerMeter);
