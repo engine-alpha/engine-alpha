@@ -30,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: build
-        path: engine-alpha-edu/target/engine-alpha-4-edu.jar
+        path: engine-alpha-edu/target/engine-alpha-4-edu-jar-with-dependencies.jar
