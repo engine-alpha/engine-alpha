@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * sf.setState("running");
  * </code>
  *
+ * @param <State> Typ der Zustände, zwischen denen in der Animation gewechselt werden soll.
  * @author Michael Andonie
  * @see Animation
  */

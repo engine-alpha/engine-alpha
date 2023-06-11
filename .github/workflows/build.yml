@@ -24,10 +24,29 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
-      run: mvn -Djava.awt.headless=true -B package --file pom.xml
+      run: mvn -Djava.awt.headless=true -B install --file pom.xml
 
-    - name: Archive artifacts
+    - name: Archive JAR artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: build
-        path: engine-alpha-edu/target/engine-alpha-4-edu-jar-with-dependencies.jar
+        name: Engine Alpha Bibliotheken
+        path: |
+          engine-alpha/target/engine-alpha-4-jar-with-dependencies.jar
+          engine-alpha-edu/target/engine-alpha-4-edu-jar-with-dependencies.jar
+
+    - name: Build documentation with Maven
+      run: mvn -Djava.awt.headless=true -B site --file pom.xml
+
+    - name: Archive Engine Alpha documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: Engine Alpha Dokumentation
+        path: |
+          engine-alpha/target/site/apidocs/
+
+    - name: Archive Engine Alpha EDU documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: Engine Alpha EDU Dokumentation
+        path: |
+          engine-alpha-edu/target/site/apidocs/

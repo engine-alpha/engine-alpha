@@ -32,6 +32,7 @@ import java.util.List;
  *     </li>
  * </ul>
  *
+ * @param <E> Typ des anderen Objekts bei Kollisionen.
  * @see CollisionListener
  * @see <a href="http://www.iforce2d.net/b2dtut/collision-anatomy" target="_top">http://www.iforce2d.net/b2dtut/collision-anatomy</a>
  */

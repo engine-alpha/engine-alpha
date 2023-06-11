@@ -171,10 +171,10 @@ public class Layer implements KeyListenerContainer, MouseClickListenerContainer,
      *
      * @param timeDistort <i>Zeit in der Simulation = Echtzeit * Verzerrungsfaktor</i> <br />
      *                    <ul>
-     *                    <li>Werte <code>>1</code> lassen die Zeit <b>schneller</b> vergehen</li>
-     *                    <li>Werte <code><1</code> lassen die Zeit <b>langsamer</b> vergehen</li>
+     *                    <li>Werte <code>&gt;1</code> lassen die Zeit <b>schneller</b> vergehen</li>
+     *                    <li>Werte <code>&lt;1</code> lassen die Zeit <b>langsamer</b> vergehen</li>
      *                    <li><code>1</code> lässt die Zeit in Echtzeit vergehen</li>
-     *                    <li>Werte <code><=0</code> sind nicht erlaubt</li>
+     *                    <li>Werte <code>&lt;=0</code> sind nicht erlaubt</li>
      *                    </ul>
      */
     @API

@@ -25,8 +25,7 @@ import ea.internal.annotations.API;
 /**
  * Beschreibt allgemein ein Objekt, das auf die <b>Kollision zweier Actor-Objekte</b> onKeyDownInternal
  * kann.
- * <p>
- * <h3>Funktionsweise</h3> <p>Eine <code>KollisionsReagierbar</code>-Instanz wird bei Kollisionen
+ * <h2>Funktionsweise</h2> <p>Eine <code>KollisionsReagierbar</code>-Instanz wird bei Kollisionen
  * zwischen verschiedenen <code>Actor</code>-Objekten aufgerufen. Die genauen Umstände hängen von der
  * Art der Anmeldung ab.</p> <ul> <li>Wurde das Objekt mit einem (oder mehrmals mit verschiedenen)
  * Ziel-Actor-Objekten angemeldet, so wird es nur bei Kollision zwischen den spezifizierten Paaren
@@ -34,6 +33,7 @@ import ea.internal.annotations.API;
  * bei jeder Kollision zwischen dem Objekt und jedem anderen (an der Wurzel angemeldeten)
  * <code>Actor</code>-Objekt angemeldet.</li> </ul>
  *
+ * @param <E> Typ des anderen Objekts bei Kollisionen.
  * @author Michael Andonie
  */
 public interface CollisionListener<E extends Actor> {

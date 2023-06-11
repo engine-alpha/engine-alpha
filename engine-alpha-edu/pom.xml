@@ -45,4 +45,22 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <locale>de_DE</locale>
+                    <charset>UTF-8</charset>
+                    <doctitle>Engine Alpha EDU 4.x API</doctitle>
+                    <windowtitle>Engine Alpha EDU 4.x API</windowtitle>
+                    <excludePackageNames>*.internal,*.internal.*</excludePackageNames>
+                    <show>public</show>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

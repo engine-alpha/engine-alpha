@@ -112,6 +112,11 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         EventListenerHelper.autoRegisterListeners(this);
     }
 
+    /**
+     * Fügt einen Listener hinzu, der ausgeführt wird, sobald das Objekt angemeldet wurde.
+     *
+     * @param listener Listener-Implementierung
+     */
     @API
     public final void addMountListener(Runnable listener) {
         mountListeners.add(listener);
@@ -121,16 +126,31 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         }
     }
 
+    /**
+     * Entfernt einen Listener, der ausgeführt wird, sobald das Objekt angemeldet wurde.
+     *
+     * @param listener Listener-Implementierung
+     */
     @API
     public final void removeMountListener(Runnable listener) {
         mountListeners.remove(listener);
     }
 
+    /**
+     * Fügt einen Listener hinzu, der ausgeführt wird, sobald das Objekt abgemeldet wurde.
+     *
+     * @param listener Listener-Implementierung
+     */
     @API
     public final void addUnmountListener(Runnable listener) {
         unmountListeners.add(listener);
     }
 
+    /**
+     * Entfernt einen Listener, der ausgeführt wird, sobald das Objekt abgemeldet wurde.
+     *
+     * @param listener Listener-Implementierung
+     */
     @API
     public final void removeUnmountListener(Runnable listener) {
         unmountListeners.remove(listener);
@@ -193,9 +213,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
     /**
      * Setzt die Sichtbarkeit des Objekts.
-     * <p>
-     * <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen (transparenten) Objekt.</li>
-     * <li><code>1.0f</code> entspricht einem undurchsichtigem Objekt.</li></ul>
+     *
+     * @param opacity <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen (transparenten) Objekt.</li>
+     *      <li><code>1.0f</code> entspricht einem undurchsichtigem Objekt.</li></ul>
      */
     @API
     public final void setOpacity(float opacity) {
@@ -300,8 +320,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Die Basiszeichenmethode.<br> Sie schließt eine Fallabfrage zur Sichtbarkeit ein.
      *
      * @param g Das zeichnende Graphics-Objekt
-     * @param r Das Bounds, dass die Kameraperspektive Repraesentiert.<br> Hierbei soll zunaechst getestet
+     * @param r Das Bounds, dass die Kameraperspektive repräsentiert.<br> Hierbei soll zunächst getestet
      *          werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
+     * @param pixelPerMeter Pixel pro Meter.
      */
     @Internal
     public final void renderBasic(Graphics2D g, Bounds r, float pixelPerMeter) {
@@ -444,6 +465,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen reagiert, die dieser Actor mit seiner
      * Umwelt erlebt.
      *
+     * @param <E> Typ des anderen Objekts bei Kollisionen.
+     * @param clazz Typ des anderen Objekts bei Kollisionen.
      * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
      *                 allen anderen Objekten der Scene erlebt.
      * @see #addCollisionListener(Actor, CollisionListener)
@@ -487,6 +510,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Rendert das Objekt am Ursprung. <ul> <li>Die Position ist (0|0).</li> <li>Die Roation ist 0.</li> </ul>
      *
      * @param g Das zeichnende Graphics-Objekt
+     * @param pixelPerMeter Pixel pro Meter.
      */
     @Internal
     public abstract void render(Graphics2D g, float pixelPerMeter);
@@ -869,6 +893,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box">AABB</a>,
      * die das gesamte Objekt umspannt, befindet sich ein <b>statisches Objekt</b>.</li>
      * </ul>
+     *
+     * @return {@code true}, falls das Objekt auf einem anderen Objekt steht, siehe Beschreibung.
      */
     @API
     public final boolean isGrounded() {
@@ -880,7 +906,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Erstellt einen Revolute-Joint zwischen dem zugehörigen <code>Actor</code>-Objekt und einem weiteren.
      *
-     * <h3>Definition Revolute-Joint</h3>
+     * <h4>Definition Revolute-Joint</h4>
      * <p>Verbindet zwei <code>Actor</code>-Objekte <b>untrennbar an einem Anchor-Point</b>. Die Objekte können sich
      * ab sofort nur noch <b>relativ zueinander drehen</b>.</p>
      *
@@ -1090,9 +1116,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Gibt die X-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+     * Gibt die x-Koordinate der linken oberen Ecke zurück. Sollte das Raumobjekt nicht rechteckig
      * sein, so wird die Position der linken oberen Ecke des umschließenden Rechtecks genommen.
-     * <p>
      *
      * @return <code>getX</code>-Koordinate
      * @see #getY()
@@ -1104,7 +1129,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Setzt die getX-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
+     * Setzt die x-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
      * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue.
      *
      * @param x neue <code>getX</code>-Koordinate
@@ -1118,7 +1143,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Gibt die getY-Koordinate der linken unteren Ecke zurück. Sollte das Raumobjekt nicht rechteckig
+     * Gibt die y-Koordinate der linken unteren Ecke zurück. Sollte das Raumobjekt nicht rechteckig
      * sein, so wird die Position der linken unteren Ecke des umschließenden Rechtecks genommen.
      *
      * @return <code>getY</code>-Koordinate
@@ -1131,7 +1156,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Setzt die getY-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
+     * Setzt die y-Koordinate der Position des Objektes gänzlich neu auf der Zeichenebene. Das
      * Setzen ist technisch gesehen eine Verschiebung von der aktuellen Position an die neue. <br>
      * <br> <b>Achtung!</b><br> Bei <b>allen</b> Objekten ist die eingegebene Position die
      * linke, untere Ecke des Rechtecks, das die Figur optimal umfasst. Das heißt, dass dies bei
@@ -1231,6 +1256,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * verschwindet.
      *
      * @param lifetime Lebenszeit in Sekunden
+     * @return Objekt, das die Animation kontrolliert
      */
     @API
     public final ValueAnimator<Float> animateParticle(float lifetime) {

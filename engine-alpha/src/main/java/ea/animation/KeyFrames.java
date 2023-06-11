@@ -73,7 +73,7 @@ public class KeyFrames implements FrameUpdateListener {
      *
      * @param infinite Ist dieser Wert <code>true</code>, so wird nach Ablauf des letzten Keyframes jeden weiteren
      *                 Frame der letzte Wert interpoliert.
-     *                 Ist dieser Wert <ocde>false</ocde>, so wird nach dem letzten Keyframe keine weitere Interpolation
+     *                 Ist dieser Wert <code>false</code>, so wird nach dem letzten Keyframe keine weitere Interpolation
      *                 ausgeführt.
      *
      * @see #isInfinite()

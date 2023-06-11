@@ -270,6 +270,8 @@ public final class Camera {
      * @param pixelPerMeter   Umrechnungsfaktor pixelPerMeter
      *
      * @return Die zu zeichnende Position des Punktes in Px
+     *
+     * @hidden
      */
     @Internal
     public Point toScreenPixelLocation(Vector locationInWorld, float pixelPerMeter) {

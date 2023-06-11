@@ -131,7 +131,7 @@ public final class Game {
     /**
      * Gibt die Fenstergröße <b>in Pixel</b> aus.
      *
-     * @return Ein Vector-Objekt, dessen Höhe und Breite mit Fensterhöhe & -breite übereinstimmt.
+     * @return Ein Vector-Objekt, dessen Höhe und Breite mit Fensterhöhe &amp; -breite übereinstimmt.
      */
     @API
     public static Vector getFrameSizeInPixels() {

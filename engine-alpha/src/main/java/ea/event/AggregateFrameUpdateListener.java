@@ -23,6 +23,8 @@ import ea.FrameUpdateListener;
 import ea.internal.annotations.API;
 
 /**
+ * Aggregiert mehrere {@link FrameUpdateListener}, um sie gemeinsam pausieren zu können.
+ *
  * @author Niklas Keller
  */
 public abstract class AggregateFrameUpdateListener implements FrameUpdateListener, FrameUpdateListenerContainer {

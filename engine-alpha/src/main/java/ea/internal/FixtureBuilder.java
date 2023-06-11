@@ -98,7 +98,7 @@ public final class FixtureBuilder {
      * Erstellt einen Shape-Supplier basierend auf einem String.
      *
      * @param code <ul>
-     *             <li>Shapes werden getrennt durch "&"</li>
+     *             <li>Shapes werden getrennt durch "&amp;"</li>
      *             <li>Rechteck: <code>R0,0,40,50</code> Rechteck mit Startpunkt (0|0), Breite 40, Höhe 50</li>
      *             <li>Polygon: <code>P40,40,50,50,10,20</code> Polygon mit drei Punkten: (40|40), (50|50), (10|20)</li>
      *             <li>Kreis:  <code>C10,10,40</code> Kreis mit Mittelpunkt (10|10) und Radius 40</li>

@@ -8,6 +8,8 @@ import ea.internal.annotations.Internal;
 /**
  * Beschreibt einen Keyframe.
  *
+ * @param <Value> Werttyp, der animiert werden soll.
+ *
  * @author Michael Andonie
  */
 public class KeyFrame<Value extends Number> implements Comparable<KeyFrame<Value>> {

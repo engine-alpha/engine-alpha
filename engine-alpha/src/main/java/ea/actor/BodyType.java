@@ -59,15 +59,15 @@ import ea.internal.annotations.Internal;
  * Dies ist die <b>Standardeinstellung</b> für Actors, wenn sie erstellt werden.
  * </li>
  * <li>
- *  * <b>Particles</b>:
- *  * <ul>
- *  * <li>Nehmen wie Sensoren <b>nicht teil an der Physiksimulation</b></li>
- *  * <li>Generieren troztdem Collision Events</li>
- *  * </ul>
- *  * Dieser Typ ist hilfreich, wenn du viele Actors generieren willst, diese aber rein optisch auf das Spiel wirken
+ *  <b>Particles</b>:
+ *  <ul>
+ *  <li>Nehmen wie Sensoren <b>nicht teil an der Physiksimulation</b></li>
+ *  <li>Generieren troztdem Collision Events</li>
+ *  </ul>
+ *  Dieser Typ ist hilfreich, wenn du viele Actors generieren willst, diese aber rein optisch auf das Spiel wirken
  *  sollen, wie zum Beispiel Dreck, den ein Auto beim Anfahren aufwühlt oder Funken, die von einer Wand nach einem
  *  Schuss sprühen.
- *  * </li>
+ *  </li>
  * </ul>
  *
  * @see Actor#setBodyType(BodyType)

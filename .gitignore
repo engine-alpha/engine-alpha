@@ -26,6 +26,7 @@ engine-alpha.log
 
 *~
 
+/target/
 /engine-alpha/target/
 /engine-alpha-edu/target/
 /engine-alpha-examples/target/
