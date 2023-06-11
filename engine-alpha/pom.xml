@@ -12,28 +12,46 @@
     <artifactId>engine-alpha</artifactId>
     <packaging>jar</packaging>
 
+    <repositories>
+        <repository>
+            <id>git-repository</id>
+            <url>file://${project.basedir}/../lib</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <!-- Install via:
+
+          mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file \
+             -Dfile=jbox2d-library-master-c0b937b.jar -DgroupId=org.jbox2d \
+             -DartifactId=jbox2d-library -Dversion=2.3.1-SNAPSHOT \
+             -Dpackaging=jar -DlocalRepositoryPath=lib -DgeneratePom=true -DcreateChecksum=true
+
+          mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file \
+             -Dfile=jbox2d-library-master-c0b937b-sources.jar -DgroupId=org.jbox2d \
+             -DartifactId=jbox2d-library -Dversion=2.3.1-SNAPSHOT \
+             -Dpackaging=jar -DlocalRepositoryPath=lib -Dclassifier=sources -DgeneratePom=true -DcreateChecksum=true
+
+              -->
         <dependency>
             <groupId>org.jbox2d</groupId>
             <artifactId>jbox2d-library</artifactId>
             <version>2.3.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../lib/jbox2d-library-master-c0b937b.jar</systemPath>
         </dependency>
     </dependencies>
 
     <build>
+        <finalName>engine-alpha-4</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <finalName>engine-alpha-4</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>

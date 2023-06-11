@@ -21,17 +21,17 @@
     </dependencies>
 
     <build>
+        <finalName>engine-alpha-4-edu</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <finalName>engine-alpha-4-edu</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
