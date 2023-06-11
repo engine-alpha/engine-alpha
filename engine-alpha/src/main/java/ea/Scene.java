@@ -1,7 +1,7 @@
 /*
  * Engine Alpha ist eine anfängerorientierte 2D-Gaming Engine.
  *
- * Copyright (c) 2011 - 2018 Michael Andonie and contributors.
+ * Copyright (c) 2011 - 2023 Michael Andonie and contributors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,10 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 public class Scene implements KeyListenerContainer, MouseClickListenerContainer, MouseWheelListenerContainer, FrameUpdateListenerContainer {
-    public static final Color REVOLUTE_JOINT_COLOR = Color.BLUE;
-    public static final Color ROPE_JOINT_COLOR = Color.CYAN;
-    public static final Color DISTANCE_JOINT_COLOR = Color.ORANGE;
-    public static final Color PRISMATIC_JOINT_COLOR = Color.GREEN;
+    private static final Color REVOLUTE_JOINT_COLOR = Color.BLUE;
+    private static final Color ROPE_JOINT_COLOR = Color.CYAN;
+    private static final Color DISTANCE_JOINT_COLOR = Color.ORANGE;
+    private static final Color PRISMATIC_JOINT_COLOR = Color.GREEN;
 
     /**
      * Die Kamera des Spiels. Hiermit kann der sichtbare Ausschnitt der Zeichenebene bestimmt und manipuliert werden.
@@ -97,16 +97,16 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
      * @param deltaSeconds Die Echtzeit, die seit dem letzten World-Step vergangen ist.
      */
     @Internal
-    public final void step(float deltaSeconds, Function<Runnable, Future> invoker) throws InterruptedException {
+    public final void step(float deltaSeconds, Function<Runnable, Future<?>> invoker) throws InterruptedException {
         synchronized (layers) {
-            Collection<Future> layerFutures = new ArrayList<>(layers.size());
+            Collection<Future<?>> layerFutures = new ArrayList<>(layers.size());
 
             for (Layer layer : layers) {
-                Future future = invoker.apply(() -> layer.step(deltaSeconds));
+                Future<?> future = invoker.apply(() -> layer.step(deltaSeconds));
                 layerFutures.add(future);
             }
 
-            for (Future layerFuture : layerFutures) {
+            for (Future<?> layerFuture : layerFutures) {
                 try {
                     layerFuture.get();
                 } catch (ExecutionException e) {
@@ -160,9 +160,9 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     /**
-     * Gibt die sichtbare Fläche auf dem <b>Hauptlayer</b> aus.
+     * Gibt die sichtbare Fläche auf dem <b>Hauptebene</b> aus.
      *
-     * @return Die sichtbare Fläche auf dem Hauptlayer
+     * @return Die sichtbare Fläche auf der Hauptebene
      *
      * @see Game#getFrameSizeInPixels()
      */
@@ -218,13 +218,13 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
         g.drawRect((int) b.getX() - (JOINT_CIRCLE_RADIUS / 2), (int) b.getY() - (JOINT_CIRCLE_RADIUS / 2), JOINT_RECTANGLE_SIDE, JOINT_RECTANGLE_SIDE);
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY());
         Vector middle = a.add(b).divide(2);
-        g.drawString("" + a.getDistance(b).divide(pixelPerMeter).getLength(), middle.getX(), middle.getY());
+        g.drawString(String.valueOf(a.getDistance(b).divide(pixelPerMeter).getLength()), middle.getX(), middle.getY());
     }
 
     /**
-     * Gibt den Worldhandler des Main-Layers aus.
+     * Gibt den WorldHandler der Hauptebene aus.
      *
-     * @return der Worldhandler des Main-Layers.
+     * @return WorldHandler der Hauptebene.
      */
     @Internal
     public final WorldHandler getWorldHandler() {
@@ -232,7 +232,7 @@ public class Scene implements KeyListenerContainer, MouseClickListenerContainer,
     }
 
     /**
-     * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb des Hauptlayers der Scene</b> wirkt.
+     * Setzt die Schwerkraft, die auf <b>alle Objekte innerhalb der Hauptebene der Szene</b> wirkt.
      *
      * @param gravityInNewton Die neue Schwerkraft als Vector. Die Einheit ist <b>[N]</b>.
      */
