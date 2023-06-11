@@ -8,7 +8,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.util.Logger;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,8 +25,19 @@ import java.util.Map;
 @API
 public class Spiel {
 
+    /**
+     * Standardtitel des Fensters
+     */
     public static final String STANDARD_TITEL = "Engine Alpha - EDU Version";
+
+    /**
+     * Standardbreite des Fensters
+     */
     public static final int STANDARD_BREITE = 800;
+
+    /**
+     * Standardhöhe des Fensters
+     */
     public static final int STANDARD_HOEHE = 600;
 
     private static final HashMap<String, Color> farben = new HashMap<>();
@@ -47,7 +58,7 @@ public class Spiel {
     private static int fensterBreite = STANDARD_BREITE;
     private static int fensterHoehe = STANDARD_HOEHE;
 
-    @SuppressWarnings ( "StaticVariableOfConcreteClass" )
+    @SuppressWarnings("StaticVariableOfConcreteClass")
     private static EduScene activeScene;
 
     /**
@@ -84,7 +95,6 @@ public class Spiel {
      * außerhalb der Engine keine awt-Klasse nötig.
      *
      * @param farbname Der Name der Farbe.
-     *
      * @return Das Farbobjekt zum String; ist Color.black bei unzuordnembaren String
      */
     @Internal
@@ -158,6 +168,10 @@ public class Spiel {
         fensterHoehe = hoehe;
     }
 
+    /**
+     * @hidden
+     * @return Aktuell aktive Szene
+     */
     @Internal
     public static EduScene getActiveScene() {
         if (activeScene == null) {
@@ -168,6 +182,10 @@ public class Spiel {
         return activeScene;
     }
 
+    /**
+     * @hidden
+     * @param eduScene Neue aktive Szene
+     */
     @Internal
     private static void setActiveScene(EduScene eduScene) {
         activeScene = eduScene;
@@ -187,8 +205,8 @@ public class Spiel {
 
     /**
      * Setzt, ob die <b>aktive Szene</b> den Erkundungsmodus aktiv hat.
-     * Ist der Erkundungsmodus aktiv, so kann man die aktuellen Szene navigieren mit Pfeiltasten (Kameraposition)
-     * und Mausrad (Kamerazoom)
+     * Ist der Erkundungsmodus aktiv, so kann man in der aktuellen Szene mit Pfeiltasten (Kameraposition)
+     * und Mausrad (Kamerazoom) navigieren.
      *
      * @param aktiv Ob der Erkundungsmodus aktiv sein soll.
      */
@@ -202,7 +220,6 @@ public class Spiel {
      * aufgerufen werden.
      *
      * @param name Der Name für die Szene.
-     *
      * @see #setzeAktiveSzene(String)
      */
     @API
@@ -237,7 +254,6 @@ public class Spiel {
      * werden.
      *
      * @param name der Name der aktiv zu setzenden Szene.
-     *
      * @see #benenneAktiveSzene(String)
      */
     @API
@@ -255,7 +271,6 @@ public class Spiel {
      *
      * @return Ein String Array. Jeder Eintrag entspricht dem Namen einer der gespeicherten Szenen des Spiels.
      * Szenen, die nicht benannt wurden, haben keinen Namen und werden daher nicht mit aufgelistet.
-     *
      * @see #erzeugeNeueSzene()
      * @see #benenneAktiveSzene(String)
      */
@@ -279,21 +294,44 @@ public class Spiel {
         getActiveScene().addLayer(ebenenName, ebenenPosition);
     }
 
+    /**
+     * Ändert, wie sehr die Ebene verschoben werden soll, wenn die Kamera verschoben wird. Dies kann verwendet werden,
+     * um eine Art 3D-Effekt zu erzeugen.
+     *
+     * @param ebenenName Name der Ebene
+     * @param x Faktor für die Verschiebung der Kamera in x-Richtung
+     * @param y Faktor für die Verschiebung der Kamera in y-Richtung
+     * @param zoom Faktor für den Kamera-Zoom
+     */
     @API
     public void setzeEbenenparallaxe(String ebenenName, double x, double y, double zoom) {
         getActiveScene().setLayerParallax(ebenenName, (float) x, (float) y, (float) zoom);
     }
 
+    /**
+     * Ändert den Zeit-Faktor der gegebenen Ebene, z.B. für einen Zeitlupen-Effekt in nur einer Ebene.
+     *
+     * @param ebenenName Name der Ebene
+     * @param zeitverzerrung Faktor der Zeitverzerrung
+     */
     @API
     public void setzeEbenenzeitverzerrung(String ebenenName, double zeitverzerrung) {
         getActiveScene().setLayerTimeDistort(ebenenName, (float) zeitverzerrung);
     }
 
+    /**
+     * Ändere die aktive Ebene.
+     *
+     * @param ebenenName Name der Ebene, die von nun an aktiv sein soll.
+     */
     @API
     public void setzeAktiveEbene(String ebenenName) {
         getActiveScene().setActiveLayer(ebenenName);
     }
 
+    /**
+     * Ändere die aktive Ebene zurück zur Hauptebene.
+     */
     @API
     public void setzeAktiveEbeneAufHauptebene() {
         getActiveScene().resetToMainLayer();
@@ -303,7 +341,6 @@ public class Spiel {
      * Gibt die Namen aller Layer der <b>aktiven</b> Szene aus.
      *
      * @return Ein String Array. Jeder Eintrag entspricht dem Namen einer Ebene in der aktiven Szene des Spiels.
-     *
      * @see #erzeugeNeueEbene(String, int)
      * @see #setzeAktiveSzene(String)
      */
@@ -312,56 +349,113 @@ public class Spiel {
         return getActiveScene().getLayerNames();
     }
 
+    /**
+     * Verschiebe die Kamera relativ zur aktuellen Position.
+     *
+     * @param x Verschiebung auf der x-Achse
+     * @param y Verschiebung auf der y-Achse
+     */
     @API
     public void verschiebeKamera(double x, double y) {
         getActiveScene().getCamera().moveBy(new Vector(x, y));
     }
 
+    /**
+     * Ändere den Zoom-Faktor der Kamera.
+     *
+     * @param zoom Neuer Zoom-Faktor
+     */
     @API
     public void setzeKamerazoom(double zoom) {
         getActiveScene().getCamera().setZoom((float) zoom);
     }
 
+    /**
+     * @return Aktueller Zoom-Faktor der Kamera
+     */
     @API
     public double nenneKamerazoom() {
         return getActiveScene().getCamera().getZoom();
     }
 
+    /**
+     * Setzt den Kamera-Fokus auf ein Objekt, sodass die Kamera immer auf das Objekt gerichtet ist und automatisch verschoben wird.
+     *
+     * @param fokus Objekt, das fokussiert werden soll
+     */
     @API
-    public void setzeKamerafokus(EduActor fokus) {
+    public void setzeKamerafokus(EduActor<?> fokus) {
         getActiveScene().getCamera().setFocus(fokus.getActor());
     }
 
+    /**
+     * Rotiere die Kamera um einen relativen Winkel.
+     *
+     * @param grad Relative Rotation in Grad
+     */
     @API
     public void rotiereKamera(double grad) {
         getActiveScene().getCamera().rotateBy((float) grad);
     }
 
+    /**
+     * Rotiere die Kamera auf einen absoluten Winkel.
+     *
+     * @param grad Absolute Rotation in Grad.
+     */
     @API
     public void setzeKamerarotation(double grad) {
         getActiveScene().getCamera().rotateTo((float) grad);
     }
 
+    /**
+     * Setzt die Stärke der Schwerkraft.
+     *
+     * @param schwerkraft Stärke der Schwerkraft
+     */
     @API
     public void setzeSchwerkraft(double schwerkraft) {
         getActiveScene().getActiveLayer().setGravity(new Vector(0, -schwerkraft));
     }
 
+    /**
+     * Zeige einen Dialog mit einer Nachricht an.
+     *
+     * @param nachricht Inhalt der Nachricht
+     */
     @API
     public void zeigeNachricht(String nachricht) {
         Game.showMessage(nachricht, STANDARD_TITEL);
     }
 
+    /**
+     * Zeige einen Dialog mit einer Nachricht an, der eine "OK" und eine "Abbrechen" Option bietet.
+     *
+     * @param frage Inhalt der Frage
+     * @return {@code true}, falls die Nachricht mit "OK" bestätigt wurde.
+     */
     @API
     public boolean zeigeNachrichtMitBestaetigung(String frage) {
         return Game.requestOkCancel(frage, STANDARD_TITEL);
     }
 
+    /**
+     * Zeige einen Dialog mit einer Nachricht an, der eine "Ja" und eine "Nein" Option bietet.
+     *
+     * @param frage Inhalt der Frage
+     * @return {@code true}, falls die Nachricht mit "Ja" bestätigt wurde.
+     */
     @API
     public boolean zeigeNachrichtMitJaNein(String frage) {
         return Game.requestYesNo(frage, STANDARD_TITEL);
     }
 
+    /**
+     * Zeige einen Dialog mit einer Nachricht an, der ein Textfeld zur Eingabe bietet.
+     *
+     * @param nachricht Inhalt der Nachricht
+     * @return Eingabe im Textfeld
+     */
     @API
     public String zeigeNachrichtMitEingabe(String nachricht) {
         return Game.requestStringInput(nachricht, STANDARD_TITEL);
@@ -427,7 +521,6 @@ public class Spiel {
      * Meldet einen "Ticker" ab.
      *
      * @param ticker Das Angemeldete "Ticker"-Objekt, das nun nicht mehr aufgerufen werden soll.
-     *
      * @see #registriereTicker(double, Ticker)
      */
     @API
@@ -444,7 +537,6 @@ public class Spiel {
      *                                     <code>bildAktualisierungReagieren(int)</code>, so passiert nichts.
      *                                     Andernfalls wird ab sofort zu jedem
      *                                     Frame-Update der <b>aktuellen</b> Szene die Methode ausgeführt.
-     *
      * @see #entferneBildAktualisierungReagierbar(BildAktualisierungReagierbar)
      */
     @API
@@ -456,7 +548,6 @@ public class Spiel {
      * Entfernt einen pro-forma Frameupdate-Listener von der <b>aktiven</b> Szene.
      *
      * @param bildAktualisierungReagierbar Das zu entfernende Objekt. War es nie angemeldet, so passiert nichts.
-     *
      * @see #registriereBildAktualisierungReagierbar(BildAktualisierungReagierbar)
      */
     @API
@@ -468,7 +559,6 @@ public class Spiel {
      * Meldet einen MausRad-Listener an der <b>aktiven</b> Szene an.
      *
      * @param mausRadReagierbar Ein Objekt mit einer Methode mit Signatur <code>mausRadReagieren(float)</code>
-     *
      * @see #entferneMausRadReagierbar(MausRadReagierbar)
      */
     @API
@@ -480,7 +570,6 @@ public class Spiel {
      * Meldet einen MausRad-Listener an der <b>aktiven</b> Szene ab.
      *
      * @param mausRadReagierbar Der abzumeldende Mausrad-Listener
-     *
      * @see #registriereMausRadReagierbar(MausRadReagierbar)
      */
     @API
@@ -492,7 +581,6 @@ public class Spiel {
      * Gibt die X-Koordinate der Maus auf der Spielebene an.
      *
      * @return Die X-Koordinate der Maus auf der Spielebene (in Meter)
-     *
      * @see #nenneMausPositionY()
      */
     @API
@@ -504,7 +592,6 @@ public class Spiel {
      * Gibt die Y-Koordinate der Maus auf der Spielebene an.
      *
      * @return Die Y-Koordinate der Maus auf der Spielebene (in Meter)
-     *
      * @see #nenneMausPositionX()
      */
     @API

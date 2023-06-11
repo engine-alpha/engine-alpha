@@ -316,7 +316,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
             smashForce = Vector.NULL;
 
             if (smashing) {
-                Vector originalOffset = getPhysicsHandler().getWorldHandler().getLayer().getParent().getCamera().getOffset();
+                Vector originalOffset = getLayer().getParent().getCamera().getOffset();
                 Interpolator<Float> interpolator = new SinusFloat(0, -0.0004f * getVelocity().getY());
                 ValueAnimator<Float> valueAnimator = new ValueAnimator<>(.1f, y -> getLayer().getParent().getCamera().setOffset(originalOffset.add(new Vector(0, y))), interpolator, getLayer());
                 getLayer().addFrameUpdateListener(valueAnimator);
