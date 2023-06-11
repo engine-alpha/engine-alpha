@@ -25,7 +25,7 @@ import ea.animation.interpolation.LinearFloat;
 import ea.internal.annotations.API;
 import ea.internal.physics.FixtureData;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.function.Supplier;
 
 /**
@@ -69,6 +69,13 @@ public abstract class Geometry extends Actor {
         return color;
     }
 
+    /**
+     * Animiert die Farbe des aktuellen Objekts.
+     *
+     * @param duration Dauer der Animation in Sekunden
+     * @param color    Neue Farbe des Objekts
+     * @return Animations-Objekt, das die weitere Steuerung der Animation erlaubt
+     */
     @API
     public ValueAnimator<Float> animateColor(float duration, Color color) {
         Color originalColor = getColor();

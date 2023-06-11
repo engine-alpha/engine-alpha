@@ -80,11 +80,17 @@ public class Image extends Actor {
         this.height = image.getHeight() / pixelPerMeter;
     }
 
+    /**
+     * @return Größe des Bildes in Pixeln
+     */
     @Internal
     public Dimension getImageSizeInPx() {
         return new Dimension(this.image.getWidth(), this.image.getHeight());
     }
 
+    /**
+     * @return AWT-Repräsentation des Bildes
+     */
     @API
     public BufferedImage getImage() {
         return this.image;

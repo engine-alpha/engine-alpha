@@ -215,7 +215,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Setzt die Sichtbarkeit des Objekts.
      *
      * @param opacity <ul><li><code>0.0f</code> entspricht einem komplett durchsichtigen (transparenten) Objekt.</li>
-     *      <li><code>1.0f</code> entspricht einem undurchsichtigem Objekt.</li></ul>
+     *                <li><code>1.0f</code> entspricht einem undurchsichtigem Objekt.</li></ul>
      */
     @API
     public final void setOpacity(float opacity) {
@@ -319,9 +319,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Die Basiszeichenmethode.<br> Sie schließt eine Fallabfrage zur Sichtbarkeit ein.
      *
-     * @param g Das zeichnende Graphics-Objekt
-     * @param r Das Bounds, dass die Kameraperspektive repräsentiert.<br> Hierbei soll zunächst getestet
-     *          werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
+     * @param g             Das zeichnende Graphics-Objekt
+     * @param r             Das Bounds, dass die Kameraperspektive repräsentiert.<br> Hierbei soll zunächst getestet
+     *                      werden, ob das Objekt innerhalb der Kamera liegt, und erst dann gezeichnet werden.
      * @param pixelPerMeter Pixel pro Meter.
      */
     @Internal
@@ -465,8 +465,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Meldet einen neuen {@link CollisionListener} an, der auf alle Kollisionen reagiert, die dieser Actor mit seiner
      * Umwelt erlebt.
      *
-     * @param <E> Typ des anderen Objekts bei Kollisionen.
-     * @param clazz Typ des anderen Objekts bei Kollisionen.
+     * @param <E>      Typ des anderen Objekts bei Kollisionen.
+     * @param clazz    Typ des anderen Objekts bei Kollisionen.
      * @param listener Der Listener, der bei Kollisionen informiert werden soll, die der  <b>ausführende Actor</b> mit
      *                 allen anderen Objekten der Scene erlebt.
      * @see #addCollisionListener(Actor, CollisionListener)
@@ -509,7 +509,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Rendert das Objekt am Ursprung. <ul> <li>Die Position ist (0|0).</li> <li>Die Roation ist 0.</li> </ul>
      *
-     * @param g Das zeichnende Graphics-Objekt
+     * @param g             Das zeichnende Graphics-Objekt
      * @param pixelPerMeter Pixel pro Meter.
      */
     @Internal
@@ -553,6 +553,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         }
     }
 
+    /**
+     * @return Gibt die Ebene zurück, an der das aktuelle Objekt angemeldet ist, sonst {@code null}.
+     */
     public final Layer getLayer() {
         WorldHandler worldHandler = physicsHandler.getWorldHandler();
         if (worldHandler == null) {
@@ -562,6 +565,9 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         return worldHandler.getLayer();
     }
 
+    /**
+     * Entfernt das aktuelle Objekt aus seiner aktuellen Ebene, falls das Objekt gerade einer Ebene zugeordnet ist.
+     */
     public final void remove() {
         Layer layer = getLayer();
         if (layer != null) {
@@ -569,21 +575,33 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         }
     }
 
+    /**
+     * @return Liste der {@link KeyListener}.
+     */
     @API
     public final EventListeners<KeyListener> getKeyListeners() {
         return keyListeners;
     }
 
+    /**
+     * @return Liste der {@link MouseClickListener}.
+     */
     @API
     public final EventListeners<MouseClickListener> getMouseClickListeners() {
         return mouseClickListeners;
     }
 
+    /**
+     * @return Liste der {@link MouseWheelListener}.
+     */
     @API
     public final EventListeners<MouseWheelListener> getMouseWheelListeners() {
         return mouseWheelListeners;
     }
 
+    /**
+     * @return Liste der {@link FrameUpdateListener}.
+     */
     @API
     public final EventListeners<FrameUpdateListener> getFrameUpdateListeners() {
         return frameUpdateListeners;
@@ -680,8 +698,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * die Bewegung des Objekts.
      *
      * @param friction Der Reibungskoeffizient. In der Regel im Bereich <b>[0; 1]</b>.
-     *                 
-     * @see #getFriction() 
+     * @see #getFriction()
      */
     @API
     public final void setFriction(float friction) {
@@ -693,29 +710,40 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @return Der Reibungskoeffizient des Objekts. Ist in der Regel (in der Realität)
      * ein Wert im Bereich <b>[0; 1]</b>.
-     * 
-     * @see #setFriction(float) 
+     * @see #setFriction(float)
      */
     @API
     public final float getFriction() {
         return physicsHandler.getFriction();
     }
 
+    /**
+     * @param damping Dämpfung der Rotationsgeschwindigkeit
+     */
     @API
     public final void setAngularDamping(float damping) {
         physicsHandler.setAngularDamping(damping);
     }
 
+    /**
+     * @return Dämpfung der Rotationsgeschwindigkeit
+     */
     @API
     public final float getAngularDamping() {
         return physicsHandler.getAngularDamping();
     }
 
+    /**
+     * @param damping Dämpfung der Geschwindigkeit
+     */
     @API
     public final void setLinearDamping(float damping) {
         physicsHandler.setLinearDamping(damping);
     }
 
+    /**
+     * @return Dämpfung der Geschwindigkeit
+     */
     @API
     public final float getLinearDamping() {
         return physicsHandler.getLinearDamping();
@@ -728,7 +756,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param velocityInMPerS Die Geschwindigkeit, mit der sich dieses Objekt ab sofort
      *                        bewegen soll. In <b>[m / s]</b>
-     *
      * @see #getVelocity()
      */
     @API
@@ -745,7 +772,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @return Die Geschwindigkeit, mit der sich dieses Objekt gerade (also in diesem Frame) bewegt.
      * In <b>[m / s]</b>
-     * 
      * @see #setVelocity(Vector)
      * @see #getAngularVelocity()
      */
@@ -758,7 +784,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Gibt die aktuelle Drehgeschwindigkeit aus.
      *
      * @return Die aktuelle Drehgeschwindigkeit.
-     *
      * @see #setAngularVelocity(float)
      * @see #getVelocity()
      * @see #getAngularDamping()
@@ -774,7 +799,6 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      *
      * @param rotationsPerSecond Die Geschwindigkeit, mit der sich dieses Objekt ab sofort
      *                           bewegen soll. In <b>[Umdrehnungen / s]</b>
-     *
      * @see #getAngularVelocity()
      * @see #setVelocity(Vector)
      * @see #setAngularDamping(float)
@@ -962,6 +986,14 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
         }, new RopeJoint());
     }
 
+    /**
+     * Erstellt einen neuen {@link PrismaticJoint} zwischen zwei Objekten.
+     *
+     * @param other     Objekt, das mit dem aktuellen verbunden werden soll
+     * @param anchor    Verbindungspunkt
+     * @param axisAngle Winkel
+     * @return Objekt für die weitere Steuerung des Joints
+     */
     @API
     public final PrismaticJoint createPrismaticJoint(Actor other, Vector anchor, float axisAngle) {
         return WorldHandler.createJoint(this, other, (world, a, b) -> {

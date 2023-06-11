@@ -26,13 +26,22 @@ import ea.internal.annotations.API;
 
 @API
 public interface FrameUpdateListenerContainer {
+    /**
+     * @return Liste der {@link FrameUpdateListener}
+     */
     EventListeners<FrameUpdateListener> getFrameUpdateListeners();
 
+    /**
+     * Fügt einen neuen {@link FrameUpdateListener} hinzu.
+     */
     @API
     default void addFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
         getFrameUpdateListeners().add(frameUpdateListener);
     }
 
+    /**
+     * Entfernt einen {@link FrameUpdateListener}.
+     */
     @API
     default void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener) {
         getFrameUpdateListeners().remove(frameUpdateListener);

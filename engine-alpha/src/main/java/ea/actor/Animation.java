@@ -218,7 +218,6 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @param prefix        Das Pfad-Präfix. Diese Funktion sucht <a>alle Dateien mit dem gegebenen Präfix</a> (im
      *                      angebenenen Ordner) und fügt sie in aufsteigender Reihenfolge der Animation hinzu.
      * @return Eine Animation aus allen Dateien, die mit dem Pfadpräfix beginnen.
-     * @author Michael Andonie
      */
     @API
     public static Animation createFromImagesPrefix(float frameDuration, float width, float height, String directoryPath, String prefix) {

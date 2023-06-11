@@ -24,6 +24,11 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 import ea.internal.physics.WorldHandler;
 
+/**
+ * Verbindung zwischen Objekten.
+ *
+ * @param <JointType> Typ der Verbindung in der Box2D-Repräsentation
+ */
 @API
 public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> {
     private JointRegistration<JointType> joint;
@@ -52,6 +57,9 @@ public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> 
         return joint.getJoint();
     }
 
+    /**
+     * Löst die Verbindung der Objekte.
+     */
     @API
     public void release() {
         if (joint != null) {
@@ -63,6 +71,11 @@ public abstract class Joint<JointType extends org.jbox2d.dynamics.joints.Joint> 
         releaseListeners.clear();
     }
 
+    /**
+     * Fügt einen Listener hinzu, der ausgeführt wird, sobald die Verbindung gelöst wird.
+     *
+     * @param runnable Listener
+     */
     @API
     public void addReleaseListener(Runnable runnable) {
         releaseListeners.add(runnable);
