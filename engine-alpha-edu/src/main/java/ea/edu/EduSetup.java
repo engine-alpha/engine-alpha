@@ -65,7 +65,7 @@ public final class EduSetup {
     }
 
     /**
-     * Erlaubt das überspringen des automatischen EDU-Setups.
+     * Erlaubt das Überspringen des automatischen EDU-Setups.
      *
      * @param runnable Code, der ohne automatischen Setup ausgeführt wird.
      * @param scene    Szene, zu der das neue Objekt hinzugefügt wird.
