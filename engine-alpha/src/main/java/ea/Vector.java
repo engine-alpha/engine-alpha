@@ -311,7 +311,7 @@ public final class Vector implements Cloneable {
      * Vektoren ist: <code>(a, b) o (c, d) = a * b + c * d</code>
      *
      * @param v zweiter Vector
-     * @return Skalarprodukt dieses Vektoren mit dem Vector <code>v</code>.
+     * @return Skalarprodukt dieser Vektoren mit dem Vector <code>v</code>.
      */
     @API
     public float getScalarProduct(Vector v) {
@@ -406,7 +406,7 @@ public final class Vector implements Cloneable {
     }
 
     /**
-     * Gibt die Manhattan-Länge des Vektors zurück. Diese ist für v=(a,b) definiert als a+b .
+     * Gibt die Manhattan-Länge des Vektors zurück. Diese ist für v=(a, b) definiert als a+b.
      *
      * @return Die Summe von delta X und delta Y des Vektors.
      */
