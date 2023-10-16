@@ -60,7 +60,7 @@ public final class Game {
     private static boolean debug;
 
     /**
-     * Wird <code>verbose</code> auf <code>true</code> geesetzt, so werden äuerst ausführliche Log-Ausgaben gemacht.
+     * Wird <code>verbose</code> auf <code>true</code> gesetzt, so werden äußerst ausführliche Log-Ausgaben gemacht.
      * Dies betrifft below anderem Informationen über das Verhalten der frameweise arbeitenden Threads. Hierfür wurde
      * diese Variable eingeführt.
      */
@@ -346,7 +346,7 @@ public final class Game {
     }
 
     /**
-     * Gibt einen Nachricht in einem modalen Dialogfenster aus. Der Dialog ist über {@link javax.swing.JOptionPane}
+     * Gibt eine Nachricht in einem modalen Dialogfenster aus. Der Dialog ist über {@link javax.swing.JOptionPane}
      * implementiert.
      *
      * @param message Der Inhalt der Botschaft im Dialogfenster.
