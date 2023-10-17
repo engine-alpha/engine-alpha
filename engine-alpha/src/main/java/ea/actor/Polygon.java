@@ -47,7 +47,7 @@ public class Polygon extends Geometry {
     /**
      * Setzt den Streckenzug neu, der dieses Polygon beschreibt. <b>Ändert die physikalischen Eigenschaften</b> des
      * Polygons.
-     * <i>Konkanve Streckenzüge werden durch die kleinste konvexe Körperform beschrieben, die den Streckenzug
+     * <i>Konkave Streckenzüge werden durch die kleinste konvexe Körperform beschrieben, die den Streckenzug
      * umspannt.</i>
      * Komplexere Formen können über {@code setFixtures(Supplier)} physikalisch präzise umgesetzt werden.
      *
