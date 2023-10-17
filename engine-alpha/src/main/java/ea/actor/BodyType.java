@@ -39,7 +39,7 @@ import ea.internal.annotations.Internal;
  * <li>Verhalten sich wie Objekte der newton'schen Mechanik.</li>
  * <li>Können Kräfte auf sich wirken lassen und interagieren miteinander.</li>
  * </ul>
- * Diese Eigenschaft gehört zum Beispiel zu <i>Billiardkugeln, Spielfiguren und Wurfgeschossen</i>.
+ * Diese Eigenschaft gehört zum Beispiel zu <i>Billardkugeln, Spielfiguren und Wurfgeschossen</i>.
  * </li>
  * <li>
  * <b>Kinematische</b> Objekte:
@@ -47,14 +47,14 @@ import ea.internal.annotations.Internal;
  * <li>Können eine Geschwindigkeit haben, aber onKeyDownInternal nicht auf Kräfte.</li>
  * <li>Kollidieren (im Sinne der Physics) nur mit dynamischen Objekten.</li>
  * </ul>
- * Doese Eigenschaft gehört zum Beispiel zu <i>beweglichen Plattformen</i>.
+ * Diese Eigenschaft gehört zum Beispiel zu <i>beweglichen Plattformen</i>.
  * </li>
  * <li>
  * <b>Sensoren</b>:
  * <ul>
  * <li>Nehmen nicht an der Physiksimulation teil. Sie werden von der Physics so behandelt,
  * <i>als wären sie nicht da</i>.</li>
- * <li>Generieren troztdem Collision Events</li>
+ * <li>Generieren trotzdem Collision Events</li>
  * </ul>
  * Dies ist die <b>Standardeinstellung</b> für Actors, wenn sie erstellt werden.
  * </li>
@@ -62,7 +62,7 @@ import ea.internal.annotations.Internal;
  *  <b>Particles</b>:
  *  <ul>
  *  <li>Nehmen wie Sensoren <b>nicht teil an der Physiksimulation</b></li>
- *  <li>Generieren troztdem Collision Events</li>
+ *  <li>Generieren trotzdem Collision Events</li>
  *  </ul>
  *  Dieser Typ ist hilfreich, wenn du viele Actors generieren willst, diese aber rein optisch auf das Spiel wirken
  *  sollen, wie zum Beispiel Dreck, den ein Auto beim Anfahren aufwühlt oder Funken, die von einer Wand nach einem

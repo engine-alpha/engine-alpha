@@ -216,7 +216,7 @@ public class Animation extends Actor implements FrameUpdateListener {
      * @param frameDuration Die Dauer (ms), die ein Frame aktiv bleibt.
      * @param directoryPath Der Pfad zum Verzeichnis, in dem die einzuladenden Bilder liegen.
      * @param prefix        Das Pfad-Präfix. Diese Funktion sucht <a>alle Dateien mit dem gegebenen Präfix</a> (im
-     *                      angebenenen Ordner) und fügt sie in aufsteigender Reihenfolge der Animation hinzu.
+     *                      angegebenen Ordner) und fügt sie in aufsteigender Reihenfolge der Animation hinzu.
      * @return Eine Animation aus allen Dateien, die mit dem Pfadpräfix beginnen.
      */
     @API

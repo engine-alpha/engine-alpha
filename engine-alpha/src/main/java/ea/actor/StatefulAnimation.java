@@ -272,7 +272,7 @@ public class StatefulAnimation<State> extends Actor {
     }
 
     /**
-     * Methode wird frameweise über einen anononymen Listener aufgerufen.
+     * Methode wird frameweise über einen anonymen Listener aufgerufen.
      */
     @Internal
     private void internalOnFrameUpdate(float frameDuration) {
