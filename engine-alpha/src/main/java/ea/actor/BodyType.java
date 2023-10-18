@@ -23,7 +23,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 /**
- * Aufzählung der drei verschiedenen Typen von Objekten innerhalb der Physics der EA.
+ * Aufzählung der fünf verschiedenen Typen von Objekten innerhalb der Physics der EA.
  * <ul>
  * <li>
  * <b>Statische</b> Objekte:
@@ -44,7 +44,7 @@ import ea.internal.annotations.Internal;
  * <li>
  * <b>Kinematische</b> Objekte:
  * <ul>
- * <li>Können eine Geschwindigkeit haben, aber onKeyDownInternal nicht auf Kräfte.</li>
+ * <li>Können eine Geschwindigkeit haben, aber reagieren nicht auf Kräfte.</li>
  * <li>Kollidieren (im Sinne der Physics) nur mit dynamischen Objekten.</li>
  * </ul>
  * Diese Eigenschaft gehört zum Beispiel zu <i>beweglichen Plattformen</i>.
@@ -75,7 +75,47 @@ import ea.internal.annotations.Internal;
  */
 @API
 public enum BodyType {
-    STATIC, DYNAMIC, KINEMATIC, SENSOR, PARTICLE;
+
+    /**
+     * <b>Statische</b> Objekte haben keine Geschwindigkeit. Sie bewegen sich
+     * nicht in der Simulation, Kräfte haben keinen Einfluss auf sie. Diese
+     * Eigenschaft gehört zum Beispiel zu <i>Wänden, Böden und Decken</i>.
+     */
+    STATIC,
+
+    /**
+     * <b>Dynamische</b> Objekte verhalten sich wie Objekte der Newton’schen
+     * Mechanik. Sie können Kräfte auf sich wirken lassen und interagieren
+     * miteinander. Diese Eigenschaft gehört zum Beispiel zu <i>Billiardkugeln,
+     * Spielfiguren und Wurfgeschossen</i>.
+     */
+    DYNAMIC,
+
+    /**
+     * <b>Kinematische</b> Objekte können eine Geschwindigkeit haben, aber
+     * reagieren nicht auf Kräfte. Sie kollidieren (im Sinne der
+     * Physics) nur mit dynamischen Objekten. Diese Eigenschaft gehört zum
+     * Beispiel zu <i>beweglichen Plattformen</i>.
+     */
+    KINEMATIC,
+
+    /**
+     * <b>Sensoren</b> nehmen nicht an der Physiksimulation teil. Sie werden von
+     * der Physics so behandelt, <i>als wären sie nicht da</i>. Sie generieren
+     * trotzdem Collision Events. Dies ist die <b>Standardeinstellung</b> für
+     * Actors, wenn sie erstellt werden.
+     */
+    SENSOR,
+
+    /**
+     * <b>Particles</b> nehmen wie Sensoren <b>nicht an der
+     * Physiksimulation</b> teil, sie generieren trotzdem Collision Events.
+     * Dieser Typ ist hilfreich, wenn du viele Actors generieren willst, diese
+     * aber rein optisch auf das Spiel wirken sollen, wie zum Beispiel Dreck,
+     * den ein Auto beim Anfahren aufwühlt oder Funken, die von einer Wand nach
+     * einem Schuss sprühen.
+     */
+    PARTICLE;
 
     BodyType() {
         //
