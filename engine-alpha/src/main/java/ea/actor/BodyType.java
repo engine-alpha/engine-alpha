@@ -23,7 +23,7 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 /**
- * Aufzählung der fünf verschiedenen Typen von Objekten innerhalb der Physics der EA.
+ * Aufzählung der verschiedenen Typen von Objekten innerhalb der Physics der EA.
  * <ul>
  * <li>
  * <b>Statische</b> Objekte:
