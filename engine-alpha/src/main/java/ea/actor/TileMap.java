@@ -44,6 +44,18 @@ public interface TileMap {
     static TileMap createFromImage(String path, int sizeX, int sizeY) {
         BufferedImage image = ImageLoader.load(path);
 
+        if (image.getWidth() % sizeX != 0) {
+          throw new IllegalArgumentException(String.format(
+              "Kann die Kacheln mit der Breite von %spx nicht aus der Bilddatei (%s) ausschneiden, da die Bildbreite (%spx) ein Vielfaches der Kachelbreite sein muss.",
+              sizeX, path, image.getWidth()));
+        }
+
+        if (image.getHeight() % sizeY != 0) {
+          throw new IllegalArgumentException(String.format(
+              "Kann die Kacheln mit der Höhe von %spx nicht aus der Bilddatei (%s) ausschneiden, da die Bildhöhe (%spx) ein Vielfaches der Kachelhöhe sein muss.",
+              sizeY, path, image.getHeight()));
+        }
+
         Tile[][] tiles = new Tile[image.getWidth() / sizeX][image.getHeight() / sizeY];
 
         for (int posX = 0; posX < image.getWidth(); posX += sizeX) {
