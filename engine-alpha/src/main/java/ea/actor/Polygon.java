@@ -24,16 +24,6 @@ public class Polygon extends Geometry {
     private int[] scaledPx, scaledPy;
 
     /**
-     * Skalierungsfaktor Breite
-     */
-    private float scaleX;
-
-    /**
-     * Skalierungsfaktor Höhe.
-     */
-    private float scaleY;
-
-    /**
      * Erstellt ein neues Polygon. Seine Position ist der <b>Ursprung</b>.
      *
      * @param points Der Streckenzug an Punkten, der das Polygon beschreibt. Alle
