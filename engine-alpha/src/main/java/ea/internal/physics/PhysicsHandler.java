@@ -132,7 +132,7 @@ public interface PhysicsHandler {
     float getMass();
 
     /**
-     * Uebt eine Kraft auf das Ziel-Objekt (im Massenschwerpunkt) aus (sofern möglich).
+     * Übt eine Kraft auf das Ziel-Objekt (im Massenschwerpunkt) aus (sofern möglich).
      *
      * @param force Die Kraft, die auf den Massenschwerpunkt angewandt werden soll. <b>Nicht in [px]</b>, sondern in
      *              [N] = [m / s^2].

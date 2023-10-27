@@ -170,7 +170,7 @@ public final class Bounds {
      *
      * @param upperBound Die Grenze, auf der das Ergebnis maximal liegen darf.
      *
-     * @return Ein Bounds derselben Hoehe und Breite wie dieses, das in jedem Fall below,
+     * @return Ein Bounds derselben Höhe und Breite wie dieses, das in jedem Fall below,
      * oder auf der Grenze liegt, wenn es passt, ist es <code>this</code>.
      */
     public Bounds below(float upperBound) {
@@ -376,9 +376,9 @@ public final class Bounds {
     }
 
     /**
-     * Gibt die <b>reelle</b> Hoehe aus.
+     * Gibt die <b>reelle</b> Höhe aus.
      *
-     * @return Die <b>reelle</b> Hoehe dieses BoundingRechtecks.
+     * @return Die <b>reelle</b> Höhe dieses BoundingRechtecks.
      *
      * @see #getX()
      * @see #getY()

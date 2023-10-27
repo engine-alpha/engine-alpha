@@ -295,11 +295,11 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
             case KeyEvent.VK_J: //Decrease Mass
                 changeMass(-10);
                 break;
-            case KeyEvent.VK_W: //Elastizitaet der Wände erhöhen
+            case KeyEvent.VK_W: //Elastizität der Wände erhöhen
                 ground.setRestitution(ground.getRestitution() + 0.1f);
                 System.out.println("Ela der Wand " + ground.getRestitution());
                 break;
-            case KeyEvent.VK_Q: //Elastizitaet der Wände erhöhen
+            case KeyEvent.VK_Q: //Elastizität der Wände erhöhen
                 ground.setRestitution(ground.getRestitution() - 0.1f);
                 System.out.println("Ela der Wand " + ground.getRestitution());
                 break;
