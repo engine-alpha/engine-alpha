@@ -38,7 +38,7 @@ import java.awt.Point;
  * zwischen den Punkten (0|0) und (1500|1000) ) eingestellt. Bei spezielleren Fokuswuenschen lässt
  * sich dies ebenfalls arrangieren durch die einzelnen Methoden, mit denen alle vier Bounds (N, S,
  * O, W) einzeln verstellt und (de)aktiviert werden können.<br> <b>!!Achtung!!</b><br> Bei den
- * Fokuseinstellungen sollte immer ein Bereich gewählt werden, der die Grösse des Anzeigefensters
+ * Fokuseinstellungen sollte immer ein Bereich gewählt werden, der die Größe des Anzeigefensters
  * (oder Vollbildes) bei weitem uebersteigt.<br> Allgemein wirken diese Bounds auch ohne
  * aktivierten Fokus. jedoch ist dies meist weniger sinnvoll.
  *
