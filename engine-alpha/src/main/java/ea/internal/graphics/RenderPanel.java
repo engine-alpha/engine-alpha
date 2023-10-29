@@ -35,8 +35,8 @@ public final class RenderPanel extends Canvas implements RenderTarget {
     /**
      * Konstruktor für Objekte der Klasse RenderPanel
      *
-     * @param width  Die Größe des Einflussbereichs des Panels in Richtung <code>getX</code>.
-     * @param height Die Größe des Einflussbereichs des Panels in Richtung <code>getY</code>.
+     * @param width  Die Größe des Einflussbereichs des Panels in Richtung <code>getX</code> in Pixel.
+     * @param height Die Größe des Einflussbereichs des Panels in Richtung <code>getY</code> in Pixel.
      */
     public RenderPanel(int width, int height) {
         this.setSize(width, height);
