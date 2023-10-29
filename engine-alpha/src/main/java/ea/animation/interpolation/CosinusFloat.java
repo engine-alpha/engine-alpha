@@ -1,6 +1,8 @@
 package ea.animation.interpolation;
 
 import ea.animation.Interpolator;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 /**
  * Interpoliert auf einer kompletten Cosinuskurve.
@@ -32,11 +34,13 @@ implements Interpolator<Float> {
      *                      <li>Nach 4/4 der Zeit <code>start</code></li>
      *                  </ul>
      */
+    @API
     public CosinusFloat(float start, float amplitude) {
         this.start = start;
         this.amplitude = amplitude;
     }
 
+    @Internal
     @Override
     public Float interpolate(float progress) {
         return (float)Math.cos(Math.PI * progress * 2) * amplitude + start - amplitude;

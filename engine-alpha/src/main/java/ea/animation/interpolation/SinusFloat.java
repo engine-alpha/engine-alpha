@@ -1,6 +1,8 @@
 package ea.animation.interpolation;
 
 import ea.animation.Interpolator;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 /**
  * Interpoliert auf einer kompletten Sinuskurve.
@@ -27,11 +29,13 @@ public class SinusFloat implements Interpolator<Float> {
      *                  <code>start+amplitude</code> und bei 3/4 ist der Wert <code>start-amplitude</code>.<br>
      *                  Negative Werte sind natürlich auch möglich.
      */
+    @API
     public SinusFloat(float start, float amplitude) {
         this.start = start;
         this.amplitude = amplitude;
     }
 
+    @Internal
     @Override
     public Float interpolate(float progress) {
         return (float)Math.sin(Math.PI * progress * 2) * amplitude + start;
