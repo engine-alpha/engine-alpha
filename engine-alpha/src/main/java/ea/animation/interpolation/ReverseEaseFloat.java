@@ -20,16 +20,20 @@
 package ea.animation.interpolation;
 
 import ea.animation.Interpolator;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 public class ReverseEaseFloat implements Interpolator<Float> {
     private float startAndEnd;
     private float middle;
 
+    @API
     public ReverseEaseFloat(float startAndEnd, float middle) {
         this.startAndEnd = startAndEnd;
         this.middle = middle;
     }
 
+    @Internal
     @Override
     public Float interpolate(float progress) {
         return this.startAndEnd + (float) Math.sin(progress * Math.PI) * (this.middle - this.startAndEnd);

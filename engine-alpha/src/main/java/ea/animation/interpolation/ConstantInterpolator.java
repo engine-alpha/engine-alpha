@@ -2,6 +2,7 @@ package ea.animation.interpolation;
 
 import ea.animation.Interpolator;
 import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 /**
  * Ein Interpolator, der eine konstante Funktion darstellt.
@@ -22,6 +23,7 @@ public class ConstantInterpolator<Value> implements Interpolator<Value> {
         this.value = value;
     }
 
+    @Internal
     @Override
     public Value interpolate(float progress) {
         return value;
