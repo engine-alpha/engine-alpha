@@ -141,8 +141,8 @@ public final class Game {
     /**
      * Dies startet das Fenster und beginnt sämtliche internen Prozesse der Engine.
      *
-     * @param width  Die Breite des Zeichenbereichs.
-     * @param height Die Höhe des Zeichenbereichs.
+     * @param width  Die Breite des Zeichenbereichs in Pixel.
+     * @param height Die Höhe des Zeichenbereichs in Pixel.
      * @param scene  Szene, mit der das Spiel gestartet wird, z.B. das Menü.
      */
     @API
