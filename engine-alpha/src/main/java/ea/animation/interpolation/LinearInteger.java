@@ -20,16 +20,20 @@
 package ea.animation.interpolation;
 
 import ea.animation.Interpolator;
+import ea.internal.annotations.API;
+import ea.internal.annotations.Internal;
 
 public class LinearInteger implements Interpolator<Integer> {
     private int start;
     private int end;
 
+    @API
     public LinearInteger(int start, int end) {
         this.start = start;
         this.end = end;
     }
 
+    @Internal
     @Override
     public Integer interpolate(float progress) {
         return this.start + (int) ((this.end - this.start) * progress);
