@@ -26,7 +26,50 @@ import ea.internal.annotations.API;
  */
 @API
 public enum Direction {
-    UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT, NONE;
+    /**
+     * Repräsentation einer Richtung, die nach <strong>oben</strong> zeigt.
+     */
+    UP,
+
+    /**
+     * Repräsentation einer Richtung, die nach <strong>oben rechts</strong> zeigt.
+     */
+    UP_RIGHT,
+
+    /**
+     * Repräsentation einer Richtung, die nach <strong>rechts</strong> zeigt.
+     */
+    RIGHT,
+
+    /**
+     * Repräsentation einer Richtung, die nach <strong>oben rechts</strong> zeigt.
+     */
+    DOWN_RIGHT,
+
+    /**
+     * Repräsentation einer Richtung, die nach <strong>unten</strong> zeigt.
+     */
+    DOWN,
+
+    /**
+     * Repräsentation einer Richtung, die nach <strong>unten links</strong> zeigt.
+     */
+    DOWN_LEFT,
+
+    /**
+     * Repräsentation einer Richtung, die nach <strong>links</strong> zeigt.
+     */
+    LEFT,
+
+    /**
+     * Repräsentation einer Richtung, die nach <strong>oben links</strong> zeigt.
+     */
+    UP_LEFT,
+
+    /**
+     * Repräsentation einer Richtung, die nirgendwo hinzeigt.
+     */
+    NONE;
 
     /**
      * Berechnet einen einfachen Vector (maximale Auslenkung bei jeder Achse 1 – positiv wie negativ).
