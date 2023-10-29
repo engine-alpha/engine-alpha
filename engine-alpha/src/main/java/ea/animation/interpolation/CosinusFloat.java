@@ -39,6 +39,6 @@ implements Interpolator<Float> {
 
     @Override
     public Float interpolate(float progress) {
-        return (float)Math.cos(Math.PI * progress * 2)*amplitude + start - amplitude;
+        return (float)Math.cos(Math.PI * progress * 2) * amplitude + start - amplitude;
     }
 }

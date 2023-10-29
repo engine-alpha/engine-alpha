@@ -34,6 +34,6 @@ public class SinusFloat implements Interpolator<Float> {
 
     @Override
     public Float interpolate(float progress) {
-        return (float)Math.sin(Math.PI * progress * 2)*amplitude + start;
+        return (float)Math.sin(Math.PI * progress * 2) * amplitude + start;
     }
 }
