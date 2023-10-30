@@ -116,6 +116,7 @@ public final class FixtureBuilder {
             Shape shape = fromLine(line);
             shapeList.add(new FixtureData(shape));
         }
+        scanner.close();
         return () -> shapeList;
     }
 
