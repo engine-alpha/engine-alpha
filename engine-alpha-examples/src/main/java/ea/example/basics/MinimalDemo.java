@@ -34,12 +34,7 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
      */
     private final Rectangle rectangle;
 
-    private final StatefulAnimation character;
-
-    /**
-     * Die Geschwindigkeit, in der sich die Kamera bewegt (pro Sekunde)
-     */
-    private final float CAM_SPEED = 600;
+    private final StatefulAnimation<String> character;
 
     public MinimalDemo() {
         rectangle = new Rectangle(50, 100);
@@ -58,8 +53,8 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
 
         //Stateful Animation
 
-        //"leerer Automat" -> Erstellt StatefulAnimation ohne Zustände
-        character = new StatefulAnimation(64, 64);
+        //"leerer Automat" → Erstellt StatefulAnimation ohne Zustände
+        character = new StatefulAnimation<>(64, 64);
 
         final String pathbase = "game-assets/dude/char/spr_m_traveler_";
 
@@ -81,15 +76,9 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     @Override
     public void onKeyDown(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_RIGHT:
-                rectangle.moveBy(50, 0);
-                break;
-            case KeyEvent.VK_LEFT:
-                rectangle.moveBy(-50, 0);
-                break;
-            case KeyEvent.VK_C:
-                character.setState("midair");
-                break;
+            case KeyEvent.VK_RIGHT -> rectangle.moveBy(50, 0);
+            case KeyEvent.VK_LEFT -> rectangle.moveBy(-50, 0);
+            case KeyEvent.VK_C -> character.setState("midair");
         }
     }
 
@@ -103,18 +92,24 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
 
     @Override
     public void onFrameUpdate(float deltaSeconds) {
+        // Die Geschwindigkeit, in der sich die Kamera bewegt (pro Sekunde)
+        float camSpeed = 600;
+
         if (Game.isKeyPressed(KeyEvent.VK_W)) {
-            //W ist gedrückt -> Kamera nach oben bewegen.
-            getCamera().moveBy(0, CAM_SPEED * deltaSeconds);
+            // W ist gedrückt → Kamera nach oben bewegen.
+            getCamera().moveBy(0, camSpeed * deltaSeconds);
         }
+
         if (Game.isKeyPressed(KeyEvent.VK_S)) {
-            getCamera().moveBy(0, -CAM_SPEED * deltaSeconds);
+            getCamera().moveBy(0, -camSpeed * deltaSeconds);
         }
+
         if (Game.isKeyPressed(KeyEvent.VK_A)) {
-            getCamera().moveBy(-CAM_SPEED * deltaSeconds, 0);
+            getCamera().moveBy(-camSpeed * deltaSeconds, 0);
         }
+
         if (Game.isKeyPressed(KeyEvent.VK_D)) {
-            getCamera().moveBy(CAM_SPEED * deltaSeconds, 0);
+            getCamera().moveBy(camSpeed * deltaSeconds, 0);
         }
     }
 }
