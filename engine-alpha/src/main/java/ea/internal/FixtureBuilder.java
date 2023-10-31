@@ -105,10 +105,7 @@ public final class FixtureBuilder {
      *             </ul>
      */
     public static Supplier<List<FixtureData>> fromString(String code) {
-        //Leerzeichen raus
-        code.replace(" ", "");
-
-        try (Scanner scanner = new Scanner(code)) {
+        try (Scanner scanner = new Scanner(code.replace(" ", ""))) {
             scanner.useDelimiter("&");
 
             ArrayList<FixtureData> shapeList = new ArrayList<>();
