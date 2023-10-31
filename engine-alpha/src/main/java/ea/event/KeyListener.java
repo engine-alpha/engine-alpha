@@ -24,7 +24,7 @@ import ea.internal.annotations.API;
 import java.awt.event.KeyEvent;
 
 /**
- * Dieses Interface wird implementiert, um auf gedrückte Tasten onKeyDownInternal zu können.
+ * Dieses Interface wird implementiert, um auf gedrückte Tasten reagieren zu können.
  *
  * @author Niklas Keller
  */
