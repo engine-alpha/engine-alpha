@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * Beschreibt einen Frame einer {@link ea.actor.Animation}.
- * @author Nicklas Keller
+ * @author Niklas Keller
  */
 @Internal
 public final class AnimationFrame {
