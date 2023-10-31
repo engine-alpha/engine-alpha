@@ -30,7 +30,7 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     }
 
     /**
-     * Ein einfacher Demo
+     * Eine einfache Demo
      */
     private final Rectangle rectangle;
 

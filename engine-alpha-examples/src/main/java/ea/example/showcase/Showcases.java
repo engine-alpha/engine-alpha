@@ -25,7 +25,7 @@ public class Showcases extends Scene {
     public static final int WIDTH = 1240, HEIGHT = 812;
 
     /**
-     * State für die interne TextBoxen
+     * State für die interne Textbox
      */
     private enum TextboxState {
         NORMAL, PRESSED, HOVER;

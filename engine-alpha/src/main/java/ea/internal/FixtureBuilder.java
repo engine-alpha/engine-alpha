@@ -65,7 +65,7 @@ public final class FixtureBuilder {
      * Erstellt eine polygonale Shape. Kann nur konvexe Shapes erstellen. Konkave Shapes werden automatisch zur
      * umspannenden konvexen Shape formatiert.
      *
-     * @param points Ein Reihe an Punkten, die nacheinander diese Shape beschreiben (mindestens 3 Punkte).
+     * @param points Eine Reihe an Punkten, die nacheinander diese Shape beschreiben (mindestens 3 Punkte).
      */
     public static FixtureData createPolygonShape(Vector... points) {
         if (points.length < 3) {

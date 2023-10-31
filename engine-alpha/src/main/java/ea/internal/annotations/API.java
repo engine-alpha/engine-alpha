@@ -22,8 +22,8 @@ package ea.internal.annotations;
 import java.lang.annotation.Documented;
 
 /**
- * Markiert Methoden, die Schüler verwenden sollen. Methoden ohne @API sollen nicht verwendet
- * werden!
+ * Diese Annotation markiert Methoden, die Schüler verwenden sollen. Methoden ohne <code>@API</code> sollen nicht
+ * verwendet werden!
  * <p>
  * Bisher müssen diese Methoden auch mit <code>@SuppressWarnings("unused")</code> zusätzlich markiert werden.
  *

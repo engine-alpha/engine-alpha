@@ -39,8 +39,8 @@ final public class FontLoader {
     public static final String[] systemFonts;
 
     /**
-     * Alle gelaadenen Fonts, die manuell eingebunden sind.<br />
-     * Macht das verwenden dieser Schriften möglich, ohne dass die Schriftart auf dem System
+     * Alle geladenen Fonts, die manuell eingebunden sind.<br />
+     * Macht das Verwenden dieser Schriften möglich, ohne dass die Schriftart auf dem System
      * vorhanden ist.
      */
     private static final Map<String, Font> userFonts = new ConcurrentHashMap<>();

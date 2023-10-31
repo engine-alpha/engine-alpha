@@ -22,7 +22,7 @@ package ea.internal.annotations;
 import java.lang.annotation.Documented;
 
 /**
- * Markiert Methoden, die Schüler definitiv <u><b>nicht</b></u> verwenden sollen.
+ * Diese Annotation markiert Methoden, die Schüler definitiv <u><b>nicht</b></u> verwenden sollen.
  *
  * @author Niklas Keller {@literal <me@kelunik.com>}
  */

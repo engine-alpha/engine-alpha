@@ -27,7 +27,7 @@ import ea.internal.annotations.Internal;
 import java.awt.Point;
 
 /**
- * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene;
+ * Die Kamera "blickt" auf die Zeichenebene, das, was sie sieht, beschreibt den Teil der Zeichenebene;
  * das, was im Window dargestellt wird.<br> Sie kann ein Objekt fokussieren und ihm so folgen.
  * Hierbei besteht auch die Möglichkeit, diesen Fokus in Grenzen zu halten. Und zwar durch die
  * Fokus-Bounds. Diese 4 Grenzwerte können individuell verstellt und aktiviert werden. auch kann

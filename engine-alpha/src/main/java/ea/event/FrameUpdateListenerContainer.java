@@ -68,7 +68,7 @@ public interface FrameUpdateListenerContainer {
     /**
      * Führt das übergebene Runnable mit einer vorgegebenen Verzögerung aus.
      *
-     * @param timeInSeconds Zeitverzögerung
+     * @param timeInSeconds Verzögerung
      * @param runnable      Wird nach Ablauf der Verzögerung ausgeführt
      *
      * @return Listener, der manuell abgemeldet werden kann, falls die Ausführung abgebrochen werden soll.
@@ -84,7 +84,7 @@ public interface FrameUpdateListenerContainer {
     /**
      * Führt das übergebene Runnable mit Verzögerung wiederholend aus.
      *
-     * @param intervalInSeconds Zeitverzögerung
+     * @param intervalInSeconds Verzögerung
      * @param runnable          Wird immer wieder nach Ablauf der Verzögerung ausgeführt
      *
      * @return Listener, der manuell abgemeldet werden kann, falls die Ausführung abgebrochen werden soll.

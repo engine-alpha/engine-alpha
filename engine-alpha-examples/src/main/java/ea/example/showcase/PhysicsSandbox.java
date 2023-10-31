@@ -91,7 +91,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     private static final Vector[] STARTINGPOINTS = new Vector[] {new Vector(260, 250), new Vector(50, 60), new Vector(400, 100), new Vector(50, 200)};
 
     /**
-     * Beschreibt die Zustände, in denen sich die Sandbox im Bezug auf Mausklick-Funktion befinden kann.
+     * Beschreibt die Zustände, in denen sich die Sandbox in Bezug auf Mausklick-Funktion befinden kann.
      */
     private enum KlickMode {
         ATTACK_POINT, DIRECTION_INTENSITY;

@@ -80,7 +80,7 @@ public class FixtureData {
     /**
      * Erstellt eine neue Fixture-Data.
      *
-     * @param shape Die Shape, die die Fixture hat.
+     * @param shape Die Shape, die diese Fixture hat.
      */
     public FixtureData(Shape shape) {
         this.shape = shape;

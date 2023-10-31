@@ -110,9 +110,9 @@ final public class Logger {
     /**
      * Funktion in die Log-Datei zu schreiben
      *
-     * @param text Meldungs-Text der zur Log übergeben wird
+     * @param text Meldungs-Text der zum Log übergeben wird
      *
-     * @return Gibt den geschrieben Text zurück, im Fehlerfall <code>null</code>
+     * @return Gibt den geschriebenen Text zurück, im Fehlerfall <code>null</code>
      */
     private static String write(String text) {
         try {
@@ -151,10 +151,10 @@ final public class Logger {
     }
 
     /**
-     * Logger-Funktion für Informationen. Wird nur tatsächlich ausgeführt wenn verbose Output in
+     * Logger-Funktion für Informationen. Wird nur tatsächlich ausgeführt, wenn verbose Output in
      * aktiviert wurde.
      *
-     * @param tag Tag für den Log
+     * @param tag Tag für das Log
      * @param s   Text der Information
      *
      * @author Michael Andonie

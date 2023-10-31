@@ -74,7 +74,7 @@ public final class Bounds {
     }
 
     /**
-     * Gibt ein neues Bounds mit der selben Höhe und Breite zurück,
+     * Gibt ein neues Bounds mit derselben Höhe und Breite zurück,
      * das seinen Point genau im angegebenen Zentrum hat.
      *
      * @param p Das Zentrum des zurückzugebenden BoundingRechtecks.
@@ -102,7 +102,7 @@ public final class Bounds {
      *
      * @param v Der Vector, der die Verschiebung des neuen Objektes von diesem beschreibt.
      *
-     * @return Ein neues <code>Bounds</code>-Objekt, das die selbe Maße wie dieses hat,
+     * @return Ein neues <code>Bounds</code>-Objekt, das dieselben Maße wie dieses hat,
      * jedoch um die entsprechende Verschiebung verschoben ist.
      */
     public Bounds moveBy(Vector v) {

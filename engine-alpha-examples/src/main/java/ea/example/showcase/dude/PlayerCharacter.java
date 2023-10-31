@@ -251,7 +251,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
                 break;
             case KeyEvent.VK_D:// Move right
                 if (getHorizontalMovement() != PlayerCharacter.HorizontalMovement.LEFT) {
-                    //Wir bewegen uns gerade NICHT schon nach links -> Dann auf nach rechts
+                    //Wir bewegen uns gerade NICHT schon nach links → Dann auf nach rechts
                     setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
                 }
                 break;
@@ -274,7 +274,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
                 if (horizontalMovement == PlayerCharacter.HorizontalMovement.LEFT) {
                     // Wir haben uns bisher nach links bewegt und das soll jetzt aufhören
                     if (Game.isKeyPressed(KeyEvent.VK_D)) {
-                        // D ist auch gedrückt, wir wollen Also ab jetzt nach Rechts
+                        // D ist auch gedrückt, wir wollen also ab jetzt nach rechts
                         setHorizontalMovement(PlayerCharacter.HorizontalMovement.RIGHT);
                     } else {
                         setHorizontalMovement(PlayerCharacter.HorizontalMovement.IDLE);
@@ -285,7 +285,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
                 if (getHorizontalMovement() == PlayerCharacter.HorizontalMovement.RIGHT) {
                     // Wir haben uns bisher nach rechts bewegt und das soll jetzt aufhören
                     if (Game.isKeyPressed(KeyEvent.VK_A)) {
-                        // A ist gedrückt, wir wollen also ab jetzt nach Links
+                        // A ist gedrückt, wir wollen also ab jetzt nach links
                         setHorizontalMovement(PlayerCharacter.HorizontalMovement.LEFT);
                     } else {
                         setHorizontalMovement(PlayerCharacter.HorizontalMovement.IDLE);

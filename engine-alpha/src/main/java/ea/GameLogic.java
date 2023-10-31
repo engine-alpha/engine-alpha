@@ -176,7 +176,7 @@ public final class GameLogic {
     /**
      * Rendert Debug-Informationen auf dem Bildschirm.
      *
-     * @param g Das Graphics-Objekt zum zeichnen.
+     * @param g Das Graphics-Objekt zum Zeichnen.
      */
     @Internal
     private void renderGrid(Graphics2D g, Scene scene, int width, int height) {
@@ -236,7 +236,7 @@ public final class GameLogic {
     /**
      * Rendert zusätzliche Debug-Infos auf dem Bildschirm.
      *
-     * @param g Das Graphics-Objekt zum zeichnen.
+     * @param g Das Graphics-Objekt zum Zeichnen.
      */
     @Internal
     private void renderInfo(Graphics2D g, DebugInfo debugInfo) {

@@ -453,7 +453,7 @@ public final class Game {
     /**
      * Setzt, ob die aktuell laufende Instanz der Engine verbose Output geben soll.
      *
-     * @param value ist dieser Wert <code>true</code>, so wird ein äußerst ausführlicher Log über die Funktionalität
+     * @param value ist dieser Wert <code>true</code>, so wird ein äußerst ausführliches Log über die Funktionalität
      *              der Engine geführt. Dies ist hauptsächlich für das Debugging an der Engine selbst notwendig.
      *
      * @see #isVerbose()
