@@ -85,7 +85,7 @@ final public class Logger {
     }
 
     private static String write(String type, String tag, String filename, int line, String message, boolean error, boolean printOnConsole) {
-        String str = String.format("[%s][%s][%s] %s (%s:%s)", getTime(), type, tag, message, filename, Integer.toString(line));
+        String str = String.format("[%s][%s][%s] %s (%s:%s)", getTime(), type, tag, message, filename, line);
 
         if (printOnConsole) {
             if (error) {

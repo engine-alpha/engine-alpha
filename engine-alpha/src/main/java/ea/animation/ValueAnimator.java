@@ -27,11 +27,11 @@ import ea.internal.annotations.API;
 import java.util.function.Consumer;
 
 public class ValueAnimator<Value> implements FrameUpdateListener {
-    private Consumer<Value> consumer;
-    private Interpolator<Value> interpolator;
-    private AnimationMode mode;
+    private final Consumer<Value> consumer;
+    private final Interpolator<Value> interpolator;
+    private final AnimationMode mode;
     private float currentTime = 0;
-    private float duration;
+    private final float duration;
     private boolean complete = false;
     private boolean paused = false;
 

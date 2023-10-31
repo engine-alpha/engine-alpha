@@ -26,6 +26,7 @@ import ea.internal.annotations.Internal;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.net.JarURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,7 +45,7 @@ public final class EngineAlpha {
     @SuppressWarnings ( "MagicNumber" )
     public static void main(String[] args) {
         Game.start(800, 600, new Scene() {
-            private List<Actor> items = new ArrayList<>();
+            private final List<Actor> items = new ArrayList<>();
 
             {
                 setGravity(new Vector(0, -9.81f));
@@ -191,7 +192,7 @@ public final class EngineAlpha {
             for (String value : values) {
                 if (value.contains("!")) {
                     try {
-                        return java.net.URLDecoder.decode(value.substring(0, value.length() - 1), "UTF-8");
+                        return java.net.URLDecoder.decode(value.substring(0, value.length() - 1), StandardCharsets.UTF_8);
                     } catch (Exception e) {
                         return null;
                     }

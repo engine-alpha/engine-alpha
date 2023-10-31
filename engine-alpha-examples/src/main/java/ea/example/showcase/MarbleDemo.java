@@ -27,7 +27,7 @@ public class MarbleDemo extends ShowcaseDemo implements KeyListener {
     /**
      * Der Boden des Trichters. Kann durchlässig gemacht werden.
      */
-    private Rectangle boden;
+    private final Rectangle boden;
 
     public MarbleDemo(Scene parent) {
         super(parent);

@@ -24,8 +24,8 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 public class LinearInteger implements Interpolator<Integer> {
-    private int start;
-    private int end;
+    private final int start;
+    private final int end;
 
     @API
     public LinearInteger(int start, int end) {

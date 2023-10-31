@@ -35,7 +35,7 @@ public final class SingleTask implements FrameUpdateListener {
     /**
      * Verzögerung in Sekunden.
      */
-    private float delay;
+    private final float delay;
 
     /**
      * Aktuelle Zeit bis zur nächsten Ausführung.
@@ -45,7 +45,7 @@ public final class SingleTask implements FrameUpdateListener {
     /**
      * Code, der nach X Sekunden ausgeführt wird.
      */
-    private Runnable runnable;
+    private final Runnable runnable;
 
     /**
      * Sagt, ob der Task bereits vollständig ausgeführt wurde.

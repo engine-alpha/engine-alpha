@@ -32,9 +32,9 @@ public class MinimalDemo extends Scene implements KeyListener, MouseWheelListene
     /**
      * Ein einfacher Demo
      */
-    private Rectangle rectangle;
+    private final Rectangle rectangle;
 
-    private StatefulAnimation character;
+    private final StatefulAnimation character;
 
     /**
      * Die Geschwindigkeit, in der sich die Kamera bewegt (pro Sekunde)

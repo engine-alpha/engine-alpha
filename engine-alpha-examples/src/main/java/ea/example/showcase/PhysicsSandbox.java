@@ -100,17 +100,17 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     /**
      * Beschreibt, ob das Test-Objekt mit dem jeweiligen Index gerade im Angriffspunkt liegt.
      */
-    private boolean[] isInAttackRange = new boolean[NUMER_OF_TESTOBJECTS];
+    private final boolean[] isInAttackRange = new boolean[NUMER_OF_TESTOBJECTS];
 
     /**
      * Der Index des zuletzt angeklickten Test-Objekts
      */
     private int lastAttackTarget = 0;
 
-    private Actor[] testObjects = new Actor[NUMER_OF_TESTOBJECTS];
+    private final Actor[] testObjects = new Actor[NUMER_OF_TESTOBJECTS];
     private Actor ground;
     private Actor attack;
-    private Geometry[] walls = new Geometry[NUMER_OF_TESTOBJECTS];
+    private final Geometry[] walls = new Geometry[NUMER_OF_TESTOBJECTS];
 
     // private ActorGroup fixierungsGruppe;
 

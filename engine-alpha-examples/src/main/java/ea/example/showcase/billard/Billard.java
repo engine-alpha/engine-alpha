@@ -35,7 +35,7 @@ public class Billard extends ShowcaseDemo implements KeyListener {
         Game.start(Showcases.WIDTH, Showcases.HEIGHT, new Billard(null));
     }
 
-    private Ball whiteBall;
+    private final Ball whiteBall;
 
     public Billard(Scene parent) {
         super(parent);

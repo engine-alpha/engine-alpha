@@ -24,8 +24,8 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 public class ReverseEaseFloat implements Interpolator<Float> {
-    private float startAndEnd;
-    private float middle;
+    private final float startAndEnd;
+    private final float middle;
 
     @API
     public ReverseEaseFloat(float startAndEnd, float middle) {

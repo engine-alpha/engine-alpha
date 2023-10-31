@@ -52,7 +52,7 @@ public class PlayerCharacter extends StatefulAnimation<PlayerState> implements C
     private enum HorizontalMovement {
         LEFT(-MAX_SPEED), RIGHT(MAX_SPEED), IDLE(0);
 
-        private float targetVelocityX;
+        private final float targetVelocityX;
 
         HorizontalMovement(float targetVelocityX) {
             this.targetVelocityX = targetVelocityX;
