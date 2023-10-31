@@ -275,8 +275,6 @@ public final class Camera {
      */
     @Internal
     public Point toScreenPixelLocation(Vector locationInWorld, float pixelPerMeter) {
-        //Punktposition relativ zur aktuellen Kameraposition
-        Vector locationInWorldCameraRelative = position.getDistance(locationInWorld);
         Vector cameraRelativeLocInPx = position.multiply(pixelPerMeter);
 
         Vector frameSize = Game.getFrameSizeInPixels();
