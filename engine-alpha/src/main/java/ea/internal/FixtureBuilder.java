@@ -108,15 +108,18 @@ public final class FixtureBuilder {
         //Leerzeichen raus
         code.replace(" ", "");
 
-        Scanner scanner = new Scanner(code);
-        scanner.useDelimiter("&");
-        ArrayList<FixtureData> shapeList = new ArrayList<>();
-        while (scanner.hasNext()) {
-            String line = scanner.next();
-            Shape shape = fromLine(line);
-            shapeList.add(new FixtureData(shape));
+        try (Scanner scanner = new Scanner(code)) {
+            scanner.useDelimiter("&");
+
+            ArrayList<FixtureData> shapeList = new ArrayList<>();
+            while (scanner.hasNext()) {
+                String line = scanner.next();
+                Shape shape = fromLine(line);
+                shapeList.add(new FixtureData(shape));
+            }
+
+            return () -> shapeList;
         }
-        return () -> shapeList;
     }
 
     private static Shape fromLine(String line) {
