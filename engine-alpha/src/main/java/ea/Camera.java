@@ -35,11 +35,11 @@ import java.awt.Point;
  * den Bereich als Bounds beschreibt.<br> <br> <br> <br> <code> Bounds
  * grenzen = new Bounds(0, 0, 1500, 1000);<br> meineCam.setBounds(grenzen);<br>
  * </code> <br> <br> <br> Hierdurch wird automatisch der gesamte Fokusapparat (auf den Bereich
- * zwischen den Punkten (0|0) und (1500|1000) ) eingestellt. Bei spezielleren Fokuswuenschen lässt
+ * zwischen den Punkten (0|0) und (1500|1000) ) eingestellt. Bei spezielleren Fokuswünschen lässt
  * sich dies ebenfalls arrangieren durch die einzelnen Methoden, mit denen alle vier Bounds (N, S,
  * O, W) einzeln verstellt und (de)aktiviert werden können.<br> <b>!!Achtung!!</b><br> Bei den
  * Fokuseinstellungen sollte immer ein Bereich gewählt werden, der die Größe des Anzeigefensters
- * (oder Vollbildes) bei weitem uebersteigt.<br> Allgemein wirken diese Bounds auch ohne
+ * (oder Vollbildes) bei weitem übersteigt.<br> Allgemein wirken diese Bounds auch ohne
  * aktivierten Fokus. jedoch ist dies meist weniger sinnvoll.
  *
  * @author Michael Andonie

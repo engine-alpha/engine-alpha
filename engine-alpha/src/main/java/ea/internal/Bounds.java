@@ -113,7 +113,7 @@ public final class Bounds {
      * Berechnet aus diesem und einem weiteren Bounds ein neues, dass die beiden genau
      * fasst.
      *
-     * @param bounds Das zweite Rectangle fuer die Berechnung
+     * @param bounds Das zweite Rectangle für die Berechnung
      *
      * @return Ein neues Bounds, dass die beiden Rechtecke genau umfasst.
      */
@@ -284,7 +284,7 @@ public final class Bounds {
      * wenig Verschiebung</i> zu bringen. Diese Methode wird intern für die Beschränkung des
      * Kamera-Bereiches genutzt.
      * <p>
-     * <div class='hinweisProbleme'><b>Achtung</b>: Voraussetzung dafuer, dass dieser Algorithmus
+     * <div class='hinweisProbleme'><b>Achtung</b>: Voraussetzung dafür, dass dieser Algorithmus
      * Sinn macht ist, dass das äußere Rectangle ausreichend größer als dieses ist!</div>
      *
      * @param aussen Das äußere Rectangle, innerhalb dessen sich das Ergebnis-Rectangle befinden wird

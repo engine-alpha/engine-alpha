@@ -77,7 +77,7 @@ public class Text extends Geometry {
      * Diese werden zu Anfang einmalig geladen und stehen dauerhaft zur Verfügung.
      *
      * @param content  Die Zeichenkette, die dargestellt werden soll
-     * @param fontName Der Name des zu verwendenden Fonts.<br> Wird hierfuer ein Font verwendet, der in dem
+     * @param fontName Der Name des zu verwendenden Fonts.<br> Wird hierfür ein Font verwendet, der in dem
      *                 Projektordner vorhanden sein soll, <b>und dies ist immer und in jedem Fall zu empfehlen</b>, muss
      *                 der Name der Schriftart hier ebenfalls einfach nur eingegeben werden, <b>nicht der Name der
      *                 schriftart-Datei!</b>
