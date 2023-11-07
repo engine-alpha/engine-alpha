@@ -381,7 +381,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Rendert eine Shape von JBox2D vectorFromThisTo den gegebenen Voreinstellungen im Graphics-Objekt.
+     * Rendert eine Shape von JBox2D nach den gegebenen Voreinstellungen im Graphics-Objekt.
      *
      * @param shape Die Shape, die zu rendern ist.
      * @param g     Das Graphics-Objekt, das die Shape rendern soll. Farbe &amp; Co. sollte im Vorfeld
@@ -1111,7 +1111,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
      * <p>
-     * Diese Methode arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
+     * Diese Methode arbeitet nach dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
      * durch den Aufruf der Methode <code>center()</code>. Daher ist diese Methode in der Anwendung
      * auf ein ActorGroup-Objekt nicht unbedingt sinnvoll.
      *
