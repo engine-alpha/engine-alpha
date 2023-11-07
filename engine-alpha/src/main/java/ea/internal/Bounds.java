@@ -328,12 +328,12 @@ public final class Bounds {
      * Gibt eine String-Repräsentation dieses Objektes aus.
      *
      * @return Die String-Repräsentation dieses Objektes. Hierin wird Auskunft über alle 4
-     * ausschlaggebenden Zahlen (<code>getX</code>, <code>getY</code>, <code>getDX</code> und <code>getDY</code>
+     * ausschlaggebenden Zahlen (<code>getX</code>, <code>getY</code>, <code>getWidth</code> und <code>getHeight</code>
      * gemacht)
      */
     @Override
     public String toString() {
-        return "Bounding-Rectangle: getX:" + x + " getY: " + y + " getDX: " + width + " getDY: " + height;
+        return "Bounding-Rectangle: getX:" + x + " getY: " + y + " getWidth: " + width + " getHeight: " + height;
     }
 
     /**
