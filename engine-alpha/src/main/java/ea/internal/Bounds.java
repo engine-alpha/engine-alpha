@@ -93,7 +93,7 @@ public final class Bounds {
      * Koordinaten mit Abrundung)
      */
     public Vector getCenter() {
-        return new Vector(x + ((width) / 2), y + ((height) / 2));
+        return new Vector(x + (width / 2), y + (height / 2));
     }
 
     /**
