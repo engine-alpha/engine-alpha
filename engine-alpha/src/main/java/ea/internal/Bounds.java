@@ -253,7 +253,7 @@ public final class Bounds {
     }
 
     /**
-     * Diese Methoden prüft, ob dieses Bounding-Rectangle ein zweites vollkommen contains.<br>
+     * Diese Methoden prüft, ob dieses Bounding-Rectangle ein zweites vollkommen enthält.<br>
      * <i>Gemeinsame Ränder zählen <b>AUCH</b> als umschliessen!</i>
      *
      * @param inner Das Innere Bounding-Rectangle. Es soll geprüft werden, ob dieses Vollkommen von
@@ -267,7 +267,7 @@ public final class Bounds {
     }
 
     /**
-     * Berechnet, ob dieses Bounds above einem zweiten ist
+     * Berechnet, ob dieses Bounds oberhalb eines zweiten ist.
      *
      * @param r Das Rectangle, bei dem dies getestet werden soll
      *
