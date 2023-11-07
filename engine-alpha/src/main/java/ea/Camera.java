@@ -236,6 +236,7 @@ public final class Camera {
 
     /**
      * Setzt die aktuelle Position der Kamera
+     *
      * @param position die neue Position der Kamera
      */
     @API
@@ -245,6 +246,7 @@ public final class Camera {
 
     /**
      * Setzt die aktuelle Position der Kamera
+     *
      * @param x Neue X-Koordinate des Kamerazentrums
      * @param y Neue Y-Koordinate des Kamerazentrums
      */
