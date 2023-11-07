@@ -103,7 +103,7 @@ final public class FontLoader {
             return userFonts.get(filename);
         }
 
-        try (InputStream stream = ResourceLoader.loadAsStream(filename)){
+        try (InputStream stream = ResourceLoader.loadAsStream(filename)) {
             Font customFont = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(Font.PLAIN);
 
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
