@@ -256,14 +256,14 @@ public final class Bounds {
      * Diese Methoden prüft, ob dieses Bounding-Rectangle ein zweites vollkommen contains.<br>
      * <i>Gemeinsame Ränder zählen <b>AUCH</b> als umschliessen!</i>
      *
-     * @param innen Das Innere Bounding-Rectangle. Es soll geprüft werden, ob dieses Vollkommen von
+     * @param inner Das Innere Bounding-Rectangle. Es soll geprüft werden, ob dieses Vollkommen von
      *              dem die Methode ausführenden Rectangle umschlossen wird.
      *
      * @return <code>true</code>, wenn das <b>ausfuehrende Bounding-Rectangle das als Argument
      * übergebene Bounds voll contains</b>, sonst <code>false</code>.
      */
-    public boolean contains(Bounds innen) {
-        return (this.x <= innen.x && this.y <= innen.y && (this.x + this.width) >= (innen.x + innen.width) && (this.y + this.height) >= (innen.y + innen.height));
+    public boolean contains(Bounds inner) {
+        return (this.x <= inner.x && this.y <= inner.y && (this.x + this.width) >= (inner.x + inner.width) && (this.y + this.height) >= (inner.y + inner.height));
     }
 
     /**
@@ -287,28 +287,28 @@ public final class Bounds {
      * <div class='hinweisProbleme'><b>Achtung</b>: Voraussetzung dafür, dass dieser Algorithmus
      * Sinn macht ist, dass das äußere Rectangle ausreichend größer als dieses ist!</div>
      *
-     * @param aussen Das äußere Rectangle, innerhalb dessen sich das Ergebnis-Rectangle befinden wird
+     * @param outer Das äußere Rectangle, innerhalb dessen sich das Ergebnis-Rectangle befinden wird
      *               (sollte das äußere ausreichend groß sein).
      *
      * @return Das Ergebnis-Rectangle, das sich im äußeren Rectangle befinden wird.
      */
-    public Bounds in(Bounds aussen) {
+    public Bounds in(Bounds outer) {
         float realX = this.x, realY = this.y;
 
-        if (this.x < aussen.x) {
-            realX = aussen.x;
+        if (this.x < outer.x) {
+            realX = outer.x;
         }
 
-        if (this.x + this.width > aussen.x + aussen.width) {
-            realX = aussen.x + aussen.width - this.width;
+        if (this.x + this.width > outer.x + outer.width) {
+            realX = outer.x + outer.width - this.width;
         }
 
-        if (this.y < aussen.y) {
-            realY = aussen.y;
+        if (this.y < outer.y) {
+            realY = outer.y;
         }
 
-        if (this.y + this.height > aussen.y + aussen.height) {
-            realY = aussen.y + aussen.height - this.height;
+        if (this.y + this.height > outer.y + outer.height) {
+            realY = outer.y + outer.height - this.height;
         }
 
         return new Bounds(realX, realY, this.width, this.height);
