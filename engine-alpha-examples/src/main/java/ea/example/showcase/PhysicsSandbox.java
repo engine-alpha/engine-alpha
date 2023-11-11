@@ -260,7 +260,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     }
 
     /**
-     * Wird bei jedem Keyndruck aufgerufen.
+     * Wird bei jedem Tastendruck aufgerufen.
      *
      * @param e Der Code der gedrückten Key.
      */

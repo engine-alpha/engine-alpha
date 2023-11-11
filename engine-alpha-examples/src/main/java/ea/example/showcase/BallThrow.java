@@ -105,7 +105,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
     }
 
     /**
-     * Wird bei jedem Keyndruck ausgeführt.
+     * Wird bei jedem Tastendruck ausgeführt.
      *
      * @param e KeyEvent
      */
