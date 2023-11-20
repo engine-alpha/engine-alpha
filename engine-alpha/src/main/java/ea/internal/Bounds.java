@@ -52,8 +52,8 @@ public final class Bounds {
     /**
      * Konstruktor mit <b>reellen</b> Werten.
      *
-     * @param x      Die <code>getX</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
-     * @param y      Die <code>getY</code>-Koordinate der <i>oberen linken Ecke</i> des Rechtecks
+     * @param x      Die <code>getX</code>-Koordinate der <i>unteren linken Ecke</i> des Rechtecks
+     * @param y      Die <code>getY</code>-Koordinate der <i>unteren linken Ecke</i> des Rechtecks
      * @param width  Die Breite des Bounding-Rechtecks
      * @param height Die Höhe des Bounding-Rechtecks
      */
@@ -89,11 +89,10 @@ public final class Bounds {
     /**
      * Berechnet den Mittelpunkt dieses BoundingRechtecks in der Zeichenebene.
      *
-     * @return Der Point mit den Koordinaten, der im Zentrum des Rechtecks liegt (bei ungeraden
-     * Koordinaten mit Abrundung)
+     * @return Der Point mit den Koordinaten, der im Zentrum des Rechtecks liegt.
      */
     public Vector getCenter() {
-        return new Vector(x + ((width) / 2), y + ((height) / 2));
+        return new Vector(x + (width / 2), y + (height / 2));
     }
 
     /**
@@ -219,11 +218,11 @@ public final class Bounds {
 
     /**
      * Gibt ein neues Bounds mit selber Höhe und Breite, jedoch einer bestimmten, zu
-     * definierenden Position.<br> Diese Position ist die der <i>linken oberen Ecke</i> des
+     * definierenden Position.<br> Diese Position ist die der <i>linken unteren Ecke</i> des
      * BoundingRechtecks.
      *
-     * @param realX Die <i>X-Koordinate der linken oberen Ecke</i> des BoundingRechtecks
-     * @param realY Die <i>Y-Koordinate der linken oberen Ecke</i> des BoundingRechtecks
+     * @param realX Die <i>X-Koordinate der linken unteren Ecke</i> des BoundingRechtecks
+     * @param realY Die <i>Y-Koordinate der linken unteren Ecke</i> des BoundingRechtecks
      *
      * @return Ein neues Bounds mit der eingegebenen Position und derselben Breite und
      * Höhe.
@@ -253,21 +252,21 @@ public final class Bounds {
     }
 
     /**
-     * Diese Methoden prüft, ob dieses Bounding-Rectangle ein zweites vollkommen contains.<br>
+     * Diese Methoden prüft, ob dieses Bounding-Rectangle ein zweites vollkommen enthält.<br>
      * <i>Gemeinsame Ränder zählen <b>AUCH</b> als umschliessen!</i>
      *
-     * @param innen Das Innere Bounding-Rectangle. Es soll geprüft werden, ob dieses Vollkommen von
+     * @param inner Das Innere Bounding-Rectangle. Es soll geprüft werden, ob dieses Vollkommen von
      *              dem die Methode ausführenden Rectangle umschlossen wird.
      *
      * @return <code>true</code>, wenn das <b>ausfuehrende Bounding-Rectangle das als Argument
      * übergebene Bounds voll contains</b>, sonst <code>false</code>.
      */
-    public boolean contains(Bounds innen) {
-        return (this.x <= innen.x && this.y <= innen.y && (this.x + this.width) >= (innen.x + innen.width) && (this.y + this.height) >= (innen.y + innen.height));
+    public boolean contains(Bounds inner) {
+        return (this.x <= inner.x && this.y <= inner.y && (this.x + this.width) >= (inner.x + inner.width) && (this.y + this.height) >= (inner.y + inner.height));
     }
 
     /**
-     * Berechnet, ob dieses Bounds above einem zweiten ist
+     * Berechnet, ob dieses Bounds oberhalb eines zweiten ist.
      *
      * @param r Das Rectangle, bei dem dies getestet werden soll
      *
@@ -287,28 +286,28 @@ public final class Bounds {
      * <div class='hinweisProbleme'><b>Achtung</b>: Voraussetzung dafür, dass dieser Algorithmus
      * Sinn macht ist, dass das äußere Rectangle ausreichend größer als dieses ist!</div>
      *
-     * @param aussen Das äußere Rectangle, innerhalb dessen sich das Ergebnis-Rectangle befinden wird
+     * @param outer Das äußere Rectangle, innerhalb dessen sich das Ergebnis-Rectangle befinden wird
      *               (sollte das äußere ausreichend groß sein).
      *
      * @return Das Ergebnis-Rectangle, das sich im äußeren Rectangle befinden wird.
      */
-    public Bounds in(Bounds aussen) {
+    public Bounds in(Bounds outer) {
         float realX = this.x, realY = this.y;
 
-        if (this.x < aussen.x) {
-            realX = aussen.x;
+        if (this.x < outer.x) {
+            realX = outer.x;
         }
 
-        if (this.x + this.width > aussen.x + aussen.width) {
-            realX = aussen.x + aussen.width - this.width;
+        if (this.x + this.width > outer.x + outer.width) {
+            realX = outer.x + outer.width - this.width;
         }
 
-        if (this.y < aussen.y) {
-            realY = aussen.y;
+        if (this.y < outer.y) {
+            realY = outer.y;
         }
 
-        if (this.y + this.height > aussen.y + aussen.height) {
-            realY = aussen.y + aussen.height - this.height;
+        if (this.y + this.height > outer.y + outer.height) {
+            realY = outer.y + outer.height - this.height;
         }
 
         return new Bounds(realX, realY, this.width, this.height);
@@ -328,18 +327,18 @@ public final class Bounds {
      * Gibt eine String-Repräsentation dieses Objektes aus.
      *
      * @return Die String-Repräsentation dieses Objektes. Hierin wird Auskunft über alle 4
-     * ausschlaggebenden Zahlen (<code>getX</code>, <code>getY</code>, <code>getDX</code> und <code>getDY</code>
+     * ausschlaggebenden Zahlen (<code>getX</code>, <code>getY</code>, <code>getWidth</code> und <code>getHeight</code>
      * gemacht)
      */
     @Override
     public String toString() {
-        return "Bounding-Rectangle: getX:" + x + " getY: " + y + " getDX: " + width + " getDY: " + height;
+        return "Bounding-Rectangle: getX:" + x + " getY: " + y + " getWidth: " + width + " getHeight: " + height;
     }
 
     /**
-     * Gibt die <b>reelle</b> X-Koordinate der oberen linken Ecke aus.
+     * Gibt die <b>reelle</b> X-Koordinate der unteren linken Ecke aus.
      *
-     * @return Die <b>reelle</b> X-Koordinate der oberen linken Ecke dieses BoundingRechtecks.
+     * @return Die <b>reelle</b> X-Koordinate der unteren linken Ecke dieses BoundingRechtecks.
      *
      * @see #getY()
      * @see #getWidth()
@@ -350,9 +349,9 @@ public final class Bounds {
     }
 
     /**
-     * Gibt die <b>reelle</b> Y-Koordinate der oberen linken Ecke aus.
+     * Gibt die <b>reelle</b> Y-Koordinate der unteren linken Ecke aus.
      *
-     * @return Die <b>reelle</b> Y-Koordinate der oberen linken Ecke dieses BoundingRechtecks.
+     * @return Die <b>reelle</b> Y-Koordinate der unteren linken Ecke dieses BoundingRechtecks.
      *
      * @see #getX()
      * @see #getWidth()
@@ -389,10 +388,10 @@ public final class Bounds {
     }
 
     /**
-     * Gibt die exakte Position der linken oberen Ecke dieses Bounding-Rechtecks
+     * Gibt die exakte Position der linken unteren Ecke dieses Bounding-Rechtecks
      * aus.
      *
-     * @return die Position des BoundingRechtecks, beschrieben durch den Point der linken oberen
+     * @return die Position des BoundingRechtecks, beschrieben durch den Point der linken unteren
      * Ecke dieses Objekts.
      */
     public Vector getPosition() {

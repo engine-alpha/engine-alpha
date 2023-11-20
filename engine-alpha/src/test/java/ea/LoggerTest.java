@@ -15,23 +15,23 @@ import ea.internal.util.Logger;
 
 public class LoggerTest {
 
-	private final PrintStream standardErr = System.err;
-	private final ByteArrayOutputStream errStreamCaptor = new ByteArrayOutputStream();
+    private final PrintStream standardErr = System.err;
+    private final ByteArrayOutputStream errStreamCaptor = new ByteArrayOutputStream();
 
-	@Before
-	public void setUp() {
-		System.setErr(new PrintStream(errStreamCaptor));
-	}
+    @Before
+    public void setUp() {
+        System.setErr(new PrintStream(errStreamCaptor));
+    }
 
-	@After
-	public void tearDown() {
-		System.setErr(standardErr);
-	}
+    @After
+    public void tearDown() {
+        System.setErr(standardErr);
+    }
 
-	@Test
-	public void fileExists() {
-		Logger.error("LoggerTest", "lorem ipsum");
-		assertTrue(errStreamCaptor.toString().indexOf("lorem ipsum") > -1);
-		assertTrue(Files.exists(Paths.get("engine-alpha.log")));
-	}
+    @Test
+    public void fileExists() {
+        Logger.error("LoggerTest", "lorem ipsum");
+        assertTrue(errStreamCaptor.toString().indexOf("lorem ipsum") > -1);
+        assertTrue(Files.exists(Paths.get("engine-alpha.log")));
+    }
 }
