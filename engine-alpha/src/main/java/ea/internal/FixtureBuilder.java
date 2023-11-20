@@ -65,7 +65,7 @@ public final class FixtureBuilder {
      * Erstellt eine polygonale Shape. Kann nur konvexe Shapes erstellen. Konkave Shapes werden automatisch zur
      * umspannenden konvexen Shape formatiert.
      *
-     * @param points Ein Reihe an Punkten, die nacheinander diese Shape beschreiben (mindestens 3 Punkte).
+     * @param points Eine Reihe an Punkten, die nacheinander diese Shape beschreiben (mindestens 3 Punkte).
      */
     public static FixtureData createPolygonShape(Vector... points) {
         if (points.length < 3) {
@@ -105,18 +105,18 @@ public final class FixtureBuilder {
      *             </ul>
      */
     public static Supplier<List<FixtureData>> fromString(String code) {
-        //Leerzeichen raus
-        code.replace(" ", "");
+        try (Scanner scanner = new Scanner(code.replace(" ", ""))) {
+            scanner.useDelimiter("&");
 
-        Scanner scanner = new Scanner(code);
-        scanner.useDelimiter("&");
-        ArrayList<FixtureData> shapeList = new ArrayList<>();
-        while (scanner.hasNext()) {
-            String line = scanner.next();
-            Shape shape = fromLine(line);
-            shapeList.add(new FixtureData(shape));
+            ArrayList<FixtureData> shapeList = new ArrayList<>();
+            while (scanner.hasNext()) {
+                String line = scanner.next();
+                Shape shape = fromLine(line);
+                shapeList.add(new FixtureData(shape));
+            }
+
+            return () -> shapeList;
         }
-        return () -> shapeList;
     }
 
     private static Shape fromLine(String line) {

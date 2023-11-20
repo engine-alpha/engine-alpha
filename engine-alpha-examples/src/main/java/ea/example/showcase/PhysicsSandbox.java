@@ -91,7 +91,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     private static final Vector[] STARTINGPOINTS = new Vector[] {new Vector(260, 250), new Vector(50, 60), new Vector(400, 100), new Vector(50, 200)};
 
     /**
-     * Beschreibt die Zustände, in denen sich die Sandbox im Bezug auf Mausklick-Funktion befinden kann.
+     * Beschreibt die Zustände, in denen sich die Sandbox in Bezug auf Mausklick-Funktion befinden kann.
      */
     private enum KlickMode {
         ATTACK_POINT, DIRECTION_INTENSITY;
@@ -100,17 +100,17 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     /**
      * Beschreibt, ob das Test-Objekt mit dem jeweiligen Index gerade im Angriffspunkt liegt.
      */
-    private boolean[] isInAttackRange = new boolean[NUMER_OF_TESTOBJECTS];
+    private final boolean[] isInAttackRange = new boolean[NUMER_OF_TESTOBJECTS];
 
     /**
      * Der Index des zuletzt angeklickten Test-Objekts
      */
     private int lastAttackTarget = 0;
 
-    private Actor[] testObjects = new Actor[NUMER_OF_TESTOBJECTS];
+    private final Actor[] testObjects = new Actor[NUMER_OF_TESTOBJECTS];
     private Actor ground;
     private Actor attack;
-    private Geometry[] walls = new Geometry[NUMER_OF_TESTOBJECTS];
+    private final Geometry[] walls = new Geometry[NUMER_OF_TESTOBJECTS];
 
     // private ActorGroup fixierungsGruppe;
 
@@ -260,7 +260,7 @@ public class PhysicsSandbox extends ShowcaseDemo implements MouseClickListener, 
     }
 
     /**
-     * Wird bei jedem Keyndruck aufgerufen.
+     * Wird bei jedem Tastendruck aufgerufen.
      *
      * @param e Der Code der gedrückten Key.
      */

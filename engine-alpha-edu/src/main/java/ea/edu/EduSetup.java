@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 
 public final class EduSetup {
 
-    private static ThreadLocal<EduScene> customSetup = ThreadLocal.withInitial(() -> null);
+    private static final ThreadLocal<EduScene> customSetup = ThreadLocal.withInitial(() -> null);
 
     @Internal
     static <T extends Actor> void setup(EduActor<T> eduActor, EduScene eduScene) {

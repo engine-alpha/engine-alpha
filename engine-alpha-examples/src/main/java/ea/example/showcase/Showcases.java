@@ -25,7 +25,7 @@ public class Showcases extends Scene {
     public static final int WIDTH = 1240, HEIGHT = 812;
 
     /**
-     * State für die interne TextBoxen
+     * State für die interne Textbox
      */
     private enum TextboxState {
         NORMAL, PRESSED, HOVER;
@@ -57,9 +57,9 @@ public class Showcases extends Scene {
     private class TextBox implements MouseClickListener, FrameUpdateListener {
 
         //Box für den Text
-        private Rectangle box;
+        private final Rectangle box;
         //Der sichtbare Text
-        private Text text;
+        private final Text text;
         //Runnable, das die Scene.
         private final Supplier<Scene> sceneCreator;
         //Der aktuelle State der TextBox

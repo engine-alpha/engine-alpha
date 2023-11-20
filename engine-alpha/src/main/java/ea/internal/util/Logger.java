@@ -85,7 +85,7 @@ final public class Logger {
     }
 
     private static String write(String type, String tag, String filename, int line, String message, boolean error, boolean printOnConsole) {
-        String str = String.format("[%s][%s][%s] %s (%s:%s)", getTime(), type, tag, message, filename, Integer.toString(line));
+        String str = String.format("[%s][%s][%s] %s (%s:%s)", getTime(), type, tag, message, filename, line);
 
         if (printOnConsole) {
             if (error) {
@@ -110,9 +110,9 @@ final public class Logger {
     /**
      * Funktion in die Log-Datei zu schreiben
      *
-     * @param text Meldungs-Text der zur Log übergeben wird
+     * @param text Meldungs-Text der zum Log übergeben wird
      *
-     * @return Gibt den geschrieben Text zurück, im Fehlerfall <code>null</code>
+     * @return Gibt den geschriebenen Text zurück, im Fehlerfall <code>null</code>
      */
     private static String write(String text) {
         try {
@@ -151,10 +151,10 @@ final public class Logger {
     }
 
     /**
-     * Logger-Funktion für Informationen. Wird nur tatsächlich ausgeführt wenn verbose Output in
+     * Logger-Funktion für Informationen. Wird nur tatsächlich ausgeführt, wenn verbose Output in
      * aktiviert wurde.
      *
-     * @param tag Tag für den Log
+     * @param tag Tag für das Log
      * @param s   Text der Information
      *
      * @author Michael Andonie

@@ -124,7 +124,7 @@ public enum BodyType {
     /**
      * Konvertierungsmethode zwischen Engine-Physiktyp und JB2D-Physiktyp.
      *
-     * @return Der zugehörige JB2D-Phy-Type zu diesem Engine-Phy-Type.
+     * @return Der zugehörige JB2D-Physiktyp zu diesem Engine-Physiktyp.
      */
     @Internal
     public org.jbox2d.dynamics.BodyType toBox2D() {

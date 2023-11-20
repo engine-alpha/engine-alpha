@@ -24,8 +24,8 @@ import ea.internal.annotations.API;
 import ea.internal.annotations.Internal;
 
 public class LinearFloat implements Interpolator<Float> {
-    private float start;
-    private float end;
+    private final float start;
+    private final float end;
 
     @API
     public LinearFloat(float start, float end) {

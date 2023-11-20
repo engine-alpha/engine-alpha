@@ -27,7 +27,7 @@ import ea.internal.annotations.Internal;
 import java.awt.Point;
 
 /**
- * Die Kamera "blickt" auf die Zeichenebene, das was sie sieht beschreibt den Teil der Zeichenebene;
+ * Die Kamera "blickt" auf die Zeichenebene, das, was sie sieht, beschreibt den Teil der Zeichenebene;
  * das, was im Window dargestellt wird.<br> Sie kann ein Objekt fokussieren und ihm so folgen.
  * Hierbei besteht auch die Möglichkeit, diesen Fokus in Grenzen zu halten. Und zwar durch die
  * Fokus-Bounds. Diese 4 Grenzwerte können individuell verstellt und aktiviert werden. auch kann
@@ -35,11 +35,11 @@ import java.awt.Point;
  * den Bereich als Bounds beschreibt.<br> <br> <br> <br> <code> Bounds
  * grenzen = new Bounds(0, 0, 1500, 1000);<br> meineCam.setBounds(grenzen);<br>
  * </code> <br> <br> <br> Hierdurch wird automatisch der gesamte Fokusapparat (auf den Bereich
- * zwischen den Punkten (0|0) und (1500|1000) ) eingestellt. Bei spezielleren Fokuswuenschen lässt
+ * zwischen den Punkten (0|0) und (1500|1000) ) eingestellt. Bei spezielleren Fokuswünschen lässt
  * sich dies ebenfalls arrangieren durch die einzelnen Methoden, mit denen alle vier Bounds (N, S,
  * O, W) einzeln verstellt und (de)aktiviert werden können.<br> <b>!!Achtung!!</b><br> Bei den
  * Fokuseinstellungen sollte immer ein Bereich gewählt werden, der die Größe des Anzeigefensters
- * (oder Vollbildes) bei weitem uebersteigt.<br> Allgemein wirken diese Bounds auch ohne
+ * (oder Vollbildes) bei weitem übersteigt.<br> Allgemein wirken diese Bounds auch ohne
  * aktivierten Fokus. jedoch ist dies meist weniger sinnvoll.
  *
  * @author Michael Andonie
@@ -236,6 +236,7 @@ public final class Camera {
 
     /**
      * Setzt die aktuelle Position der Kamera
+     *
      * @param position die neue Position der Kamera
      */
     @API
@@ -245,6 +246,7 @@ public final class Camera {
 
     /**
      * Setzt die aktuelle Position der Kamera
+     *
      * @param x Neue X-Koordinate des Kamerazentrums
      * @param y Neue Y-Koordinate des Kamerazentrums
      */
@@ -275,8 +277,6 @@ public final class Camera {
      */
     @Internal
     public Point toScreenPixelLocation(Vector locationInWorld, float pixelPerMeter) {
-        //Punktposition relativ zur aktuellen Kameraposition
-        Vector locationInWorldCameraRelative = position.getDistance(locationInWorld);
         Vector cameraRelativeLocInPx = position.multiply(pixelPerMeter);
 
         Vector frameSize = Game.getFrameSizeInPixels();

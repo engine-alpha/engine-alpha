@@ -32,7 +32,7 @@ public class Table {
     public static final float GAP = 20;
     public static final float DIAGONAL_GAP = (float) Math.sqrt(GAP * GAP / 2) * 2;
 
-    private List<Actor> actors = new ArrayList<>();
+    private final List<Actor> actors = new ArrayList<>();
 
     public Actor[] getActors() {
         return actors.toArray(new Actor[0]);

@@ -60,11 +60,14 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
 
     /**
      * Die Konstanten für die Umsetzung der Simulation
+     * <p>
      * Einheiten sind:
-     * Distanz : Meter
-     * Masse : KG
-     * Impuls : Ns
-     * Winkel : Grad (nicht Bogenmaß)
+     * <ul>
+     * <li>Distanz: Meter</li>
+     * <li>Masse: KG</li>
+     * <li>Impuls: Ns</li>
+     * <li>Winkel: Grad (nicht Bogenmaß)</li>
+     * </ul>
      */
     private static final float DURCHMESSER = 0.2f, HOEHE_UEBER_BODEN = 1f, MASSE = 1f, IMPULS = 10, WINKEL = 60;
 
@@ -102,7 +105,7 @@ public class BallThrow extends ShowcaseDemo implements CollisionListener<Actor>,
     }
 
     /**
-     * Wird bei jedem Keyndruck ausgeführt.
+     * Wird bei jedem Tastendruck ausgeführt.
      *
      * @param e KeyEvent
      */

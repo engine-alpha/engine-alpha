@@ -7,7 +7,7 @@ import ea.internal.annotations.Internal;
 /**
  * Ein Interpolator, der eine konstante Funktion darstellt.
  *
- * @param <Value> Ein beliebiger Type zum Interpolieren
+ * @param <Value> Ein beliebiger Typ zum Interpolieren
  */
 public class ConstantInterpolator<Value> implements Interpolator<Value> {
 

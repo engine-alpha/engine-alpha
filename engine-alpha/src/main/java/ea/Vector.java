@@ -39,31 +39,31 @@ public final class Vector implements Cloneable {
     }
 
     /**
-     * Konstante für einen "bewegungslosen" Vector (0, 0)
+     * Konstante für einen "bewegungslosen" Vector (0, 0).
      */
     @API
     public static final Vector NULL = new Vector(0, 0);
 
     /**
-     * Konstante für eine einfache Verschiebung vectorFromThisTo rechts (1, 0)
+     * Konstante für eine einfache Verschiebung nach rechts (1, 0).
      */
     @API
     public static final Vector RIGHT = new Vector(1, 0);
 
     /**
-     * Konstante für eine einfache Verschiebung vectorFromThisTo links (-1, 0)
+     * Konstante für eine einfache Verschiebung nach links (-1, 0).
      */
     @API
     public static final Vector LEFT = new Vector(-1, 0);
 
     /**
-     * Konstante für eine einfache Verschiebung vectorFromThisTo oben (0, -1)
+     * Konstante für eine einfache Verschiebung nach oben (0, -1).
      */
     @API
     public static final Vector UP = new Vector(0, 1);
 
     /**
-     * Konstante für eine einfache Verschiebung vectorFromThisTo unten (0, 1)
+     * Konstante für eine einfache Verschiebung nach unten (0, 1).
      */
     @API
     public static final Vector DOWN = new Vector(0, -1);

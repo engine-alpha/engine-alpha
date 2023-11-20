@@ -22,7 +22,7 @@ public final class Random {
      * Gibt einen <b>zufälligen</b> <code>boolean</code>-Wert zurück.<br> Die Wahrscheinlichkeiten für
      * <code>true</code> bzw. <code>false</code> sind gleich groß.
      *
-     * @return Mit 50% Wahrscheinlichkeit <code>false</code>, mit 50% Wahrscheinlichkeit
+     * @return Mit 50 % Wahrscheinlichkeit <code>false</code>, mit 50 % Wahrscheinlichkeit
      * <code>true</code>.
      */
     @API

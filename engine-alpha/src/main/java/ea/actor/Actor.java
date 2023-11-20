@@ -381,10 +381,10 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     }
 
     /**
-     * Rendert eine Shape von JBox2D vectorFromThisTo den gegebenen Voreinstellungen im Graphics-Objekt.
+     * Rendert eine Shape von JBox2D nach den gegebenen Voreinstellungen im Graphics-Objekt.
      *
      * @param shape Die Shape, die zu rendern ist.
-     * @param g     Das Graphics2D-Object, das die Shape rendern soll. Farbe &amp; Co. sollte im Vorfeld
+     * @param g     Das Graphics-Objekt, das die Shape rendern soll. Farbe &amp; Co. sollte im Vorfeld
      *              eingestellt sein. Diese Methode übernimmt nur das direkte rendern.
      */
     @Internal
@@ -909,7 +909,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      * Testet, ob das Objekt "steht". Diese Funktion ist below anderem hilfreich für die Entwicklung von Platformern
      * (z.B. wenn der Spieler nur springen können soll, wenn er auf dem Boden steht).<br>
      * Diese Funktion ist eine <b>Heuristik</b>, sprich sie ist eine Annäherung. In einer Physik-Simulation ist die
-     * Definition von "stehen" nicht unbedingt einfach. Hier bedeutet es folgendes:<br>
+     * Definition von "stehen" nicht unbedingt einfach. Hier bedeutet es Folgendes:<br>
      * <i>Ein Objekt steht genau dann, wenn alle Eigenschaften erfüllt sind:</i>
      * <ul>
      * <li>Es ist ein <b>dynamisches Objekt</b>.</li>
@@ -1111,7 +1111,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Verschiebt die Actor-Figur so, dass ihr Mittelpunkt die eingegebenen Koordinaten hat.
      * <p>
-     * Diese Methode arbeitet vectorFromThisTo dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
+     * Diese Methode arbeitet nach dem Mittelpunkt des das Objekt abdeckenden BoundingRechtecks
      * durch den Aufruf der Methode <code>center()</code>. Daher ist diese Methode in der Anwendung
      * auf ein ActorGroup-Objekt nicht unbedingt sinnvoll.
      *
@@ -1303,8 +1303,8 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
 
     /**
      * Animiert die Opacity dieses Actors über einen festen Zeitraum: Beginnend von der aktuellen Opacity, ändert sie
-     * sich "smooth" (mit {@code EaseInOutFloat} Interpolation) vom aktuellen Opacity-Wert (die Ausgabe von
-     * {@code getOpacity()} bis hin zum angebebenen Opacity-Wert.
+     * sich "smooth" (mit {@code EaseInOutFloat}-Interpolation) vom aktuellen Opacity-Wert (die Ausgabe von
+     * {@code getOpacity()}) bis hin zum angegebenen Opacity-Wert.
      *
      * @param time           Die Animationszeit in Sekunden
      * @param toOpacityValue Der Opacity-Wert, zu dem innerhalb von {@code time} zu interpolieren ist.

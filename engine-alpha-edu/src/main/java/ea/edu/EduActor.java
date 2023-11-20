@@ -358,7 +358,7 @@ public abstract class EduActor<T extends Actor> {
     }
 
     /**
-     * Bewegt den Actor in einem Kreis um einen Angegebenen Mittelpunkt.
+     * Bewegt den Actor in einem Kreis um einen angegebenen Mittelpunkt.
      *
      * @param mX            X-Koordinate des Mittelpunkts der Revolution.
      * @param mY            Y-Koordinate des Mittelpunkts der Revolution.
