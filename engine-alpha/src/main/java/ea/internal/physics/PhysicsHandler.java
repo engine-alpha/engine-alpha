@@ -177,7 +177,7 @@ public interface PhysicsHandler {
      * @param globalLocation TODO
      */
     @Internal
-    void applyImpluse(Vector impulsInNS, Vector globalLocation);
+    void applyImpulse(Vector impulsInNS, Vector globalLocation);
 
     /**
      * Gibt den WorldHandler aus, der die Welt handelt, in der sich der Klient

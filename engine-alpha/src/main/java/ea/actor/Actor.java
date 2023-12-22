@@ -880,7 +880,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
             return; // ignore invalid impulses, they make box2d hang
         }
 
-        physicsHandler.applyImpluse(newtonSeconds, physicsHandler.getCenter());
+        physicsHandler.applyImpulse(newtonSeconds, physicsHandler.getCenter());
     }
 
     /**
@@ -891,7 +891,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
      */
     @API
     public final void applyImpulse(Vector newtonSeconds, Vector globalPoint) {
-        physicsHandler.applyImpluse(newtonSeconds, globalPoint);
+        physicsHandler.applyImpulse(newtonSeconds, globalPoint);
     }
 
     /**
