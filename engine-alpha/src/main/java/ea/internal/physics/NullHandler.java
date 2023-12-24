@@ -189,8 +189,8 @@ public class NullHandler implements PhysicsHandler {
     }
 
     @Override
-    public void applyImpluse(Vector impulse, Vector globalLocation) {
-        mountCallbacks.add(physicsHandler -> physicsHandler.applyImpluse(impulse, globalLocation));
+    public void applyImpulse(Vector impulse, Vector globalLocation) {
+        mountCallbacks.add(physicsHandler -> physicsHandler.applyImpulse(impulse, globalLocation));
     }
 
     @Override
