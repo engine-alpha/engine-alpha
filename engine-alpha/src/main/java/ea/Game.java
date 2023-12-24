@@ -235,7 +235,10 @@ public final class Game {
     }
 
     /**
-     * TODO : Dokumentation!
+     * Wechselt die aktuelle Szene.
+     *
+     * @param scene Die Szene, zu der gewechselt werden soll. Wird <code>null</code> übergeben, wird eine neue Szene
+     *              erstellt.
      */
     @API
     public static void transitionToScene(Scene scene) {
