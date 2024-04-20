@@ -57,7 +57,7 @@ public final class PeriodicTask implements FrameUpdateListener {
     }
 
     /**
-     * Setzt das intervall dieses periodischen Tasks neu.
+     * Setzt das Intervall dieses periodischen Tasks neu.
      *
      * @param interval Das neue Intervall. Zeit zwischen den Ausführungen in Sekunden.
      *                 Muss größer als 0 sein.
