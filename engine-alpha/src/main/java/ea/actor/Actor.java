@@ -181,7 +181,7 @@ public abstract class Actor implements KeyListenerContainer, MouseClickListenerC
     /**
      * Setzt die Sichtbarkeit des Objektes.
      *
-     * @param visible Ob das Objekt isVisible sein soll oder nicht.<br> Ist dieser Wert
+     * @param visible Ob das Objekt sichtbar sein soll oder nicht.<br> Ist dieser Wert
      *                <code>false</code>, so wird es nicht gezeichnet.
      * @see #isVisible()
      */
